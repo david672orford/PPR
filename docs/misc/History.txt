@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--10 January 2002.
+1.50a1, 1 August 2001--25 January 2002.
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7476,8 +7476,6 @@ line was being parsed twice.
 * Moved vendors/ --> nonppr_vendors/, nonppr/ --> nonppr_misc/, and tcl/ -->
   nonppr->tcl/.
 
-* Added pprd/pprd-kill.sh.
-
 * Added "Status-and-Flags:" to queue file and stopped using the execute bits
   to save this information.
 
@@ -7513,4 +7511,19 @@ line was being parsed twice.
 * Fixed pprd so that fatal() doesn't delete the lock file unless pprd
   created the lock file.  The problem was that if it found a lock file from
   another instance, it called fatal() which removed it.
+
+* Added --stop option to pprd.
+
+* Moved the timeval routines out of pprdrv/pprdrv_writemon.c and into
+  libgu/gu_timeval.c.
+
+* Changed pprd so that it no longer uses SIGALRM and no longer does anything
+  but set a flag in the SIGCHLD handler.  It now uses select() to dispatch
+  events.
+
+* Broke the www/ppr-httpd.perl standalone code out into libscript/tcpserver.pl.
+
+* pprd/pprd_ppop.c:ppop_list(): removed error check from fwrite(). 
+  Previously it was a fatal error.  This meant that pprd would kill itself
+  if the temporary file space filled up!
 

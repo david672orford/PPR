@@ -1,17 +1,32 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 20 December 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 17 January 2002.
 #
 
 use lib "?";
@@ -28,7 +43,6 @@ defined($SHAREDIR) || die;
 defined($LOGDIR) || die;
 defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
-defined($CONFDIR) || die;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.  It is based on
 # the PPR version number.
@@ -99,7 +113,7 @@ my $TOKEN = '[\!\#\$\%\&\x27\*\+\-\.0-9A-Z\^\_\`a-z\|\~]';
 #===========================================================
 
 # Ditch Linux environment variables which offend or sense of neatness because
-# they are not meaningful (or even necessarily true) in the context of a CGI 
+# they are not meaningful (or even necessarily true) in the context of a CGI
 # script.
 delete $ENV{CONSOLE};
 delete $ENV{TERM};
@@ -126,7 +140,7 @@ delete $ENV{LINGUAS};		# Who knows
 # This is the PATH that we will feed to CGI scripts.
 $ENV{PATH} = $SAFE_PATH;
 
-# These variables specify files which sh, ksh, and bash should source during 
+# These variables specify files which sh, ksh, and bash should source during
 # startup.  Since taint checks are on, Perl won't do exec() if these
 # are defined since they could alter the semantics of a shell script.
 # or shell command.  The same goes for IFS since it changes how the shells
@@ -141,58 +155,38 @@ delete $ENV{CDPATH};
 # group "ppr".
 umask(002);
 
-# If we have access, send STDERR to a debugging file, otherwise throw it
-# away.  We must do something with it so it doesn't corrupt the HTTP
-# transaction.
-open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die;
-
 #===========================================================
-# If in standalone mode, create the socket and wait for a connexion.
+# If there are command line arguments, pull in Getopt::Long
+# to process them.
 #===========================================================
 my $standalone_port = undef;
-if(scalar @ARGV >= 1 && $ARGV[0] =~ /^--standalone-port=(.+)$/)
+if(scalar @ARGV >= 1)
     {
-    $standalone_port = $1;
+    require Getopt::Long;
+    if(!Getopt::Long::GetOptions("standalone-port=s" => \$standalone_port))
+    	{
+	print STDERR "Usage: ppr-httpd [--standalone-port=<port>]\n";
+	exit 1;
+    	}
     }
-elsif(scalar @ARGV >= 2 && $ARGV[0] eq "--standalone-port" && $ARGV[1] =~ /^(.+)$/)
-    {
-    $standalone_port = $1;
-    }
+
+#===========================================================
+# If we have access, send STDERR to a debugging file,
+# otherwise throw it away.  We must do something with it so
+# it doesn't corrupt the HTTP transaction.
+#===========================================================
+open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
+
+#===========================================================
+# If standalone mode is called for, load and call
+# tcpserver().  It will fork child processes which will
+# return from tcpserver() with STDIN and STDOUT connected
+# to the remote machine, but the parent will never return.
+#===========================================================
 if(defined $standalone_port)
     {
-    if($standalone_port !~ /^\d+$/)
-    	{
-	($standalone_port) = (getservbyname($standalone_port, "tcp"))[2];
-	defined($standalone_port) || die;
-    	}
-
-    socket(SERVER, PF_INET, SOCK_STREAM, getprotobyname("tcp")) || die $!;
-    setsockopt(SERVER, Socket::SOL_SOCKET, Socket::SO_REUSEADDR, 1) || die $!;
-    my $my_address = sockaddr_in($standalone_port, INADDR_ANY);
-    bind(SERVER, $my_address) || die $!;
-    listen(SERVER, SOMAXCONN) || die $!;
-
-    $SIG{CHLD} = 'IGNORE';
-    while(1)
-	{
-	accept(CLIENT, SERVER) || die $!;
-	my $pid = fork();
-	if(!defined $pid)
-	    {
-	    print STDERR "Fork failed, $!\n";
-	    close CLIENT;
-	    next;
-	    }
-	if($pid)
-	    {
-	    close CLIENT;
-	    next;
-	    }
-	close SERVER;
-	open(STDIN, "<&CLIENT") || die $!;
-	open(STDOUT, ">&CLIENT") || die $!;
-	last;
-	}
+    require "tcpserver.pl";
+    tcpserver($standalone_port);
     }
 
 #===========================================================
@@ -1555,7 +1549,7 @@ sub auth_verify_cookie
 
 	if(!digest_nonce_validate($domain, $nonce))
 	    {
-	    die "Nonce is stale\n" 
+	    die "Nonce is stale\n"
 	    }
 
 	return ("Cookie", $username);

@@ -18,6 +18,7 @@
 
 #include "tclInt.h"
 #include "tclPort.h"
+#include "gu.h"
 
 /*
  * A linked list of the following structures is used to keep track
@@ -216,7 +217,7 @@ Tcl_ReapDetachedProcs()
     int status, result;
 
     for (detPtr = detList, prevPtr = NULL; detPtr != NULL; ) {
-	result = waitpid(detPtr->pid, &status, WNOHANG);
+	result = (int) waitpid((pid_t) detPtr->pid, &status, WNOHANG);
 	if ((result == 0) || ((result == -1) && (errno != ECHILD))) {
 	    prevPtr = detPtr;
 	    detPtr = detPtr->nextPtr;
@@ -491,7 +492,7 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 
     if (inputId < 0) {
 	if (input != NULL) {
-	    char inName[L_tmpnam];
+	    char inName[MAXPATHLEN];
 	    int length;
 
 	    /*
@@ -500,13 +501,8 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	     * file.
 	     */
 
-	    #if 0
-	    tmpnam(inName);
-	    inputId = open(inName, O_RDWR|O_CREAT|O_TRUNC, 0600);
-	    #else
 	    snprintf(inName, sizeof(inName), "%s/tcl-XXXXXX", getenv("TMPDIR") ? getenv("TMPDIR") : "/tmp");
-	    inputId = mkstemp(inName);
-	    #endif
+	    inputId = gu_mkstemp(inName);
 
 	    closeInput = 1;
 	    if (inputId < 0) {
@@ -576,15 +572,10 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
      */
 
     if (errFilePtr != NULL) {
-	char errName[L_tmpnam];
+	char errName[MAXPATHLEN];
 
-	#if 0
-	tmpnam(errName);
-	*errFilePtr = open(errName, O_RDONLY|O_CREAT|O_TRUNC, 0600);
-	#else
 	snprintf(errName, sizeof(errName), "%s/tcl-XXXXXX", getenv("TMPDIR") ? getenv("TMPDIR") : "/tmp");
-	*errFilePtr = mkstemp(errName);
-	#endif
+	*errFilePtr = gu_mkstemp(errName);
 
 	if (*errFilePtr < 0) {
 	    errFileError:
@@ -642,7 +633,7 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	pidPtr[i] = -1;
     }
     Tcl_ReapDetachedProcs();
-    for (firstArg = 0; firstArg < argc; numPids++, firstArg = lastArg+1) {
+    for (firstArg = 0; firstArg < argc; firstArg = lastArg+1) {
 	int joinThisError;
 	int curOutputId;
 
@@ -701,6 +692,9 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	    goto error;
 	}
 	execName = Tcl_TildeSubst(interp, argv[firstArg], &buffer);
+	if (execName == NULL) {
+	    goto error;
+	}
 	pid = vfork();
 	if (pid == 0) {
 	    if (((inputId != -1) && (dup2(inputId, 0) == -1))
@@ -734,6 +728,15 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	}
 
 	/*
+	 * Add the child process to the list of those to be reaped.
+	 * Note:  must do it now, so that the process will be reaped
+	 * even if an error occurred during its startup.
+	 */
+
+	pidPtr[numPids] = pid;
+	numPids++;
+
+	/*
 	 * Read back from the error pipe to see if the child startup
 	 * up OK.  The info in the pipe (if any) consists of a decimal
 	 * errno value followed by an error message.
@@ -752,7 +755,6 @@ Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	}
 	close(errPipeIds[0]);
 	errPipeIds[0] = -1;
-	pidPtr[numPids] = pid;
 
 	/*
 	 * Close off our copies of file descriptors that were set up for
@@ -1114,7 +1116,7 @@ MakeFileTable(iPtr, index)
 	newSize = index+1;
 	newPtrArray = (OpenFile **) ckalloc((unsigned)
 		((newSize)*sizeof(OpenFile *)));
-	memcpy((VOID *) newPtrArray, (VOID *) tclOpenFiles,
+	memcpy((void*) newPtrArray, (void *) tclOpenFiles,
 		tclNumFiles*sizeof(OpenFile *));
 	for (i = tclNumFiles; i < newSize; i++) {
 	    newPtrArray[i] = NULL;
@@ -1392,7 +1394,7 @@ TclOpen(path, oflag, mode)
 int
 TclRead(fd, buf, numBytes)
     int fd;
-    VOID *buf;
+    void *buf;
     size_t numBytes;
 {
     int result;
@@ -1405,7 +1407,7 @@ TclRead(fd, buf, numBytes)
 }
 
 #undef waitpid
-extern pid_t waitpid _ANSI_ARGS_((pid_t pid, int *stat_loc, int options));
+extern pid_t waitpid(pid_t pid, int *stat_loc, int options);
 
 /*
  * Note:  the #ifdef below is needed to avoid compiler errors on systems
@@ -1413,20 +1415,11 @@ extern pid_t waitpid _ANSI_ARGS_((pid_t pid, int *stat_loc, int options));
  * problem is a complex one having to do with argument type promotion.
  */
 
-#ifdef _USING_PROTOTYPES_
-int
-TclWaitpid _ANSI_ARGS_((pid_t pid, int *statPtr, int options))
-#else
-int
-TclWaitpid(pid, statPtr, options)
-    pid_t pid;
-    int *statPtr;
-    int options;
-#endif /* _USING_PROTOTYPES_ */
+int TclWaitpid _ANSI_ARGS_((pid_t pid, int *statPtr, int options))
 {
     int result;
     while (1) {
-	result = waitpid(pid, statPtr, options);
+	result = (int) waitpid((pid_t) pid, statPtr, options);
 	if ((result != -1) || (errno != EINTR)) {
 	    return result;
 	}
@@ -1437,7 +1430,7 @@ TclWaitpid(pid, statPtr, options)
 int
 TclWrite(fd, buf, numBytes)
     int fd;
-    VOID *buf;
+    void *buf;
     size_t numBytes;
 {
     int result;

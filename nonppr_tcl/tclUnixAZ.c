@@ -9,9 +9,12 @@
  *
  * Copyright (c) 1991-1994 The Regents of the University of California.
  * Copyright (c) 1994-1995 Sun Microsystems, Inc.
+ * Copyright (c) 2002 Trinity College Computing Center.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ *
+ * Last modified 18 January 2002.
  */
 
 #include "tclInt.h"
@@ -22,8 +25,7 @@
  * in Tk to destroy file event bindings whenever a file is closed.  I
  * realize that this is a big ugly...
  */
-
-void (*tcl_FileCloseProc) _ANSI_ARGS_((FILE *f)) = NULL;
+void (*tcl_FileCloseProc)(FILE *f) = NULL;
 
 /*
  * The variable below caches the name of the current working directory
@@ -34,29 +36,12 @@ void (*tcl_FileCloseProc) _ANSI_ARGS_((FILE *f)) = NULL;
 static char *currentDir =  NULL;
 
 /*
- * If the system doesn't define one or both of the errno values EAGAIN
- * and EWOULDBLOCK, #define them to a bogus value that will never occur.
- */
-
-#ifndef EAGAIN
-#   define EAGAIN -1901
-#endif
-#ifndef EWOULDBLOCK
-#   define EWOULDBLOCK -1901
-#endif
-
-/*
  * Prototypes for local procedures defined in this file:
  */
-
-static int		CleanupChildren _ANSI_ARGS_((Tcl_Interp *interp,
-			    int numPids, int *pidPtr, int errorId,
-			    int keepNewline));
-static char *		GetFileType _ANSI_ARGS_((int mode));
-static char *		GetOpenMode _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, int *modePtr));
-static int		StoreStatData _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *varName, struct stat *statPtr));
+static int CleanupChildren(Tcl_Interp *interp, int numPids, int *pidPtr, int errorId, int keepNewline);
+static char *GetFileType(int mode);
+static char *GetOpenMode(Tcl_Interp *interp, char *string, int *modePtr);
+static int StoreStatData(Tcl_Interp *interp, char *varName, struct stat *statPtr);
 
 /*
  *----------------------------------------------------------------------
@@ -75,9 +60,7 @@ static int		StoreStatData _ANSI_ARGS_((Tcl_Interp *interp,
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
-int
-Tcl_CdCmd(dummy, interp, argc, argv)
+int Tcl_CdCmd(dummy, interp, argc, argv)
     ClientData dummy;			/* Not used. */
     Tcl_Interp *interp;			/* Current interpreter. */
     int argc;				/* Number of arguments. */
@@ -781,52 +764,52 @@ StoreStatData(interp, varName, statPtr)
 {
     char string[30];
 
-    snprintf(string, sizeof(string), "%ld", statPtr->st_dev);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_dev);
     if (Tcl_SetVar2(interp, varName, "dev", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_ino);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_ino);
     if (Tcl_SetVar2(interp, varName, "ino", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_mode);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_mode);
     if (Tcl_SetVar2(interp, varName, "mode", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_nlink);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_nlink);
     if (Tcl_SetVar2(interp, varName, "nlink", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", (long) statPtr->st_uid);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_uid);
     if (Tcl_SetVar2(interp, varName, "uid", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", (long) statPtr->st_gid);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_gid);
     if (Tcl_SetVar2(interp, varName, "gid", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_size);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_size);
     if (Tcl_SetVar2(interp, varName, "size", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_atime);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_atime);
     if (Tcl_SetVar2(interp, varName, "atime", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_mtime);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_mtime);
     if (Tcl_SetVar2(interp, varName, "mtime", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
     }
-    snprintf(string, sizeof(string), "%ld", statPtr->st_ctime);
+    snprintf(string, sizeof(string), "%ld", (long)statPtr->st_ctime);
     if (Tcl_SetVar2(interp, varName, "ctime", string, TCL_LEAVE_ERR_MSG)
 	    == NULL) {
 	return TCL_ERROR;
@@ -1804,14 +1787,9 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
 {
     int count, i, result;
     double timePer;
-#if NO_GETTOD
-    struct tms dummy2;
-    long start, stop;
-#else
     struct timeval start, stop;
     struct timezone tz;
     int micros;
-#endif
 
     if (argc == 2) {
 	count = 1;
@@ -1824,11 +1802,7 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
 		" command ?count?\"", (char *) NULL);
 	return TCL_ERROR;
     }
-#if NO_GETTOD
-    start = times(&dummy2);
-#else
     gettimeofday(&start, &tz);
-#endif
     for (i = count ; i > 0; i--) {
 	result = Tcl_Eval(interp, argv[1]);
 	if (result != TCL_OK) {
@@ -1841,15 +1815,10 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
 	    return result;
 	}
     }
-#if NO_GETTOD
-    stop = times(&dummy2);
-    timePer = (((double) (stop - start))*1000000.0)/CLK_TCK;
-#else
     gettimeofday(&stop, &tz);
     micros = (stop.tv_sec - start.tv_sec)*1000000
 	    + (stop.tv_usec - start.tv_usec);
     timePer = micros;
-#endif
     Tcl_ResetResult(interp);
     snprintf(interp->result, TCL_RESULT_SIZE+1, "%.0f microseconds per iteration",
 	(count <= 0) ? 0 : timePer/count);
@@ -1878,19 +1847,18 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
  *----------------------------------------------------------------------
  */
 
-static int
-CleanupChildren(interp, numPids, pidPtr, errorId, keepNewline)
-    Tcl_Interp *interp;		/* Used for error messages. */
-    int numPids;		/* Number of entries in pidPtr array. */
-    int *pidPtr;		/* Array of process ids of children. */
-    int errorId;		/* File descriptor index for file containing
+static int CleanupChildren(
+    Tcl_Interp *interp,		/* Used for error messages. */
+    int numPids,		/* Number of entries in pidPtr array. */
+    int *pidPtr,		/* Array of process ids of children. */
+    int errorId,		/* File descriptor index for file containing
 				 * stderr output from pipeline.  -1 means
 				 * there isn't any stderr output. */
-    int keepNewline;		/* Non-zero means don't discard trailing
-				 * newline. */
+    int keepNewline		/* Non-zero means don't discard trailing newline. */
+    )
 {
     int result = TCL_OK;
-    int i, pid, length, abnormalExit;
+    int i, pid, length, abnormalExit, anyErrorInfo;
     int waitStatus;
     char *msg;
 
@@ -1962,6 +1930,7 @@ CleanupChildren(interp, numPids, pidPtr, errorId, keepNewline)
      * string.
      */
 
+    anyErrorInfo = 0;
     if (errorId >= 0) {
 	while (1) {
 #	    define BUFFER_SIZE 1000
@@ -1982,6 +1951,7 @@ CleanupChildren(interp, numPids, pidPtr, errorId, keepNewline)
 	    }
 	    buffer[count] = 0;
 	    Tcl_AppendResult(interp, buffer, (char *) NULL);
+	    anyErrorInfo = 1;
 	}
 	close(errorId);
     }
@@ -1991,7 +1961,7 @@ CleanupChildren(interp, numPids, pidPtr, errorId, keepNewline)
      * at all, generate an error message here.
      */
 
-    if (abnormalExit && (*interp->result == 0)) {
+    if (abnormalExit && !anyErrorInfo) {
 	Tcl_AppendResult(interp, "child process exited abnormally",
 		(char *) NULL);
     }

@@ -26,30 +26,15 @@
  * needed by stdlib.h in some configurations.
  */
 
-#include <stdio.h>
-
-#ifndef _TCL
 #include "tcl.h"
-#endif
-#ifndef _REGEXP
 #include "tclRegexp.h"
-#endif
 
 #include <ctype.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-
-/*
- * At present (12/91) not all stdlib.h implementations declare strtod.
- * The declaration below is here to ensure that it's declared, so that
- * the compiler won't take the default approach of assuming it returns
- * an int.  There's no ANSI prototype for it because there would end
- * up being too many conflicts with slightly-different prototypes.
- */
-
-extern double strtod(const char *, char **);
+#include <sys/time.h>
 
 /*
  *----------------------------------------------------------------
@@ -404,7 +389,11 @@ typedef struct Command {
     Tcl_HashEntry *hPtr;	/* Pointer to the hash table entry in
 				 * interp->commandTable that refers to
 				 * this command.  Used to get a command's
-				 * name from its Tcl_Command handle. */
+				 * name from its Tcl_Command handle.  NULL
+				 * means that the hash table entry has
+				 * been removed already (this can happen
+				 * if deleteProc causes the command to be
+				 * deleted or recreated). */
     Tcl_CmdProc *proc;		/* Procedure to process command. */
     ClientData clientData;	/* Arbitrary value to pass to proc. */
     Tcl_CmdDeleteProc *deleteProc;
@@ -412,6 +401,10 @@ typedef struct Command {
 				 * command. */
     ClientData deleteData;	/* Arbitrary value to pass to deleteProc
 				 * (usually the same as clientData). */
+    int deleted;		/* Means that the command is in the process
+				 * of being deleted (its deleteProc is
+				 * currently executing).  Any other attempts
+				 * to delete the command should be ignored. */
 } Command;
 
 /*

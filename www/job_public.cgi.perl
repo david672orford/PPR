@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 January 2002.
+# Last modified 14 January 2002.
 #
 
 
@@ -121,7 +121,7 @@ eval {
 	my $error = undef;
 
 	# If [OK] pressed with a valid username and password pair,
-	if($action eq "OK" && !defined($error = validate_password($protection_domain, $username, $password)))
+	if(($action eq "OK" || $username ne "") && !defined($error = validate_password($protection_domain, $username, $password)))
 	    {
 	    require "cgi_run.pl";
 	    run_or_die($PPR::PPOP_PATH, "--magic-cookie", $magic_cookie, "modify", $jobname, "for=$username", "question=");

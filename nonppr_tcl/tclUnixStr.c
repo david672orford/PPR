@@ -215,7 +215,7 @@ Tcl_ErrnoId()
 #ifdef ELNRNG
 	case ELNRNG: return "ELNRNG";
 #endif
-#ifdef ELOOP
+#if defined(ELOOP) && (!defined(ENOENT) || (ELOOP != ENOENT))
 	case ELOOP: return "ELOOP";
 #endif
 #ifdef EMFILE

@@ -6,19 +6,18 @@
  *
  * Copyright (c) 1987-1994 The Regents of the University of California.
  * Copyright (c) 1994-1995 Sun Microsystems, Inc.
+ * Copyright (c) 2002 Trinity College Computing Center.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
- * @(#) tcl.h 1.153 95/06/27 15:42:31
+ * Last modified 18 January 2002.
  */
 
 #ifndef _TCL
 #define _TCL
 
-#ifndef BUFSIZ
 #include <stdio.h>
-#endif
 
 #define TCL_VERSION "7.4"
 #define TCL_MAJOR_VERSION 7
@@ -30,47 +29,11 @@
  */
 
 #undef _ANSI_ARGS_
-#undef CONST
-#if ((defined(__STDC__) || defined(SABER)) && !defined(NO_PROTOTYPE)) || defined(__cplusplus)
-#   define _USING_PROTOTYPES_ 1
-#   define _ANSI_ARGS_(x)	x
-#   define CONST const
-#   ifdef __cplusplus
-#       define VARARGS(first) (first, ...)
-#   else
-#       define VARARGS(first) ()
-#   endif
-#else
-#   define _ANSI_ARGS_(x)	()
-#   define CONST
-#endif
+#define _ANSI_ARGS_(x)	x
 
-#ifdef __cplusplus
-#   define EXTERN extern "C"
-#else
-#   define EXTERN extern
-#endif
-
-/*
- * Macro to use instead of "void" for arguments that must have
- * type "void *" in ANSI C;  maps them to type "char *" in
- * non-ANSI systems.
- */
-
-#ifndef VOID
-#   ifdef __STDC__
-#       define VOID void
-#   else
-#       define VOID char
-#   endif
-#endif
-
+/* What is this? */
 #ifndef _CLIENTDATA
-#   if defined(__STDC__) || defined(__cplusplus)
     typedef void *ClientData;
-#   else
-    typedef int *ClientData;
-#   endif /* __STDC__ */
 #define _CLIENTDATA
 #endif
 
@@ -144,9 +107,8 @@ typedef struct Tcl_Value {
  * Procedure types defined by Tcl:
  */
 
-typedef int (Tcl_AppInitProc) _ANSI_ARGS_((Tcl_Interp *interp));
-typedef int (Tcl_AsyncProc) _ANSI_ARGS_((ClientData clientData,
-	Tcl_Interp *interp, int code));
+typedef int (Tcl_AppInitProc)(Tcl_Interp *interp);
+typedef int (Tcl_AsyncProc)(ClientData clientData, Tcl_Interp *interp, int code);
 typedef void (Tcl_CmdDeleteProc) _ANSI_ARGS_((ClientData clientData));
 typedef int (Tcl_CmdProc) _ANSI_ARGS_((ClientData clientData,
 	Tcl_Interp *interp, int argc, char *argv[]));
@@ -272,14 +234,14 @@ typedef struct Tcl_DString {
 
 #ifdef TCL_MEM_DEBUG
 
-EXTERN char *		Tcl_DbCkalloc _ANSI_ARGS_((unsigned int size,
+extern char *		Tcl_DbCkalloc _ANSI_ARGS_((unsigned int size,
 			    char *file, int line));
-EXTERN int		Tcl_DbCkfree _ANSI_ARGS_((char *ptr,
+extern int		Tcl_DbCkfree _ANSI_ARGS_((char *ptr,
 			    char *file, int line));
-EXTERN char *		Tcl_DbCkrealloc _ANSI_ARGS_((char *ptr,
+extern char *		Tcl_DbCkrealloc _ANSI_ARGS_((char *ptr,
 			    unsigned int size, char *file, int line));
-EXTERN int		Tcl_DumpActiveMemory _ANSI_ARGS_((char *fileName));
-EXTERN void		Tcl_ValidateAllMemory _ANSI_ARGS_((char *file, int line));
+extern int		Tcl_DumpActiveMemory _ANSI_ARGS_((char *fileName));
+extern void		Tcl_ValidateAllMemory _ANSI_ARGS_((char *file, int line));
 #define ckalloc(x) Tcl_DbCkalloc(x, __FILE__, __LINE__)
 #define ckfree(x)  Tcl_DbCkfree(x, __FILE__, __LINE__)
 #define ckrealloc(x,y) Tcl_DbCkrealloc((x), (y),__FILE__, __LINE__)
@@ -426,200 +388,200 @@ typedef struct Tcl_HashSearch {
  * Exported Tcl variables:
  */
 
-EXTERN int		tcl_AsyncReady;
-EXTERN void		(*tcl_FileCloseProc) _ANSI_ARGS_((FILE *f));
-EXTERN char *		tcl_RcFileName;
+extern int		tcl_AsyncReady;
+extern void		(*tcl_FileCloseProc)(FILE *f);
+extern char *		tcl_RcFileName;
 
 /*
  * Exported Tcl procedures:
  */
 
-EXTERN void		Tcl_AddErrorInfo _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *message));
-EXTERN void		Tcl_AllowExceptions _ANSI_ARGS_((Tcl_Interp *interp));
-EXTERN void		Tcl_AppendElement _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string));
-EXTERN void		Tcl_AppendResult(Tcl_Interp *interp, ...);
-EXTERN int		Tcl_AppInit _ANSI_ARGS_((Tcl_Interp *interp));
-EXTERN void		Tcl_AsyncMark _ANSI_ARGS_((Tcl_AsyncHandler async));
-EXTERN Tcl_AsyncHandler	Tcl_AsyncCreate _ANSI_ARGS_((Tcl_AsyncProc *proc,
-			    ClientData clientData));
-EXTERN void		Tcl_AsyncDelete _ANSI_ARGS_((Tcl_AsyncHandler async));
-EXTERN int		Tcl_AsyncInvoke _ANSI_ARGS_((Tcl_Interp *interp,
-			    int code));
-EXTERN char		Tcl_Backslash _ANSI_ARGS_((char *src,
-			    int *readPtr));
-EXTERN void		Tcl_CallWhenDeleted _ANSI_ARGS_((Tcl_Interp *interp,
+extern void		Tcl_AddErrorInfo(Tcl_Interp *interp,
+			    char *message);
+extern void		Tcl_AllowExceptions(Tcl_Interp *interp);
+extern void		Tcl_AppendElement(Tcl_Interp *interp,
+			    char *string);
+extern void		Tcl_AppendResult(Tcl_Interp *interp, ...);
+extern int		Tcl_AppInit(Tcl_Interp *interp);
+extern void		Tcl_AsyncMark(Tcl_AsyncHandler async);
+extern Tcl_AsyncHandler	Tcl_AsyncCreate(Tcl_AsyncProc *proc,
+			    ClientData clientData);
+extern void		Tcl_AsyncDelete(Tcl_AsyncHandler async);
+extern int		Tcl_AsyncInvoke(Tcl_Interp *interp,
+			    int code);
+extern char		Tcl_Backslash(char *src,
+			    int *readPtr);
+extern void		Tcl_CallWhenDeleted(Tcl_Interp *interp,
 			    Tcl_InterpDeleteProc *proc,
-			    ClientData clientData));
-EXTERN int		Tcl_CommandComplete _ANSI_ARGS_((char *cmd));
-EXTERN char *		Tcl_Concat _ANSI_ARGS_((int argc, char **argv));
-EXTERN int		Tcl_ConvertElement _ANSI_ARGS_((char *src,
-			    char *dst, int flags));
-EXTERN Tcl_Command	Tcl_CreateCommand _ANSI_ARGS_((Tcl_Interp *interp,
+			    ClientData clientData);
+extern int		Tcl_CommandComplete(char *cmd);
+extern char *		Tcl_Concat(int argc, char **argv);
+extern int		Tcl_ConvertElement(char *src,
+			    char *dst, int flags);
+extern Tcl_Command	Tcl_CreateCommand(Tcl_Interp *interp,
 			    char *cmdName, Tcl_CmdProc *proc,
 			    ClientData clientData,
-			    Tcl_CmdDeleteProc *deleteProc));
-EXTERN Tcl_Interp *	Tcl_CreateInterp _ANSI_ARGS_((void));
-EXTERN void		Tcl_CreateMathFunc _ANSI_ARGS_((Tcl_Interp *interp,
+			    Tcl_CmdDeleteProc *deleteProc);
+extern Tcl_Interp *	Tcl_CreateInterp(void);
+extern void		Tcl_CreateMathFunc(Tcl_Interp *interp,
 			    char *name, int numArgs, Tcl_ValueType *argTypes,
-			    Tcl_MathProc *proc, ClientData clientData));
-EXTERN int		Tcl_CreatePipeline _ANSI_ARGS_((Tcl_Interp *interp,
+			    Tcl_MathProc *proc, ClientData clientData);
+extern int		Tcl_CreatePipeline(Tcl_Interp *interp,
 			    int argc, char **argv, int **pidArrayPtr,
 			    int *inPipePtr, int *outPipePtr,
-			    int *errFilePtr));
-EXTERN Tcl_Trace	Tcl_CreateTrace _ANSI_ARGS_((Tcl_Interp *interp,
+			    int *errFilePtr);
+extern Tcl_Trace	Tcl_CreateTrace(Tcl_Interp *interp,
 			    int level, Tcl_CmdTraceProc *proc,
-			    ClientData clientData));
-EXTERN int		Tcl_DeleteCommand _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *cmdName));
-EXTERN void		Tcl_DeleteHashEntry _ANSI_ARGS_((
-			    Tcl_HashEntry *entryPtr));
-EXTERN void		Tcl_DeleteHashTable _ANSI_ARGS_((
-			    Tcl_HashTable *tablePtr));
-EXTERN void		Tcl_DeleteInterp _ANSI_ARGS_((Tcl_Interp *interp));
-EXTERN void		Tcl_DeleteTrace _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_Trace trace));
-EXTERN void		Tcl_DetachPids _ANSI_ARGS_((int numPids, int *pidPtr));
-EXTERN void		Tcl_DontCallWhenDeleted _ANSI_ARGS_((
+			    ClientData clientData);
+extern int		Tcl_DeleteCommand(Tcl_Interp *interp,
+			    char *cmdName);
+extern void		Tcl_DeleteHashEntry(
+			    Tcl_HashEntry *entryPtr);
+extern void		Tcl_DeleteHashTable(
+			    Tcl_HashTable *tablePtr);
+extern void		Tcl_DeleteInterp(Tcl_Interp *interp);
+extern void		Tcl_DeleteTrace(Tcl_Interp *interp,
+			    Tcl_Trace trace);
+extern void		Tcl_DetachPids(int numPids, int *pidPtr);
+extern void		Tcl_DontCallWhenDeleted(
 			    Tcl_Interp *interp, Tcl_InterpDeleteProc *proc,
-			    ClientData clientData));
-EXTERN char *		Tcl_DStringAppend _ANSI_ARGS_((Tcl_DString *dsPtr,
-			    char *string, int length));
-EXTERN char *		Tcl_DStringAppendElement _ANSI_ARGS_((
-			    Tcl_DString *dsPtr, char *string));
-EXTERN void		Tcl_DStringEndSublist _ANSI_ARGS_((Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringFree _ANSI_ARGS_((Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringGetResult _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringInit _ANSI_ARGS_((Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringResult _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_DString *dsPtr));
-EXTERN void		Tcl_DStringSetLength _ANSI_ARGS_((Tcl_DString *dsPtr,
-			    int length));
-EXTERN void		Tcl_DStringStartSublist _ANSI_ARGS_((
-			    Tcl_DString *dsPtr));
-EXTERN void		Tcl_EnterFile _ANSI_ARGS_((Tcl_Interp *interp,
-			    FILE *file, int permissions));
-EXTERN char *		Tcl_ErrnoId _ANSI_ARGS_((void));
-EXTERN int		Tcl_Eval _ANSI_ARGS_((Tcl_Interp *interp, char *cmd));
-EXTERN int		Tcl_EvalFile _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *fileName));
-EXTERN int		Tcl_ExprBoolean _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, int *ptr));
-EXTERN int		Tcl_ExprDouble _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, double *ptr));
-EXTERN int		Tcl_ExprLong _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, long *ptr));
-EXTERN int		Tcl_ExprString _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string));
-EXTERN int		Tcl_FilePermissions _ANSI_ARGS_((FILE *file));
-EXTERN Tcl_HashEntry *	Tcl_FirstHashEntry _ANSI_ARGS_((
+			    ClientData clientData);
+extern char *		Tcl_DStringAppend(Tcl_DString *dsPtr,
+			    char *string, int length);
+extern char *		Tcl_DStringAppendElement(
+			    Tcl_DString *dsPtr, char *string);
+extern void		Tcl_DStringEndSublist(Tcl_DString *dsPtr);
+extern void		Tcl_DStringFree(Tcl_DString *dsPtr);
+extern void		Tcl_DStringGetResult(Tcl_Interp *interp,
+			    Tcl_DString *dsPtr);
+extern void		Tcl_DStringInit(Tcl_DString *dsPtr);
+extern void		Tcl_DStringResult(Tcl_Interp *interp,
+			    Tcl_DString *dsPtr);
+extern void		Tcl_DStringSetLength(Tcl_DString *dsPtr,
+			    int length);
+extern void		Tcl_DStringStartSublist(
+			    Tcl_DString *dsPtr);
+extern void		Tcl_EnterFile(Tcl_Interp *interp,
+			    FILE *file, int permissions);
+extern char *		Tcl_ErrnoId(void);
+extern int		Tcl_Eval(Tcl_Interp *interp, char *cmd);
+extern int		Tcl_EvalFile(Tcl_Interp *interp,
+			    char *fileName);
+extern int		Tcl_ExprBoolean(Tcl_Interp *interp,
+			    char *string, int *ptr);
+extern int		Tcl_ExprDouble(Tcl_Interp *interp,
+			    char *string, double *ptr);
+extern int		Tcl_ExprLong(Tcl_Interp *interp,
+			    char *string, long *ptr);
+extern int		Tcl_ExprString(Tcl_Interp *interp,
+			    char *string);
+extern int		Tcl_FilePermissions(FILE *file);
+extern Tcl_HashEntry *	Tcl_FirstHashEntry(
 			    Tcl_HashTable *tablePtr,
-			    Tcl_HashSearch *searchPtr));
-EXTERN int		Tcl_GetBoolean _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, int *boolPtr));
-EXTERN int		Tcl_GetCommandInfo _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *cmdName, Tcl_CmdInfo *infoPtr));
-EXTERN char *		Tcl_GetCommandName _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_Command command));
-EXTERN int		Tcl_GetDouble _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, double *doublePtr));
-EXTERN int		Tcl_GetInt _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, int *intPtr));
-EXTERN int		Tcl_GetOpenFile _ANSI_ARGS_((Tcl_Interp *interp,
+			    Tcl_HashSearch *searchPtr);
+extern int		Tcl_GetBoolean(Tcl_Interp *interp,
+			    char *string, int *boolPtr);
+extern int		Tcl_GetCommandInfo(Tcl_Interp *interp,
+			    char *cmdName, Tcl_CmdInfo *infoPtr);
+extern char *		Tcl_GetCommandName(Tcl_Interp *interp,
+			    Tcl_Command command);
+extern int		Tcl_GetDouble(Tcl_Interp *interp,
+			    char *string, double *doublePtr);
+extern int		Tcl_GetInt(Tcl_Interp *interp,
+			    char *string, int *intPtr);
+extern int		Tcl_GetOpenFile(Tcl_Interp *interp,
 			    char *string, int write, int checkUsage,
-			    FILE **filePtr));
-EXTERN char *		Tcl_GetVar _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *varName, int flags));
-EXTERN char *		Tcl_GetVar2 _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *part1, char *part2, int flags));
-EXTERN int		Tcl_GlobalEval _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *command));
-EXTERN char *		Tcl_HashStats _ANSI_ARGS_((Tcl_HashTable *tablePtr));
-EXTERN int		Tcl_Init _ANSI_ARGS_((Tcl_Interp *interp));
-EXTERN void		Tcl_InitHashTable _ANSI_ARGS_((Tcl_HashTable *tablePtr,
-			    int keyType));
-EXTERN void		Tcl_InitMemory _ANSI_ARGS_((Tcl_Interp *interp));
-EXTERN int		Tcl_LinkVar _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *varName, char *addr, int type));
-EXTERN void		Tcl_Main _ANSI_ARGS_((int argc, char **argv,
-			    Tcl_AppInitProc *appInitProc));
-EXTERN char *		Tcl_Merge _ANSI_ARGS_((int argc, char **argv));
-EXTERN Tcl_HashEntry *	Tcl_NextHashEntry _ANSI_ARGS_((
-			    Tcl_HashSearch *searchPtr));
-EXTERN char *		Tcl_ParseVar _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, char **termPtr));
-EXTERN char *		Tcl_PosixError _ANSI_ARGS_((Tcl_Interp *interp));
-EXTERN void		Tcl_PrintDouble _ANSI_ARGS_((Tcl_Interp *interp,
-			    double value, char *dst));
-EXTERN void		Tcl_ReapDetachedProcs _ANSI_ARGS_((void));
-EXTERN int		Tcl_RecordAndEval _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *cmd, int flags));
-EXTERN Tcl_RegExp	Tcl_RegExpCompile _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string));
-EXTERN int		Tcl_RegExpExec _ANSI_ARGS_((Tcl_Interp *interp,
-			    Tcl_RegExp regexp, char *string, char *start));
-EXTERN int		Tcl_RegExpMatch _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, char *pattern));
-EXTERN void		Tcl_RegExpRange _ANSI_ARGS_((Tcl_RegExp regexp,
-			    int index, char **startPtr, char **endPtr));
-EXTERN void		Tcl_ResetResult _ANSI_ARGS_((Tcl_Interp *interp));
+			    FILE **filePtr);
+extern char *		Tcl_GetVar(Tcl_Interp *interp,
+			    char *varName, int flags);
+extern char *		Tcl_GetVar2(Tcl_Interp *interp,
+			    char *part1, char *part2, int flags);
+extern int		Tcl_GlobalEval(Tcl_Interp *interp,
+			    char *command);
+extern char *		Tcl_HashStats(Tcl_HashTable *tablePtr);
+extern int		Tcl_Init(Tcl_Interp *interp);
+extern void		Tcl_InitHashTable(Tcl_HashTable *tablePtr,
+			    int keyType);
+extern void		Tcl_InitMemory(Tcl_Interp *interp);
+extern int		Tcl_LinkVar(Tcl_Interp *interp,
+			    char *varName, char *addr, int type);
+extern void		Tcl_Main(int argc, char **argv,
+			    Tcl_AppInitProc *appInitProc);
+extern char *		Tcl_Merge(int argc, char **argv);
+extern Tcl_HashEntry *	Tcl_NextHashEntry(
+			    Tcl_HashSearch *searchPtr);
+extern char *		Tcl_ParseVar(Tcl_Interp *interp,
+			    char *string, char **termPtr);
+extern char *		Tcl_PosixError(Tcl_Interp *interp);
+extern void		Tcl_PrintDouble(Tcl_Interp *interp,
+			    double value, char *dst);
+extern void		Tcl_ReapDetachedProcs(void);
+extern int		Tcl_RecordAndEval(Tcl_Interp *interp,
+			    char *cmd, int flags);
+extern Tcl_RegExp	Tcl_RegExpCompile(Tcl_Interp *interp,
+			    char *string);
+extern int		Tcl_RegExpExec(Tcl_Interp *interp,
+			    Tcl_RegExp regexp, char *string, char *start);
+extern int		Tcl_RegExpMatch(Tcl_Interp *interp,
+			    char *string, char *pattern);
+extern void		Tcl_RegExpRange(Tcl_RegExp regexp,
+			    int index, char **startPtr, char **endPtr);
+extern void		Tcl_ResetResult(Tcl_Interp *interp);
 #define Tcl_Return Tcl_SetResult
-EXTERN int		Tcl_ScanElement _ANSI_ARGS_((char *string,
-			    int *flagPtr));
-EXTERN int		Tcl_SetCommandInfo _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *cmdName, Tcl_CmdInfo *infoPtr));
-EXTERN void		Tcl_SetErrorCode(Tcl_Interp *interp, ...);
-EXTERN int		Tcl_SetRecursionLimit _ANSI_ARGS_((Tcl_Interp *interp,
-			    int depth));
-EXTERN void		Tcl_SetResult _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *string, Tcl_FreeProc *freeProc));
-EXTERN char *		Tcl_SetVar _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *varName, char *newValue, int flags));
-EXTERN char *		Tcl_SetVar2 _ANSI_ARGS_((Tcl_Interp *interp,
+extern int		Tcl_ScanElement(char *string,
+			    int *flagPtr);
+extern int		Tcl_SetCommandInfo(Tcl_Interp *interp,
+			    char *cmdName, Tcl_CmdInfo *infoPtr);
+extern void		Tcl_SetErrorCode(Tcl_Interp *interp, ...);
+extern int		Tcl_SetRecursionLimit(Tcl_Interp *interp,
+			    int depth);
+extern void		Tcl_SetResult(Tcl_Interp *interp,
+			    char *string, Tcl_FreeProc *freeProc);
+extern char *		Tcl_SetVar(Tcl_Interp *interp,
+			    char *varName, char *newValue, int flags);
+extern char *		Tcl_SetVar2(Tcl_Interp *interp,
 			    char *part1, char *part2, char *newValue,
-			    int flags));
-EXTERN char *		Tcl_SignalId _ANSI_ARGS_((int sig));
-EXTERN char *		Tcl_SignalMsg _ANSI_ARGS_((int sig));
-EXTERN int		Tcl_SplitList _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *list, int *argcPtr, char ***argvPtr));
-EXTERN int		Tcl_StringMatch _ANSI_ARGS_((char *string,
-			    char *pattern));
-EXTERN char *		Tcl_TildeSubst _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *name, Tcl_DString *bufferPtr));
-EXTERN int		Tcl_TraceVar _ANSI_ARGS_((Tcl_Interp *interp,
+			    int flags);
+extern char *		Tcl_SignalId(int sig);
+extern char *		Tcl_SignalMsg(int sig);
+extern int		Tcl_SplitList(Tcl_Interp *interp,
+			    char *list, int *argcPtr, char ***argvPtr);
+extern int		Tcl_StringMatch(char *string,
+			    char *pattern);
+extern char *		Tcl_TildeSubst(Tcl_Interp *interp,
+			    char *name, Tcl_DString *bufferPtr);
+extern int		Tcl_TraceVar(Tcl_Interp *interp,
 			    char *varName, int flags, Tcl_VarTraceProc *proc,
-			    ClientData clientData));
-EXTERN int		Tcl_TraceVar2 _ANSI_ARGS_((Tcl_Interp *interp,
+			    ClientData clientData);
+extern int		Tcl_TraceVar2(Tcl_Interp *interp,
 			    char *part1, char *part2, int flags,
-			    Tcl_VarTraceProc *proc, ClientData clientData));
-EXTERN void		Tcl_UnlinkVar _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *varName));
-EXTERN int		Tcl_UnsetVar _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *varName, int flags));
-EXTERN int		Tcl_UnsetVar2 _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *part1, char *part2, int flags));
-EXTERN void		Tcl_UntraceVar _ANSI_ARGS_((Tcl_Interp *interp,
+			    Tcl_VarTraceProc *proc, ClientData clientData);
+extern void		Tcl_UnlinkVar(Tcl_Interp *interp,
+			    char *varName);
+extern int		Tcl_UnsetVar(Tcl_Interp *interp,
+			    char *varName, int flags);
+extern int		Tcl_UnsetVar2(Tcl_Interp *interp,
+			    char *part1, char *part2, int flags);
+extern void		Tcl_UntraceVar(Tcl_Interp *interp,
 			    char *varName, int flags, Tcl_VarTraceProc *proc,
-			    ClientData clientData));
-EXTERN void		Tcl_UntraceVar2 _ANSI_ARGS_((Tcl_Interp *interp,
+			    ClientData clientData);
+extern void		Tcl_UntraceVar2(Tcl_Interp *interp,
 			    char *part1, char *part2, int flags,
-			    Tcl_VarTraceProc *proc, ClientData clientData));
-EXTERN int		Tcl_UpVar _ANSI_ARGS_((Tcl_Interp *interp,
+			    Tcl_VarTraceProc *proc, ClientData clientData);
+extern int		Tcl_UpVar(Tcl_Interp *interp,
 			    char *frameName, char *varName,
-			    char *localName, int flags));
-EXTERN int		Tcl_UpVar2 _ANSI_ARGS_((Tcl_Interp *interp,
+			    char *localName, int flags);
+extern int		Tcl_UpVar2(Tcl_Interp *interp,
 			    char *frameName, char *part1, char *part2,
-			    char *localName, int flags));
-EXTERN int		Tcl_VarEval(Tcl_Interp *interp, ...);
-EXTERN ClientData	Tcl_VarTraceInfo _ANSI_ARGS_((Tcl_Interp *interp,
+			    char *localName, int flags);
+extern int		Tcl_VarEval(Tcl_Interp *interp, ...);
+extern ClientData	Tcl_VarTraceInfo(Tcl_Interp *interp,
 			    char *varName, int flags,
 			    Tcl_VarTraceProc *procPtr,
-			    ClientData prevClientData));
-EXTERN ClientData	Tcl_VarTraceInfo2 _ANSI_ARGS_((Tcl_Interp *interp,
+			    ClientData prevClientData);
+extern ClientData	Tcl_VarTraceInfo2(Tcl_Interp *interp,
 			    char *part1, char *part2, int flags,
 			    Tcl_VarTraceProc *procPtr,
-			    ClientData prevClientData));
+			    ClientData prevClientData);
 
 #endif /* _TCL */

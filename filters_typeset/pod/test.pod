@@ -1,3 +1,5 @@
+=head1 This is the heading
+
 This is a paragraph.
 
 Here is a second paragraph.

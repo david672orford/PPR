@@ -1,6 +1,6 @@
 ============================================================================
  mouse:~ppr/src/README.txt
- Last revised 7 November 2000.
+ Last revised 16 January 2002.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -93,9 +93,9 @@ The source code is divided into directories as follows:
 		including PPR, System V lp, and BSD lpr.
 	fonts/
 		No actual fonts, just font data, actual fonts are in
-		vendors/.
+		nonppr_vendors/.
 	ppd/
-		PPD files under PPR license, others in vendors/.
+		PPD files under PPR license, others in nonppr_vendors/.
 	misc/
 		Odds and ends that are mostly small, experimental,
 		unimportant, or included only for reference.
@@ -109,7 +109,7 @@ The source code is divided into directories as follows:
 		Procedure sets used by filters and for N-Up.
 	commentators/
 		Programs for sending news to system operators.
-	vendors/
+	nonppr_vendors/
 		Fonts, procedure sets, and PPD files not under the PPR
 		license.
 	docs/
@@ -142,7 +142,10 @@ The source code is divided into directories as follows:
 		Shell scripts used in the final stages of installing PPR.
 	tests/
 		Regression tests.
-	nonppr/
+	nonppr_misc/
 		Files, such as libraries taken from other projects. 
 		Symbolic links point to this directory.
+
+	nonppr_tcl/
+		A modified copy of Tcl 7.4.
 

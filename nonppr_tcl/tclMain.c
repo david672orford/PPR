@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "tcl.h"
 
 static Tcl_Interp *interp;	/* Interpreter for application. */
@@ -210,7 +211,13 @@ Tcl_Main(argc, argv, appInitProc)
 	if (code != TCL_OK) {
 	    fprintf(stderr, "%s\n", interp->result);
 	} else if (tty && (*interp->result != 0)) {
-	    printf("%s\n", interp->result);
+	    /*
+	     * Important:  use puts and not printf here.  On Solaris 2.3
+	     * and 2.4, and perhaps other systems, printf will dump core
+	     * if interp->result is big.
+	     */
+
+	    puts(interp->result);
 	}
 #ifdef TCL_MEM_DEBUG
 	if (quitFlag) {

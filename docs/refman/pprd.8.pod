@@ -1,6 +1,6 @@
 #
 # pprd.8.pod
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 29 November 2001.
+# Last modified 15 January 2002.
 #
 
 =head1 NAME
@@ -19,7 +19,7 @@ pprd - PostScript PRinter spooling Daemon
 
 =head1 SYNOPSIS
 
-B<pprd> [B<--help>] [B<--version>] [B<--foreground>]
+B<pprd> [B<--help>] [B<--version>] [B<--foreground>] [B<--stop>]
 
 =head1 DESCRIPTION
 
@@ -31,17 +31,20 @@ If the B<--help> or B<--version> switch is used it will print brief usage
 information or PPR version information respectively.
 
 The B<--foreground> switch tells B<pprd> not to puts itself in the background.  Use this switch if you
-are running B<pprd> directly from B<init>.  Note that using this option does not cause debug and error 
+are running B<pprd> directly from B<init>.  Note that using this option does not cause debug and error
 messages to be sent to stdout.  They continue to go to F</var/spool/ppr/logs/pprd>.
+
+The B<--stop> option shuts down a previously-started instance of B<pprd>.
 
 =head1 SEE ALSO
 
 L<ppop(1)>, L<ppr(1)>, L<lprsrv(8)>, L<papsrv(8)>, L<ppad(8)>,
-L<ppuser(8)> "PPR, a PostScript Print Spooler", and "Installing and Using PPR".
+L<ppuser(8)> "PPR, a PostScript Print Spooler",
+and "Installing and Using PPR".
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2001.  It
+PPR was written at Trinity College during 1993--2002.  It
 was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

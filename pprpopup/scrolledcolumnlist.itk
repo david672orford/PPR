@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/templates/Makefile
+# mouse:~ppr/src/pprpopup/scrolledcolumnlist.itk
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,43 +25,52 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2002.
+# Last modified 25 January 2002.
 #
 
-include ../makeprogs/global.mk
+package require Itcl
+package require Itk
+package require Iwidgets
 
-#=== Inventory ==============================================================
+itcl::class iwidgets::Scrolledcolumnlist {
+    inherit iwidgets::Scrolledwidget
 
-BIN_PROGS=
+    constructor {args} {}
+    destructor {}
 
-LIB_PROGS=
+    }
 
-#=== Build ==================================================================
+proc ::iwidgets::scrolledcolumnlist {pathName args} {
+    uplevel ::iwidgets::Scrolledcolumnlist $pathName $args
+    }
 
-all: $(BIN_PROGS) $(LIB_PROGS)
+itcl::body iwidgets::Scrolledcolumnlist::constructor {args} {
 
-OBJS=\
-	xxx.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-xxx$(DOTEXE): $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS)
+    for {set x 0} {$x < 5} {incr x} {
+	itk_component add listbox$x {
+	    listbox $itk_interior.listbox$x \
+		-width 5 -height 1
+	    } {
+	    puts "hello"
+	    }
 
-#=== Install ================================================================
+	grid $itk_component(listbox$x) -row $x -column 0
+	grid rowconfigure $_interior 0 -weight 1
 
-install: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
+	$itk_component(listbox$x) insert end "$x Testing"
+	$itk_component(listbox$x) insert end "one..."
+	$itk_component(listbox$x) insert end "two..."
+	$itk_component(listbox$x) insert end "three."
+	}
 
-#=== Housekeeping ===========================================================
+    grid columnconfigure $_interior $x -weight 1
 
-include .depend
+    eval itk_initialize $args
+    }
 
-depend:
-	$(PPR_MAKE_DEPEND) ../include
 
-clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
 
-# end of file
+iwidgets::Scrolledcolumnlist .x
+pack .x
+
 

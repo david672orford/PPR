@@ -44,6 +44,7 @@
 
 #include "tclInt.h"
 #include "tclPort.h"
+#include "gu.h"
 
 /*
  * The variable below is set to NULL before invoking regexp functions

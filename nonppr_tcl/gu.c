@@ -1,19 +1,4 @@
-/*
-** mouse:~ppr/src/libgu/gu_mkstemp.c
-** Copyright 1995--2002, Trinity College Computing Center.
-** Written by David Chappell.
-**
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
-**
-** Last modified 18 January 2002.
-*/
-
-#include "before_system.h"
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -21,12 +6,23 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string.h>
+#include <stdarg.h>
 #include "gu.h"
 
-/*
-** This is a replacement for a BSD function for making temporary
-** files while preventing 'accidents' caused by symbolic links.
-*/
+
+int gu_snprintfcat(char *buffer, size_t max, const char *format, ...)
+    {
+    va_list va;
+    size_t len = strlen(buffer);
+    int ret;
+    max -= len;
+    buffer += len;
+    va_start(va, format);
+    ret = vsnprintf(buffer, max, format, va);
+    va_end(va);
+    return ret;
+    }
+
 int gu_mkstemp(char *template)
     {
     int XXXXXX_pos = (strlen(template) - 6);
@@ -52,4 +48,3 @@ int gu_mkstemp(char *template)
     return fd;
     }
 
-/* end of file */

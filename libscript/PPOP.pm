@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/PPOP.pm
-# Copyright 1995--2001 Trinity College Computing Center.
+# Copyright 1995--2002 Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 29 August 2001.
+# Last modified 23 January 2002.
 #
 
 =head1 NAME
@@ -134,7 +134,7 @@ sub launch
   if( ! $ppop_launched )
     {
     # I don't remember what this is for.  Perhaps it has something to do
-    # with an obscure bug in Perl.
+    # with an obscure bug in Perl.  It looks like it flushes stdout.
     my $saved_buffer_mode = $|;
     $| = 1;
     print "";
@@ -160,7 +160,11 @@ sub launch
     #print STDERR "Launching: ", join(" ", @COMMAND), "\n";
     ($rdr, $wtr) = (FileHandle->new, FileHandle->new);
     my $pid = open2($rdr, $wtr, @COMMAND);
-    $wtr->autoflush();
+
+    # Set the file handle to ppop to flush on each print.  If we don't
+    # do this, then communication will get locked as both parties
+    # wait for messages that will never come.
+    $wtr->autoflush(1);
 
     # The first thing it does is print the PPR version number.
     my $junk = <$rdr>;
@@ -173,7 +177,6 @@ sub launch
 
     # Undo whatever that was we did.
     $| = $saved_buffer_mode;
-
     }
   }
 

@@ -7,13 +7,17 @@
  *
  * Copyright (c) 1987-1993 The Regents of the University of California.
  * Copyright (c) 1994-1995 Sun Microsystems, Inc.
+ * Copyright (c) 2002 Trinity College Computing Center.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
+ *
+ * Last modified 18 January 2002.
  */
 
 #include "tclInt.h"
 #include "tclPort.h"
+#include "gu.h"
 
 /*
  *----------------------------------------------------------------------
@@ -608,19 +612,6 @@ int Tcl_ForeachCmd(
  *----------------------------------------------------------------------
  */
 
-int gu_snprintfcat(char *buffer, size_t max, const char *format, ...)
-    {
-    va_list va;
-    size_t len = strlen(buffer);
-    int ret;
-    max -= len;
-    buffer += len;
-    va_start(va, format);
-    ret = vsnprintf(buffer, max, format, va);
-    va_end(va);
-    return ret;
-    }
-
 int Tcl_FormatCmd(
     ClientData dummy,			/* Not used. */
     Tcl_Interp *interp,			/* Current interpreter. */
@@ -696,10 +687,11 @@ int Tcl_FormatCmd(
 	whichValue = PTR_VALUE;
 
 	/* Handle any characters before the next field specifier. */
-	if (*format != '%')
+	if(*format != '%')
 	    {
 	    ptrValue = format;
 	    size = strcspn(ptrValue, "%");
+	    format += size;
 	    noPercent = 1;
 	    goto doField;
 	    }
@@ -772,12 +764,25 @@ int Tcl_FormatCmd(
 	    }
 	else if(*format == '*')
 	    {
-	    if (argIndex >= argc)
+	    if(argIndex >= argc)
 		goto badIndex;
-	    if (Tcl_GetInt(interp, argv[argIndex], &width) != TCL_OK)
+	    if(Tcl_GetInt(interp, argv[argIndex], &width) != TCL_OK)
 		goto fmtError;
 	    argIndex++;
 	    format++;
+	    }
+	if(width > 1000)
+	    {
+	    /*
+	     * Don't allow arbitrarily large widths:  could cause core
+	     * dump when we try to allocate a zillion bytes of memory
+	     * below.
+ 	     */
+	    width = 1000;
+ 	    }
+	else if(width < 0)
+	    {
+ 	    width = 0;
 	    }
 	if(width != 0)
 	    gu_snprintfcat(newFormat, sizeof(newFormat), "%d", width);
@@ -885,7 +890,7 @@ int Tcl_FormatCmd(
 	    newSpace = 2*(dstSize + size);
 	    newDst = (char *) ckalloc((unsigned) newSpace+1);
 	    if (dstSize != 0) {
-		memcpy((VOID *) newDst, (VOID *) dst, (size_t) dstSize);
+		memcpy((void *) newDst, (void *) dst, (size_t) dstSize);
 	    }
 	    if (dstSpace != TCL_RESULT_SIZE) {
 		ckfree(dst);
@@ -894,7 +899,7 @@ int Tcl_FormatCmd(
 	    dstSpace = newSpace;
 	}
 	if (noPercent) {
-	    memcpy((VOID *) (dst+dstSize), (VOID *) ptrValue, (size_t) size);
+	    memcpy((void *) (dst+dstSize), (void *) ptrValue, (size_t) size);
 	    dstSize += size;
 	    dst[dstSize] = 0;
 	} else {

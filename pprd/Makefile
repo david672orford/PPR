@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/pprd/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 December 2001.
+# Last modified 15 January 2002.
 #
 
 include ../makeprogs/global.mk
 
 #=== Inventory ==============================================================
 
-PROGS=pprd$(DOTEXE) pprd-kill pprd-question
+PROGS=pprd$(DOTEXE) pprd-question
 
 OBJS=pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
 	pprd_respond.$(OBJ) pprd_alert.$(OBJ) pprd_ppop.$(OBJ) \

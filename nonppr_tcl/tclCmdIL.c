@@ -47,8 +47,7 @@ static int sortCode;			/* Anything other than TCL_OK means a
  * Forward declarations for procedures defined in this file:
  */
 
-static int		SortCompareProc _ANSI_ARGS_((CONST VOID *first,
-			    CONST VOID *second));
+static int		SortCompareProc(const void *first, const void *second);
 
 /*
  *----------------------------------------------------------------------
@@ -722,7 +721,7 @@ Tcl_LindexCmd(dummy, interp, argc, argv)
 	interp->freeProc = (Tcl_FreeProc *) free;
     }
     if (parenthesized) {
-	memcpy((VOID *) interp->result, (VOID *) element, (size_t) size);
+	memcpy((void *) interp->result, (void *) element, (size_t) size);
 	interp->result[size] = 0;
     } else {
 	TclCopyAndCollapse(size, element, interp->result);
@@ -1312,7 +1311,7 @@ Tcl_LsortCmd(notUsed, interp, argc, argv)
 	sortCode = TCL_ERROR;
 	goto done;
     }
-    qsort((VOID *) listArgv, (size_t) listArgc, sizeof (char *),
+    qsort((void *) listArgv, (size_t) listArgc, sizeof (char *),
 	    SortCompareProc);
     if (sortCode == TCL_OK) {
 	Tcl_ResetResult(interp);
@@ -1351,7 +1350,7 @@ Tcl_LsortCmd(notUsed, interp, argc, argv)
 
 static int
 SortCompareProc(first, second)
-    CONST VOID *first, *second;		/* Elements to be compared. */
+    const void *first, *second;		/* Elements to be compared. */
 {
     int order;
     char *firstString = *((char **) first);

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 9 January 2002.
+** Last modified 25 January 2002.
 */
 
 /*
@@ -41,7 +41,7 @@
 ** Note that we use C++ comments here to disable the ones we don't want.  This
 ** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
-#if 1
+#if 0
 #define DEBUG 1				/* define function[] strings */
 //#define DEBUG_STARTUP 1		/* initialization routines */
 //#define DEBUG_MAINLOOP 1		/* main loop */

@@ -879,7 +879,7 @@ TclExpandParseValue(pvPtr, needed)
      * mark new buffer as malloc-ed.
      */
 
-    memcpy((VOID *) new, (VOID *) pvPtr->buffer,
+    memcpy((void *) new, (void *) pvPtr->buffer,
 	    (size_t) (pvPtr->next - pvPtr->buffer));
     pvPtr->next = new + (pvPtr->next - pvPtr->buffer);
     if (pvPtr->clientData != 0) {

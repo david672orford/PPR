@@ -118,7 +118,7 @@ Tcl_RegexpCmd(dummy, interp, argc, argv)
 	pattern = Tcl_DStringValue(&patternDString);
 	for (p = pattern; *p != 0; p++) {
 	    if (isupper(UCHAR(*p))) {
-		*p = tolower(*p);
+		*p = tolower(UCHAR(*p));
 	    }
 	}
 	Tcl_DStringInit(&stringDString);
@@ -126,7 +126,7 @@ Tcl_RegexpCmd(dummy, interp, argc, argv)
 	string = Tcl_DStringValue(&stringDString);
 	for (p = string; *p != 0; p++) {
 	    if (isupper(UCHAR(*p))) {
-		*p = tolower(*p);
+		*p = tolower(UCHAR(*p));
 	    }
 	}
     } else {
@@ -265,7 +265,7 @@ Tcl_RegsubCmd(dummy, interp, argc, argv)
 	pattern = Tcl_DStringValue(&patternDString);
 	for (p = pattern; *p != 0; p++) {
 	    if (isupper(UCHAR(*p))) {
-		*p = tolower(*p);
+		*p = tolower(UCHAR(*p));
 	    }
 	}
 	Tcl_DStringInit(&stringDString);
@@ -273,7 +273,7 @@ Tcl_RegsubCmd(dummy, interp, argc, argv)
 	string = Tcl_DStringValue(&stringDString);
 	for (p = string; *p != 0; p++) {
 	    if (isupper(UCHAR(*p))) {
-		*p = tolower(*p);
+		*p = tolower(UCHAR(*p));
 	    }
 	}
     } else {
@@ -1128,7 +1128,7 @@ Tcl_StringCmd(dummy, interp, argc, argv)
 	Tcl_SetResult(interp, argv[2], TCL_VOLATILE);
 	for (p = interp->result; *p != 0; p++) {
 	    if (isupper(UCHAR(*p))) {
-		*p = tolower(*p);
+		*p = tolower(UCHAR(*p));
 	    }
 	}
 	return TCL_OK;
@@ -1144,7 +1144,7 @@ Tcl_StringCmd(dummy, interp, argc, argv)
 	Tcl_SetResult(interp, argv[2], TCL_VOLATILE);
 	for (p = interp->result; *p != 0; p++) {
 	    if (islower(UCHAR(*p))) {
-		*p = toupper(*p);
+		*p = toupper(UCHAR(*p));
 	    }
 	}
 	return TCL_OK;

@@ -41,30 +41,6 @@
 #include <unistd.h>
 
 /*
- * The stuff below is needed by the "time" command.  If this
- * system has no gettimeofday call, then must use times and the
- * CLK_TCK #define (from sys/param.h) to compute elapsed time.
- * Unfortunately, some systems only have HZ and no CLK_TCK, and
- * some might not even have HZ.
- */
-
-#ifdef NO_GETTOD
-#   include <sys/times.h>
-#   include <sys/param.h>
-#   ifndef CLK_TCK
-#       ifdef HZ
-#           define CLK_TCK HZ
-#       else
-#           define CLK_TCK 60
-#       endif
-#   endif
-#else
-#   ifdef HAVE_BSDGETTIMEOFDAY
-#	define gettimeofday BSDgettimeofday
-#   endif
-#endif
-
-/*
  * Make sure that MAXPATHLEN is defined.
  */
 
@@ -87,9 +63,9 @@
 #define waitpid(a,b,c) TclWaitpid(a,b,c)
 #define write(a,b,c) TclWrite(a,b,c)
 int TclOpen(char *path, int oflag, int mode);
-int TclRead(int fd, VOID *buf, size_t numBytes);
+int TclRead(int fd, void *buf, size_t numBytes);
 int TclWaitpid(pid_t pid, int *statPtr, int options);
-int TclWrite(int fd, VOID *buf, size_t numBytes);
+int TclWrite(int fd, void *buf, size_t numBytes);
 
 /*
  * Variables provided by the C library:

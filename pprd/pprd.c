@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 24 January 2002.
 */
 
 /*
@@ -42,6 +42,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -74,7 +75,10 @@ int starving_printers = 0;	/* printers currently waiting for rations */
 ** Utility functions used by children
 =========================================================================*/
 
-/* We use this because pprd blocks SIGCHLD and SIGALRM. */
+/*
+** We call this from the child after a fork() because pprd likely has SIGCHLD
+** and possibly other signals blocked while calling fork().
+*/
 void child_unblock_all(void)
     {
     sigset_t sigset;
@@ -82,7 +86,11 @@ void child_unblock_all(void)
     sigprocmask(SIG_SETMASK, &sigset, (sigset_t*)NULL);
     } /* end of child_unblock_all() */
 
-/* We use this because pprd has not stdin, stdout, or stderr. */
+/*
+** We calls this from the child side of fork() because pprd has no stdin,
+** stdout, or stderr handles open.  It directs the child's stdin to /dev/null
+** and stdout and stderr to the pprd log file.
+*/
 void child_stdin_stdout_stderr(const char input_file[], const char output_file[])
     {
     const char function[] = "child_stdin_stdout_stderr";
@@ -134,14 +142,26 @@ void unlock(void)
 ** be either pprdrv or responders.
 ===================================================================*/
 
-void reapchild(int signum)
-    {
-    pid_t pid;
-    int wstat;			/* result of waitpid() */
-    int saved_errno = errno;
-    int gu_alloc_saved = gu_alloc_checkpoint_get();
+static volatile gu_boolean sigchld_caught = FALSE;
+static struct timeval select_tv;
 
-    lock_level++;		/* set our flag */
+/* This is the signal hanlder.  It does nothing but set variables. */
+void sigchld_handler(int signum)
+    {
+    /* The select() loop tests for this. */
+    sigchld_caught = TRUE;
+
+    /* This is in case the signal is received right after it is unblocked
+       and before select() can be called.  We set the timeout to zero so
+       that select() will return right away. */
+    gu_timeval_zero(&select_tv);
+    }
+
+/* This is called from the select() loop. */
+static void reapchild(void)
+    {
+    pid_t pid;			/* pid from waitpid() */
+    int wstat;			/* status from waitpid() */
 
     while((pid = waitpid((pid_t)-1, &wstat, WNOHANG)) > (pid_t)0)
 	{
@@ -171,25 +191,40 @@ void reapchild(int signum)
 		}
 	}
 
-    lock_level--;				/* clear our flag */
-
     DODEBUG_PRNSTOP(("reapchild(): done"));
-
-    gu_alloc_checkpoint_put(gu_alloc_saved);
-    errno = saved_errno;
     } /* end of reapchild() */
 
 /*=======================================================================
-** Timer tick routine (SIGALRM handler).
+** Other signal handlers.
 =======================================================================*/
-void tick(int sig)
+
+/*
+** Handler for signals we don't expect to receive such as SIGHUP and SIGPIPE.
+** The effect of this handler is to ignore such signals.
+*/
+static void signal_ignore(int sig)
     {
-    int saved_errno = errno;		/* save errno of interupted code */
-    alarm(TICK_INTERVAL);		/* set timer for next tick */
+    debug("Received %d (%s)", sig, gu_strsignal(sig));
+    }
+
+/*
+** This is the signal that init will send us
+** at system shutdown time.
+*/
+volatile gu_boolean sigterm_received = FALSE;
+static void sigterm_handler(int sig)
+    {
+    sigterm_received = TRUE;
+    }
+
+/*=======================================================================
+** Timer tick routine.  This is called every TICK_INTERVAL seconds.
+=======================================================================*/
+static void tick(void)
+    {
     printer_tick();
     remote_tick();
     question_tick();
-    errno = saved_errno;
     } /* end of tick() */
 
 /*========================================================================
@@ -202,6 +237,7 @@ int main(int argc, char *argv[])
     int option_foreground = FALSE;
     int FIFO;			/* First-in-first-out which feeds us requests */
     sigset_t lock_set;
+    struct timeval next_tick;
 
     /* Initialize internation messages library. */
     #ifdef INTERNATIONAL
@@ -238,10 +274,18 @@ int main(int argc, char *argv[])
     /* Create /var/spool/ppr/pprd.pid. */
     create_lock_file();
 
-    /* Handler for terminate, child exit, and timer. */
-    install_signal_handlers();
+    /* Signal handlers for silly stuff. */
+    signal_restarting(SIGPIPE, signal_ignore);
+    signal_restarting(SIGHUP, signal_ignore);
 
-    /* move /var/spool/ppr/logs/pprd to pprd.old */
+    /* Signal handler for shutdown request. */
+    signal_interupting(SIGTERM, sigterm_handler);
+
+    /* Arrange for child termination to be noted. */
+    signal_restarting(SIGCHLD, sigchld_handler);
+
+    /* Move /var/spool/ppr/logs/pprd to pprd.old before we call debug()
+       for the first time (below). */
     rename_old_log_file();
 
     /*
@@ -251,14 +295,6 @@ int main(int argc, char *argv[])
     */
     debug("PPRD startup, pid=%ld", (long)getpid());
     state_update("STARTUP");
-
-    /*
-    ** Create a signal mask which will be needed by the
-    ** lock() and unlock() functions.
-    */
-    sigemptyset(&lock_set);
-    sigaddset(&lock_set, SIGALRM);
-    sigaddset(&lock_set, SIGCHLD);
 
     /* Make sure the local node gets the node id of 0. */
     if(! nodeid_is_local_node(nodeid_assign(ppr_get_nodename())))
@@ -283,29 +319,93 @@ int main(int argc, char *argv[])
     DODEBUG_STARTUP(("initializing the queue"));
     initialize_queue();
 
-    /* Start periodic alarm going. */
-    alarm(TICK_INTERVAL);
+    /* Schedule the first timer tick. */
+    gettimeofday(&next_tick, NULL);
+    next_tick.tv_sec += TICK_INTERVAL;
 
     /*
-    ** Main Loop
-    **
-    ** This daemon terminates only if it is killed,
-    ** so the condition on this loop is always TRUE.
-    **
-    ** Notice that
-    ** SIGCHLD and SIGALRM are blocked except while
-    ** we are executing read().  This is so as to be
-    ** absolutely sure that they will not interupted
-    ** non-reentrant C library calls.
+    ** Create a signal block set which will be used to block SIGCHLD except
+    ** when we are calling select().
     */
-    while(TRUE)
+    sigemptyset(&lock_set);
+    sigaddset(&lock_set, SIGCHLD);
+    sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
+
+    /*
+    ** This is the Main Loop.  It runs until the sigterm_handler
+    ** sets sigterm_received.
+    */
+    while(!sigterm_received)
 	{
-	char command[256];	/* buffer for received command + zero byte  */
-	int len;		/* length of data in buffer */
+	int readyfds;			/* return value from select() */
+	fd_set rfds;			/* list of file descriptors for select() to watch */
+	struct timeval time_now;	/* the current time */
+	char command[256];		/* buffer for received command + zero byte  */
+	int len;			/* length of data in buffer */
 
 	DODEBUG_MAINLOOP(("top of main loop"));
 
-	sigprocmask(SIG_UNBLOCK, &lock_set, (sigset_t*)NULL);
+	gettimeofday(&time_now, NULL);
+
+	/* If it is time for or past time for the next tick, */
+	if(gu_timeval_cmp(&time_now, &next_tick) >= 0)
+	    {
+	    readyfds = 0;
+	    }
+
+	/* If it is not time for the next tick yet, */
+	else
+            {
+	    /* Set the select() timeout so that it will return in time for the
+	       next tick(). */
+	    gu_timeval_cpy(&select_tv, &next_tick);
+	    gu_timeval_sub(&select_tv, &time_now);
+
+	    /* Create a file descriptor list which contains only the descriptor
+	       of the FIFO. */
+	    FD_ZERO(&rfds);
+	    FD_SET(FIFO, &rfds);
+
+	    /* Call select() with SIGCHLD unblocked. */
+	    sigprocmask(SIG_UNBLOCK, &lock_set, (sigset_t*)NULL);
+	    readyfds = select(FIFO + 1, &rfds, NULL, NULL, &select_tv);
+	    sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
+	    }
+
+	/* If the SIGCHLD handler set the flag, handle child termination.  Once
+	   we have done that, we must go back to the top of the loop because
+	   we don't really know if it is time for a tick() call yet. */
+        if(sigchld_caught)
+            {
+            sigchld_caught = FALSE;
+            reapchild();
+	    continue;
+            }
+
+	/* If there was no error and no file descriptors are ready, then the timeout
+	   must have expired.  Call tick(). */
+        if(readyfds == 0)
+            {
+            tick();
+	    next_tick.tv_sec += TICK_INTERVAL;
+            continue;
+            }
+
+	/* If select() claims an error and it is EINTR (Interupted System Call),
+	   then restart it.  Other errors are fatal. */
+	if(readyfds < 0)
+	    {
+	    if(errno == EINTR)
+	    	continue;
+	    fatal(0, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	    }
+
+	/* Before we assume there is a request waiting on the FIFO, do a
+	   few sanity checks. */
+	if(readyfds != 1)
+	    fatal(0, "%s(): assertion failed: selected returned %d", function, readyfds);
+	if(!FD_ISSET(FIFO, &rfds))
+	    fatal(0, "%s(): assertion failed: select() returned but FIFO not ready", function);
 
 	/*
 	** Get a line from the FIFO.  We include lame code for
@@ -326,11 +426,9 @@ int main(int argc, char *argv[])
 	    }
 	#endif
 
-	sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
-
 	if(len == 0 || command[len-1] != '\n')
 	    {
-	    error("ignoring misformed command from pipe");
+	    error("ignoring malformed command from pipe");
 	    continue;
 	    }
 
@@ -363,6 +461,9 @@ int main(int argc, char *argv[])
 		break;
 	    }
 	} /* end of endless while() loop */
+
+    state_update("SHUTDOWN");
+    fatal(0, "Received SIGTERM, exiting");
     } /* end of main() */
 
 /* end of file */

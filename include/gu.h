@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/gu.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 15 January 2002.
 */
 
 #ifndef _GU_H
@@ -152,6 +152,11 @@ char *gu_strsignal(int signum);
 char *gu_StrCopyMax(char *target, size_t max, const char *source);
 char *gu_StrAppendMax(char *target, size_t max, const char *source);
 int gu_snprintfcat(char *buffer, size_t max, const char *format, ...);
+int gu_timeval_cmp(const struct timeval *t1, const struct timeval *t2);
+void gu_timeval_sub(struct timeval *t1, const struct timeval *t2);
+void gu_timeval_add(struct timeval *t1, const struct timeval *t2);
+void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2);
+void gu_timeval_zero(struct timeval *t);
 
 /*
 ** Values for gu_torf(), a function which examines a string

@@ -58,11 +58,11 @@ static void		EnvInit _ANSI_ARGS_((void));
 static char *		EnvTraceProc _ANSI_ARGS_((ClientData clientData,
 			    Tcl_Interp *interp, char *name1, char *name2,
 			    int flags));
-static int		FindVariable _ANSI_ARGS_((CONST char *name,
+static int		FindVariable _ANSI_ARGS_((const char *name,
 			    int *lengthPtr));
-void			TclSetEnv _ANSI_ARGS_((CONST char *name,
-			    CONST char *value));
-void			TclUnsetEnv _ANSI_ARGS_((CONST char *name));
+void			TclSetEnv _ANSI_ARGS_((const char *name,
+			    const char *value));
+void			TclUnsetEnv _ANSI_ARGS_((const char *name));
 
 /*
  *----------------------------------------------------------------------
@@ -161,14 +161,14 @@ TclSetupEnv(interp)
 
 static int
 FindVariable(name, lengthPtr)
-    CONST char *name;		/* Name of desired environment variable. */
+    const char *name;		/* Name of desired environment variable. */
     int *lengthPtr;		/* Used to return length of name (for
 				 * successful searches) or number of non-NULL
 				 * entries in environ (for unsuccessful
 				 * searches). */
 {
     int i;
-    register CONST char *p1, *p2;
+    register const char *p1, *p2;
 
     for (i = 0, p1 = environ[i]; p1 != NULL; i++, p1 = environ[i]) {
 	for (p2 = name; *p2 == *p1; p1++, p2++) {
@@ -207,9 +207,9 @@ FindVariable(name, lengthPtr)
 
 void
 TclSetEnv(name, value)
-    CONST char *name;		/* Name of variable whose value is to be
+    const char *name;		/* Name of variable whose value is to be
 				 * set. */
-    CONST char *value;		/* New value for variable. */
+    const char *value;		/* New value for variable. */
 {
     int index, length, nameLength;
     char *p;
@@ -232,7 +232,7 @@ TclSetEnv(name, value)
 
 	    newEnviron = (char **) ckalloc((unsigned)
 		    ((length+5) * sizeof(char *)));
-	    memcpy((VOID *) newEnviron, (VOID *) environ,
+	    memcpy((void *) newEnviron, (void *) environ,
 		    length*sizeof(char *));
 	    ckfree((char *) environ);
 	    environ = newEnviron;
@@ -303,7 +303,7 @@ TclSetEnv(name, value)
 
 int
 Tcl_PutEnv(string)
-    CONST char *string;		/* Info about environment variable in the
+    const char *string;		/* Info about environment variable in the
 				 * form NAME=value. */
 {
     int nameLength;
@@ -356,7 +356,7 @@ Tcl_PutEnv(string)
 
 void
 TclUnsetEnv(name)
-    CONST char *name;			/* Name of variable to remove. */
+    const char *name;			/* Name of variable to remove. */
 {
     int index, dummy;
     char **envPtr;

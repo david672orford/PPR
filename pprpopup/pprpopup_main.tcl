@@ -28,21 +28,25 @@
 #
 
 set about_text "PPR Popup 1.50a1
-19 January 2002
+25 January 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
 # This is the URL that is loaded when the user selects Help/Contents.
 set help_contents_file "docs/pprpopup/"
 
-# This is the port that this server should listen on:
+# This is the port that this server should listen on.  It would be nice
+# to get rid of this.
 set server_port 15009
 
 # This is the token which the server must present for access.
-set magic_cookie "wrmvosrmssdr324"
+if {![info exists ppr_magic_cookie_seed]} {
+    set ppr_magic_cookie_seed ""
+    }
 
 # This is how often we re-register (in seconds).
-set registration_interval 600
+#set registration_interval 600
+set registration_interval 60
 
 # Set options in order to make the Macintosh version look more
 # like the others.
@@ -339,6 +343,10 @@ proc command_QUESTION {file jobname url width height} {
     global wserial
     global open_windows
 
+    if {![server_authcheck $file]} {
+	return
+	}
+
     if [info exists open_windows($jobname)] {
     	puts "  Already exists"
 	window_reopen $open_windows($jobname)
@@ -407,6 +415,7 @@ proc server_function {file cli_addr cli_port} \
 # one of the connected sockets.
 #
 proc server_reader {file} {
+
     # Get the next line from the socket.
     if {[set line [gets $file]] == "" && [eof $file]} {
 	catch { close $file }
@@ -418,7 +427,11 @@ proc server_reader {file} {
     # Act on the command received
     switch -glob -- $line {
 	"COOKIE *" {
-	    puts $file "+OK"
+	    if {[regexp {^COOKIE (.+)} $line junk try_cookie]} {
+		command_COOKIE $file $try_cookie
+		} else {
+		puts $file "-ERR wrong number of parameters"
+		}
 	    }
 	"USER" {
 	    command_USER $file
@@ -450,7 +463,7 @@ proc server_reader {file} {
 	    }
 	QUIT {
             puts $file "+OK"
-	    close $file
+	    server_close $file
 	    return
             }
 	* {
@@ -460,8 +473,65 @@ proc server_reader {file} {
 
     # Push out the reply.
     if [catch { flush $file }] {
-	#alert "Unexepected disconnect by print server!"
-	catch { close $file }
+	puts "$file: Unexepected disconnect by print server!"
+	server_close $file 
+	}
+    }
+
+#========================================================================
+# Magic cookie verification
+#========================================================================
+proc command_COOKIE {file try_cookie} {
+    global magic_cookie
+    global authenticated_clients
+
+    if {![info exists magic_cookie]} {
+	puts "$file: -ERR no magic cookie yet"
+	puts $file "-ERR no magic cookie yet"
+	return
+	}
+
+    if {[string compare $try_cookie $magic_cookie] != 0} {
+	puts "$file: -ERR incorrect cookie"
+	puts $file "-ERR incorrect cookie"
+	return
+	}
+
+    set authenticated_clients($file) 1
+    puts "$file: +OK"
+    puts $file "+OK"
+    }
+
+proc server_close {file} {
+    global authenticated_clients
+    catch { close $file }
+    catch { unset authenticated_clients($file) }
+    }
+
+proc server_authcheck {file} {
+    global authenticated_clients
+    if {[info exists authenticated_clients($file)]} {
+	return 1
+	} else {
+	puts "-ERR must issue sucessful COOKIE command first"
+	return 0
+	}
+    }
+
+# This is called by a handler bound to mouse motion.
+proc entropy {entropy} {
+    global ppr_magic_cookie_seed
+    puts "\$entropy = \"$entropy\""
+
+    # Add this mouse motion (or whatever) to the seed for the next magic cookie.
+    append ppr_magic_cookie_seed $entropy
+
+    # If we have as much entry as we think we need, top intercepting mouse
+    # motion events, it is a waste of time.
+    puts "Seed size: [string length $ppr_magic_cookie_seed]"
+    if {[string length $ppr_magic_cookie_seed] >= 256} {
+	bind all <Motion> {}
+	bind all <KeyPress> {}
 	}
     }
 
@@ -469,26 +539,13 @@ proc server_reader {file} {
 # This is what we use to register with the server.
 #========================================================================
 
-proc do_register {register_url} {
-    package require http 2.2
+proc register_with_server {register_url} {
+    package require http 2.3
     global server_socket
     global magic_cookie
     global client_id
 
     puts "Registering with server at <$register_url>..."
-
-    # We only get the client ID once and cache the result.
-    # This reduces problems on Macintoshes with AppleScript
-    # timeouts.
-    if {![info exists client_id]} {
-	if [catch { set client_id [get_client_id] } result] {
-	    global errorInfo
-	    alert "Error getting client ID: $result\n\n$errorInfo"
-	    global registration_interval
-	    after [expr $registration_interval * 1000 / 4] [list do_register $register_url]
-	    return
-	    }
-	}
 
     set sockname [fconfigure $server_socket -sockname]
     set ip [lindex $sockname 0]
@@ -502,7 +559,7 @@ proc do_register {register_url} {
     }
 
 proc register_callback {token} {
-    global registration_interval
+    global registration_status
 
     # Get the result codes for the POST.
     upvar #0 $token state
@@ -513,16 +570,102 @@ proc register_callback {token} {
     puts "    Size: $state(totalsize)"
 
     # Test the status for errors.
-    if {[string compare $state(status) "ok"] != 0} {
-	alert "POST failed while registering with PPR server:\n$state(url)\n$state(status)\n$state(error)"
+    if {[string compare $state(status) "ok"] == 0 && $ncode == 200} {
+	# Sucess
+	set registration_status($state(url)) 0
+
 	} else {
-	if {$ncode != 200} {
+
+	# Set error counter.
+	incr registration_status($state(url))
+
+	# Describe the error.
+	if {[string compare $state(status) "ok"] != 0} {
+	    # Transaction didn't complete.
+	    alert "POST failed while registering with PPR server:\n$state(url)\n$state(status)\n$state(error)"
+	    } else {
+	    # Transaction completed but result was unsatisfactory.
 	    alert "POST failed while registering with the PPR server:\n$state(url)\n$state(http)"
+	    }
+
+	# Re-schedual for 30 seconds (30,000 milliseconds) in the future.
+	after 30000 [list register_with_server $state(url)]
+	}
+    }
+
+proc do_register {} {
+    global client_id
+    global ppr_server_list
+    global magic_cookie
+    global ppr_magic_cookie_seed
+    global registration_interval
+    global registration_status
+
+    puts "do_register"
+
+    # We only get the client ID once and cache the result.
+    # This reduces AppleScript timeout problems on Macintoshes.
+    if {![info exists client_id]} {
+	if [catch { set client_id [get_client_id] } result] {
+	    global errorInfo
+	    alert "Error getting client ID: $result\n\n$errorInfo"
+	    after 60000 do_register
+	    return
+	    }
+	}
+
+    # If there is insufficient entropy to generate a new magic cookie,
+    # then time some code and use the noise.  I assume we are measuring
+    # schedualer noise, but I have no idea how random it is.
+    if {[string length $ppr_magic_cookie_seed] < 64} {
+	puts -nonewline "Looking for more entropy."
+	for {set x 0} {[string length $ppr_magic_cookie_seed] < 64} {incr x} {
+	    puts -nonewline "."
+	    set time_output [time { catch { open "_not_a_real_file_name_$x" } }]
+	    regexp {^([0-9]+)} $time_output count
+	    append ppr_magic_cookie_seed [expr $count % 10]
+	    }
+	puts ""
+	}
+
+    # Reduce the seed to an MD5 hash, hash it with the current time to make
+    # the new magic cookie, and keep the first hash as the start of the next
+    # magic cookie seed.
+    set ppr_magic_cookie_seed [md5pure::md5 $ppr_magic_cookie_seed]
+    set magic_cookie [md5pure::md5 "[clock clicks] $ppr_magic_cookie_seed"]
+
+    # We safe this proto-seed to the config file so that when we are restarted
+    # we don't have to start from scratch.
+    do_config_save
+
+    # Start collecting entropy for next time.  The least significating
+    # (decimal) digit of the mouse's x and y coordinates will be added
+    # to the seed.
+    bind all <Motion> { entropy [expr %x %% 10][expr %y %% 10] }    
+    bind all <KeyPress> { entropy [expr [clock clicks] %% 100] }
+
+    # Start the registration process for each server.
+    foreach url $ppr_server_list {
+        set url "${url}cgi-bin/pprpopup_register.cgi"
+	puts "$url"
+
+	# Make sure we have a status entry for this URL.
+	if {![info exists registration_status($url)]} {
+	    set registration_status($url) 0
+	    }
+
+	# If there isn't already an (errored) registration in progress,
+	# start a new one.
+	if {$registration_status($url) == 0} {
+	    incr registration_status($url)
+	    register_with_server $url 
+	    } else {
+	    puts "Registration already in progress, tries = $registration_status($url)."
 	    }
 	}
 
     # Register again in a few minutes.
-    after [expr $registration_interval * 1000] [list do_register $state(url)]
+    after [expr $registration_interval * 1000] do_register
     }
 
 #========================================================================
@@ -647,19 +790,18 @@ proc main {} {
 	exit 1
 	}
 
-    # Register with the server for the first time and schedual
+    # Register with the servers for the first time and schedual
     # future registrations.
-    global ppr_server_list
-    foreach url $ppr_server_list {
-	do_register "${url}cgi-bin/pprpopup_register.cgi"
-	}
+    do_register
 
     # Set the main window size, title, and visibility.
     wm geometry . 600x200
     wm title . "PPR Popup"
     menu_view_main 0
 
-    do_config_save
+    # No need to do this since do_register does it in order to save the 
+    # magic cookie seed.
+    #do_config_save
     }
 
 proc menu_file_quit {} {
@@ -888,8 +1030,9 @@ proc menu_help_about_system {} {
 proc do_config_save {} {
     global ppr_root_url
     global ppr_server_list
+    global ppr_magic_cookie_seed
     puts "Saving configuration..."
-    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\n"} errormsg]} {
+    if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\nset ppr_magic_cookie_seed \"$ppr_magic_cookie_seed\"\n"} errormsg]} {
 	puts "Failed to save configuration:\n$errormsg"
 	#alert "Failed to save configuration:\n$errormsg"
 	}

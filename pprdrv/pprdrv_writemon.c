@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_writemon.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 18 June 2001.
+** Last modified 15 January 2002.
 */
 
 #include "before_system.h"
@@ -47,72 +47,6 @@ static gu_boolean online_online;			/* is printer on-line? */
 static struct timeval online_unaccumulated_start_time;	/* when did it go online or finish previous page? */
 static struct timeval online_accumulator;		/* total of previous online periods */
 
-/*==========================================================================
-** These are utility routines for dealing with time.
-==========================================================================*/
-
-/*
-** This utility function is used to compare times.
-*/
-static int timeval_cmp(const struct timeval *t1, const struct timeval *t2)
-    {
-    if(t1->tv_sec > t2->tv_sec)
-    	return 1;
-    if(t1->tv_sec < t2->tv_sec)
-    	return -1;
-    if(t1->tv_usec > t2->tv_usec)
-    	return 1;
-    if(t1->tv_usec < t2->tv_usec)
-    	return -1;
-    return 0;
-    }
-
-/*
-** This utility function is used to subtract time t2 from time t1.
-*/
-static void timeval_sub(struct timeval *t1, const struct timeval *t2)
-    {
-    t1->tv_sec -= t2->tv_sec;
-    t1->tv_usec -= t2->tv_usec;
-    if(t1->tv_usec < 0)
-        {
-        t1->tv_usec += 1000000;
-        t1->tv_sec--;
-        }
-    }
-
-/*
-** This utility function adds t2 to t1.
-*/
-static void timeval_add(struct timeval *t1, const struct timeval *t2)
-    {
-    t1->tv_sec += t2->tv_sec;
-    t1->tv_usec += t2->tv_usec;
-    if(t1->tv_usec > 1000000)
-        {
-        t1->tv_usec -= 1000000;
-        t1->tv_sec++;
-        }
-    }
-
-/*
-** This utility function copies time t2 to time t1.
-*/
-static void timeval_cpy(struct timeval *t1, const struct timeval *t2)
-    {
-    t1->tv_sec = t2->tv_sec;
-    t1->tv_usec = t2->tv_usec;
-    }
-
-/*
-** This utility function zeros a time.
-*/
-static void timeval_zero(struct timeval *t)
-    {
-    t->tv_sec = 0;
-    t->tv_usec = 0;
-    }
-
 /*=========================================================================
 ** This is called from start_interface() to set this module
 ** to its initial state.
@@ -120,7 +54,7 @@ static void timeval_zero(struct timeval *t)
 void writemon_init(void)
     {
     stackp = -1;
-    timeval_zero(&online_accumulator);		/* we haven't measured any time online */
+    gu_timeval_zero(&online_accumulator);	/* we haven't measured any time online */
     online_online_valid = FALSE;		/* we don't know if the printer is online */
     }
 
@@ -178,25 +112,25 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
     /* If first call to writemon_sleep_time() after writemon_start(), */
     if(!stack[stackp].start_time_set)
 	{
-	timeval_cpy(&stack[stackp].start_time, &now_time);
+	gu_timeval_cpy(&stack[stackp].start_time, &now_time);
 	stack[stackp].start_time_set = TRUE;
 	}
 
     if(timeout > 0)
     	{
 	/* Figure out when the caller's timeout will expire. */
-    	timeval_cpy(&your_next_time, &stack[stackp].start_time);
+    	gu_timeval_cpy(&your_next_time, &stack[stackp].start_time);
 	your_next_time.tv_sec += timeout;
 
 	/* If the callers timeout has expired, we are done, tell the caller. */
-	if(timeval_cmp(&your_next_time, &now_time) <= 0)
+	if(gu_timeval_cmp(&your_next_time, &now_time) <= 0)
 	    return FALSE;
 	}
 
     while(TRUE)
 	{
         /* Figure out when we next want to make a commentary announcement. */
-        timeval_cpy(&my_next_time, &stack[stackp].start_time);
+        gu_timeval_cpy(&my_next_time, &stack[stackp].start_time);
         my_next_time.tv_sec += ((stack[stackp].stall_time_minutes_announced + 1) * 60);
 
         DODEBUG_INTERFACE(("%s(): my_next_time=%d.%06d, now_time=%d.%06d, start_time=%d.%06d",
@@ -209,11 +143,11 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
         /* If the next commentary announcement should have been
            made already, make it now and go back to compute
            a new time for the next one. */
-        if(timeval_cmp(&my_next_time, &now_time) <= 0)
+        if(gu_timeval_cmp(&my_next_time, &now_time) <= 0)
             {
             struct timeval temp;
-            timeval_cpy(&temp, &now_time);
-            timeval_sub(&temp, &stack[stackp].start_time);
+            gu_timeval_cpy(&temp, &now_time);
+            gu_timeval_sub(&temp, &stack[stackp].start_time);
             writemon_stalled(&temp);
 	    continue;
             }
@@ -221,10 +155,10 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
 	}
 
     /* Use the soonest one as the time to interupt select. */
-    if(timeout < 1 || timeval_cmp(&my_next_time, &your_next_time) < 0)
-    	timeval_cpy(sleep_time, &my_next_time);
+    if(timeout < 1 || gu_timeval_cmp(&my_next_time, &your_next_time) < 0)
+    	gu_timeval_cpy(sleep_time, &my_next_time);
     else
-    	timeval_cpy(sleep_time, &your_next_time);
+    	gu_timeval_cpy(sleep_time, &your_next_time);
 
     /* Here is where we observe the limit set by "ppad pagetimelimit".
        First we must test that there is a limit and that we have been getting
@@ -244,11 +178,11 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
 	*/
 	time_of_expiration.tv_sec = printer.PageTimeLimit;
 	time_of_expiration.tv_usec = 0;
-	timeval_add(&time_of_expiration, &online_unaccumulated_start_time);
-	timeval_sub(&time_of_expiration, &online_accumulator);
+	gu_timeval_add(&time_of_expiration, &online_unaccumulated_start_time);
+	gu_timeval_sub(&time_of_expiration, &online_accumulator);
 
 	/* Has the time limit expired? */
-	if(timeval_cmp(&now_time, &time_of_expiration) > 0)
+	if(gu_timeval_cmp(&now_time, &time_of_expiration) > 0)
 	    {
 	    give_reason("PageTimeLimit exceeded");
 	    hooked_exit(EXIT_JOBERR, "PageTimeLimit exceeded");
@@ -257,12 +191,12 @@ int writemon_sleep_time(struct timeval *sleep_time, int timeout)
 	/* If the PageTimeLimit expiration time is before the time we had
 	   planed on sleeping until, change sleep_time to the PageTimeLimit
 	   expiration time. */
-	if(timeval_cmp(&time_of_expiration, sleep_time) < 0)
-	    timeval_cpy(sleep_time, &time_of_expiration);
+	if(gu_timeval_cmp(&time_of_expiration, sleep_time) < 0)
+	    gu_timeval_cpy(sleep_time, &time_of_expiration);
     	}
 
     /* Turn it into a realative time. */
-    timeval_sub(sleep_time, &now_time);
+    gu_timeval_sub(sleep_time, &now_time);
 
     if(sleep_time->tv_sec < 0 || (sleep_time->tv_sec == 0 && sleep_time->tv_usec < 0))
     	fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed, sleep_time is negative", function);
@@ -407,7 +341,7 @@ static int compute_severity(int minutes)
 void writemon_pagedrop(void)
     {
     DODEBUG_INTERFACE(("writemon_pagedrop()"));
-    timeval_zero(&online_accumulator);
+    gu_timeval_zero(&online_accumulator);
     gettimeofday(&online_unaccumulated_start_time, NULL);
 
     if(online_online)		/* if on-line, the clock is ticking */
@@ -447,8 +381,8 @@ void writemon_online(gu_boolean online)
 		{
 		struct timeval t;
 		gettimeofday(&t, NULL);
-		timeval_sub(&t, &online_unaccumulated_start_time);
-		timeval_add(&online_accumulator, &t);
+		gu_timeval_sub(&t, &online_unaccumulated_start_time);
+		gu_timeval_add(&online_accumulator, &t);
 		}
             snprintf(temp, sizeof(temp), "%d", (int)online_accumulator.tv_sec);
             }

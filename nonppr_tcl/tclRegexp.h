@@ -25,10 +25,10 @@ typedef struct regexp {
 	char program[1];	/* Unwarranted chumminess with compiler. */
 } regexp;
 
-EXTERN regexp *TclRegComp _ANSI_ARGS_((char *exp));
-EXTERN int TclRegExec _ANSI_ARGS_((regexp *prog, char *string, char *start));
-EXTERN void TclRegSub _ANSI_ARGS_((regexp *prog, char *source, char *dest));
-EXTERN void TclRegError _ANSI_ARGS_((char *msg));
-EXTERN char *TclGetRegError _ANSI_ARGS_((void));
+extern regexp *TclRegComp _ANSI_ARGS_((char *exp));
+extern int TclRegExec _ANSI_ARGS_((regexp *prog, char *string, char *start));
+extern void TclRegSub _ANSI_ARGS_((regexp *prog, char *source, char *dest));
+extern void TclRegError _ANSI_ARGS_((char *msg));
+extern char *TclGetRegError _ANSI_ARGS_((void));
 
 #endif /* REGEXP */

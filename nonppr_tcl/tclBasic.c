@@ -208,6 +208,7 @@ Tcl_CreateInterp()
 	    cmdPtr->clientData = (ClientData) NULL;
 	    cmdPtr->deleteProc = NULL;
 	    cmdPtr->deleteData = (ClientData) NULL;
+	    cmdPtr->deleted = 0;
 	    Tcl_SetHashValue(hPtr, cmdPtr);
 	}
     }
@@ -430,10 +431,13 @@ Tcl_DeleteInterp(interp)
     for (hPtr = Tcl_FirstHashEntry(&iPtr->commandTable, &search);
 	    hPtr != NULL; hPtr = Tcl_NextHashEntry(&search)) {
 	cmdPtr = (Command *) Tcl_GetHashValue(hPtr);
-	if (cmdPtr->deleteProc != NULL) { 
-	    (*cmdPtr->deleteProc)(cmdPtr->deleteData);
+	if (!cmdPtr->deleted) {
+	    cmdPtr->deleted = 1;
+	    if (cmdPtr->deleteProc != NULL) {
+		(*cmdPtr->deleteProc)(cmdPtr->deleteData);
+	    }
+	    ckfree((char *) cmdPtr);
 	}
-	ckfree((char *) cmdPtr);
     }
     Tcl_DeleteHashTable(&iPtr->commandTable);
     for (hPtr = Tcl_FirstHashEntry(&iPtr->mathFuncTable, &search);
@@ -528,25 +532,40 @@ Tcl_CreateCommand(interp, cmdName, proc, clientData, deleteProc)
     Tcl_HashEntry *hPtr;
     int new;
 
+    if (iPtr->flags & DELETED) {
+	/*
+	 * The interpreter is being deleted.  Don't create any new
+	 * commands;  it's not safe to muck with the interpreter anymore.
+	 */
+
+	return (Tcl_Command) NULL;
+    }
     hPtr = Tcl_CreateHashEntry(&iPtr->commandTable, cmdName, &new);
     if (!new) {
 	/*
 	 * Command already exists:  delete the old one.
 	 */
 
-	cmdPtr = (Command *) Tcl_GetHashValue(hPtr);
-	if (cmdPtr->deleteProc != NULL) {
-	    (*cmdPtr->deleteProc)(cmdPtr->deleteData);
-	}
-    } else {
-	cmdPtr = (Command *) ckalloc(sizeof(Command));
-	Tcl_SetHashValue(hPtr, cmdPtr);
+	Tcl_DeleteCommand(interp, Tcl_GetHashKey(&iPtr->commandTable, hPtr));
+	hPtr = Tcl_CreateHashEntry(&iPtr->commandTable, cmdName, &new);
+	if (!new) {
+	    /*
+	     * Drat.  The stupid deletion callback recreated the command.
+	     * Just throw away the new command (if we try to delete it again,
+	     * we could get stuck in an infinite loop).
+	     */
+
+	     ckfree((char  *) Tcl_GetHashValue(hPtr));
+	 }
     }
+    cmdPtr = (Command *) ckalloc(sizeof(Command));
+    Tcl_SetHashValue(hPtr, cmdPtr);
     cmdPtr->hPtr = hPtr;
     cmdPtr->proc = proc;
     cmdPtr->clientData = clientData;
     cmdPtr->deleteProc = deleteProc;
     cmdPtr->deleteData = clientData;
+    cmdPtr->deleted = 0;
     return (Tcl_Command) cmdPtr;
 }
 
@@ -694,16 +713,57 @@ Tcl_DeleteCommand(interp, cmdName)
     Tcl_HashEntry *hPtr;
     Command *cmdPtr;
 
+    if (iPtr->flags & DELETED) {
+	/*
+	 * The interpreter is being deleted, so this command has already
+	 * been deleted, or will be soon.  It's not safe to muck with the
+	 * interpreter anymore.
+	 */
+
+	return -1;
+    }
     hPtr = Tcl_FindHashEntry(&iPtr->commandTable, cmdName);
     if (hPtr == NULL) {
 	return -1;
     }
     cmdPtr = (Command *) Tcl_GetHashValue(hPtr);
+
+    /*
+     * The code here is tricky.  We can't delete the hash table entry
+     * before invoking the deletion callback because there are cases
+     * where the deletion callback needs to invoke the command (e.g.
+     * object systems such as OTcl).  However, this means that the
+     * callback could try to delete or rename the command.  The deleted
+     * flag allows us to detect these cases and skip nested deletes.
+     */
+
+    if (cmdPtr->deleted) {
+	/*
+	 * Another deletion is already in progress.  Remove the hash
+	 * table entry now, but don't invoke a callback or free the
+	 * command structure.
+	 */
+
+	Tcl_DeleteHashEntry(hPtr);
+	cmdPtr->hPtr = NULL;
+	return 0;
+    }
+    cmdPtr->deleted = 1;
     if (cmdPtr->deleteProc != NULL) {
 	(*cmdPtr->deleteProc)(cmdPtr->deleteData);
     }
+
+    /*
+     * Don't use hPtr to delete the hash entry here, because it's
+     * possible that the deletion callback renamed the command.
+     * Instead, use cmdPtr->hptr, and make sure that no-one else
+     * has already deleted the hash entry.
+     */
+
+    if (cmdPtr->hPtr != NULL) {
+	Tcl_DeleteHashEntry(cmdPtr->hPtr);
+    }
     ckfree((char *) cmdPtr);
-    Tcl_DeleteHashEntry(hPtr);
     return 0;
 }
 

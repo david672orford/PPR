@@ -6,11 +6,14 @@
  *
  * Copyright (c) 1991-1994 The Regents of the University of California.
  * Copyright (c) 1994-1995 Sun Microsystems, Inc.
+ * Copyright (c) 2002 Trinity College Computing Center.
  *
  * See the file "license.terms" for information on usage and redistribution
  * of this file, and for a DISCLAIMER OF ALL WARRANTIES.
  *
  * This code contributed by Karl Lehenbauer and Mark Diekhans
+ *
+ * Last modified 18 January 2002.
  *
  */
 
@@ -20,6 +23,7 @@
 #define TRUE	1
 
 #ifdef TCL_MEM_DEBUG
+
 #ifndef TCL_GENERIC_ONLY
 #include "tclPort.h"
 #endif
@@ -305,7 +309,7 @@ Tcl_DbCkalloc(size, file, line)
      * Link into allocated list.
      */
     if (init_malloced_bodies) {
-        memset ((VOID *) result, GUARD_VALUE,
+        memset ((void *) result, GUARD_VALUE,
 		size + sizeof(struct mem_header) + HIGH_GUARD_SIZE);
     } else {
 	memset ((char *) result->low_guard, GUARD_VALUE, LOW_GUARD_SIZE);
@@ -391,7 +395,7 @@ Tcl_DbCkfree(ptr, file, line)
      * even though BODY_OFFSET is in words on these machines).
      */
 
-    struct mem_header *memp = (struct mem_header *) \
+    struct mem_header *memp = (struct mem_header *)
 	    (((unsigned long) ptr) - BODY_OFFSET);
 
     if (alloc_tracing)
@@ -403,7 +407,7 @@ Tcl_DbCkfree(ptr, file, line)
 
     ValidateMemory (memp, file, line, TRUE);
     if (init_malloced_bodies) {
-	memset((VOID *) ptr, GUARD_VALUE, (size_t) memp->length);
+	memset((void *) ptr, GUARD_VALUE, (size_t) memp->length);
     }
 
     total_frees++;
@@ -457,7 +461,7 @@ Tcl_DbCkrealloc(ptr, size, file, line)
      * line.
      */
 
-    struct mem_header *memp = (struct mem_header *) \
+    struct mem_header *memp = (struct mem_header *)
 	    (((unsigned long) ptr) - BODY_OFFSET);
 
     copySize = size;
@@ -465,7 +469,7 @@ Tcl_DbCkrealloc(ptr, size, file, line)
 	copySize = memp->length;
     }
     new = Tcl_DbCkalloc(size, file, line);
-    memcpy((VOID *) new, (VOID *) ptr, (size_t) copySize);
+    memcpy((void *) new, (void *) ptr, (size_t) copySize);
     Tcl_DbCkfree(ptr, file, line);
     return(new);
 }
@@ -620,8 +624,7 @@ Tcl_CreateCommand (interp, "memory", MemoryCmd, (ClientData) NULL,
  *
  *----------------------------------------------------------------------
  */
-VOID *
-Tcl_Ckalloc (unsigned int size)
+void *Tcl_Ckalloc (unsigned int size)
 {
         char *result;
 

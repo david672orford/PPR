@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/www/q_icons/make_composit_figs.perl
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,8 +11,10 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 29 December 2000.
+# Last modified 22 January 2002.
 #
+
+my $SCALING_FACTOR = 30.0;
 
 #
 # Write a Fig file header.
@@ -78,13 +80,51 @@ foreach $file (@list)
 }
 
 #
+# Convert a FIG file to a PNG file.
+#
+sub fig_to_png
+    {
+    my $fig_name = shift;
+    my $png_name = shift;
+    
+    unlink("$png_name");
+
+    # Obvious but produces images of various sizes:
+    #system("fig2dev -L png $fig_name >$png_name") && die;
+
+    # Very basic ImageMagic:
+    #system("convert $fig_name $png_name") && die;
+
+    # Here we use ImageMagick and try to get a transparent background:
+    #system("convert -quality 100 -transparent white $fig_name $png_name") && die;
+
+    # ImageMagick with reduced colors:
+    #system("convert -colors 64 -quality 100 $fig_name $png_name") && die;
+
+    # Does this achieve the web palete?
+    #system("convert -colors 216 -quality 100 $fig_name $png_name") && die;
+
+    # Was almost right, but broken in Linux Mandrake 7.2:
+    #system("montage -quality 100 -gravity SouthWest -background white -transparent white -geometry 95x93 $fig_name $png_name") && die;
+
+    # Combine fig2dev and ImageMagic:
+    #system("fig2dev -L png $fig_name >temp.png && montage -quality 100 -gravity SouthWest -background white -transparent white -geometry 95x93 temp.png $png_name && rm temp.png") && die;
+
+    # ImageMagic with PBM utilities:
+    system("convert $fig_name temp.ppm") && die;
+    system("pnmflip -cw temp.ppm | pnmcut 352 262 88 88 | pnmtopng -compression 9 >$png_name") && die;
+    unlink("temp.ppm") || die $!;
+    }
+
+#
 # This data describes how we should combine Fig files to create composit
 # Fig files.
 #
 $filename_map = [
 	[			# type of object
 	'printer1.fig',
-	'group1.fig'
+	'group1.fig',
+	'alias1.fig'
 	],
 	[			# accepting or rejecting new jobs
 	'',
@@ -129,7 +169,8 @@ for($type=0; $type <= 1; $type++)
         {
         for($status=0; $status <= 11; $status++)
           {
-	  # Groups don't have complicated status
+	  # Groups don't have complicated status, so skip those images 
+	  # which don't apply.
 	  next if($type > 0 && $status > 0);
 
 	  my $hstatus = (qw(0 1 2 3 4 5 6 7 8 9 a b c d e f))[$status];
@@ -140,7 +181,7 @@ for($type=0; $type <= 1; $type++)
 	  open(OUT, ">$basic_name.fig") || die;
 
 	  # Write a header while setting the scaling factor.
-	  write_header(OUT, 30.0);
+	  write_header(OUT, $SCALING_FACTOR);
 
 	  # Copy the bodies of several Fig files.
 	  write_file_body(OUT, "boundingbox.fig");
@@ -154,34 +195,7 @@ for($type=0; $type <= 1; $type++)
 	  close(OUT) || die;
 	  print ")\n";
 
-	  unlink("$basic_name.png");
-
-	  # Obvious but produces images of various sizes:
-	  #system("fig2dev -L png $basic_name.fig >$basic_name.png") && die;
-
-	  # Very basic ImageMagic:
-	  #system("convert $basic_name.fig $basic_name.png") && die;
-
-	  # Here we use ImageMagick and try to get a transparent background:
-	  #system("convert -quality 100 -transparent white $basic_name.fig $basic_name.png") && die;
-
-	  # ImageMagick with reduced colors:
-	  #system("convert -colors 64 -quality 100 $basic_name.fig $basic_name.png") && die;
-
-	  # Does this achieve the web palete?
-	  #system("convert -colors 216 -quality 100 $basic_name.fig $basic_name.png") && die;
-
-	  # Was almost right, but broken in Linux Mandrake 7.2:
-	  #system("montage -quality 100 -gravity SouthWest -background white -transparent white -geometry 95x93 $basic_name.fig $basic_name.png") && die;
-
-	  # Combine fig2dev and ImageMagic:
-	  #system("fig2dev -L png $basic_name.fig >temp.png && montage -quality 100 -gravity SouthWest -background white -transparent white -geometry 95x93 temp.png $basic_name.png && rm temp.png") && die;
-
-	  # ImageMagic with PBM utilities:
-	  system("convert $basic_name.fig $basic_name.ppm") && die;
-	  #system("pnmflip -cw $basic_name.ppm | pnmcrop -white | pnmtopng -compression 9 >$basic_name.png") && die;
-	  system("pnmflip -cw $basic_name.ppm | pnmcut 352 262 88 88 | pnmtopng -compression 9 >$basic_name.png") && die;
-	  unlink("$basic_name.ppm") || die $!;
+	  fig_to_png("$basic_name.fig", "$basic_name.png");
 
 	  unlink("$basic_name.fig") || die $!;
           }
@@ -189,6 +203,16 @@ for($type=0; $type <= 1; $type++)
       }
     }
   }
+
+print "20000 (";
+open(OUT, ">20000.fig") || die;
+write_header(OUT, $SCALING_FACTOR);
+write_file_body(OUT, "boundingbox.fig");
+write_file_body(OUT, "alias1.fig");
+close(OUT) || die $!;
+fig_to_png("20000.fig", "20000.png");
+unlink("20000.fig") || die $!;
+print ")\n";
 
 exit 0;
 

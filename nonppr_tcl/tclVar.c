@@ -55,25 +55,15 @@ static char *danglingUpvar =	"upvar refers to element in deleted array";
  * Forward references to procedures defined later in this file:
  */
 
-static  char *		CallTraces _ANSI_ARGS_((Interp *iPtr, Var *arrayPtr,
-			    Var *varPtr, char *part1, char *part2,
-			    int flags));
-static void		CleanupVar _ANSI_ARGS_((Var *varPtr, Var *arrayPtr));
-static void		DeleteSearches _ANSI_ARGS_((Var *arrayVarPtr));
-static void		DeleteArray _ANSI_ARGS_((Interp *iPtr, char *arrayName,
-			    Var *varPtr, int flags));
-static Var *		LookupVar _ANSI_ARGS_((Tcl_Interp *interp, char *part1,
-			    char *part2, int flags, char *msg, int create,
-			    Var **arrayPtrPtr));
-static int		MakeUpvar _ANSI_ARGS_((Interp *iPtr,
-			    CallFrame *framePtr, char *otherP1,
-			    char *otherP2, char *myName, int flags));
-static Var *		NewVar _ANSI_ARGS_((void));
-static ArraySearch *	ParseSearchId _ANSI_ARGS_((Tcl_Interp *interp,
-			    Var *varPtr, char *varName, char *string));
-static void		VarErrMsg _ANSI_ARGS_((Tcl_Interp *interp,
-			    char *part1, char *part2, char *operation,
-			    char *reason));
+static char *CallTraces(Interp *iPtr, Var *arrayPtr, Var *varPtr, char *part1, char *part2, int flags);
+static void CleanupVar(Var *varPtr, Var *arrayPtr);
+static void DeleteSearches(Var *arrayVarPtr);
+static void DeleteArray(Interp *iPtr, char *arrayName, Var *varPtr, int flags);
+static Var *LookupVar(Tcl_Interp *interp, char *part1, char *part2, int flags, char *msg, int create, Var **arrayPtrPtr);
+static int MakeUpvar(Interp *iPtr, CallFrame *framePtr, char *otherP1, char *otherP2, char *myName, int flags);
+static Var *NewVar(void);
+static ArraySearch *ParseSearchId(Tcl_Interp *interp, Var *varPtr, char *varName, char *string);
+static void VarErrMsg(Tcl_Interp *interp, char *part1, char *part2, char *operation, char *reason);
 
 /*
  *----------------------------------------------------------------------
@@ -2014,7 +2004,10 @@ CallTraces(iPtr, arrayPtr, varPtr, part1, part2, flags)
 					 * indicates what's happening to
 					 * variable, plus other stuff like
 					 * TCL_GLOBAL_ONLY and
-					 * TCL_INTERP_DESTROYED. */
+					 * TCL_INTERP_DESTROYED.   May also
+					 * contain PART1_NOT_PARSEd, which
+					 * should not be passed through
+					 * to callbacks. */
 {
     register VarTrace *tracePtr;
     ActiveVarTrace active;
@@ -2067,7 +2060,7 @@ CallTraces(iPtr, arrayPtr, varPtr, part1, part2, flags)
 	    }
 	}
     }
-
+    flags &= ~PART1_NOT_PARSED;
 
     /*
      * Invoke traces on the array containing the variable, if relevant.
