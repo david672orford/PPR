@@ -4,11 +4,11 @@
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 9 January 2002.
+# Last revised 10 January 2002.
 #
 
 set about_text "PPR Popup 1.50a1
-9 January 2002
+10 January 2002
 Copyright 1995--2002, Trinity College Computing Center
 Written by David Chappell"
 
@@ -21,7 +21,11 @@ set server_port 15009
 # This is the token which the server must present for access.
 set magic_cookie "wrmvosrmssdr324"
 
-# Set options in order to make the Macintosh version look more like the others.
+# This is how often we re-register (in seconds).
+set registration_interval 600
+
+# Set options in order to make the Macintosh version look more
+# like the others.
 set background_color #a4b6dd
 set button_color #8892a8
 option add *foreground black
@@ -35,7 +39,7 @@ option add *textBackground white
 set wserial 0
 
 #
-# Put up a dialog box for bad errors.  We don't use iwidgets::messagedialog 
+# Put up a dialog box for bad errors.  We don't use iwidgets::messagedialog
 # because it won't appear on WinNT if the main window isn't visible.
 #
 proc alert {message} {
@@ -421,23 +425,30 @@ proc do_register {register_url} {
     package require http 2.2
     global server_socket
     global magic_cookie
+    global client_id
 
     puts "Registering with server at <$register_url>..."
 
-    set client [get_client_id]
+    # We only get the client ID once and cache the result.
+    # This reduces problems on Macintoshes with AppleScript
+    # timeouts.
+    if {![info exists client_id]} {
+	set client_id [get_client_id]
+	}
 
     set sockname [fconfigure $server_socket -sockname]
     set ip [lindex $sockname 0]
     set port [lindex $sockname 2]
     set pprpopup_address "$ip:$port"
 
-    puts "client=$client, pprpopup_address=$pprpopup_address, magic_cookie=$magic_cookie"
-    set data [eval ::http::formatQuery [list client $client pprpopup_address $pprpopup_address magic_cookie $magic_cookie]]
+    puts "client_id=$client_id, pprpopup_address=$pprpopup_address, magic_cookie=$magic_cookie"
+    set data [eval ::http::formatQuery [list client $client_id pprpopup_address $pprpopup_address magic_cookie $magic_cookie]]
 
     ::http::geturl $register_url -query $data -command [namespace code register_callback]
     }
 
 proc register_callback {token} {
+    global registration_interval
 
     # Get the result codes for the POST.
     upvar #0 $token state
@@ -457,7 +468,7 @@ proc register_callback {token} {
 	}
 
     # Register again in 10 minutes.
-    after 600000 [list do_register $state(url)]
+    after [expr $registration_interval * 1000] [list do_register $state(url)]
     }
 
 #========================================================================
@@ -492,12 +503,26 @@ proc main {} {
     # the user uses the window manager to close the main window.
     wm protocol . WM_DELETE_WINDOW { menu_file_quit }
 
+    # Create a set of bindings which we can attach to widgets.
+    bind GlobalBindTags <Alt-q> { menu_file_quit }
+    bindtags . GlobalBindTags
+
     # Create the menubar and attach it to the default toplevel window.
     . configure -menu .menubar
     menu .menubar -border 1 -relief groove
 
+    # Macintosh needs another toplevel to keep the menu in place.
+    # We will place it off the screen.
+    global tcl_platform
+    if {$tcl_platform(platform) == "macintosh"} {
+        toplevel .dummy -menu .menubar
+        wm geometry .dummy 25x25+2000+2000
+	.menubar add cascade -menu [menu .menubar.apple -tearoff 0 -border 1]
+	.menubar.apple add command -label "About PPR Popup" -command { menu_help_about }
+        }
+
     .menubar add cascade -label "File" -menu [menu .menubar.file -tearoff 0 -border 1]
-    .menubar.file add command -label "Quit" -command { menu_file_quit }
+    .menubar.file add command -label "Quit" -accelerator "Alt-q" -command { menu_file_quit }
 
     .menubar add cascade -label "View" -menu [menu .menubar.view -tearoff 0 -border 1]
     .menubar.view add check -variable menu_view_main_visibility -label "Show Main Window" -command { menu_view_main $menu_view_main_visibility }
@@ -509,14 +534,6 @@ proc main {} {
     .menubar.help add command -label "Help Contents" -command { menu_help_contents }
     .menubar.help add command -label "About PPR Popup" -command { menu_help_about }
     .menubar.help add command -label "About System" -command { menu_help_about_system }
-
-    # Macintosh needs another toplevel to keep the menu in place.
-    # We will place it off the screen.
-    global tcl_platform
-    if {$tcl_platform(platform) == "macintosh"} {
-        toplevel .dummy -menu .menubar
-        wm geometry .dummy 25x25+2000+2000
-        }
 
     # Create the scrolling listbox with the outstanding jobs.
     frame .jobs -border 3
@@ -577,7 +594,7 @@ proc main {} {
     wm title . "PPR Popup"
     menu_view_main 0
 
-    do_config_save 
+    do_config_save
     }
 
 proc menu_file_quit {} {
@@ -679,6 +696,7 @@ proc menu_help_about_system {} {
     global system_dpi
     global tcl_platform
     global button_color
+    global env
 
     set info ""
 
@@ -696,9 +714,10 @@ proc menu_help_about_system {} {
     append info "Screen size: ${screenwidth}x${screenheight}\n"
 
     set dpi [winfo pixels . 1i]
-    append info "OS screen resolution claim: $system_dpi DPI\n"
-    append info "Working screen resolution assumption: $dpi DPI\n"
+    append info "Screen resolution (OS): $system_dpi DPI\n"
+    append info "Screen resolution (Tk): $dpi DPI\n"
 
+    # Create a dialog box.
     iwidgets::dialog .si \
     	-modality application \
     	-title "About System"
@@ -711,16 +730,23 @@ proc menu_help_about_system {} {
     .si hide "Cancel"
     .si hide "Apply"
     .si hide "Help"
+
+    # Get a reference to the childsite so we can start packing stuff in.
     set childsite [.si childsite]
 
+    # First we add a label containing the text we got above.
     label $childsite.label -justify left -text $info
-    pack $childsite.label -side left
+    pack $childsite.label -side left -anchor nw
 
-    frame $childsite.pad -width 10
-    pack $childsite.pad -side left
+    # Add a spacer.
+    frame $childsite.pad1 -width 15
+    pack $childsite.pad1 -side left
 
+    # Now add a frame with DPI information.
     frame $childsite.dpi
-    pack $childsite.dpi -side left -padx 5 -pady 5
+    pack $childsite.dpi -side left -anchor nw
+    label $childsite.dpi.title -text "Resolution Test"
+    pack $childsite.dpi.title -side top
     frame $childsite.dpi.square1 -width $system_dpi -height $system_dpi -background white
     pack $childsite.dpi.square1 -side top -anchor w
     label $childsite.dpi.label1 -text "1 inch at $system_dpi DPI"
@@ -732,6 +758,25 @@ proc menu_help_about_system {} {
     label $childsite.dpi.label2 -text "1 inch at $dpi DPI"
     pack $childsite.dpi.label2 -side top -anchor w
 
+    # Add a spacer.
+    frame $childsite.pad2 -width 15
+    pack $childsite.pad2 -side left
+
+    frame $childsite.env
+    pack $childsite.env -side left
+    label $childsite.env.label -text "Environment Variables"
+    pack $childsite.env.label -side top
+    text $childsite.env.text -width 40 -height 20 -wrap none -background white
+    scrollbar $childsite.env.vsb -command "$childsite.env.text yview"
+    scrollbar $childsite.env.hsb -orient horizontal -command "$childsite.env.text xview"
+    $childsite.env.text configure -xscrollcommand "$childsite.env.hsb set" -yscrollcommand "$childsite.env.vsb set"
+    pack $childsite.env.vsb -side right -fill y
+    pack $childsite.env.hsb -side bottom -fill x
+    pack $childsite.env.text -side left -fill both -expand 1
+    foreach key [lsort [array names env]] {
+	$childsite.env.text insert end "$key=$env($key)\n"
+	}
+
     .si activate
     destroy .si
     }
@@ -741,8 +786,8 @@ proc do_config_save {} {
     global ppr_server_list
     puts "Saving configuration..."
     if {[catch {config_save "set ppr_root_url \"$ppr_root_url\"\nset ppr_server_list {$ppr_server_list}\n"} errormsg]} {
-	puts "Failed to save configuration:\n$errormsg"	
-	#alert "Failed to save configuration:\n$errormsg"	
+	puts "Failed to save configuration:\n$errormsg"
+	#alert "Failed to save configuration:\n$errormsg"
 	}
     }
 

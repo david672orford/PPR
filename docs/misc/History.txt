@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--21 December 2001
+1.50a1, 1 August 2001--10 January 2002.
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7504,4 +7504,13 @@ line was being parsed twice.
 
 * Added docs/pprpopup/.
 
+* Removed unixuser/pprpopupd.perl and added it to fixup/fixup_obsolete.sh
+  (but left the latter commented out).
+
+* Added procsets/TrinColl-PPR-dmm-nup-3-7 to replace TrinColl-PPR-dmm-nup-3-6.
+  The changes correct bugs discovered by Klaus Reimann.
+
+* Fixed pprd so that fatal() doesn't delete the lock file unless pprd
+  created the lock file.  The problem was that if it found a lock file from
+  another instance, it called fatal() which removed it.
 

@@ -1,9 +1,9 @@
 #
 # browser.itk
-# Copyright (c) 1996 DSC Technologies Corporation
-# Copyright 1995--2001, Trinity College Computing Center.
+# Portions Copyright (c) 1996 DSC Technologies Corporation
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 20 December 2001.
+# Last modified 9 January 2002.
 #
 
 package require Itcl
@@ -607,7 +607,7 @@ itcl::class Browser {
   protected variable _current_textarea
 
   protected method _append_text {text}
-  protected method _parse_fields {array_var string}
+  #protected method _parse_fields {array_var string}
   protected method to_anchor {}
   protected method parse_url {url}
 }
@@ -776,6 +776,8 @@ itcl::body Browser::render {html {wd .}} {
 }
 
 #-----------------------------------------------------------
+# METHOD: write text
+#
 # This is like JavaScript document.write().
 #-----------------------------------------------------------
 itcl::body Browser::write {html} {
@@ -846,16 +848,22 @@ itcl::body Browser::write {html} {
     $itk_component(text) config -state disabled
 }
 
-# ------------------------------------------------------------------
-# PRIVATE METHOD: _append_text text
-#
-# append text in the format described by the state variables
-# ------------------------------------------------------------------
+#------------------------------------------------------------------
+# Internal function
+# Append text in the format described by the state variables.
+#------------------------------------------------------------------
 itcl::body Browser::_append_text {text} {
 
-    if {!$_intable && $itk_option(-update)} {update}
+    # This is a good time to call update so that the user can see our progress.
+    if {!$_intable && $itk_option(-update)} {
+	update
+	}
 
-    # If not in <pre></pre>, then convert each intances of whitespace
+    # Swallow <style></style>
+
+    # Swallow <script></script>
+
+    # If not in <pre></pre>, then convert each instance of whitespace
     # to a single space.
     if !$_pre {
 	set text [string trim $text "\n\r"]
@@ -908,40 +916,9 @@ itcl::body Browser::_append_text {text} {
     $_hottext insert end $text $_tag
 }
 
-# ------------------------------------------------------------------
-# PRIVATE METHOD: _parse_fields array_var string
-#
-# parse fields from a href or image tag. At the moment, doesn't support
-# spaces in field values. (e.g. alt="not avaliable")
-# ------------------------------------------------------------------
-itcl::body Browser::_parse_fields {array_var string} {
-  upvar $array_var array
-  if {$string != "{}" } {
-    regsub -all "( *)=( *)" $string = string
-    regsub -all {\\\"} $string \" string
-    while {$string != ""} {
-      if ![regexp "^ *(\[^ \n\r=\]+)=\"(\[^\"\n\r\t\]*)(.*)" $string \
-                      dummy field value newstring] {
-        if ![regexp "^ *(\[^ \n\r=\]+)=(\[^\n\r\t \]*)(.*)" $string \
-                      dummy field value newstring] {
-          if ![regexp "^ *(\[^ \n\r\]+)(.*)" $string dummy field newstring] {
-            error "malformed command field; field = \"$string\""
-            continue
-          }
-          set value ""
-        }
-      }
-      set array([string tolower $field]) $value
-      set string "$newstring"
-    }
-  }
-}
-
-# ------------------------------------------------------------------
-# PRIVATE METHOD: _entity_img
-#
-# display an image. takes argument of the form img=<filename>
-# ------------------------------------------------------------------
+#------------------------------------------------------------------
+# <img> tag handler
+#------------------------------------------------------------------
 itcl::body Browser::_entity_img {{args {}}} {
   #puts "Browser::_entity_img: $args"
 
@@ -1064,7 +1041,7 @@ itcl::body Browser::_entity_/th {} {
 }
 
 #-----------------------------------------------------------
-# <form>
+# <form> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_form {args} {
   #puts "Browser::_entity_form $args"
@@ -1087,7 +1064,7 @@ itcl::body Browser::_entity_form {args} {
 }
 
 #-----------------------------------------------------------
-# </form>
+# </form> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_/form {} {
   #puts "Browser::_entity_/form"
@@ -1096,7 +1073,7 @@ itcl::body Browser::_entity_/form {} {
 }
 
 #-----------------------------------------------------------
-# <input>
+# <input> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_input {args} {
   #puts "Browser::_entity_input"
@@ -1184,14 +1161,14 @@ itcl::body Browser::_entity_input {args} {
 }
 
 #-----------------------------------------------------------
-# <button>
+# <button> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_button {args} {
   puts "Browser::_entity_button"
 }
 
 #-----------------------------------------------------------
-# <select>
+# <select> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_select {args} {
   #puts "Browser::_entity_select"
@@ -1214,19 +1191,23 @@ itcl::body Browser::_entity_select {args} {
 }
 
 #-----------------------------------------------------------
-# </select>
-# We have to use baseline alignment because bottom
-# alignment doesn't work.
+# </select> tag handler
+#
 #-----------------------------------------------------------
 itcl::body Browser::_entity_/select {} {
   #puts "Browser::_entity_/select"
+
   $_current_form add_element [itcl::code $_current_select]
+
+  # We have to use baseline alignment because bottom
+  # alignment doesn't work.
   $_hottext window create end -window [$_current_select window $_hottext.select[incr _counter]] -align baseline
+
   set _current_select {}
 }
 
 #-----------------------------------------------------------
-# <option>
+# <option> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_option {args} {
   #puts "Browser::_entity_option"
@@ -1251,7 +1232,7 @@ itcl::body Browser::_entity_option {args} {
 }
 
 #-----------------------------------------------------------
-# <textarea>
+# <textarea> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_textarea {args} {
   #puts "Browser::_entity_textarea"
@@ -1271,7 +1252,7 @@ itcl::body Browser::_entity_textarea {args} {
 }
 
 #-----------------------------------------------------------
-# </textarea>
+# </textarea> tag handler
 #-----------------------------------------------------------
 itcl::body Browser::_entity_/textarea {args} {
   #puts "Browser::_entity_/textarea"

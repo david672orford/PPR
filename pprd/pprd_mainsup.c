@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_mainsup.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 9 May 2001.
+** Last modified 9 January 2002.
 */
 
 #include "before_system.h"
@@ -136,12 +136,13 @@ void create_lock_file(void)
     int lockfilefd;
     char temp[10];
     if((lockfilefd = open(PPRD_LOCKFILE, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
-	fatal(1, "can't open \"%s\", errno=%d (%s)", PPRD_LOCKFILE, errno, gu_strerror(errno));
+	fatal(100, "can't open \"%s\", errno=%d (%s)", PPRD_LOCKFILE, errno, gu_strerror(errno));
     if(gu_lock_exclusive(lockfilefd, FALSE))
-	fatal(1, "pprd already running");
+	fatal(100, "pprd already running");
     snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
     write(lockfilefd, temp, strlen(temp));
     gu_set_cloexec(lockfilefd);
+    lockfile_created = TRUE;
     } /* end of create_lock_file() */
 
 /*

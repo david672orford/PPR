@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_run.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,23 +10,20 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 20 December 2001.
+# Last modified 9 January 2002.
 #
 
 #===============================================================
-# Run a command.  The output is sent to the web browser after
-# HTML escaping it.  The real and effective user ids are
-# reversed when the command is run.
+# Print the command in HTML.  We assume we are in a <PRE>
+# environment.
 #===============================================================
-sub run
-    {
-    # Print the command we are about to execute.
+sub run_print
     {
     print '$';
     my $total_length = 1;
     foreach $arg (@_)
     	{
-	if(($total_length + length($arg)) >= 80)
+	if(($total_length + length($arg)) >= 70)
 	    {
 	    print " \\\n    ";
 	    $total_length = 4;
@@ -39,17 +36,28 @@ sub run
 
 	if($arg !~ /^[-_0-9a-zA-Z\/]+$/)
 	    {
-	    print "\"$arg\"";
+	    print html("\"$arg\"");
 	    $total_length += 2;
 	    }
 	else
 	    {
-	    print "$arg";
+	    print html($arg);
 	    }
+
 	$total_length += length($arg);
     	}
     print "\n";
     }
+    
+#===============================================================
+# Run a command.  The output is sent to the web browser after
+# HTML escaping it.  The real and effective user ids are
+# reversed when the command is run.
+#===============================================================
+sub run
+    {
+    # Print the command we are about to execute.
+    run_print @_;
 
     my $pid;
     my $result;
@@ -107,6 +115,10 @@ sub opencmd
 
     return 1 if($pid != 0);		# if parent
 
+    # Make sure errors go the the web page rather than
+    # to the server error log.
+    open(STDERR, ">&STDOUT");
+
     # If possible, clear the PATH to avoid problems with
     # tainted PATHs.
     $ENV{PATH} = "" if($_[0] =~ /^\//);
@@ -132,13 +144,14 @@ sub run_or_die
 	{
 	$result .= $line;
 	}
-    if(! close(RUN_OR_DIE))
+    if(!close(RUN_OR_DIE))
 	{
-	$result =~ s/&/&amp;/g;
-	$result =~ s/</&lt;/g;
-	$result =~ s/>/&gt;/g;
-	$result =~ s/$/<br>/gm;
-	die "$result\n";
+	my $error = $! ? $! : ("exit code " . ($? >> 8));
+	print "<pre>\n";
+	run_print @_;
+	print html($result);
+	print "</pre>\n";
+	die "external command failed: $error\n";
 	}
     }
 

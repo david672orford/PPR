@@ -3,7 +3,7 @@
 # pprpopup_loader.tcl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 9 January 2002.
+# Last modified 10 January 2002.
 #
 
 package require Tcl 8.3
@@ -71,7 +71,7 @@ namespace eval pprpopup_loader {
     wm withdraw .
 
     # Pull in the HTTP routines.
-    package require http 2.2
+    package require http 2.3
 
     # Define a procedure for displaying error messages.
     proc display_error {message} {
@@ -239,7 +239,7 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 
     set screen_width [winfo screenwidth .splash]
     set screen_height [winfo screenheight .splash]
-    
+
     # Figure out the width and height of the splash screen.  After we know it we
     # comment out the code and hard-code the values.
     #tkwait visibility .splash
@@ -252,6 +252,16 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
     set window_x [expr ($screen_width - $window_width) / 2]
     set window_y [expr ($screen_height - $window_height) / 2]
     wm geometry .splash +$window_x+$window_y
+
+    # Add a progress bar.
+    scale .splash.scale \
+    	-orient horizontal \
+    	-from 0 -to 100 \
+    	-tickinterval 10 \
+    	-showvalue false
+    pack .splash.scale -side top -fill x
+
+    # Let the user see what we have so far.
     update
 
     # Load the configuration.
@@ -300,17 +310,14 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
 	    }
 	}
 
-    # Add a progress bar.
-    scale .splash.scale \
-    	-orient horizontal \
-    	-from 0 -to 100 \
-    	-tickinterval 10 \
-    	-showvalue false
-    pack .splash.scale -side top -fill x
+    # We will call this 10% done.
+    .splash.scale set 10
+    update
 
     # Define a callback procedure to adjust the progress bar.
+    # It can take the bar from 10% to 90% done.
     proc scale_callback {token total current} {
-	.splash.scale set [expr $current / $current * 100.0]
+	.splash.scale set [expr $current / $current * 80.0 + 10]
         }
 
     # Define the callback procedure that gets called once the HTTP

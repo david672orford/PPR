@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/unixuser/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,14 +10,14 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 2 August 2001.
+# Last modified 7 January 2002.
 #
 
 include ../makeprogs/global.mk
 
 BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
 BIN_PROGS=ppr-xfm
-LIB_PROGS=pprpopupd
+LIB_PROGS=
 FIXUP_SCRIPTS=login_ppr.sh login_ppr.csh
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 

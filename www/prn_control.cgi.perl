@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_control.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 4 May 2001.
+# Last modified 11 January 2002.
 #
 
 use lib "?";
@@ -357,10 +357,10 @@ if($job ne "")
     my $width2 = ($progress_width_total - $width1);
 
     print "<span class=\"label\"><span class=\"sent\">", H_("Bytes Sent"), "</span>/<span class=\"unsent\">", H_("Bytes Unsent"), "</span></span><br>\n";
-    print "<div class=\"bar\">";
-    print "<img src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width1>" if($width1 > 0);	# no "\n"!
-    print "<img src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width2>" if($width2 > 0);	# no "\n"!
-    print "</div>\n";
+    print "<table><tr><td class=\"bar\">";
+    print "<img src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width1>" if($width1 > 0); # no "\n"!
+    print "<img src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width2>" if($width2 > 0); # no "\n"!
+    print "</td></tr></table>\n";
     }
 
 # If we know how many pages there should be, and the values make sense,
@@ -392,11 +392,12 @@ if($pages > 0 && $pages_started <= $pages && $pages_completed <= $pages && $page
     	print "<span class=\"started\">", H_("Pages Started"), "</span>/";
     	print "<span class=\"unstarted\">", H_("Pages Unstarted"), "</span>";
     print "</span><br>\n";
-    print "<div class=\"bar\">";
-	print "<img src=\"../images/pixel-white.png\" hspace=0 height=25 width=$width1>" if($width1 > 0);	# no "\n"!
+    print "<table><tr><td class=\"bar\">";
+	print "<img src=\"../images/pixel-white.png\" hspace=0 height=25 width=$width1>" if($width1 > 0); # no "\n"!
 	print "<img src=\"../images/pixel-red.png\" hspace=0 height=25 width=$width2>" if($width2 > 0);	# no "\n"!
-	print "<img src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width3>" if($width3 > 0);	# no "\n"!
-    print "</div>\n";
+	print "<img src=\"../images/pixel-blue.png\" hspace=0 height=25 width=$width3>" if($width3 > 0); # no "\n"!
+print "abcd";
+    print "</td></tr></table>\n";
     }
 
 #

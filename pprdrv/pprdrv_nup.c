@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_nup.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 10 February 2001.
+** Last modified 7 January 2002.
 */
 
 /*
@@ -33,7 +33,7 @@ static const char draft_notice_font[] = "Helvetica-Bold";
 
 /* Change these to use a different version of PPR's N-Up procedure set. */
 static const double procset_version = 3.0;
-static const int    procset_revision = 6;	/* 5 or 6 */
+static const int    procset_revision = 7;	/* 6 or 7 */
 
 /*
 ** This routine in the N-Up module is called before any output is

@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 19 December 2001.
+# Last modified 9 January 2002.
 #
 
 #
@@ -20,10 +20,16 @@
 
 require 5.000;
 use lib "?";
+require 'paths.ph';
 require 'pprpopup.pl';
 require 'cgi_data.pl';
+use Sys::Hostname;
 
-my $host_and_port = "mouse.trincoll.edu:15010";
+# This is because Sys::Hostname:hostname() might have to exec uname.
+defined($SAFE_PATH) || die;
+$ENV{PATH} = $SAFE_PATH;
+
+my $host_and_port = hostname() . ":15010";
 
 # Set a maximum time this script can run.
 alarm(30);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 9 January 2002.
 */
 
 /*
@@ -276,7 +276,10 @@ static void queue_write_status_and_flags(struct QEntry *job)
 	    	error("%s(): lseek() failed, errno=%d (%s)", function, errno, strerror(errno));
 	    	break;
 	    	}
+
+	    /* Write the new line.  If the job is printing, substitute 0 for the actual printer index. */
 	    snprintf(buf, sizeof(buf), "Status-and-Flags: %02d %04X\n", job->status >= 0 ? 0 : (job->status * -1), job->flags);
+
 	    to_write_size = strlen(buf);
 	    if((written_size = write(fd, buf, to_write_size)) == -1)
 	    	{
@@ -287,6 +290,7 @@ static void queue_write_status_and_flags(struct QEntry *job)
 	    	{
 		error("%s(): tried to write %d bytes but wrote %d instead", function, to_write_size, written_size);
 		}
+
 	    break;	/* end of inner exception handling block */
 	    }
 
@@ -534,6 +538,10 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
                    have the required media mounted. */
 		newent.never = 0;
 		newent.notnow = 0;
+
+		/* If the job was printing (as indicated by a status of 0), then set its status to waiting. */
+		if(newent.status == 0)
+		    newent.status = STATUS_WAITING;
 
 		lock();
 

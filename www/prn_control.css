@@ -1,19 +1,28 @@
 /*
 ** mouse:~ppr/src/www/prn_control.css
-** Last modified 16 June 2000.
+** Last modified 10 January 2002.
 */
 
 BODY { background-color: yellow; color: black }
 SPAN.label { font-weight: bold }
 SPAN.blank { backgroup-color: white; color: blue }
 TD TABLE TH { font-weight: bold }
-TD TABLE TD { font-weight: normal;
+TD TABLE TD {
+	font-weight: normal;
 	background-color: white;
-	border-color: black; border-style: solid; border-width: thin; }
+	border-color: black; border-style: solid; border-width: thin;
+	}
 TEXTAREA.alerts { font-size: 8pt; }
 INPUT.buttons { background: #b0b0b0 }
 
-DIV.bar		{ margins: 3pt; border-style: solid; border-width: thin; }
+TD.bar {
+	margin: 3pt; 
+	border-style: solid;
+	border-width: thin;
+	height: 25; width: 550;
+	}
+
+IMG { margin: 0pt; padding: 0pt; }
 
 SPAN.sent	{ color: red; }
 SPAN.unsent	{ color: blue; }

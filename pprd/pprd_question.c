@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_question.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 December 2001.
+** Last modified 8 January 2002.
 */
 
 #include "before_system.h"
@@ -36,6 +36,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
+#include <signal.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -64,6 +65,31 @@ static int active_questions = 0;
 /* How many questions are still unanswered? */
 static int outstanding_questions = 0;
 
+/* These functions and values protect the integrity of the tables
+   from disruption by the SIGCHLD handler calling question_child_hook().
+   */
+static int question_lock_level = 0;
+static sigset_t question_block_set, question_save_set;
+static void question_lock(void)
+    {
+    question_lock_level++;
+    if(question_lock_level == 1)
+	{
+	sigemptyset(&question_block_set);
+	sigaddset(&question_block_set, SIGCHLD);
+	sigprocmask(SIG_BLOCK, &question_block_set, &question_save_set);
+	}
+    }
+static void question_unlock(void)
+    {
+    const char function[] = "question_unlock";
+    question_lock_level--;
+    if(question_lock_level == 0)
+	sigprocmask(SIG_SETMASK, &question_block_set, (sigset_t*)NULL);
+    if(question_lock_level < 0)
+    	fatal(0, "%s(): assertion failed, question_lock_level=%d", function, question_lock_level);
+    }
+
 /*
 ** Initialize the question subsystem.
 ** This involves clearing all of the slots.
@@ -89,9 +115,8 @@ static int question_launch(struct QEntry *job)
 
     DODEBUG_QUESTIONS(("%s(job={id=%d})", function, job->id));
 
-    if(lock_level == 0)
+    if(question_lock_level == 0)
     	fatal(0, "%s(): tables not locked", function);
-
 
     /* Find the first empty slot.  We know there is one. */
     for(x=0; x < MAX_ACTIVE_QUESTIONS; x++)
@@ -159,10 +184,14 @@ static int question_launch(struct QEntry *job)
         fclose(qfile);
 
 	if(!question || !response_responder || !response_address)
-	    fatal(11, "child: %s(): required parameter missing", function);
+	    {
+	    debug("child: %s(): required parameter missing", function);
+	    exit(11);
+	    }
 
 	execl("lib/pprd-question", "pprd-question", response_responder, response_address, response_options ? response_options : "", question, jobname, magic_cookie, title, NULL);
-	fatal(12, "child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	debug("child: %s(): execl() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	exit(12);
 	}
 
     DODEBUG_QUESTIONS(("%s(): pid is %ld", function, (long)active_question[x].pid));
@@ -176,6 +205,8 @@ static int question_launch(struct QEntry *job)
     active_question[x].id = job->id;
     active_question[x].subid = job->subid;
     active_question[x].homenode_id = job->homenode_id;
+
+    active_questions++;
 
     DODEBUG_QUESTIONS(("%s()", function));
     return 0;
@@ -200,7 +231,8 @@ static void question_look_for_work(void)
 
 	DODEBUG_QUESTIONS(("%s(): time_now=%ld", function, (long)time_now));
 
-	lock();
+	question_lock();
+
 	for(x=count=0; x < queue_entries && count < outstanding_questions && active_questions < MAX_ACTIVE_QUESTIONS; x++)
 	    {
 	    DODEBUG_QUESTIONS(("%s(): id=%d, UNANSWERED=%s, ASKING_NOW=%s, resend_message_at=%ld (now %+ld)",
@@ -225,7 +257,7 @@ static void question_look_for_work(void)
 	if(x==queue_entries)
 	    outstanding_questions = count;
 
-        unlock();
+        question_unlock();
 	}
 
     DODEBUG_QUESTIONS(("%s(): done", function));
@@ -241,9 +273,11 @@ void question_job(struct QEntry *job)
     {
     FUNCTION4DEBUG("question_job")
     DODEBUG_QUESTIONS(("%s(job={id=%d})", function, job->id));
+    question_lock();
     outstanding_questions++;
     if(active_questions < MAX_ACTIVE_QUESTIONS)
 	question_launch(job);
+    question_unlock();
     DODEBUG_QUESTIONS(("%s(): done", function));
     } /* end of question_job() */
 
@@ -258,7 +292,7 @@ gu_boolean question_child_hook(pid_t pid, int wstat)
 
     DODEBUG_QUESTIONS(("%s(pid=%ld, wstat=0x%08X)", function, (long)pid, wstat));
 
-    lock();
+    question_lock();
 
     /* Look for an active question with this PID. */
     for(x=0; x < MAX_ACTIVE_QUESTIONS; x++)
@@ -322,11 +356,11 @@ gu_boolean question_child_hook(pid_t pid, int wstat)
 	    }
 	}
 
-    unlock();
+    question_unlock();
 
     DODEBUG_QUESTIONS(("%s(): returning %s", function, retval ? "TRUE" : "FALSE"));
     return retval;
-    }
+    } /* end of question_child_hook() */
 
 /*
 ** This is called every so often so we can retry questions.

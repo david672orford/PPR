@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_pprdrv.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 December 2001.
+** Last modified 9 January 2002.
 */
 
 /*
@@ -121,7 +121,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 
     if(pid)				/* parent */
 	{
-	DODEBUG_PRNSTART(("%s(): Starting printer \"%s\", pid=%d", function, destid_local_to_name(prnid), pid));
+	DODEBUG_PRNSTART(("%s(): Starting printer \"%s\", pid=%d", function, destid_local_to_name(prnid), (int)pid));
 	active_printers++;				/* add to count of printers printing */
 	printers[prnid].pid = pid;			/* remember which process is printing it */
 	printers[prnid].jobdestid = job->destid;	/* remember what job is being printed */

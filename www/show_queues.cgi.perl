@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/show_queues.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 18 October 2001.
+# Last modified 7 January 2002.
 #
 
 use 5.005;
@@ -143,6 +143,8 @@ Vary: user-agent, accept-language
 <meta http-equiv="Content-Script-Type" content="text/javascript">
 <script type="text/javascript" src="../js/show_queues.js" defer></script>
 <link rel="stylesheet" href="../style/show_queues.css" type="text/css">
+<link rel="icon" href="../images/icon-16.png" type="image/png">
+<link rel="SHORTCUT ICON" href="../images/icon-16.ico">
 </head>
 <body onload="window.scrollTo(document.forms[0].x.value, document.forms[0].y.value)">
 <div id="popup" class="menu">
@@ -163,7 +165,8 @@ eval {
 {
 print <<"Top5";
 <div class="menubar">
-<label><span class="label">${\H_("View:")}</span>&nbsp;
+<label title="Choose the display format.">
+<span class="label">${\H_("View:")}</span>&nbsp;
 <select name="columns" onchange="document.forms[0].submit()")>
 Top5
 
@@ -194,27 +197,35 @@ Top7
 # Add a control for the refresh interval.
 print <<"Top8";
 <spacer type="horizontal" size=10>
-<label><span class="label">${\H_("Refresh Interval:")}</span>
-<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
+<label title="This page will be reloaded at the indicated interval (in seconds).">
+	<span class="label">${\H_("Refresh Interval:")}</span>
+	<input type="text" name="refresh_interval" value="$refresh_interval" size=4 onchange="document.forms[0].submit()">
 </label>
 Top8
 
 # Add a refresh button.
 print <<"Top9";
 <spacer type="horizontal" size=50>
-<input class="buttons" type="submit" name="action" value="Refresh" onclick="gentle_reload(); return false">
+<label title="Refresh the page right now.">
+	<input class="buttons" type="submit" name="action" value="Refresh" onclick="gentle_reload(); return false">
+</label>
 Top9
 
 # Create a button for JavaScript Cookie login.
-print '<spacer type="horizontal" size=10>', "\n";
-print '<input type="button" value=', html_value(_("Cookie Login")), ' onclick="';
-print "window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')";
-print '">', "\n";
+print <<"TopCookie";
+<spacer type="horizontal" size=10>
+<label title="Use this if your browser doesn't support Digest authentication.">
+<input type="button" value=${\html_value(_("Cookie Login"))} 
+	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
+</label>
+TopCookie
 
 # Try to make a "Close" button.  (They do the same thing.)
 cgi_back_possible("/");
 print '<spacer type="horizontal" size=10>', "\n";
+print "<label title=\"Close this window.\">\n";
 isubmit("action", "Close", N_("_Close"), "class=\"buttons\" onclick=\"window.close(); return false;\"");
+print "</label>\n";
 
 print <<"Top10";
 </div>
@@ -228,15 +239,21 @@ Top10
 print <<"Top10";
 <table border=$table_border cellspacing=0 cellpadding=$CELLPADDING>
 <tr align=center>
-<td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')">
+<td><a href="prn_addwiz.cgi?$encoded_back_stack" onclick="return wizard('prn_addwiz.cgi')"
+	title="Click here and you will be guided through the process of adding a new printer."
+	>
 	<img $ICON_ADD_PRINTER border=0><br>
 	<span class="qname">${\H_("Add New Printer")}</span>
         </a></td>
-<td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')">
+<td><a href="grp_addwiz.cgi?$encoded_back_stack" onclick="return wizard('grp_addwiz.cgi')"
+	title="Click here and you will be guided through the process of adding a new group of printers."
+	>
 	<img $ICON_ADD_GROUP border=0><br>
 	<span class="qname">${\H_("Add New Group")}</span>
 	</a></td>
-<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false">
+<td><a href="show_jobs.cgi?name=all;$encoded_back_stack" onclick="show_jobs('all'); return false"
+	title="Click here to open a window which will show all queued jobs."
+	>
 	<img $ICON_ALL_QUEUES border=0><br>
 	<span class="qname">${\H_("Show All Queues")}</span>
 	</a></td>
@@ -414,14 +431,16 @@ foreach my $qname (sort(keys(%queues)))
     if($columns > 0)		# multicolumn or single column w/out details
 	{
 	print "<tr align=center>\n" if(($col % $columns) == 0);
-	print "<td>$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
+	print "<td title=\"", html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>\n";
 	$col++;
 	print "</tr>\n" if(($col % $columns) == 0);
 	}
     elsif($columns == 0)	# free flow
         {
 	print "<table align=\"left\" border=$table_border cellspacing=0 cellpadding=$CELLPADDING>";
-	print "<tr align=\"center\"><td>$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td></tr></table>\n";
+	print "<tr align=\"center\">";
+	print "<td title=\"", html($qdescription), "\">$a_tag$img_tag$jcount<br><span class=\"qname\">", html($qname), "</span></a></td>";
+	print "</tr></table>\n";
         }
     else			# Details (-1) or Many Details (-2)
         {

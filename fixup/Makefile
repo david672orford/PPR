@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/tools4fixup/Makefile
-# Copyright 1995--2000, Trinity College Computing Center.
+# mouse:~ppr/src/fixup/Makefile
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 22 November 2000.
+# Last modified 4 January 2002.
 #
 
 include ../makeprogs/global.mk
@@ -27,7 +27,8 @@ FIXUP_PROGS=fixup \
 	fixup_perms \
 	fixup_samples \
 	fixup_inetd \
-	fixup_media
+	fixup_media \
+	fixup_login
 
 all: $(FIXUP_PROGS)
 

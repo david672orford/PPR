@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_obsolete.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 2 August 2001.
+# Last modified 7 January 2002.
 #
 
 HOMEDIR="?"
@@ -159,6 +159,7 @@ outdated $SHAREDIR/www/html/docbrowse.html
 outdated "$SHAREDIR/PPDFiles/HP LaserJet 4050 N"	# is bad
 outdated $HOMEDIR/lib/login_ppr.sh
 outdated $HOMEDIR/lib/login_ppr.csh
+#outdated $HOMEDIR/lib/pprpopupd			# uncomment for 1.90
 
 echo "Done."
 echo

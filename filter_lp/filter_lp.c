@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_lp/filter_lp.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 19 June 2001. 
+** Last modified 2 January 2002. 
 */
 
 /*
@@ -1405,7 +1405,7 @@ int main(int argc, char *argv[])
 		    filter_options_error(1, &o, _("Value for option \"%s=\" is invalid."), "pagesize");
  	    	}
 
-	    /* force a page width (number of columns */
+	    /* force a page width (number of columns) */
 	    else if(strcmp(name, "width") == 0)
 	    	{
 	    	if((MAX_WIDTH = atoi(value)) < 10 || MAX_WIDTH > 1000)
@@ -1760,7 +1760,7 @@ int main(int argc, char *argv[])
     if( (LMTM + LMBM + gutter) >= phys_pu_width )
 	fatal(1, _("lmtm, lmbm, gutter, and current pagesize leave no space for text"));
 
-    /* If in noisy mode, point out certain odd conditions */
+    /* If in noisy mode, point out certain odd conditions. */
     if(noisy)
 	{
 	if(MIN_COLUMNS >= landscape_lentrigger)

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/pprd.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 December 2001.
+** Last modified 9 January 2002.
 */
 
 /*
@@ -35,26 +35,30 @@
 #define QUEUE_SIZE_MAX 10000		/* absolute maximum size we will attempt to allocate */
 
 /*
-** pprd Debugging Options.
+** These are the pprd debugging options.  Change "#if 0" to "#if 1" to turn 
+** debugging on.
+**
+** Note that we use C++ comments here to disable the ones we don't want.  This
+** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
 #if 1
 #define DEBUG 1				/* define function[] strings */
-#define DEBUG_STARTUP 1			/* initialization routines */
-#define DEBUG_MAINLOOP 1		/* main loop */
-/* #define DEBUG_RECOVER 1 */		/* reloading jobs and mounted media on restart */
-#define DEBUG_NEWJOBS 1			/* receipt of new jobs */
-#define DEBUG_PRNSTART 1		/* starting of printers */
-/* #define DEBUG_PRNSTART_GRITTY 1 */	/* details of starting printers */
-#define DEBUG_PRNSTOP 1			/* analysis of pprdrv exit */
-#define DEBUG_DEQUEUE 1			/* removal from the queue */
-#define DEBUG_MEDIA 1			/* media operations */
-/* #define DEBUG_TICK 1 */		/* debug timer tick routine */
-/* #define DEBUG_RESPOND 1 */		/* launching of responders */
-/* #define DEBUG_PPOPINT 1 */		/* interface to ppop */
-/* #define DEBUG_ALERTS 1 */            /* sending of operator alerts */
-/* #define DEBUG_NODEID 1 */		/* allocating and deallocating node id numbers */
+//#define DEBUG_STARTUP 1		/* initialization routines */
+//#define DEBUG_MAINLOOP 1		/* main loop */
+//#define DEBUG_RECOVER 1		/* reloading jobs and mounted media on restart */
+//#define DEBUG_NEWJOBS 1		/* receipt of new jobs */
+//#define DEBUG_PRNSTART 1		/* starting of printers */
+//#define DEBUG_PRNSTART_GRITTY 1	/* details of starting printers */
+//#define DEBUG_PRNSTOP 1		/* analysis of pprdrv exit */
+//#define DEBUG_DEQUEUE 1		/* removal from the queue */
+//#define DEBUG_MEDIA 1			/* media operations */
+//#define DEBUG_TICK 1			/* debug timer tick routine */
+//#define DEBUG_RESPOND 1		/* launching of responders */
+//#define DEBUG_PPOPINT 1		/* interface to ppop */
+//#define DEBUG_ALERTS 1		/* sending of operator alerts */
+//#define DEBUG_NODEID 1		/* allocating and deallocating node id numbers */
 #define DEBUG_REMOTE 1			/* sending of jobs to remote systems */
-#define DEBUG_QUESTIONS 1
+#define DEBUG_QUESTIONS 1		/* sending questions to job submitters */
 #endif
 
 /*
@@ -65,6 +69,9 @@
 #define PPRD_LOGFILE LOGDIR"/pprd"
 
 /*============ User: don't change anything below this line. ============*/
+
+/* A few global variables: */
+extern gu_boolean lockfile_created;
 
 /* A few critical declarations: */
 void fatal(int exval, const char string[], ...)
