@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2003.
+** Last modified 30 June 2003.
 */
 
 /*
@@ -34,6 +34,8 @@
 **
 ** This program must be linked with Netatalk and NATALI.
 */
+
+/* #define DEBUG 1 */
 
 #include "before_system.h"
 #include <stdio.h>
@@ -175,8 +177,14 @@ static int gui_backend(char *argv[])
 
 	for(iteration=1, more=1; 1; iteration++)
 		{
-		/* printf("iteration %d\n", iteration); */
+		#ifdef DEBUG
+		printf("search iteration %d\n", iteration);
+		#endif
 
+		/* In order to produce results as quicly as possible while still giving as many
+		   devices as possible a chance to respond, we start with queries that don't 
+		   wait very long and then move up to more patient queries.
+		   */
 		if(iteration == 1)
 			{
 			retries.retries = 2;
@@ -205,6 +213,9 @@ static int gui_backend(char *argv[])
 		*/
 		if(more)
 			{
+			#ifdef DEBUG
+			printf("  enlarging tuple buffer from %d to %d entries\n", max, max + 100);
+			#endif
 			max += 100;
 			if((buffer = (at_nbptuple_t*)realloc(buffer, sizeof(at_nbptuple_t) * max)) == (at_nbptuple_t*)NULL)
 				{
@@ -213,50 +224,67 @@ static int gui_backend(char *argv[])
 				}
 			}
 
+		/* This does the actual lookup and places the results in buffer[]. */
 		if((ret = nbp_lookup(&parsed_name, buffer, max, &retries, &more)) == -1)
 			{
 			fprintf(stderr, "Lookup failed!\n");
 			return 1;
 			}
 
+		#ifdef DEBUG
+		printf("  got %d entries\n", ret);
+		#endif
+
+		/* Iterate over the lookup results array. */
 		for(x=0; x < ret; x++)
 			{
 			char temp[100];
 			at_nbptuple_t *t = &buffer[x];
 			int cmp;
 
+			/* Format the AppleTalk name as a printable string. */
 			snprintf(temp, sizeof(temp), "%.*s:%.*s@%.*s",
 				(int)t->enu_entity.object.len, t->enu_entity.object.str,
 				(int)t->enu_entity.type.len, t->enu_entity.type.str,
 				(int)t->enu_entity.zone.len, t->enu_entity.zone.str);
 
-			/* printf("x = %d, temp = \"%s\"\n", x, temp); */
+			#ifdef DEBUG
+			printf("  entry %d \"%s\"\n", x, temp);
+			printf("  searching %d existing names\n", names_count);
+			#endif
 
+			/* Iterate over the list of names which we saw on previous lookup interations. */
 			for(y=0, cmp=1; y < names_count; y++)
 				{
 				cmp = gu_strcasecmp(temp, names[y].str); /*	 || strcmp(temp, names[y].str); */
 
-				/* printf("y = %d, names[y] = {%d, \"%s\"}, cmp = %d\n", y, names[y].iteration, names[y].str, cmp); */
+				#ifdef DEBUG
+				printf("    names[%d] = {%d, \"%s\"}, cmp = %d\n", y, names[y].iteration, names[y].str, cmp);
+				#endif
 
 				if(cmp <= 0)
 					break;
 				}
 
+			/* If we found an insertion point, */
 			if(cmp != 0)
 				{
+				/* If more space is needed, */
 				if(names_count == names_arraysize)
 					{
 					names_arraysize += 100;
-					if( (names = (struct NAME *)realloc(names, names_arraysize * sizeof(struct NAME))) == (struct NAME *)NULL )
+					if((names = (struct NAME *)realloc(names, names_arraysize * sizeof(struct NAME))) == (struct NAME *)NULL)
 						{
 						fprintf(stderr, "realloc() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
 						return 1;
 						}
 					}
 
+				/* If the insertion point isn't the end of the array, open a space. */
 				if(y < names_count)
 					memmove(&names[y+1], &names[y], ((names_count - y) * sizeof(struct NAME)));
 
+				/* Insert the name into the array. */
 				if((names[y].str = strdup(temp)) == (char*)NULL)
 					{
 					fprintf(stderr, "strdup() failed, errno=%d (%s)\n", errno, gu_strerror(errno));
@@ -265,25 +293,32 @@ static int gui_backend(char *argv[])
 
 				names_count++;
 
+				/* Send the new name to the GUI front end. */
 				printf("%d %s\n", y, temp);
 				}
 
+			/* Update the iteration number for this name. */
 			names[y].iteration = iteration;
 			}
 
-		/* Remove names which have disappeared. */
+		/* Remove names which haven't been seen since more than two iterations ago. */
 		for(x=0; x < names_count; x++)
 			{
 			if( (iteration - names[x].iteration) > 2 )
 				{
-				/* printf("Dropping %s\n", names[x].str); */
+				#ifdef DEBUG
+				printf("Dropping %s\n", names[x].str);
+				#endif
+				
 				printf("%d\n", x);
+
 				if((x+1) < names_count)
 					{
 					free(names[x].str);
 					memmove(&names[x], &names[x+1], names_count - x - 1);
 					x--;
 					}
+
 				names_count--;
 				}
 			}

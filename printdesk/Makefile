@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 May 2003.
+# Last modified 30 June 2003.
 #
 
 include ../Makefile.conf
@@ -48,7 +48,7 @@ all: $(PROGS) $(ALL_ATALK)
 
 all-atalk: $(ATALK_PROGS)
 
-nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).$(OBJ)
+nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o nbp_lookup nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT) $(ATALKLIBS)
 
 #=== Install ================================================================

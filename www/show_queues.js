@@ -350,7 +350,9 @@ function group(event, name)
 	lnks[5].onclick = function () { return delete_queue(w, 'group', name); };
 	lnks[5].href = 'delete_queue.cgi?type=group&name=' + name;
 	menu_show(w);
-	if(ie5_dom || nav4_dom) { w.onmouseout = function () { menu_hide(w) }; }
+	if(ie5_dom || nav4_dom) {
+		w.onmouseout = function () { menu_hide(w) };
+		}
 	return false;
 	}
 

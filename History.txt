@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--26 June 2003.
+1.51, 15 February 2003--30 June 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8594,6 +8594,10 @@ line was being parsed twice.
   values to these ppop command line options.  Nor can I imagine any instance in which
   a server would accept unverified data as a user identity.
   
+* libgu/gu_strcasecmp.c: corrected gu_strcasecmp() and gu_strncasecmp() to
+  return positive and negative values to indicate the direction of the
+  mismatch.  This has the effect of correcting the behavior of
+  printdesk/nbp_lookup_ali.c when run with the --gui-backend option.
 
 
 
