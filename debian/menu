@@ -1,0 +1,14 @@
+?package(ppr):\
+  needs=X11\
+  section=Apps/System\
+  title="PPR Queues" command="/usr/bin/ppr-panel"\
+  icon16x16="/usr/share/ppr/www/images/icon-16.xpm"
+  icon32x32="/usr/share/ppr/www/images/icon-32.xpm"
+
+?package(ppr):\
+  needs=X11\
+  section=Apps/System\
+  title="PPR Control Panel" command="/usr/bin/ppr-web"\
+  icon16x16="/usr/share/ppr/www/images/icon-16.xpm"
+  icon32x32="/usr/share/ppr/www/images/icon-32.xpm"
+

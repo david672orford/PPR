@@ -26,7 +26,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 October 2004.
+** Last modified 2 December 2004.
 */
 
 /*! \file
@@ -111,6 +111,6 @@ API.  :-)
 
 /* IPP status codes */
 #define IPP_OK 0x0000
-
+#define IPP_NOT_FOUND 0x4006	/* CUPS extension */
 
 /* end of file */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 2 December 2004.
 */
 
 #include "before_system.h"
@@ -285,7 +285,30 @@ static void do_passthru(struct IPP *ipp)
 
 static void do_get_default(struct IPP *ipp)
 	{
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "default");
+	FILE *f;
+	gu_boolean found = FALSE;
+
+	if((f = fopen(ALIASCONF"/default", "r")))
+		{
+		char *line = NULL;
+		int line_len = 80;
+		char *p;
+		while((line = gu_getline(line, &line_len, f)))
+			{
+			if((p = lmatchp(line, "ForWhat:")))
+				{
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", gu_strdup(p));
+				found = TRUE;
+				break;
+				}
+			}
+		if(line)
+			gu_free(line);
+		fclose(f);
+		}
+
+	if(!found)
+		ipp->response_code = IPP_NOT_FOUND;
 	}
 
 int main(int argc, char *argv[])
@@ -339,7 +362,7 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request_header(ipp);
 
-		DEBUG(("dispatching operation 0x%.2x", ipp->operation_id));
+		DEBUG(("dispatching operation 0x%.2x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
 		switch(ipp->operation_id)
 			{
 			case CUPS_GET_CLASSES:

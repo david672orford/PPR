@@ -9389,7 +9389,7 @@ no final tarball was released.
 * added uprint/uprint-lpc.c.
 
 
-1.53, 5 October 2004--12 November 2004
+1.53, 5 October 2004--3 December 2004
 
 * z_install_end/ppr.sh: added code it bail out if PPR is no longer installed.
   This is needed because initscripts are considered configuration files in
@@ -9413,6 +9413,12 @@ no final tarball was released.
 * editps/: Applied Acroread "ProcSet" vs. "procset" bug fix to Windows_*
   and Adobe_NT_5.0.
 
+* ipp/ipp.c:do_get_default(): changed so that rather than return "default"
+  it opens /etc/ppr/aliases/default and returns the name of the actual
+  printer or group.
+
+* papsrv/papsrv_query.c, papd/papd_query.c: fixed handling of %%?End
+  without %%?Begin.
 
 
 TODO

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 2 December 2004.
 */
 
 /* This union holds any kind of IPP value. */
@@ -135,5 +135,6 @@ void debug(const char message[], ...)
 __attribute__ (( format (printf, 1, 2) ))
 #endif
 ;
+const char *ipp_operation_to_str(int op);
 
 /* end of file */

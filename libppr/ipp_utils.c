@@ -98,7 +98,7 @@ static const char *tag_to_str(int tag)
 /*
 ** Convert an operation code to a string.
 */
-static const char *operation_to_str(int op)
+const char *ipp_operation_to_str(int op)
 	{
 	switch(op)
 		{
@@ -169,7 +169,7 @@ static const char *operation_to_str(int op)
 		default:
 			return "unknown";
 		}
-	} /* end of operation_to_str() */
+	} /* end of ipp_operation_to_str() */
 
 /*
  * May tag types have the same encoding.  This function lumps them together
@@ -612,7 +612,7 @@ void ipp_parse_request_header(struct IPP *ipp)
 
 	DEBUG(("version-number: %d.%d, operation-id: 0x%.4X (%s), request-id: %d",
 		ipp->version_major, ipp->version_minor,
-		ipp->operation_id, operation_to_str(ipp->operation_id),
+		ipp->operation_id, ipp_operation_to_str(ipp->operation_id),
 		ipp->request_id
 		));
 	}
