@@ -225,8 +225,8 @@ void ipp_parse_request(struct IPP *ipp)
 	char *p;
 	char *path_info;
 	int tag, delimiter_tag = 0, value_tag, name_length, value_length;
-	char *name;
-	ipp_attribute_t *ap, *ap_prev = NULL, *ap_prev_prev = NULL;
+	char *name = NULL;
+	ipp_attribute_t *ap = NULL, *ap_prev = NULL, **ap_resize = NULL;
 	int ap_i = 0;
 
 	/* Do basic input validation */
@@ -257,28 +257,30 @@ void ipp_parse_request(struct IPP *ipp)
 		if(tag >= 0x00 && tag <= 0x0f)
 			{
 			delimiter_tag = tag;
+			name = NULL;
 			}
 		else if(tag >= 0x10 && tag <= 0xff)
 			{
 			value_tag = tag;
 
 			name_length = ipp_get_ss(ipp);
+
 			if(name_length > 0)
 				name = ipp_get_bytes(ipp, name_length);
-			else
-				name = NULL;
-			debug("0x%.2x 0x%.2x name[%d]=\"%s\"", delimiter_tag, value_tag, name_length, name ? name : "");
 
 			value_length = ipp_get_ss(ipp);
 
+			debug("0x%.2x 0x%.2x name[%d]=\"%s\", value_len=%d", delimiter_tag, value_tag, name_length, name ? name : "", value_length);
+
 			if(name_length > 0)
 				{
-				ap = gu_alloc(1, sizeof(ipp_attribute_t) - 1 + sizeof(ipp_value_t));
-				if(ipp->request_attrs)
-					ap_prev->next = ap;
+				if(ap_prev)
+					ap_resize = &ap_prev->next;
 				else
-					ipp->request_attrs = ap;
+					ap_resize = &ipp->request_attrs;
 			
+				ap = *ap_resize = gu_alloc(1, sizeof(ipp_attribute_t) - 1 + sizeof(ipp_value_t));
+
 				ap->next = NULL;
 				ap->group_tag = delimiter_tag;
 				ap->name = name;
@@ -286,12 +288,14 @@ void ipp_parse_request(struct IPP *ipp)
 
 				ap_i = 0;
 
-				ap_prev_prev = ap_prev;
 				ap_prev = ap;
 				}
 			else
 				{
-				Throw("multiple values not supported");
+				if(!name)
+					Throw("no name!");
+				ap_i++;
+				ap = *ap_resize = gu_realloc(ap, 1, sizeof(ipp_attribute_t) - 1 + sizeof(ipp_value_t) * (1 + ap_i));
 				}
 
 			switch(value_tag)
@@ -301,22 +305,34 @@ void ipp_parse_request(struct IPP *ipp)
 					debug("    integer[%d]=%d", value_length, ap->values[ap_i].integer);
 					break;
 				case IPP_TAG_NAME:
-					debug("    nameWithoutLanguage[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].string.text = p;
+					debug("    nameWithoutLanguage[%d]=\"%s\"", value_length, p);
 					break;
 				case IPP_TAG_URI:
-					debug("    uri[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].string.text = p;
+					debug("    uri[%d]=\"%s\"", value_length, p);
 					break;
 				case IPP_TAG_KEYWORD:
-					debug("    keyword[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].string.text = p;
+					debug("    keyword[%d]=\"%s\"", value_length, p);
 					break;
 				case IPP_TAG_CHARSET:
-					debug("    charset[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].string.text = p;
+					debug("    charset[%d]=\"%s\"", value_length, p);
 					break;
 				case IPP_TAG_LANGUAGE:
-					debug("    naturalLanguage[%d]=\"%s\"", value_length, ipp_get_bytes(ipp, value_length));
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].string.text = p;
+					debug("    naturalLanguage[%d]=\"%s\"", value_length, p);
 					break;
 				default:
-					ipp_get_bytes(ipp, value_length);
+					p = ipp_get_bytes(ipp, value_length);
+					ap->values[ap_i].unknown.length = value_length;
+					ap->values[ap_i].unknown.data = p;
 					debug("    ?????????[%d]", value_length);
 					break;
 				}
