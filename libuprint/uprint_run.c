@@ -1,4 +1,5 @@
 /*
+** mouse:~ppr/src/libuprint/uprint_run.c
 ** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -24,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 20 June 2003.
 */
 
 #include "before_system.h"
@@ -113,6 +114,7 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 		fprintf(stderr, "%s(): execv() of \"%s\" failed, errno=%d (%s)\n", function, exepath, errno, gu_strerror(errno));
 		exit(242);
 		}
+
 	else						/* parent */
 		{
 		if(wait(&wstatus) == -1)

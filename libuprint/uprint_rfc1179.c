@@ -25,13 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 May 2003.
+** Last modified 20 June 2003.
 */
 
 /*
-** This module contains that portion of UPRINT that needs to run as root in 
-** order to open sockets with port numbers below 1024.  This file is
-** compiled to make the program uprint_rfc1179 which is setuid root.
+** This is the program uprint_rfc1179.  This program contains that portion of 
+** UPRINT that needs to run as root in order to open sockets with port numbers
+** below 1024.  This file is compiled to make the program uprint_rfc1179 which 
+** is setuid root.
 */
 
 #include "before_system.h"
@@ -63,6 +64,11 @@
 #define TIMEOUT_HANDSHAKE 30
 #define TIMEOUT_PRINT 30
 
+/*
+** This error message printer formats the uprint_errno value and the error 
+** message in a format that the code in uprint_run_rfc1179.c understands
+** an can use to call uprint_error_callback() on its end.
+*/
 void uprint_error_callback(const char *format, ...)
 	{
 	va_list va;
@@ -87,6 +93,10 @@ static const char *get_username(void)
 	return pw->pw_name;
 	}
 
+/*
+** This subroutine handles the print command.  It sends the supplied control file and 
+** the data files listed.
+*/
 static int do_print(int sockfd, const char server_node[], char *argv[])
 	{
 	const char function[] = "do_lpr";
@@ -102,7 +112,7 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 	int x;
 
 	/*
-	** Make sure the nodename is true.
+	** Make sure the source nodename is truthful.
 	*/
 	if(strcmp(local_nodename, uprint_lpr_nodename()) != 0)
 		{
@@ -112,7 +122,7 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 		}
 
 	/*
-	** Make sure the username is true.
+	** Make sure the username is truthful.
 	*/
 	{
 	const char *p = get_username();
@@ -128,8 +138,8 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 
 	/*
 	** Make sure that the control file does not make false statements about either
-	** the username or the source node.  Notice that will _will_ examine a final 
-	** unterminated line.
+	** the username or the source nodename.  Notice that this code will _will_ 
+	** examine a final unterminated line.
 	*/
 	{
 	char *cfdup = gu_strdup(control_file);
@@ -165,14 +175,14 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 		}
 	}
 
-	/* Say we want to send a job: */
+	/* Say we want to send a job. */
 	snprintf(command, sizeof(command), "\002%s\n", printer);
 	if(uprint_lpr_send_cmd(sockfd, command, strlen(command)) == -1)
 		{
 		return -1;
 		}
 
-	/* Check if the response if favorable: */
+	/* Check if the response if favorable. */
 	if((code = uprint_lpr_response(sockfd, TIMEOUT_HANDSHAKE)) == -1)
 		{
 		uprint_error_callback(_("(Connection lost while negotiating to send job.)"));
@@ -334,8 +344,12 @@ static int do_print(int sockfd, const char server_node[], char *argv[])
 		} /* end of for each file */
 
 	return 0;
-	}
+	} /* end of do_print() */
 
+/*
+** This subroutine handles commands such as list queue which take a few parameters
+** and receive result text for printing on stdout.
+*/
 static int do_command(int sockfd, char *argv[])
 	{
 	const char function[] = "do_command";
@@ -402,7 +416,7 @@ static int do_command(int sockfd, char *argv[])
 		}
 
 	return 0;
-	}
+	} /* end of do_command() */
 
 int main(int argc, char *argv[])
 	{

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 April 2003.
+# Last modified 26 June 2003.
 #
 
 #
@@ -278,6 +278,8 @@ $addprn_wizard_table = [
 		'title' => N_("AppleTalk Interface: Choose a Zone"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
+				require 'cgi_run.pl';
+
 				my $zone = cgi_data_move('int_atalk_zone', '');
 
 				# Use the getzones program to fetch the zone list and sort it.
@@ -319,6 +321,8 @@ $addprn_wizard_table = [
 		'title' => N_("AppleTalk Interface: Choose a Printer"),
 		'picture' => "wiz-address.jpg",
 		'dopage' => sub {
+				require 'cgi_run.pl';
+
 				my $address = cgi_data_move('int_atalk_address', '');
 				my $zone = $data{'int_atalk_zone'};
 				my $type = $data{'int_atalk_type'};

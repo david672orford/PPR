@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 May 2003.
+** Last modified 20 June 2003.
 */
 
 #include "before_system.h"
@@ -52,6 +52,12 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 	int pipefds[2];
 	pid_t pid;
 
+	/* Adobe's Acroread 5.0 appearently sets SIGCHLD to SIG_IGN.  This causes us problems,
+	   so we explicitly set the default behavior.
+	   */
+	signal_interupting(SIGCHLD, SIG_DFL);
+	
+	/* Create a pipe to receive uprint_rfc1179's output. */
 	if(pipe(pipefds) == -1)
 		{
 		uprint_errno = UPE_INTERNAL;
@@ -107,6 +113,7 @@ int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 			uprint_error_callback(_("%s(): fdopen(\"%d\", \"%s\") failed, errno=%d (%s)"), function, pipefds[0], "r", errno, gu_strerror(errno));
 			}
 
+		/* Read lines from uprint_rfc1179 and process them according to their tags. */
 		while((line = gu_getline(line, &line_available, reader)))
 			{
 			if((p = lmatchp(line, "uprint_error_callback:")))
