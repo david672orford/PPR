@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2005.
+# Last modified 29 March 2005.
 #
 
 #
@@ -34,7 +34,6 @@
 # program.	If that fails, it invokes the mail responder.
 #
 
-puts "x: $argv"
 foreach option $argv {
 	regexp {^([^=]+)=(.*)$} $option junk name value
 	switch -exact -- $name {
@@ -57,17 +56,18 @@ foreach option $argv {
 	}
 
 # Send the message with write.
-set command [open "| write $responder_address  >@stdout 2>@stderr" w]
+set command [ppr_popen_w [list write $responder_address]]
 puts $command "To: $for"
 puts $command "Subject: $subject"
 puts $command ""
-puts $command $short_message
+puts $command [ppr_wordwrap $short_message 78]
 puts $command "======================================================"
-puts $command $long_message
-set result [catch { close $command } error ]
+puts $command [ppr_wordwrap $long_message 78]
+set result [catch { close $command } error]
 
 # If that didn't work, try the mail responder.
 if {$result != 0} {
+	puts "responder write: chaining to responder mail"
 	eval exec @RESPONDERDIR@/mail $argv >@stdout 2>@stderr
 	}
 

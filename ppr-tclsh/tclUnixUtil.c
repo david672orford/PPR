@@ -267,78 +267,78 @@ int
 Tcl_CreatePipeline(interp, argc, argv, pidArrayPtr, inPipePtr,
 	outPipePtr, errFilePtr)
     Tcl_Interp *interp;		/* Interpreter to use for error reporting. */
-    int argc;			/* Number of entries in argv. */
-    char **argv;		/* Array of strings describing commands in
-				 * pipeline plus I/O redirection with <,
-				 * <<,  >, etc.  Argv[argc] must be NULL. */
+    int argc;				/* Number of entries in argv. */
+    char **argv;			/* Array of strings describing commands in
+							* pipeline plus I/O redirection with <,
+							* <<,  >, etc.  Argv[argc] must be NULL. */
     int **pidArrayPtr;		/* Word at *pidArrayPtr gets filled in with
-				 * address of array of pids for processes
-				 * in pipeline (first pid is first process
-				 * in pipeline). */
-    int *inPipePtr;		/* If non-NULL, input to the pipeline comes
-				 * from a pipe (unless overridden by
-				 * redirection in the command).  The file
-				 * id with which to write to this pipe is
-				 * stored at *inPipePtr.  -1 means command
-				 * specified its own input source. */
+							* address of array of pids for processes
+							* in pipeline (first pid is first process
+							* in pipeline). */
+    int *inPipePtr;			/* If non-NULL, input to the pipeline comes
+							* from a pipe (unless overridden by
+							* redirection in the command).  The file
+							* id with which to write to this pipe is
+							* stored at *inPipePtr.  -1 means command
+							* specified its own input source. */
     int *outPipePtr;		/* If non-NULL, output to the pipeline goes
-				 * to a pipe, unless overriden by redirection
-				 * in the command.  The file id with which to
-				 * read frome this pipe is stored at
-				 * *outPipePtr.  -1 means command specified
-				 * its own output sink. */
+							 * to a pipe, unless overriden by redirection
+							 * in the command.  The file id with which to
+							 * read frome this pipe is stored at
+							 * *outPipePtr.  -1 means command specified
+							 * its own output sink. */
     int *errFilePtr;		/* If non-NULL, all stderr output from the
-				 * pipeline will go to a temporary file
-				 * created here, and a descriptor to read
-				 * the file will be left at *errFilePtr.
-				 * The file will be removed already, so
-				 * closing this descriptor will be the end
-				 * of the file.  If this is NULL, then
-				 * all stderr output goes to our stderr.
-				 * If the pipeline specifies redirection
-				 * then the fill will still be created
-				 * but it will never get any data. */
+							 * pipeline will go to a temporary file
+							 * created here, and a descriptor to read
+							 * the file will be left at *errFilePtr.
+							 * The file will be removed already, so
+							 * closing this descriptor will be the end
+							 * of the file.  If this is NULL, then
+							 * all stderr output goes to our stderr.
+							 * If the pipeline specifies redirection
+							 * then the fill will still be created
+							 * but it will never get any data. */
 {
     int *pidPtr = NULL;		/* Points to malloc-ed array holding all
-				 * the pids of child processes. */
+		   					* the pids of child processes. */
     int numPids = 0;		/* Actual number of processes that exist
-				 * at *pidPtr right now. */
-    int cmdCount;		/* Count of number of distinct commands
-				 * found in argc/argv. */
+				   			* at *pidPtr right now. */
+    int cmdCount;			/* Count of number of distinct commands
+							* found in argc/argv. */
     char *input = NULL;		/* If non-null, then this points to a
-				 * string containing input data (specified
-				 * via <<) to be piped to the first process
-				 * in the pipeline. */
+							* string containing input data (specified
+							* via <<) to be piped to the first process
+							* in the pipeline. */
     int inputId = -1;		/* If >= 0, gives file id to use as input for
-				 * first process in pipeline (specified via
-				 * < or <@). */
+							* first process in pipeline (specified via
+							* < or <@). */
     int closeInput = 0;		/* If non-zero, then must close inputId
-				 * when cleaning up (zero means the file needs
-				 * to stay open for some other reason). */
+							* when cleaning up (zero means the file needs
+							* to stay open for some other reason). */
     int outputId = -1;		/* Writable file id for output from last
-				 * command in pipeline (could be file or pipe).
-				 * -1 means use stdout. */
+							* command in pipeline (could be file or pipe).
+							* -1 means use stdout. */
     int closeOutput = 0;	/* Non-zero means must close outputId when
-				 * cleaning up (similar to closeInput). */
+							* cleaning up (similar to closeInput). */
     int errorId = -1;		/* Writable file id for error output from
-				 * all commands in pipeline. -1 means use
-				 * stderr. */
+							* all commands in pipeline. -1 means use
+							* stderr. */
     int closeError = 0;		/* Non-zero means must close errorId when
-				 * cleaning up. */
-    int pipeIds[2];		/* File ids for pipe that's being created. */
+							* cleaning up. */
+    int pipeIds[2];			/* File ids for pipe that's being created. */
     int firstArg, lastArg;	/* Indexes of first and last arguments in
-				 * current command. */
-    int skip;			/* Number of arguments to skip (because they
-				 * specify redirection). */
-    int maxFd;			/* Highest known file descriptor (used to
-				 * close off extraneous file descriptors in
-				 * child process). */
+							* current command. */
+    int skip;				/* Number of arguments to skip (because they
+							* specify redirection). */
+    int maxFd;				/* Highest known file descriptor (used to
+							* close off extraneous file descriptors in
+							* child process). */
     int errPipeIds[2];		/* Used for communication between parent and
-				 * child processes.  If child encounters
-				 * error during startup it returns error
-				 * message via pipe.  If child starts up
-				 * OK, it closes pipe without anything in
-				 * it. */
+							* child processes.  If child encounters
+							* error during startup it returns error
+							* message via pipe.  If child starts up
+							* OK, it closes pipe without anything in
+							* it. */
     int lastBar;
     char *execName;
     int i, j, pid, count;

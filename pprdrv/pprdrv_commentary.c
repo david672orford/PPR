@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2005.
+** Last modified 29 March 2005.
 */
 
 #include "config.h"
@@ -81,7 +81,7 @@
 ** This is the function which is called by other parts of pprdrv when
 ** there is something interesting to report.
 */
-void commentary(int category, const char cooked[], const char raw1[], const char duration[], int severity)
+void commentary(int category, const char cooked[], const char raw1[], const char raw2[], int duration, int severity)
 	{
 	FUNCTION4DEBUG("commentary")
 	static int commentary_seq_number = 0;
@@ -118,8 +118,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	*/
 	if(test_mode)
 		{
-		fprintf(stderr, "commentary: category=%d, cooked=\"%s\", raw1=\"%s\", duration=\"%s\"\n",
-				category, cooked, raw1 ? raw1 : "", duration ? duration : "");
+		fprintf(stderr, "commentary: category=%d, cooked=\"%s\", raw1=\"%s\", raw2=\"%s\", duration=%d, severity=%d\n",
+				category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", duration, severity);
 		return;
 		}
 
@@ -161,7 +161,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 					gu_name_str_value("printer", printer.Name),
 					gu_name_str_value("commentary_cooked", cooked),
 					gu_name_str_value("commentary_raw1", raw1),
-					gu_name_str_value("commentary_duration", duration),
+					gu_name_str_value("commentary_raw2", raw2),
+					gu_name_int_value("commentary_duration", duration),
 					gu_name_int_value("commentary_severity", severity),
 					gu_name_int_value("commentary_seq_number", commentary_seq_number),
 					(char*)NULL
@@ -178,8 +179,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 	*/
 	{
 	char buffer[256];
-	snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d\n",
-		printer.Name, category, cooked, raw1 ? raw1 : "", duration ? duration : "", severity);
+	snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d %d\n",
+		printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", duration, severity);
 	state_update_pprdrv_puts(buffer);
 	}
 
@@ -204,42 +205,67 @@ void commentary_exit_hook(int rval, const char explain[])
 	switch(rval)
 		{
 		case EXIT_PRINTED:
-			cooked = "has printed a job";
+			cooked = N_("has printed a job");
 			raw = "EXIT_PRINTED";
 			severity = 1;
 			break;
 		case EXIT_PRNERR:
-			cooked = "printer error";
+			cooked = N_("printer error");
 			raw = "EXIT_PRNERR";
 			severity = 7;
 			break;
 		case EXIT_PRNERR_NORETRY:
-			cooked = "printer error, no retry";
+			cooked = N_("printer error, no retry");
 			raw = "EXIT_PRNERR_NORETRY";
 			severity = 10;
 			break;
 		case EXIT_JOBERR:
-			cooked = "job error";
+			cooked = N_("job error");
 			raw = "EXIT_JOBERR";
 			severity = 3;
 			break;
 		case EXIT_SIGNAL:
-			cooked = "interface program killed";
+			cooked = N_("interface program killed");
 			raw = "EXIT_SIGNAL";
 			severity = 10;
 			break;
 		case EXIT_ENGAGED:
-			cooked = "otherwise engaged or off-line";
+			cooked = N_("otherwise engaged or off-line");
 			raw = "EXIT_ENGAGED";
 			severity = 6;
 			break;
 		case EXIT_STARVED:
-			cooked = "starved for system resources";
+			cooked = N_("starved for system resources");
 			raw = "EXIT_STARVED";
 			severity = 7;
 			break;
+		case EXIT_PRNERR_NORETRY_ACCESS_DENIED:
+			cooked = N_("PPR does not have access to printer");
+			raw = "EXIT_PRNERR_NORETRY_ACCESS_DENIED";
+			severity = 10;
+			break;
+		case EXIT_PRNERR_NOT_RESPONDING:
+			cooked = N_("printer is not responding");
+			raw = "EXIT_PRNERR_NOT_RESPONDING";
+			severity = 7;
+			break;
+		case EXIT_PRNERR_NORETRY_BAD_SETTINGS:
+			cooked = N_("interface settings are invalid");
+			raw = "EXIT_PRNERR_NORETRY_BAD_SETTINGS";
+			severity = 10;
+			break;
+		case EXIT_PRNERR_NO_SUCH_ADDRESS:
+			cooked = N_("printer address lookup failed");
+			raw = "EXIT_PRNERR_NO_SUCH_ADDRESS";
+			severity = 7;
+			break;
+		case EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS:
+			cooked = N_("printer address does not exist");
+			raw = "EXIT_PRNERR_NORETRY_NO_SUCH_ADDRESS";
+			severity = 10;
+			break;
 		case EXIT_INCAPABLE:
-			cooked = "incapable of printing this job";
+			cooked = N_("printer incapable of printing this job");
 			raw = "EXIT_INCAPABLE";
 			severity = 2;
 			break;
@@ -268,7 +294,7 @@ void commentary_exit_hook(int rval, const char explain[])
 	** Feed the whole thing to the commentary function.
 	** Then, wait for the commentators to exit.
 	*/
-	commentary(com_code, cooked, raw, NULL, severity);
+	commentary(com_code, cooked, raw, NULL, 0, severity);
 	} /* end of commentary_exit_hook() */
 
 /*

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2005.
+# Last modified 29 March 2005.
 #
 
 #
@@ -52,12 +52,16 @@ foreach option $argv {
 		}
 	}
 
-set command [open "| @SENDMAIL_PATH@ $responder_address >@stdout 2>@stderr" w]
+set command [ppr_popen_w [list @SENDMAIL_PATH@ $responder_address]]
 puts $command "From: PPR Spooler <@USER_PPR@>"
 puts $command "To: $for <$responder_address>"
 puts $command "Subject: $subject"
 puts $command ""
-puts $command $long_message
-close $command
+puts $command [ppr_wordwrap $long_message 78]
+set result [catch { close $command } error]
+
+if {$result != 0} {
+	puts "responder mail: can't send to $responder_address"
+	}
 
 exit 0

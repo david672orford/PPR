@@ -480,16 +480,16 @@ static void dispatch_commentary(void)
 		{
 		if(snmp_bits[x].start && (snmp_bits[x].last_commentary == 0 || (time_now - snmp_bits[x].last_commentary) >= 300))
 			{
-			const char *description; int severity;
-			char temp_duration[10];
-			translate_snmp_error(x, &description, &severity);
+			const char *description, *raw1;
+			int severity;
+			translate_snmp_error(x, &description, &raw1, &severity);
 			if(!snmp_bits[x].shadowed)
 				{
-				snprintf(temp_duration, sizeof(temp_duration), "%d", (int)(time_now - snmp_bits[x].start));
 				commentary(COM_PRINTER_ERROR,
 						description,
+						raw1,
 						snmp_bits[x].details[0] != '\0' ? snmp_bits[x].details : NULL,
-						temp_duration,
+						(int)(time_now - snmp_bits[x].start),
 						severity);
 				if(severity > greatest_severity)
 					greatest_severity = severity;
@@ -510,7 +510,7 @@ static void dispatch_commentary(void)
 			{
 			const char *message, *raw1; int severity;
 			translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
-			commentary(COM_PRINTER_STATUS, message, status.details, NULL, severity);
+			commentary(COM_PRINTER_STATUS, message, raw1, status.details, 0, severity);
 			}
 		status.last_commentary = time(NULL);
 		}

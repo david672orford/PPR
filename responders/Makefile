@@ -32,7 +32,7 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-RESPONDERS=write netsend mail samba xwin pprpopup audio
+RESPONDERS=write netsend mail samba xwin pprpopup audio audio_flite
 
 LIBPROGS=ppr-respond$(DOTEXE)
 

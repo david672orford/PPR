@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2005.
+** Last modified 29 March 2005.
 */
 
 #include "config.h"
@@ -47,13 +47,13 @@
 
 /* The stall monitoring variables: */
 static struct
-		{
-		const char *remembered_operation;				/* what pprdrv is doing */
-		struct timeval start_time;						/* when pprdrv begin doing it */
-		gu_boolean start_time_set;						/* has start_time been recorded yet? */
-		struct timeval stall_time;						/* how long was it stalled? */
-		int stall_time_minutes_announced;				/* what was the number of minutes in the last announcement? */
-		} stack[10];
+	{
+	const char *remembered_operation;			/* what pprdrv is doing */
+	struct timeval start_time;					/* when pprdrv begin doing it */
+	gu_boolean start_time_set;					/* has start_time been recorded yet? */
+	struct timeval stall_time;					/* how long was it stalled? */
+	int stall_time_minutes_announced;			/* what was the number of minutes in the last announcement? */
+	} stack[10];
 static int stackp;
 
 /* The page stopwatch: */
@@ -254,28 +254,9 @@ void writemon_unstalled(const char operation[])
 	/* If we previously announced that it was stalled, */
 	if(stack[stackp].stall_time_minutes_announced > 0)
 		{
-		char temp_duration[10];
 		int severity;
-
-		snprintf(temp_duration, sizeof(temp_duration), "%d", (int)stack[stackp].stall_time.tv_sec);
 		severity = compute_severity(stack[stackp].stall_time_minutes_announced);
-
-		/*
-		** Send the appropriate message.  The message differs according
-		** to how many minutes it was stalled.
-		*/
-		switch(stack[stackp].stall_time_minutes_announced)
-			{
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-				commentary(COM_STALL, "wasn't stalled", stack[stackp].remembered_operation, temp_duration, severity);
-				break;
-			default:
-				commentary(COM_STALL, "is no longer stalled", stack[stackp].remembered_operation, temp_duration, severity);
-				break;
-			}
+		commentary(COM_STALL, "UNSTALLED", stack[stackp].remembered_operation, NULL, stack[stackp].stall_time_minutes_announced, severity);
 		}
 
 	stackp--;
@@ -305,33 +286,11 @@ static void writemon_stalled(const struct timeval *time_stalled)
 
 	if(minutes > stack[stackp].stall_time_minutes_announced)
 		{
-		char temp_duration[10];
-		char temp[40];
 		int severity;
 
-		/* Format the seconds and milliseconds stalled as an ASCIIZ string. */
-		snprintf(temp_duration, sizeof(temp_duration), "-%d", (int)time_stalled->tv_sec);
-
-		/* Rank the severity of this problem on a scale from 1 to 10. */
+		/* Rank the severity of this problem on a scale from 1 to 10 and announce it. */
 		severity = compute_severity(minutes);
-
-		/* Call the commentator with a message depending on the length of the stall. */
-		switch(minutes)
-			{
-			case 1:
-			case 2:
-				commentary(COM_STALL, "may be stalled", stack[stackp].remembered_operation, temp_duration, severity);
-				break;
-			case 3:
-			case 4:
-				commentary(COM_STALL, "is probably stalled", stack[stackp].remembered_operation, temp_duration, severity);
-				break;
-			default:
-				snprintf(temp, sizeof(temp), "has been stalled for %d minutes", minutes);
-				commentary(COM_STALL, temp, stack[stackp].remembered_operation, temp_duration, severity);
-				break;
-			}
-
+		commentary(COM_STALL, "STALLED", stack[stackp].remembered_operation, NULL, (int)time_stalled->tv_sec, severity);
 		stack[stackp].stall_time_minutes_announced = minutes;
 
 		/* Let the "ppop status" code know. */

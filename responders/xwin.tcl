@@ -1,4 +1,4 @@
-#! @SHELL@
+#! @PPR_TCLSH@
 #
 # mouse:~ppr/src/responders/xwin.sh
 # Copyright 1995--2005, Trinity College Computing Center.
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 March 2005.
+# Last modified 29 March 2005.
 #
 
 #
@@ -39,94 +39,74 @@
 #==============================
 # Parse the command line
 #==============================
-while [ $# -gt 0 ]
-	do
-	name=`echo $1 | cut -d= -f1`
-	value=`echo $1 | cut -d= -f2`
-	case $name in
-		for )
-			for="$value"
-			;;
-		responder_address )
-			responder_address="$value"
-			;;
-		long_message )
-			long_message="$value"
-			;;
-	esac
-	shift
-	done
-
-echo $long_message >&2
+puts $argv
+foreach option $argv {
+	regexp {^([^=]+)=(.*)$} $option junk name value
+	switch -exact -- $name {
+		for {
+			set for $value
+			}
+		responder_address {
+			set responder_address $value
+			}
+		responder_options {
+			set responder_options $value
+			}
+		subject {
+			set subject $value
+			}
+		short_message {
+			set short_message $value
+			}
+		long_message {
+			set long_message $value
+			}
+		}
+	}
 
 #==============================
 # Parse the responder options
 #==============================
-option_timeout=""
-for opt in $responder_options
-	do
-	case $opt in
-		timeout=* )
-			option_timeout="-timeout `echo $opt | cut -d= -f2`"
-			;;
-		esac
-	done
+set option_timeout 10000
+foreach option [split $responder_options " "] {
+	regexp {^([^=]+)=(.*)$} $option junk name value
+	switch -exact -- $name {
+		timeout {
+			if [regexp {^[0-9]+$} $value value] {
+				set option_timeout $value
+				}
+			}
+		}
+	}
 
 #===========================================================
 # Figure out which program we can use so send the message.
 #===========================================================
 
-if [ -x @XWINBINDIR@/xmessage ]
-	then
-	sender="@XWINBINDIR@/xmessage \
-		-geometry +100+100 \
-		-default okay $option_timeout \
-		-file -
-"
-
-	elif [ -x /usr/local/bin/wish ]
-	then
-	sender="/usr/local/bin/wish @LIBDIR@/xmessage \
-		-geometry +100+100 \
-		-default okay $option_timeout \
-		-file -
-"
-
-	elif [ -x /usr/bin/wish ]
-	then
-	sender="/usr/bin/wish $LIBDIR/xmessage \
-		-geometry +100+100 \
-		-default okay $option_timeout \
-		-file -
-"
-
-	elif [ -x @XWINBINDIR@/rxvt ]
-	then
-	sender="@XWINBINDIR@/rxvt \
-	-geometry 80x5+100+100 \
-	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
-"
-
-	elif [ -x @XWINBINDIR@/xterm ]
-	then
-	sender="@XWINBINDIR@/xterm \
-	-geometry 80x5+100+100 \
-	-e /bin/sh -c 'cat; echo \"Press ENTER to dismiss this message.\"; read x'
-"
-
-	else
-	echo "Can't find a program to respond with!"
-	fi
+if [file executable @XWINBINDIR@/xmessage] {
+	set command [list @XWINBINDIR@/xmessage -geometry +100+100 -default okay -timeout $option_timeout -file -]
+} elseif [file executable /usr/local/bin/wish] {
+	set command [list /usr/local/bin/wish @LIBDIR@/xmessage -geometry +100+100 -default okay -timeout $option_timeout -file -]
+} elseif [file executable /usr/bin/wish] {
+	set command [list /usr/bin/wish $LIBDIR/xmessage -geometry +100+100 -default okay -timeout $option_timeout -file -]
+} elseif [file executable @XWINBINDIR@/rxvt] {
+	set command [list @XWINBINDIR@/rxvt -geometry 80x5+100+100 -e /bin/sh -c 'cat; echo "Press ENTER to dismiss this message."; read x']
+} elseif [file executable @XWINBINDIR@/xterm] {
+	set command [list @XWINBINDIR@/xterm -geometry 80x5+100+100 -e /bin/sh -c 'cat; echo "Press ENTER to dismiss this message."; read x']
+} else {
+	puts "Can't find a program by which to respond!"
+	exit 1
+	}
 
 #====================================
 # Dispatch the message.
 #====================================
 
-$sender -display "$responder_address" \
-	-title "Message for $for" \
-	-bg skyblue -fg black \
-	<<EndOfMessage
-$long_message
-EndOfMessage
+set command [lappend command -display $responder_address -title "Message for $for: $subject" -bg skyblue -fg black]
+set pipe [ppr_popen_w $command]
+#puts $pipe [ppr_wordwrap $short_message 80]
+#puts $pipe "==========================================================================="
+puts $pipe [ppr_wordwrap $long_message 80]
+catch { close $pipe } error
 
 exit 0

@@ -246,15 +246,15 @@ Tcl_EofCmd(notUsed, interp, argc, argv)
 	/* ARGSUSED */
 int
 Tcl_ExecCmd(dummy, interp, argc, argv)
-    ClientData dummy;			/* Not used. */
-    Tcl_Interp *interp;			/* Current interpreter. */
+    ClientData dummy;		/* Not used. */
+    Tcl_Interp *interp;		/* Current interpreter. */
     int argc;				/* Number of arguments. */
     char **argv;			/* Argument strings. */
 {
     int outputId;			/* File id for output pipe.  -1
-					 * means command overrode. */
+							* means command overrode. */
     int errorId;			/* File id for temporary file
-					 * containing error output. */
+							* containing error output. */
     int *pidPtr;
     int numPids, result, keepNewline;
     int firstWord;
@@ -1024,13 +1024,12 @@ Tcl_GetsCmd(notUsed, interp, argc, argv)
  *----------------------------------------------------------------------
  */
 
-	/* ARGSUSED */
-int
-Tcl_OpenCmd(notUsed, interp, argc, argv)
-    ClientData notUsed;			/* Not used. */
-    Tcl_Interp *interp;			/* Current interpreter. */
-    int argc;				/* Number of arguments. */
-    char **argv;			/* Argument strings. */
+int Tcl_OpenCmd(
+    ClientData notUsed,	/* Not used. */
+    Tcl_Interp *interp,	/* Current interpreter. */
+    int argc,			/* Number of arguments. */
+    char **argv			/* Argument strings. */
+	)
 {
     int pipeline, fd, mode, prot, readWrite, permissions;
     char *access;
@@ -1848,12 +1847,12 @@ Tcl_TimeCmd(dummy, interp, argc, argv)
  */
 
 static int CleanupChildren(
-    Tcl_Interp *interp,		/* Used for error messages. */
+    Tcl_Interp *interp,	/* Used for error messages. */
     int numPids,		/* Number of entries in pidPtr array. */
     int *pidPtr,		/* Array of process ids of children. */
     int errorId,		/* File descriptor index for file containing
-				 * stderr output from pipeline.  -1 means
-				 * there isn't any stderr output. */
+						* stderr output from pipeline.  -1 means
+						* there isn't any stderr output. */
     int keepNewline		/* Non-zero means don't discard trailing newline. */
     )
 {

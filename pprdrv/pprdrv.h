@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2005.
+** Last modified 29 March 2005.
 */
 
 /*
@@ -282,7 +282,7 @@ void jobpatchfile(void);
 gu_boolean patchfile_query_callback(const char message[]);
 
 /* pprdrv_commentary.c: */
-void commentary(int category, const char cooked[], const char raw1[], const char duration[], int severity);
+void commentary(int category, const char cooked[], const char raw1[], const char raw2[], int duration, int severity);
 void commentary_exit_hook(int rval, const char explain[]);
 void commentator_wait(void);
 
@@ -317,7 +317,7 @@ int translate_lw_message(const char raw_message[], int *value1, int *value2, int
 int translate_pjl_message(int code, const char display[], int *value1, int *value2, int *value3, const char **details);
 
 /* pprdrv_snmp_messages.c: */
-int translate_snmp_error(int bit, const char **description, int *severity);
+int translate_snmp_error(int bit, const char **description, const char **raw1, int *severity);
 int translate_snmp_status(int device_status, int printer_status, const char **description, const char **raw1, int *severity);
 
 /* pprdrv_notppd.c: */

@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 March 2005.
+# Last modified 29 March 2005.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
+BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) \
 	rewind_stdin$(DOTEXE) tail_status$(DOTEXE) \
 	file_outdated$(DOTEXE) mkstemp$(DOTEXE)
 
@@ -43,8 +43,7 @@ BUILT_LIBS=\
 
 UNBUILT_LIBS=\
 	responder_argv.pl \
-	pprpopup.pl \
-	speach.pl speach_play.pl speach_commentary.pl speach_response.pl \
+	speach.pl speach_play.pl \
 	MD5pp.pm \
 	readppd.pl \
 	acl.pl \

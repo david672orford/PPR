@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--28 March 2005
+2.00a1, 11 December 2004--29 March 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9661,5 +9661,16 @@ no final tarball was released.
 * responders/Makefile: removed code to create link from mail to errmail.
 
 * removed everything previously marked with CRUFT_AUTH.
+
+* Moved much of the function of the responders in responders/ into 
+  responders/ppr-respond.c; moved libscript/time_elapsed.c into 
+  ppr-respond.c.
+
+* libscript/pprpopup.pl, responders/pprpopup.perl: removed
+
+* consolidated libscript/speach_response.pl and speach_commentary.pl 
+  into responders/audio.perl.
+
+
 
 

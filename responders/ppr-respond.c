@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2005.
+** Last modified 29 March 2005.
 */
 
 /*
@@ -52,6 +52,7 @@
 #include <string.h>
 #include <signal.h>
 #include <errno.h>
+#include <time.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -72,6 +73,7 @@ struct RESPONSE_INFO
 	char *extra;				/* extra parameter supplementing response_code */
 	char *commentary_cooked;
 	char *commentary_raw1;
+	char *commentary_raw2;
 	int commentary_duration;
 	int commentary_severity;
 	int commentary_seq_number;
@@ -80,6 +82,7 @@ struct RESPONSE_INFO
 	int charge_per_simplex;
 	struct COMPUTED_CHARGE charge;
 	char *reason;
+	int elapsed_time_threshold;
 	} ;
 
 static char *build_subject(struct RESPONSE_INFO *rinfo)
@@ -211,25 +214,25 @@ static char *build_subject(struct RESPONSE_INFO *rinfo)
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_ERROR:
 			gu_pcs_append_sprintf(&message,
 				_("error on %s: %s while printing %s (%s)"),
-				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+				rinfo->printer, gettext(rinfo->commentary_cooked), rinfo->job, title);	
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_PRINTER_STATUS:
 			gu_pcs_append_sprintf(&message,
 				_("status of %s: %s while printing %s (%s)"),
-				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+				rinfo->printer, gettext(rinfo->commentary_cooked), rinfo->job, title);	
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_STALL:
 			gu_pcs_append_sprintf(&message,
 				_("problem on %s: %s while printing %s (%s)\n"),
-				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+				rinfo->printer, gettext(rinfo->commentary_cooked), rinfo->job, title);	
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_EXIT:
 			gu_pcs_append_sprintf(&message,
 				_("%s: %s while printing %s (%s)"),
-				rinfo->printer, rinfo->commentary_cooked, rinfo->job, title);	
+				rinfo->printer, gettext(rinfo->commentary_cooked), rinfo->job, title);	
 			break;
 
 		default:
@@ -419,14 +422,14 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 				gu_pcs_append_sprintf(&message,
 					_("The printer \"%s\" which could print your job \"%s\" cannot at present\n"
 					"due to the error condition \"%s\"."),
-					rinfo->printer, rinfo->job, rinfo->commentary_cooked);
+					rinfo->printer, rinfo->job, gettext(rinfo->commentary_cooked));
 				}
 			else
 				{
 				gu_pcs_append_sprintf(&message,
 					_("The printer \"%s\" which is printing your job \"%s\" reports error\n"
 					"\"%s\"."),
-					rinfo->printer, rinfo->job, rinfo->commentary_cooked);
+					rinfo->printer, rinfo->job, gettext(rinfo->commentary_cooked));
 				if(long_format)
 					{
 					gu_pcs_append_char(&message, ' ');
@@ -447,11 +450,11 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 			gu_pcs_append_sprintf(&message,
 				_("The printer \"%s\" which is printing your job \"%s\" reports status\n"
 				"\"%s\"."),
-				rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+				rinfo->printer, rinfo->job, gettext(rinfo->commentary_cooked));	
 			break;
 
 		case RESP_TYPE_COMMENTARY | COM_STALL:
-			if(rinfo->commentary_duration > 0)
+			if(strcmp(rinfo->commentary_cooked, "STALLED") == 0)
 				{
 				switch(rinfo->commentary_duration / 60)
 					{
@@ -474,16 +477,16 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 						break;
 					}
 				}
-			else
+			else if(strcmp(rinfo->commentary_cooked, "UNSTALLED") == 0)
 				{
-				switch((0 - rinfo->commentary_duration) / 60)
+				switch(rinfo->commentary_duration / 60)
 					{
 					case 1:
 					case 2:
 					case 3:
 					case 4:
 						gu_pcs_append_sprintf(&message,
-							_("The printer \"%s\" which is printing your job %s (%s) was not stalled."),
+							_("The printer \"%s\" which is printing your job %s (%s) was not actually stalled."),
 							rinfo->printer, rinfo->job, rinfo->qentry.Title);
 						break;
 					default:
@@ -521,11 +524,44 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 		{
 		gu_pcs_append_char(&message, ' ');
 		gu_pcs_append_sprintf(&message,
-			_("Probably cause: %s."),
+			_("Probable cause: %s."),
 			rinfo->reason
 			);
 		}
 
+	if(long_format && rinfo->qentry.time != 0)
+		{
+		long elapsed_time = (time(NULL) - rinfo->qentry.time);
+		if(elapsed_time > rinfo->elapsed_time_threshold)
+			{
+			int seconds, minutes, hours, days;
+			seconds = elapsed_time % 60;			/* remainder seconds */
+			elapsed_time /= 60;						/* total minutes */
+			if(seconds >= 30) elapsed_time++;
+			minutes = elapsed_time % 60;			/* remainder minutes */
+			elapsed_time /= 60;						/* total hours */
+			hours = elapsed_time % 24;				/* remainder hours */
+			days = elapsed_time / 24;				/* total days */
+
+			gu_pcs_append_char(&message, ' ');
+			if(days >= 1)
+				{
+				if(minutes >= 30)	/* round off hours */
+					hours++;
+				if(hours == 24)		/* handle carry */
+					{
+					days++;
+					hours = 0;
+					}
+				gu_pcs_append_sprintf(&message, _("This print job was submitted %d day(s) %d hours ago."), days, hours);
+				}
+			else
+				{
+				gu_pcs_append_sprintf(&message, _("This print job was submitted %d hour(s) %d minute(s) ago."), hours, minutes);
+				}
+			}
+		}
+	
 	return gu_pcs_free_keep_cstr(&message);
 	}
 
@@ -612,6 +648,7 @@ int main(int argc, char *argv[])
 	rinfo.extra = NULL;
 	rinfo.commentary_cooked = NULL;
 	rinfo.commentary_raw1 = NULL;
+	rinfo.commentary_raw2 = NULL;
 	rinfo.commentary_duration = 0;
 	rinfo.commentary_severity = -1;
 	rinfo.commentary_severity = -1;
@@ -619,6 +656,7 @@ int main(int argc, char *argv[])
 	rinfo.charge_per_duplex = 0;
 	rinfo.charge_per_simplex = 0;
 	rinfo.reason = NULL;
+	rinfo.elapsed_time_threshold = 600;
 
 	for(iii=1; iii < argc; iii++)
 		{
@@ -631,7 +669,7 @@ int main(int argc, char *argv[])
 			qentryfile_load(&rinfo.qentry, f);
 			while((line = gu_getline(line, &line_len, f)))
 				{
-				if((p = lmatchp("Reason:", line)))
+				if((p = lmatchp(line, "Reason:")))
 					{
 					rinfo.reason = gu_strdup(p);
 					continue;
@@ -708,6 +746,11 @@ int main(int argc, char *argv[])
 			rinfo.commentary_raw1 = p;
 			gu_pca_push(command, argv[iii]);
 			}
+		else if((p = gu_name_matchp(argv[iii], "commentary_raw2")))
+			{
+			rinfo.commentary_raw2 = p;
+			gu_pca_push(command, argv[iii]);
+			}
 		else if((p = gu_name_matchp(argv[iii], "commentary_duration")))
 			{
 			rinfo.commentary_duration = atoi(p);
@@ -739,7 +782,7 @@ int main(int argc, char *argv[])
 	if(!(actual_responder = followme(&rinfo.qentry.responder)))
 		return 0;
 
-	/* Deteremine if this message should actually be sent. */
+	/* Parse the responder options and deteremine if this message should actually be sent. */
 	if(actual_responder->options && strlen(actual_responder->options) > 0)
 		{
 		char *temp = gu_strdup(actual_responder->options);
@@ -765,6 +808,10 @@ int main(int argc, char *argv[])
 					if(temp < rinfo.commentary_severity)
 						return 0;
 					}
+				}
+			else if((value = gu_name_matchp(item, "elapsed_time_threshold")))
+				{
+				rinfo.elapsed_time_threshold = atoi(p);
 				}
 			}
 		gu_free(temp);

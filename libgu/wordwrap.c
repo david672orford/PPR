@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/wordwrap.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 May 2004.
+** Last modified 29 March 2005.
 */
 
 /*! \file
@@ -40,9 +40,9 @@
 /** word wrap string
  *
  * This function will re-line-wrap a string so that it has lines whose
- * length do not exceed a certain limit.
+ * length do not exceed a certain limit.  The original string is
+ * modified.
  */
-
 int gu_wordwrap(char *string, int width)
 	{
 	const char *si;
@@ -51,7 +51,7 @@ int gu_wordwrap(char *string, int width)
 	int wordlen;
 	int spacelen;		/* number of spaces at end of line */
 
-	if(width <= 0)
+	if(width <= 0)		/* if width is impossible, leave string unchanged */
 		return 0;
 
 	for(si=di=string,spacelen=curlen=0; *si; spacelen=0)
@@ -80,7 +80,7 @@ int gu_wordwrap(char *string, int width)
 			}
 
 		/* copy the word */
-		strncpy(di, si, wordlen);
+		memmove(di, si, wordlen);
 		si += wordlen;
 		di += wordlen;
 		curlen += wordlen;
@@ -140,18 +140,18 @@ int gu_wrap_eprintf(const char format[], ...)
 	return ret;
 	}
 
+/* gcc -Wall -I../include -DTEST -o wordwrap wordwrap.c ../libgu.a */
 #ifdef TEST
 int main(int argc, char *argv[])
 		{
 		char old[512];
-		char new[512];
 
-		strcpy(old,"Now is the time for all good men to come to the aid of the party.\n");
+		strcpy(old,"Now is the time for    all good men to come to the aid of the party.\n");
 		strcat(old,"The quick brown fox jumped over the lazy yellow dogs.");
 
-		gu_wordwrap(new,old,20);
+		gu_wordwrap(old,20);
 
-		printf("%s\n",new);
+		printf("%s\n",old);
 
 		return 0;
 		}
