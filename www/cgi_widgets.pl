@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 February 2004.
+# Last modified 15 April 2004.
 #
 
 # This creates a checkbox followed by a label.  If the box is checked,
@@ -100,6 +100,17 @@ sub link_button
 	print "<a class=\"buttons\" href=\"$url\" target=\"_blank\" onclick=\"return wopen(null,this.href)\" title=", html_value($tooltip), ">", html($label), "</a>\n";
 	}
 
+# Prune a language name down to size for a help file.
+sub help_language 
+	{
+	my $lang = defined $ENV{LANG} ? $ENV{LANG} : "en";
+	if($lang =~ /^([a-z][a-z])[\._-]/)
+		{
+		$lang = $1;
+		}
+	return $lang;
+	}
+
 # This creates a button that pops up a help page.  The name of the help page is
 # based on the script name.	 The argument is used to make an HTML fragment
 # identifier.
@@ -113,7 +124,7 @@ sub help_button
 	$ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
 	my $basename = $1;
 
-	my $lang = defined $ENV{LANG} ? $ENV{LANG} : "en";
+	my $lang = help_language();
 
 	my $append = defined($helpdir) ? "" : "_help";
 
@@ -226,7 +237,7 @@ sub menu_help
 	$ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
 	my $basename = $1;
 	menu_start("m_help", _("Help"));
-		menu_link(_("For This Window"), "../help/$basename." . (defined $ENV{LANG} ? $ENV{LANG} : "en") . ".html",
+		menu_link(_("For This Window"), "../help/$basename." . help_language() . ".html",
 			_("Display the help document for this program in a web browser window"));
 		menu_link(_("All PPR Documents"), "../docs/",
 			_("Open the PPR documentation index in a web browser window"));
