@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 February 2002.
+# Last modified 8 March 2002.
 #
 
 use lib "?";
@@ -78,6 +78,7 @@ $html_text .= <<"Printer";
 <tr><td><a href="show_jobs.cgi?$encoded_name;$encoded_HIST">${\H_("View Queue")}</a></td></tr>
 <tr><td><a href="prn_control.cgi?$encoded_name;$encoded_HIST">${\H_("Printer Control")}</a></td></tr>
 <tr><td><a href="prn_properties.cgi?$encoded_name;$encoded_HIST">${\H_("Printer Properties")}</a></td></tr>
+<tr><td><a href="prn_testpage.cgi?${\form_urlencoded("printer", $name)};$encoded_HIST">${\H_("Test Page")}</a></td></tr>
 <tr><td><a href="cliconf.cgi.perl?$encoded_name;$encoded_HIST">${\H("Client Configuration")}</a></td></tr>
 <tr><td><a href="show_printlog.cgi?${\form_urlencoded("printer", $name)};$encoded_HIST">${\H_("Printlog")}</a></td></tr>
 <tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_HIST">${\H_("Delete Printer")}</a></td></tr>

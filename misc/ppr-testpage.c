@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2002.
+** Last modified 8 March 2002.
 */
 
 #include "before_system.h"
@@ -53,6 +53,15 @@ static void do_header(void)
 %%%%Title: PPR Test Page
 %%%%Pages: 1
 %%%%EndComments
+
+");
+    }
+
+static void do_prolog(void)
+    {
+    printf("\
+%%%%BeginProlog
+%%%%EndProlog
 
 ");
     }
@@ -154,6 +163,8 @@ int main(int argc, char *argv[])
     }
 
     do_header();
+
+    do_prolog();
 
     do_setup();
 

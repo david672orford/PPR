@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--8 March 2002.
+1.50a1, 27 February 2002--12 March 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7568,3 +7568,10 @@ line was being parsed twice.
 * ppr/: moved calls to respond() into the new function ppr_abort().
   Changed fatal() to call ppr_abort().  ppr_abort() should now be
   handling all abnormal exits.
+
+* pprdrv/pprdrv_rip.c: changed code to interpret killing of the RIP
+  by SIGSEGV as a sign of a bad job.  Previously WCOREDUMP() was used
+  to determine if the error was a bad job but this didn't work
+  because (at least on Linux) WCOREDUMP() was returning false if 
+  core would have been dumped but the ulimit prohibited it.
+

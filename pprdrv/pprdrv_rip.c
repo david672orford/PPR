@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_rip.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 12 November 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 12 March 2002.
 */
 
 #include "before_system.h"
@@ -67,19 +82,29 @@ static int rip_exit_screen(void)
     {
     if(WIFSIGNALED(rip_wait_status))
 	{
-	alert(printer.Name, TRUE,
-		_("The RIP terminated abruptly after receiving signal %d (%s)\n"
-		"from a non-spooler process (possibly the OS kernel)."),
-		WTERMSIG(rip_wait_status),
-		gu_strsignal(WTERMSIG(rip_wait_status))
-		);
-	if(WCOREDUMP(rip_wait_status))
+	if(WTERMSIG(rip_wait_status) == SIGSEGV)
 	    {
-	    alert(printer.Name, FALSE, "The RIP dumped core.");
-	    /* hooked_exit(EXIT_PRNERR_NORETRY, "RIP core dump"); */
-	    hooked_exit(EXIT_JOBERR, "RIP core dump");
+	    alert(printer.Name, TRUE,
+		_("The RIP (Ghostscript) malfunctioned while printing the job\n"
+		"%s.  Presumably it can print other jobs that don't\n"
+		"trigger the bug, so the spooler will arrest the job and move on.\n"),
+			QueueFile
+		);
+	    hooked_exit(EXIT_JOBERR, "RIP segfault");
 	    }
-	hooked_exit(EXIT_PRNERR, "RIP killed");
+	else
+	    {
+	    alert(printer.Name, TRUE,
+		_("The RIP (Ghostscript) was killed by signal %d (%s).\n"
+		"Perhaps a system operator did it or perhaps the system\n"
+		"is shutting down.\n"),
+			WTERMSIG(rip_wait_status),
+			gu_strsignal(WTERMSIG(rip_wait_status))
+		);
+	    if(WCOREDUMP(rip_wait_status))
+		alert(printer.Name, FALSE, "The RIP dumped core.");
+	    hooked_exit(EXIT_PRNERR, "RIP killed");
+	    }
 	}
     if(WIFSTOPPED(rip_wait_status))
 	fatal(EXIT_PRNERR_NORETRY, _("RIP stopped by signal \"%s\"."), gu_strsignal(WSTOPSIG(rip_wait_status)));

@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2002, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 26 February 2002.
+// Last revised 8 March 2002.
 //
 
 //
@@ -136,6 +136,12 @@ function prn_properties(w, printer_name)
 	menu_hide(w);
 	return false;
 	}
+function prn_testpage(w, printer_name)
+	{
+	window.open('prn_testpage.cgi?name=' + printer_name, '_blank', 'width=750,height=580,resizable');
+	menu_hide(w);
+	return false;
+	}
 function grp_properties(w, name)
 	{
 	window.open('grp_properties.cgi?name=' + name, '_blank', 'width=675,height=580,resizable');
@@ -170,9 +176,10 @@ function printer(event, name)
 		+ '<a href="" name="L1" id="L1"><nobr>View Queue</nobr></a><br>\n'
 		+ '<a href="" name="L2" id="L2"><nobr>Printer Control</nobr></a><br>\n'
 		+ '<a href="" name="L3" id="L3"><nobr>Printer Properties</nobr></a><br>\n'
-		+ '<a href="" name="L4" id="L4"><nobr>Client Configuration</nobr></a><br>\n'
-		+ '<a href="" name="L5" id="L5"><nobr>Printlog</nobr></a><br>\n'
-		+ '<a href="" name="L6" id="L6"><nobr>Delete Printer</nobr></a><br>\n'
+		+ '<a href="" name="L4" id="L4"><nobr>Test Page</nobr></a><br>\n'
+		+ '<a href="" name="L5" id="L5"><nobr>Client Configuration</nobr></a><br>\n'
+		+ '<a href="" name="L6" id="L6"><nobr>Printlog</nobr></a><br>\n'
+		+ '<a href="" name="L7" id="L7"><nobr>Delete Printer</nobr></a><br>\n'
 		+ '</td></tr></table>\n';
 	var w;
 	var lnks;
@@ -190,7 +197,9 @@ function printer(event, name)
 			d.links[2],
 			d.links[3],
 			d.links[4],
-			d.links[5] ];
+			d.links[5],
+			d.links[6]
+			];
 		}
 	else if(ie5_dom)
 		{
@@ -207,7 +216,9 @@ function printer(event, name)
 			w.all.L3,
 			w.all.L4,
 			w.all.L5,
-			w.all.L6 ];
+			w.all.L6,
+			w.all.L7
+			];
 
 		// IE 5.0 makes everthing so complicated!
 		lnks[0].onmouseout = function () { event.cancelBubble = true };
@@ -216,6 +227,7 @@ function printer(event, name)
 		lnks[3].onmouseout = function () { event.cancelBubble = true };
 		lnks[4].onmouseout = function () { event.cancelBubble = true };
 		lnks[5].onmouseout = function () { event.cancelBubble = true };
+		lnks[6].onmouseout = function () { event.cancelBubble = true };
 		}
 	else	// W3C DOM, Mozilla
 		{
@@ -235,15 +247,17 @@ function printer(event, name)
 			document.getElementById("L3"),
 			document.getElementById("L4"),
 			document.getElementById("L5"),
-			document.getElementById("L6")
+			document.getElementById("L6"),
+			document.getElementById("L7")
 			];
 		}
 	lnks[0].onclick = function () { show_jobs(name); menu_hide(w); return false; };
 	lnks[1].onclick = function () { return prn_control(w, name); };
 	lnks[2].onclick = function () { return prn_properties(w, name); };
-	lnks[3].onclick = function () { return cliconf(w, name); };
-	lnks[4].onclick = function () { return show_printlog(w, 'printer', name); };
-	lnks[5].onclick = function () { return delete_queue(w, 'printer', name); };
+	lnks[3].onclick = function () { return prn_testpage(w, name); };
+	lnks[4].onclick = function () { return cliconf(w, name); };
+	lnks[5].onclick = function () { return show_printlog(w, 'printer', name); };
+	lnks[6].onclick = function () { return delete_queue(w, 'printer', name); };
 	menu_show(w);
 	if(ie5_dom || nav4_dom) { w.onmouseout = function () { menu_hide(w) }; }
 	return false;

@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/show_printlog.cgi.perl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 16 November 2001.
+# Last modified 8 March 2002.
 #
 
 use lib "?";
@@ -84,7 +84,7 @@ if(!open(LOG, "< $filename"))
     if($error =~ /^No such file /)
     	{
     	die sprintf(_("Print job logging is disabled.  To enable it, create the file \"%s\"\n"
-    		"and make sure the user \"%s\" can write to it.\n"), $filename, $USER_PPR);
+    		. "and make sure the user \"%s\" can write to it.\n"), $filename, $USER_PPR);
     	}
     else
 	{

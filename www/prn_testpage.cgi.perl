@@ -1,5 +1,6 @@
+#! /usr/bin/perl -w
 #
-# mouse:~ppr/src/misc/Makefile
+# mouse:~ppr/src/www/prn_testpage.cgi.perl
 # Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -28,53 +29,59 @@
 # Last modified 8 March 2002.
 #
 
-include ../makeprogs/global.mk
+use lib "?";
+require 'paths.ph';
+require 'cgi_data.pl';
+require 'cgi_wizard.pl';
+require "cgi_intl.pl";
+require 'cgi_run.pl';
 
-#=== Inventory ==============================================================
+#===========================================
+# This is the table for this wizard:
+#===========================================
+$addprn_wizard_table = [
+	#===========================================
+	# Welcome
+	#===========================================
+	{
+	'title' => N_("PPR Print Test Page"),
+	'picture' => "wiz-newprn.jpg",
+	'dopage' => sub {
+		print "<p>", H_("Right now the test page is pretty poor.  It is just a blank page."), "</p>\n";
+		},
+	'buttons' => [N_("_Cancel"), N_("_Print")]
+	},
+	#===========================================
+	# Do It
+	#===========================================
+	{
+	'title' => N_("PPR Print Test Page"),
+	'picture' => "wiz-newprn.jpg",
+	'dopage' => sub {
+		my $name = cgi_data_peek("name", "_missing_");
+		print "<pre>\n";
+		run("$HOMEDIR/bin/ppr-testpage | $HOMEDIR/bin/ppr -d $name");
+		print "</pre>\n";
+		},
+	'buttons' => [N_("_Close")]
+	}
+];
 
-PROGS=ppr-sync \
-	customs.ppr \
-	sgi_glp_hack \
-	remove_ppr \
-	ppd2macosdrv \
-	custom_hook_docutech \
-	xmessage \
-	ppr-testpage
+#===========================================
+# Main
+#===========================================
 
-#=== Build ==================================================================
+&cgi_read_data();
 
-all: $(PROGS)
+if(cgi_data_peek("wiz_action", "") eq "Print")
+    {
+    $data{wiz_action} = "Finish";
+    }
 
-xmessage: xmessage.tcl
-	cp xmessage.tcl xmessage
-	$(CHMOD) 755 xmessage
+&do_wizard($addprn_wizard_table,
+	{
+	'auth' => 1,
+	'imgdir' => "../images/"
+	});
 
-OBJS1=\
-	ppr-testpage.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-ppr-testpage$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1)
-
-#=== Install ================================================================
-
-install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-sync ppd2macosdrv ppr-testpage
-	if [ `uname -s` = "IRIX" ];\
-		then\
-		$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin sgi_glp_hack;\
-		fi
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib custom_hook_docutech xmessage
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/fixup customs.ppr remove_ppr
-
-#=== Housekeeping ===========================================================
-
-include .depend
-
-depend:
-	$(PPR_MAKE_DEPEND) ../include
-
-clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
-
-# end of file
+exit 0;

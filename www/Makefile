@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 February 2002.
+# Last modified 8 March 2002.
 #
 
 include ../makeprogs/global.mk
@@ -66,7 +66,7 @@ LIB_PROGS=ppr-httpd ppr-push-httpd$(DOTEXE)
 
 # These programs go into cgi-bin.
 CGI_PROGS=show_queues.cgi show_queues_nojs.cgi \
-	prn_addwiz.cgi prn_properties.cgi prn_control.cgi prn_media.cgi \
+	prn_addwiz.cgi prn_properties.cgi prn_control.cgi prn_media.cgi prn_testpage.cgi \
 	grp_addwiz.cgi grp_properties.cgi \
 	show_jobs.cgi job_modify.cgi job_log.cgi job_public.cgi \
 	delete_queue.cgi \
