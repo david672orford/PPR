@@ -211,6 +211,14 @@ sub do_file
 	print STDERR "Can't find last modified date.\n";
 	return 0;
 	}
+
+    if($file_modified)
+	{
+	if(grep(/^    {/, @lines))
+	    {
+	    print "Tab conversion needed.\n";
+	    }
+	}
     }
 
     #========================================================================
