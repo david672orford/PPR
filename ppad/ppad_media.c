@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 March 2003.
+** Last modified 12 March 2003.
 */
 
 /*
@@ -498,8 +498,8 @@ int media_import(const char *argv[])
     char *line = NULL;
     int linenum = 0;
     #define MAX_CMD_WORDS 64
-    char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
-    char *p;			/* used to parse arguments */
+    const char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
+    char *p;				/* used to parse arguments */
     int i;
 
     if( ! am_administrator() )
