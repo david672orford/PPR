@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 May 2002.
+# Last modified 21 May 2002.
 #
 
 use lib "?";
@@ -87,9 +87,13 @@ $printcap_wizard_table = [
 		print "</p>\n";
 		},
 	'onnext' => sub {
-		if(! defined(cgi_data_peek("localname")))
+		if(cgi_data_peek("localname", "") eq "")
 		    {
 		    return _("The local name must not be blank.");
+		    }
+		if(cgi_data_peek("comment", "") eq "")
+		    {
+		    return _("The description must not be blank.");
 		    }
 		return undef;
 		}	
@@ -101,8 +105,13 @@ $printcap_wizard_table = [
 	'title' => N_("Create Client Script: Download"),
 	'picture' => "cliconf1.png",
 	'dopage' => sub {
+		my $localname = cgi_data_peek("localname", "?");
 		print "<p>", H_("Click on the button below to download the install script."), "</p>\n";
 		isubmit("action", "Download", N_("_Download"), undef), 
+		print "<p>", H_("This script must be run as root.  The command to run it is:"), "</p>\n";
+		print "<pre>\n";
+		print html("# sh setup_$localname.sh"), "\n";
+		print "</pre>\n";
 		},
 	'buttons' => [N_("_Close")]
 	}
@@ -155,12 +164,14 @@ EndHead
 if($spooler eq "lpr" || $spooler eq "lprng")
 {
 print <<"EndOfBSD";
-cat >>/etc/printcap <<EndOfPrintcap
+cat >>/etc/printcap <<'EndOfPrintcap'
 
-$localname|$comment:\
-	:rm=$host:rp=$name:\
-	:sd=/var/spool/lpd/$name:\
-	:mx#0:
+$localname|$comment:\\
+	:lp=:\\
+	:rm=$host:rp=$name:\\
+	:sd=/var/spool/lpd/$name:\\
+	:mx#0:\\
+	:sh:
 
 EndOfPrintcap
 

@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2002, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 12 April 2002.
+// Last revised 21 May 2002.
 //
 
 //
@@ -162,7 +162,7 @@ function alias_properties(w, name)
 	}
 function cliconf(w, name)
 	{
-	window.open('cliconf.cgi?name=' + name, '_blank', 'width=675,height=580,resizable');
+	window.open('cliconf.cgi?name=' + name, '_blank', 'width=675,height=500,resizable');
 	menu_hide(w);
 	return false;
 	}

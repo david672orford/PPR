@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2002.
+** Last modified 21 May 2002.
 */
 
 #include "before_system.h"
@@ -42,6 +42,16 @@
 #include "version.h"
 
 const char myname[] = "ppr-testpage";
+
+void error(const char *message, ... )
+    {
+    va_list va;
+    fprintf(stderr, "%s: ", myname);
+    va_start(va,message);
+    vfprintf(stderr,message,va);
+    va_end(va);
+    fputc('\n', stderr);
+    } /* end of error() */
 
 /*========================================================================
 **
