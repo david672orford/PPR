@@ -81,12 +81,9 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 #============================================================================
 # This configures and builds the source.  The current directory is already
 # the root of the source code.
-#
-# Note: Configure will take the CFLAGS from $RPM_OPT_FLAGS in preference
-# to what it would have picked.
 #============================================================================
 %build
-PERL=/usr/bin/perl GUNZIP=/usr/bin/gunzip \
+CFLAGS="$RPM_OPT_FLAGS" PERL=/usr/bin/perl GUNZIP=/usr/bin/gunzip \
 	./Configure --prefix=/usr --user-ppr=ppr --with-gdbm --with-gettext --without-tdb
 make
 

@@ -8671,6 +8671,8 @@ Bug Fixes
 
 * libscript/PPOP.pm: added code to launch ppop with PATH unset.
 
+* Added -R/usr/local/lib to LDFLAGS= for Solaris (both new and old)
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
