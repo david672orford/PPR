@@ -768,7 +768,8 @@ int printer_show(const char *argv[])
 		{
 		const char *s = _("Default Filter Options: ");
 		PUTS(s);
-		if(deffiltopts) print_wrapped(deffiltopts, strlen(s));
+		if(deffiltopts)
+			print_wrapped(deffiltopts, strlen(s));
 		putchar('\n');
 		}
 

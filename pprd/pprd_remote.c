@@ -56,7 +56,7 @@ void remote_job(struct QEntry *qentry)
 	FUNCTION4DEBUG("remote_new_job")
 	DODEBUG_REMOTE(("%s()", function));
 
-    remote_spawn(struct QEntry *qentry);
+    remote_spawn(qentry);
 	}
 
 /*

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 13 May 2003.
 */
 
 /*
@@ -179,12 +179,14 @@ int group_show(const char *argv[])
 		{
 		const char *s = _("Default Filter Options: ");
 		PUTS(s);
-		print_wrapped(deffiltopts, strlen(s));
+		if(deffiltopts)
+			print_wrapped(deffiltopts, strlen(s));
 		putchar('\n');
 		}
 
 		PUTS(_("Switchset: "));
-		if(switchset) print_switchset(switchset);
+		if(switchset)
+			print_switchset(switchset);
 		putchar('\n');
 
 		/* This rare parameter is shown only when it has a value. */
@@ -246,12 +248,18 @@ int group_show(const char *argv[])
 
 		}
 
-	if(comment) gu_free(comment);
-	for(x=0;x<member_count;x++) gu_free(members[x]);
-	if(deffiltopts) gu_free(deffiltopts);
-	if(switchset) gu_free(switchset);
-	if(passthru) gu_free(passthru);
-	if(acls) gu_free(acls);
+	if(comment)
+		gu_free(comment);
+	for(x=0;x<member_count;x++)
+		gu_free(members[x]);
+	if(deffiltopts)
+		gu_free(deffiltopts);
+	if(switchset)
+		gu_free(switchset);
+	if(passthru)
+		gu_free(passthru);
+	if(acls)
+		gu_free(acls);
 
 	return EXIT_OK;
 	} /* end of group_show() */

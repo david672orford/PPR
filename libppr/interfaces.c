@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2003.
+** Last modified 14 May 2003.
 */
 
 #include "before_system.h"
@@ -84,12 +84,15 @@ static const struct INTERFACE_INFO *find_interface(const char name[])
 	{
 	int index;
 
-	for(index = 0; interfaces[index].name; index++)
+	if(name)
 		{
-		if(strcmp(name, interfaces[index].name) == 0)
+		for(index = 0; interfaces[index].name; index++)
 			{
-			return &interfaces[index];
-			break;
+			if(strcmp(name, interfaces[index].name) == 0)
+				{
+				return &interfaces[index];
+				break;
+				}
 			}
 		}
 
