@@ -112,28 +112,6 @@
 ** have made.
 ** =====================================================================
 **
-** #define LPR_EXTENSIONS_OSF 1
-**			Define this if your lpr has the DEC OSF extensions
-**			such as the -I, -j, -K, -N, -o, -O, and -x switches.
-**
-** #define LP_LIST_PRINTERS "/etc/lp/printers"
-**			This can be defined as
-**			the name of a directory which will contain
-**			one entry (either a file or a subdirectory)
-**			named after each printer.  There is no
-**			default value.
-**
-** #define LP_LIST_CLASSES "/etc/lp/classes"
-**			This can be defined as the
-**			name of a directory which will contain one entry
-**			(either a file or a subdirectory) named after
-**			each class (group).  There is no default
-**			value.
-**
-** #define LP_LPSTAT_BROKEN 1
-**			This is defined if lpstat is so old that it cannot
-**			parse the line "lpstat -o myprinter".
-**
 ** #define SAFE_PATH "/bin:/usr/bin"
 **			Defines a nice, secure path for filters, interfaces,
 **			responders, and other children of ppr and pprd.
@@ -219,10 +197,6 @@
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-/* The LP paths are just a guess!!! */
-#define LP_LIST_PRINTERS "/var/spool/lp/admins/lp/interfaces"
-#define LP_LIST_CLASSES "/var/spool/lp/admins/lp/classes"
-
 #ifndef S_ISLNK
 #define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
 #endif
@@ -266,9 +240,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 /* /bin is a link to /usr/bin */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
-
-#define LP_LIST_PRINTERS "/etc/lp/printers"
-#define LP_LIST_CLASSES "/etc/lp/classes"
 
 /* Work around difference in when access
    to reserved ports is permitted. */
@@ -391,9 +362,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-/* It looks like lp is just a front end to lpr: */
-#define LPR_EXTENSIONS_OSF 1
-
 #endif /* PASS2 */
 #endif /* PPR_OSF1 */
 
@@ -416,9 +384,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 /* /bin is a link to /usr/bin */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
-
-#define LP_LIST_PRINTERS "/var/spool/lp/interface"
-#define LP_LIST_CLASSES "/var/spool/lp/class"
 
 #endif
 #endif /* PPR_IRIX */
@@ -502,10 +467,6 @@ int seteuid(uid_t);		/* not defined in header files */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
 
-#define LP_LPSTAT_BROKEN 1
-#define LP_LIST_PRINTERS "/etc/lp/interface"
-#define LP_LIST_CLASSES "/etc/lp/class"
-
 #define seteuid(x)     setresuid(-1,(x),-1)
 #define setegid(x)     setresgid(-1,(x),-1)
 #define setreuid(x,y)  setresuid((x),(y),-1)
@@ -528,8 +489,6 @@ int seteuid(uid_t);		/* not defined in header files */
 
 #endif
 #ifdef PASS2
-
-#define LPR_EXTENSIONS_OSF 1
 
 #ifndef S_ISLNK
 #define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
@@ -558,9 +517,6 @@ int seteuid(uid_t);		/* not defined in header files */
 /* /bin is a link to /usr/bin */
 #undef SAFE_PATH
 #define SAFE_PATH "/usr/bin"
-
-#define LP_LIST_PRINTERS "/etc/lp/printers"
-#define LP_LIST_CLASSES "/etc/lp/classes"
 
 /* Work around difference in when access
    to reserved ports is permitted. */

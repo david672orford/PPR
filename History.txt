@@ -9457,6 +9457,9 @@ no final tarball was released.
 * README.txt: removed reference to papsrv/, fixed damage to indentation appearently
   caused by tab conversion.
 
+* include sysdep.h: removed LPR_* and LP_* things since the features of UPRINT
+  that need them are being removed.
+
 
 TODO
 
