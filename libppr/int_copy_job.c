@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_copy_job.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 9 May 2001.
+** Last modified 19 April 2002.
 */
 
 #include "before_system.h"
@@ -21,6 +21,9 @@
 #include <string.h>
 #include <fcntl.h>
 #include <time.h>
+#ifdef USE_SHUTDOWN
+#include <sys/socket.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "libppr_int.h"
@@ -50,6 +53,10 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 **
 ** If snmp_function is not NULL, then it is called every snmp_status_interval
 ** seconds.  It is passed the pointer snmp_address.
+**
+** The USE_SHUTDOWN code was an experiment.  HP JetDirect cards don't seem to
+** handle shutdown properly, so it was a bust.  However it may still be the
+** right thing to do, so it is still here but #ifdefed out.
 */
 void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(int err), void (*snmp_function)(void * snmp_address), void *snmp_address, int snmp_status_interval)
     {
@@ -59,6 +66,9 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
     char recv_buffer[BUFFER_SIZE]; 	/* data coming from printer */
     char *recv_ptr = xmit_buffer;
     int recv_len = 0;
+    #ifdef USE_SHUTDOWN
+    gu_boolean recv_zero_read = FALSE;
+    #endif
     enum COPYSTATE xmit_state = COPYSTATE_READING;
     enum COPYSTATE recv_state = COPYSTATE_READING;
     fd_set rfds, wfds;
@@ -86,7 +96,11 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
     ** have data in the receive buffer from the printer that we haven't
     ** sent to pprdrv yet.
     */
-    while(last_stdin_read || recv_len > 0)
+    while(last_stdin_read || recv_len > 0 
+		#ifdef USE_SHUTDOWN
+    		|| !recv_zero_read
+		#endif
+    		)
     	{
 	FD_ZERO(&rfds);
 	FD_ZERO(&wfds);
@@ -95,7 +109,7 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	switch(xmit_state)
 	    {
 	    case COPYSTATE_READING:
-		if(last_stdin_read)			/* if we haven't gotton a 0 byte read */
+		if(last_stdin_read)			/* if read() on fd 0 hasn't reported zero bytes yet, */
 		    {
 		    DODEBUG(("wish to read stdin"));
 		    FD_SET(0, &rfds);
@@ -205,6 +219,12 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    	xmit_state = COPYSTATE_WRITING;
 	    	time_next_control_t = 0;		/* cancel control-T */
 	    	}
+	    #ifdef USE_SHUTDOWN
+	    else
+	   	{
+		shutdown(portfd, SHUT_WR);
+	   	}
+	    #endif
 	    }
 
 	else if(FD_ISSET(portfd, &wfds))
@@ -244,7 +264,12 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    DODEBUG(("read %d byte%s from printer", recv_len, recv_len != 1 ? "s" : ""));
 	    DODEBUG(("--->\"%.*s\"<---", recv_len, recv_ptr));
 
-	    recv_state = COPYSTATE_WRITING;
+	    if(recv_len > 0)
+		recv_state = COPYSTATE_WRITING;
+	    #ifdef USE_SHUTDOWN
+	    else
+	    	recv_zero_read = TRUE;
+	    #endif
 	    }
 
 	else if(FD_ISSET(1, &wfds))

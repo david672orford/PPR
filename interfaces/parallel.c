@@ -219,15 +219,15 @@ static void parse_options(int portfd, struct OPTIONS *options)
 */
 static void printer_error(int error_number)
     {
-    switch(error_number)
-    	{
-	case EINVAL:
-	    alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
-	    int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-    	default:
-	    alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-	    int_exit(EXIT_PRNERR);
+    /* Maybe we tried to read data back from a one-way port. */
+    if(error_number == EINVAL && int_cmdline.feedback)
+	{
+	alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
+	int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 	}
+
+    alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
+    int_exit(EXIT_PRNERR);
     }
 
 /*

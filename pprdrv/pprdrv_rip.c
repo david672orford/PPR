@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2002.
+** Last modified 19 April 2002.
 */
 
 #include "before_system.h"
@@ -146,7 +146,7 @@ void rip_fault_check(void)
 	   */
 	if(exit_code == 1 && !feedback_posterror())
 	    {
-	    fatal(EXIT_PRNERR_NORETRY, "Possible error on Ghostscript command line.  Check options.\n"
+	    fatal(EXIT_PRNERR_NORETRY, "Possible error on RIP (Ghostscript?) command line.  Check options.\n"
 	    				"(Use \"ppop log %s:%s-%d.%d\" to view the error message.)",
 	    					job.destnode, job.destname, job.id, job.subid);
 	    }
@@ -193,6 +193,7 @@ int rip_start(int printdata_handle, int stdout_handle)
     	    size_t len = sizeof(HOMEDIR) + sizeof("/lib/") + strlen(printer.RIP.name) + 1;
     	    char *p = (char*)gu_alloc(len, sizeof(char));
     	    snprintf(p, len, "%s/lib/%s", HOMEDIR, printer.RIP.name);
+    	    rip_exe = p;
     	    }
     	}
 
