@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 7 May 2002.
+# Last modified 17 May 2002.
 #
 
 
@@ -40,10 +40,14 @@ Content-Type: text/html
 <head>
 </head>
 <body>
+
 <script>
+window.resizeTo(100, 100);
+window.moveTo(0, 0);
 window.open('$url', '$target', '$options');
 window.close();
 </script>
+
 </body>
 </html>
 Head

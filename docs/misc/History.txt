@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--21 May 2002.
+1.50a2, 27 February 2002--23 May 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7741,5 +7741,4 @@ line was being parsed twice.
   stuff, removed *ScalePatterns code since it doesn't work on many versions of
   the MS-Windows PostScript drivers, renamed "HP C LaserJet 4500-PS" to "HP
   Color LaserJet 4500".
-
 
