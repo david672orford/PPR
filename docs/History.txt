@@ -446,7 +446,7 @@ more information about RIPs and *pprRIP:.
   jetdirect interface aliases.
 
 
-1.52, 24 July 2003--20 August 2003.
+1.52, 24 July 2003--21 August 2003.
 
 * docs/refman/Makefile: moved comment which broke install of manpages in
   nroff format.
@@ -456,8 +456,8 @@ more information about RIPs and *pprRIP:.
 
 * ppop/ppop.1.pod: added documentation for --magic-cookie.
 
-* pprinst/: added many references to using the web interface instead of the 
-  command-line interface.  Many screenshots are included.
+* pprinst/: added many references to using the web and Perl/Tk interfaces
+  instead of the command-line interface.  Many screenshots are included.
 
 
 

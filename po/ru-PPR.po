@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ru-PPR\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2003-08-20 13:58-0400\n"
-"PO-Revision-Date: 2003-08-20 20:37+0500\n"
+"PO-Revision-Date: 2003-08-21 16:30-0400\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <C@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2448,7 +2448,7 @@ msgstr ""
 
 #: ../ppop/ppop_cmds_other.c:527
 msgid "Printer"
-msgstr "Печатель"
+msgstr "Принтер"
 
 #: ../ppad/ppad_printer.c:2146
 #, c-format
@@ -2546,7 +2546,7 @@ msgstr ""
 #: ../ppad/ppad_printer.c:708
 #, c-format
 msgid "Printer name: %s\n"
-msgstr ""
+msgstr "Название принтера: %s\n"
 
 #: ../interfaces/parallel.c:160
 #, c-format
@@ -4938,6 +4938,3 @@ msgstr ""
 #: ../ppad/ppad_printer.c:885 ../ppop/ppop_cmds_other.c:1635
 msgid "yes"
 msgstr "да"
-
-#~ msgid "value must be set to \"true\" or \"false\""
-#~ msgstr "должно выбрать или \"true\" или \"false\""
