@@ -68,6 +68,9 @@ LIBOBJS=malloc.$(OBJ) \
 	gu_pcs.$(OBJ) \
 	gu_pch.$(OBJ) \
 	gu_pca.$(OBJ) \
+	gu_pcre_match.$(OBJ) \
+	gu_pcre_split.$(OBJ) \
+	gu_pca_join.$(OBJ) \
 	gu_run.$(OBJ) \
 	gu_exceptions.$(OBJ) \
 	gu_parse_uri.$(OBJ) \
@@ -75,13 +78,7 @@ LIBOBJS=malloc.$(OBJ) \
 	gu_strtrim.$(OBJ) \
 	pcre.$(OBJ) \
 	pcre_get.$(OBJ) \
-	pcre_maketables.$(OBJ) \
-	pcre_study.$(OBJ) \
-	c2lib_hash.$(OBJ) \
- 	c2lib_pool.$(OBJ) \
-	c2lib_pre.$(OBJ) \
-	c2lib_pstring.$(OBJ) \
-	c2lib_vector.$(OBJ)
+	pcre_study.$(OBJ) 
 
 TARGETS=../libgu.$(LIBEXT)
 

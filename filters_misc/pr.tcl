@@ -1,7 +1,7 @@
-#! ppr-tclsh
+#! @PPR_TCLSH@
 #
-# mouse:~ppr/src/misc_filters/pr.tcl
-# Copyright 1995--2003, Trinity College Computing Center.
+# mouse:~ppr/src/filters_misc/pr.tcl
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 28 February 2005.
 #
 
 #
@@ -41,9 +41,9 @@
 #
 
 # These are filled in when the script is installed.
-set LIBDIR "?"
-set TEMPDIR "?"
-set PR "?"
+set LIBDIR "@LIBDIR@"
+set TEMPDIR "@TEMPDIR@"
+set PR "@PR@"
 
 # Process the options
 regsub "title=\"" [lindex $argv 0] "\"title=" options

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 28 February 2005.
 */
 
 /*! \file
@@ -101,6 +101,7 @@ typedef int gu_boolean;
 
 /* Actual allocation functions */
 void *gu_alloc(size_t number, size_t size);
+void *gu_malloc(size_t size);
 void *gu_realloc(void *ptr, size_t number, size_t size);
 char *gu_strdup(const char *string);
 char *gu_strndup(const char *string, size_t len);
@@ -109,10 +110,10 @@ void gu_free(void *ptr);
 
 /* Pool functions */
 void *gu_pool_new(void);
-void gu_pool_destroy(void *p);
+void gu_pool_free(void *p);
 void *gu_pool_return(void *block);
-void gu_pool_push(void *p);
-void *gu_pool_pop(void);
+void *gu_pool_push(void *p);
+void *gu_pool_pop(void *p);
 
 /* Debugging functions */
 int gu_alloc_checkpoint(void);
@@ -440,21 +441,26 @@ void *gu_pch_new(int bucket_count);
 void gu_pch_free(void *pch);
 void gu_pch_debug(void *pch, const char name[]);
 void gu_pch_set(void *pch, char key[], void *value);
-char *gu_pch_get(void *pch, const char key[]);
-char *gu_pch_delete(void *pch, char key[]);
+void *gu_pch_get(void *pch, const char key[]);
+void *gu_pch_delete(void *pch, char key[]);
 void gu_pch_rewind(void *pch);
-char *gu_pch_nextkey(void *pch, char **value);
-int gu_hash(const char string[]);
+char *gu_pch_nextkey(void *pch, void **value);
+int gu_hash(const char string[], int modus);
 
 /* Perl Compatible Array */
 void *gu_pca_new(int initial_size, int increment);
 void  gu_pca_free(void *pca);
 int gu_pca_size(void *pca);
-char *gu_pca_index(void *pca, int index);
-char *gu_pca_pop(void *pca); 
-void  gu_pca_push(void *pca, char *item); 
-char *gu_pca_shift(void *pca); 
-void  gu_pca_unshift(void *pca, char *item); 
+void *gu_pca_index(void *pca, int index);
+void *gu_pca_pop(void *pca); 
+void  gu_pca_push(void *pca, void *item); 
+void *gu_pca_shift(void *pca); 
+void  gu_pca_unshift(void *pca, void *item); 
+char *gu_pca_join(const char separator[], void *array);
+
+/* Perl Compatible Regular Expressions */
+void *gu_pcre_match(const char pattern[], const char string[]);
+void *gu_pcre_split(const char pattern[], const char string[]);
 
 /*===================================================================
 ** Replacements for frequently missing functions

@@ -473,7 +473,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	gu_Final
 		{
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch
 		{
@@ -546,7 +546,7 @@ int group_remove_internal(const char *group, const char *member)
 	gu_Final
 		{
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch
 		{
@@ -745,7 +745,7 @@ int group_deffiltopts_internal(const char *group)
 		}
 	gu_Final {
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		confabort();

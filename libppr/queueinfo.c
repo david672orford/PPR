@@ -41,6 +41,7 @@ PPR queue.
 #include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -48,11 +49,6 @@ PPR queue.
 #include "global_defines.h"
 #include "interface.h"
 #include "queueinfo.h"
-
-#include "pool.h"
-#include "pstring.h"
-#include "vector.h"
-#include "hash.h"
 
 #ifdef TEST
 #define DODEBUG(a) { printf a; printf("\n"); }
@@ -83,14 +79,14 @@ struct PRINTER_INFO {
 	gu_boolean colorDevice;
 	char *faxSupport;
 	char *ttRasterizer;
-	sash fonts;
-	sash options;
-	sash VMOptions;
+	void *fonts;				/* hash with empty values */
+	void *options;				/* hash */
+	void *VMOptions;			/* hash */
 	};
 
 /* queue information */
 struct QUEUE_INFO {
-	pool subpool;
+	void *pool;					/* pool to hold allocated memory */
 	int debug_level;
 	FILE *warnings;
 	enum QUEUEINFO_TYPE type;
@@ -98,9 +94,9 @@ struct QUEUE_INFO {
 	char *comment;
 	gu_boolean transparentMode;
 	gu_boolean psPassThru;
-	vector printers;
+	void *printers;
 	gu_boolean common_fonts_found;
-	vector fontlist;		/* fonts held in common */
+	void *fontlist;		/* fonts held in common */
 	gu_boolean chargeExists;
 	};
 
@@ -134,15 +130,15 @@ static void do_passthru(struct QUEUE_INFO *qip, char *list)
 	}
 
 /*
- * This creates a new PRINTER_INFO object and adds it to the list of such objects in a 
- * QUEUE_INFO structure.
+ * This creates a new PRINTER_INFO object and adds it to the list of such
+ * objects in a QUEUE_INFO structure.
  */
 static struct PRINTER_INFO *do_printer_new_obj(struct QUEUE_INFO *qip, const char name[])
 	{
 	struct PRINTER_INFO *pip;
-	pip = c2_pmalloc(qip->subpool, sizeof(struct PRINTER_INFO));
-	vector_push_back(qip->printers, pip);
-	pip->name = pstrdup(qip->subpool, name);
+	pip = gu_alloc(1, sizeof(struct PRINTER_INFO));
+	gu_pca_push(qip->printers, (char*)pip);
+	pip->name = gu_strdup(name);
 	pip->interface = NULL;
 	pip->protocols.TBCP = FALSE;
 	pip->protocols.PJL = FALSE;
@@ -164,9 +160,9 @@ static struct PRINTER_INFO *do_printer_new_obj(struct QUEUE_INFO *qip, const cha
 	pip->colorDevice = FALSE;
 	pip->faxSupport = NULL;
 	pip->ttRasterizer = NULL;
-	pip->fonts = new_sash(qip->subpool);
-	pip->options = new_sash(qip->subpool);
-	pip->VMOptions = new_sash(qip->subpool);
+	pip->fonts = gu_pch_new(25);
+	pip->options = gu_pch_new(12);
+	pip->VMOptions = gu_pch_new(6);
 	return pip;
 	} /* end of do_printer_new_obj() */
 
@@ -190,6 +186,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		gu_Try {
 			char *line;
 			char *p;
+
 			while((line = ppdobj_readline(ppd)))
 				{
 				if(qip->debug_level > 5)
@@ -241,7 +238,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 												p = p + nlen + 1;
 												}
 											}
-										pip->resolution = pstrdup(qip->subpool, p);
+										pip->resolution = gu_strdup(p);
 										}
 									}
 								continue;
@@ -251,14 +248,14 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								{
 								if(!pip->faxSupport)
 									{
-									pip->faxSupport = pstrdup(qip->subpool, p);
+									pip->faxSupport = gu_strdup(p);
 									}
 								continue;
 								}
 							if((p = lmatchp(line, "*Font")))
 								{
-								p = pstrndup(qip->subpool, p, strcspn(p, ":"));
-								sash_insert(pip->fonts, p, "");	
+								p = gu_strndup(p, strcspn(p, ":"));
+								gu_pch_set(pip->fonts, p, "");	
 								continue;
 								}
 							if((p = lmatchp(line, "*FreeVM:")))
@@ -285,10 +282,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 							if((p = lmatchp(line, "*ModelName:")))
 								{
 								if(*p == '"' && !pip->modelname)
-									{
 									pip->modelname = ppd_finish_QuotedValue(ppd, p+1);
-									pool_register_malloc(qip->subpool, pip->modelname);
-									}
 								continue;
 								}
 							break;
@@ -298,7 +292,6 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								if(*p == '"' && !pip->nickname)
 									{
 									pip->nickname = ppd_finish_QuotedValue(ppd, p+1);
-									pool_register_malloc(qip->subpool, pip->nickname);
 
 									/* special parsing rule */
 									if(!pip->shortNickName)
@@ -313,7 +306,6 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								if(*p == '"' && !pip->product)
 									{
 									pip->product = ppd_finish_QuotedValue(ppd, p+1);
-									pool_register_malloc(qip->subpool, pip->product);
 									}
 								continue;
 								}
@@ -327,7 +319,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 									p[strcspn(p, "\"")] = '\0';
 									if(gu_sscanf(p, "(%f) %d", &version, &revision) == 2)
 										{
-										pip->psVersionStr = pstrdup(qip->subpool, p);
+										pip->psVersionStr = gu_strdup(p);
 										pip->psVersion = version;
 										pip->psRevision = revision;
 										}
@@ -353,7 +345,6 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								if(*p == '"' && !pip->shortNickName)
 									{
 									pip->shortNickName = ppd_finish_QuotedValue(ppd, p+1);
-									pool_register_malloc(qip->subpool, pip->shortNickName);
 									}
 								continue;
 								}
@@ -363,7 +354,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 								{
 								if(!pip->ttRasterizer)
 									{
-									pip->ttRasterizer = pstrdup(qip->subpool, p);
+									pip->ttRasterizer = gu_strdup(p);
 									}
 								continue;
 								}
@@ -371,7 +362,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 						case 'V':
 							if((p = lmatchp(line, "*VMOption ")))
 								{
-								char *name = pstrndup(qip->subpool, p, strcspn(p, "/:"));
+								char *name = gu_strndup(p, strcspn(p, "/:"));
 								p += strcspn(p, ":");
 								if(*p == ':')
 									{
@@ -380,7 +371,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 									if(*p == '"')
 										{
 										p++;
-										sash_insert(pip->VMOptions, name, pstrndup(qip->subpool, p, strcspn(p, "\"")));	
+										gu_pch_set(pip->VMOptions, name, gu_strndup(p, strcspn(p, "\"")));	
 										}
 									}
 								continue;
@@ -409,10 +400,10 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 			/* Is a memory expansion module installed? */
 			{
 			const char *name;
-			if(sash_get(pip->options, "*InstalledMemory", name))
+			if((name = gu_pch_get(pip->options, "*InstalledMemory")))
 				{
 				const char *value_string;
-				if(sash_get(pip->VMOptions, name, value_string))
+				if((value_string = gu_pch_get(pip->VMOptions, name)))
 					{
 					pip->psFreeVM = atoi(value_string);
 					}
@@ -420,7 +411,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 			}
 			}
 		gu_Final {
-			ppdobj_delete(ppd);
+			ppdobj_free(ppd);
 			}
 		gu_Catch {
 			gu_ReThrow();
@@ -453,7 +444,7 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 			case 'C':
 				if((p = lmatchp(line, "Comment:")) && depth == 0)
 					{
-					qip->comment = pstrdup(qip->subpool, p);
+					qip->comment = gu_strdup(p);
 					continue;
 					}
 				if((p = lmatchp(line, "Codes:")))
@@ -476,7 +467,7 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 			case 'I':
 				if((p = lmatchp(line, "Interface:")))
 					{
-					pip->interface = pstrdup(qip->subpool, p);
+					pip->interface = gu_strdup(p);
 					/* Invalidate lines which preceed "Interface:". */
 					pip->feedback = -1;
 					pip->jobbreak = JOBBREAK_DEFAULT;
@@ -494,7 +485,7 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 			case 'P':
 				if((p = lmatchp(line, "PPDFile:")))
 					{
-					pip->ppdFile = pstrdup(qip->subpool, p);
+					pip->ppdFile = gu_strdup(p);
 					continue;
 					}
 				if((p = lmatchp(line, "PPDOpt:")))
@@ -502,9 +493,9 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 					char *name, *value;
 					if((name = gu_strsep(&p," ")) && (value = gu_strsep(&p," ")))
 						{
-						name = pstrdup(qip->subpool, name);
-						value = pstrdup(qip->subpool, value);
-						sash_insert(pip->options, name, value);			
+						name = gu_strdup(name);
+						value = gu_strdup(value);
+						gu_pch_set(pip->options, name, value);
 						}
 					continue;
 					}
@@ -556,7 +547,7 @@ static gu_boolean do_group(struct QUEUE_INFO *qip, const char name[], int depth)
 			case 'C':
 				if((p = lmatchp(line, "Comment:")) && depth == 0)
 					{
-					qip->comment = pstrdup(qip->subpool, p);
+					qip->comment = gu_strdup(p);
 					continue;
 					}
 				break;
@@ -608,7 +599,7 @@ static gu_boolean do_alias(struct QUEUE_INFO *qip)
 			case 'C':
 				if((p = lmatchp(line, "Comment:")))
 					{
-					qip->comment = pstrdup(qip->subpool, p);
+					qip->comment = gu_strdup(p);
 					continue;
 					}
 				break;
@@ -645,29 +636,31 @@ static gu_boolean do_alias(struct QUEUE_INFO *qip)
 */
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	{
+	void *pool = gu_pool_new();
 	struct QUEUE_INFO *qip = gu_alloc(1, sizeof(struct QUEUE_INFO));
-	qip->subpool = new_subpool(global_pool);
+	qip->pool = pool;
+	gu_pool_push(qip->pool);
 	qip->debug_level = 0;
 	qip->warnings = NULL;
 	qip->type = qit;
-	qip->name = pstrdup(qip->subpool, name);
+	qip->name = gu_strdup(name);
 	qip->comment = NULL;
 	qip->transparentMode = FALSE;
 	qip->psPassThru = FALSE;
-	qip->printers = new_vector(qip->subpool, struct PRINTER_INFO*);
+	qip->printers = gu_pca_new(8, 8);
 	qip->common_fonts_found = FALSE;
-	qip->fontlist = new_vector(qip->subpool, char*);
+	qip->fontlist = gu_pca_new(50, 50);
 	qip->chargeExists = FALSE;
+	gu_pool_pop(qip->pool);
 	return (void*)qip;
 	} /* end of queueinfo_new() */
 
 /** discard a queueinfo object
 */
-void queueinfo_delete(void *p)
+void queueinfo_free(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	delete_pool(qip->subpool);
-	gu_free(p);
+	gu_pool_free(qip->pool);
 	}
 
 /** create a queueinfo object and load a queue's information into it
@@ -675,7 +668,7 @@ void queueinfo_delete(void *p)
 void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 	{
 	struct QUEUE_INFO *qip = queueinfo_new(qit, name);
-
+	gu_pool_push(qip->pool);
 	gu_Try {
 		switch(qip->type)
 			{
@@ -706,11 +699,13 @@ void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 				break;
 			}
 		}
+	gu_Final {
+		gu_pool_pop(qip->pool);
+		}
 	gu_Catch {
-		queueinfo_delete(qip);
+		queueinfo_free(qip);
 		gu_ReThrow();
 		}
-
 	return (void *)qip;
 	} /* end of queueinfo_new_load_config() */
 
@@ -722,27 +717,43 @@ void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 void queueinfo_add_printer(void *p, const char name[])
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	if(!do_printer(qip, name, 0))
-		gu_CodeThrow(EEXIST, _("no printer called \"%s\""), name);
+	gu_pool_push(qip->pool);
+	gu_Try {
+		if(!do_printer(qip, name, 0))
+			gu_CodeThrow(EEXIST, _("no printer called \"%s\""), name);
+		}
+	gu_Final {
+		gu_pool_pop(qip->pool);
+		}
+	gu_Catch {
+		gu_ReThrow();
+		}
 	}
 
 /** add a hypothetical printer to this object
  *
- * This function load the indicated PPD file as if it belonged to one of the
+ * This function loads the indicated PPD file as if it belonged to one of the
  * member printers of this object.  This capability is used to build queueinfo
  * objects for printers and group which haven't been created yet.
 */
 void queueinfo_add_hypothetical_printer(void *p, const char name[], const char ppdfile[], const char installed_memory[])
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	struct PRINTER_INFO *pip = do_printer_new_obj(qip, name);
-	pip->ppdFile = pstrdup(qip->subpool, ppdfile);
-	if(installed_memory)
-		{
-		char *temp = pstrdup(qip->subpool, installed_memory);
-		sash_insert(pip->options, "*InstalledMemory", temp);
+	struct PRINTER_INFO *pip;
+	gu_pool_push(qip->pool);
+	gu_Try {
+		pip = do_printer_new_obj(qip, name);
+		pip->ppdFile = gu_strdup(ppdfile);
+		if(installed_memory)
+			gu_pch_set(pip->options, "*InstalledMemory", gu_strdup(installed_memory));
+		do_printer_ppd(qip, pip);
 		}
-	do_printer_ppd(qip, pip);
+	gu_Final {
+		gu_pool_pop(qip->pool);
+		}
+	gu_Catch {
+		gu_ReThrow();
+		}
 	}
 
 /** Set a file object to which warning messages may be sent
@@ -822,10 +833,10 @@ gu_boolean queueinfo_binaryOK(void *p)
 	int i;
 	gu_boolean answer = FALSE;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		struct PRINTER_INFO *pip;
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->binaryOK)
 			return FALSE;
 		else
@@ -847,9 +858,9 @@ const char *queueinfo_ppdFile(void *p)
 	int i;
 	const char *answer = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->ppdFile)
 			return NULL;
 		if(!answer)
@@ -873,9 +884,9 @@ const char *queueinfo_product(void *p)
 	int i;
 	const char *answer = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->product)
 			return NULL;
 		if(!answer)
@@ -899,9 +910,9 @@ const char *queueinfo_shortNickName(void *p)
 	int i;
 	const char *answer = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->shortNickName)
 			return NULL;
 		if(!answer)
@@ -922,9 +933,9 @@ static struct PRINTER_INFO *find_lowest_version(struct QUEUE_INFO *qip)
 	int i;
 	struct PRINTER_INFO *pip, *lowest = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->psVersion)
 			return NULL;
 		if(!lowest || pip->psVersion < lowest->psVersion 
@@ -1013,9 +1024,9 @@ int queueinfo_psFreeVM(void *p)
 	int i;
 	int lowest_freevm = 0;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(pip->psFreeVM == 0)
 			return 0;
 		if(lowest_freevm == 0 || pip->psFreeVM < lowest_freevm)
@@ -1040,9 +1051,9 @@ const char *queueinfo_resolution(void *p)
 	int lowest_resolution = 0;
 	char *lowest_resolution_string = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->resolution)
 			return 0;
 		if(lowest_resolution == 0 || atoi(pip->resolution) < lowest_resolution)
@@ -1063,10 +1074,10 @@ gu_boolean queueinfo_colorDevice(void *p)
 	int i;
 	gu_boolean answer = FALSE;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		struct PRINTER_INFO *pip;
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->colorDevice)
 			return FALSE;
 		else
@@ -1089,9 +1100,9 @@ const char *queueinfo_faxSupport(void *p)
 	int i;
 	const char *answer = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->faxSupport)
 			return NULL;
 		else if(!answer)
@@ -1116,9 +1127,9 @@ const char *queueinfo_ttRasterizer(void *p)
 	int i;
 	const char *answer = NULL;
 
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
+		pip = gu_pca_index(qip->printers, i);
 		if(!pip->ttRasterizer)
 			return NULL;
 		else if(!answer)
@@ -1146,29 +1157,35 @@ static void find_common_fonts(struct QUEUE_INFO *qip)
 	{
 	if(!qip->common_fonts_found)
 		{
-		if(vector_size(qip->printers) > 0)
-			{
-			struct PRINTER_INFO *pip;
-			int x, y;
-			const char *fontname;
-			vector keys;
-
-			vector_get(qip->printers, 0, pip);
-			keys = sash_keys(pip->fonts);
-			for(x=0; x < vector_size(keys); x++)
+		gu_pool_push(qip->pool);
+		gu_Try {
+			if(gu_pca_size(qip->printers) > 0)
 				{
-				vector_get(keys, x, fontname);
-				for(y=1; y < vector_size(qip->printers); y++)
+				struct PRINTER_INFO *pip, *pipy;
+				int y;
+				char *fontname;
+	
+				pip = gu_pca_index(qip->printers, 0);
+				for(gu_pch_rewind(pip->fonts); (fontname = gu_pch_nextkey(pip->fonts,NULL)); )
 					{
-					vector_get(qip->printers, y, pip);
-					if(!sash_exists(pip->fonts, fontname))
-						break;
+					for(y=1; y < gu_pca_size(qip->printers); y++)
+						{
+						pipy = gu_pca_index(qip->printers, y);
+						if(!gu_pch_get(pipy->fonts, fontname))
+							break;
+						}
+					if(y == gu_pca_size(qip->printers))
+						gu_pca_push(qip->fontlist, fontname);
 					}
-				if(y == vector_size(qip->printers))
-					vector_push_back(qip->fontlist, fontname);
 				}
+			qip->common_fonts_found = TRUE;
 			}
-		qip->common_fonts_found = TRUE;
+		gu_Final {
+			gu_pool_pop(qip->pool);
+			}
+		gu_Catch {
+			gu_ReThrow();
+			}
 		}
 	} /* end of find_common_fonts() */
 
@@ -1178,7 +1195,7 @@ int queueinfo_fontCount(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	find_common_fonts(qip);
-	return vector_size(qip->fontlist);
+	return gu_pca_size(qip->fontlist);
 	}
 
 /** Return item index from the printer's font list
@@ -1186,15 +1203,15 @@ int queueinfo_fontCount(void *p)
 const char *queueinfo_font(void *p, int index)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	const char *fontname;
 	find_common_fonts(qip);
-	if(index > vector_size(qip->fontlist))
+	if(index > gu_pca_size(qip->fontlist))
 		return NULL;
-	vector_get(qip->fontlist, index, fontname);
-	return fontname;
+	return gu_pca_index(qip->fontlist, index);
 	}
 
 /** Check if a specified font exists
+ *
+ * !!! exists where ???
 */
 gu_boolean queueinfo_fontExists(void *p, const char name[])
 	{
@@ -1202,10 +1219,10 @@ gu_boolean queueinfo_fontExists(void *p, const char name[])
 	struct PRINTER_INFO *pip;
 	int i;
 	find_common_fonts(qip);
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
-		if(!sash_exists(pip->fonts, name))
+		pip = gu_pca_index(qip->printers, i);
+		if(!gu_pch_get(pip->fonts, name))
 			return FALSE;
 		}
 	return TRUE;
@@ -1221,14 +1238,14 @@ const char *queueinfo_optionValue(void *p, const char name[])
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
-	const char *value;
 	const char *answer = NULL;
+	const char *value;
 	if(!queueinfo_ppdFile(p))
 		return NULL;
-	for(i=0; i < vector_size(qip->printers); i++)
+	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
-		vector_get(qip->printers, i, pip);
-		if(!sash_get(pip->options, name, value))
+		pip = gu_pca_index(qip->printers, i);
+		if(!(value = gu_pch_get(pip->options, name)))
 			return FALSE;
 		if(!answer)
 			answer = value;
@@ -1241,7 +1258,7 @@ const char *queueinfo_optionValue(void *p, const char name[])
 /*
 ** Look up a printer's product, modelname, nickname, and resolution and return a MetaFont mode.
 */
-static const char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
+static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	{
 	FILE *modefile;
 	char *line = NULL;
@@ -1318,9 +1335,11 @@ static const char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		if(qip->debug_level >= 2)
 			printf(_("Match at \"%s\" line %d, mfmode=\"%s\".\n"), MFMODES, linenum, answer);
 
-		gu_free(line);			/* didn't hit EOF so must do it ourselves */
 		break;
 		}
+
+	if(line)
+		gu_free(line);
 
 	{
 	int error = ferror(modefile);
@@ -1339,30 +1358,43 @@ const char *queueinfo_computedMetaFontMode(void *p)
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
-	const char *answer = NULL;
-	const char *temp;
+	char *answer = NULL;
+	char *temp;
+	void *private_pool = gu_pool_push(gu_pool_new());
 
-	for(i=0; i < vector_size(qip->printers); i++)
-		{
-		vector_get(qip->printers, i, pip);
-		if(!(temp = get_mfmode(qip, pip)))
+	gu_Try {
+		for(i=0; i < gu_pca_size(qip->printers); i++)
 			{
-			if(qip->warnings)
-				fprintf(qip->warnings, _("Warning: no MetaFont mode found for printer \"%s\".\n"), pip->name);
-			return NULL;
-			}
-		else if(!answer)
-			{
-			answer = temp;
-			}
-		else if(strcmp(answer, temp))
-			{
-			if(qip->warnings)
-				fprintf(qip->warnings, _("Warning: not all members of group \"%s\" have the save MetaFont mode.\n"), qip->name);
-			return NULL;
+			pip = gu_pca_index(qip->printers, i);
+			if(!(temp = get_mfmode(qip, pip)))
+				{
+				if(qip->warnings)
+					fprintf(qip->warnings, _("Warning: no MetaFont mode found for printer \"%s\".\n"), pip->name);
+				answer = NULL;
+				break;
+				}
+			else if(!answer)
+				{
+				answer = temp;
+				}
+			else if(strcmp(answer, temp))
+				{
+				if(qip->warnings)
+					fprintf(qip->warnings, _("Warning: not all members of group \"%s\" have the save MetaFont mode.\n"), qip->name);
+				answer = NULL;
+				break;
+				}
 			}
 		}
-
+	gu_Final {
+		if(answer)
+			answer = gu_pool_return(answer);
+		gu_pool_free(gu_pool_pop(private_pool));
+		}
+	gu_Catch {
+		gu_ReThrow();
+		}
+	
 	return answer;
 	} /* end of queueinfo_computedMetaFontMode() */
 	
@@ -1396,12 +1428,12 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 	if(qip->debug_level >= 2)
 		printf("New default filter options for \"%s\" are: %s\n", qip->name, result_line);
 
-	return pstrdup(qip->subpool, result_line);
+	return gu_strdup(result_line);
 	} /* end of queueinfo_computedDefaultFilterOptions() */
 
 /*
 ** Test program
-** gcc -Wall -DTEST -I../include queueinfo.c ../libppr.a ../libgu.a -lz
+** gcc -Wall -DTEST -I../include -o queueinfo queueinfo.c ../libppr.a ../libgu.a -lz
 */
 #ifdef TEST
 int main(int argc, char *argv[])

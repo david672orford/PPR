@@ -101,7 +101,7 @@ int gu_pca_size(void *pca)
 
 /** Return the string at a given index
  */
-char *gu_pca_index(void *pca, int index)
+void *gu_pca_index(void *pca, int index)
 	{
 	struct PCA *p = (struct PCA *)pca;
 	index += p->removed_at_start;
@@ -112,7 +112,7 @@ char *gu_pca_index(void *pca, int index)
 
 /** Remove and return the last element
  */
-char *gu_pca_pop(void *pca) 
+void *gu_pca_pop(void *pca) 
 	{
 	struct PCA *p = (struct PCA *)pca;
 	if(p->size_used > p->removed_at_start)
@@ -125,7 +125,7 @@ char *gu_pca_pop(void *pca)
 
 /** Add the given element to the end of the array 
  */
-void gu_pca_push(void *pca, char *item)
+void gu_pca_push(void *pca, void *item)
 	{
 	struct PCA *p = (struct PCA *)pca;
 	if(p->size_used == p->size_allocated)
@@ -146,7 +146,7 @@ void gu_pca_push(void *pca, char *item)
 
 /** Remove and return the first element
  */
-char *gu_pca_shift(void *pca)
+void *gu_pca_shift(void *pca)
 	{
 	struct PCA *p = (struct PCA *)pca;
 	if(p->size_used > p->removed_at_start)
@@ -158,7 +158,7 @@ char *gu_pca_shift(void *pca)
 
 /** Add the provided element to the begining of the array
  */
-void gu_pca_unshift(void *pca, char *item)
+void gu_pca_unshift(void *pca, void *item)
 	{
 	struct PCA *p = (struct PCA *)pca;
 	if(p->removed_at_start > 0)

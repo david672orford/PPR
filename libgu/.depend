@@ -10,9 +10,9 @@ getline.$(OBJ): getline.c ../include/gu.h
 
 getopt.$(OBJ): getopt.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-snprintf.$(OBJ): snprintf.c ../include/config.h ../include/gu.h ../include/config.h
+snprintf.$(OBJ): snprintf.c ../include/config.h
 
-gu_wildmat.$(OBJ): gu_wildmat.c
+gu_wildmat.$(OBJ): gu_wildmat.c ../include/gu.h
 
 gu_dtostr.$(OBJ): gu_dtostr.c ../include/config.h ../include/gu.h
 
@@ -44,19 +44,17 @@ gu_strsep2.$(OBJ): gu_strsep2.c ../include/config.h ../include/gu.h ../include/g
 
 gu_strsignal.$(OBJ): gu_strsignal.c ../include/config.h ../include/gu.h
 
-c2lib_hash.$(OBJ): c2lib_hash.c ../nonppr_misc/c2lib/config.h
+pcre_get.$(OBJ): pcre_get.c ../nonppr_misc/pcre/internal.h
 
 gu_timeval.$(OBJ): gu_timeval.c ../include/config.h ../include/gu.h
 
-pcre_get.$(OBJ): pcre_get.c ../nonppr_misc/pcre/internal.h
+pcre_study.$(OBJ): pcre_study.c ../nonppr_misc/pcre/internal.h
 
 ini_section.$(OBJ): ini_section.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 lock_exclusive.$(OBJ): lock_exclusive.c ../include/gu.h
 
 malloc.$(OBJ): malloc.c ../include/config.h ../include/gu.h
-
-malloc_debug.$(OBJ): malloc_debug.c ../include/config.h ../include/gu.h
 
 padded.$(OBJ): padded.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
@@ -68,29 +66,33 @@ torf.$(OBJ): torf.c ../include/config.h ../include/gu.h
 
 wordwrap.$(OBJ): wordwrap.c ../include/config.h ../include/gu.h
 
-pcre_maketables.$(OBJ): pcre_maketables.c ../nonppr_misc/pcre/internal.h
-
-pcre_study.$(OBJ): pcre_study.c ../nonppr_misc/pcre/internal.h
-
-c2lib_pool.$(OBJ): c2lib_pool.c ../nonppr_misc/c2lib/config.h
-
-c2lib_pre.$(OBJ): c2lib_pre.c ../nonppr_misc/c2lib/config.h
-
-c2lib_pstring.$(OBJ): c2lib_pstring.c ../nonppr_misc/c2lib/config.h
-
-c2lib_tree.$(OBJ): c2lib_tree.c ../nonppr_misc/c2lib/config.h ../include/tree.h
-
-c2lib_vector.$(OBJ): c2lib_vector.c ../nonppr_misc/c2lib/config.h
+gu_pca.$(OBJ): gu_pca.c ../include/config.h ../include/gu.h
 
 gu_run.$(OBJ): gu_run.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
+gu_parse_uri.$(OBJ): gu_parse_uri.c ../include/config.h ../include/gu.h
+
+gu_pch.$(OBJ): gu_pch.c ../include/config.h ../include/gu.h
+
 gu_exceptions.$(OBJ): gu_exceptions.c ../include/config.h ../include/gu.h
+
+gu_pca_join.$(OBJ): gu_pca_join.c ../include/config.h ../include/gu.h ../include/pcre.h
 
 gu_psprintf.$(OBJ): gu_psprintf.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
+gu_strtrim.$(OBJ): gu_strtrim.c ../include/config.h ../include/gu.h
+
+gu_pcre_split.$(OBJ): gu_pcre_split.c ../include/config.h ../include/gu.h ../include/pcre.h
+
 gu_isdigit.$(OBJ): gu_isdigit.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_snprintf.$(OBJ): gu_snprintf.c ../include/config.h ../include/gu.h ../nonppr_misc/snprintf/snprintf.c
 
 gu_strlcat.$(OBJ): gu_strlcat.c ../include/gu.h ../nonppr_misc/openbsd/strlcat.c
 
 gu_strlcpy.$(OBJ): gu_strlcpy.c ../include/gu.h ../nonppr_misc/openbsd/strlcpy.c
+
+gu_strlower.$(OBJ): gu_strlower.c ../include/config.h ../include/gu.h
+
+gu_pcre_match.$(OBJ): gu_pcre_match.c ../include/config.h ../include/gu.h ../include/pcre.h
 

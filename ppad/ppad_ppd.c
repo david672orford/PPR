@@ -807,7 +807,7 @@ int ppdlib_query(const char *argv[])
 		/* Now call the function that does the real work. */
 		ret = ppd_query_core("<printer>", q);
 
-		query_delete(q);
+		query_free(q);
 		}
 	gu_Catch
 		{
@@ -919,7 +919,7 @@ int ppdlib_get(const char *argv[])
 			}
 		}
 	gu_Final {
-		ppdobj_delete(ppd);
+		ppdobj_free(ppd);
 		}
 	gu_Catch {
 		fprintf(errors, "%s: %s\n", myname, gu_exception);

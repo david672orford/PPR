@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 28 February 2005.
 */
 
 /*
@@ -373,7 +373,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 			}
 		}
 
-    queueinfo_delete(queue_config);
+    queueinfo_free(queue_config);
 	
 	DODEBUG_LOOP(("child daemon done"));
 	} /* end of connexion_callback() */

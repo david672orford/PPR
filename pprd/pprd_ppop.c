@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 February 2005.
+** Last modified 28 February 2005.
 */
 
 /** \file
@@ -1434,7 +1434,7 @@ void ppop_dispatch(const char command[])
 
 	{
 	int alloc_count = gu_alloc_checkpoint();
-	gu_pool_push(gu_pool_new());
+	void *temporary_pool = gu_pool_push(gu_pool_new());
 
 	/* Do the command. */
 	switch(ppop_command[0])
@@ -1512,7 +1512,7 @@ void ppop_dispatch(const char command[])
 			break;
 		}
 
-	gu_pool_destroy(gu_pool_pop());
+	gu_pool_free(gu_pool_pop(temporary_pool));
 	gu_alloc_assert(alloc_count);
 	}
 

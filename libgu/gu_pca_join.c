@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_parse_uri.c
+** mouse:~ppr/src/libgu/gu_pcs_join.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,36 +25,47 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 February 2005.
+** Last modified 28 February 2005.
+*/
+
+/*! \file 
+
+  This module joins a PCA into a PCS.
+  
 */
 
 #include "config.h"
+#include <string.h>
 #include "gu.h"
+#include "pcre.h"
 
-int gu_parse_uri(struct URI *uri, char uri_string[])
+/** Join array members into a string
+ */
+char *gu_pca_join(const char separator[], void *array)
 	{
-#if 0
-	pcre *uri_pattern;
-	vector uri_matches;
-	char *p;
+	void *string = gu_pcs_new();
+	int iii;
+	for(iii=0; iii < gu_pca_size(array); iii++)
+		{
+		if(iii > 0)
+			gu_pcs_append_cstr(&string, separator);
+		gu_pcs_append_cstr(&string, gu_pca_index(array,iii));
+		}
+	return gu_pcs_free_keep_cstr(&string);
+	}
 
-	uri_pattern = precomp(callers_pool,
-		"^([a-zA-Z]+)://([a-zA-Z0-9\\.-]+)((?:/[^/]+)*?(?:/([^/]*))?)$",
-		0);
+/* gcc -Wall -I../include -DTEST -o gu_pca_join gu_pca_join.c ../libgu.a */
+#ifdef TEST
+#include <stdio.h>
+int main(int argc, char *argv[])
+	{
+	void *list;
+	
+	list = gu_pcre_split("\\s", "Now is the TIME for all good men to come to the aid of the party.");
+	printf("\"%s\"\n", gu_pca_join(",", list));
 
-	if(!(uri_matches = prematch(callers_pool, uri_string, uri_pattern, 0)))
-		return -1;
-
-	vector_pop_front(uri_matches, p);	/* discard */
-	vector_pop_front(uri_matches, uri->method);
-	vector_pop_front(uri_matches, uri->node);
-	vector_pop_front(uri_matches, uri->path);
-	if(vector_size(uri_matches) > 0)
-		vector_pop_front(uri_matches, uri->basename);
-	else
-		uri->basename[0] = '\0';
-#endif	
 	return 0;
 	}
+#endif
 
 /* end of file */

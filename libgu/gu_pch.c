@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 28 February 2005.
 */
 
 /*! \file
@@ -43,6 +43,8 @@ The values of PCH objects are either NULL pointers or pointers to PCS objects.
 #include <string.h>
 #include "gu.h"
 
+#define MAGIC 0x4201
+
 struct PCH_ENTRY {
 	char *key;					/* key for this item */
 	char *value;				/* value for this item */
@@ -50,6 +52,7 @@ struct PCH_ENTRY {
 	};
 
 struct PCH {
+	int magic;
 	struct PCH_ENTRY **buckets;
 	int bucket_count;				/* how many buckets are in the hash? */
 	int key_count;					/* how many items in the hash? */
@@ -67,10 +70,16 @@ hash that the new hash should have.
 */
 void *gu_pch_new(int bucket_count)
 	{
-	struct PCH *p = gu_alloc(1, sizeof(struct PCH));
+	struct PCH *p;
 	int x;
+
+	if(bucket_count < 1)
+		gu_Throw("gu_pch_new(): bucket count must be at least one");
+	
+	p = gu_alloc(1, sizeof(struct PCH));
+	p->magic = MAGIC;
 	p->bucket_count = bucket_count;
-	p->buckets = gu_alloc(sizeof(struct PCH_ENTRY *), p->bucket_count);
+	p->buckets = gu_alloc(p->bucket_count, sizeof(struct PCH_ENTRY *));
 	for(x=0; x < p->bucket_count; x++)
 		{
 		p->buckets[x] = (struct PCH_ENTRY *)NULL;
@@ -93,6 +102,9 @@ void gu_pch_free(void *pch)
 	struct PCH *p = (struct PCH *)pch;
 	int x;
 	struct PCH_ENTRY *bucket, *bucket_next;;
+
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pch_free(): bad magic");
 
 	/* Decrement the reference count on each PCS which is a key or a value. */
 	for(x=0; x < p->bucket_count; x++)
@@ -118,7 +130,10 @@ void gu_pch_debug(void *pch, const char name[])
 	struct PCH *p = (struct PCH *)pch;
 	int x;
 
-	printf("%p {\n", pch);
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pch_debug(): bad magic: 0x%08x", p->magic);
+
+	printf("%s (%p) {\n", name, pch);
 
 	for(x=0; x < p->bucket_count; x++)
 		{
@@ -134,28 +149,28 @@ void gu_pch_debug(void *pch, const char name[])
 	printf("  } (%d items)\n", p->key_count);
 	}
 
-/**
-
-This function sets a given key of a given hash object to a given value.
-
+/** Set a given key of a given hash object to a given value.
 */
 void gu_pch_set(void *pch, char key[], void *value)
 	{
 	struct PCH *p = (struct PCH *)pch;
 	struct PCH_ENTRY *entry, **entry_pp;
-	entry_pp = &p->buckets[gu_hash(key) % p->bucket_count];
-	while(*entry_pp && strcmp((*entry_pp)->key, key) != 0)
+
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pch_set(): bad magic");
+
+	entry_pp = &p->buckets[gu_hash(key,p->bucket_count)];
+	while((entry = *entry_pp) && strcmp(entry->key, key) != 0)
 		{
-		entry_pp = &(*entry_pp)->next;
+		entry_pp = &(entry->next);
 		}
-	entry = *entry_pp;
 	if(entry)
 		{
 		entry->value = value;
 		}
 	else
 		{
-		*entry_pp = entry = gu_alloc(sizeof(struct PCH_ENTRY *), 1);
+		*entry_pp = entry = gu_alloc(1, sizeof(struct PCH_ENTRY));
 		entry->key = key;
 		entry->value = value;
 		entry->next = NULL;
@@ -169,10 +184,15 @@ This function looks up the indicated key and returns the value as a PCS (or
 NULL if the key is not found).
 
 */
-char *gu_pch_get(void *pch, const char key[])
+void *gu_pch_get(void *pch, const char key[])
 	{
 	struct PCH *p = (struct PCH *)pch;
-	struct PCH_ENTRY *entry = p->buckets[gu_hash(key) % p->bucket_count];
+	struct PCH_ENTRY *entry;
+
+	if(p->magic != MAGIC)
+		gu_Throw("gu_pch_get(): bad magic");
+
+	entry = p->buckets[gu_hash(key,p->bucket_count)];
 	while(entry && strcmp(entry->key, key) != 0)
 		entry = entry->next;
 	if(entry)
@@ -181,15 +201,14 @@ char *gu_pch_get(void *pch, const char key[])
 		return NULL;
 	}
 
-/*
+/** This function deletes a key from the hash table.
 
-This function deletes a key from the hash table.
-
+  This function is analogous to Perl's delete operator.
 */
-char *gu_pch_delete(void *pch, char key[])
+void *gu_pch_delete(void *pch, char key[])
 	{
 	struct PCH *p = (struct PCH *)pch;
-	struct PCH_ENTRY *entry, **entry_pp = &p->buckets[gu_hash(key) % p->bucket_count];
+	struct PCH_ENTRY *entry, **entry_pp = &p->buckets[gu_hash(key,p->bucket_count)];
 	while((entry = *entry_pp))
 		{
 		if(strcmp(entry->key, key) == 0)
@@ -234,7 +253,7 @@ Do it like this:
 		}
 
 */
-char *gu_pch_nextkey(void *pch, char **value)
+char *gu_pch_nextkey(void *pch, void **value)
 	{
 	struct PCH *p = (struct PCH *)pch;
 	if(!p->next_item)
@@ -260,13 +279,14 @@ char *gu_pch_nextkey(void *pch, char **value)
 
 /** create a hash value from a string
 
-This function hashes a string.  The hash function is attibuted to 
-P. J Weinberger.
+This function hashes a string.  The range of the hash value is limited
+to 0 thru (modus - 1) inclusive.  The hash function is attibuted to 
+P. J Weinberger.  It is assume that an int is at least 32 bits long.
 
 */
-int gu_hash(const char string[])
+int gu_hash(const char string[], int modus)
 	{
-	int total;
+	unsigned int total;
 	const char *p;
 	int temp;
 
@@ -281,7 +301,7 @@ int gu_hash(const char string[])
 			}
 		}
 
-	return total;
+	return total % modus;
 	}
 
 /* gcc -Wall -DTEST -I../include -o gu_pch gu_pch.c ../libgu.a */
@@ -289,7 +309,7 @@ int gu_hash(const char string[])
 int main(int argc, char *argv[])
 	{
 	void *thash = gu_pch_new(10);
-	gu_pch_debug(&thash, "thash");
+	gu_pch_debug(thash, "thash");
 
 	gu_pch_set(thash, "x", "100");
 	gu_pch_set(thash, "y", "110");
@@ -311,7 +331,10 @@ int main(int argc, char *argv[])
 
 	printf("sue=\"%s\"\n", gu_pch_delete(thash, "sue"));
 	printf("math=\"%s\"\n", gu_pch_delete(thash, "math"));
+	gu_pch_set(thash, "john", "fired");
 	gu_pch_debug(thash, "thash");
+
+	gu_pch_set(thash, "*Option1", "False");
 
 	{
 	const char *key;

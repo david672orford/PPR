@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/query.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 28 February 2005.
 */
 
 #include "config.h"
@@ -140,7 +140,7 @@ struct QUERY *query_new_byprinter(const char printer[])
 /** destroy a query object
 
 */
-void query_delete(struct QUERY *q)
+void query_free(struct QUERY *q)
 	{
 	if(!q)
 		gu_Throw("query_delete(NULL)!");
@@ -149,7 +149,7 @@ void query_delete(struct QUERY *q)
 	if(q->line)
 		gu_free(q->line);
 	gu_free(q);
-	} /* end of query_delete() */
+	} /* end of query_free() */
 
 /** connect to the printer
 

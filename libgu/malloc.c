@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 28 February 2005.
 */
 
 /*! \file
@@ -57,6 +57,16 @@ static void gu_pool_reregister(void *block, void *old_block);
 
 #if 0
 #define DODEBUG(a) debug a
+#include <stdarg.h>
+static void debug(const char message[], ...)
+	{
+	va_list va;
+	va_start(va, message);
+	fputs("gu_malloc: ", stdout);
+	vfprintf(stdout, message, va);
+	fputc('\n', stdout);
+	va_end(va);
+	} /* end of debug() */
 #else
 #define DODEBUG(a)
 #endif
@@ -65,7 +75,7 @@ static void gu_pool_reregister(void *block, void *old_block);
 struct POOL {
 	int size_allocated;
 	int size_used;
-	void *blocks[1];
+	void **blocks;
 	};
 
 /* Stack of memory allocate pools */
@@ -76,7 +86,7 @@ static int pools_stack_pointer = -1;
 /** Number of blocks currently allocated, used for debugging */
 static int gu_alloc_blocks = 0;
 
-/** Return the number of allocated memory blocks
+/** Determine the number of allocated memory blocks
 
   This function is used to check for memory leaks.  Before
   entering a block of code which is known not to allocate
@@ -92,7 +102,8 @@ int gu_alloc_checkpoint(void)
 	return gu_alloc_blocks;
 	} /* end of gu_alloc_checkpoint() */
 
-/*
+/** Make an assertion about the number of allocated memory blocks
+**
 ** This is called to assert that gu_alloc_blocks differs
 ** from the figure saved by gu_alloc_checkpoint by a
 ** certain amount.  This is called by a macro called
@@ -119,18 +130,29 @@ a void pointer to the allocated memory.  The memory is not initialized.
 */
 void *gu_alloc(size_t number, size_t size)
 	{
+	DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
+	return gu_malloc(number * size);
+	} /* end of gu_alloc() */
+
+/** Allocate memory block
+
+This function is provided for PCRE.
+
+*/
+void *gu_malloc(size_t size)
+	{
 	void *rval;
 
-	DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
+	DODEBUG(("gu_malloc(size=%ld)", (long)size));
 
-	if(!(rval = malloc(size*number)))
-		gu_CodeThrow(errno, "gu_alloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	if(!(rval = malloc(size)))
+		gu_CodeThrow(errno, "gu_malloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 	gu_pool_register(rval);
 
 	return rval;
-	} /* end of gu_alloc() */
+	}
 
 /** Duplicate a string
 
@@ -194,7 +216,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 	{
 	size_t len = strlen(string);
 
-	DODEBUG(("gu_restrdup(ptr=%p, number=%d, string=\"%s\")", ptr, number, string));
+	DODEBUG(("gu_restrdup(ptr=%p, *number=%d, string=\"%s\")", ptr, *number, string));
 
 	if(!ptr || *number <= len)			/* must be at least one greater */
 		{
@@ -204,7 +226,10 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 			gu_CodeThrow(errno, "gu_restrdup(): realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		if(rval != ptr)
 			{
-			gu_pool_reregister(rval, ptr);
+			if(ptr == NULL)
+				gu_pool_register(rval);
+			else
+				gu_pool_reregister(rval, ptr);
 			ptr = rval;
 			}
 		}
@@ -231,7 +256,12 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
 		gu_CodeThrow(errno, "gu_realloc(): realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
 
 	if(rval != ptr)
-		gu_pool_reregister(rval, ptr);
+		{
+		if(ptr == NULL)
+			gu_pool_register(rval);
+		else
+			gu_pool_reregister(rval, ptr);
+		}
 	
 	return rval;
 	} /* end of ppr_realloc() */
@@ -265,12 +295,18 @@ will be placed.
 */
 void *gu_pool_new(void)
 	{
+	const char function[] = "gu_pool_new";
 	struct POOL *pool;
-	if(!(pool = malloc(sizeof(struct POOL) - sizeof(void*) + 10 * sizeof(void*))))
-		gu_CodeThrow(errno, "gu_pool_new(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+	DODEBUG(("%s()",function));
+	if(!(pool = malloc(sizeof(struct POOL))))
+		gu_CodeThrow(errno, "%s(): malloc() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 	gu_alloc_blocks++;
 	pool->size_allocated = 10;
+	if(!(pool->blocks = malloc(sizeof(void*) * pool->size_allocated)))
+		gu_CodeThrow(errno, "%s(): malloc() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+	gu_alloc_blocks++;
 	pool->size_used = 0;
+	DODEBUG(("gu_pool_new(): %p", pool));
 	return (void*)pool;
 	}
 
@@ -280,15 +316,19 @@ The indicated memory pool and all of the blocks which it contains
 will be deallocated.
 
 */
-void gu_pool_destroy(void *p)
+void gu_pool_free(void *p)
 	{
 	struct POOL *pool = (struct POOL*)p;	
 	int iii;
+	DODEBUG(("gu_pool_free()"));
 	for(iii=0; iii < pool->size_used; iii++)
 		{
+		DODEBUG(("gu_pool_free(): freeing %p",pool->blocks[iii]));
 		free(pool->blocks[iii]);
 		gu_alloc_blocks--;
 		}
+	free(pool->blocks);
+	gu_alloc_blocks--;
 	free(p);
 	gu_alloc_blocks--;
 	}
@@ -298,15 +338,16 @@ void gu_pool_destroy(void *p)
  */
 static void gu_pool_register(void *block)
 	{
+	const char function[] = "gu_pool_register";
+	DODEBUG(("gu_pool_register(%p)",block));
 	if(pools_stack_pointer >= 0)
 		{
 		struct POOL *pool = pools_stack[pools_stack_pointer];
 		if(pool->size_used == pool->size_allocated)
 			{
 			pool->size_allocated += 10;
-			if(!(pool = realloc(pool, sizeof(struct POOL) - sizeof(void*) + pool->size_allocated * sizeof(void*))))
-				gu_CodeThrow(errno, "gu_pool_register(): realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
-			pools_stack[pools_stack_pointer] = pool;
+			if(!(pool->blocks = realloc(pool->blocks, pool->size_allocated * sizeof(void*))))
+				gu_CodeThrow(errno, "%s(): realloc() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 			}
 		pool->blocks[pool->size_used++] = block;
 		}
@@ -315,6 +356,7 @@ static void gu_pool_register(void *block)
 /* Internal function to reregister a block moved by realloc(). */
 static void gu_pool_reregister(void *block, void *old_block)
 	{
+	DODEBUG(("gu_pool_reregister(block=%p, old_block=%p)",block,old_block));
 	if(pools_stack_pointer >= 0)
 		{
 		struct POOL *pool = pools_stack[pools_stack_pointer];
@@ -344,15 +386,16 @@ should be called before destroying the internal pools.
 */ 
 void *gu_pool_return(void *block)
 	{
+	DODEBUG(("gu_pool_return(%p)",block));
 	if(pools_stack_pointer < 0)
 		{
 		gu_Throw("gu_pool_return(): pools stack is empty");
 		}
 	else
 		{
-		struct POOL *pool = gu_pool_pop();
+		struct POOL *pool = gu_pool_pop(NULL);				/* remove current pool */
 		int iii;
-		for(iii = (pool->size_used - 1); iii >= 0; iii--)	/* hunt downward */
+		for(iii = (pool->size_used - 1); iii >= 0; iii--)	/* hunt downward is removed pool */
 			{
 			if(pool->blocks[iii] == block)
 				{
@@ -376,27 +419,34 @@ void *gu_pool_return(void *block)
 Memory allocates are recorded in the top pool on the stack.
 This function should generally be called like this:
 
-gu_pool_push(gu_pool_new());
+void *my_pool = gu_pool_push(gu_pool_new());
 
 */
-void gu_pool_push(void *p)
+void *gu_pool_push(void *p)
 	{
+	DODEBUG(("gu_pool_push(%p)",p));
 	if((pools_stack_pointer + 1) >= POOLS_STACK_SIZE)
 		gu_Throw("gu_pool_push(): pools stack overflow");
 	pools_stack[++pools_stack_pointer] = p;
+	return p;
 	}
 
 /** Pop the top memory pool off of the pools tack
 
 This function should generally be called thus:
 
-gu_pool_destroy(gu_pool_pop());
+gu_pool_free(gu_pool_pop(my_pool));
 
 */
-void *gu_pool_pop(void)
+void *gu_pool_pop(void *p)
 	{
+	const char function[] = "gu_pool_pop";
+	DODEBUG(("gu_pool_pop(%p)",p));
 	if(pools_stack_pointer < 0)
-		gu_Throw("gu_pool_pop(): pools stack underflow");
+		gu_Throw("%s(): pools stack underflow", function);
+	DODEBUG(("gu_pool_pop(): pools_stack[%d] = %p", pools_stack_pointer, pools_stack[pools_stack_pointer]));
+	if(p && p != pools_stack[pools_stack_pointer])
+		gu_Throw("%s(): attempt to pop wrong pool", function);
 	return pools_stack[pools_stack_pointer--];
 	}
 
@@ -405,10 +455,11 @@ void *gu_pool_pop(void)
 #include <stdio.h>
 int main(int argc, char *argv[])
 	{
+	void *pool1, *pool2;
 	char *p, *p2;
 	printf("gu_alloc_blocks=%d\n", gu_alloc_blocks);
 
-	gu_pool_push(gu_pool_new());
+	pool1 = gu_pool_push(gu_pool_new());
 	printf("gu_alloc_blocks=%d (with pool)\n", gu_alloc_blocks);
 
 	p = gu_strdup("smith");
@@ -420,7 +471,7 @@ int main(int argc, char *argv[])
 	p2 = gu_pool_return(p);
 	printf("gu_alloc_blocks=%d (with item moved to 'global pool'\n", gu_alloc_blocks);
 
-	gu_pool_push(gu_pool_new());
+	pool2 = gu_pool_push(gu_pool_new());
 	printf("gu_alloc_blocks=%d (with second-level pool)\n", gu_alloc_blocks);
 
 	p = gu_strdup("smith");
@@ -434,10 +485,10 @@ int main(int argc, char *argv[])
 	printf("gu_alloc_blocks=%d (after gu_restrdup())\n", gu_alloc_blocks);
 	}
 
-	gu_pool_destroy(gu_pool_pop());
+	gu_pool_free(gu_pool_pop(pool2));
 	printf("gu_alloc_blocks=%d (with second-level pool destroyed)\n", gu_alloc_blocks);
 
-	gu_pool_destroy(gu_pool_pop());
+	gu_pool_free(gu_pool_pop(pool1));
 	printf("gu_alloc_blocks=%d (with pool destroyed)\n", gu_alloc_blocks);
 
 	printf("p2[]=\"%s\"\n", p2);

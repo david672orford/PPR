@@ -12,5 +12,5 @@ ppad_printer.$(OBJ): ppad_printer.c ../include/config.h ../include/gu.h ../inclu
 
 ppad_util.$(OBJ): ppad_util.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
 
-ppad_ppd.$(OBJ): ppad_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h ../include/pstring.h
+ppad_ppd.$(OBJ): ppad_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h
 

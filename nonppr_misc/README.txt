@@ -1,10 +1,10 @@
 mouse:~ppr/src/nonppr_misc/README.txt
-Last modified 13 January 2005.
+Last modified 28 February 2005.
 
-This directory contains small bits of code and documents which are not under 
-the PPR license.  There are symbolic links in other parts of the source tree 
-which point to these files.  The files are listed below according to the names
-of their symbolic links.
+This directory contains small bits of code and documents which are licenced
+by parties other than Trinity College.  There are symbolic links in other 
+parts of the source tree which point to these files.  The files are listed 
+below according to the names of their symbolic links.
 
 Please see ../LICENSE.txt for a list of other directories containing
 material not under the PPR license.
@@ -23,27 +23,6 @@ nonppr_misc/wildmat/gu_wildmat.3 (no symbolic link)
 	Placed in the public domain by the author, Rich $alz.  Copyright on
 	modifications for PPR is likewise abandoned.  Look in gu_wildmat.c
 	for a list of changes.
-
-include/hash.h -> nonppr_misc/c2lib/hash.h
-include/pcre.h -> nonppr_misc/pcre/pcre.h
-include/pool.h -> nonppr_misc/c2lib/pool.h
-include/pre.h -> nonppr_misc/c2lib/pre.h
-include/pstring.h -> nonppr_misc/c2lib/pstring.h
-include/tree.h -> nonppr_misc/c2lib/tree.h
-include/vector.h -> nonppr_misc/c2lib/vector.h
-libgu/c2lib_hash.c -> nonppr_misc/c2lib/hash.c
-libgu/c2lib_pool.c -> nonppr_misc/c2lib/pool.c
-libgu/c2lib_pre.c -> nonppr_misc/c2lib/pre.c
-libgu/c2lib_pstring.c nonppr_misc/c2lib/pstring.c
-libgu/c2lib_tree.c -> nonppr_misc/c2lib/tree.c
-libgu/c2lib_vector.c -> nonppr_misc/c2lib/vector.c
-	See c2lib/README.txt
-
-libgu/pcre.c -> nonppr_misc/pcre/pcre.c
-libgu/pcre_get.c -> nonppr_misc/pcre/get.c
-libgu/pcre_maketables.c -> nonppr_misc/pcre/maketables.c
-libgu/pcre_study.c -> nonppr_misc/pcre/study.c
-	See pcre/README.txt
 
 libgu/gu_strlcat.c includes nonppr_misc/openbsd/strlcat.c
 libgu/gu_strlcpy.c includes nonppr_misc/openbsd/strlcpy.c
@@ -81,5 +60,5 @@ docbook-xsl ->
 	rather large, so they aren't in PPR's CVS at the moment and are
 	excluded from the tarball.
 
-If you discover any errors or omisions in this list of exceptions to the
-PPR license, please write to <ppr-bugs@mail.trincoll.edu>.
+If you discover any errors or omisions in this list
+please write to <ppr-bugs@mail.trincoll.edu>.

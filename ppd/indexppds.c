@@ -45,35 +45,18 @@
 #include "util_exits.h"
 #include "version.h"
 
-#include "pool.h"
-#include "vector.h"
-#include "pstring.h"
-#include "pre.h"
-
 const char myname[] = "lib/indexppds";
 const char ppr_conf[] = PPR_CONF;
 const char section_name[] = "ppds";
 const char ppdindex_db[] = PPD_INDEX;
 
 /*==========================================================================
-** This wraps a library function in order to use the pool allocater.
-==========================================================================*/
-
-/* get the rest, decode it, register it in a c2lib pool */
-static char *finish_decode_pool(pool thepool, void *obj, char *initial_segment)
-	{
-	char *p = ppd_finish_QuotedValue(obj, initial_segment);
-	pool_register_malloc(thepool, p);
-	return p;
-	}
-
-/*==========================================================================
 ** This routine is called for each file found in the PPD directories.
 ==========================================================================*/
 static int do_file(FILE *indexfile, const char filename[], const char base_filename[])
 	{
+	void *temp_pool = gu_pool_push(gu_pool_new());
 	void *obj;
-	pool temp_pool;
 	char *pline, *p;
 
 	/* the information we are gathering */
@@ -82,7 +65,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	char *NickName = NULL;
 	char *ShortNickName = NULL;
 	char *Product = NULL;
-	vector PSVersion;
+	void *PSVersion = gu_pca_new(10,10);
 	gu_boolean DeviceID = FALSE;
 	char *DeviceID_MFG = NULL;
 	char *DeviceID_MDL = NULL;
@@ -97,30 +80,28 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	printf("  %s", base_filename);
 
 	obj = ppdobj_new(filename);
-	temp_pool = new_subpool(global_pool);
-	PSVersion = new_vector(temp_pool, char*);
 
 	while((pline = ppdobj_readline(obj)))
 		{
 		if(!Manufacturer && (p = lmatchp(pline, "*Manufacturer:")) && *p == '"')
 			{
-			Manufacturer = finish_decode_pool(temp_pool, obj, p + 1);
+			Manufacturer = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		if(!ModelName && (p = lmatchp(pline, "*ModelName:")) && *p == '"')
 			{
-			ModelName = finish_decode_pool(temp_pool, obj, p + 1);
+			ModelName = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		if(!NickName && (p = lmatchp(pline, "*NickName:")) && *p == '"')
 			{
-			NickName = finish_decode_pool(temp_pool, obj, p + 1);
+			NickName = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		/* ShortNickName is only valid if it comes before NickName. */
 		if(!ShortNickName && !NickName && (p = lmatchp(pline, "*ShortNickName:")) && *p == '"')
 			{
-			ShortNickName = finish_decode_pool(temp_pool, obj, p + 1);
+			ShortNickName = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		/* For some reason this string is double quoted in PPD files.  The outer
@@ -132,7 +113,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 			p = ppd_finish_QuotedValue(obj, p + 1);
 			if(*p == '(' && p[strlen(p) - 1] == ')')
 				{
-				Product = pstrndup(temp_pool, p + 1, strlen(p) - 2);
+				Product = gu_strndup(p + 1, strlen(p) - 2);
 				}
 			gu_free(p);
 			continue;
@@ -144,14 +125,16 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		if((p = lmatchp(pline, "*PSVersion:")) && *p == '"')
 			{
 			/* this wastefully recompiles the pattern */
-			vector matches = prematch(temp_pool, p,
-									 /* ^"\(([0-9\.]+)\)\s+(\d+)"$ */
-					precomp(temp_pool, "^\"\\(([0-9\\.]+)\\)\\s+(\\d+)\"$", 0),
-					0);
-			if(matches && vector_size(matches) == 3)
+			void *matches = gu_pcre_match(
+					/* ^"\(([0-9\.]+)\)\s+(\d+)"$ */
+					"^\"\\(([0-9\\.]+)\\)\\s+(\\d+)\"$",
+					p
+					);
+			if(matches)
 				{
-				vector_pop_front(matches, p);	/* discard */
-				vector_push_back_vector(PSVersion, matches);
+				gu_pca_push(PSVersion, gu_pca_shift(matches));
+				gu_pca_push(PSVersion, gu_pca_shift(matches));
+				gu_pca_free(matches);
 				}
 			continue;
 			}
@@ -164,49 +147,47 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		 */
 		if(!DeviceID && (p = lmatchp(pline, "*1284DeviceID:")) && *p == '"')
 			{
-			int i;
-			pcre *split_pattern;
-			vector pairs;
+			void *pairs;
+			char *p2, *p3;
 
 			p = ppd_finish_QuotedValue(obj, p + 1);
 			gu_strtrim(p);
 
 			/* use regular expression to split on semicolons */
-			split_pattern = precomp(temp_pool, ";\\s*", 0);
-			pairs = pstrresplit(temp_pool, p, split_pattern);
+			pairs = gu_pcre_split(";\\s*", p);
 		
 			/* Iterate over the resulting list */
-			for(i = 0; i < vector_size(pairs); i++)
+			while((p2 = gu_pca_shift(pairs)))
 				{
-				char *p2, *p3;
-				vector_get(pairs, i, p2);
 				if((p3 = lmatchp(p2, "MANUFACTURER:")) || (p3 = lmatchp(p2, "MFG:")))
 					{
-					DeviceID_MFG = pstrdup(temp_pool, p3);
+					DeviceID_MFG = gu_strdup(p3);
 					}
 				else if((p3 = lmatchp(p2, "MODEL:")) || (p3 = lmatchp(p2, "MDL:")))
 					{
-					DeviceID_MDL = pstrdup(temp_pool, p3);
+					DeviceID_MDL = gu_strdup(p3);
 					}
+				gu_free(p2);
 				}
-			
+
+			gu_pca_free(pairs);	
 			gu_free(p);	
 			DeviceID = TRUE;			/* We have seen one */
 			continue;
 			}
 		if(pprPJLID && (p = lmatchp(pline, "*pprPJLID:")) && *p == '"')
 			{
-			pprPJLID = finish_decode_pool(temp_pool, obj, p + 1);
+			pprPJLID = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		if(pprSNMPsysDescr && (p = lmatchp(pline, "*pprSNMPsysDescr:")) && *p == '"')
 			{
-			pprSNMPsysDescr = finish_decode_pool(temp_pool, obj, p + 1);
+			pprSNMPsysDescr = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		if(pprSNMPhrDeviceDescr && (p = lmatchp(pline, "*pprSNMPhrDeviceDescr:")) && *p == '"')
 			{
-			pprSNMPhrDeviceDescr = finish_decode_pool(temp_pool, obj, p + 1);
+			pprSNMPhrDeviceDescr = ppd_finish_QuotedValue(obj, p + 1);
 			continue;
 			}
 		}
@@ -230,11 +211,11 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	*/
 	if(Manufacturer)
 		{
-		vendor = pstrdup(temp_pool, Manufacturer);
+		vendor = gu_strdup(Manufacturer);
 		}
 	else if(NickName && strlen(NickName) > 3 && isupper(NickName[0]) && isalpha(NickName[1]) && strchr(NickName, ' '))
 		{
-		vendor = pstrndup(temp_pool, NickName, strcspn(NickName, " -"));
+		vendor = gu_strndup(NickName, strcspn(NickName, " -"));
 		}
 	else
 		{
@@ -276,7 +257,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		(NickName && (!ModelName || strcmp(NickName, ModelName) != 0)) ? NickName : "",
 		(ShortNickName && (!NickName || strcmp(ShortNickName, NickName) != 0)) ? ShortNickName : "",
 		Product ? Product : "",
-		pjoin(temp_pool, PSVersion, ","),	
+		gu_pca_join(",", PSVersion),
 		DeviceID_MFG ? DeviceID_MFG : "",
 		DeviceID_MDL ? DeviceID_MDL : "",
 		pprPJLID ? pprPJLID : "",
@@ -284,8 +265,9 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		pprSNMPhrDeviceDescr ? pprSNMPhrDeviceDescr : ""
 		);
 
-	delete_pool(temp_pool);
-	ppdobj_delete(obj);
+	ppdobj_free(obj);
+
+	gu_pool_free(gu_pool_pop(temp_pool));	/* this frees what we missed */
 		
 	return EXIT_OK;
 	} /* end of do_file() */

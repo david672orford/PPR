@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 28 February 2005.
 */
 
 /*
@@ -285,7 +285,7 @@ static void do_config_file(struct DIRS *dir, const char qname[], int *total_expo
 		if(drivername)
 			gu_free(drivername);
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		switch(dir->type)

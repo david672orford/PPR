@@ -402,7 +402,7 @@ char *ppd_find_file(const char ppdname[]);
 int ppd_open(const char name[], FILE *errors);
 char *ppd_readline(void);
 void *ppdobj_new(const char ppdname[]);
-void ppdobj_delete(void *p);
+void ppdobj_free(void *p);
 char *ppdobj_readline(void *p);
 void *ppd_finish_quoted_string(void *obj, char *initial_segment);
 char *ppd_finish_QuotedValue(void *obj, char *initial_segment);

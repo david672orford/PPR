@@ -72,7 +72,11 @@ findprog_prog ()
 # Run a shell script thru Sed, changing the program paths
 sedit ()
 	{
-	sed -e "s#^\\(\$*\\)PR=\"[^\"]*\"#\\1PR=\"$PR\"#" \
+	sed \
+		-e "s#\@PPR_TCLSH\@#$PPR_TCLSH#g" \
+		-e "s#\@PR\@#$PR#g" \
+		-e "s#\@LIBDIR\@#$LIBDIR#g" \
+		-e "s#\@TEMPDIR\@#$TEMPDIR#g" \
 		-e "s#^\\(\$*\\)TROFF=\"[^\"]*\"#\\1TROFF=\"$TROFF\"#" \
 		-e "s#^\\(\$*\\)EQN=\"[^\"]*\"#\\1EQN=\"$EQN\"#" \
 		-e "s#^\\(\$*\\)REFER=\"[^\"]*\"#\\1REFER=\"$REFER\"#" \
@@ -109,7 +113,6 @@ sedit ()
 		-e "s#^\\(\$*\\)CONFDIR=\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
 		-e "s#^\\(\$*\\)VAR_SPOOL_PPR=\"[^\"]*\"#\\1VAR_SPOOL_PPR=\"$VAR_SPOOL_PPR\"#" \
 		-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
-		-e "s@^#! *ppr-tclsh\\( *.*\\)\$@#! $PPR_TCLSH\\1@" \
 		$1 >$2 || exit 1 # infile, outfile
 
 	# Make it executable

@@ -682,7 +682,7 @@ int printer_show(const char *argv[])
 			}
 		gu_Final {
 			if(ppdobj)
-				ppdobj_delete(ppdobj);
+				ppdobj_free(ppdobj);
 			}
 		gu_Catch {
 			fprintf(errors, "%s: %s\n", myname, gu_exception);
@@ -1738,7 +1738,7 @@ int printer_ppd(const char *argv[])
 		}
 	gu_Final {
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		confabort();
@@ -2513,7 +2513,7 @@ int printer_deffiltopts(const char *argv[])
 		}
 	gu_Final {
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		confabort();
@@ -2837,7 +2837,7 @@ int printer_ppdopts(const char *argv[])
 			}
 		gu_Final {
 			if(qobj)
-				queueinfo_delete(qobj);
+				queueinfo_free(qobj);
 			}
 		gu_Catch {
 			gu_ReThrow();
@@ -2850,7 +2850,7 @@ int printer_ppdopts(const char *argv[])
 		}
 	gu_Final {
 		if(ppd_obj)
-			ppdobj_delete(ppd_obj);
+			ppdobj_free(ppd_obj);
 		}
 	gu_Catch {
 		confabort();
@@ -3105,7 +3105,7 @@ int printer_ppdq(const char *argv[])
 		/* Now call the function in ppad_ppd.c that does the real work. */
 		ret = ppd_query_core(printer, q);
 
-		query_delete(q);
+		query_free(q);
 		}
 	gu_Catch
 		{

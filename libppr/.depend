@@ -10,8 +10,6 @@ cs2enc.$(OBJ): cs2enc.c ../include/config.h ../include/gu.h ../include/global_de
 
 datestamp.$(OBJ): datestamp.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-destspec.$(OBJ): destspec.c ../include/config.h ../include/gu.h ../include/global_defines.h
-
 dimens.$(OBJ): dimens.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 enc2font.$(OBJ): enc2font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
@@ -22,8 +20,6 @@ font.$(OBJ): font.c ../include/config.h ../include/gu.h ../include/global_define
 
 foptions.$(OBJ): foptions.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-gnodename.$(OBJ): gnodename.c ../include/config.h ../include/gu.h ../include/global_defines.h
-
 int_acache.$(OBJ): int_acache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
 int_cmdline.$(OBJ): int_cmdline.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
@@ -31,8 +27,6 @@ int_cmdline.$(OBJ): int_cmdline.c ../include/config.h ../include/gu.h ../include
 int_copy_job.$(OBJ): int_copy_job.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
 int_debug.$(OBJ): int_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
-
-int_exit.$(OBJ): int_exit.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
 int_prpapst.$(OBJ): int_prpapst.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
@@ -60,7 +54,7 @@ prune_env.$(OBJ): prune_env.c ../include/config.h ../include/gu.h ../include/glo
 
 query.$(OBJ): query.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_query.h
 
-queueinfo.$(OBJ): queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h ../include/pool.h ../include/pstring.h ../include/vector.h ../include/hash.h
+queueinfo.$(OBJ): queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h
 
 quote.$(OBJ): quote.c ../include/config.h ../include/gu.h ../include/global_defines.h
 

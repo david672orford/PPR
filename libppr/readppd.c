@@ -458,13 +458,13 @@ void *ppdobj_new(const char ppdname[])
 		ppdobj_open(self, ppdname);
 		}
 	gu_Catch {
-		ppdobj_delete(self);
+		ppdobj_free(self);
 		gu_ReThrow();
 		}
 	return (void*)self;
 	}
 
-void ppdobj_delete(void *p)
+void ppdobj_free(void *p)
 	{
 	struct PPDOBJ *self = p;
 
