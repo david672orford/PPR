@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 August 2002.
+# Last modified 15 November 2002.
 #
 
 include ../Makefile.conf
@@ -65,7 +65,7 @@ pprdrv_ppd_parse.c: pprdrv_ppd_parse.l
 	$(LEX) -v pprdrv_ppd_parse.l
 	$(MV) lex.yy.c pprdrv_ppd_parse.c
 
-OBJS2=ppr-gs.$(OBJ) ../libgu.$(LIBEXT)
+OBJS2=ppr-gs.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 ppr-gs$(DOTEXE): $(OBJS2)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS2)
 

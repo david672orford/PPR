@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 November 2002.
+** Last modified 15 November 2002.
 */
 
 /*
@@ -52,9 +52,8 @@ int main(int argc, char *argv[])
     const char *gs_exe = NULL;
     char *outputfile = NULL;
     gu_boolean saw_DEVICE = FALSE;
-    gu_boolean saw_cupsfilter = FALSE;
-    gu_boolean saw_hpijs = FALSE;
-    gu_boolean saw_omni = FALSE;
+    char *cupsfilter = NULL;
+    char *ijsserver = NULL;
     const char **gs_args;
     int si, di;
     char *p;
@@ -91,6 +90,10 @@ int main(int argc, char *argv[])
     ** passed to us on our command line.)  The extra space allocated
     ** in the array is for "-q -dSAFER -sOutputFile='...' -" and the NULL
     ** which terminates the array.  These will be added later.
+    **
+    ** Note that there are some option that we intercept and don't pass
+    ** thru to Ghostscript.  These are in name=value form.  At the moment
+    ** these all specify output post-processing of some kind.
     */
     gs_args = gu_alloc(argc + 5, sizeof(const char *));
 
@@ -101,20 +104,14 @@ int main(int argc, char *argv[])
 	{
 	if((p=lmatchp(argv[si], "cupsfilter=")))
 	    {
-	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", p);
-	    saw_cupsfilter = TRUE;
+	    cupsfilter = gu_strdup(p);
+	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", cupsfilter);
 	    }
 
-	else if((p=lmatchp(argv[si], "hpijs=")))
+	else if((p=lmatchp(argv[si], "ijsserver=")))
 	    {
+	    ijsserver = gu_strdup(p);
 	    /* something missing here */
-	    saw_hpijs = TRUE;
-	    }
-
-	else if((p=lmatchp(argv[si], "omni=")))
-	    {
-	    /* something missing here */
-	    saw_omni = TRUE;
 	    }
 
 	/* Unrecognized options must be for Ghostscript. */
@@ -160,34 +157,56 @@ int main(int argc, char *argv[])
     ** with the PPR-GS directory where we may find a private copy of the
     ** CUPS filters, procedes to /usr/local, and ends in /usr.
     */
-    if(saw_cupsfilter)
+    if(cupsfilter)
 	{
 	const char *cups_bin_list[] = {HOMEDIR"/../ppr-gs/bin", "/usr/local/lib/cups/filter", "/usr/lib/cups/filter", NULL};
 	int i;
+	char temp[MAX_PPR_PATH];
+	gu_boolean found = FALSE;
 	for(i=0 ; cups_bin_list[i]; i++)
 	    {
-	    if(access(cups_bin_list[i], R_OK) == 0)
+	    ppr_fnamef(temp, "%s/%s", cups_bin_list[i], cupsfilter);
+	    if(access(temp, X_OK) == 0)
 		{
 		char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
 		gu_asprintf(&path_equals, "PATH=%s:%s", cups_bin_list[i], getenv("PATH"));
 		putenv(path_equals);
+		found = TRUE;
 		break;
 		}
+	    }
+	if(!found)
+	    {
+	    fprintf(stderr, "Unknown device: cups (can't find %s)\n", cupsfilter);
 	    }
 	}
 
     /*
-    **
+    ** If we will be using a driver that requires an IJS server, find the 
+    ** external server and add its directory at the head of PATH.
     */
-    if(saw_hpijs)
+    if(ijsserver)
 	{
-	}
-
-    /*
-    **
-    */
-    if(saw_omni)
-	{
+	const char *ijs_bin_list[] = {HOMEDIR"/../ppr-gs/bin", "/usr/local/bin", "/usr/bin", NULL};
+	int i;
+	char temp[MAX_PPR_PATH];
+	gu_boolean found = FALSE;
+	for(i=0 ; ijs_bin_list[i]; i++)
+	    {
+	    ppr_fnamef(temp, "%s/%s", ijs_bin_list[i], ijsserver);
+	    if(access(temp, R_OK) == 0)
+		{
+		char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
+		gu_asprintf(&path_equals, "PATH=%s:%s", ijs_bin_list[i], getenv("PATH"));
+		putenv(path_equals);
+		found = TRUE;
+		break;
+		}
+	    }
+	if(!found)
+	    {
+	    fprintf(stderr, "Unknown device: ijs (can't find %s)\n", ijsserver);
+	    }
 	}
 
     /* Replace ourself with Ghostscript. */
