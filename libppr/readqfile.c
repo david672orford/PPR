@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/readqfile.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2002.
+** Last modified 10 October 2003.
 */
 
 #include "before_system.h"
@@ -131,11 +131,11 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 				return -1;
 
 			case 'A':
-				if(strncmp(line, "Attr: ", 6) == 0)
+				if(strncmp(line, "Attr:", 5) == 0)
 					{
 					int tempint;
 					found_attr = TRUE;
-					if(sscanf(line+6, "%d %f %d %d %d %d %d %d %d %d %d %ld %ld %d %d",
+					if(gu_sscanf(line+5, " %d %f %d %d %d %d %d %d %d %d %d %ld %ld %d %d",
 							&job->attr.langlevel,
 							&job->attr.DSClevel,
 							&job->attr.pages,
@@ -153,7 +153,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 							&tempint
 							) != 15)
 						{
-						error("%s: bad \"%s\" line", function, "Attr: ");
+						error("%s: bad \"%s\" line", function, "Attr:");
 						return -1;
 						}
 
@@ -247,7 +247,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 
 			case 'P':
 				MATCH("Priority: ", _2("%d", &job->priority), !=1, found_priority)
-				if(sscanf(line, "PPRVersion: %f", &job->PPRVersion) == 1)
+				if(gu_sscanf(line, "PPRVersion: %f", &job->PPRVersion) == 1)
 					continue;
 				MATCH("PassThruPDL: ", _2("%Z", &job->PassThruPDL), !=1, found_other)
 				if(gu_sscanf(line, "PageList: %d %Z", &job->page_list.count, &job->page_list.mask) == 2)
@@ -265,7 +265,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 				break;
 
 			case 'S':
-				if(sscanf(line, "StripPrinter: %d", &tempint) == 1)
+				if(gu_sscanf(line, "StripPrinter: %d", &tempint) == 1)
 					{
 					job->StripPrinter = tempint ? TRUE : FALSE;
 					continue;

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2003.
+# Last modified 25 September 2003.
 #
 
 include ../Makefile.conf
@@ -53,7 +53,7 @@ install: $(ALL)
 	./install_bin_links.sh
 	./install_inetd_conf.sh
 	./install_init_script.sh
-	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real
+	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real || true
 
 # These are operations which are defered if we are building an package.
 install-real:

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 August 2003.
+# Last modified 25 September 2003.
 #
 
 #
@@ -200,7 +200,12 @@ END
 #==========================================================================
 
 send_hup ()
-	{
+  {
+  if [ -n "$RPM_BUILD_ROOT" ]
+    then
+	echo "  Not sending SIGHUP to $prog because \$RPM_BUILD_ROOT is set."
+
+	else
 	prog=$1
 
 	echo "  Sending SIGHUP to $prog..."
@@ -229,7 +234,8 @@ send_hup ()
 			echo "    not running"
 		fi
 	fi
-	}
+  fi
+  }
 	
 #==========================================================================
 # /etc/services

@@ -94,4 +94,3 @@ const char *gu_dtostr(double n)
 	} /* end of gu_dtostr() */
 
 /* end of file */
-

@@ -8829,6 +8829,22 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
+1.53a1, 24 September 2003--10 October 2003.
+
+* z_install_end/: fixed minor RPM build problems.
+
+* Did global search-and-replace to change setlocale(LC_MESSAGES, "") to 
+  setlocale(LC_ALL, "").
+
+* libgu/gu_sscanf.c: added %f, replaced isdigit() with own function that
+  returns true only for ASCII digits.  Added note to documentation to the
+  effect that it really is our purpose not to support locales since the
+  purpose of the function is to read configuration and queue files.
+
+* libppr/readqfile.c: changed sscanf() calls that read floats to gu_sscanf()
+  calls.
+
+
 
 
 +++++++++++++++++++++

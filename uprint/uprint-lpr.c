@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 10 October 2003.
 */
 
 #include "before_system.h"
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif

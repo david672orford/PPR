@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 10 October 2003.
 */
 
 /*
@@ -162,7 +162,7 @@ static int respond_get_info(struct RINFO *rinfo, int qffd, int charge_per_duplex
 			charge_to = TRUE;
 		else if(gu_sscanf(line, "PageList: %d", &pagelist_pages) == 1)
 			{}
-		else if(gu_sscanf(line, "LC_MESSAGES: %S", &rinfo->lc_messages) == 1)
+		else if(gu_sscanf(line, "LC_ALL: %S", &rinfo->lc_messages) == 1)
 			{}
 		} /* while(gu_getline()) */
 
@@ -439,7 +439,7 @@ int main(int argc, char *argv[])
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
-	setlocale(LC_MESSAGES, rinfo.lc_messages);
+	setlocale(LC_ALL, rinfo.lc_messages);
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 March 2003.
+** Last modified 10 October 2003.
 */
 
 /*! \file
@@ -76,8 +76,9 @@ void gu_sscanf_rollback(void)
 	}
 
 /*
-** This function is used internaly to allocate space for formats such
-** as %S.
+** This function is used internaly to allocate space for formats such as %S. 
+** We don't use gu_strndup() because it doesn't have hooks for the rollback
+** stack.
 */
 static char *gu_sscanf_strndup(const char *string, size_t len)
 	{
@@ -91,9 +92,26 @@ static char *gu_sscanf_strndup(const char *string, size_t len)
 	return p;
 	}
 
+/*
+** This function replaces isdigit() from the C library.  The one in the C library 
+** determines if c is a digit in the current locale.  We want to know if it is a
+** digit in ASCII.
+*/
+static int gu_isdigit(int c)
+	{
+	if(c >= '0' && c <= '9')
+		return 1;
+	else
+		return 0;
+	}
+
 /** safe sscanf()
 
-This function is similiar to sscanf().  It implements the following formats:
+This function is similiar to sscanf().  It has additional format specifiers which allocate
+memory and read quoted strings.  Since it is meant to read PPR configuration files and
+queue files, it does out of its way not to heed the current locale.
+
+It implements the following formats:
 
 <dl>
 
@@ -120,7 +138,7 @@ pointer to a char array with enough space to hold the string and the
 terminating NULL.  To prevent overruns, the size of the array may be
 specified by a decimal number between the <tt>%</tt> and the <tt>s</tt> or
 by a <tt>#</tt>. If the length of the array is specified with a <tt>#</tt>
-then the actuall length is read from ppr_sscanf()'s next argument (the one
+then the actuall length is read from gu_sscanf()'s next argument (the one
 before the pointer to the char array).</dd>
 
 <dt>%S</dt>
@@ -181,7 +199,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 			pattern++;
 
 			maxextlen = 0;						/* Get "precision" */
-			while(isdigit(*pattern))			/* from any digits in */
+			while(gu_isdigit(*pattern))			/* from any digits in */
 				{								/* the format. */
 				maxextlen *= 10;
 				maxextlen += ( *(pattern++) - '0' );
@@ -214,7 +232,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					break;
 
 				/*
-				 * Decimal integer.
+				 * Signed decimal int
 				 */
 				case 'd':
 				case 'i':
@@ -225,12 +243,12 @@ int gu_sscanf(const char *input, const char *format, ...)
 						sign = -1;
 						string++;
 						}
-					if(! isdigit(*string))				/* if no number present, */
+					if(! gu_isdigit(*string))				/* if no number present, */
 						goto break_break;
 					if(islong)
 						{
 						long int templong = 0;
-						while(isdigit(*string))			/* convert digits */
+						while(gu_isdigit(*string))			/* convert digits */
 							{
 							templong *= 10;
 							templong += (*(string++)-'0');
@@ -240,7 +258,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					else if(isshort)
 						{
 						short int tempshort = 0;
-						while(isdigit(*string))			/* convert digits */
+						while(gu_isdigit(*string))			/* convert digits */
 							{
 							tempshort *= 10;
 							tempshort += (*(string++)-'0');
@@ -250,7 +268,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					else
 						{
 						int tempint = 0;
-						while(isdigit(*string))			/* convert digits */
+						while(gu_isdigit(*string))			/* convert digits */
 							{
 							tempint *= 10;
 							tempint += (*(string++) - '0');
@@ -260,15 +278,16 @@ int gu_sscanf(const char *input, const char *format, ...)
 					}
 					count++;						/* increment count of values extracted */
 					break;
+
 				/*
-				 * Unsigned int
+				 * Unsigned decimal int
 				 */
 				case 'u':
 					{
 					unsigned int tempint = 0;
-					if(!isdigit(*string))
+					if(!gu_isdigit(*string))
 						goto break_break;
-					while(isdigit(*string))		/* convert digits */
+					while(gu_isdigit(*string))		/* convert digits */
 						{
 						tempint *= 10;
 						tempint += (*(string++) - '0');
@@ -277,6 +296,41 @@ int gu_sscanf(const char *input, const char *format, ...)
 					}
 					count++;
 					break;
+
+				/*
+				 * Decimal float, probably a version number.
+				 */
+				case 'f':
+					{
+					int sign = 1;
+					int whole = 0;
+					float fraction = 0.0;
+					if(*string == '-')					/* if a minus sign is found, */
+						{
+						sign = -1;
+						string++;
+						}
+					if(! gu_isdigit(*string))				/* if no number present, */
+						goto break_break;
+					while(gu_isdigit(*string))				/* convert digits to left of decimal point */
+						{
+						whole *= 10;
+						whole += (*(string++) - '0');
+						}
+					if(*string == '.')
+						{
+						float place = 0.1;
+						string++;
+						while(gu_isdigit(*string))
+							{
+							fraction += place * (*(string++) - '0');
+							}
+						}
+					*(va_arg(va, float *)) = (float)sign * ((float)whole + fraction);
+					}
+					count++;
+					break;
+
 				/*
 				 * Extract a string into the storage provided.
 				 */
@@ -289,6 +343,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						string++;
 					count++;									/* one more item done */
 					break;
+
 				/*
 				 * Extract a string of any length
 				 * and allocate storage for it.
@@ -299,6 +354,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					string += len;
 					count++;
 					break;
+
 				/*
 				 * Get rest of line as a string, extracting it
 				 * into the storage provided.
@@ -310,6 +366,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					*extptr = '\0';
 					count++;
 					break;
+
 				/*
 				 * Get the rest of the line as a string and
 				 * allocate storage for it.  Notice that
@@ -323,6 +380,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						string++;
 				   count++;
 				   break;
+
 				/*
 				 * Extract a possibly quoted string of any length
 				 * and allocate storage for it.
@@ -348,6 +406,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						string++;
 					count++;
 					break;
+
 				/*
 				 * Get the rest of the line or a quoted string.  If the
 				 * line ends with whitespace, ommit it.
@@ -375,6 +434,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						string++;
 					count++;
 					break;
+
 				/*
 				 * Store the number of characters read so far.
 				 */
@@ -382,13 +442,14 @@ int gu_sscanf(const char *input, const char *format, ...)
 					*(va_arg(va, int *)) = ((string - input) / sizeof(const char));
 					count++;
 					break;
+
 				/*
 				 * Read a time_t.
 				 */
 				case 't':
 					{
 					time_t temptime = 0;
-					while(isdigit(*string))				/* convert digits */
+					while(gu_isdigit(*string))				/* convert digits */
 						{
 						temptime *= 10;
 						temptime += (*(string++) - '0');

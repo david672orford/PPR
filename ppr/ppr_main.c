@@ -1987,7 +1987,7 @@ int main(int argc, char *argv[])
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
-	setlocale(LC_MESSAGES, "");
+	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif
