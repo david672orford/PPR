@@ -64,13 +64,20 @@ proc alert {message} {
     tkwait window $w
     }
 
+#
 # The MacOS Finder can hide applications.  On MacOS we define this function
 # to unhide this application.  On other plaforms it is a no-op.
+#
+# Also, the Macintosh needs "Command" instead of "Alt" in menu accelerators.  For some mysterious reason,
+# the "Open Apple" is called "Command".
+#
 if {$tcl_platform(platform) == "macintosh"} {
     package require Tclapplescript
     proc activate {} { AppleScript execute "tell application \"PPR Popup\" to activate" }
+    set menu_accel_modifier "Command"
     } else {
     proc activate {} {}
+    set menu_accel_modifier "Alt"
     }
 
 # Different operating systems need different id getting functions.
@@ -512,16 +519,19 @@ proc main {} {
     # the user uses the window manager to close the main window.
     wm protocol . WM_DELETE_WINDOW { menu_file_quit }
 
-    # Create a set of bindings which we can attach to widgets.
+    # Create a set of bindings which we can attach to widgets.  This has no effect on Macintosh.
+    # I don't know why.
     bind GlobalBindTags <Alt-q> { menu_file_quit }
+    bind GlobalBindTags <Alt-slash> { menu_help_contents }
+    bind GlobalBindTags <Alt-question> { menu_help_contents }
     bindtags . GlobalBindTags
 
     # Create the menubar and attach it to the default toplevel window.
     . configure -menu .menubar
     menu .menubar -border 1 -relief groove
 
-    # Macintosh needs another toplevel to keep the menu in place.
-    # We will place it off the screen.
+    # Macintosh needs another toplevel to keep the menu in place.  We will place it off the screen.  We 
+    # also add a menu called "apple" to override the default "About Tcl & Tk".
     global tcl_platform
     if {$tcl_platform(platform) == "macintosh"} {
         toplevel .dummy -menu .menubar
@@ -530,8 +540,11 @@ proc main {} {
 	.menubar.apple add command -label "About PPR Popup" -command { menu_help_about }
         }
 
+    # This global string has the name of the Alt/Ctrl/Shift/Meta/Cmd key used in menu accelerators.
+    global menu_accel_modifier
+
     .menubar add cascade -label "File" -menu [menu .menubar.file -tearoff 0 -border 1]
-    .menubar.file add command -label "Quit" -accelerator "Alt-q" -command { menu_file_quit }
+    .menubar.file add command -label "Quit" -accelerator "${menu_accel_modifier}-Q" -command { menu_file_quit }
 
     .menubar add cascade -label "View" -menu [menu .menubar.view -tearoff 0 -border 1]
     .menubar.view add check -variable menu_view_main_visibility -label "Show Main Window" -command { menu_view_main $menu_view_main_visibility }
@@ -540,7 +553,7 @@ proc main {} {
     .menubar add cascade -label "Tools" -menu [menu .menubar.tools -tearoff 0 -border 1]
 
     .menubar add cascade -label "Help" -menu [menu .menubar.help -tearoff 0 -border 1]
-    .menubar.help add command -label "Help Contents" -command { menu_help_contents }
+    .menubar.help add command -label "Help Contents" -accelerator "${menu_accel_modifier}-?" -command { menu_help_contents }
     .menubar.help add command -label "About PPR Popup" -command { menu_help_about }
     .menubar.help add command -label "About System" -command { menu_help_about_system }
 
@@ -624,6 +637,7 @@ proc menu_file_quit {} {
 		-defaultring false \
 		-defaultringpad 0 \
 		-highlightthickness 0
+    .quit_confirm default OK
     if {[.quit_confirm activate]} {
         exit 0
         } else {
@@ -697,6 +711,7 @@ proc menu_help_about {} {
 		-defaultringpad 0 \
 		-highlightthickness 0
     .about hide "Cancel"
+    .about default OK
     .about activate
     destroy .about
     }
@@ -739,6 +754,7 @@ proc menu_help_about_system {} {
     .si hide "Cancel"
     .si hide "Apply"
     .si hide "Help"
+    .si default OK
 
     # Get a reference to the childsite so we can start packing stuff in.
     set childsite [.si childsite]
