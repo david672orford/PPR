@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 6 March 2003.
 #
 
 HOMEDIR="?"
@@ -52,6 +52,10 @@ for i in $PACKAGE_LISTS
 	if $HOMEDIR/lib/file_outdated $VAR_SPOOL_PPR/ppdindex.db $i
 	    then
 	    $HOMEDIR/bin/ppr-indexppds >$VAR_SPOOL_PPR/logs/ppr-indexppds 2>&1
+	    fi
+	if $HOMEDIR/lib/file_outdated $HOMEDIR/filters/filter_pr $i
+	    then
+	    $HOMEDIR/bin/ppr-indexfilters >$VAR_SPOOL_PPR/logs/ppr-indexfilters 2>&1
 	    fi
 	fi
     done

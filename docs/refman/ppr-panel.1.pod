@@ -38,6 +38,10 @@ B<ppr-panel>
 
 =head1 DESCRIPTION
 
+This command launches an GUI interface for PPR.  It is written in Perl with
+the Tk widget set.  It is less capable than the web-based GUI and hasn't
+been maintainted lately, but it still works.
+
 =head1 SEE ALSO
 
 "PPR, a PostScript Print Spooler"

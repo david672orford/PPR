@@ -30,7 +30,7 @@
 
 =head1 NAME
 
-B<ppr-indexfilters> - Scan PATH and create PPR filter scripts
+ppr-indexfilters - Scan PATH and create PPR filter scripts
 
 =head1 SYNOPSIS
 
@@ -38,13 +38,26 @@ B<ppr-indexfilters>
 
 =head1 DESCRIPTION
 
-This program
+This program searches the PATH for programs which can be used by PPR filter
+scripts to convert files in various formats to PostScript.  After gathering
+information, this program will create usable filter scripts from a
+collection of prototype scripts.  If more than one prototype scripts could
+be used, it automatically chooses what it considers to be the best one.  If
+the necessary programs for a particular prototype filter script can't be
+found, no usable script will be created and if there already is one it will
+be removed.
+
+You should run this program anytime you install or remove software that
+might be used to convert files to PostScript.  Examples include NetPBM,
+Acroread, and HTMLDOC.  This program is run automatically once a day from
+PPR's crontab.
 
 =head1 FILES
 
 The prototype filters scripts are found in F</usr/lib/ppr/fixup/>.  The
 usable filter scripts created by this program are deposited in
-F</usr/lib/ppr/filters/>.
+F</usr/lib/ppr/filters/>.  When this program is run from cron, the output is
+logged in F</var/spool/ppr/logs/ppr-indexfilters>.
 
 =head1 SEE ALSO
 

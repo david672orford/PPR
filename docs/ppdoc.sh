@@ -26,19 +26,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 January 2003.
+# Last modified 7 March 2003.
 #
 
 SHAREDIR="?"
 
 if [ "$1" = "" ]
 then
+{
 cat - <<EndOfHereFile
 Usage: ppdoc <document-name>
 
-The ppdoc command is a wrapper for your system's normal man(1) command.  It
-sets MANPATH to the directory where the PPR man pages are located and then
-runs man.
+The ppdoc command is a wrapper for your system's normal man(1) command.
+It sets MANPATH to the directory where the PPR man pages are located 
+($SHAREDIR/man) and then runs man.
 
 These are the PPR documents available in man format:
 
@@ -53,6 +54,7 @@ for s in 1 5 8
 	done
     done
 
+} | more
 exit 0
 fi
 
@@ -60,4 +62,3 @@ MANPATH=$SHAREDIR/man
 export MANPATH
 man "$@"
 exit $?
-

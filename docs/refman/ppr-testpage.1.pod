@@ -30,13 +30,72 @@
 
 =head1 NAME
 
-B<ppr-testpage> -- Generate a Test Page
+ppr-testpage - generate a test page
 
 =head1 SYNOPSIS
 
-B<ppr-testpage>
+B<ppr-testpage> [options]
 
 =head1 DESCRIPTION
+
+This program genenerates a PostScript testpage and prints it on standard
+output.  Normally this testpage has the PPR logo in the upper right hand
+corner, multiple margin lines as an aid in locating unprintable areas, and 
+the printers product string and PostScript version and revision numbers. 
+The test page's features may be alterned by using the options listed below.
+
+=over 4
+
+=item --pagesize=I<pagesize>
+
+Format the test page for the indicated page size.  Valid values include
+B<Letter>, B<Legal>, B<A4>, and all the other sizes defined in the PPD file
+specification.  The default is B<Letter>.
+
+=item --eps-file=I<filename>
+
+Replace the PPR logo at the upper right hand of the the test page with the
+indicated EPS file.
+
+=item --eps-scale=I<float>
+
+Multiply the size of the EPS file by the indicated factor.  A factor of 1.0
+will print the EPS figure out its intrisic size.
+
+=item --test-grayscale
+
+Print a grayscale density bar.
+
+=item --test-rgb
+
+Print density bars for red, green, and blue.  Zero density will be black
+since zero represents no illumination.
+
+=item --test-cmyk
+
+Print density bars for cyan, magenta, yellow and black (k).  Zero density
+will be white (assuming white paper) since zero represents no ink
+appication.
+
+=item --version
+
+Print PPR version information.
+
+=item --help
+
+Print brief usage summary on stdout.
+
+=back
+
+=head1 EXAMPLE
+
+Since this program doesn't actually print the test page (in the sense of
+sending it to a printer and putting marks on paper) we must pipe its output
+to a command such B<ppr> in order to get it printed.  For example:
+
+	$ ppr-testpage --test-cmyk | ppr -d myprn
+
+This command will print a test page with CMYK color bars on myprn.
 
 =head1 SEE ALSO
 

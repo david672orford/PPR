@@ -38,9 +38,16 @@ B<ppd2macosdrv>
 
 =head1 DESCRIPTION
 
+This program converts PPR's PPD file collection to Macintosh format so that
+you can use them with LaserWriter 8.x.  This conversion involves changing
+the line termination to carriage return and renaming the files so that the
+name of each is the PostScript product name.  Once this has been done, you
+can copy the files you want to the F<Printer Descriptions> folder within the
+F<Extensions> within your Macintosh's system folder.
+
 =head1 FILES
 
-The PPD files are deposited in F</var/spool/ppr/drivers/macos/>.
+The converted PPD files are deposited in F</var/spool/ppr/drivers/macos/>.
 
 =head1 SEE ALSO
 

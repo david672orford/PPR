@@ -1,23 +1,23 @@
-mouse:~ppr/src/docs/misc/misc_README.txt
-21 February 2003
+mouse:~ppr/src/misc/README.txt
+7 March 2003
 
 The PPR source directory "misc/" contains a number of small programs and other
 files.  Some of these are not described in the primary documentation.  Some
 are not installed automatically.  Many of them are of questionable value.
 
 
-======================
+=================================
  ppd2macosdrv.perl
-======================
+=================================
 
 This program converts the PPD files to MacOS format and installs them in
 $VAR_SPOOL_PPR/drivers/macos.  Presumably, the system administrator will
 then arrange to share that directory with CAP or Netatalk.
 
 
-======================
+=================================
  ppr-sync.sh
-======================
+=================================
 
 This shell script can be used to syncronize the printer configurations on
 two computers running PPR.  After making a change on one computer, while
@@ -25,9 +25,9 @@ logged in as "ppr", run "ppr-sync <othercomputer>".  This script uses rsh to
 transfer the files.  It is really just a hack and not a very good one at that.
 
 
-========================
+===================================
  xmessage.tcl
-========================
+===================================
 
 This is a Tcl/Tk wish script which is intended as a substitute for xmessage.
 
@@ -40,18 +40,18 @@ This program is installed in $HOMEDIR/lib/.  The xwin responder and xwin
 commentator will use it if xmessage is not found and wish is.
 
 
-=========================
+====================================
  printer_list.perl
-=========================
+====================================
 
 This script prints a neat list of all the printers.  It is only intended as an
 example which you can adapt to your needs, so it is not installed by
 "make install".
 
 
-=========================
+====================================
  manual_duplex.sh
-=========================
+====================================
 
 A shell script to submit a job twice in order to print it on both sides on a
 simplex-only printer.  The user must removed the sheets after the first job
@@ -59,9 +59,9 @@ and re-insert them in the manual feed tray.  This script is only an example
 and not a polished utility, so it is not installed by "make install".
 
 
-=========================
+====================================
  sgi_glp_hack.perl
-=========================
+====================================
 
 If you run this script (as root), it will create dummy files in
 /var/spool/lp, one for each PPR printer and each printer listed in
@@ -73,22 +73,22 @@ If the operating system is IRIX, then this script will be installed in
 $HOMEDIR/bin/.
 
 
-=========================
+====================================
  custom_hook_docutech.perl
-=========================
+====================================
 
 This script is for use with a Xerox Docutech 135 in Trinity College's print
 shop.  Use it as an example.  It is installed in $HOMEDIR/lib/.
 
 
-=========================
+====================================
  ppr-wp-1.12.zip
-=========================
+====================================
 
 This file contains WordPerfect 5.1 PostScript drivers for the HP LaserJet 4M
 and a generic PostScript level 1 printer which work much better with PPR than
 the ones supplied by WordPerfect Corp.
 
 
-=========================
+====================================
 End of file

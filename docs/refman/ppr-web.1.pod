@@ -34,9 +34,39 @@ B<ppr-web> - Open PPR's Web-based Control Panel
 
 =head1 SYNOPSIS
 
-B<ppr-web>
+B<ppr-web> [I<destname> [I<filename>] ... ] 
 
 =head1 DESCRIPTION
+
+This command attempts to open the PPR web interface in a web browser.  If
+it is running under X-Windows and Mozilla is available, that is what will be
+used since it is the browser which best displays the PPR web interface.  It
+X-Windows is not available, Links will be used in text mode.
+
+=head2 Control Panel
+
+If no arguments are supplied, then the PPR control panel will be opened.
+
+=head2 Queue Display
+
+If one argument, a queue name, is supplied, then a queue display window is
+opened.
+
+=head2 Job Submission
+
+If two or more arguments are supplied, the first is understood to be the
+queue name and the second and subsequent arguments are understood to be the
+names of files to be submitted to that queue.  There will be no GUI
+manifestation of this operation, though a print dialog is planned for the
+future.
+
+=head2 KDE Icons
+
+This command is the action command of KDE icons which you can double click
+on to open a queue or drop files onto to print them.  To create such an
+icon, click on the queue's icon in the Control Panel and choose the B<Client
+Configuration> item.  You will be able to choose to create an KDE icon.  You
+can save the icon on your desktop (or anywhere else for that matter).
 
 =head1 SEE ALSO
 

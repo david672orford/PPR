@@ -30,13 +30,34 @@
 
 =head1 NAME
 
-B<ppr-ttf2ps> - Convert a TrueType font to PostScript format
+ppr-ttf2ps - Convert a TrueType font to PostScript format
 
 =head1 SYNOPSIS
 
-B<ppr-panel>
+B<ppr-ttf2ps> [B<--type3>] [B<--type42>] I<filename>
 
 =head1 DESCRIPTION
+
+This is a demonstration program for PPR libttf library.  As such it will not
+ordinarily be required when using PPR.  It takes as input a TrueType font
+file in the format used on Microsoft Windows and Unix systems and converts
+it to one of two PostScript formats.
+
+=over 4
+
+=item B<--type42>
+
+Generate a PostScript type 42 font file.  This keep the font data in
+TrueType format.  Such a font file will work only on PostScript printers
+with internal TrueType rasterizers.  This is the default.
+
+=item B<--type3>
+
+Convert the outlines to PostScript code and generate a type 3 font.  This
+conversion throws away all of the hinting, so the type quality will be a
+little crude.  However it should work on any PostScript printer.
+
+=back
 
 =head1 SEE ALSO
 

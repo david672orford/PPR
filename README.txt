@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/docs/misc/README.txt
  mouse:~ppr/src/README.txt (symbolic link)
- Last revised 4 March 2003.
+ Last revised 7 March 2003.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -14,151 +14,170 @@ The PPR home page is at:
 
 	http://ppr.trincoll.edu/
 
-See INSTALL.txt for detailed instructions on compiling and installing PPR and
-information about upgrading from previous versions.
+=============================================================================
+ Documentation
+=============================================================================
 
-Post-install configuration instructions and a tutorial can be found in
-docs/pprinst/pprinst.html or docs/pprinst/pprinst.ps.
+Here is a list of the documents which will help you understand what PPR is
+and get it up and running as quicly as possible.
+
+    docs/misc/announce.txt
+	the announcent of the release of this version and a brief
+	description of PPR's features and the release notes
+
+    docs/misc/LICENSE.txt
+	PPR the BSD license terms and a list of files included with PPR
+	which are licensed under other terms
+
+    INSTALL.txt
+	detailed instructions on building and installing PPR and information
+	about upgrading from previous versions
+
+    docs/misc/PORTING.txt
+	Consult this document if PPR's has not yet been ported to the OS
+	which you are using.
+
+    docs/pprinst/pprinst.html
+    docs/pprinst/pprinst.ps.
+	a getting started guide which explains how to use PPR after you 
+	have installed it
 
 Once PPR is installed, HTML versions of all the PPR documentation can be found
 in the /usr/share/ppr/www/docs/ directory.  Man-style versions of some of the 
 documents are also available.  You can either add PPR's man page directory 
 (/usr/share/ppr/man) to your MANPATH or use the command "ppdoc" to read them.
 
+=============================================================================
+ Source Code
+=============================================================================
 
-The source code is divided into directories as follows:
-
-	templates/
-		Blank source code files, used as models for headers and
-		license statements.
-	makeprogs/
-		Programs and certain intermediate files used in the build
-		process.
-	include/
-		Project wide include files.
-	libgu/
-		A library of General Useful functions.
-	libppr/
-		Various utility functions used in more than one project
-		program.
-	libscript/
-		A library of shell and Perl scripts and of small programs
-		for calling from shell scripts.
-	libttf/
-		A library of routines for reading TrueType fonts and
-		converting them to PostScript.
-	fontutils/
-		Tools for indexing fonts and a demonstration utility for
-		libttf.
-	libpprdb/
-		Database modules for user charge accounts.
-	libuprint/
-		A library for submitting jobs to various spooling systems,
-		including PPR, System V lp, and BSD lpr.
-	uprint/
-		Substitutes for programs such as lp, lpr, and lpq, which
-		call libuprint routines to do the real work.
-	pprd/
-		Source code of the spooler daemon.
-	pprdrv/
-		Source code of the program that pprd calls to actually
-		drive a printer.
-	papsrv/
-		Source code for the AppleTalk PAP server.
-	ppr-papd/
-		Source code for a new AppleTalk PAP server.
-	lprsrv/
-		Source code of the lpr/lpd server.
-	ipp/
-		An Internet Printing Protocol server for PPR, barely
-		started.
-	interfaces/
-		Programs which pprdrv runs to communicate with printers.
-	browsers/
-		Programs which enumberate available printers.
-	ppr/
-		Source code for the program ppr.
-	ppop/
-		Source code of the ppop command.
-	ppad/
-		Source code of the ppad command.
-	ppuser/
-		Source code to the ppuser utility.
-	responders/
-		Programs which are run to send messages to the submitter of
-		a job.
-	commentators/
-		Programs for sending news to system operators.  These will
-		soon be obsolete.
-	filters_misc/
-		Various small filters, most of them shell scripts, for
-		converting other file formats to PostScript.
-	filter_lp/
-		Source code for line printer emulator.
-	filter_dotmatrix/
-		A filter for converting Epson/IBM dot matrix printer file to
-		PostScript.
-	filters_typeset/
-		A lot of code that doesn't work.
-	filter_pcl/
-		A filter (written in Java) for converting HP PCL to
-		PostScript.  It is only understands a few commands.
-	fonts/
-		No actual fonts, just font data, actual fonts are in
-		nonppr_vendors/.
-	ppd/
-		PPD files under PPR license.  Vendor-supplied PPD files are
-		in nonppr_vendors/.
-	misc/
-		Odds and ends that are mostly small, experimental,
-		unimportant, or included as examples.
-	encodings/
-		PostScript arrays for mapping various character sets to
-		PostScript glyph names.
-	procsets/
-		Procedure sets used by filters and for N-Up.
-	nonppr_vendors/
-		Fonts, procedure sets, and PPD files not under the PPR
-		license.
-	docs/
-		The PPR documentation.
-	samba/
-		Programs and configuration files for integrating Samba and
-		PPR.
-	editps/
-		Sed and Perl scripts for corrected the bad PostScript
-		generated by specific applications and printer drivers.
-	po/
-		Internationalization files.	
-	www/
-		The WWW interface to PPR.
-	printdesk/
-		A basic print queue control program written in Perl/Tk.
-	unixuser/
-		A series of scripts and programs to help Unix shell or
-		X-Windows users to use PPR.
-	init_and_cron/
-		A System V Init script for PPR and scripts to be run as Cron
-		jobs to clean up stray PPR temporary files.
-	fixup/
-		Shell scripts used in the final stages of installing PPR.  An
-		attempt is being made to phase this out or at least reduce it
-		to almost nothing.
-	tests/
-		Regression tests.
-	nonppr_misc/
-		Files, such as libraries taken from other projects. 
-		Symbolic links point to this directory.
-	nonppr_tcl/
-		A modified copy of Tcl 7.4.  It is intended to replace
-		/bin/sh as the language for PPR's simple scripts.
-	z_install_start/
-	z_install_end/
-		These directories begin with z so that they will appear at
-		the end of a directory listing.  They contain build and
-		install scripts which are run at the start and end
-		respectively when the top level Makefile is run.  The
-		z_install_start/Makefile creates the installation
-		directories.  The z_install_end/Makefile does final tasks
-		such as creating missing configuration files from sample
-		configuration files.
+    templates/
+	Blank source code files, used as models for headers and
+	license statements.
+    makeprogs/
+	Programs and certain intermediate files used in the build
+	process.
+    include/
+	Project wide include files.
+    libgu/
+	A library of General Useful functions.
+    libppr/
+	Various utility functions used in more than one project
+	program.
+    libscript/
+	A library of shell and Perl scripts and of small programs
+	for calling from shell scripts.
+    libttf/
+	A library of routines for reading TrueType fonts and
+	converting them to PostScript.
+    fontutils/
+	Tools for indexing fonts and a demonstration utility for
+	libttf.
+    libpprdb/
+	Not really a library, but rather charge account database modules
+    pprd/
+	Source code of the spooler daemon.
+    pprdrv/
+	Source code of the program that pprd calls to actually
+	drive a printer.
+    ppr/
+	Source code for the program ppr.
+    ppop/
+	Source code of the ppop command.
+    ppad/
+	Source code of the ppad command.
+    ppuser/
+	Source code to the ppuser utility.
+    libuprint/
+	A library for submitting jobs to various spooling systems,
+	including PPR, System V lp, and BSD lpr.
+    uprint/
+	Substitutes for programs such as lp, lpr, and lpq which call 
+	libuprint routines to do the real work
+    papsrv/
+	Source code for PPR's old AppleTalk PAP server
+    papd/
+	Source code for PPR's new AppleTalk PAP server
+    lprsrv/
+	Source code of PPR's lpr/lpd server
+    ipp/
+	An Internet Printing Protocol server for PPR, barely
+	started
+    interfaces/
+	Programs which pprdrv runs to communicate with printers
+    browsers/
+	Programs which enumberate available printers
+    responders/
+	Programs which are run to send messages to the submitter of
+	a job
+    commentators/
+	Programs for sending news to system operators.  These will
+	soon be obsolete.
+    filters_misc/
+	Various small filters, most of them shell scripts, for
+	converting other file formats to PostScript
+    filter_lp/
+	Source code for line printer emulator.
+    filter_dotmatrix/
+	A filter for converting Epson/IBM dot matrix printer file to
+	PostScript
+    filters_typeset/
+	A lot of Perl typesetting code that doesn't work yet
+    filter_pcl/
+	A filter (written in Java) for converting HP PCL to
+	PostScript.  It is only understands a few commands.
+    fonts/
+	No actual fonts, just font data, actual fonts are in
+	nonppr_vendors/.
+    ppd/
+	PPD files under PPR license.  Vendor-supplied PPD files are
+	in nonppr_vendors/.
+    misc/
+	Odds and ends that are mostly small, experimental,
+	unimportant, or included as examples
+    encodings/
+	PostScript arrays for mapping various character sets to
+	PostScript glyph names.
+    procsets/
+	Procedure sets used by filters and for N-Up.
+    nonppr_vendors/
+	Fonts, procedure sets, and PPD files not under the PPR
+	license.
+    docs/
+	The PPR documentation.
+    samba/
+	Programs and configuration files for integrating Samba and
+	PPR.
+    editps/
+	Sed and Perl scripts for corrected the bad PostScript
+	generated by specific applications and printer drivers.
+    po/
+	Internationalization files.	
+    www/
+	The WWW interface to PPR.
+    printdesk/
+	A basic print queue control program written in Perl/Tk.
+    unixuser/
+	A series of scripts and programs to help Unix shell or
+	X-Windows users to use PPR.
+    cron/
+	Scripts to be run as Cron jobs to clean up stray PPR temporary files.,
+	update indexes of fonts and PPD files, etc.
+    tests/
+	Regression tests.
+    nonppr_misc/
+	Files, such as libraries taken from other projects. 
+	Symbolic links point to this directory.
+    nonppr_tcl/
+	A modified copy of Tcl 7.4.  It is intended to replace
+	/bin/sh as the language for PPR's simple scripts.
+    z_install_start/
+    z_install_end/
+	These directories begin with z so that they will appear at
+	the end of a directory listing.  They contain build and
+	install scripts which are run at the start and end
+	respectively when the top level Makefile is run.  The
+	z_install_start/Makefile creates the installation
+	directories.  The z_install_end/Makefile does final tasks
+	such as creating missing configuration files from sample
+	configuration files.

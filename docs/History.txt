@@ -360,8 +360,7 @@ more information about RIPs and *pprRIP:.
   added description of new Ghostscript support.
 
 
-
-1.51, 15 February 2003--6 March 2003.
+1.51, 15 February 2003--7 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -403,6 +402,42 @@ more information about RIPs and *pprRIP:.
 
 * Changed all DocBook tags to lower case.
 
+* Moved misc/misc_dir_contents.txt back to ../misc/README.txt and made a 
+  symbolic link to it.  (Previously it was the other way around.)
+
+* Moved misc/History.txt back up to the top level, leaving a link
+  misc/main_history.txt.
+
+* Moved misc/TODO.txt into ../History.txt.
+
+* Moved misc/docs_todo.txt back into History.txt (this file).
+
+* ppdoc.sh: piped list of available documents through more(1) since it is
+  now longer than one screen.
 
 
+TODO
+
+* pprd: --version --help --foreground
+
+* pprdoc: Document the ".ppr", ".For:", ".AuthCode", ".Routing",
+  ".feature:", ".hack", ".end" header format
+
+* pprdoc: Describe editps.conf and editps system
+
+* pprdoc: Explain meaning of !!! in source code
+
+* Describe uprint responder extensions
+
+* Describe the pagesizes.conf and pserrors.conf files.
+
+* Describe the "CustomHook:" printer configuration line.
+
+* Describe the "Userparams:" printer configuration line.
+
+* Describe the "LimitPages:" printer configuration line.
+
+* Describe the "LimitKilobytes:" printer configuration line.
+
+* Finish uprint-lpstat(1) manpage
 

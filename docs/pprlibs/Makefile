@@ -33,15 +33,18 @@ include ../rules.mk
 
 #=== Inventory ==============================================================
 
+DIRS=html
 
 #=== Build ==================================================================
 
-all:
+all: $(DIRS)
+
+html:
 	doxygen Doxyfile
 
 #=== Install ================================================================
 
-install: 
+install: $(DIRS)
 	../$(MAKE_NEW_DIR) $(DOCSDIR)/pprlibs
 	../$(INSTALLDATA) $(DOCSDIR)/pprlibs html/*
 
@@ -54,6 +57,9 @@ depend:
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+
+veryclean: clean
+	rm -rf $(DIRS)
 
 # end of file
 

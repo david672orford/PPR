@@ -34,9 +34,18 @@ B<ppdoc> - Display PPR Manpages
 
 =head1 SYNOPSIS
 
-B<ppr-panel> [I<command>]
+B<ppdoc> [I<command>]
 
 =head1 DESCRIPTION
+
+This command will display the indicated PPR manpage.  If no manpage is
+indicated, a list of available PPR manpages will be displayed.
+
+This command was created so that you can see what PPR manpages are available
+without haveing to hunt for them amoung the system manpages and also so that
+you can view the PPR manpages even if your man command isn't configured to
+search in the PPR man directory.  This command works by setting MANPATH to
+/usr/share/ppr/man and then running man(1).
 
 =head1 SEE ALSO
 

@@ -3,27 +3,3 @@ mouse:~ppr/src/docs/misc/docs_todo.txt
 
 Work still to be done on the documentation:
 
-* pprd: --version --help --foreground
-
-* pprdoc: Document the ".ppr", ".For:", ".AuthCode", ".Routing",
-  ".feature:", ".hack", ".end" header format
-
-* pprdoc: Describe editps.conf and editps system
-
-* pprdoc: Explain meaning of !!! in source code
-
-* Describe uprint responder extensions
-
-* Describe the pagesizes.conf and pserrors.conf files.
-
-* Describe ppd2macosdrv
-
-* Describe the "CustomHook:" printer configuration line.
-
-* Describe the "Userparams:" printer configuration line.
-
-* Describe the "LimitPages:" printer configuration line.
-
-* Describe the "LimitKilobytes:" printer configuration line.
-
-* Finish uprint-lpstat(1) manpage
