@@ -25,38 +25,193 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 25 February 2005.
 */
 
 /*! \file
 
 Perl Compatible Array
-  
+
+This module implements an array of strings.  In addition to indexing, the 
+shift, unshift, pop, and push operations familiar to Perl programers are 
+implemented.  Slicing is not.
+
 */
 
 #include "config.h"
+#include <string.h>
 #include "gu.h"
 
-void *gu_pca_new(int initial_size)
+struct PCA {
+	int removed_at_start;		/* number of elements shifted off the start */
+	int size_used;				/* number of slots used (including removed_at_start) */
+	int size_allocated;			/* number of members in storage[] */
+	int increment;				/* number of slots to expand by */
+	char **storage;
+	};
+
+/** Create a Perl compatible array object
+ * initial_size slots are initially allocated
+ */
+void *gu_pca_new(int initial_size, int increment)
 	{
+	struct PCA *p;
+	if(initial_size < 0)
+		gu_Throw("gu_pca_new(): initial_size must not be negative");
+	if(increment < 0)
+		gu_Throw("gu_pca_new(): increement must not be negative");
+	p = gu_alloc(1, sizeof(struct PCA));
+	p->removed_at_start = 0;
+	p->size_used = 0;
+	p->size_allocated = initial_size;
+	p->increment = increment;
+	if(initial_size > 0)
+		p->storage = gu_alloc(p->size_allocated, sizeof(char*));
+	else
+		p->storage = NULL;
+	return (void*)p;
 	}
-void  gu_pca_free(void *pca)
+
+/** Deallocate a PCA object.
+ */
+void gu_pca_free(void *pca)
 	{
+	struct PCA *p = pca;
+	if(p->storage)
+		gu_free(p->storage);
+	gu_free(p);
 	}
+
+static void gu_pca_expand(void *pca)
+	{
+	struct PCA *p = (struct PCA *)pca;
+	if(p->increment <= 0)
+		gu_Throw("gu_pca_expand(): array is not growable");
+	p->size_allocated += p->increment;
+	p->storage = gu_realloc(p->storage, p->size_allocated, sizeof(char*));
+	}
+
+/** Return the number of elements in the array
+ */
+int gu_pca_size(void *pca)
+	{
+	struct PCA *p = (struct PCA *)pca;
+	return (p->size_used - p->removed_at_start);
+	}
+
+/** Return the string at a given index
+ */
 char *gu_pca_index(void *pca, int index)
 	{
+	struct PCA *p = (struct PCA *)pca;
+	index += p->removed_at_start;
+	if(index >= 0 && index <= p->size_used)
+		return p->storage[index];
+	return NULL;
 	}
+
+/** Remove and return the last element
+ */
 char *gu_pca_pop(void *pca) 
 	{
+	struct PCA *p = (struct PCA *)pca;
+	if(p->size_used > p->removed_at_start)
+		{
+		p->size_used--;
+		return p->storage[p->size_used];
+		}
+	return NULL;
 	}
-void  gu_pca_push(void *pca, char *item)
+
+/** Add the given element to the end of the array 
+ */
+void gu_pca_push(void *pca, char *item)
 	{
+	struct PCA *p = (struct PCA *)pca;
+	if(p->size_used == p->size_allocated)
+		{
+		if(p->removed_at_start > 0)		/* if we can slide the array down in storage, */
+			{
+			memmove(p->storage, &(p->storage[p->removed_at_start]), (p->size_used - p->removed_at_start) * sizeof(char*));
+			p->size_used -= p->removed_at_start;
+			p->removed_at_start = 0;
+			}
+		else
+			{
+			gu_pca_expand(pca);
+			}
+		}
+	p->storage[p->size_used++] = item;
 	}
+
+/** Remove and return the first element
+ */
 char *gu_pca_shift(void *pca)
 	{
+	struct PCA *p = (struct PCA *)pca;
+	if(p->size_used > p->removed_at_start)
+		{
+		return p->storage[p->removed_at_start++];
+		}
+	return NULL;	
 	}
-void  gu_pca_unshift(void *pca, char *item)
+
+/** Add the provided element to the begining of the array
+ */
+void gu_pca_unshift(void *pca, char *item)
 	{
+	struct PCA *p = (struct PCA *)pca;
+	if(p->removed_at_start > 0)
+		{
+		p->removed_at_start--;
+		p->storage[p->removed_at_start] = item;
+		}
+	else
+		{
+		if(p->size_used == p->size_allocated)
+			gu_pca_expand(pca);
+		memmove(&p->storage[1], p->storage, p->size_used * sizeof(char*));
+		p->size_used++;
+		p->storage[0] = item;
+		}
 	}
+
+/* gcc -Wall -I../include -DTEST -o gu_pca gu_pca.c ../libgu.a */
+#ifdef TEST
+#include <stdio.h>
+void print_array(void *a)
+	{
+	int iii;
+	printf("a[] = ");
+	for(iii=0; iii < gu_pca_size(a); iii++)
+		{
+		if(iii > 0)
+			printf(", ");
+		printf("\"%s\"", gu_pca_index(a, iii));
+		}
+	printf("\n");
+	}
+int main(int argc, char *argv[])
+	{
+	int i;
+	void *array = gu_pca_new(10, 10);
+	gu_pca_push(array, "hello");
+	gu_pca_push(array, "world");
+	gu_pca_unshift(array, "well");
+	print_array(array);
+	gu_pca_pop(array);
+	print_array(array);
+	gu_pca_shift(array);
+	print_array(array);
+	for(i=0; i < 20; i++)
+		printf("\"%s\"\n", gu_pca_shift(array));
+	for(i=0; i < 20; i++)
+		gu_pca_unshift(array, "x");
+	print_array(array);
+	gu_pca_free(array);
+	printf("memory blocks = %d\n", gu_alloc_checkpoint());
+	return 0;
+	}
+#endif
 
 /* end of file */

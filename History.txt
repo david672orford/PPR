@@ -9573,6 +9573,9 @@ no final tarball was released.
 * libscript/ppr_conf_query.c: made failure to open ppr.conf a fatal
   error rather than a warning.
 
+* test/*: fixed the tests to coorespond with the interface script parameter
+  changes and the directory layout changes.
+
 * nonppr_misc/c2lib/tree.*: removed
 
 * libgu/malloc.c: added gu_pool_* functions.
@@ -9582,13 +9585,13 @@ no final tarball was released.
 * pprd/pprd_ppopint.c: switched from the gu_sscanf() rollback functions to
   gu_pool_* functions.
 
-* test/*: fixed the tests to coorespond with the interface script parameter
-  changes and the directory layout changes.
-
-* libgu/gu_pch.c: restored and finished
-
-* libgu/gu_strlower.c,gu_strtrim.c, gu_pca.c, gu_parse_uri.c: added
+* libgu/gu_strlower.c,gu_strtrim.c: new functions to replace c2lib ones
 
 * libgu/malloc_debug.c: moved a simplified version into malloc.c and deleted 
   file
+
+* libgu/gu_pch.c: restored and finished (this is a "Perl compatible" hash class)
+
+* libgu/gu_pca.c: new "Perl compatible" array class
+
 

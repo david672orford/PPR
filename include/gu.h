@@ -447,8 +447,9 @@ char *gu_pch_nextkey(void *pch, char **value);
 int gu_hash(const char string[]);
 
 /* Perl Compatible Array */
-void *gu_pca_new(int initial_size);
+void *gu_pca_new(int initial_size, int increment);
 void  gu_pca_free(void *pca);
+int gu_pca_size(void *pca);
 char *gu_pca_index(void *pca, int index);
 char *gu_pca_pop(void *pca); 
 void  gu_pca_push(void *pca, char *item); 

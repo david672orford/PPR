@@ -310,6 +310,7 @@ int main(int argc, char *argv[])
 	gu_pch_debug(thash, "thash");
 
 	printf("sue=\"%s\"\n", gu_pch_delete(thash, "sue"));
+	printf("math=\"%s\"\n", gu_pch_delete(thash, "math"));
 	gu_pch_debug(thash, "thash");
 
 	{
