@@ -37,7 +37,7 @@
 *FormatVersion: "4.3"
 *FileVersion: "1.0"
 *LanguageVersion: English
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *PCFileName: "HP2250.PPD"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpEdgeToEdge.plugin"

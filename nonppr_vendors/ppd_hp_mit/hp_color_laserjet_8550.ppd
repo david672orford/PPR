@@ -40,7 +40,7 @@
 *FileVersion: "1.1.2 X"
 *PCFileName: "HP-CLJ85.PPD"
 *LanguageVersion: English
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *Product: "(HP Color LaserJet 8550)"
 *PSVersion: "(3011.103) 1"
 *ModelName: "HP Color LaserJet 8550"
@@ -1796,7 +1796,7 @@ globaldict /ColorSmartColorMatching known {
 *% ================================================
 *% Spot Colors
 *% ================================================
-*OpenUI *HPPantone/Automatic PANTONE¨ Color Calibration: Boolean
+*OpenUI *HPPantone/Automatic PANTONE<ae> Color Calibration: Boolean
 *OrderDependency: 35 AnySetup *HPPantone
 *DefaultHPPantone: True
 *HPPantone True/Yes: "<< /SpotColorMatching true >> setpagedevice"

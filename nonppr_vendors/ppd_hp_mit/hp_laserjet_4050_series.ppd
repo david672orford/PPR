@@ -32,7 +32,7 @@
 *%
 
 *% PPD for HP LaserJet 4000 Series
-*% For Macintosh only
+*%
 *% 2001
 *% =========================================
 
@@ -42,7 +42,7 @@
 *% PPD File Version Information
 *FormatVersion: "4.3"
 *FileVersion: "1.1.2 X"
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *LanguageVersion: English
 *PCFileName: "HP4050_5.PPD"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"
@@ -720,19 +720,19 @@
 *OpenUI *HPwmTextAngle/Watermark Angle:  PickOne
 *OrderDependency: 65 AnySetup *HPwmTextAngle
 *DefaultHPwmTextAngle: Deg45
-*HPwmTextAngle Deg90/90<A1>: "userdict /HPwmAngle 90 put"
-*HPwmTextAngle Deg75/75<A1>: "userdict /HPwmAngle 75 put"
-*HPwmTextAngle Deg60/60<A1>: "userdict /HPwmAngle 60 put"
-*HPwmTextAngle Deg45/45<A1>: "userdict /HPwmAngle 45 put"
-*HPwmTextAngle Deg30/30<A1>: "userdict /HPwmAngle 30 put"
-*HPwmTextAngle Deg15/15<A1>: "userdict /HPwmAngle 15 put"
-*HPwmTextAngle Deg0/0<A1>: "userdict /HPwmAngle 0 put"
-*HPwmTextAngle DegN15/Ð15<A1>: "userdict /HPwmAngle -15 put"
-*HPwmTextAngle DegN30/Ð30<A1>: "userdict /HPwmAngle -30 put"
-*HPwmTextAngle DegN45/Ð45<A1>: "userdict /HPwmAngle -45 put"
-*HPwmTextAngle DegN60/Ð60<A1>: "userdict /HPwmAngle -60 put"
-*HPwmTextAngle DegN75/Ð75<A1>: "userdict /HPwmAngle -75 put"
-*HPwmTextAngle DegN90/Ð90<A1>: "userdict /HPwmAngle -90 put"
+*HPwmTextAngle Deg90/90<b0>: "userdict /HPwmAngle 90 put"
+*HPwmTextAngle Deg75/75<b0>: "userdict /HPwmAngle 75 put"
+*HPwmTextAngle Deg60/60<b0>: "userdict /HPwmAngle 60 put"
+*HPwmTextAngle Deg45/45<b0>: "userdict /HPwmAngle 45 put"
+*HPwmTextAngle Deg30/30<b0>: "userdict /HPwmAngle 30 put"
+*HPwmTextAngle Deg15/15<b0>: "userdict /HPwmAngle 15 put"
+*HPwmTextAngle Deg0/0<b0>: "userdict /HPwmAngle 0 put"
+*HPwmTextAngle DegN15/ 15<b0>: "userdict /HPwmAngle -15 put"
+*HPwmTextAngle DegN30/ 30<b0>: "userdict /HPwmAngle -30 put"
+*HPwmTextAngle DegN45/ 45<b0>: "userdict /HPwmAngle -45 put"
+*HPwmTextAngle DegN60/ 60<b0>: "userdict /HPwmAngle -60 put"
+*HPwmTextAngle DegN75/ 75<b0>: "userdict /HPwmAngle -75 put"
+*HPwmTextAngle DegN90/ 90<b0>: "userdict /HPwmAngle -90 put"
 *CloseUI: *HPwmTextAngle
 
 *% =================================

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 May 2004.
+# Last modified 3 June 2004.
 #
 
 #
@@ -199,7 +199,6 @@ cat - >&5 <<===EndHere90===
 # from any of the listed directories.
 #
 [PPDs]
-"/usr/share/cups/model"
 ===EndHere90===
 
 # MacOS 10.x
@@ -207,6 +206,9 @@ if_dir_print "/Library/Printers/PPDs/Contents/Resources/en.lproj"
 
 # PPR's Ghostscript distribution
 if_dir_print "/usr/share/ppr-gs/ppd"
+
+# Debian
+if_dir_print "/usr/share/postscript/ppd"
 
 echo >&5
 

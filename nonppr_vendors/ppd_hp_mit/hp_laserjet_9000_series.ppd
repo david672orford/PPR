@@ -42,7 +42,7 @@
 *FileVersion: "1.2.2 X"
 *HPBuildNumber: "010"
 *FormatVersion: "4.3"
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *LanguageVersion: English
 *PCFileName: "HP9000_H.PPD"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"

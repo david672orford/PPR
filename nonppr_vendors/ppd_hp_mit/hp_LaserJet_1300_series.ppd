@@ -2,9 +2,9 @@
 *% =======================================================
 *% Disclaimer:  The above statement indicates
 *% that this PPD was written using the Adobe PPD
-*% File Format Specification 4.3, but does not
+*% File Format Specification 4.3, but does not 
 *% intend to imply approval and acceptance by
-*% Adobe Systems, Inc.
+*% Adobe Systems, Inc. 
 *% =======================================================
 *% Printer Description File
 *% Copyright 1992-2003 Hewlett-Packard Company
@@ -30,45 +30,37 @@
 *% 
 *% [this is the MIT open source license -- please see www.opensource.org]
 *%
-
-*% PPD for HP LaserJet 3200 Series
-*%
+*% PPD for HP LaserJet 1300 Series
+*%  
 *%========================================================
 *%=================================================
-*% 		 PPD File Version Information
+*% 		 PPD File Version Information 
 *%=================================================
-*FileVersion: "1.1.1 X"
+*FileVersion: "1.0.0 X"
 *FormatVersion: "4.3"
 *LanguageEncoding: ISOLatin1
 *LanguageVersion: English
-*PCFileName: "HP3200_6.PPD"
-*APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"
-*APDialogExtension: "/Library/Printers/hp/PDEs/hpEdgeToEdge.plugin"
-*APDialogExtension: "/Library/Printers/hp/PDEs/hpFinishing.plugin"
-*APDialogExtension: "/Library/Printers/hp/PDEs/hpImageQuality.plugin"
-*APDialogExtension: "/Library/Printers/hp/PDEs/hpProofAndPrint.plugin"
-*cupsICCProfile RGB../sRGB Matching Profile: "/Library/Printers/hp/Profiles/sRGB_A.icc"
-*APPrinterIconPath: "/Library/Printers/hp/Icons/HP LaserJet 3200.icns"
+*PCFileName: "HP1300_6.PPD"
 
 *%=================================================
-*% 		 Product Version Information
+*% 		 Product Version Information 
 *%=================================================
-*ModelName: "HP LaserJet 3200M"
-*ShortNickName: "HP LaserJet 3200M"
-*NickName: "HP LaserJet 3200M"
-*Product: "(HP LaserJet 3200M)"
+*ModelName: "HP LaserJet 1300"
+*ShortNickName: "HP LaserJet 1300"
+*NickName: "HP LaserJet 1300"
+*Product: "(hp LaserJet 1300)"
 *Manufacturer: "HP"
 *PSVersion: "(2014.116) 0"
 
 *%=================================================
-*%		 Device Capabilities
+*%		 Device Capabilities 
 *%=================================================
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *FileSystem: False
 
 *LanguageLevel: "2"
-*Throughput: "10"
+*Throughput: "20"
 *TTRasterizer: Type42
 *?TTRasterizer: "
    save
@@ -79,7 +71,7 @@
 *End
 
 *%=================================================
-*%		 Emulations and Protocols
+*%		 Emulations and Protocols 
 *%=================================================
 *Protocols: PJL TBCP
 
@@ -89,55 +81,60 @@
 
 *%==============================================
 *%			 Installable Options
-*%==============================================
+*%============================================== 
 *OpenGroup: InstallableOptions/Installed Options
+
+*OpenUI *HPOption_Tray2/Tray 2: Boolean
+*DefaultHPOption_Tray2: False
+*HPOption_Tray2 True/Installed: ""
+*HPOption_Tray2 False/Not Installed: ""
+*?HPOption_Tray2: "
+   save
+    currentpagedevice /InputAttributes get 0 known
+    {(True)}{(False)} ifelse = flush
+  restore "
+*End
+*CloseUI: *HPOption_Tray2
 
 *%====================================
 *%         Fit to Page
 *%====================================
-*OpenUI *HPOption_PaperPolicy/Fit to Page: PickOne
-*OrderDependency: 10 AnySetup *HPOption_PaperPolicy
-*DefaultHPOption_PaperPolicy: PromptUser
-*HPOption_PaperPolicy PromptUser/Prompt User: "
+*OpenUI *HPPaperPolicy/Fit to Page: PickOne
+*OrderDependency: 10 AnySetup *HPPaperPolicy
+*DefaultHPPaperPolicy: PromptUser
+*HPPaperPolicy PromptUser/Prompt User: "
    <</DeferredMediaSelection true>> setpagedevice"
 *End
-*HPOption_PaperPolicy NearestSizeAdjust/Nearest Size and Scale: "
+*HPPaperPolicy NearestSizeAdjust/Nearest Size and Scale: "
    <</DeferredMediaSelection false>> setpagedevice
    <</Policies << /PageSize 3 >> >> setpagedevice"
 *End
-*HPOption_PaperPolicy NearestSizeNoAdjust/Nearest Size and Crop: "
+*HPPaperPolicy NearestSizeNoAdjust/Nearest Size and Crop: "
    <</DeferredMediaSelection false>> setpagedevice
    <</Policies << /PageSize 5 >> >> setpagedevice"
 *End
-*?HPOption_PaperPolicy: "(PromptUser) = flush"
-*CloseUI: *HPOption_PaperPolicy
+*?HPPaperPolicy: "(PromptUser) = flush"
+*CloseUI: *HPPaperPolicy
+
 
 *OpenUI *InstalledMemory/Total Printer Memory: PickOne
-*DefaultInstalledMemory: 8MB
-*InstalledMemory 8MB/8 - 15 MB: ""
-*InstalledMemory 16MB/16 - 23 MB: ""
-*InstalledMemory 24MB/24 - 31 MB: ""
+*DefaultInstalledMemory: 16MB
+*InstalledMemory 16MB/16 - 31 MB: ""
 *InstalledMemory 32MB/32 - 47 MB: ""
-*InstalledMemory 48MB/48 - 63 MB: ""
-*InstalledMemory 64MB/64 MB or more: ""
+*InstalledMemory 48MB/48 - 71 MB: ""
+*InstalledMemory 72MB/72 MB or more: ""
 *?InstalledMemory: "
   save
-    currentsystemparams /RamSize get
+    currentsystemparams /RamSize get 
     524288 div ceiling cvi 2 div
     /size exch def
-    size 64 ge
-      {(64MB)}
+    size 72 ge
+    {(72MB)}
        {size 48 ge
-          {(48MB)}
-          {size 32 ge
-             {(32MB)}
-             {size 24 ge
-                {(24MB)}
-                {size 16 ge
-                   {(16MB)}
-                   {(8MB)} ifelse
-             } ifelse
-          } ifelse
+       {(48MB)}
+           {size 32 ge
+           {(32MB)}
+           {(16MB)} ifelse
        } ifelse
     } ifelse = flush
   restore
@@ -145,27 +142,7 @@
 *End
 *CloseUI: *InstalledMemory
 
-
 *CloseGroup: InstallableOptions
-
-*%=================================================
-*%		 UI Constraints
-*%=================================================
-*% If A than not B  (Also include the reverse constraints if appropriate)
-*%
-
-*% No 1200 dpi HPEconoMode.
-*UIConstraints: *Resolution 1200x1200dpi *HPEconoMode True
-
-*% Fills not allowed with overlays
-*%------------------------------------------------------------
-*UIConstraints: *HPwmSwitch Overlay *HPwmTextStyle Fill
-*UIConstraints: *HPwmTextStyle Fill *HPwmSwitch Overlay
-
-*% Halo style does not work with Watermarks
-*%------------------------------------------------------------
-*UIConstraints: *HPwmSwitch Watermark *HPwmTextStyle Halo
-*UIConstraints: *HPwmTextStyle Halo *HPwmSwitch Watermark
 
 *% =================================
 *%  Watermark Printing
@@ -187,31 +164,31 @@
     /MacEncoding where
     { pop /Encoding MacEncoding def }
     { /Encoding ISOLatin1Encoding def } ifelse
-    currentdict
+    currentdict 
     end
     /HPwmFont exch definefont pop
   } if
   userdict /HPwmSize known not {/HPwmSize 48 def} if
   userdict /HPwmAngle known not {/HPwmAngle 45 def} if
-  userdict /HPwmSaturation known not
-  { /HPwmSaturation
-    { [ currentcmykcolor ] /DeviceCMYK setcolorspace { .55 mul } forall setcolor } def
+  userdict /HPwmSaturation known not 
+  { /HPwmSaturation 
+    { [ currentcmykcolor ] /DeviceCMYK setcolorspace { .55 mul } forall setcolor } def 
   } if
-  userdict /HPwmColor known not
-  { /HPwmColor { 0 setgray HPwmSaturation } def
+  userdict /HPwmColor known not 
+  { /HPwmColor { 0 setgray HPwmSaturation } def 
   } if
-  userdict /HPwmStyle known not
+  userdict /HPwmStyle known not 
   {/HPwmStyle { HPwmText false charpath HPwmColor .48 setlinewidth stroke } def
   } if
   end
-
+  
   /HPwminitialize
 	{ HPwm /HPwmOn get
 	    { gsave
 	      initmatrix
 	      0 setgray 1 setlinewidth true setstrokeadjust 0 setlinejoin 0 setlinecap [] 0 setdash
 	      currentpagedevice /PageSize get aload pop 2 div exch 2 div exch translate
-	      HPwmAngle rotate
+	      HPwmAngle rotate 
 	      /normland where {
 	      	pop /normland load dup type /booleantype eq { { 90 rotate } if } if
 	      } if
@@ -227,7 +204,7 @@
   		/initializepage { HPwminitialize LWinitializepage } put
   	}if
   } if
-
+  
   /LWinitializepage where { pop }{
   <<
   /BeginPage
@@ -249,33 +226,33 @@
     /MacEncoding where
     { pop /Encoding MacEncoding def }
     { /Encoding ISOLatin1Encoding def } ifelse
-    currentdict
+    currentdict 
     end
     /HPwmFont exch definefont pop
   } if
   userdict /HPwmSize known not {/HPwmSize 48 def} if
   userdict /HPwmAngle known not {/HPwmAngle 45 def} if
-  userdict /HPwmSaturation known not
-  { /HPwmSaturation
-    { [ currentcmykcolor ] /DeviceCMYK setcolorspace { .55 mul } forall setcolor } def
+  userdict /HPwmSaturation known not 
+  { /HPwmSaturation 
+    { [ currentcmykcolor ] /DeviceCMYK setcolorspace { .55 mul } forall setcolor } def 
   } if
-  userdict /HPwmColor known not
-  { /HPwmColor { 0 setgray HPwmSaturation } def
+  userdict /HPwmColor known not 
+  { /HPwmColor { 0 setgray HPwmSaturation } def 
   } if
-  userdict /HPwmStyle known not
+  userdict /HPwmStyle known not 
   {/HPwmStyle { HPwmText false charpath HPwmColor .48 setlinewidth stroke } def
   } if
  end
   <<
   /EndPage
-    {
+    { 
   	  2 eq { pop false }{
   		pop HPwm /HPwmOn get
 	    { gsave
 	      initmatrix
 	      0 setgray 1 setlinewidth true setstrokeadjust 0 setlinejoin 0 setlinecap [] 0 setdash
 	      currentpagedevice /PageSize get aload pop 2 div exch 2 div exch translate
-	      HPwmAngle rotate
+	      HPwmAngle rotate 
 	      /normland where {
 	      	pop /normland load dup type /booleantype eq { { 90 rotate } if } if
 	      } if
@@ -284,7 +261,7 @@
 	      HPwmStyle HPwmLocation not {true setglobal HPwm /HPwmOn false put false setglobal} if
 	      grestore
 	    } if
-	    true
+	    true 
 	  } ifelse
     } bind
   >> setpagedevice
@@ -305,69 +282,69 @@
 *% =================================
 *%  Watermark Text
 *% =================================
-*OpenUI *HPwmTextMessage/Watermark Text:  PickOne
-*OrderDependency: 65 AnySetup *HPwmTextMessage
-*DefaultHPwmTextMessage: Draft
-*HPwmTextMessage Draft/Draft: "userdict /HPwmText (Draft) put"
-*HPwmTextMessage CompanyConfidential/Company Confidential: "userdict /HPwmText (Company Confidential) put"
-*HPwmTextMessage CompanyProprietary/Company Proprietary: "userdict /HPwmText (Company Proprietary) put"
-*HPwmTextMessage CompanyPrivate/Company Private: "userdict /HPwmText (Company Private) put"
-*HPwmTextMessage Confidential/Confidential: "userdict /HPwmText (Confidential) put"
-*HPwmTextMessage Copy/Copy: "userdict /HPwmText (Copy) put"
-*HPwmTextMessage Copyright/Copyright: "userdict /HPwmText (Copyright) put"
-*HPwmTextMessage FileCopy/File Copy: "userdict /HPwmText (File Copy) put"
-*HPwmTextMessage Final/Final: "userdict /HPwmText (Final) put"
-*HPwmTextMessage ForInternalUse/For Internal Use Only: "userdict /HPwmText (For Internal Use Only) put"
-*HPwmTextMessage Preliminary/Preliminary: "userdict /HPwmText (Preliminary) put"
-*HPwmTextMessage Proof/Proof: "userdict /HPwmText (Proof) put"
-*HPwmTextMessage ReviewCopy/Review Copy: "userdict /HPwmText (Review Copy) put"
-*HPwmTextMessage Sample/Sample: "userdict /HPwmText (Sample) put"
-*HPwmTextMessage TopSecret/Top Secret: "userdict /HPwmText (Top Secret) put"
-*HPwmTextMessage Urgent/Urgent: "userdict /HPwmText (Urgent) put"
-*HPwmTextMessage Set/Custom: "userdict /HPwmText (Custom) put"
-*CloseUI: *HPwmTextMessage
+*OpenUI *HPwmText/Watermark Text:  PickOne
+*OrderDependency: 65 AnySetup *HPwmText
+*DefaultHPwmText: Draft
+*HPwmText Draft/Draft: "userdict /HPwmText (Draft) put"
+*HPwmText CompanyConfidential/Company Confidential: "userdict /HPwmText (Company Confidential) put"
+*HPwmText CompanyProprietary/Company Proprietary: "userdict /HPwmText (Company Proprietary) put"
+*HPwmText CompanyPrivate/Company Private: "userdict /HPwmText (Company Private) put"
+*HPwmText Confidential/Confidential: "userdict /HPwmText (Confidential) put"
+*HPwmText Copy/Copy: "userdict /HPwmText (Copy) put"
+*HPwmText Copyright/Copyright: "userdict /HPwmText (Copyright) put"
+*HPwmText FileCopy/File Copy: "userdict /HPwmText (File Copy) put"
+*HPwmText Final/Final: "userdict /HPwmText (Final) put"
+*HPwmText ForInternalUse/For Internal Use Only: "userdict /HPwmText (For Internal Use Only) put"
+*HPwmText Preliminary/Preliminary: "userdict /HPwmText (Preliminary) put"
+*HPwmText Proof/Proof: "userdict /HPwmText (Proof) put"
+*HPwmText ReviewCopy/Review Copy: "userdict /HPwmText (Review Copy) put"
+*HPwmText Sample/Sample: "userdict /HPwmText (Sample) put"
+*HPwmText TopSecret/Top Secret: "userdict /HPwmText (Top Secret) put"
+*HPwmText Urgent/Urgent: "userdict /HPwmText (Urgent) put"
+*HPwmText Set/Custom: "userdict /HPwmText (Custom) put"
+*CloseUI: *HPwmText
 
 *% Allows LW 8.5.1 to use custom strings
-*RBISetHPwmTextMessage Data: "(Custom) 50"
-*RBISetHPwmTextMessage Code: "userdict /HPwmText 3 -1 roll put"
+*RBISetHPwmText Data: "(Custom) 50"
+*RBISetHPwmText Code: "userdict /HPwmText 3 -1 roll put"
 
 *% =================================
 *%  Watermark Font
 *% =================================
-*OpenUI *HPwmFontName/Watermark Font: PickOne
-*OrderDependency: 65 AnySetup *HPwmFontName
-*DefaultHPwmFontName: HelveticaB
-*HPwmFontName CourierB/Courier Bold: "
+*OpenUI *HPwmFont/Watermark Font: PickOne
+*OrderDependency: 65 AnySetup *HPwmFont
+*DefaultHPwmFont: HelveticaB
+*HPwmFont CourierB/Courier Bold: "
   /Courier-Bold findfont dup length dict begin
     {1 index /FID ne {def} {pop pop} ifelse} forall
     /MacEncoding where
     { pop /Encoding MacEncoding def }
     { /Encoding ISOLatin1Encoding def } ifelse
-    currentdict
+    currentdict 
   end
   /HPwmFont exch definefont pop"
 *End
-*HPwmFontName HelveticaB/Helvetica Bold: "
+*HPwmFont HelveticaB/Helvetica Bold: "
   /Helvetica-Bold findfont dup length dict begin
     {1 index /FID ne {def} {pop pop} ifelse} forall
     /MacEncoding where
     { pop /Encoding MacEncoding def }
     { /Encoding ISOLatin1Encoding def } ifelse
-    currentdict
+    currentdict 
   end
   /HPwmFont exch definefont pop"
 *End
-*HPwmFontName TimesB/Times Bold: "
+*HPwmFont TimesB/Times Bold: "
   /Times-Bold findfont dup length dict begin
     {1 index /FID ne {def} {pop pop} ifelse} forall
     /MacEncoding where
     { pop /Encoding MacEncoding def }
     { /Encoding ISOLatin1Encoding def } ifelse
-    currentdict
+    currentdict 
   end
   /HPwmFont exch definefont pop"
 *End
-*CloseUI: *HPwmFontName
+*CloseUI: *HPwmFont
 
 *% =================================
 *%  Watermark Size
@@ -419,7 +396,7 @@
 *HPwmTextStyle Thin/Thin Outline: "userdict /HPwmStyle { HPwmText false charpath HPwmColor .24 setlinewidth stroke } bind put"
 *HPwmTextStyle Medium/Medium Outline: "userdict /HPwmStyle { HPwmText false charpath HPwmColor .48 setlinewidth stroke } bind put"
 *HPwmTextStyle Thick/Thick Outline: "userdict /HPwmStyle { HPwmText false charpath HPwmColor .96 setlinewidth stroke } bind put"
-*HPwmTextStyle Halo/Thick Outline with Halo: "userdict /HPwmStyle
+*HPwmTextStyle Halo/Thick Outline with Halo: "userdict /HPwmStyle 
      { HPwmText false charpath gsave /DeviceGray setcolorspace 1 setgray 1.8 setlinewidth stroke grestore
      HPwmColor .96 setlinewidth stroke } bind put"
 *End
@@ -451,19 +428,19 @@
 *DefaultSmoothing: PrinterDefault
 *Smoothing PrinterDefault/Printer's Current Setting: ""
 *Smoothing On/On: "
-<< /PostRenderingEnhance true
-    /PostRenderingEnhanceDetails << /REValue 2 /Type 8 >>
+<< /PostRenderingEnhance true 
+    /PostRenderingEnhanceDetails << /REValue 2 /Type 8 >> 
 >>  setpagedevice"
 *End
-*Smoothing Off/Off: "
-<< /PostRenderingEnhance true
-    /PostRenderingEnhanceDetails << /REValue 0 /Type 8 >>
+*Smoothing Off/Off: " 
+<< /PostRenderingEnhance true 
+    /PostRenderingEnhanceDetails << /REValue 0 /Type 8 >> 
 >>  setpagedevice"
 *End
 *?Smoothing: "
   save
     currentpagedevice /PostRenderingEnhanceDetails get /REValue get
-    [(Off) (On) (On) (On)]  exch get print
+    [(Off) (On) (On) (On)]  exch get print			
   restore
 "
 *End
@@ -471,15 +448,48 @@
 
 
 *FreeVM: "4000000"
-*VMOption 8MB/8 - 15 MB: "4000000"
-*VMOption 16MB/16 - 23 MB: "11000000"
-*VMOption 24MB/24 - 31 MB: "18000000"
-*VMOption 32MB/32 - 47 MB: "25000000"
-*VMOption 48MB/48 - 63 MB: "39000000"
-*VMOption 64MB/64 MB or more: "53000000"
+*VMOption 16MB/16 - 61 MB: "4000000"
+*VMOption 32MB/32 - 47 MB: "11000000"
+*VMOption 48MB/48 - 71 MB: "18000000"
+*VMOption 72MB/72 MB or more: "25000000"
 
 *%=================================================
-*%		 Paper Sizes
+*%		 UI Constraints 
+*%=================================================
+*% If A than not B  (Also include the reverse constraints if appropriate)
+*%
+
+*% No 1200 dpi HPEconoMode.
+*UIConstraints: *Resolution 1200x1200dpi *HPEconoMode True
+
+
+*% If an optional 250 sheet tray is not installed, disable access to Tray2
+*UIConstraints: *HPOption_Tray2 False *InputSlot Tray2
+
+*% If selected page size is an envelope, Postcard or double postcard
+*%    disable access to paper trays 2 and 3
+*UIConstraints: *PageSize Env10       *InputSlot Tray2
+*UIConstraints: *PageSize EnvMonarch  *InputSlot Tray2
+*UIConstraints: *PageSize EnvDL       *InputSlot Tray2
+*UIConstraints: *PageSize EnvC5       *InputSlot Tray2
+*UIConstraints: *PageSize EnvISOB5    *InputSlot Tray2
+*UIConstraints: *PageSize w558h774  *InputSlot Tray2
+*UIConstraints: *PageSize Postcard  *InputSlot Tray2
+*UIConstraints: *PageSize DoublePostcard  *InputSlot Tray2
+*UIConstraints: *MediaType Labels       *InputSlot Tray2
+
+*% Fills not allowed with overlays
+*%------------------------------------------------------------
+*UIConstraints: *HPwmSwitch Overlay *HPwmTextStyle Fill
+*UIConstraints: *HPwmTextStyle Fill *HPwmSwitch Overlay
+
+*% Halo style does not work with Watermarks
+*%------------------------------------------------------------
+*UIConstraints: *HPwmSwitch Watermark *HPwmTextStyle Halo
+*UIConstraints: *HPwmTextStyle Halo *HPwmSwitch Watermark
+
+*%=================================================
+*%		 Paper Sizes 
 *%=================================================
 *OpenUI *PageSize: PickOne
 *OrderDependency: 30 AnySetup *PageSize
@@ -510,14 +520,11 @@
 *End
 *PageSize A6/A6: "
   <</PageSize [297 420] /ImagingBBox null>> setpagedevice"
-*End
-*PageSize ISOB5/B5: "
-  <</PageSize [499 709] /ImagingBBox null>> setpagedevice"
-*End
+*End 
 *PageSize B5/JIS B5: "
   <</PageSize [516 729] /ImagingBBox null>> setpagedevice"
 *End
-*PageSize w612h936/8.5x13: "
+*PageSize w612h935/Executive (JIS): "
   <</PageSize [612 936] /ImagingBBox null>> setpagedevice"
 *End
 *PageSize Postcard/Postcard (JIS): "
@@ -547,18 +554,17 @@
 *?PageSize: "
    save
    currentpagedevice /PageSize get aload pop
-   2 copy gt {exch} if
-   (Unknown)
-   17 dict
+   2 copy gt {exch} if 
+   (Unknown) 
+   16 dict
    dup [612 792]  (Letter) put
    dup [522 756]  (Executive) put
    dup [612 1008] (Legal) put
    dup [595 842]  (A4) put
    dup [420 595]  (A5) put
    dup [297 420]  (A6) put
-   dup [499 709]  (ISOB5) put
    dup [516 729]  (B5) put
-   dup [612 936]  (w612h936) put
+   dup [612 936]  (w612h935) put
    dup [284 419]  (Postcard) put
    dup [419.5 567] (DoublePostcard) put
    dup [558 774]  (w558h774) put
@@ -567,8 +573,8 @@
    dup [312 624]  (EnvDL) put
    dup [459 649]  (EnvC5) put
    dup [499 709]  (EnvISOB5) put
-   { exch aload pop 4 index sub abs 5 le exch
-      5 index sub abs 5 le and
+   { exch aload pop 4 index sub abs 5 le exch 
+      5 index sub abs 5 le and 
       {exch pop exit} {pop} ifelse
    } bind forall
    = flush pop pop
@@ -606,14 +612,11 @@
 *End
 *PageRegion A6/A6: "
   <</PageSize [297 420] /ImagingBBox null>> setpagedevice"
-*End
-*PageRegion ISOB5/ISO B5: "
-  <</PageSize [499 709] /ImagingBBox null>> setpagedevice"
-*End
+*End 
 *PageRegion B5/JIS B5: "
   <</PageSize [516 729] /ImagingBBox null>> setpagedevice"
 *End
-*PageRegion w612h936/8.5x13: "
+*PageRegion w612h935/Executive (JIS): "
   <</PageSize [612 936] /ImagingBBox null>> setpagedevice"
 *End
 *PageRegion Postcard/Postcard (JIS): "
@@ -644,17 +647,16 @@
 
 *DefaultImageableArea: Letter
 *ImageableArea Letter/Letter: "12.00 12.00 599.76 779.76"
-*ImageableArea LetterSmall/Letter (Small): "30.00 31.00 582.00 761.00"
+*ImageableArea LetterSmall/Letter (Small): "30.00 31.00 582.00 761.00" 
 *ImageableArea Executive/Executive: "12.00 12.00 509.76 743.76"
 *ImageableArea Legal/Legal: "12.00 12.00 599.76 995.76"
-*ImageableArea LegalSmall/Legal (Small): "64.00 54.00 548.00 954.00"
+*ImageableArea LegalSmall/Legal (Small): "64.00 54.00 548.00 954.00" 
 *ImageableArea A4/A4: "12.00 12.00 582.96 829.44"
 *ImageableArea A4Small/A4 (Small): "28.00 30.00 566.00 811.00"
 *ImageableArea A5/A5: "12.00 12.00 407.28 582.96"
 *ImageableArea A6/A6: "12.00 12.00 284.76 407.76"
-*ImageableArea ISOB5/ISO B5: "12.00 12.00 486.48 696.24"
 *ImageableArea B5/JIS B5: "12.00 12.00 503.52 716.16"
-*ImageableArea w612h936/8.5x13: "12.00 12.00 599.76 923.76"
+*ImageableArea w612h935/Executive (JIS): "12.00 12.00 599.76 923.76"
 *ImageableArea Postcard/Postcard (JIS): "12.00 12.00 271.20 407.28"
 *ImageableArea DoublePostcard/Double Postcard (JIS): "12.00 12.00 407.28 554.64"
 *ImageableArea w558h774/16K: "12.00 12.00 545.76 761.76"
@@ -685,9 +687,8 @@
 *PaperDimension A4Small/A4 (Small): "595 842"
 *PaperDimension A5/A5: "420 595"
 *PaperDimension A6/A6: "297 420"
-*PaperDimension ISOB5/ISO B5: "499 709"
 *PaperDimension B5/JIS B5: "516 729"
-*PaperDimension w612h936/8.5x13: "612 936"
+*PaperDimension w612h935/Executive (JIS): "612 936"
 *PaperDimension Postcard/Postcard (JIS): "284 419"
 *PaperDimension DoublePostcard/Double Postcard (JIS): "419.5 567"
 *PaperDimension w558h774/16K: "558 774"
@@ -700,13 +701,13 @@
 *LandscapeOrientation: Plus90
 
 *%=================================================
-*%		 Custom Paper Support
+*%		 Custom Paper Support 
 *%=================================================
 *%Orientation and Margin (offsets) values are not utilized
 
 *VariablePaperSize: True
 
-*LeadingEdge PreferLong: ""
+*LeadingEdge: ""
 *DefaultLeadingEdge: PreferLong
 
 *% Smallest = 3x5, Largest = 8.5 x 14
@@ -714,7 +715,7 @@
 *MaxMediaHeight: "1008"
 *HWMargins:      12 12 12 12
 *CustomPageSize True: "
-  pop pop pop 2 copy gt {exch} if
+  pop pop pop 2 copy gt {exch} if 
   <</DeferredMediaSelection true /PageSize [ 7 -2 roll ] /ImagingBBox null >>
   setpagedevice
 "
@@ -724,23 +725,85 @@
 *ParamCustomPageSize Height:       2 points 360 1008
 *ParamCustomPageSize WidthOffset:  3 points 0 0
 *ParamCustomPageSize HeightOffset: 4 points 0 0
-*ParamCustomPageSize Orientation:  5 int 0 3
+*ParamCustomPageSize Orientation:  5 int 0 0
 
 *RequiresPageRegion All: True
 
+*%==========================================
+*%		Media Type 
+*%=========================================
+*OpenUI *MediaType/Media Type: PickOne
+*OrderDependency: 20 AnySetup *MediaType
+*DefaultMediaType: Plain
+*MediaType None/None:  "
+    <</ManualFeed false /MediaType null >> setpagedevice"
+*End
+*MediaType Plain/Plain (71-89 g/m2):  "
+    <</ManualFeed false /MediaType (Plain)>> setpagedevice"
+*End
+*MediaType Preprinted/Preprinted:  "
+    <</ManualFeed false /MediaType (Preprinted)>> setpagedevice"
+*End
+*MediaType Letterhead/Letterhead:  "
+    <</ManualFeed false /MediaType (Letterhead)>> setpagedevice"
+*End
+*MediaType Transparency/Transparency:  "
+    <</ManualFeed false /MediaType (Transparency)>> setpagedevice"
+*End
+*MediaType Prepunched/Prepunched:  "
+    <</ManualFeed false /MediaType (Prepunched)>> setpagedevice"
+*End
+*MediaType Labels/Labels:  "
+    <</ManualFeed false /MediaType (Labels)>> setpagedevice"
+*End
+*MediaType Bond/Bond:  "
+    <</ManualFeed false /MediaType (Bond)>> setpagedevice"
+*End
+*MediaType Recycled/Recycled:  "
+    <</ManualFeed false /MediaType (Recycled)>> setpagedevice"
+*End
+*MediaType Color/Color:  "
+    <</ManualFeed false /MediaType (Color)>> setpagedevice"
+*End
+*MediaType Rough/Rough:  "
+    <</ManualFeed false /MediaType (Rough)>> setpagedevice"
+*End
+*MediaType Light/Light (60-70 g/m2):  "
+    <</ManualFeed false /MediaType (Light)>> setpagedevice"
+*End
+*MediaType Heavy/Heavy (90-104 g/m2):  "
+    <</ManualFeed false /MediaType (Heavy)>> setpagedevice"
+*End
+*MediaType Cardstock/Card Stock (105-176 g/m2):  "
+    <</ManualFeed false /MediaType (Card Stock)>> setpagedevice"
+*End
+*MediaType Envelope/Envelope:  "
+    <</ManualFeed false /MediaType (Envelope)>> setpagedevice"
+*End
+*?MediaType: "
+  save
+    currentpagedevice /MediaType get
+    dup null eq {pop (Unknown)} if
+    = flush
+  restore
+"
+*End
+*CloseUI: *MediaType
+
 *%=================================================
-*%		 Paper Sources
+*%		 Paper Sources 
 *%=================================================
 *OpenUI *InputSlot: PickOne
 *OrderDependency: 20 AnySetup *InputSlot
-*DefaultInputSlot: Upper
-*InputSlot Upper/ Tray 1: "<</ManualFeed false /MediaPosition 0>> setpagedevice"
+*DefaultInputSlot: Tray1
+*InputSlot Tray1/Tray 1: "<</ManualFeed false /MediaPosition 3>> setpagedevice"
+*InputSlot Tray2/Tray 2: "<</ManualFeed false /MediaPosition 0>> setpagedevice"
 *?InputSlot: "
- save
-   [(Upper) (None)]
-   statusdict /papertray get exec
-   {get exec} stopped { pop pop (Unknown) } if = flush
- restore
+   save
+     [(Tray2) (None) (Tray1)]
+     statusdict /papertray get exec 
+     {get exec} stopped { pop pop (unknown) } if = flush
+   restore
 "
 *End
 *CloseUI: *InputSlot
@@ -765,94 +828,6 @@
 *CloseUI: *ManualFeed
 
 
-*% ===================================
-*%      Gray Levels and Halftone
-*% ===================================
-
-*ScreenFreq:  "212.0"
-*ScreenAngle: "45.0"
-
-*ResScreenFreq 300x300dpi/300 dpi:  "60.0"
-*ResScreenAngle 300x300dpi/300 dpi: "45.0"
-*ResScreenFreq 600x600dpi/600 dpi:  "106.0"
-*ResScreenAngle 600x600dpi/600 dpi: "45.0"
-*ResScreenFreq 1200x1200dpi/1200 dpi:  "212.0"
-*ResScreenAngle 1200x1200dpi/1200 dpi: "45.0"
-
-*DefaultScreenProc: Dot
-*ScreenProc HPEnhanced: "
-	{ /EnhancedHalftone /Halftone findresource }"
-*End
-*ScreenProc Dot: "
-        {abs exch abs 2 copy add 1 gt {1 sub dup mul exch 1 sub dup mul add 1
-        sub }{dup mul exch dup mul add 1 exch sub }ifelse }
-"
-*End
-*ScreenProc Line: "{ pop }"
-*ScreenProc Ellipse: "{ dup 5 mul 8 div mul exch dup mul exch add sqrt 1 exch sub }"
-
-*DefaultTransfer: Null
-*Transfer Null: "{ }"
-*Transfer Null.Inverse: "{ 1 exch sub }"
-
-*DefaultHalftoneType:    9
-*AccurateScreensSupport: False
-
-*OpenUI *HPHalftone/Levels of Gray: PickOne
-*OrderDependency: 10 DocumentSetup *HPHalftone
-*DefaultHPHalftone: PrinterDefault
-*HPHalftone PrinterDefault/Printer's Current Setting: ""
-*HPHalftone Enhanced/Enhanced: "
-   << /Install {
-     currentpagedevice /HWResolution get
-     dup 0 get 600 eq exch 1 get 600 eq and
-     { /EnhancedColorRendering600 } { /EnhancedColorRendering } ifelse
-     /ColorRendering findresource setcolorrendering
-     /EnhancedHalftone /Halftone findresource sethalftone
-     { } settransfer false setstrokeadjust
-   }
-   >> setpagedevice
-   currentpagedevice /HWResolution get dup 0 get 600 eq exch 1 get 600 eq and
-   {
-       << /PostRenderingEnhance true
-            /PostRenderingEnhanceDetails << /REValue 0 /Type 8 >>
-       >> setpagedevice
-   } if
-   /setscreen { pop pop pop } def
-   /setcolorscreen { pop pop pop pop pop pop pop pop pop pop pop pop } def
-   /sethalftone { pop } def
-"
-*End
-*HPHalftone Standard/Standard: "
-   << /Install {
-     currentpagedevice /HWResolution get
-     dup 0 get 600 eq exch 1 get 600 eq and dup
-     currentpagedevice /PostRenderingEnhance get
-     currentpagedevice /PostRenderingEnhanceDetails get /REValue get 0 ne and
-     { {/DefaultColorRenderingRE600} {/DefaultColorRenderingRE} ifelse}
-     { {/DefaultColorRendering600} {/DefaultColorRendering} ifelse} ifelse
-     /ColorRendering findresource setcolorrendering
-     { /DefaultHalftone600 } {/DefaultHalftone} ifelse
-     /Halftone findresource sethalftone
-     {} settransfer false setstrokeadjust
-   } >> setpagedevice
-   currentpagedevice /HWResolution get dup 0 get 600 eq exch 1 get 600 eq and
-   {
-     << /PostRenderingEnhance true /PostRenderingEnhanceDetails
-     << /REValue 0 /Type 8 >> >> setpagedevice
-   } if
-"
-*End
-*?HPHalftone: "
-   save
-      currenthalftone /HalftoneType get 9 eq
-     {(Enhanced)} {(Standard)} ifelse = flush
-   restore
-"
-*End
-*CloseUI: *HPHalftone
-
-
 *%===================================
 *%		Resolution
 *%===================================
@@ -869,9 +844,6 @@
 *Resolution 600x600dpi/600 dpi: "
     <</HWResolution [600 600] /PreRenderingEnhance false>> setpagedevice"
 *End
-*Resolution 300x300dpi/300 dpi: "
-    <</HWResolution [300 300] /PreRenderingEnhance false>> setpagedevice"
-*End
 *?Resolution: "
   save
     currentpagedevice /HWResolution get
@@ -887,7 +859,7 @@
 *%==================================
 *%          HPEconoMode
 *%==================================
-*OpenUI *HPEconoMode/EconoMode: PickOne
+*OpenUI *HPEconoMode/HPEconoMode: PickOne
 *DefaultHPEconoMode: PrinterDefault
 *OrderDependency: 10 AnySetup *HPEconoMode
 *HPEconoMode PrinterDefault/Printer's Current Setting: ""
@@ -906,9 +878,8 @@
 *End
 *CloseUI: *HPEconoMode
 
-
 *%=================================================
-*%		 Color Control
+*%		 Color Control 
 *%=================================================
 *DefaultColorSep: ProcessBlack.212lpi.1200dpi/212 lpi / 1200 dpi
 *InkName: ProcessBlack/Process Black
@@ -955,7 +926,7 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }"
 *ColorSepScreenAngle ProcessCyan.106lpi.300dpi/106 lpi / 300 dpi: "71.5651"
 *ColorSepScreenAngle ProcessMagenta.106lpi.300dpi/106 lpi / 300 dpi: "18.4349"
 *ColorSepScreenAngle ProcessYellow.106lpi.300dpi/106 lpi / 300 dpi: "0.0"
-
+     
 *ColorSepScreenFreq ProcessBlack.106lpi.300dpi/106 lpi / 300 dpi: "106.066"
 *ColorSepScreenFreq CustomColor.106lpi.300dpi/106 lpi / 300 dpi: "106.066"
 *ColorSepScreenFreq ProcessCyan.106lpi.300dpi/106 lpi / 300 dpi: "94.8683"
@@ -968,28 +939,28 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }"
 *ColorSepScreenAngle ProcessCyan.106lpi.600dpi/106 lpi / 600 dpi: "71.5651"
 *ColorSepScreenAngle ProcessMagenta.106lpi.600dpi/106 lpi / 600 dpi: "18.4349"
 *ColorSepScreenAngle ProcessYellow.106lpi.600dpi/106 lpi / 600 dpi: "0.0"
-
+     
 *ColorSepScreenFreq ProcessBlack.106lpi.600dpi/106 lpi / 600 dpi: "106.066"
 *ColorSepScreenFreq CustomColor.106lpi.600dpi/106 lpi / 600 dpi: "106.066"
 *ColorSepScreenFreq ProcessCyan.106lpi.600dpi/106 lpi / 600 dpi: "94.8683"
 *ColorSepScreenFreq ProcessMagenta.106lpi.600dpi/106 lpi / 600 dpi: "94.8683"
 *ColorSepScreenFreq ProcessYellow.106lpi.600dpi/106 lpi / 600 dpi: "100.0"
 
-*%  For 180 lpi / 1200 dpi  =========================
-*ColorSepScreenAngle ProcessBlack.180lpi.1200dpi/180 lpi / 1200 dpi: "45.0"
-*ColorSepScreenAngle CustomColor.180lpi.1200dpi/180 lpi / 1200 dpi: "45.0"
-*ColorSepScreenAngle ProcessCyan.180lpi.1200dpi/180 lpi / 1200 dpi: "71.5651"
-*ColorSepScreenAngle ProcessMagenta.180lpi.1200dpi/180 lpi / 1200 dpi: "18.4349"
-*ColorSepScreenAngle ProcessYellow.180lpi.1200dpi/180 lpi / 1200 dpi: "0.0"
-
-*ColorSepScreenFreq ProcessBlack.180lpi.1200dpi/180 lpi / 1200 dpi: "180"
-*ColorSepScreenFreq CustomColor.180lpi.1200dpi/180 lpi / 1200 dpi: "180"
-*ColorSepScreenFreq ProcessCyan.180lpi.1200dpi/180 lpi / 1200 dpi: "161"
-*ColorSepScreenFreq ProcessMagenta.180lpi.1200dpi/180 lpi / 1200 dpi: "161"
-*ColorSepScreenFreq ProcessYellow.180lpi.1200dpi/180 lpi / 1200 dpi: "170"
+*%  For 212 lpi / 1200 dpi  =========================
+*ColorSepScreenAngle ProcessBlack.212lpi.1200dpi/212 lpi / 1200 dpi: "45.0"
+*ColorSepScreenAngle CustomColor.212lpi.1200dpi/212 lpi / 1200 dpi: "45.0"
+*ColorSepScreenAngle ProcessCyan.212lpi.1200dpi/212 lpi / 1200 dpi: "71.5651"
+*ColorSepScreenAngle ProcessMagenta.212lpi.1200dpi/212 lpi / 1200 dpi: "18.4349"
+*ColorSepScreenAngle ProcessYellow.212lpi.1200dpi/212 lpi / 1200 dpi: "0.0"
+     
+*ColorSepScreenFreq ProcessBlack.212lpi.1200dpi/212 lpi / 1200 dpi: "212"
+*ColorSepScreenFreq CustomColor.212lpi.1200dpi/212 lpi / 1200 dpi: "212"
+*ColorSepScreenFreq ProcessCyan.212lpi.1200dpi/212 lpi / 1200 dpi: "190"
+*ColorSepScreenFreq ProcessMagenta.212lpi.1200dpi/212 lpi / 1200 dpi: "190"
+*ColorSepScreenFreq ProcessYellow.212lpi.1200dpi/212 lpi / 1200 dpi: "200"
 
 *%=================================================
-*%		 Font Information
+*%		 Font Information 
 *%=================================================
 *DefaultFont: Courier
 *Font AvantGarde-Book: Standard "(001.006S)" Standard ROM
@@ -1048,7 +1019,7 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }"
 *End
 
 *%=================================================
-*%		 Printer Messages (verbatim from printer):
+*%		 Printer Messages (verbatim from printer): 
 *%=================================================
 *Message: "%%[ exitserver: permanent state may be changed ]%%"
 *Message: "%%[ Flushing: rest of job (to end-of-file) will be ignored ]%%"
@@ -1133,5 +1104,5 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }"
 *End
 
 *% =======================================
-*% For "HP LaserJet 3200 Series" version 2014.116
+*% For "HP LaserJet 1300 Series"  
 *% =======================================

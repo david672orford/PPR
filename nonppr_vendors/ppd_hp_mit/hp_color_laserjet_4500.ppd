@@ -35,7 +35,7 @@
 *FormatVersion: "4.3"
 *FileVersion: "1.2.0 X"
 *LanguageVersion: English
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *PCFileName: "HP4500.PPD"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpEdgeToEdge.plugin"
@@ -134,7 +134,7 @@
 *InstalledMemory Mem4/96 - 127 MB RAM: ""
 *InstalledMemory Mem5/128 - 159 MB RAM: ""
 *InstalledMemory Mem6/160 - 191 MB RAM: ""
-*InstalledMemory Mem7/³ 192 MB RAM: ""
+*InstalledMemory Mem7/  192 MB RAM: ""
 *?InstalledMemory: "
   save
 	currentsystemparams /RamSize get
@@ -989,19 +989,19 @@ globaldict /ColorSmartColorMatching known {
 *OpenUI *HPwmTextAngle/Watermark Angle:  PickOne
 *OrderDependency: 65 AnySetup *HPwmTextAngle
 *DefaultHPwmTextAngle: Deg45
-*HPwmTextAngle Deg90/90<A1>: "userdict /HPwmAngle 90 put"
-*HPwmTextAngle Deg75/75<A1>: "userdict /HPwmAngle 75 put"
-*HPwmTextAngle Deg60/60<A1>: "userdict /HPwmAngle 60 put"
-*HPwmTextAngle Deg45/45<A1>: "userdict /HPwmAngle 45 put"
-*HPwmTextAngle Deg30/30<A1>: "userdict /HPwmAngle 30 put"
-*HPwmTextAngle Deg15/15<A1>: "userdict /HPwmAngle 15 put"
-*HPwmTextAngle Deg0/0<A1>: "userdict /HPwmAngle 0 put"
-*HPwmTextAngle DegN15/Ð15<A1>: "userdict /HPwmAngle -15 put"
-*HPwmTextAngle DegN30/Ð30<A1>: "userdict /HPwmAngle -30 put"
-*HPwmTextAngle DegN45/Ð45<A1>: "userdict /HPwmAngle -45 put"
-*HPwmTextAngle DegN60/Ð60<A1>: "userdict /HPwmAngle -60 put"
-*HPwmTextAngle DegN75/Ð75<A1>: "userdict /HPwmAngle -75 put"
-*HPwmTextAngle DegN90/Ð90<A1>: "userdict /HPwmAngle -90 put"
+*HPwmTextAngle Deg90/90<b0>: "userdict /HPwmAngle 90 put"
+*HPwmTextAngle Deg75/75<b0>: "userdict /HPwmAngle 75 put"
+*HPwmTextAngle Deg60/60<b0>: "userdict /HPwmAngle 60 put"
+*HPwmTextAngle Deg45/45<b0>: "userdict /HPwmAngle 45 put"
+*HPwmTextAngle Deg30/30<b0>: "userdict /HPwmAngle 30 put"
+*HPwmTextAngle Deg15/15<b0>: "userdict /HPwmAngle 15 put"
+*HPwmTextAngle Deg0/0<b0>: "userdict /HPwmAngle 0 put"
+*HPwmTextAngle DegN15/ 15<b0>: "userdict /HPwmAngle -15 put"
+*HPwmTextAngle DegN30/ 30<b0>: "userdict /HPwmAngle -30 put"
+*HPwmTextAngle DegN45/ 45<b0>: "userdict /HPwmAngle -45 put"
+*HPwmTextAngle DegN60/ 60<b0>: "userdict /HPwmAngle -60 put"
+*HPwmTextAngle DegN75/ 75<b0>: "userdict /HPwmAngle -75 put"
+*HPwmTextAngle DegN90/ 90<b0>: "userdict /HPwmAngle -90 put"
 *CloseUI: *HPwmTextAngle
 
 *% =================================
@@ -1249,7 +1249,7 @@ restore
 *VMOption Mem4/96 - 127 MB RAM: "65283608"
 *VMOption Mem5/128 - 159 MB RAM: "99528700"
 *VMOption Mem6/160 - 191 MB RAM: "128460116"
-*VMOption Mem7/³ 192 MB RAM: "159631164"
+*VMOption Mem7/  192 MB RAM: "159631164"
 
 *%DeviceAdjustMatrix: "[1 0 0 1 0 0]"
 *SuggestedJobTimeout: "0"

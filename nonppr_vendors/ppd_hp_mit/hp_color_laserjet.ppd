@@ -36,7 +36,7 @@
 *FormatVersion: "4.3"
 *FileVersion: "1.1.1 X"
 *LanguageVersion: English
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *PCFileName: "HP__CLJ1.PPD"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpEdgeToEdge.plugin"
@@ -350,7 +350,7 @@ sub }{dup mul exch dup mul add 1 exch sub }ifelse }
 *% ==================================
 *%  PANTONE support
 *% ==================================
-*OpenUI *HPPantone/PANTONE<A8>:  Boolean
+*OpenUI *HPPantone/PANTONE<ae>:  Boolean
 *OrderDependency: 50 AnySetup *HPPantone
 *DefaultHPPantone: False
 *HPPantone True/On: "

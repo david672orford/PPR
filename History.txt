@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--29 May 2004.
+1.53a2, 20 February 2004--3 June 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9255,6 +9255,7 @@ Internet Printing Protocol Work
 							HP LaserJet 4 Plus
 							HP LaserJet 5Si
 							HP LaserJet 8000 Series
+							HP LaserJet 2300 PS
   They have been added to z_install_end/fixup_obsolete.sh.
 
 * Removed nonppr_vendors/ppd_adobe/
@@ -9269,7 +9270,10 @@ Internet Printing Protocol Work
 * added nonppr_vendors/ppd_hp/
 							hpc9500s.ppd
 					/ppd_hp_mit/
-							contents of hp-ppd-mit-12_02_2003.tar.gz
+							HP PPD files from Debian hp-ppd package (which 
+							appears to come from the same source as the
+							files on www.linuxprinting.org).  The are MIT
+							licenced.
 					/ppd_canon/
 							EFNC9111.PPD							
 

@@ -1,5 +1,5 @@
-mouse:~ppr/src/non_ppr/vendors/README.txt
-27 May 2004
+mouse:~ppr/src/nonppr_vendors/README.txt
+3 June 2004
 
 This subdirectory contains files on which are not covered by the PPR license
 terms.  None of them are essential to the operation of PPR, though they may
@@ -16,8 +16,8 @@ ppd_ricoh/
 	In other words, they are not free software.
 
 ppd_hp_mit/
-	PPD files distributed under the MIT license (which is equivelent 
-	to the PPR license).
+	Hewlet-Packard PPD files distributed under the MIT license (which is
+	equivelent to the PPR license).
 
 procset_apple/
 	A TrueType renderer from Apple which Macintoshs need when printing 

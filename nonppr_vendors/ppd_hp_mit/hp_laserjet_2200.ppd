@@ -32,14 +32,14 @@
 *%
 
 *% PPD for HP LaserJet 2200 Series
-*% For Macintosh only
+*%
 *%========================================================
 *%=================================================
 *% 		 PPD File Version Information
 *%=================================================
 *FileVersion: "1.1.1 X"
 *FormatVersion: "4.3"
-*LanguageEncoding: MacStandard
+*LanguageEncoding: ISOLatin1
 *LanguageVersion: English
 *PCFileName: "HP2200_6.PPD"
 *APDialogExtension: "/Library/Printers/hp/PDEs/hpColorOptions.plugin"
