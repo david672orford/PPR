@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--20 August 2002.
+1.50a2, 27 February 2002--26 August 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7833,4 +7833,12 @@ the very start.
 * www/: moved prn_properties.html to prn_properties.en.html, added dummy
   prn_properties.ru.html, changed ppr-httpd to use "KOI8-R" as the charset
   for .ru.html files.
+
+* www/prn_testpage.cgi.perl: added -m and -r options to the ppr command.
+
+* www/pprpopup_register.cgi.perl: added code to create an alias registration
+  based on the stuff to the left of the @ and the client IP address. 
+
+* init_and_cron/ppr-clean.perl: added code to remove old files from
+  $VAR_SPOOL_PPR/pprpopup.db/.
 

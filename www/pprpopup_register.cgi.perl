@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 February 2002.
+# Last modified 26 August 2002.
 #
 
 use lib "?";
@@ -41,29 +41,48 @@ umask(0007);
 
 # Get the CGI data.
 &cgi_read_data();
-my $client=cgi_data_move("client", "");
-my $pprpopup_address=cgi_data_move("pprpopup_address", "");
-my $magic_cookie=cgi_data_move("magic_cookie", "");
 
-# We convert the client name to lower case and change characters
-# that are not alpha-numberic and arn't at sign or period to
-# percent plus two hexadecimal digits.
+# This is what the string which will be passed to ppr's -r option when jobs
+# from this client are submitted.
+my $client = cgi_data_move("client", "");
+
+# This is the name or IP address and port number at which PPR Popup can be
+# reached.
+my $pprpopup_address = cgi_data_move("pprpopup_address", "");
+
+# This is the password that gets us in.
+my $magic_cookie = cgi_data_move("magic_cookie", "");
+
+# We convert the client name to lower case and change characters that are not
+# alpha-numberic and aren't the comercial at sign or period to percent plus
+# two hexadecimal digits.
 $client =~ tr/A-Z/a-z/;
 $client =~ s/([^a-zA-Z0-9\@\.])/sprintf("%%%02X", ord $1)/ge;
 
-# If the client claims its IP address is 0.0.0.0, it doesn't know.
-# Substitute the address identified by the web server as the
-# source address of the request.
+# If the client claims its IP address is 0.0.0.0, that means it doesn't know
+# so substitute the address identified by the web server as the source address
+# of the request.
 if($pprpopup_address =~ /^0\.0\.0\.0:(\d+)$/)
     {
     $pprpopup_address = "$ENV{REMOTE_ADDR}:$1";
     } 
 
 # Write the information into the registration file.
-open(OUT, ">$dbdir/$client") || die $!;
+open(OUT, ">$dbdir/${client}_tmp") || die $!;
 print OUT "pprpopup_address=$pprpopup_address\n";
 print OUT "magic_cookie=$magic_cookie\n";
-close OUT;
+close OUT || die $!;
+rename("$dbdir/${client}_tmp", "$dbdir/$client") || die $!;
+
+# If the address has a comercial at sign in it, register an alias with the
+# client IP address on the right hand side.  This will allow response
+# from jobs that arrive via the web interface.  (At least Unix jobs.)
+if($client =~ /^([^\@]+)\@.+$/)
+    {
+    my $filename = "$1\@$ENV{REMOTE_ADDR}";
+    unlink("$dbdir/$filename");
+    link("$dbdir/$client", "$dbdir/$filename") || die $!;
+    }
 
 # Return an empty document.
 print <<"EndHead";
@@ -74,4 +93,3 @@ EndHead
 
 # That's it!
 exit 0;
-

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 August 2002.
+# Last modified 23 August 2002.
 #
 
 use lib "?";
@@ -129,7 +129,7 @@ $addprn_wizard_table = [
 		    $options .= " --test-cmyk";
 		    }
 
-		run("$HOMEDIR/bin/ppr-testpage$options | $HOMEDIR/bin/ppr -d $name");
+		run("$HOMEDIR/bin/ppr-testpage$options | $HOMEDIR/bin/ppr -d $name -m pprpopup -r $ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}");
 		print "</pre>\n";
 		},
 	'buttons' => [N_("_Close")]
