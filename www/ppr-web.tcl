@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 November 2002.
+# Last modified 22 November 2002.
 #
 
 #
@@ -145,12 +145,12 @@ switch -exact $selected_browser {
 		</script>
 		</head>
 		<body onload=\"doit()\">
-		<p>This window is trying to remove user interface features
-		which are appropriate for browsing the WWW but only get in
-		the way of the PPR web interface.  You browser will ask for
-		your permission to allow these operations.  Please check
-		the box which says \"remember this descision\" and then press
-		the Yes button.</p>
+		<p>Javascript code executing in thsi window is trying to 
+		remove some of its user interface features which, while appropriate
+		for browsing the WWW, only get in the way of the PPR web interface.
+		You browser may ask for your permission to allow these operations.  
+		If it does, please check the box which says \"remember this descision\"
+		and then press the <b>Yes</b> button.</p>
 		</body>
 		</html>"
 	close $file
