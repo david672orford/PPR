@@ -108,4 +108,8 @@ also saved me the trouble of designing that part of the API.  :-)
 #define CUPS_GET_PPDS 0x400c
 #define CUPS_MOVE_JOB 0x400d
 
+/* IPP status codes */
+#define IPP_OK 0x0000
+
+
 /* end of file */

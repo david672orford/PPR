@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 April 2003.
+** Last modified 15 April 2003.
 */
 
 #include "before_system.h"
@@ -41,6 +41,19 @@
 
 struct exception_context the_exception_context[1];
 
+static void do_print(struct IPP *ipp)
+	{
+	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "us-ascii");
+	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
+	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
+	
+	ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", 140);
+	ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "http://localhost:15010/cgi-bin/ipp/x/147");
+	ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
+	
+	
+	}
+
 int main(int argc, char *argv[])
 	{
 	const char *e;
@@ -50,9 +63,13 @@ int main(int argc, char *argv[])
 		ipp = ipp_new();
 		ipp_parse_request(ipp);
 
+		debug("dispatching");
 		switch(ipp->operation_id)
 			{
-
+			case IPP_PRINT_JOB:
+				do_print(ipp);
+				break;
+				
 			default:
 				Throw("unsupported operation");
 				break;

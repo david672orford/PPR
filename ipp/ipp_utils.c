@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 April 2003.
+** Last modified 15 April 2003.
 */
 
 /*! \file */
@@ -63,7 +63,10 @@ struct IPP *ipp_new(void)
 	p->writebuf_remaining = sizeof(p->writebuf);
 
 	p->request_attrs = NULL;
-	p->response_attrs = NULL;
+	p->response_attrs_operation = NULL;
+	p->response_attrs_printer = NULL;
+	p->response_attrs_job = NULL;
+	p->response_attrs_unsupported = NULL;
 
 	return p;
 	}
@@ -73,7 +76,7 @@ struct IPP *ipp_new(void)
 */
 static void ipp_readbuf_load(struct IPP *p)
 	{
-	if((p->readbuf_remaining = read(0, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? sizeof(p->readbuf) : p->bytes_left)) == -1)
+	if((p->readbuf_remaining = read(0, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		{
 		Throw("Read failed");
 		}
@@ -86,15 +89,20 @@ static void ipp_readbuf_load(struct IPP *p)
 */
 static void ipp_writebuf_flush(struct IPP *p)
 	{
-	int i, remaining, len;
-	i=0;
-	remaining=p->writebuf_remaining;
-	while(remaining > 0)
+	char *write_ptr;
+	int to_write, len;
+
+	to_write = p->writebuf_i;
+	write_ptr = p->writebuf;
+
+	while(to_write > 0)
 		{
-		if((len = write(1, p->writebuf, p->writebuf_i)) == -1)
+		if((len = write(1, write_ptr, to_write)) == -1)
 			Throw("Write error");
-		remaining -= len;
+		to_write -= len;
+		write_ptr += len;
 		}
+
 	p->writebuf_i = 0;
 	p->writebuf_remaining = sizeof(p->writebuf);
 	}
@@ -108,7 +116,7 @@ service object is destroyed.
 */
 void ipp_delete(struct IPP *p)
 	{
-	debug("%d leftover bytes", p->bytes_left);
+	debug("%d leftover bytes", p->bytes_left + p->readbuf_remaining);
 
 	while(p->bytes_left > 0)
 		{
@@ -140,12 +148,12 @@ unsigned char ipp_get_byte(struct IPP *p)
 This is used to write tags.
 
 */
-void ipp_put_byte(struct IPP *p, unsigned char val)
+void ipp_put_byte(struct IPP *ipp, unsigned char val)
 	{
-	p->writebuf[p->writebuf_i++] = val;
-	p->writebuf_remaining--;
-	if(p->writebuf_remaining < 1)
-		ipp_writebuf_flush(p);
+	ipp->writebuf[ipp->writebuf_i++] = val;
+	ipp->writebuf_remaining--;
+	if(ipp->writebuf_remaining < 1)
+		ipp_writebuf_flush(ipp);
 	}
 
 /** fetch a signed byte from the IPP request
@@ -218,13 +226,72 @@ unsigned char *ipp_get_bytes(struct IPP *p, int len)
 	return ptr;
     }
 
-/** read the IPP request and store it in the IPP object
+/** append a byte array of a specified length
+*/
+void ipp_put_bytes(struct IPP *ipp, const unsigned char *data, int len)
+	{
+	int i;
+	for(i=0; i<len; i++)
+		{
+		ipp_put_byte(ipp, data[i]);
+		}
+	}
 
+/** append a string to the reply
+*/
+void ipp_put_string(struct IPP *ipp, const char string[])
+	{
+	int i;
+	for(i=0; string[i]; i++)
+		ipp_put_byte(ipp, string[i]);
+	}
+
+/** append an attribute to the IPP response
+*/
+void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
+	{
+	ipp_value_t *p;
+	int i, len;
+	
+	for(i=0 ; i < attr->num_values; i++)
+		{
+		p = &attr->values[i];
+		ipp_put_byte(ipp, attr->group_tag);
+		if(i == 0)
+			{
+			len = strlen(attr->name);
+			ipp_put_ss(ipp, len);
+			ipp_put_bytes(ipp, attr->name, len);
+			}
+		else
+			{
+			ipp_put_ss(ipp, 0);
+			}
+
+		switch(attr->group_tag)
+			{
+			case IPP_TAG_INTEGER:
+				ipp_put_si(ipp, 4);
+				ipp_put_si(ipp, p->integer);
+				break;
+			case IPP_TAG_NAME:
+			case IPP_TAG_URI:
+			case IPP_TAG_KEYWORD:
+			case IPP_TAG_CHARSET:
+			case IPP_TAG_LANGUAGE:
+				len = strlen(p->string.text);
+				ipp_put_si(ipp, len);
+				ipp_put_bytes(ipp, p->string.text, len);
+				break;
+			}
+		}
+	}
+
+/** read the IPP request and store it in the IPP object
 */
 void ipp_parse_request(struct IPP *ipp)
 	{
 	char *p;
-	char *path_info;
 	int tag, delimiter_tag = 0, value_tag, name_length, value_length;
 	char *name = NULL;
 	ipp_attribute_t *ap = NULL, *ap_prev = NULL, **ap_resize = NULL;
@@ -235,14 +302,14 @@ void ipp_parse_request(struct IPP *ipp)
 		Throw("REQUEST_METHOD is not POST");
 	if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
 		Throw("CONTENT_TYPE is not application/ipp");
-	if(!(path_info = getenv("PATH_INFO")) || strlen(path_info) < 1)
+	if(!(ipp->path_info = getenv("PATH_INFO")) || strlen(ipp->path_info) < 1)
 		Throw("PATH_INFO is missing");
 	if(!(p = getenv("CONTENT_LENGTH")) || (ipp->bytes_left = atoi(p)) < 0)
 		Throw("CENTENT_LENGTH is missing or invalid");
 	if(ipp->bytes_left < 9)
 		Throw("request is too short to be an IPP request");
 
-	debug("request for %s, %d bytes", path_info, ipp->bytes_left);
+	debug("request for %s, %d bytes", ipp->path_info, ipp->bytes_left);
 
 	ipp->version_major = ipp_get_sb(ipp);
 	ipp->version_minor = ipp_get_sb(ipp);
@@ -346,14 +413,103 @@ void ipp_parse_request(struct IPP *ipp)
 		}
 
     debug("end of request read");
+    
+    ipp->response_code = IPP_OK;
 	}
 
 /** send the IPP response in the IPP object
-
 */
-void ipp_send_reply(struct IPP *p)
+void ipp_send_reply(struct IPP *ipp)
 	{
+	ipp_attribute_t *p;
+	
+	debug("sending reply");
 
+	ipp_put_string(ipp, "Content-Type: application/ipp\n\n");
+
+	ipp_put_sb(ipp, 1);		/* version number 1.0 */
+	ipp_put_sb(ipp, 0);
+	
+	ipp_put_ss(ipp, ipp->response_code);
+	ipp_put_si(ipp, ipp->request_id);
+	
+	if(!(p = ipp->response_attrs_operation))
+		Throw("no response_attrs_operation");
+	ipp_put_byte(ipp, IPP_TAG_OPERATION);
+	for( ; p; p = p->next)
+		{
+		ipp_put_attr(ipp, p);
+		}
+
+	if((p = ipp->response_attrs_printer))
+		{
+		ipp_put_byte(ipp, IPP_TAG_PRINTER);
+		for( ; p; p = p->next)
+			{
+			ipp_put_attr(ipp, p);
+			}
+		}
+	
+	if((p = ipp->response_attrs_job))
+		{
+		ipp_put_byte(ipp, IPP_TAG_JOB);
+		for( ; p; p = p->next)
+			{
+			ipp_put_attr(ipp, p);
+			}
+		}
+
+	ipp_put_byte(ipp, IPP_TAG_END);
+	}
+
+/*
+** add an attribute to the IPP response
+*/
+static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, const char name[])
+	{
+	ipp_attribute_t	*ap = gu_alloc(1, sizeof(ipp_attribute_t));
+	ap->group_tag = group;
+	ap->value_tag = tag;
+	ap->name = name;
+	ap->num_values = 1;
+
+	switch(group)
+		{
+		case IPP_TAG_OPERATION:
+			ap->next = ipp->response_attrs_operation;
+			ipp->response_attrs_operation = ap;
+			break;
+		case IPP_TAG_PRINTER:
+			ap->next = ipp->response_attrs_printer;
+			ipp->response_attrs_printer = ap;
+			break;
+		case IPP_TAG_JOB:
+			ap->next = ipp->response_attrs_job;
+			ipp->response_attrs_job = ap;
+			break;
+		case IPP_TAG_UNSUPPORTED:
+			ap->next = ipp->response_attrs_unsupported;
+			ipp->response_attrs_unsupported = ap;
+			break;
+		}
+
+	return ap;
+	}
+
+/** add an integer to the IPP response
+*/
+void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value)
+	{
+	ipp_attribute_t *ap = ipp_add_attribute(ipp, group, tag, name);
+	ap->values[0].integer = value;
+	}
+
+/** add an integer to the IPP response
+*/
+void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[])
+	{
+	ipp_attribute_t *ap = ipp_add_attribute(ipp, group, tag, name);
+	ap->values[0].string.text = value;
 	}
 
 /** Send a debug message to the HTTP server's error log

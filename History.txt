@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--9 April 2003.
+1.51, 15 February 2003--28 April 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8572,8 +8572,9 @@ line was being parsed twice.
 
 * www/: minor style fixes for buttons.
 
-* ppad/ppad_printer.c: changed human-readable ppad show output to better
-  groups things and to indent second and subsequent lines of logical groups.
+* ppad/ppad_printer.c: changed human-readable ppad show output to better group 
+  things by category and to indent second and subsequent lines of logical
+  groups.
 
 
 
