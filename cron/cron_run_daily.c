@@ -59,7 +59,7 @@ static const struct gu_getopt_opt option_words[] =
 /*
 ** Print help.
 */
-void help_switches(FILE *outfile)
+static void help_switches(FILE *outfile)
 	{
 	fputs(_("Valid switches:\n"), outfile);
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 January 2004.
+# Last modified 9 December 2004.
 #
 
 include ../Makefile.conf
@@ -34,20 +34,20 @@ include ../Makefile.conf
 
 PROGS=pprd$(DOTEXE) pprd-question
 
-OBJS=pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
-	pprd_respond.$(OBJ) pprd_alert.$(OBJ) pprd_ppop.$(OBJ) \
-	pprd_remind.$(OBJ) pprd_nodeid.$(OBJ) pprd_destid.$(OBJ) \
-	pprd_mainsup.$(OBJ) pprd_load.$(OBJ) pprd_pprdrv.$(OBJ) \
-	pprd_media.$(OBJ) pprd_printer.$(OBJ) pprd_state.$(OBJ) \
-	pprd_remote.$(OBJ) pprd_question.$(OBJ) pprd_ipp.$(OBJ)
-
 #=== Build ==================================================================
 
 all: $(PROGS)
 
-pprd$(DOTEXE): $(OBJS) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o pprd$(DOTEXE) $(OBJS) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
-	$(CHMOD) 6755 pprd$(DOTEXE)
+pprd$(DOTEXE): \
+		pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
+		pprd_respond.$(OBJ) pprd_alert.$(OBJ) pprd_ppop.$(OBJ) \
+		pprd_remind.$(OBJ) pprd_nodeid.$(OBJ) pprd_destid.$(OBJ) \
+		pprd_mainsup.$(OBJ) pprd_load.$(OBJ) pprd_pprdrv.$(OBJ) \
+		pprd_media.$(OBJ) pprd_printer.$(OBJ) pprd_state.$(OBJ) \
+		pprd_remote.$(OBJ) pprd_question.$(OBJ) pprd_ipp.$(OBJ) \
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
+	$(CHMOD) 6755 $@
 
 # This automatically makes a header file which has prototypes for
 # all functions and has extern definitions of all global variables.

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/filter_dotmatrix/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 September 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -38,37 +38,43 @@ TARGETS=filter_dotmatrix$(DOTEXE) \
 	TrinColl-PPR-Dotmatrix-MetricsEpson3-1-0 \
 	TrinColl-PPR-Dotmatrix-MetricsEpson4-1-0
 
-FILTER_OBJS=main.$(OBJ) linebuf.$(OBJ) postscript.$(OBJ) \
-	tabbing.$(OBJ) graphics.$(OBJ) \
-	pass1.$(OBJ) inbuf.$(OBJ) \
-	escape_pass1.$(OBJ) escape_pass2.$(OBJ) \
-	prop_tables.$(OBJ)
 
 #=== Build ==================================================================
 
 all: $(TARGETS)
 
-filter_dotmatrix$(DOTEXE): $(FILTER_OBJS) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(CFLAGS) -o filter_dotmatrix$(DOTEXE) $(FILTER_OBJS) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+filter_dotmatrix$(DOTEXE): \
+		main.$(OBJ) linebuf.$(OBJ) postscript.$(OBJ) \
+		tabbing.$(OBJ) graphics.$(OBJ) \
+		pass1.$(OBJ) inbuf.$(OBJ) \
+		escape_pass1.$(OBJ) escape_pass2.$(OBJ) \
+		prop_tables.$(OBJ) \
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # The file escape.c is compiled twice.  The general rules
 # work for one, but for this one we need to specify -DCOMPILING_PASS1.
 escape_pass1.$(OBJ): escape.c filter_dotmatrix.h
-	$(CC) $(CFLAGS) -DCOMPILING_PASS1 -o escape_pass1.$(OBJ) -c escape.c
+	$(CC) $(CFLAGS) -DCOMPILING_PASS1 -o $@ -c escape.c
 
 escape_pass2.$(OBJ): escape.c filter_dotmatrix.h
-	$(CC) $(CFLAGS) -o escape_pass2.$(OBJ) -c escape.c
+	$(CC) $(CFLAGS)                   -o $@ -c escape.c
 
-# We must rename this object file so it won't be
-# destroyed when we build prop_genmetrics.
+# Compile the metric module a first time to generate tables which we can
+# compile into the program.  We must list filter_dotmatrix.h separately
+# because prop_tables.o isn't listed in .depend.
 prop_tables.$(OBJ): prop.c filter_dotmatrix.h
-	$(CC) $(CFLAGS) -c prop.c
-	$(MV) prop.$(OBJ) prop_tables.$(OBJ)
+	$(CC) $(CFLAGS) -o $@ -c prop.c
 
 # Compile the metric module again as a standalone program.
-prop_genmetrics$(DOTEXE): prop.c filter_dotmatrix.h ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(CFLAGS) -DGENMETRICS -o prop_genmetrics$(DOTEXE) prop.c ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+prop_genmetrics.$(OBJ): prop.c filter_dotmatrix.h
+	$(CC) $(CFLAGS) -DGENMETRICS -o $@ -c prop.c
 
+prop_genmetrics$(DOTEXE): prop_genmetrics.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^
+
+# Use the prop_genmetrics program to generate metrics tables from the
+# fonts' AFM files.
 TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0: prop_genmetrics$(DOTEXE)
 	./prop_genmetrics ../nonppr_vendors/font_ibm/IBMCourier.afm Courier 0 >TrinColl-PPR-Dotmatrix-MetricsEpson1-1-0
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/nonppr_tcl/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -106,12 +106,12 @@ all: libtcl.$(LIBEXT) $(BIN_PROGS)
 	$(CC) $(CFLAGS) $(MORE_CFLAGS) -c $*.c
 
 libtcl.$(LIBEXT): $(OBJS)
-	$(RMF) libtcl.$(LIBEXT)
-	$(LIBCMD) libtcl.$(LIBEXT) $(OBJS)
-	$(RANLIB) libtcl.$(LIBEXT)
+	$(RMF) $@
+	$(LIBCMD) $@ $^
+	$(RANLIB) $@
 
 ppr-tclsh$(DOTEXE): tclAppInit.$(OBJ) libtcl.$(LIBEXT)
-	$(CC) $(CC_SWITCHES) tclAppInit.$(OBJ) libtcl.$(LIBEXT) $(MATH_LIBS) -o ppr-tclsh$(DOTEXE)
+	$(CC) $(CC_SWITCHES) -o $@ $^ $(MATH_LIBS)
 
 #=== Test ===================================================================
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -38,20 +38,17 @@ PROGS=ppr$(DOTEXE) tbcp2bin$(DOTEXE)
 
 all: $(PROGS)
 
-OBJS1=ppr_main.$(OBJ) ppr_infile.$(OBJ) ppr_outfile.$(OBJ) \
-	ppr_media.$(OBJ) ppr_rcache.$(OBJ) ppr_req.$(OBJ) \
-	ppr_res.$(OBJ) ppr_old2new.$(OBJ) ppr_dscdoc.$(OBJ) \
-	ppr_respond.$(OBJ) ppr_split.$(OBJ) ppr_conffile.$(OBJ) \
-	ppr_mactt.$(OBJ) ppr_nest.$(OBJ) ppr_things.$(OBJ) \
-	ppr_simplify.$(OBJ) ppr_editps.$(OBJ) \
-	ppr_features.$(OBJ) \
-	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libpprdb.$(LIBEXT)
-ppr$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(INTLLIBS) $(ZLIBLIBS)
+ppr$(DOTEXE): \
+		ppr_main.$(OBJ) ppr_infile.$(OBJ) ppr_outfile.$(OBJ) \
+		ppr_media.$(OBJ) ppr_rcache.$(OBJ) ppr_req.$(OBJ) \
+		ppr_res.$(OBJ) ppr_old2new.$(OBJ) ppr_dscdoc.$(OBJ) \
+		ppr_respond.$(OBJ) ppr_split.$(OBJ) ppr_conffile.$(OBJ) \
+		ppr_mactt.$(OBJ) ppr_nest.$(OBJ) ppr_things.$(OBJ) \
+		ppr_simplify.$(OBJ) ppr_editps.$(OBJ) \
+		ppr_features.$(OBJ) \
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libpprdb.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(DBLIBS) $(INTLLIBS) $(ZLIBLIBS)
 	$(CHMOD) 4755 $@
-
-ppr_infile.$(OBJ): ppr_infile.c
-	$(CC) $(CFLAGS) $(UNCOMPRESS_OPTS) -c ppr_infile.c
 
 #=== Install ================================================================
 

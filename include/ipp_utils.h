@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 December 2004.
+** Last modified 10 December 2004.
 */
 
 /* This union holds any kind of IPP value. */
@@ -119,8 +119,8 @@ void ipp_parse_request_body(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
-void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);
-void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[]);
+void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[], gu_boolean free_value);
+void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[], gu_boolean free_values);
 void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
 #ifdef __GNUC__
 __attribute__ (( format (printf, 5, 6) ))

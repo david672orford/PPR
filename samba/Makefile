@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/samba/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 March 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -54,17 +54,11 @@ smb-protos.conf: smb-protos.conf.template
 		smb-protos.conf.template >smb-protos.conf
 	chmod 444 smb-protos.conf
 
-OBJS_PPR2SAMBA=ppr2samba.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-ppr2samba$(DOTEXE): $(OBJS_PPR2SAMBA)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS_PPR2SAMBA) $(INTLLIBS) $(ZLIBLIBS)
+ppr2samba$(DOTEXE): ppr2samba.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 
-OBJS_SAMBAPRINT=sambaprint.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-sambaprint$(DOTEXE): $(OBJS_SAMBAPRINT)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS_SAMBAPRINT) $(INTLLIBS) -ltdb
+sambaprint$(DOTEXE): sambaprint.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) -ltdb
 
 #=== Install ================================================================
 

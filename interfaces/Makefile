@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 May 2004.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -53,48 +53,38 @@ all-atalk: $(ATALK_PROGS)
 # below with the AppleTalk libraries for this system as defined in
 # Makefile.conf as ATALKLIBS.
 atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o atalk$(DOTEXE) atalk_$(ATALKTYPE).$(OBJ) \
-		$(ATALKLIBS) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(ATALKLIBS)
 
 atalk_$(ATALKTYPE).$(OBJ): atalk_$(ATALKTYPE).c
-	$(CC) $(ATALKFLAGS) $(CFLAGS) -c atalk_$(ATALKTYPE).c
+	$(CC) $(ATALKFLAGS) $(CFLAGS) -c $*.c
 
 # This target will only be compiled on AT&T systems with STREAMS NetBIOS.
-clispool$(DOTEXE): clispool.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o clispool$(DOTEXE) clispool.$(OBJ) \
-		-lnsl \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+clispool$(DOTEXE): clispool.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ -lnsl $(INTLLIBS)
 
 # Berkely LPR/LPD protocol client:
-lpr$(DOTEXE): lpr.$(OBJ) ../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o lpr$(DOTEXE) lpr.$(OBJ) \
-		../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
+lpr$(DOTEXE): lpr.$(OBJ) ../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 # Parallel port interface:
-parallel$(DOTEXE): parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o parallel$(DOTEXE) parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+parallel$(DOTEXE): parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Serial port interface
-serial$(DOTEXE): serial.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o serial$(DOTEXE) serial.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+serial$(DOTEXE): serial.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # HP JetDirect style TCP/IP interface
-OBJS_TCPIP=tcpip.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-tcpip$(DOTEXE): $(OBJS_TCPIP)
-	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) $(OBJS_TCPIP) $(SOCKLIBS) $(INTLLIBS)
+tcpip$(DOTEXE): tcpip.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 # USB printer
-usb$(DOTEXE): usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o usb$(DOTEXE) usb.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+usb$(DOTEXE): usb.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Axis PROS protocol
-OBJS_PROS=pros.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-pros$(DOTEXE): $(OBJS_PROS)
-	$(LD) $(LDFLAGS) -o pros$(DOTEXE) $(OBJS_PROS) $(SOCKLIBS) $(INTLLIBS)
+pros$(DOTEXE): pros.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 #=== Install ================================================================
 

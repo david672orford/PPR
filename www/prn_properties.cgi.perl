@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 October 2004.
+# Last modified 9 December 2004.
 #
 
 use lib "?";
@@ -40,685 +40,687 @@ defined($INTDIR) || die;
 defined($PPR2SAMBA_PATH) || die;
 
 my $tabbed_table = [
-		#====================================================
-		# Pane for the print queue comment
-		#====================================================
-		{
-		'tabname' => N_("Comment"),
-		'help' => "comment",
-		'dopage' => sub {
-
-				print "<p>";
-				labeled_blank(_("Printer Name:"), cgi_data_peek("name", "???"), 50);
-
-				print "<p>";
-				labeled_entry("comment", _("Comment:"), cgi_data_move("comment", ""), 50);
-
-				print "<p>";
-				labeled_entry("location", _("Location:"), cgi_data_move("location", ""), 50);
-
-				print "<p>";
-				labeled_entry("department", _("Department:"), cgi_data_move("department", ""), 50);
-
-				print "<p>";
-				labeled_entry("contact", _("Contact:"), cgi_data_move("contact", ""), 50);
-				}
-		},
-
-		#====================================================
-		# Pane for the interface settings
-		#====================================================
-		{
-		'tabname' => N_("Interface"),
-		'help' => "interface",
-		'dopage' => sub {
-				# Read a list of available interfaces into @interface_list.
-				opendir(I, $INTDIR) || die "opendir() failed on \"$INTDIR\", $!";
-				my @interface_list = ();
-				while(defined(my $interface = readdir(I)))
-					{
-					next if($interface =~ /^\./);
-					push(@interface_list, $interface);
-					}
-				closedir(I) || die;
-
-				print "<p>";
-				labeled_select("interface", _("Printer interface program:"), "", cgi_data_move("interface", ""), @interface_list);
-				print "</p>\n";
-
-				print "<p>";
-				labeled_entry("address", _("Printer address:"), cgi_data_move("address", ""), 50);
-				print "</p>\n";
-
-				print "<p>";
-				labeled_entry("options", _("Interface options:"), cgi_data_move("options", ""), 50);
-				print "</p>\n";
-
-				{
-				print '<p><span class="label">', H_("Does feedback (2-way communication) work?"), "</span><br>\n";
-				my $selected_feedback = cgi_data_move('feedback', 'default');
-				foreach my $feedback (N_("default"), N_("yes"), N_("no"))
-					{
-					print '<label><input type="radio" name="feedback" value=', html_value($feedback);
-					if($feedback eq $selected_feedback)
-						{ print " checked" }
-					print "> ", H_($feedback);
-					if($feedback eq 'default')
-						{ print " (", H_($data{feedback_default}), ")" }
-					print "</label>\n";
-					}
-				print "</p>\n";
-				}
-
-				print "<p>";
-				labeled_select("jobbreak", _("Jobbreak method:"),
-								$data{jobbreak_default}, cgi_data_move("jobbreak", "default"),
-								N_("default"),
-								N_("control-d"),
-								N_("pjl"),
-								N_("signal"),
-								N_("signal/pjl"),
-								N_("newinterface"),
-								N_("none"),
-								N_("save/restore"));
-				print "</p>\n";
-
-				print "<p>";
-				labeled_select("codes", _("Character code compatibility:"),
-								$data{codes_default}, (split(/ /, cgi_data_move("codes", "default")))[0],
-								N_("default"),
-								N_("Clean7Bit"),
-								N_("Clean8Bit"),
-								N_("Binary"),
-								N_("TBCP"),
-								N_("UNKNOWN"));
-				print "</p>\n";
-				},
-		'onleave' => sub {
-				if($data{interface} eq "")
-					{ return _("No interface is selected!") }
-				if($data{address} eq "")
-					{ return _("The Printer Address is blank!") }
-				return undef;
-				}
-		},
-
-		#====================================================
-		# Pane to select the PPD file
-		#====================================================
-		{
-		'tabname' => N_("PPD"),
-		'help' => "ppd",
-		'cellpadding' => 10,
-		'sync' => sub {
-				my $error = undef;
-
-				# The textbox wins if it isn't empty and it doesn't have 
-				# the value it had last time.
-				my $ppd = cgi_data_move('ppd', "");
-				my $ppd_text = cgi_data_move('ppd_text', "");
-				my $ppd_text_prev = cgi_data_move('ppd_text_prev', undef);
-				if($ppd_text ne "" && defined $ppd_text_prev && $ppd_text ne $ppd_text_prev)
-					{
-					$ppd = $ppd_text;
-					}
-				$data{ppd_text_prev} = $ppd;
-				$data{ppd} = $ppd;
-				},
-		'dopage' => sub {
-				require 'ppd_select.pl';
-
-				my $ppd = cgi_data_move("ppd", undef);
-
-				print "<table class=\"ppd\"><tr><td>\n";
-				print '<p><label>', H_("Current PPD File:"), "<br>\n";
-				print '<input tabindex=1 name="ppd_text" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
-				print "</label></p>\n";
-
-				# Handle the button under the list of PPD files which
-				# is labeled alternatately "Auto Detect" and
-				# "Show all PPD Files".
-				{
-				my $ppd_probe = cgi_data_move("ppd_probe", "");
-				if($ppd_probe eq "Auto Detect")
-					{
-					$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
-					if(! defined $data{ppd_probe_list})
-						{
-						$error = _("Auto detection failed.");
-						}
-					}
-				elsif($ppd_probe eq "Show all PPD Files")
-					{
-					delete $data{ppd_probe_list};
-					}
-				}
-
-				# Print the HTML for a select box.
-				print '<p><label>';
-				if(defined cgi_data_peek("ppd_probe_list", undef))
-					{
-					print H_("Suitable PPD Files:");
-					}
-				else
-					{
-					print H_("All Available PPD Files:");
-					}
-				print "<br>\n";
-				print '<select tabindex=2 name="ppd" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
-				my $lastgroup = "";
-				foreach my $item (ppd_list(cgi_data_peek("ppd_probe_list", undef)))
-					{
-					my($item_manufacturer, $item_modelname, $item_fuzzy) = @{$item};
-					if($item_manufacturer ne $lastgroup)
-						{
-						print "</optgroup>\n" if($lastgroup ne "");
-						print "<optgroup label=", html_value($item_manufacturer), ">\n";
-						$lastgroup = $item_manufacturer;
-						}
-					print "<option value=", html_value($item_modelname);
-					print " selected" if($item_modelname eq $ppd);
-					print ">", html($item_modelname);
-					print " (fuzzy match)" if(defined $item_fuzzy && $item_fuzzy);
-					print "\n";
-					}
-				print "</optgroup>\n" if($lastgroup ne "");
-				print "</select>\n";
-				print "</label></p>\n";
-
-				print "</td><td style=\"padding-top: 2cm;\">\n";
-
-				# Print a small table with a summary of what the PPD files says.
-				ppd_summary($ppd);
-
-				print "</td></tr></table>\n";
-
-				if(!defined cgi_data_peek("ppd_probe_list", undef))
-					{
-					isubmit("ppd_probe", "Auto Detect", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
-					}
-				else
-					{
-					isubmit("ppd_probe", "Show all PPD Files", N_("Show All PPD Files"));
-					}
-
-				if(defined $error)
-					{
-					print "<p>", html($error), "</p>\n";
-					}
-				},
-		'onleave' => sub {
-				if($data{ppd} eq '')
-					{ return _("No PPD file is selected!") }
-				return undef;
-				}
-		},
-
-		#====================================================
-		# Pane to select the RIP
-		#====================================================
-		{
-		'tabname' => N_("RIP"),
-		'help' => "rip",
-		'dopage' => sub {
-
-				fix_rip_which();
-
-				my($rip_which, $rip_name, $rip_outlang, $rip_options) =
-						(
-						cgi_data_move("rip_which", ""),
-						cgi_data_move("rip_name", ""),
-						cgi_data_move("rip_outlang", ""),
-						cgi_data_move("rip_options", "")
-						);
-
-				# Upper section: PPD RIP info.
-				{
-				print "<div class=\"section\">\n";
-				print '<span class="section_label">';
-				labeled_radio("rip_which", _("From PPD File"), $rip_which);
-				print "</span>\n";
-
-				my @rip_list = split(/\t/, cgi_data_peek("rip_ppd", ""));
-				if($rip_list[0] eq "")
-					{
-					print "<p>", H_("The PPD file does not call for a raster image processor."), "</p>\n";
-					}
-				else
-					{
-					print "<p>";
-					labeled_blank(_("Raster Image Processor:"), $rip_list[0], 8);
-					print "<p>";
-					labeled_blank(_("Output Language:"), $rip_list[1], 8);
-					print "<p>";
-					labeled_blank(_("Options:"), $rip_list[2], 40);
-					}
-
-				print "</div>\n";
-				}
-
-				# Lower section: Custom RIP Info
-				{
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\"><label><input type=\"radio\" name=\"rip_which\" value=\"CONFIG\"";
-				print " checked" if($rip_which eq "CONFIG");
-				print "> Custom</label></span>\n";
-
-				print "<p>";
-				labeled_select("rip_name", _("Raster Image Processor:"),
-						"", $rip_name,
-						"", "ppr-gs", "foomatic-rip");
-
-				print "<p>";
-				labeled_select("rip_outlang", _("Output Language:"),
-						"", $rip_outlang,
-						"", "pcl", "other");
-
-				print "<p>";
-				labeled_entry("rip_options", _("Options:"), $rip_options, 40);
-
-				print "</div>\n";
-				}
-				},
-		'onleave' => sub {
-				my $error;
-				if(fix_rip_which())
-					{
-					return _("Incomplete custom RIP settings.");
-					}
-				if(cgi_data_peek("rip_which", "") eq "CONFIG")
-					{
-					$data{rip} = join("\t", (
-						cgi_data_move("rip_name", ""),
-						cgi_data_move("rip_outlang", ""),
-						cgi_data_move("rip_options", "")
-						));
-					}
-				else			# If PPD,
-					{
-					$data{rip} = $data{rip_ppd};
-					}
-				return undef;
-				}
-		},
-
-		#====================================================
-		# This is for printer hardware options enumerated
-		# in the PPD file.
-		#====================================================
-		{
-		'tabname' => N_("Features"),
-		'help' => "features",
-		'dopage' => sub {
-				print "<label>", H_("Optional printer features:"), "<br>\n";
-
-				# Get the list of features from the PPD file.
-				my @features = ppd_features(cgi_data_peek("ppd", "?"));
-
-				# Create a hash of the current settings.
-				my %current;
-				{
-				my @list = split(/ /, cgi_data_move("ppdopts", ""));
-				my $name;
-				my $value;
-				while(defined($name = shift @list))
-					{
-					$value = shift @list;
-					$current{"$name $value"} = 1;
-					}
-				}
-
-				# Print a select control for each feature.
-				foreach my $feature (@features)
-					{
-					my $name = shift @$feature;
-					$name =~ m#^([^/]+)/?(.*)$# || die;
-					my($name_mr, $name_tr) = ($1, $2);
-					print "<select name=\"ppdopts\">\n";
-					print "<option value=\"\">", html($name_tr), "\n";
-					foreach my $setting (@$feature)
-						{
-						$setting =~ m#^([^/]+)/?(.*)$# || die;
-						my($setting_mr, $setting_tr) = ($1, $2);
-						print "<option value=", html_value("$name_mr $setting_mr");
-						print " selected" if(defined $current{"$name_mr $setting_mr"});
-						print ">", html("$name_tr $setting_tr"), "\n";
-						}
-					print "</select>\n";
-					print "</label>\n";
-					}
-				}
-		},
-
-		#====================================================
-		# Bin management
-		#====================================================
-		{
-		'tabname' => N_("Bins"),
-		'help' => "bins",
-		'dopage' => sub {
-				print "<span class=\"label\">", H_("Bins for forms management purposes:"), "</span><br>\n";
-
-				my %current_bins = ();
-				foreach my $bin (split(/ /, cgi_data_move("bins", "")))
-					{
-					$current_bins{$bin} = 1;
-					}
-
-				foreach my $ppd_bin (ppd_bins(cgi_data_peek("ppd", "?")))
-					{
-					my ($name, $translation) = @$ppd_bin;
-					my $checked = defined($current_bins{$name});
-					labeled_checkbox("bins", sprintf($translation eq "" ? "%s" : _("%s -- %s"), $name, $translation), $name, $checked);
-					print "<br>\n";
-					delete $current_bins{$name} if($checked);
-					}
-
-				foreach my $bin (sort keys %current_bins)
-					{
-					labeled_checkbox("bins", ($bin . _(" (not listed in PPD file)")), $bin, 1);
-					print "<br>\n";
-					}
-				}
-		},
-
-		#====================================================
-		# Operator alerting method
-		#====================================================
-		{
-		'tabname' => N_("Alerts"),
-		'help' => "alerts",
-		'dopage' => sub {
-				print "<p>";
-				labeled_select("alerts_method", _("Alert method:"),
-						"", cgi_data_move("alerts_method", ""),
-						N_("mail"));
-
-				print "<p>";
-				labeled_select("alerts_frequency_sign", _("Alert frequency:"),
-						"", cgi_data_move("alerts_frequency_sign", ""),
-						N_("never"),
-						N_("after"),
-						N_("every"));
-				labeled_entry("alerts_frequency_abs", undef, cgi_data_move("alerts_frequency_abs", ""), 5);
-				print H_("errors"), "\n";
-
-				print "<p>";
-				labeled_entry("alerts_address", _("Alert address:"), cgi_data_move("alerts_address", ""), 50);
-				}
-		},
-
-		#====================================================
-		# Switchset
-		#====================================================
-		{
-		'tabname' => N_("Switchset"),
-		'help' => "switchset",
-		'dopage' => sub {
-				print "<p><span class=\"label\">", H_("Switchset:"), "</span><br>\n";
-				print "<textarea name=switchset cols=50 rows=10>\n";
-				print html(&cgi_data_move('switchset', ''));
-				print "</textarea>\n";
-				print "</p>\n";
-				}
-		},
-
-		#====================================================
-		# Samba
-		#====================================================
-		{
-		'tabname' => N_("Samba"),
-		'help' => "samba",
-		'dopage' => sub {
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\">";
-				labeled_boolean("addon ppr2samba", _("Share with Samba"), cgi_data_move("addon ppr2samba", 1));
-				print "</span>\n";
-
-				print "<p>";
-				labeled_select("addon ppr2samba-prototype", _("Prototype Share:"),
-						"", cgi_data_move("addon ppr2samba-prototype", ""),
-						"", "pprproto", "pprproto_pprpopup", "pprproto_pprpopup2");
-				print "</p>\n";
-
-				print "<p>";
-				labeled_entry("addon ppr2samba-drivername", _("Override Win95 driver name:"), cgi_data_move("addon ppr2samba-drivername", ""), 20);
-				print "</p>\n";
-
-				print "<p>";
-				labeled_select("addon ppr2samba-vserver", _("Assign to virtual server (Samba setup required):"),
-						"", cgi_data_move("addon ppr2samba-vserver", ""),
-						"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
-				print "</p>\n";
-
-				print "</div>\n";
-
-				print "<p>", _("Note that if the Samba configuration file smb.conf has not been edited as described in\n"
-								. "the ppr2samba(8) manpage, the settings on this screen will have no effect."), "</p>\n";
-
-				},
-		'onleave' => sub {
-				# This gives it a value of 0 if it wasn't checked and blank if it was.
-				$data{"addon ppr2samba"} = (cgi_data_move("addon ppr2samba", 0) ? "" : "0");
-				return undef;
-				}
-		},
-
-		#====================================================
-		# AppleTalk
-		#====================================================
-		{
-		'tabname' => N_("AppleTalk"),
-		'help' => "appletalk",
-		'dopage' => sub {
-				my $papname = cgi_data_move("addon papname", "");
-				$data{appletalk_save_papname} = $papname;
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\">";
-				labeled_boolean("appletalk_share", _("Share with AppleTalk PAP"), $papname ne "");
-				print "</span>\n";
-
-				print "<p>";
-				labeled_entry("addon papname", _("Share As:"), $papname, 32);
-				print "</p>\n";
-
-				print "</div>\n";
-				},
-		'onleave' => sub {
-				if(!cgi_data_peek("appletalk_share", undef) 
-						&& $data{"addon papname"} eq $data{appletalk_save_papname})
-					{
-					$data{"addon papname"} = "";
-					}
-				delete $data{appletalk_share};
-				delete $data{appletalk_share_save};
-				return undef;
-				}
-		},
-
-		#====================================================
-		# Limits
-		#====================================================
-		{
-		'tabname' => N_("Limits"),
-		'help' => "limits",
-		'dopage' => sub {
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\">", H_("Limits Enforced Before Printing"), "</span>\n";
-
-				print '<p><span class="label">', H_("Limit Kilobytes"), "</span><br>\n";
-				labeled_entry("limitkilobytes_lower", _("Lower limit:"), cgi_data_move("limitkilobytes_lower", 0), 8);
-				labeled_entry("limitkilobytes_upper", _("Upper limit:"), cgi_data_move("limitkilobytes_upper", 0), 8);
-				print "</p>\n";
-
-				print '<p><span class="label">', H_("Limit Pages"), "</span><br>\n";
-				labeled_entry("limitpages_lower", _("Lower limit:"), cgi_data_move("limitpages_lower", 0), 8);
-				labeled_entry("limitpages_upper", _("Upper limit:"), cgi_data_move("limitpages_upper", 0), 8);
-				print "</p>\n";
-
-				print "<p>";
-				labeled_select("grayok", _("Grayscale documents OK:"), "", cgi_data_move("grayok", "yes"), N_("yes"), N_("no"));
-				print "</p>\n";
-
-				print "</div>\n";
-
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\">", H_("Limits Enforced During Printing"), "</span>\n";
-
-				print "<p>";
-				labeled_entry("pagetimelimit", H_("Per-page time limit (in seconds):"), cgi_data_move("pagetimelimit", 0), 4);
-				print "</p>\n";
-
-				print "</div>\n";
-				}
-		},
-
-		#====================================================
-		# Userparams
-		#====================================================
-		{
-		'tabname' => N_("Userparams"),
-		'help' => "userparams",
-		'dopage' => sub {
-				print '<span class="label">', H_("PostScript Interpreter Userparams Settings:"), "</span><br>\n";
-
-				my %userparams;
-				$userparams{waittimeout} = ['timeout', "WaitTimeout", undef];
-				$userparams{jobtimeout} = ['timeout', "JobTimeout", undef];
-				$userparams{manualfeedtimeout} = ['timeout', "ManualfeedTimeout", undef];
-				$userparams{doprinterrors} = ['bool', "DoPrintErrors", undef];
-
-				# Scan the existing list and save the capitalization and current
-				# value in the master table.
-				foreach my $pair (split(/\s+/, cgi_data_move("userparams", "")))
-					{
-					if($pair =~ /^([^=]+)=(.+)$/)
-						{
-						my($name, $value) = ($1, $2);
-						my $name_lowered = $name;
-						$name_lowered =~ tr/A-Z/a-z/;
-
-						if(!defined $userparams{$name_lowered})
-							{
-							if($value eq "false" || $value eq "true")
-								{
-								$userparams{$name_lowered}->[0] = "bool";
-								}
-							if($name =~ /Timeout$/i)
-								{
-								$userparams{$name_lowered}->[0] = "timeout";
-								}
-							}
-
-						$userparams{$name_lowered}->[1] = $name;
-						$userparams{$name_lowered}->[2] = $value;
-						}
-					}
-
-				# Generate a control for each value.
-				foreach my $control (keys %userparams)
-					{
-					my($type, $name, $value) = @{$userparams{$control}};
-					if($type eq "bool")
-						{
-						print "<select name=\"userparams\">";
-						print "<option value=\"\"";
-								print " selected" if(!defined $value);
-								print ">", html($name), "=default\n";
-						print "<option value=", html_value("$name=false");
-								print " selected" if($value eq "false");
-								print ">", html($name), "=false\n";
-						print "<option value=", html_value("$name=true");
-								print " selected" if($value eq "true");
-								print ">", html($name), "=true\n";
-						print "</select><br>\n";
-						}
-					elsif($type eq "timeout")
-						{
-						print "<select name=\"userparams\">";
-						print "<option value=\"\"";
-								print " selected" if(!defined $value);
-								print ">", html($name), "=default\n";
-						foreach my $i (qw(0 30 45 60 90 120 180 240 360 480 720 1800))
-							{
-							if($value < $i)
-								{
-								print "<option value=", html_value("$name=$value"), " selected>", html("$name=$value"), "\n";
-								$value = 1000000;
-								}
-							print "<option value=", html_value("$name=$i");
-							if($i == $value)
-								{
-								print " selected";
-								$value = 1000000;
-								}
-							print ">", html("$name=$i"), "\n";
-							}
-						print "</select><br>\n";
-						}
-					else
-						{
-						print "<input name=\"userparams\" value=", html_value("$name=$value"), " size=25><br>\n";
-						}
-					}
-
-				# Leave one extra space
-				print "<input name=\"userparams\" value=\"\" size=25><br>\n";
-				},
-		'onleave' => sub {
-				# Remove valueless options from the userparams.
-				$data{userparams} = join(" ", grep(/^[^=]+=[^=]+/, split(/\s+/, $data{userparams})));
-				return undef;
-				}
-		},
-
-		#====================================================
-		# Other
-		#  Flag Pages
-		#  Charge
-		#  Output Order
-		#====================================================
-		{
-		'tabname' => N_("Other"),
-		'help' => "other",
-		'dopage' => sub {
-				{
-				my @flags_list = (N_("never"), N_("no"), N_("yes"), N_("always"));
-				print "<p>\n";
-				labeled_select("flags_banner", _("Print banner page"), "", cgi_data_move("flags_banner", ""), @flags_list);
-				print "<br>\n";
-				labeled_select("flags_trailer", _("Print trailer page"), "", cgi_data_move("flags_trailer", ""), @flags_list);
-				print "</p>\n";
-				}
-
-				print "<p>";
-				print "<span class=\"label\">", H_("Monetary Charge for Printing on this Printer"), "<br>\n";
-				labeled_entry("charge_duplex", _("Per duplex sheet:"), cgi_data_move("charge_duplex", ""), 6);
-				labeled_entry("charge_simplex", _("Per simplex sheet:"), cgi_data_move("charge_simplex", ""), 6);
-				print "</p>\n";
-
-				print "<p>";
-				labeled_select("outputorder", _("Output order:"),
-						"", cgi_data_move("outputorder", ""),
-						N_("Normal"),
-						N_("Reverse"),
-						N_("PPD"));
-				print "</p>\n";
-
-				print "<p>";
-				labeled_entry("passthru", _("Passthru printer languages:"), cgi_data_move("passthru", ""), 25);
-				print "</p>\n";
-				},
-		'onleave' => sub {
-				if(cgi_data_peek('charge_duplex', '') !~ /^(\d*\.\d\d)?$/)
-					{ return _("The charge per duplex sheet is not valid!") }
-				if(cgi_data_peek('charge_simplex', '') !~ /^(\d*\.\d\d)?$/)
-					{ return _("The charge per simplex sheet is not valid!") }
-				if((cgi_data_peek('charge_duplex', '') eq '') != (cgi_data_peek('charge_simplex', '') eq ''))
-					{ return _("Both the duplex charge and the simplex charge must be set or neither must be set!") }
-				return undef;
-				}
+	#====================================================
+	# Pane for the print queue comment
+	#====================================================
+	{
+	'tabname' => N_("Comment"),
+	'help' => "comment",
+	'dopage' => sub {
+
+		print "<p>";
+		labeled_blank(_("Printer Name:"), cgi_data_peek("name", "???"), 50);
+
+		print "<p>";
+		labeled_entry("comment", _("Comment:"), cgi_data_move("comment", ""), 50);
+
+		print "<p>";
+		labeled_entry("location", _("Location:"), cgi_data_move("location", ""), 50);
+
+		print "<p>";
+		labeled_entry("department", _("Department:"), cgi_data_move("department", ""), 50);
+
+		print "<p>";
+		labeled_entry("contact", _("Contact:"), cgi_data_move("contact", ""), 50);
 		}
+	},
+
+	#====================================================
+	# Pane for the interface settings
+	#====================================================
+	{
+	'tabname' => N_("Interface"),
+	'help' => "interface",
+	'dopage' => sub {
+		# Read a list of available interfaces into @interface_list.
+		opendir(I, $INTDIR) || die "opendir() failed on \"$INTDIR\", $!";
+		my @interface_list = ();
+		while(defined(my $interface = readdir(I)))
+			{
+			next if($interface =~ /^\./);
+			push(@interface_list, $interface);
+			}
+		closedir(I) || die;
+
+		print "<p>";
+		labeled_select("interface", _("Printer interface program:"), "", cgi_data_move("interface", ""), @interface_list);
+		print "</p>\n";
+
+		print "<p>";
+		labeled_entry("address", _("Printer address:"), cgi_data_move("address", ""), 50);
+		print "</p>\n";
+
+		print "<p>";
+		labeled_entry("options", _("Interface options:"), cgi_data_move("options", ""), 50);
+		print "</p>\n";
+
+		{
+		print '<p><span class="label">', H_("Does feedback (2-way communication) work?"), "</span><br>\n";
+		my $selected_feedback = cgi_data_move('feedback', 'default');
+		foreach my $feedback (N_("default"), N_("yes"), N_("no"))
+			{
+			print '<label><input type="radio" name="feedback" value=', html_value($feedback);
+			if($feedback eq $selected_feedback)
+				{ print " checked" }
+			print "> ", H_($feedback);
+			if($feedback eq 'default')
+				{ print " (", H_($data{feedback_default}), ")" }
+			print "</label>\n";
+			}
+		print "</p>\n";
+		}
+
+		print "<p>";
+		labeled_select("jobbreak", _("Jobbreak method:"),
+						$data{jobbreak_default}, cgi_data_move("jobbreak", "default"),
+						N_("default"),
+						N_("control-d"),
+						N_("pjl"),
+						N_("signal"),
+						N_("signal/pjl"),
+						N_("newinterface"),
+						N_("none"),
+						N_("save/restore"));
+		print "</p>\n";
+
+		print "<p>";
+		labeled_select("codes", _("Character code compatibility:"),
+						$data{codes_default}, (split(/ /, cgi_data_move("codes", "default")))[0],
+						N_("default"),
+						N_("Clean7Bit"),
+						N_("Clean8Bit"),
+						N_("Binary"),
+						N_("TBCP"),
+						N_("UNKNOWN"));
+		print "</p>\n";
+		},
+	'onleave' => sub {
+		if($data{interface} eq "")
+			{ return _("No interface is selected!") }
+		if($data{address} eq "")
+			{ return _("The Printer Address is blank!") }
+		return undef;
+		}
+	},
+
+	#====================================================
+	# Pane to select the PPD file
+	#====================================================
+	{
+	'tabname' => N_("PPD"),
+	'help' => "ppd",
+	'cellpadding' => 10,
+	'sync' => sub {
+		my $error = undef;
+
+		# The textbox wins if it isn't empty and it doesn't have 
+		# the value it had last time.
+		my $ppd = cgi_data_move('ppd', "");
+		my $ppd_text = cgi_data_move('ppd_text', "");
+		my $ppd_text_prev = cgi_data_move('ppd_text_prev', undef);
+		if($ppd_text ne "" && defined $ppd_text_prev && $ppd_text ne $ppd_text_prev)
+			{
+			$ppd = $ppd_text;
+			}
+		$data{ppd_text_prev} = $ppd;
+		$data{ppd} = $ppd;
+		},
+	'dopage' => sub {
+		require 'ppd_select.pl';
+
+		my $ppd = cgi_data_move("ppd", undef);
+
+		print "<table class=\"ppd\"><tr><td>\n";
+		print '<p><label>', H_("Current PPD File:"), "<br>\n";
+		print '<input tabindex=1 name="ppd_text" size=32 value=', html_value($ppd), ' onchange="forms[0].submit()">', "\n";
+		print "</label></p>\n";
+
+		# Handle the button under the list of PPD files which
+		# is labeled alternatately "Auto Detect" and
+		# "Show all PPD Files".
+		{
+		my $ppd_probe = cgi_data_move("ppd_probe", "");
+		if($ppd_probe eq "Auto Detect")
+			{
+			$data{ppd_probe_list} = ppd_probe($data{interface}, $data{address}, $data{options});
+			if(! defined $data{ppd_probe_list})
+				{
+				$error = _("Auto detection failed.");
+				}
+			}
+		elsif($ppd_probe eq "Show all PPD Files")
+			{
+			delete $data{ppd_probe_list};
+			}
+		}
+
+		# Print the HTML for a select box.
+		print '<p><label>';
+		if(defined cgi_data_peek("ppd_probe_list", undef))
+			{
+			print H_("Suitable PPD Files:");
+			}
+		else
+			{
+			print H_("All Available PPD Files:");
+			}
+		print "<br>\n";
+		print '<select tabindex=2 name="ppd" size="15" style="max-width: 300px;min-width: 300px" onchange="forms[0].submit()">', "\n";
+		my $lastgroup = "";
+		foreach my $item (ppd_list(cgi_data_peek("ppd_probe_list", undef)))
+			{
+			my($item_manufacturer, $item_modelname, $item_fuzzy) = @{$item};
+			if($item_manufacturer ne $lastgroup)
+				{
+				print "</optgroup>\n" if($lastgroup ne "");
+				print "<optgroup label=", html_value($item_manufacturer), ">\n";
+				$lastgroup = $item_manufacturer;
+				}
+			print "<option value=", html_value($item_modelname);
+			print " selected" if($item_modelname eq $ppd);
+			print ">", html($item_modelname);
+			print " (fuzzy match)" if(defined $item_fuzzy && $item_fuzzy);
+			print "\n";
+			}
+		print "</optgroup>\n" if($lastgroup ne "");
+		print "</select>\n";
+		print "</label></p>\n";
+
+		print "</td><td style=\"padding-top: 2cm;\">\n";
+
+		# Print a small table with a summary of what the PPD files says.
+		ppd_summary($ppd);
+
+		print "</td></tr></table>\n";
+
+		if(!defined cgi_data_peek("ppd_probe_list", undef))
+			{
+			isubmit("ppd_probe", "Auto Detect", N_("Auto Detect"), _("Automatically detect printer type and propose suitable PPD files."));
+			}
+		else
+			{
+			isubmit("ppd_probe", "Show all PPD Files", N_("Show All PPD Files"));
+			}
+
+		if(defined $error)
+			{
+			print "<p>", html($error), "</p>\n";
+			}
+		},
+	'onleave' => sub {
+		if($data{ppd} eq '')
+			{ return _("No PPD file is selected!") }
+		return undef;
+		}
+	},
+
+	#====================================================
+	# Pane to select the RIP
+	#====================================================
+	{
+	'tabname' => N_("RIP"),
+	'help' => "rip",
+	'dopage' => sub {
+
+		fix_rip_which();
+
+		my($rip_which, $rip_name, $rip_outlang, $rip_options) =
+				(
+				cgi_data_move("rip_which", ""),
+				cgi_data_move("rip_name", ""),
+				cgi_data_move("rip_outlang", ""),
+				cgi_data_move("rip_options", "")
+				);
+
+		# Upper section: PPD RIP info.
+		{
+		print "<div class=\"section\">\n";
+		print '<span class="section_label">';
+		labeled_radio("rip_which", _("From PPD File"), $rip_which);
+		print "</span>\n";
+
+		my @rip_list = split(/\t/, cgi_data_peek("rip_ppd", ""));
+		if($rip_list[0] eq "")
+			{
+			print "<p>", H_("The PPD file does not call for a raster image processor."), "</p>\n";
+			}
+		else
+			{
+			print "<p>";
+			labeled_blank(_("Raster Image Processor:"), $rip_list[0], 8);
+			print "<p>";
+			labeled_blank(_("Output Language:"), $rip_list[1], 8);
+			print "<p>";
+			labeled_blank(_("Options:"), $rip_list[2], 40);
+			}
+
+		print "</div>\n";
+		}
+
+		# Lower section: Custom RIP Info
+		{
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\"><label><input type=\"radio\" name=\"rip_which\" value=\"CONFIG\"";
+		print " checked" if($rip_which eq "CONFIG");
+		print "> Custom</label></span>\n";
+
+		print "<p>";
+		labeled_select("rip_name", _("Raster Image Processor:"),
+				"", $rip_name,
+				"", "ppr-gs", "foomatic-rip");
+
+		print "<p>";
+		labeled_select("rip_outlang", _("Output Language:"),
+				"", $rip_outlang,
+				"", "pcl", "other");
+
+		print "<p>";
+		labeled_entry("rip_options", _("Options:"), $rip_options, 40);
+
+		print "</div>\n";
+		}
+		},
+	'onleave' => sub {
+		my $error;
+		if(fix_rip_which())
+			{
+			return _("Incomplete custom RIP settings.");
+			}
+		if(cgi_data_peek("rip_which", "") eq "CONFIG")
+			{
+			$data{rip} = join("\t", (
+				cgi_data_move("rip_name", ""),
+				cgi_data_move("rip_outlang", ""),
+				cgi_data_move("rip_options", "")
+				));
+			}
+		else			# If PPD,
+			{
+			$data{rip} = $data{rip_ppd};
+			}
+		return undef;
+		}
+	},
+
+	#====================================================
+	# This is for printer hardware options enumerated
+	# in the PPD file.
+	#====================================================
+	{
+	'tabname' => N_("Features"),
+	'help' => "features",
+	'dopage' => sub {
+		print "<label>", H_("Optional printer features:"), "<br>\n";
+
+		# Get the list of features from the PPD file.
+		my @features = ppd_features(cgi_data_peek("ppd", "?"));
+
+		# Create a hash of the current settings.
+		my %current;
+		{
+		my @list = split(/ /, cgi_data_move("ppdopts", ""));
+		my $name;
+		my $value;
+		while(defined($name = shift @list))
+			{
+			$value = shift @list;
+			$current{"$name $value"} = 1;
+			}
+		}
+
+		# Print a select control for each feature.
+		foreach my $feature (@features)
+			{
+			my $name = shift @$feature;
+			$name =~ m#^([^/]+)/?(.*)$# || die;
+			my($name_mr, $name_tr) = ($1, $2);
+			print "<select name=\"ppdopts\">\n";
+			print "<option value=\"\">", html($name_tr), "\n";
+			foreach my $setting (@$feature)
+				{
+				$setting =~ m#^([^/]+)/?(.*)$# || die;
+				my($setting_mr, $setting_tr) = ($1, $2);
+				print "<option value=", html_value("$name_mr $setting_mr");
+				print " selected" if(defined $current{"$name_mr $setting_mr"});
+				print ">", html("$name_tr $setting_tr"), "\n";
+				}
+			print "</select>\n";
+			print "<br>\n";
+			}
+
+		print "</label>\n";
+		}
+	},
+
+	#====================================================
+	# Bin management
+	#====================================================
+	{
+	'tabname' => N_("Bins"),
+	'help' => "bins",
+	'dopage' => sub {
+		print "<span class=\"label\">", H_("Bins for forms management purposes:"), "</span><br>\n";
+
+		my %current_bins = ();
+		foreach my $bin (split(/ /, cgi_data_move("bins", "")))
+			{
+			$current_bins{$bin} = 1;
+			}
+
+		foreach my $ppd_bin (ppd_bins(cgi_data_peek("ppd", "?")))
+			{
+			my ($name, $translation) = @$ppd_bin;
+			my $checked = defined($current_bins{$name});
+			labeled_checkbox("bins", sprintf($translation eq "" ? "%s" : _("%s -- %s"), $name, $translation), $name, $checked);
+			print "<br>\n";
+			delete $current_bins{$name} if($checked);
+			}
+
+		foreach my $bin (sort keys %current_bins)
+			{
+			labeled_checkbox("bins", ($bin . _(" (not listed in PPD file)")), $bin, 1);
+			print "<br>\n";
+			}
+		}
+	},
+
+	#====================================================
+	# Operator alerting method
+	#====================================================
+	{
+	'tabname' => N_("Alerts"),
+	'help' => "alerts",
+	'dopage' => sub {
+		print "<p>";
+		labeled_select("alerts_method", _("Alert method:"),
+				"", cgi_data_move("alerts_method", ""),
+				N_("mail"));
+
+		print "<p>";
+		labeled_select("alerts_frequency_sign", _("Alert frequency:"),
+				"", cgi_data_move("alerts_frequency_sign", ""),
+				N_("never"),
+				N_("after"),
+				N_("every"));
+		labeled_entry("alerts_frequency_abs", undef, cgi_data_move("alerts_frequency_abs", ""), 5);
+		print H_("errors"), "\n";
+
+		print "<p>";
+		labeled_entry("alerts_address", _("Alert address:"), cgi_data_move("alerts_address", ""), 50);
+		}
+	},
+
+	#====================================================
+	# Switchset
+	#====================================================
+	{
+	'tabname' => N_("Switchset"),
+	'help' => "switchset",
+	'dopage' => sub {
+		print "<p><span class=\"label\">", H_("Switchset:"), "</span><br>\n";
+		print "<textarea name=switchset cols=50 rows=10>\n";
+		print html(&cgi_data_move('switchset', ''));
+		print "</textarea>\n";
+		print "</p>\n";
+		}
+	},
+
+	#====================================================
+	# Samba
+	#====================================================
+	{
+	'tabname' => N_("Samba"),
+	'help' => "samba",
+	'dopage' => sub {
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\">";
+		labeled_boolean("addon ppr2samba", _("Share with Samba"), cgi_data_move("addon ppr2samba", 1));
+		print "</span>\n";
+
+		print "<p>";
+		labeled_select("addon ppr2samba-prototype", _("Prototype Share:"),
+				"", cgi_data_move("addon ppr2samba-prototype", ""),
+				"", "pprproto", "pprproto_pprpopup", "pprproto_pprpopup2");
+		print "</p>\n";
+
+		print "<p>";
+		labeled_entry("addon ppr2samba-drivername", _("Override Win95 driver name:"), cgi_data_move("addon ppr2samba-drivername", ""), 20);
+		print "</p>\n";
+
+		print "<p>";
+		labeled_select("addon ppr2samba-vserver", _("Assign to virtual server (Samba setup required):"),
+				"", cgi_data_move("addon ppr2samba-vserver", ""),
+				"", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+		print "</p>\n";
+
+		print "</div>\n";
+
+		print "<p>", _("Note that if the Samba configuration file smb.conf has not been edited as described in\n"
+						. "the ppr2samba(8) manpage, the settings on this screen will have no effect."), "</p>\n";
+
+		},
+	'onleave' => sub {
+		# This gives it a value of 0 if it wasn't checked and blank if it was.
+		$data{"addon ppr2samba"} = (cgi_data_move("addon ppr2samba", 0) ? "" : "0");
+		return undef;
+		}
+	},
+
+	#====================================================
+	# AppleTalk
+	#====================================================
+	{
+	'tabname' => N_("AppleTalk"),
+	'help' => "appletalk",
+	'dopage' => sub {
+		my $papname = cgi_data_move("addon papname", "");
+		$data{appletalk_save_papname} = $papname;
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\">";
+		labeled_boolean("appletalk_share", _("Share with AppleTalk PAP"), $papname ne "");
+		print "</span>\n";
+
+		print "<p>";
+		labeled_entry("addon papname", _("Share As:"), $papname, 32);
+		print "</p>\n";
+
+		print "</div>\n";
+		},
+	'onleave' => sub {
+		if(!cgi_data_peek("appletalk_share", undef) 
+				&& $data{"addon papname"} eq $data{appletalk_save_papname})
+			{
+			$data{"addon papname"} = "";
+			}
+		delete $data{appletalk_share};
+		delete $data{appletalk_share_save};
+		return undef;
+		}
+	},
+
+	#====================================================
+	# Limits
+	#====================================================
+	{
+	'tabname' => N_("Limits"),
+	'help' => "limits",
+	'dopage' => sub {
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\">", H_("Limits Enforced Before Printing"), "</span>\n";
+
+		print '<p><span class="label">', H_("Limit Kilobytes"), "</span><br>\n";
+		labeled_entry("limitkilobytes_lower", _("Lower limit:"), cgi_data_move("limitkilobytes_lower", 0), 8);
+		labeled_entry("limitkilobytes_upper", _("Upper limit:"), cgi_data_move("limitkilobytes_upper", 0), 8);
+		print "</p>\n";
+
+		print '<p><span class="label">', H_("Limit Pages"), "</span><br>\n";
+		labeled_entry("limitpages_lower", _("Lower limit:"), cgi_data_move("limitpages_lower", 0), 8);
+		labeled_entry("limitpages_upper", _("Upper limit:"), cgi_data_move("limitpages_upper", 0), 8);
+		print "</p>\n";
+
+		print "<p>";
+		labeled_select("grayok", _("Grayscale documents OK:"), "", cgi_data_move("grayok", "yes"), N_("yes"), N_("no"));
+		print "</p>\n";
+
+		print "</div>\n";
+
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\">", H_("Limits Enforced During Printing"), "</span>\n";
+
+		print "<p>";
+		labeled_entry("pagetimelimit", H_("Per-page time limit (in seconds):"), cgi_data_move("pagetimelimit", 0), 4);
+		print "</p>\n";
+
+		print "</div>\n";
+		}
+	},
+
+	#====================================================
+	# Userparams
+	#====================================================
+	{
+	'tabname' => N_("Userparams"),
+	'help' => "userparams",
+	'dopage' => sub {
+		print '<span class="label">', H_("PostScript Interpreter Userparams Settings:"), "</span><br>\n";
+
+		my %userparams;
+		$userparams{waittimeout} = ['timeout', "WaitTimeout", undef];
+		$userparams{jobtimeout} = ['timeout', "JobTimeout", undef];
+		$userparams{manualfeedtimeout} = ['timeout', "ManualfeedTimeout", undef];
+		$userparams{doprinterrors} = ['bool', "DoPrintErrors", undef];
+
+		# Scan the existing list and save the capitalization and current
+		# value in the master table.
+		foreach my $pair (split(/\s+/, cgi_data_move("userparams", "")))
+			{
+			if($pair =~ /^([^=]+)=(.+)$/)
+				{
+				my($name, $value) = ($1, $2);
+				my $name_lowered = $name;
+				$name_lowered =~ tr/A-Z/a-z/;
+
+				if(!defined $userparams{$name_lowered})
+					{
+					if($value eq "false" || $value eq "true")
+						{
+						$userparams{$name_lowered}->[0] = "bool";
+						}
+					if($name =~ /Timeout$/i)
+						{
+						$userparams{$name_lowered}->[0] = "timeout";
+						}
+					}
+
+				$userparams{$name_lowered}->[1] = $name;
+				$userparams{$name_lowered}->[2] = $value;
+				}
+			}
+
+		# Generate a control for each value.
+		foreach my $control (keys %userparams)
+			{
+			my($type, $name, $value) = @{$userparams{$control}};
+			if($type eq "bool")
+				{
+				print "<select name=\"userparams\">";
+				print "<option value=\"\"";
+						print " selected" if(!defined $value);
+						print ">", html($name), "=default\n";
+				print "<option value=", html_value("$name=false");
+						print " selected" if($value eq "false");
+						print ">", html($name), "=false\n";
+				print "<option value=", html_value("$name=true");
+						print " selected" if($value eq "true");
+						print ">", html($name), "=true\n";
+				print "</select><br>\n";
+				}
+			elsif($type eq "timeout")
+				{
+				print "<select name=\"userparams\">";
+				print "<option value=\"\"";
+						print " selected" if(!defined $value);
+						print ">", html($name), "=default\n";
+				foreach my $i (qw(0 30 45 60 90 120 180 240 360 480 720 1800))
+					{
+					if($value < $i)
+						{
+						print "<option value=", html_value("$name=$value"), " selected>", html("$name=$value"), "\n";
+						$value = 1000000;
+						}
+					print "<option value=", html_value("$name=$i");
+					if($i == $value)
+						{
+						print " selected";
+						$value = 1000000;
+						}
+					print ">", html("$name=$i"), "\n";
+					}
+				print "</select><br>\n";
+				}
+			else
+				{
+				print "<input name=\"userparams\" value=", html_value("$name=$value"), " size=25><br>\n";
+				}
+			}
+
+		# Leave one extra space
+		print "<input name=\"userparams\" value=\"\" size=25><br>\n";
+		},
+	'onleave' => sub {
+		# Remove valueless options from the userparams.
+		$data{userparams} = join(" ", grep(/^[^=]+=[^=]+/, split(/\s+/, $data{userparams})));
+		return undef;
+		}
+	},
+
+	#====================================================
+	# Other
+	#  Flag Pages
+	#  Charge
+	#  Output Order
+	#====================================================
+	{
+	'tabname' => N_("Other"),
+	'help' => "other",
+	'dopage' => sub {
+		{
+		my @flags_list = (N_("never"), N_("no"), N_("yes"), N_("always"));
+		print "<p>\n";
+		labeled_select("flags_banner", _("Print banner page"), "", cgi_data_move("flags_banner", ""), @flags_list);
+		print "<br>\n";
+		labeled_select("flags_trailer", _("Print trailer page"), "", cgi_data_move("flags_trailer", ""), @flags_list);
+		print "</p>\n";
+		}
+
+		print "<p>";
+		print "<span class=\"label\">", H_("Monetary Charge for Printing on this Printer"), "<br>\n";
+		labeled_entry("charge_duplex", _("Per duplex sheet:"), cgi_data_move("charge_duplex", ""), 6);
+		labeled_entry("charge_simplex", _("Per simplex sheet:"), cgi_data_move("charge_simplex", ""), 6);
+		print "</p>\n";
+
+		print "<p>";
+		labeled_select("outputorder", _("Output order:"),
+				"", cgi_data_move("outputorder", ""),
+				N_("Normal"),
+				N_("Reverse"),
+				N_("PPD"));
+		print "</p>\n";
+
+		print "<p>";
+		labeled_entry("passthru", _("Passthru printer languages:"), cgi_data_move("passthru", ""), 25);
+		print "</p>\n";
+		},
+	'onleave' => sub {
+		if(cgi_data_peek('charge_duplex', '') !~ /^(\d*\.\d\d)?$/)
+			{ return _("The charge per duplex sheet is not valid!") }
+		if(cgi_data_peek('charge_simplex', '') !~ /^(\d*\.\d\d)?$/)
+			{ return _("The charge per simplex sheet is not valid!") }
+		if((cgi_data_peek('charge_duplex', '') eq '') != (cgi_data_peek('charge_simplex', '') eq ''))
+			{ return _("Both the duplex charge and the simplex charge must be set or neither must be set!") }
+		return undef;
+		}
+	}
 ];
 
 #=========================================================
@@ -782,6 +784,7 @@ sub ppd_features
 	my $filename = shift;
 
 	my $line;
+	my $in_installable_options = 0;
 	my $open_ui = undef;
 	my @answer = ();
 	my $subanswer;
@@ -790,24 +793,33 @@ sub ppd_features
 
 	while(defined($line = ppd_readline()))
 		{
-		if($line =~ /^\*OpenUI/)
+		if(!$in_installable_options)
+			{
+			if($line =~ /^\*OpenGroup:\s+InstallableOption/)
+				{
+				$in_installable_options = 1;
+				}
+			next;
+			}
+		if($line =~ /^\*CloseGroup:/)
+			{
+			$in_installable_options = 0;
+			}
+		if($line =~ /^\*OpenUI\s+(\*[^:]+)/)
 			{
 			die "Unclosed UI section \"$open_ui\"" if(defined $open_ui);
-			if($line =~ /^\*OpenUI\s+(\*Option[^:]*)/ || $line =~ /^\*OpenUI\s+(\*InstalledMemory[^:]*)/)
-				{
-				$open_ui = $1;
-				#print "Start of $open_ui ($open_ui_mr)\n";
-				$open_ui =~ m#^([^/]*)# || die;
-				$open_ui_mr = $1;
-				$subanswer = [$open_ui];
-				next;
-				}
+			$open_ui = $1;
+			$open_ui =~ m#^([^/]*)# || die;
+			$open_ui_mr = $1;
+			#print STDERR "Start of $open_ui ($open_ui_mr)\n";
+			$subanswer = [$open_ui];
+			next;
 			}
-		if(defined $open_ui && ($line =~ /^(\*Option\S*)\s*([^:]*)/ || $line =~ /^(\*InstalledMemory\S*)\s*([^:]*)/))
+		if(defined $open_ui && $line =~ /^(\*\S*)\s*([^:]*)/ && $1 eq $open_ui_mr)
 			{
 			my($option, $value) = ($1, $2);
-			die "Found \"$option\" option in \"$open_ui_mr\" section" if($option ne $open_ui_mr);
-			#print "\t$value\n";
+			#die "Found \"$option\" option in \"$open_ui_mr\" section" if($option ne $open_ui_mr);
+			#print STDERR "\t$value\n";
 			push(@$subanswer, $value);
 			next;
 			}

@@ -25,11 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 February 2004.
+** Last modified 9 December 2004.
 */
 
 #include "before_system.h"
 #include <stdio.h>
+#include <string.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>

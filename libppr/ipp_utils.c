@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2004.
+** Last modified 10 December 2004.
 */
 
 /*! \file */
@@ -42,7 +42,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 
-#if 0
+#if 1
 #define DEBUG(a) debug a
 #else
 #define DEBUG(a)
@@ -737,10 +737,10 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 	
 	for(i=0 ; i < attr->num_values; i++)
 		{
-		debug("  encoding 0x%.2x (%s) name=\"%s\"",
+		DEBUG(("  encoding 0x%.2x (%s) name=\"%s\"",
 			attr->value_tag, tag_to_str(attr->value_tag),
 			attr->name
-			);
+			));
 
 		p = &attr->values[i];
 		ipp_put_byte(ipp, attr->value_tag);
@@ -759,40 +759,32 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 			ipp_put_ss(ipp, 0);
 			}
 
-		if(attr->value_tag == IPP_TAG_URI && rmatch(attr->name, "printer-uri"))
+		/* prepend the "http://host:port" stuff to URLs. */
+		if(attr->value_tag == IPP_TAG_URI)
 			{
-			len = strlen(ipp->root) + strlen("/queues/") + strlen(p->string.text);
+			DEBUG(("        \"%s\" + \"%s\"", ipp->root, p->string.text));
+			len = strlen(ipp->root) + strlen(p->string.text);
 			ipp_put_ss(ipp, len);
 			ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
-			ipp_put_bytes(ipp, "/queues/", strlen("/queues/"));
 			ipp_put_bytes(ipp, p->string.text, strlen(p->string.text));
-			continue;
-			}
-
-		if(attr->value_tag == IPP_TAG_URI && rmatch(attr->name, "job-uri"))
-			{
-			char temp[10];
-			gu_snprintf(temp, sizeof(temp), "%d", p->integer);
-			len = strlen(ipp->root) + strlen("/jobs/") + strlen(temp);
-			ipp_put_ss(ipp, len);
-			ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
-			ipp_put_bytes(ipp, "/jobs/", strlen("/jobs/"));
-			ipp_put_bytes(ipp, temp, strlen(temp));
 			continue;
 			}
 
 		switch(tag_simplify(attr->value_tag))
 			{
 			case IPP_TAG_INTEGER:
+				DEBUG(("        %d", p->integer));
 				ipp_put_ss(ipp, 4);
 				ipp_put_si(ipp, p->integer);
 				break;
 			case IPP_TAG_STRING:
+				DEBUG(("        \"%s\"", p->string.text));
 				len = strlen(p->string.text);
 				ipp_put_ss(ipp, len);
 				ipp_put_bytes(ipp, p->string.text, len);
 				break;
 			case IPP_TAG_BOOLEAN:
+				DEBUG(("        %s", p->boolean ? "TRUE" : "FALSE"));
 				ipp_put_ss(ipp, 1);
 				ipp_put_sb(ipp, p->boolean ? 1 : 0);
 				break;
@@ -840,6 +832,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 		ipp_put_byte(ipp, IPP_TAG_PRINTER);
 		for( ; p; p = p->next)
 			{
+			DEBUG((" printer:"));
 			if(p->value_tag == IPP_TAG_END)
 				{
 				if(p->next)
@@ -856,6 +849,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 		ipp_put_byte(ipp, IPP_TAG_JOB);
 		for( ; p; p = p->next)
 			{
+			DEBUG((" job:"));
 			if(p->value_tag == IPP_TAG_END)
 				{
 				if(p->next)
@@ -949,13 +943,14 @@ void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int
  * This function keeps a pointer to name[] and value[], so they had better not
  * change!
 */
-void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[])
+void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[], gu_boolean free_value)
 	{
 	ipp_attribute_t *ap;
 	if(tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_string(): %s is a %s", name, tag_to_str(tag));
 	ap = ipp_add_attribute(ipp, group, tag, name, 1);
 	ap->values[0].string.text = (char*)value;
+	ap->free_values = free_value;
 	}
 
 /** add a list of strings to the IPP response
@@ -963,7 +958,7 @@ void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], cons
  * This function keeps a pointer to name[] and all of the values[], so they 
  * had better not change!
 */
-void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[])
+void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[], gu_boolean free_values)
 	{
 	ipp_attribute_t *ap;
 	int i;
@@ -972,6 +967,7 @@ void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int
 	ap = ipp_add_attribute(ipp, group, tag, name, num_values);
 	for(i=0; i<num_values; i++)
 		ap->values[i].string.text = (char*)values[i];
+	ap->free_values = free_values;
 	}
 
 /** add a formatted string to the IPP response

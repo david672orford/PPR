@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/filters_misc/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -50,10 +50,10 @@ SCRIPTS_TCL=pr.tcl
 all: $(BUILT)
 
 filter_hexdump$(DOTEXE): filter_hexdump.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o filter_hexdump$(DOTEXE) filter_hexdump.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 make_dvips_conf$(DOTEXE): make_dvips_conf.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o make_dvips_conf$(DOTEXE) make_dvips_conf.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
 

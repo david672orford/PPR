@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/templates/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 4 March 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -40,12 +40,8 @@ LIB_PROGS=
 
 all: $(BIN_PROGS) $(LIB_PROGS)
 
-OBJS=\
-	xxx.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-xxx$(DOTEXE): $(OBJS)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS)
+xxx$(DOTEXE): xxx.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^
 
 #=== Install ================================================================
 

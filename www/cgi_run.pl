@@ -50,6 +50,7 @@ sub run
 	my $pid;
 	my $result = 0;
 
+	{ local($| = 1); print; }			# not needed in Perl 5.8.x
 	if($pid = open(RUNHANDLE, "-|"))	# parent
 		{
 		while(<RUNHANDLE>)
@@ -118,6 +119,7 @@ sub run_pipeline
 	    $handle = "RUNHANDLE$i";
 		my $pid;
 	
+		{ local($| = 1); print; }			# not needed in Perl 5.8.x
 		if(!defined($pid = open($handle, "-|")))
 			{
 			print "Can't fork!\n";
@@ -190,6 +192,7 @@ sub opencmd
 	# Perl 5.8.0 spews warnings if exec() arguments are tainted.
 	run_detaint(\@command_list);
 
+	{ local($| = 1); print; }			# Not needed in Perl 5.8.x
 	my $pid = open($handle, "-|");
 
 	return 0 if(! defined($pid));		# fork failed

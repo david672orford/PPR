@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2004.
+# Last modified 10 December 2004.
 #
 
 use lib "?";
@@ -164,12 +164,14 @@ umask(002);
 #===========================================================
 my $standalone_port = undef;
 my $root_xlate = undef;
+my $assume_port = 15010;
 if(scalar @ARGV >= 1)
 	{
 	require Getopt::Long;
 	if(!Getopt::Long::GetOptions(
 			"standalone-port=s" => \$standalone_port,
-			"root-xlate=s" => \$root_xlate
+			"root-xlate=s" => \$root_xlate,
+			"assume-port" => \$assume_port
 			))
 		{
 		print STDERR "Usage: ppr-httpd [--standalone-port=<port>] [--root-xlate=<path>]\n";
@@ -966,7 +968,7 @@ sub do_cgi
 				$ENV{SERVER_NAME} =~ s/:\d+$//;
 			$ENV{GATEWAY_INTERFACE} = "CGI/1.1";
 			$ENV{SERVER_PROTOCOL} = "HTTP/$request_version_major.$request_version_minor";
-			$ENV{SERVER_PORT} = ($request_headers->{HOST} =~ /:(\d+)$/) ? $1 : 80;
+			$ENV{SERVER_PORT} = ($request_headers->{HOST} =~ /:(\d+)$/) ? $1 : $assume_port;
 			$ENV{REQUEST_METHOD} = $method;
 			if($path_info ne "")
 				{

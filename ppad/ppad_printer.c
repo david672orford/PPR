@@ -2675,12 +2675,6 @@ int printer_ppdopts(const char *argv[])
 					ui_open = (char*)NULL;
 					}
 	
-				#if 0
-				/* If this is not an option UI block, we are not interested. */
-				if(!lmatch(ptr, "*Option") && !lmatch(ptr, "*InstalledMemory"))
-					continue;
-				#endif
-	
 				/* Truncate after the end of the translation string. */
 				ptr[strcspn(ptr, ":")] = '\0';
 	
@@ -2698,7 +2692,7 @@ int printer_ppdopts(const char *argv[])
 				continue;
 				}
 	
-			/* If this is open of the choices, */
+			/* If this is one of the choices, */
 			if(ui_open && strcspn(ppdline, "/ \t") == ui_open_mrlen && strncmp(ppdline, ui_open, ui_open_mrlen) == 0)
 				{
 				ptr = ppdline;

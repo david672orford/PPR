@@ -55,8 +55,9 @@ EECHO="?"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is
 # considered to be a configuration file and isn't deleted if the package is
-# simply removed, only if it is purged.
-test -x $HOMEDIR/bin/pprd || exit 0
+# simply removed, only if it is purged.)  Exit code 5 is required by LSB.
+# Debian policy supposedly requires exit code 0.
+test -x $HOMEDIR/bin/pprd || exit 5
 
 # Read default file such as is found on Debian systems.
 LPRSRV_STANDALONE_PORT=""
@@ -81,19 +82,23 @@ do_start ()
 	# This is the spooler daemon.
 	$HOMEDIR/bin/pprd && $EECHO "pprd \c"
 
-	# This is the new AppleTalk server daemon.
+	# This is the new AppleTalk server daemon.  We start it if it was built
+	# and installed.
 	if [ -x $HOMEDIR/bin/papd ]
 		then
 		$HOMEDIR/bin/papd && $EECHO "papd \c"
 		fi
 
-	# This is the old AppleTalk server daemon.
+	# This is the old AppleTalk server daemon.  We start it if it was built
+	# and installed and if it has a configuration file.  No configuration 
+	# file in installed by default.
 	if [ -x $HOMEDIR/bin/papsrv -a -r $CONFDIR/papsrv.conf ]
 		then
 		$HOMEDIR/bin/papsrv && $EECHO "papsrv \c"
 		fi
 
-	# Uncomment this if you want to run lprsrv in standalone mode.
+	# Define LPRSRV_STANDALONE_PORT in /etc/default/ppr if you want to run 
+	# lprsrv in standalone mode.
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
 		then
 		$HOMEDIR/lib/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
@@ -138,7 +143,7 @@ do_stop ()
 	}
 
 # This function prints the status of the deamon named in the first parameter.
-# If it is down, this is noted only if the second parameter is true.
+# If it is down, this is noted only if the second parameter is not zero.
 # A daemon is considered to be up if its .pid file exists and kill -0 works
 # on its PID.
 do_status_1()
@@ -156,6 +161,7 @@ do_status_1()
 		fi
 	}
 
+# Implementation of status subcommand
 do_status()
 	{
 	do_status_1 pprd 1
@@ -196,7 +202,8 @@ case "$1" in
 		do_status
 		;;
 
-	restart|reload)
+	# reload and force-reload should be made more gentle
+	restart|reload|force-reload)
 		do_stop
 		do_start
 		;;
@@ -212,9 +219,9 @@ case "$1" in
 		;;
 
 	*)
-	echo "Usage: ppr {start|stop|status|reload|restart|probe}"
-	exit 1
-	;;
+		echo "Usage: ppr {start|stop|status|reload|restart|probe}"
+		exit 2
+		;;
 esac
 
 exit 0

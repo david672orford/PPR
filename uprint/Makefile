@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 September 2004.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -39,32 +39,30 @@ PRIVATE_LIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT)
 
 PUBLIC_LIBS=$(SOCKLIBS) $(INTLLIBS)
 
-LINK_LIBS=$(PRIVATE_LIBS) $(PUBLIC_LIBS)
-
 #=== Build ==================================================================
 
 all: $(PROGS) $(SETUID_PROGS)
 
 uprint-lpr$(DOTEXE): uprint-lpr.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lpr.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 uprint-lpq$(DOTEXE): uprint-lpq.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lpq.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 uprint-lprm$(DOTEXE): uprint-lprm.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lprm.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 uprint-lpc$(DOTEXE): uprint-lpc.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lpc.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 uprint-lp$(DOTEXE): uprint-lp.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lp.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 uprint-cancel$(DOTEXE): uprint-cancel.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-cancel.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 uprint-lpstat$(DOTEXE): uprint-lpstat.$(OBJ) $(PRIVATE_LIBS)
-	$(LD) $(LDFLAGS) -o $@ uprint-lpstat.$(OBJ) $(LINK_LIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(PUBLIC_LIBS)
 
 #=== Install ================================================================
 

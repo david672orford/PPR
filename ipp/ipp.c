@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 December 2004.
+** Last modified 10 December 2004.
 */
 
 #include "before_system.h"
@@ -61,6 +61,7 @@
 #define FIFO_OPEN_FLAGS (O_WRONLY | O_APPEND)
 #endif
 
+/* Extract the URI of the requested printer from the request. */
 static const char *printer_uri(struct IPP *ipp)
 	{
 	ipp_attribute_t *p;
@@ -69,6 +70,9 @@ static const char *printer_uri(struct IPP *ipp)
 	return p->values[0].string.text;
 	}
 
+/* Extract the URI of the requested printer from the request,
+ * but return only the last path element.
+ */ 
 static const char *printer_uri_basename(struct IPP *ipp)
 	{
 	const char *p = printer_uri(ipp);
@@ -104,6 +108,7 @@ static void do_print_job(struct IPP *ipp)
 		if(pid == 0)		/* child */
 			{
 			char fd_str[10];
+			char for_whom[64];
 	
 			close(toppr_fds[1]);
 			close(jobid_fds[0]);
@@ -112,8 +117,14 @@ static void do_print_job(struct IPP *ipp)
 			dup2(2, 1);
 			
 			snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
+
+			snprintf(for_whom, sizeof(for_whom),
+				"%s@%s",
+				ipp->remote_user ? ipp->remote_user : "?", 
+				ipp->remote_addr ? ipp->remote_addr : "?"
+				);
 	
-			execl(PPR_PATH, PPR_PATH, "-d", printer, "--print-id-to-fd", fd_str, NULL);
+			execl(PPR_PATH, PPR_PATH, "-d", printer, "-f", for_whom, "--print-id-to-fd", fd_str, NULL);
 	
 			_exit(242);
 			}

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 10 December 2004.
 */
 
 /*
@@ -429,14 +429,14 @@ static const char *describe_orientation(int orientation)
 **		suppressed when there are no files in the queue.
 ====================================================================*/
 int custom_list(char *argv[],
-				void(*help)(void),		/* function for syntax error */
-				void(*banner)(void),	/* function to print column labels */
-				int(*item)(const struct QEntry *qentry,
-					const struct QFileEntry*,
-					const char *onprinter,
-					FILE *qstream),		/* file to read Media: from */
-				int suppress,			/* True if should suppress header on empty queue */
-				int arrested_drop_time)
+		void(*help)(void),		/* function for syntax error */
+		void(*banner)(void),	/* function to print column labels */
+		int(*item)(const struct QEntry *qentry,
+			const struct QFileEntry*,
+			const char *onprinter,
+			FILE *qstream),		/* file to read Media: from */
+		int suppress,			/* True if should suppress header on empty queue */
+		int arrested_drop_time)
 	{
 	int arg_index;
 	FILE *FIFO, *reply_file;
@@ -1001,7 +1001,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 			user = qfileentry->For;
 			user_len = strlen(qfileentry->For);
 			}
-		else											/* probably never invoked */
+		else							/* probably never invoked */
 			{
 			user = qfileentry->username;
 			user_len = strlen(user);
@@ -1080,8 +1080,8 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	{
 	const char *ptr;
 	int x;
-	if((ptr = qfileentry->lpqFileName) == (char*)NULL)
-		if((ptr = qfileentry->Title) == (char*)NULL)
+	if(!(ptr = qfileentry->lpqFileName))
+		if(!(ptr = qfileentry->Title))
 			ptr = "stdin";
 
 	for(x=0; ptr[x] && x < fixed_name_MAXLENGTH; x++)

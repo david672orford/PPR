@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 1 September 2004.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -42,7 +42,7 @@ ppr.conf.sample: make_ppr_conf_sample.sh
 	./make_ppr_conf_sample.sh
 
 getservbyname$(DOTEXE): getservbyname.$(OBJ)
-	$(CC) $(CFLAGS) -o getservbyname$(DOTEXE) getservbyname.$(OBJ) $(SOCKLIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS)
 
 #=== Install ================================================================
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -59,37 +59,24 @@ PPR_LIBS=PPOP.pm
 all: $(BUILT_BINS) $(BUILT_LIBS) $(UNBUILT_LIBS) $(PPR_LIBS)
 
 # A program which calls alert().
-OBJS1=alert.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-alert$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS)
+alert$(DOTEXE): alert.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Program to get a value from ppr.conf.
-OBJS2=ppr_conf_query.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-ppr_conf_query$(DOTEXE): $(OBJS2)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS2) $(INTLLIBS)
+ppr_conf_query$(DOTEXE): ppr_conf_query.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Program which prints PPR status message stream on stdout.
-OBJS3=tail_status.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-tail_status$(DOTEXE): $(OBJS3)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS3) $(INTLLIBS)
+tail_status$(DOTEXE): tail_status.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Wrapper for getsockbyname().
-OBJS4=getservbyname.$(OBJ)
-getservbyname$(DOTEXE): $(OBJS4)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS4) $(SOCKLIBS)
+getservbyname$(DOTEXE): getservbyname.$(OBJ)
+	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS)
 
 # A wrapper for mkstemp().
-OBJS5=mkstemp.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-mkstemp$(DOTEXE): $(OBJS5)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS5)
+mkstemp$(DOTEXE): mkstemp.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^
 
 # Signal values in Borne shell script form.
 signal.sh: signal_sh$(DOTEXE)

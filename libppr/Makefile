@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 May 2004.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -74,15 +74,15 @@ ali_str.$(OBJ): ali_str.c
 	$(CC) $(CFLAGS) $(ATALKFLAGS) -DATALKTYPE_$(ATALKTYPE) -c ali_str.c
 
 ../libppr.$(LIBEXT): $(LIBOBJS)
-	$(RMF) ../libppr.$(LIBEXT)
-	$(LIBCMD) ../libppr.$(LIBEXT) $(LIBOBJS)
-	$(RANLIB) ../libppr.$(LIBEXT)
+	$(RMF) $@
+	$(LIBCMD) $@ $^
+	$(RANLIB) $@
 
-query$(DOTEXE): query.c
-	$(CC) $(CFLAGS) -o query -DTEST query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+query$(DOTEXE): query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(CC) $(CFLAGS) -o $@ -DTEST $^
 
-query_wrapper$(DOTEXE): query_wrapper.c
-	$(CC) $(CFLAGS) -o query_wrapper -DTEST query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+query_wrapper$(DOTEXE): query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(CC) $(CFLAGS) -o $@ -DTEST $^
 
 #=== Install ================================================================
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 March 2003.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -42,11 +42,8 @@ all: $(PROGS)
 	( cd ghostscript; $(MAKE) )
 	( cd generic; $(MAKE) )
 
-OBJS1=\
-	indexppds.$(OBJ) \
-	../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-indexppds$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS) $(ZLIBLIBS)
+indexppds$(DOTEXE): indexppds.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 
 #=== Install ================================================================
 

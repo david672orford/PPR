@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 November 2004.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -45,23 +45,23 @@ all: $(ALL_ATALK)
 all-atalk: $(BIN_PROGS)
 
 # This is the server.
-OBJS1=papsrv.$(OBJ) \
-	papsrv_$(ATALKTYPE).$(OBJ) \
-	papsrv_query.$(OBJ) \
-	papsrv_conf.$(OBJ) \
-	papsrv_ppd_parse.$(OBJ) \
-	papsrv_authorize.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT) \
-	../libpprdb.$(LIBEXT)
-papsrv$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(LIB_LEX) $(ATALKLIBS) $(DBLIBS) $(ZLIBLIBS)
-	$(CHMOD) 6755 papsrv$(DOTEXE)
+papsrv$(DOTEXE): \
+		papsrv.$(OBJ) \
+		papsrv_$(ATALKTYPE).$(OBJ) \
+		papsrv_query.$(OBJ) \
+		papsrv_conf.$(OBJ) \
+		papsrv_ppd_parse.$(OBJ) \
+		papsrv_authorize.$(OBJ) \
+		../libppr.$(LIBEXT) \
+		../libgu.$(LIBEXT) \
+		../libpprdb.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIB_LEX) $(ATALKLIBS) $(DBLIBS) $(ZLIBLIBS)
+	$(CHMOD) 6755 $@
 
 # This one module might need extra flags to find the AppleTalk library 
 # include files.
 papsrv_$(ATALKTYPE).$(OBJ): papsrv_$(ATALKTYPE).c
-	$(CC) $(ATALKFLAGS) $(CFLAGS) -c papsrv_$(ATALKTYPE).c
+	$(CC) $(CFLAGS) $(ATALKFLAGS) -c $*.c
 
 # How to build the C source for the PPD file lexer.
 papsrv_ppd_parse.c: papsrv_ppd_parse.l

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 10 December 2004.
 */
 
 /*
@@ -54,42 +54,187 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "pprd.h"
 #include "pprd.auto_h"
 
+/*
+ * This is the folder structure.  We have deliberately made
+ * it the same as that used by CUPS as some buggy software
+ * makes unwarranted assumptions.
+ */
+#define DIR_GROUPS "classes"
+#define DIR_PRINTERS "printers"
+#define DIR_GROUP_JOBS "jobs"
+#define DIR_PRINTER_JOBS "jobs"
+
 /* IPP_GET_PRINTER_ATTRIBUTES */
 static void ipp_get_printer_attributes(struct IPP *ipp)
     {
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", "http://localhost:15010/cgi-bin/ipp/test");
-	ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug");
-	ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs", TRUE);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain");
+	ipp_attribute_t *printer_uri;
+	const char *printer_uri_value;
+
+	if(!(printer_uri = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, "printer-uri")))
+		{
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+	printer_uri_value = printer_uri->values[0].string.text;
+		
+	lock();
+
+	do	{
+		char *p;
+		if((p = strstr(printer_uri_value, "/"DIR_GROUPS"/")))
+			{
+			const char *queue_name = p + sizeof("/"DIR_GROUPS"/") - 1;
+			int i;
+	
+			for(i=0; group_count; i++)
+				{
+				if(strcmp(groups[i].name, queue_name) == 0)
+					break;
+				}
+	
+			if(i == group_count)
+				{
+				ipp->response_code = IPP_NOT_FOUND;
+				break;
+				}
+
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri",
+				"/%s/%s",
+				DIR_GROUPS,
+				queue_name
+				);
+
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4);
+			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug", FALSE); */
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs",
+				groups[i].accepting
+				);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain", FALSE);
+			}
+		else if((p = strstr(printer_uri_value, "/"DIR_PRINTERS"/")))
+			{
+			const char *queue_name = p + sizeof("/"DIR_PRINTERS"/") - 1;
+			int i;
+	
+			for(i=0; group_count; i++)
+				{
+				if(strcmp(groups[i].name, queue_name) == 0)
+					break;
+				}
+	
+			if(i == group_count)
+				{
+				ipp->response_code = IPP_NOT_FOUND;
+				break;
+				}
+
+			ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri",
+				"/%s/%s",
+				DIR_PRINTERS,
+				queue_name
+				);
+	
+			/* ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state", 4); */
+			/* ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "printer-state-reasons", "glug", FALSE); */
+			ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+				"printer-is-accepting-jobs",
+				printers[i].accepting
+				);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE, "document-format-supported", "text/plain", FALSE);
+			}
+		else
+			{
+			ipp->response_code = IPP_NOT_FOUND;
+			}
+		} while(FALSE);
+
+	unlock();
     }
 
 /* IPP_GET_JOBS */
 static void ipp_get_jobs(struct IPP *ipp)
 	{
+	const char function[] = "ipp_get_jobs";
 	int i;
+	char fname[MAX_PPR_PATH];
+	FILE *qfile;
+	struct QFileEntry qfileentry;
 
 	lock();
 
+	/* Loop over the queue entries. */
 	for(i=0; i < queue_entries; i++)
 		{
-		if(queue[i].destnode_id != nodeid_local())
+		if(queue[i].destnode_id != nodeid_local())		/* delete in 2.x */
 			continue;
 
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", destid_to_name(queue[i].destnode_id, queue[i].destid));
+		/* Read and parse the queue file. */
+		ppr_fnamef(fname, "%s/%s:%s-%d.%d(%s)", QUEUEDIR,
+			nodeid_to_name(queue[i].destnode_id),
+			destid_to_name(queue[i].destnode_id, queue[i].destid),
+			queue[i].id,
+			queue[i].subid,
+			nodeid_to_name(queue[i].homenode_id));
+		if(!(qfile = fopen(fname, "r")))
+			{
+			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
+			continue;
+			}
+		if(read_struct_QFileEntry(qfile, &qfileentry) == -1)
+			{
+			error("%s(): invalid queue file: %s", function, fname);
+			continue;
+			}
+
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", queue[i].id);
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", queue[i].id);
-#if 0
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", "glug");
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", "chappell");
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", i + 100);
-#endif
+		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-printer-uri", 
+				"/%s/%s",
+				destid_local_is_group(queue[i].destid) ? DIR_GROUPS : DIR_PRINTERS,
+				destid_to_name(queue[i].destnode_id, queue[i].destid)
+				);
+		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri",
+				"/%s/%d",
+				destid_local_is_group(queue[i].destid) ? DIR_GROUP_JOBS : DIR_PRINTER_JOBS,
+				queue[i].id
+				);
+
+		/* Derived from "ppop lpq" */
+		{
+		const char *ptr;
+		if(!(ptr = qfileentry.lpqFileName))
+			ptr = qfileentry.Title;
+		if(ptr)
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
+		}
+
+		/* Derived from "ppop lpq" */
+		{
+		const char *user;
+		if(qfileentry.proxy_for)
+			user = qfileentry.proxy_for;
+		else if(qfileentry.For)				/* probably never false */
+			user = qfileentry.For;
+		else								/* probably never invoked */
+			user = qfileentry.username;
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(user), TRUE);
+		}
+
+		/* Derived from "ppop lpq" */
+		{
+		long int bytes = qfileentry.PassThruPDL ? qfileentry.attr.input_bytes : qfileentry.attr.postscript_bytes;
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
+		}
+
 		ipp_add_end(ipp, IPP_TAG_JOB);
+
+		destroy_struct_QFileEntry(&qfileentry);
 		}
 
 	unlock();
@@ -102,8 +247,16 @@ static void cups_get_printers(struct IPP *ipp)
 	lock();
 	for(i=0; i < printer_count; i++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", printers[i].name);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", printers[i].name);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", printers[i].name, FALSE);
+		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", 
+			"/%s/%s",
+			DIR_PRINTERS,
+			printers[i].name
+			);
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+			"printer-is-accepting-jobs",
+			printers[i].accepting
+			);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	unlock();
@@ -117,11 +270,19 @@ static void cups_get_classes(struct IPP *ipp)
 	lock();
 	for(i=0; i < group_count; i++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", groups[i].name);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", groups[i].name);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", groups[i].name, FALSE);
+		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "printer-uri", 
+			"/%s/%s",
+			DIR_GROUPS,
+			groups[i].name
+			);
+		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
+			"printer-is-accepting-jobs",
+			groups[i].accepting
+			);
 		for(i2=0; i2 < groups[i].members; i2++)
 			members[i2] = printers[groups[i].printers[i2]].name;
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members);
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members, FALSE);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	unlock();
@@ -203,8 +364,8 @@ void ipp_dispatch(const char command[])
 		}
 		
 		/* For now, English is all we are capable of. */
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8");
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en");
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "natural-language", "en", FALSE);
 
 		debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
 		switch(ipp->operation_id)
@@ -227,7 +388,7 @@ void ipp_dispatch(const char command[])
 			}
 
 		if(ipp->response_code == IPP_OK)
-			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok");
+			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok", FALSE);
 
 		ipp_send_reply(ipp, FALSE);
 		}

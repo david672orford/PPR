@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 June 2004.
+# Last modified 10 December 2004.
 #
 
 include ../Makefile.conf
@@ -40,18 +40,18 @@ CONF_DATA_2=media.german
 
 all: $(BIN_PROGS)
 
-OBJS1=ppad.$(OBJ) \
-	ppad_printer.$(OBJ) \
-	ppad_media.$(OBJ) \
-	ppad_group.$(OBJ) \
-	ppad_conf.$(OBJ) \
-	ppad_util.$(OBJ) \
-	ppad_alias.$(OBJ) \
-	ppad_ppd.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-ppad$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS) $(ZLIBLIBS)
+ppad$(DOTEXE): \
+		ppad.$(OBJ) \
+		ppad_printer.$(OBJ) \
+		ppad_media.$(OBJ) \
+		ppad_group.$(OBJ) \
+		ppad_conf.$(OBJ) \
+		ppad_util.$(OBJ) \
+		ppad_alias.$(OBJ) \
+		ppad_ppd.$(OBJ) \
+		../libppr.$(LIBEXT) \
+		../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 	chmod 4755 $@
 
 #=== Install ================================================================
