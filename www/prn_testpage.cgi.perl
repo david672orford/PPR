@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 April 2002.
+# Last modified 15 April 2002.
 #
 
 use lib "?";
@@ -89,18 +89,18 @@ $addprn_wizard_table = [
 
 		my $options = "";
 
-		my $pagesize = cgi_data_peek("pagesize", "Letter");
+		my $pagesize = cgi_data_move("pagesize", "Letter");
 		$pagesize =~ /^[a-zA-Z0-9]+$/ || die "$pagesize is not a valid pagesize";
 		$options .= " --pagesize=$pagesize";
 
-		my $image = cgi_data_peek("image", "");
-		if($image eq "Ghostscript Tiger")
+		my $image = cgi_data_move("image", "");
+		if($image eq "Ghostscript Golfer")
 		    {
-		    $options .= " --eps-file=$SHAREDIR/gs/golfer.ps --eps-scale=0.25";
+		    $options .= " --eps-file=$SHAREDIR/gs/golfer.ps --eps-scale=0.40";
 		    }
-		elsif($image eq "Ghostscript Golfer")
+		elsif($image eq "Ghostscript Tiger")
 		    {
-		    $options .= " --eps-file=$SHAREDIR/gs/tiger.ps --eps-scale=0.25";
+		    $options .= " --eps-file=$SHAREDIR/gs/tiger.ps --eps-scale=0.40";
 		    }
 
 		if(cgi_data_move("test_grayscale", 0))
