@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 29 March 2005.
 */
 
 /*
@@ -365,7 +365,12 @@ static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean e
 		if(len == 0)
 			{
 			if(! empty_ok)
-				fatal(PPREXIT_OTHERERR, _("%s%s is empty"), name, is_argument ? _(" argument") : "");
+				{
+				if(is_argument)
+					fatal(PPREXIT_OTHERERR, _("%s argument is empty"), name);
+				else
+					fatal(PPREXIT_OTHERERR, _("%s is empty"), name);
+				}
 			}
 		else
 			{

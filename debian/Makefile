@@ -1,8 +1,10 @@
+# mouse:~ppr/src/debian/Makefile
+
+export PWD=`/bin/pwd`
+
 all:
-	#( cd .. && dpkg-buildpackage -rfakeroot )
-	debbuild
+	debuild binary
 
 clean:
-	debbuild clean
-	rm -rf conffiles
+	debuild clean
 	

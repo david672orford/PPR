@@ -34,12 +34,8 @@
 # directories necessary to build and install PPR.
 #=============================================================================
 
-# Blank the list of files for RPM.
-fileslist="`dirname $0`/../z_install_begin/installed_files_list"
-rm -f $fileslist
-
-# If global.mk is global.mk.unconfigured it won't
-# contain a definition of LIBDIR.
+# If Makefile.conf is Makefile.conf.unconfigured, it won't contain a 
+# definition of LIBDIR.
 if [ -z "$LIBDIR" ]
 	then
 	echo "You haven't run Configure yet."
@@ -62,12 +58,12 @@ directory ()
 	echo "$RPM_BUILD_ROOT$dir"
 	if [ ! -d "$RPM_BUILD_ROOT$dir" ]
 		then
-		mkdir "$RPM_BUILD_ROOT$dir" || exit 1
+		mkdir -p "$RPM_BUILD_ROOT$dir" || exit 1
 		fi
 	chown $USER_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 	chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 	chmod $perms "$RPM_BUILD_ROOT$dir"
-	echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$dir\"">>$fileslist
+	echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$dir\"">>installed_files_list
 	}
 
 #
@@ -75,21 +71,13 @@ directory ()
 # owner and group if we are building an RPM package as a user other than
 # root or $USER_PPR.
 #
-for dir in $CONFDIR $LIBDIR $SHAREDIR $VAR_SPOOL_PPR
-	do
-	if [ ! -d $RPM_BUILD_ROOT$dir ]
-		then
-		mkdir -p $RPM_BUILD_ROOT$dir
-		fi
-	chown $USER_PPR $RPM_BUILD_ROOT$dir 2>/dev/null &&
-		chgrp $GROUP_PPR $RPM_BUILD_ROOT$dir 2>/dev/null
-	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
-	done 
-
-echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$LIBDIR\"">>$fileslist
-echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$SHAREDIR\"">>$fileslist
-echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$CONFDIR\"">>$fileslist
-echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$VAR_SPOOL_PPR\"">>$fileslist
+directory $CONFDIR 755
+directory $LIBDIR 755
+directory $SHAREDIR 755
+directory $VAR_SPOOL_PPR 755
+directory $VAR_LIB_PPR 755
+directory $RUNDIR 755
+directory $LOGDIR 775 		#group write
 
 #
 # We have to be more careful with this one since it is probably the 
@@ -97,23 +85,20 @@ echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$VAR_SPOOL_PPR\"">>$fileslist
 # permissions.
 #
 # Yes, the test does check the real system, not the $RPM_BUILD_ROOT!
+# That is the way it should be.
 #
 if [ ! -d $TEMPDIR ]
 	then
-	mkdir -p $RPM_BUILD_ROOT$TEMPDIR 
-	chown $USER_PPR $RPM_BUILD_ROOT$TEMPDIR
-	chgrp $GROUP_PPR $RPM_BUILD_ROOT$TEMPDIR
-	chmod 755 $RPM_BUILD_ROOT$dir || exit 1
-	echo "%attr(-,$USER_PPR,$GROUP_PPR) %dir \"$TEMPDIR\"">>$fileslist
+	directory $TEMPDIR 755
 	fi
 
 # It is necessary to create empty configuration
 # directories.
-directory $CONFDIR/printers 755
-directory $CONFDIR/groups 755
-directory $CONFDIR/aliases 755
-directory $CONFDIR/mounted 755
-directory $CONFDIR/acl 755
+directory $PRCONF 755
+directory $GRCONF 755
+directory $ALIASCONF 755
+directory $MOUNTEDDIR 755
+directory $ACLDIR 755
 
 # Make the directories for the resource store.  Notice
 # that we do not make a directory for fonts since they
@@ -133,28 +118,19 @@ directory $LIBDIR/fixup 755
 directory $LIBDIR/editps 755
 
 # Architecture indendent stuff
-directory $SHAREDIR/PPDFiles 755
+directory $PPDDIR 755
 directory $SHAREDIR/fonts 755
-directory $SHAREDIR/man 755
-directory $SHAREDIR/lib 755
+directory $MANDIR 755
 directory $SHAREDIR/locale 755
 
 # Make the directories in the spool area.
 directory $VAR_SPOOL_PPR/queue 700
 directory $VAR_SPOOL_PPR/jobs 700
-directory $VAR_SPOOL_PPR/run 755
 directory $VAR_SPOOL_PPR/printers 755
 directory $VAR_SPOOL_PPR/printers/alerts 755
 directory $VAR_SPOOL_PPR/printers/status 755
 directory $VAR_SPOOL_PPR/printers/addr_cache 755
 directory $VAR_SPOOL_PPR/logs 775		# <-- group can write
-directory $VAR_SPOOL_PPR/cache 755
-directory $VAR_SPOOL_PPR/cache/font 755
-directory $VAR_SPOOL_PPR/cache/procset 755
-# The next one is commented out because to many drivers are too ill-behaved
-# and generate multiple files with the same name.
-#directory $VAR_SPOOL_PPR/cache/file
-directory $VAR_SPOOL_PPR/cache/encoding 755
 directory $VAR_SPOOL_PPR/dvips 755
 directory $VAR_SPOOL_PPR/drivers 755
 directory $VAR_SPOOL_PPR/drivers/W32X86 755		# MS-Windows 95/98
@@ -168,6 +144,6 @@ directory $VAR_SPOOL_PPR/followme.db 770		# <-- group can write
 
 # Make the directories for web documentation and managment tools
 directory $CGI_BIN 755
-directory $SHAREDIR/www 755
+directory $WWWDIR 755
 
 exit 0

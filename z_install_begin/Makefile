@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 March 2005.
+# Last modified 10 March 2005.
 #
 
 include ../Makefile.conf
@@ -41,6 +41,7 @@ all: $(ALL)
 #=== Install ================================================================
 
 install: $(ALL)
+	$(RMF) installed_files_list conffiles
 	[ -z "$(RPM_BUILD_ROOT)" ] && ./install_create_accounts.sh || true
 	./install_create_dirs.sh
 
@@ -52,7 +53,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(ALL) installed_files_list
+	$(RMF) *.$(OBJ) $(BACKUPS) $(ALL) installed_files_list conffiles
 
 # end of file
 

@@ -440,7 +440,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 				for(x=1; argv[x]; x++)	/* Is this the same as one we are adding? */
 					{
 					if(strcmp(ptr, argv[x]) == 0)
-						gu_Throw(_("%d Printer \"%s\" is already a member of \"%s\".\n"), EXIT_ALREADY, argv[x], group);
+						gu_CodeThrow(EXIT_ALREADY, _("Printer \"%s\" is already a member of \"%s\".\n"), argv[x], group);
 					queueinfo_add_printer(qobj, ptr);
 					count++;
 					}
@@ -471,7 +471,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 
 		/* See if adding our printer will make the group too big. */
 		if(count > MAX_GROUPSIZE)
-			gu_Throw(_("%d Group \"%s\" would have %d members, only %d are allowed.\n"), EXIT_OVERFLOW, group, count, MAX_GROUPSIZE);
+			gu_CodeThrow(EXIT_OVERFLOW, _("Group \"%s\" would have %d members, only %d are allowed.\n"), group, count, MAX_GROUPSIZE);
 
 		/* Commit the changes. */
 		confclose();

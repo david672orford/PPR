@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 March 2005.
+** Last modified 29 March 2005.
 */
 
 #include "config.h"
@@ -56,7 +56,7 @@ static void _copy(const char fname[], char *tline, int tline_len, FILE *cache_fi
 		printer_puts(tline);
 		ne = strcmp(tline,stop);
 		if(!fgets(tline,tline_len,cache_file))
-			fatal(EXIT_PRNERR_NORETRY, _("Cached Mac TT font \"%s\" has no \"%.*s\"."), fname, (int)strcspn(stop,"\n"), stop);
+			fatal(EXIT_PRNERR_NORETRY, _("Dual-type font \"%s\" has no \"%.*s\"."), fname, (int)strcspn(stop,"\n"), stop);
 		} while( ne );
 
 	} /* end of _copy() */
@@ -68,7 +68,7 @@ static void _discard(const char fname[], char *tline, int tline_len, FILE *cache
 	do	{
 		ne = strcmp(tline,stop);
 		if(!fgets(tline, tline_len, cache_file))
-			fatal(EXIT_PRNERR_NORETRY, _("Cached Mac TT font \"%s\" has no \"%.*s\"."), fname, (int)strcspn(stop,"\n"), stop);
+			fatal(EXIT_PRNERR_NORETRY, _("Dual-type font \"%s\" has no \"%.*s\"."), fname, (int)strcspn(stop,"\n"), stop);
 		} while( ne );
 
 	} /* end of _discard() */
@@ -153,7 +153,7 @@ void send_font_mactt(const char filename[])
 
 		/* Sanity check, make sure the sfntdef section is next. */
 		if(strcmp(tline, "%beginsfntdef\n"))
-			fatal(EXIT_PRNERR_NORETRY, _("Cached Mac TT font \"%s\" has no sfntdef section."), filename);
+			fatal(EXIT_PRNERR_NORETRY, _("Dual-Type font \"%s\" has no sfntdef section."), filename);
 
 		/* Copy or discard the "sfntdef" section */
 		if(type42_sent)

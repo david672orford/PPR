@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
-# -*- makefile -*-
+# mouse:~ppr/src/debian/rules
+# Last modified 10 March 2005.
+
 # Sample debian/rules that uses debhelper.
 # GNU copyright 1997 to 1999 by Joey Hess.
 #
@@ -55,7 +57,7 @@ clean:
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
 
-	dh_clean 
+	dh_clean
 
 install: install-indep install-arch
 install-indep:
@@ -95,35 +97,17 @@ binary-common:
 	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate	
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
 	dh_installinit
 	dh_installcron
-#	dh_installinfo
 	dh_installman
 	dh_link
 	dh_strip
 	dh_compress 
-	dh_fixperms \
-		-X pprd \
-		-X ppr \
-		-X ppop \
-		-X ppad \
-		-X ppuser \
-		-X papd \
-		-X ppr2samba \
-		-X ppr-xgrant \
-		-X ppr-followme \
-		-X ppr-passwd \
-		-X ppr-index \
-		-X lpr \
-		-X ipp \
-		-X query_wrapper \
-		-X uprint_rfc1179 \
-		-X sambaprint 
-#	dh_perl
-#	dh_python
+	# We can't us dh_fixperms because it undoes all of our careful setuid settings
+	# and closes off the spool directories!  On the other hand, we don't want to
+	# ignore the Debian policy entirely.  This is a compromise.
+	find debian/ppr/usr debian/ppr-doc ! -perm +6000 -print0 | xargs -0 chown root:root
+	dh_perl
 	dh_makeshlibs
 	dh_installdeb
 	dh_shlibdeps

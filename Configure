@@ -116,6 +116,7 @@ opt_bindir=""
 opt_libdir=""
 opt_datadir=""
 opt_spooldir=""
+opt_rundir=""
 opt_prompt_paths=1
 opt_with_gcc=1
 opt_prompt_compiler=1
@@ -154,6 +155,10 @@ for opt in $*
     	    ;;
 	--spooldir=* )
 	    opt_spooldir=`echo $opt | cut -d= -f2`
+	    opt_prompt_paths=0
+    	    ;;
+	--rundir=* )
+	    opt_rundir=`echo $opt | cut -d= -f2`
 	    opt_prompt_paths=0
     	    ;;
 	--x11bindir=* )
@@ -227,6 +232,7 @@ opt_bindir=${opt_bindir:-$opt_prefix/bin}
 opt_libdir=${opt_libdir:-$opt_prefix/lib}
 opt_datadir=${opt_datadir:-$opt_prefix/share}
 opt_spooldir=${opt_spooldir:-/var/spool}
+opt_rundir=${opt_rundir:-/var/run/ppr}
 opt_x11bindir=${opt_x11bindir:-/usr/bin/X11}
 
 #
@@ -390,75 +396,22 @@ if [ "$NATIVE_CC" = "yes" ]
 #
 # Create a list of default install locations.
 #
+CONFDIR=$opt_sysconfdir/ppr
 LIBDIR=$opt_libdir/ppr
 SHAREDIR=$opt_datadir/ppr
-CONFDIR=$opt_sysconfdir/ppr
 VAR_SPOOL_PPR=$opt_spooldir/ppr
+VAR_LIB_PPR=/var/lib/ppr
+RUNDIR=$opt_rundir
 TEMPDIR=/tmp
 SYSBINDIR=$opt_bindir
 XWINBINDIR=$opt_x11bindir
-
-#
-# Ask the user if he would like to change any of the PPR
-# install directories.
-#
-if [ $opt_prompt_paths -ne 0 ]
-then
-
-echo
-echo "Please choose where to install PPR.  It is suggested that"
-echo "you accept the defaults as all the documentation assumes"
-echo "that you are using the default directories."
-echo
-
-$EECHO "PPR lib directory [$LIBDIR]: \c"
-read answer
-if [ -n "$answer" ]; then LIBDIR="$answer"; fi
-echo
-
-$EECHO "PPR share directory [$SHAREDIR]: \c"
-read answer
-if [ -n "$answer" ]; then SHAREDIR="$answer"; fi
-echo
-
-$EECHO "PPR configuration directory [$CONFDIR]: \c"
-read answer
-if [ -n "$answer" ]; then CONFDIR="$answer"; fi
-echo
-
-$EECHO "PPR spool files directory [$VAR_SPOOL_PPR]: \c"
-read answer
-if [ -n "$answer" ]; then VAR_SPOOL_PPR="$answer"; fi
-echo
-
-$EECHO "PPR temporary files directory [$TEMPDIR]: \c"
-read answer
-if [ -n "$answer" ]; then TEMPDIR="$answer"; fi
-echo
-
-$EECHO "Directory for symbolic links to PPR binaries [$SYSBINDIR]: \c"
-read answer
-if [ -n "$answer" ]; then SYSBINDIR="$answer"; fi
-echo
-
-echo
-echo "You must indicate the directory where X-Windows binaries such as"
-echo "xterm may be found.  It is recomended that if the default is not"
-echo "correct, you accept it anyway and make a symbolic link from"
-echo "your X-Windows bin directory, (/usr/openwin/bin, /usr/X11R6/bin,"
-echo "etc.) to /usr/bin/X11."
-echo
-$EECHO "X-Windows bin [$XWINBINDIR]: \c"
-read answer
-if [ -n "$answer" ]; then XWINBINDIR=$answer; fi
-echo
-
-fi
 
 echo "\$CONFDIR=$CONFDIR"
 echo "\$LIBDIR=$LIBDIR"
 echo "\$SHAREDIR=$SHAREDIR"
 echo "\$VAR_SPOOL_PPR=$VAR_SPOOL_PPR"
+echo "\$VAR_LIB_PPR=$VAR_LIB_PPR"
+echo "\$RUNDIR=$RUNDIR"
 echo "\$TEMPDIR=$TEMPDIR"
 echo "\$SYSBINDIR=$SYSBINDIR"
 echo "\$XWINBINDIR=$XWINBINDIR"
@@ -944,6 +897,9 @@ export CONFDIR=$CONFDIR
 # Directory for spool files.
 export VAR_SPOOL_PPR=$VAR_SPOOL_PPR
 
+# Directory for PID files and such.
+export RUNDIR=$RUNDIR
+
 # Directory for temporary files.
 export TEMPDIR=$TEMPDIR
 
@@ -986,7 +942,6 @@ export MOUNTEDDIR=$(CONFDIR)/mounted
 #----------------------------------------
 # Subdirectories
 #----------------------------------------
-export RUNDIR=$(VAR_SPOOL_PPR)/run
 export VAR_PRINTERS=$(VAR_SPOOL_PPR)/printers
 export BINDIR=$(LIBDIR)/bin
 

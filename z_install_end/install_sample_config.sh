@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_end/install_sample_to_conf.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 August 2003.
+# Last modified 10 March 2005.
 #
 
 . ../makeprogs/paths.sh
@@ -53,7 +53,7 @@ for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
 #===========================================================================
 echo "Making missing configuration files from the samples..."
 
-for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
+for f in ppr.conf uprint-remote.conf lprsrv.conf
 	do
 	./puts "  $f..."
 	if [ ! -f $RPM_BUILD_ROOT$CONFDIR/$f ]

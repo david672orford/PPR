@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 29 March 2005.
 */
 
 #include "filter_dotmatrix.h"
@@ -73,7 +73,7 @@ void rewind_input(void)
 	bytes_left=0;
 	eof=FALSE;
 	if(lseek(0,(off_t)0,SEEK_SET) == -1)
-		gu_Throw(_("%s(): lseek() failed, errno=%d (%s)"), "rewind_input", errno, gu_strerror(errno));
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), "rewind_input", "lseek", errno, gu_strerror(errno));
 	} /* end of rewind_input() */
 
 /* end of file */

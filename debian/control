@@ -2,12 +2,12 @@ Source: ppr
 Section: net
 Priority: optional
 Maintainer: David Chappell <David.Chappell@trincoll.edu>
-Build-Depends: debhelper (>= 4.0.0)
+Build-Depends: debhelper (>= 4.0.0) libgdbm-dev tdb-dev 
 Standards-Version: 3.6.0
 
 Package: ppr
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${perl:Depends}
 Description: A print spooler for PostScript
  PPR is a print spooler for PostScript printing.  It can print either to
  printers with PostScript interpreters built-in or thru Ghostscript.

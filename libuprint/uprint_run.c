@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 29 March 2005.
 */
 
 #include "config.h"
@@ -116,7 +116,7 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 
 		execv(exepath, (char *const *)argv); /* it's OK, execv() won't modify it */
 
-		fprintf(stderr, _("%s(): %s() of \"%s\" failed, errno=%d (%s)\n"), function, "execv", exepath, errno, gu_strerror(errno));
+		fprintf(stderr, _("%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"), function, "execv", exepath, errno, gu_strerror(errno));
 		fputc('\n',stderr);
 		exit(242);
 		}

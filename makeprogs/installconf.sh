@@ -76,7 +76,7 @@ while [ "$1" != "" ]
 		# (Is the above wrong?  It sure looks like we have quote marks here!)
 		echo "%attr(-,$USER,$GROUP) %$TYPE \"$1\"" >>`dirname $0`/../z_install_begin/installed_files_list
 
-		echo "$1" >>`dirname $0`/../debian/conffiles
+		echo "$1" >>`dirname $0`/../z_install_begin/conffiles
 		fi
 	shift
 	done
