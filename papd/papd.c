@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -42,7 +42,6 @@
 #include <sys/wait.h>
 #include <ctype.h>
 #include <stdlib.h>
-#include <setjmp.h>
 #include <signal.h>
 #include <stdarg.h>
 #ifdef INTERNATIONAL
@@ -63,7 +62,6 @@ char line[257];
 int line_len;
 
 /* Other globals: */
-static struct ADV *adv_for_fatal = NULL; 
 pid_t master_pid = (pid_t)0;
 gu_boolean opt_foreground = FALSE;
 int children = 0;						/* The number of our children living. (master daemon) */
@@ -74,10 +72,9 @@ static const char *log_file_name = LOGFILE;
 static const char *pid_file_name = PIDFILE;
 
 /*
-** This function is called by fatal(), debug(),
-** and libppr_throw() below.
+** This function is called by fatal() and debug().
 */
-static void log(const char category[], const char atfunction[], const char format[], va_list va)
+static void log(const char category[], const char format[], va_list va)
 	{
 	FILE *file;
 	pid_t mypid;
@@ -91,8 +88,6 @@ static void log(const char category[], const char atfunction[], const char forma
 	mypid = getpid();
 	if(master_pid != 0 && master_pid != mypid)
 		fprintf(file, "child %ld: ", (long)mypid);
-	if(atfunction)
-		fprintf(file, "%s(): ", atfunction);
 	vfprintf(file, format, va);
 	fputc('\n', file);
 
@@ -113,63 +108,9 @@ void debug(const char string[], ... )
 	{
 	va_list va;
 	va_start(va,string);
-	log("DEBUG", NULL, string, va);
+	log("DEBUG", string, va);
 	va_end(va);
 	} /* end of debug() */
-
-/*
-** Fatal error function.
-**
-** Print a message in the log file, remove the advertised names, and exit.
-*/
-void fatal(int rval, const char string[], ... )
-	{
-	va_list va;
-
-	va_start(va, string);
-	log("FATAL", NULL, string, va);
-	va_end(va);
-
-	/* Master daemon cleanup: */
-	if(master_pid == 0 || master_pid == getpid())
-		{
-		if(adv_for_fatal)
-			{
-			int i;
-			for(i = 0; adv_for_fatal[i].adv_type != ADV_LAST; i++)
-				{
-				if(adv_for_fatal[i].adv_type == ADV_ACTIVE)
-					at_remove_name(adv_for_fatal[i].PAPname, adv_for_fatal[i].fd);
-				}
-			}
-		
-		unlink(pid_file_name);			/* remove file with our pid in it */
-
-		debug("Shutdown complete");		/* <-- and let those who are waiting know. */
-		}
-
-	/* Daemon's child cleanup: */
-	else
-		{
-		printjob_abort();
-		}
-
-	/* Exit with the code we were told to exit with. */
-	exit(rval);
-	} /* end of fatal() */
-
-/*
-** This is for libppr exceptions.  It overrides the version
-** in libppr.a.
-*/
-void libppr_throw(int exception_type, const char exception_function[], const char format[], ...)
-	{
-	va_list va;
-	va_start(va, format);
-	log("libppr exception", exception_function, format, va);
-	va_end(va);
-	exit(1);
-	} /* end of libppr_throw() */
 
 /*
 ** Return a copy of a string with control characters
@@ -204,13 +145,13 @@ char *debug_string(char *s)
 ** signals are received before the server exits, they have no effect other
 ** other than to provide a peevish message in the log.
 */
+static volatile gu_boolean keep_running = TRUE;
 static void termination_handler(int sig)
 	{
 	static int count = 0;
 	if(count++ > 0)
 		debug("Signal \"%s\" received, but shutdown already in progress", gu_strsignal(sig));
-	else
-		fatal(1, "Received signal \"%s\", shutting down", gu_strsignal(sig));
+	keep_running = FALSE;
 	} /* end of termination_handler() */
 
 /*
@@ -341,11 +282,11 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	{
 	const char function[] = "connexion_callback";
 	char *cptr;
-	struct QUEUE_CONFIG queue_config;
+	void *queue_config;
 
 	/* Load more queue configuration information so we can answer queries. */
-	if(conf_load_queue_config(this_adv, &queue_config) == -1)
-		fatal(1, "%s(): can't load queue \"%s\"", function, this_adv->PPRname);
+	if(!(queue_config = queueinfo_new(this_adv->queue_type, this_adv->PPRname)))
+		gu_Throw("%s(): can't information about queue \"%s\"", function, this_adv->PPRname);
 
 	/* We don't want to use our parent's SIGCHLD handler. */
 	signal_restarting(SIGCHLD, printjob_reapchild);
@@ -371,7 +312,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 			DODEBUG_LOOP(("start of query: %s", line));
 
 			/* Note that query may be for login. */
-			answer_query(sesfd, &queue_config);
+			answer_query(sesfd, queue_config);
 
 			DODEBUG_LOOP(("query processing complete"));
 			}
@@ -386,6 +327,8 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 			}
 		}
 
+    queueinfo_delete(queue_config);
+	
 	DODEBUG_LOOP(("child daemon done"));
 	} /* end of connexion_callback() */
 
@@ -409,6 +352,7 @@ static void help(FILE *out)
 	fprintf(out, _("Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"), myname);
 	}
 
+/* Send the specified signal to an already running instance of this daemon. */
 static int do_signal(int signal_number)
 	{
 	FILE *f;
@@ -442,7 +386,7 @@ static int do_signal(int signal_number)
 	return 0;
 	}
 
-
+/* Send SIGTERM to the daemon and waits for the papd.pid file to disappear. */
 static int do_stop(void)
 	{
 	int ret;
@@ -465,32 +409,15 @@ static int do_stop(void)
 	return 0;
 	}
 
-static int do_reload(void)
-	{
-	return do_signal(SIGHUP);
-	}
-
-int main(int argc, char *argv[])
-	{
-	struct ADV *adv = NULL;
-	int optchar;
-	struct gu_getopt_state getopt_state;
-
-	/* Initialize internation messages library. */
-	#ifdef INTERNATIONAL
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE_PAPD, LOCALEDIR);
-	textdomain(PACKAGE_PAPD);
-	#endif
-
-	/*
-	** If this program was invoked with excessive permissions (i.e. as root),
-	** renounce them now.  This program should be setuid "ppr" and setgid "ppr".
-	**
-	** We use fputs() and exit() here because fatal() would put the
-	** message into the log file which is not where we want it.  Besides,
-	** it could create a log file with wrong permissions.
-	*/
+/*
+** If this program was invoked with excessive permissions (i.e. as root),
+** renounce them now.  This program should be setuid "ppr" and setgid "ppr".
+**
+** We use fputs() and return here because fatal() would put the
+** message into the log file which is not where we want it.  Besides,
+** it could create a log file with wrong permissions.
+*/
+static int drop_privs(void)
 	{
 	uid_t uid, euid;
 	gid_t gid, egid;
@@ -504,8 +431,8 @@ int main(int argc, char *argv[])
 	   being run by root.  We refuse to tolerate either! */
 	if(euid == 0)
 		{
-		fprintf(stderr, "%s: this program must be setuid %s\n", USER_PPR);
-		exit(EXIT_INTERNAL);
+		fprintf(stderr, "%s: this program must be setuid %s\n", myname, USER_PPR);
+		return(EXIT_INTERNAL);
 		}
 
 	if(uid == 0)				/* if user is root */
@@ -517,21 +444,21 @@ int main(int argc, char *argv[])
 		if(setregid(egid, egid) == -1)
 			{
 			fprintf(stderr, "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)egid, (long)egid, errno, gu_strerror(errno));
-			exit(EXIT_INTERNAL);
+			return EXIT_INTERNAL;
 			}
 
 		/* Now we may set all three UIDs to "ppr". */
 		if(setreuid(euid, euid) == -1)
 			{
 			fprintf(stderr, "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)euid, (long)euid, errno, gu_strerror(errno));
-			exit(EXIT_INTERNAL);
+			return EXIT_INTERNAL;
 			}
 
 		/* Now be paranoid. */
 		if(setuid(0) != -1)
 			{
-			fprintf(stderr, "%s: setuid(0) didn't fail!\n");
-			exit(EXIT_INTERNAL;
+			fprintf(stderr, "%s: setuid(0) didn't fail!\n", myname);
+			return EXIT_INTERNAL;
 			}
 		}
 	else						/* not root */
@@ -539,10 +466,19 @@ int main(int argc, char *argv[])
 		if(uid != euid)			/* if real user id is not same as owner of papd (euid), */
 			{
 			fputs("Only \"ppr\" or \"root\" may start papd.\n", stderr);
-			exit(EXIT_DENIED);
+			return EXIT_DENIED;
 			}
 		}
+
+	return 0;
 	}
+
+
+/* This is startup code called from main(). */
+static int parse_cmdline(int argc, char *argv[])
+	{
+	int optchar;
+	struct gu_getopt_state getopt_state;
 
 	/* Parse the options. */
 	gu_getopt_init(&getopt_state, argc, argv, option_chars, option_words);
@@ -554,48 +490,53 @@ int main(int argc, char *argv[])
 				puts(VERSION);
 				puts(COPYRIGHT);
 				puts(AUTHOR);
-				exit(EXIT_OK);
+				return EXIT_OK;
 
 			case 1001:					/* --help */
 				help(stdout);
-				exit(EXIT_OK);
+				return EXIT_OK;
 
 			case 1002:					/* --foreground */
 				opt_foreground = TRUE;
 				break;
 
 			case 1003:					/* --stop */
-				exit(do_stop());
+				return do_stop();
 				break;
 
 			case 1004:					/* --reload */
-				exit(do_reload());
+				return do_signal(SIGHUP);
 				break;
 
 			case '?':					/* help or unrecognized switch */
 				fprintf(stderr, "Unrecognized switch: %s\n\n", getopt_state.name);
 				help(stderr);
-				exit(EXIT_SYNTAX);
+				return EXIT_SYNTAX;
 
 			case ':':					/* argument required */
 				fprintf(stderr, "The %s option requires an argument.\n", getopt_state.name);
-				exit(EXIT_SYNTAX);
+				return EXIT_SYNTAX;
 
 			case '!':					/* bad aggreation */
 				fprintf(stderr, "Switches, such as %s, which take an argument must stand alone.\n", getopt_state.name);
-				exit(EXIT_SYNTAX);
+				return EXIT_SYNTAX;
 
 			case '-':					/* spurious argument */
 				fprintf(stderr, "The %s switch does not take an argument.\n", getopt_state.name);
-				exit(EXIT_SYNTAX);
+				return EXIT_SYNTAX;
 
 			default:					/* missing case */
 				fprintf(stderr, "Missing case %d in switch dispatch switch()\n", optchar);
-				exit(EXIT_INTERNAL);
+				return EXIT_INTERNAL;
 				break;
 			}
 		}
 
+	return EXIT_OK;
+	}
+
+static void daemon_mode(void)
+	{
 	/* Set environment variables such as PATH and PPR_VERSION. */
 	set_ppr_env();
 
@@ -639,24 +580,80 @@ int main(int argc, char *argv[])
 	signal_restarting(SIGHUP, sighup_sigalrm_handler);
 	signal_restarting(SIGALRM, sighup_sigalrm_handler);
 	signal_restarting(SIGIO, sigio_handler);
+	}
 
-	/*
-	** The main loop alternates between calling at_service() (which 
-	** contains AppleTalk-implementation-dependent code) and calling
-	** conf_load().
-	*/
+/*
+** The main loop alternates between calling at_service() (which 
+** contains AppleTalk-implementation-dependent code) and calling
+** conf_load().
+*/
+static int main_loop(void)
+	{
+	struct ADV *adv = NULL;
 	debug("Entering main loop");
-	while(TRUE)
-		{
-		if(reload_config)
+	gu_Try {
+		while(keep_running)
 			{
-			adv_for_fatal = adv = conf_load(adv);
-			reload_config = FALSE;
+			if(reload_config)
+				{
+				adv = conf_load(adv);
+				reload_config = FALSE;
+				}
+			at_service(adv);
 			}
-		at_service(adv);
+		}
+	gu_Final {
+		if(adv)
+			{
+			int i;
+			debug("Removing advertised names");
+			for(i = 0; adv[i].adv_type != ADV_LAST; i++)
+				{
+				if(adv[i].adv_type == ADV_ACTIVE)
+					at_remove_name(adv[i].PAPname, adv[i].fd);
+				}
+			}
+		}
+	gu_Catch {
+		gu_ReThrow();
+		}
+	debug("Shutdown complete");
+	return 0;
+	}
+
+int main(int argc, char *argv[])
+	{
+	int ret;
+
+	/* Initialize internation messages library. */
+	#ifdef INTERNATIONAL
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE_PAPD, LOCALEDIR);
+	textdomain(PACKAGE_PAPD);
+	#endif
+
+	if((ret = drop_privs()))
+		return ret;
+	
+	gu_Try {
+		if((ret = parse_cmdline(argc, argv)) != 0)
+			return ret;
+	
+		daemon_mode();
+
+		ret = main_loop();
+		}
+	gu_Catch {
+		log("FATAL", "%s", gu_exception);
+
+		/* This is for children which might have a copy of ppr running. */
+		printjob_abort();
 		}
 
-	return 0;							/* <-- this makes GNU-C happy */
+	/* remove file with our pid in it */
+	unlink(pid_file_name);
+	
+	return ret;
 	} /* end of main() */
 
 /* end of file */

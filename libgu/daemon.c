@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/daemon.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 23 January 2004.
 */
 
 /*! \file
@@ -36,6 +36,8 @@
 #include <signal.h>
 #include <unistd.h>
 #include <limits.h>
+#include <errno.h>
+#include <string.h>
 #include "gu.h"
 
 /** become a daemon
@@ -66,7 +68,7 @@ void gu_daemon(mode_t daemon_umask)
 	if((pid = fork()) == -1)
 		{
 		fputs("FATAL:  can't fork daemon\n", stderr);
-		libppr_throw(EXCEPTION_STARVED, function, "can't fork daemon");
+		gu_Throw("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		}
 
 	if(pid)
@@ -80,7 +82,7 @@ void gu_daemon(mode_t daemon_umask)
 	if(setsid() == -1)
 		{
 		fputs("FATAL: can't set session id\n", stderr);
-		libppr_throw(EXCEPTION_OTHER, function, "can't set session id");
+		gu_Throw("%s(): setsid() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		}
 
 	/* Close all file descriptors. */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_cap.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2002.
+** Last modified 23 January 2004.
 */
 
 /*============================================================================
@@ -126,7 +126,7 @@ int at_getc(int sesfd)
 				}
 			else
 				{
-				fatal(1, "%s(): PAPRead() completed with code %d", function, rcomp);
+				gu_Throw("%s(): PAPRead() completed with code %d", function, rcomp);
 				}
 			}
 
@@ -164,7 +164,7 @@ void at_reply(int sesfd, char *s)
 	while(*s)
 		{
 		if(ocount == sizeof(out))		/* check if room in output buffer */
-			fatal(1, "%s(): output buffer overflow", function);
+			gu_Throw("%s(): output buffer overflow", function);
 
 		out[hindex++]=*(s++);			/* place in output buffer */
 		ocount++;
@@ -190,7 +190,7 @@ static void do_xmit(int sesfd)
 		return;					/* do nothing. */
 
 	if(wcomp < 0)				/* If last write had error, */
-		fatal(1, "%s(): PAPWRite() completed with error %d", function, wcomp);
+		gu_Throw("%s(): PAPWRite() completed with error %d", function, wcomp);
 
 	if(ocount)					/* If there are bytes in output buffer, */
 		{
@@ -205,7 +205,7 @@ static void do_xmit(int sesfd)
 
 		DODEBUG_WRITEBUF(("%s(): writing %d bytes", function, x));
 		if( (paperr=PAPWrite(sesfd, writebuf, x, FALSE, &wcomp)) != 0)
-			fatal(1,"PAPWrite() returned %d",paperr);
+			gu_Throw("PAPWrite() returned %d",paperr);
 		}
 	} /* end of do_xmit() */
 
@@ -229,7 +229,7 @@ void at_reply_eoj(int sesfd)
 
 	/* Send the EOJ packet. */
 	if((paperr = PAPWrite(sesfd, "", 0, TRUE, &wcomp)) != 0)
-			fatal(1, "%s(): PAPWrite() returned %d", function, paperr);
+			gu_Throw("%s(): PAPWrite() returned %d", function, paperr);
 
 	/* Wait for write to complete. */
 	do	{
@@ -238,7 +238,7 @@ void at_reply_eoj(int sesfd)
 
 	/* See if write failed. */
 	if(wcomp < 0)
-		fatal(1,"PAPWrite() completed with error %d",wcomp);
+		gu_Throw("PAPWrite() completed with error %d",wcomp);
 
 	} /* end of at_reply_eoj() */
 
@@ -295,15 +295,15 @@ int at_add_name(const char papname[])
 			debug("Retry...");
 			}
 		if(err==nbpDuplicate)
-			fatal(1, "Name \"%s\" already exists", papname);
+			gu_Throw("Name \"%s\" already exists", papname);
 		else
-			fatal(1, "SLInit() failed, err=%d", err);
+			gu_Throw("SLInit() failed, err=%d", err);
 		}
 
 	endpoints[prnid].fd = fd;	/* Remember the file descriptor. */
 
 	if((err = GetNextJob(endpoints[prnid].fd, &endpoints[prnid].sesfd, &endpoints[prnid].gcomp)) != 0)
-		fatal(1, "GetNextJob() returned %d", err);
+		gu_Throw("GetNextJob() returned %d", err);
 
 	return fd;
 	} /* at_add_name() */
@@ -340,20 +340,20 @@ int at_printjob_copy(int sesfd, int pipe)
 			{					/* into the pipe to ppr */
 			writelen=write(pipe,readbuf,bytesleft);
 			if(writelen==-1)
-				fatal(1, "%s(): write error on pipe, errno=%d (%s)", function, errno, gu_strerror(errno));
+				gu_Throw("%s(): write error on pipe, errno=%d (%s)", function, errno, gu_strerror(errno));
 			bytesleft-=writelen;
 			}
 		if(!eoj)
 			{
 			if( (err=PAPRead(sesfd,readbuf,&bytesleft,&eoj,&rcomp)) != 0 )
-				fatal(1,"PAPRead() returned %d",err);
+				gu_Throw("PAPRead() returned %d",err);
 
 			do	{						/* let PAPRead() work */
 				abSleep(4,TRUE);
 				} while(rcomp > 0);
 
 			if(rcomp < 0)
-				fatal(1, "%s(): PAPRead() completed with error code %d", function, rcomp);
+				gu_Throw("%s(): PAPRead() completed with error code %d", function, rcomp);
 			}
 		} while(bytesleft);
 
@@ -396,7 +396,7 @@ void at_service(struct ADV *adv)
 				continue;					/* try the next one. */
 
 			if(endpoints[x].gcomp < 0)		/* if error, */
-				fatal(1, "GetNextJob() completed with error %d on \"%s\"", endpoints[x].gcomp, adv[x].PAPname);
+				gu_Throw("GetNextJob() completed with error %d on \"%s\"", endpoints[x].gcomp, adv[x].PAPname);
 
 			DODEBUG_LOOP(("connexion found, sesfd=%d", endpoints[x].sesfd));
 
@@ -404,7 +404,7 @@ void at_service(struct ADV *adv)
 			papfd = endpoints[x].fd;			/* name fd */
 			sesfd = endpoints[x].sesfd;			/* session fd */
 			if((err = GetNextJob(endpoints[x].fd, &endpoints[x].sesfd, &endpoints[x].gcomp)) != 0)
-				fatal(1, "GetNextJob() returned %d",err);
+				gu_Throw("GetNextJob() returned %d",err);
 
 			/* Fork so that one copy of this process can continue
 			** to be the daemon while the other goes off and

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/readppd.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*+ \file
@@ -47,18 +47,9 @@ files.  Includes are handled automatically.
 #include "global_defines.h"
 #include "util_exits.h"
 
-static int nest;						/* current PPD nesting level */
 
-static char *fname[MAX_PPD_NEST];		/* list of names of open PPD files */
-static char *line = (char*)NULL;		/* storate for the current line */
-static FILE *saved_errors = NULL;		/* STDIO file to send error messages to */
-
-#ifdef HAVE_ZLIB
-static gzFile f[MAX_PPD_NEST];
-#else
-static FILE *f[MAX_PPD_NEST];
-#endif
-
+/** given a PPD filename or product string, find the file and returns its full path
+*/
 char *ppd_find_file(const char ppdname[])
 	{
 	FILE *f;
@@ -97,6 +88,94 @@ char *ppd_find_file(const char ppdname[])
 	gu_asprintf(&filename, "%s/%s", PPDDIR, ppdname);
 	return filename;
 	}
+
+/** decode PPD file quoted string
+ *
+ * Take initial_segment and possibly subsequent lines readable with ppd_readline()
+ * (until one of them ends with a quote) and assemble them into a PCS.
+ */
+void *ppd_finish_quoted_string(char *initial_segment)
+	{
+	char *p = initial_segment;
+	gu_boolean end_quote = FALSE;
+	int len;
+	void *text = gu_pcs_new();
+
+	do	{
+		len = strlen(p);
+		if(len > 0 && p[len-1] == '"')
+			{
+			p[len-1] = '\0';
+			end_quote = TRUE;
+			}
+		if(gu_pcs_length(&text) > 0)
+			gu_pcs_append_char(&text, '\n');
+		gu_pcs_append_cstr(&text, p);
+		} while(!end_quote && (p = ppd_readline()));
+	return text;
+	} /* end of ppd_finish_quoted_string() */
+
+/** Decode PPD file QuotedValue
+ *
+ * Edit a string in place, decoding hexadecimal substrings.  The length of the
+ * resulting string (which will never be longer) is returned.  QuotedValues with hexadecimal
+ * substrings are described in the "PostScript Printer File Format Specification"
+ * version 4.0 on page 5.
+ */
+int ppd_decode_QuotedValue(char *p)
+	{
+	int len;
+	int si, di;
+
+	len = strlen(p); 
+	
+	for(si=di=0; si < len; si++)
+		{
+		if(p[si] == '<')
+			{
+			int count = 0;
+			int c, high_nibble = 0;
+
+			si++;
+			while((c = p[si]) && c != '>')
+				{
+				if(c >= '0' && c <= '9')
+					c -= '0';
+				else if(c >= 'a' && c <= 'f')
+					c -= ('a' + 10);
+				else if(c >= 'A' && c <= 'F')
+					c -= ('A' + 10);
+				else
+					continue;
+
+				if(count % 2 == 0)
+					high_nibble = c;
+				else
+					p[di++] = (high_nibble << 4) + c;
+				
+				count++;
+				}
+			}
+		else
+			{
+			p[di++] = p[si];
+			}
+		}
+	
+	return di;
+	} /* end of ppd_decode_QuotedValue() */
+
+/*============================================================================*/
+
+static int nest;						/* current PPD nesting level */
+static char *fname[MAX_PPD_NEST];		/* list of names of open PPD files */
+static char *line = (char*)NULL;		/* storate for the current line */
+static FILE *saved_errors = NULL;		/* STDIO file to send error messages to */
+#ifdef HAVE_ZLIB
+static gzFile f[MAX_PPD_NEST];
+#else
+static FILE *f[MAX_PPD_NEST];
+#endif
 
 /*
 ** This routine is called from ppd_open() and from ppd_readline()
@@ -297,5 +376,149 @@ char *ppd_readline(void)
 
 	return (char*)NULL;
 	} /* end of ppd_readline() */
+
+/*============================================================================*/
+
+struct PPDOBJ {
+	int nest;						/* current nesting level */
+	char *fname[MAX_PPD_NEST];		/* list of names of open PPD files */
+	char line[MAX_PPD_LINE+2];		/* storage for the current line */
+	#ifdef HAVE_ZLIB
+	gzFile f[MAX_PPD_NEST];
+	#else
+	FILE *f[MAX_PPD_NEST];
+	#endif
+	};
+
+static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
+	{
+	const char function[] = "ppdobj_open";
+
+	if((self->nest + 1) >= MAX_PPD_NEST)			/* are we too deep? */
+		gu_Throw("PPD files nested too deeply");
+
+	if(nest < 0)			/* if first level, */
+		{
+		self->nest = -1;	/* <-- we are paranoid */
+		self->fname[self->nest + 1] = ppd_find_file(ppdname);
+		}
+	else if(ppdname[0] == '/')
+		{
+		self->fname[self->nest +1] = gu_strdup(ppdname);
+		}
+	else					/* if an include file, */
+		{
+		char *dirend;
+
+		/* We should always be able to find the final slash. */
+		if(!(dirend = strrchr(self->fname[self->nest], '/')))
+			gu_Throw("%s(): internal error\n", function);
+
+		/* Build the path in malloced memory. */
+		gu_asprintf(&(self->fname[self->nest + 1]), "%.*s/%s", (dirend - self->fname[self->nest]), self->fname[self->nest], ppdname);
+		}
+
+	self->nest++;
+
+	/* Open the PPD file for reading. */
+	#ifdef HAVE_ZLIB
+	if(!(f[nest] = gzopen(self->fname[self->nest], "r")))
+	#else
+	if(!(f[nest] = fopen(self->fname[self->nest], "r")))
+	#endif
+		{
+		gu_Throw("PPD file \"%s\" does not exist.\n", self->fname[self->nest]);
+		}
+	}
+
+void *ppdobj_new(const char ppdname[])
+	{
+	struct PPDOBJ *self = gu_alloc(1, sizeof(struct PPDOBJ));
+	self->nest = -1;
+	gu_Try {
+		ppdobj_open(self, ppdname);
+		}
+	gu_Catch {
+		ppdobj_delete(self);
+		gu_ReThrow();
+		}
+	return (void*)self;
+	}
+
+void ppdobj_delete(void *p)
+	{
+	struct PPDOBJ *self = p;
+
+	/* close any files which may still be open */
+	while(self->nest >= 0)
+		{
+		if(self->f[self->nest])		/* watch out for open failures! */
+			{
+			#ifdef HAVE_ZLIB
+			gzclose(f[nest]);
+			#else
+			fclose(f[nest]);
+			#endif
+			}
+		gu_free(self->fname[self->nest]);
+		self->nest--;
+		}
+
+	gu_free(p);
+	}
+
+char *ppdobj_readline(void *p)
+	{
+	struct PPDOBJ *self = p;
+	int len;
+	char *ptr;
+
+	while(self->nest >= 0)
+		{
+		#ifdef HAVE_ZLIB
+		if(!gzgets(self->f[self->nest], self->line, MAX_PPD_LINE+2))
+		#else
+		if(!fgets(self->line, MAX_PPD_LINE+2, self->f[self->nest]))
+		#endif
+			{
+			#ifdef HAVE_ZLIB
+			gzclose(self->f[self->nest]);
+			#else
+			fclose(self->f[self->nest]);
+			#endif
+			gu_free(self->fname[self->nest]);		/* free the stored file name */
+
+			self->nest--;
+			continue;
+			}
+
+		/* If this is a comment line, skip it. */
+		if(strncmp(self->line, "*%", 2) == 0)
+			continue;
+
+		/* Remove all trailing whitespace, including carriage return and line feed. */
+		len = strlen(self->line);
+		while(--len >= 0 && isspace(self->line[len]))
+			self->line[len] = '\0';
+
+		/* Skip blank lines. */
+		if(self->line[0] == '\0')
+			continue;
+
+		/* If this is an "*Include:" line, open a new file. */
+		if((ptr = lmatchp(self->line, "*Include:")))
+			{
+			ptr += strspn(ptr, "\"");				/* find name start */
+			ptr[strcspn(ptr,"\"")] = '\0';			/* terminate name */
+
+			ppdobj_open(self, ptr);
+			continue;
+			}
+
+		return self->line;
+		}
+
+	return (char*)NULL;
+	}
 
 /* end of file */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 14 January 2004.
 */
 
 #include "queueinfo.h"
@@ -135,40 +135,10 @@ struct ADV
 	int fd;								/* file descriptor of listening socket */
 	} ;
 
-/* Structure used to describe an *Option entry. */
-struct OPTION
-	{
-	char *name;
-	char *value;
-	struct OPTION *next;
-	} ;
-
-struct QUEUE_CONFIG
-	{
-	void *queueinfo;
-	const char **fontlist;		/* list of fonts in this printer */
-	int fontcount;
-	int LanguageLevel;			/* 1 or 2, 1 is default */
-	char *PSVersion;			/* a rather complicated string */
-	char *Resolution;			/* "300dpi", "600x300dpi" */
-	gu_boolean BinaryOK;		/* TRUE or FALSE */
-	int FreeVM;					/* free printer memory from "*FreeVM:" line */
-	char *InstalledMemory;		/* Selected "*InstalledMemory" option */
-	int VMOptionFreeVM;			/* Value from selected "*VMOption" */
-	const char *Product;		/* *Product string from PPD file */
-	gu_boolean ColorDevice;		/* TRUE or FALSE */
-	int RamSize;				/* an integer (LaserWriter 8) */
-	char *FaxSupport;			/* a string such as "Base" */
-	char *TTRasterizer;			/* "None", "Type42", "Accept68K" */
-	struct OPTION *options;		/* PPD file option settings */
-	gu_boolean query_font_cache;
-	} ;
-
 extern char line[];				/* input line */
 extern int children;			/* count of children */
 
 /* routines in papd.c */
-void fatal(int exitvalue, const char string[], ...);
 void debug(const char string[], ...);
 char *debug_string(char *s);
 gu_boolean reload_callback(void);
@@ -189,17 +159,16 @@ int	 at_add_name(const char papname[]);
 void at_remove_name(const char papname[], int fd);
 
 /* routines in papd_printjob.c */
-void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[]);
+void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const char log_file_name[]);
 void printjob_abort(void);
 void printjob_reapchild(int sig);
 void printjob_sigpipe(int sig);
 
 /* routines in papd_query.c */
-void answer_query(int sesfd, struct QUEUE_CONFIG *qc);
+void answer_query(int sesfd, void *qc);
 void sigusr1_handler(int sig);
 
 /* routines in papd_conf.c */
 struct ADV *conf_load(struct ADV *old_config);
-int conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *queue_config);
 
 /* end of file */

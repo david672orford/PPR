@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/atalk_ali.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -715,7 +715,7 @@ static int copy_job(int papfd, at_nbptuple_t *addr, int wlen)
 /*
 ** main function
 */
-int main(int argc, char *argv[])
+int int_main(int argc, char *argv[])
 	{
 	int printer_fd;										/* open circuit to the printer */
 	int wlen;											/* max bytes to write to printer */

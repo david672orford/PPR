@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_conf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 23 January 2004.
 */
 
 #include "before_system.h"
@@ -206,6 +206,7 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		*/
 		if(adv[i].PAPname && strcmp(adv[i].PAPname, papname) != 0)
 			{
+			DODEBUG_STARTUP(("%s(): removing previous name for %s (%s)", function, adv[i].PPRname, adv[i].PAPname));
 			at_remove_name(adv[i].PAPname, adv[i].fd);
 			gu_free((char*)adv[i].PAPname);
 			adv[i].PAPname = NULL;
@@ -214,10 +215,11 @@ static struct ADV *do_config_file(struct ADV *adv, enum QUEUEINFO_TYPE qtype, co
 		/* If we haven't an advertised PAP name, add it to the AppleTalk network. */
 		if(!adv[i].PAPname)
 			{
+			DODEBUG_STARTUP(("%s(): advertising %s as %s", function, adv[i].PPRname, papname));
 			adv[i].fd = at_add_name(papname);
 			adv[i].PAPname = papname;
 			}
-		else
+		else		/* must be the same as the old one */
 			{
 			gu_free(papname);
 			}
@@ -273,7 +275,7 @@ struct ADV *conf_load(struct ADV *adv)
 		DODEBUG_STARTUP(("%s(): searching directory %s", function, dir->name));
 
 		if(!(dirobj = opendir(dir->name)))
-			fatal(0, _("%s(): opendir(\"%s\") failed, errno=%d (%s)"), function, dir, errno, gu_strerror(errno));
+			gu_Throw(_("%s(): opendir(\"%s\") failed, errno=%d (%s)"), function, dir, errno, gu_strerror(errno));
 
 		while((direntp = readdir(dirobj)))
 			{
@@ -290,7 +292,7 @@ struct ADV *conf_load(struct ADV *adv)
 
 			ppr_fnamef(fname, "%s/%s", dir->name, direntp->d_name);
 			if(!(f = fopen(fname, "r")))
-				fatal(0, "%s(): fopen(\"%s\", \"r\") failed, errno=%d (%s)", function, fname, errno, gu_strerror(errno));
+				gu_Throw("%s(): fopen(\"%s\", \"r\") failed, errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 
 			adv = do_config_file(adv, dir->type, direntp->d_name, f);
 
@@ -309,7 +311,7 @@ struct ADV *conf_load(struct ADV *adv)
 		{
 		int fd;
 		if((fd = open(dir->name, O_RDONLY)) < 0)
-			fatal(0, "%s(): open(\"%s\", O_RDONLY) failed, errno=%d (%s)", function, dir->name, errno, gu_strerror(errno));
+			gu_Throw("%s(): open(\"%s\", O_RDONLY) failed, errno=%d (%s)", function, dir->name, errno, gu_strerror(errno));
 		if(fcntl(fd, F_NOTIFY, DN_MULTISHOT | DN_MODIFY | DN_CREATE | DN_DELETE) == -1)
 			{
 			DODEBUG_STARTUP(("%s(): dnotify doesn't work", function));
@@ -340,34 +342,6 @@ struct ADV *conf_load(struct ADV *adv)
 	DODEBUG_STARTUP(("%s(): done", function));
 
 	return adv;
-	}
-
-/*
-**
-*/
-int conf_load_queue_config(struct ADV *adv, struct QUEUE_CONFIG *qc)
-	{
-	if(!(qc->queueinfo = queueinfo_new(adv->queue_type, adv->PPRname)))
-		return -1;
-
-	qc->fontlist = (const char**)NULL;
-	qc->fontcount = 0;
-	qc->LanguageLevel = 1;
-	qc->PSVersion = "(50.0) 0";
-	qc->Resolution = "300dpi";
-	qc->BinaryOK = FALSE;
-	qc->FreeVM = 600000;
-	qc->InstalledMemory = NULL;
-	qc->VMOptionFreeVM = 600000;
-	qc->Product = NULL;
-	qc->ColorDevice = FALSE;
-	qc->RamSize = 0;
-	qc->FaxSupport = NULL;
-	qc->TTRasterizer = NULL;
-	qc->options = NULL;
-	qc->query_font_cache = TRUE;
-
-	return 0;
 	}
 
 /* end of file */

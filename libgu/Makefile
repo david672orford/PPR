@@ -35,7 +35,6 @@ include ../Makefile.conf
 LIBOBJS=malloc.$(OBJ) malloc_debug.$(OBJ) \
 	ini_section.$(OBJ) \
 	getline.$(OBJ) \
-	gu_throw.$(OBJ) \
 	gu_md5.$(OBJ) \
 	cloexec.$(OBJ) \
 	gu_nonblock.$(OBJ) \

@@ -40,7 +40,7 @@
 vector
 _vector_new (pool pool, size_t size)
 {
-  vector v = pmalloc (pool, sizeof *v);
+  vector v = c2_pmalloc (pool, sizeof *v);
 
   v->pool = pool;
   v->size = size;
@@ -53,7 +53,7 @@ _vector_new (pool pool, size_t size)
 inline vector
 new_subvector (pool pool, vector v, int i, int j)
 {
-  vector new_v = pmalloc (pool, sizeof *v);
+  vector new_v = c2_pmalloc (pool, sizeof *v);
 
   assert (0 <= i && j <= v->used);
 
@@ -86,7 +86,7 @@ _vector_push_back (vector v, const void *ptr)
   if (v->used >= v->allocated)
 	{
 	  int a = v->allocated + INCREMENT;
-	  void *d = prealloc (v->pool, v->data, a * v->size);
+	  void *d = c2_prealloc (v->pool, v->data, a * v->size);
 	  v->allocated = a;
 	  v->data = d;
 	}
@@ -150,7 +150,7 @@ vector_push_back_vector (vector v, const vector w)
   if (v->used + w->used > v->allocated)
 	{
 	  int a = v->used + w->used;
-	  void *d = prealloc (v->pool, v->data, a * size);
+	  void *d = c2_prealloc (v->pool, v->data, a * size);
 	  v->allocated = a;
 	  v->data = d;
 	}
@@ -169,7 +169,7 @@ vector_push_front_vector (vector v, const vector w)
   if (v->used + w->used > v->allocated)
 	{
 	  int a = v->used + w->used;
-	  void *d = prealloc (v->pool, v->data, a * size);
+	  void *d = c2_prealloc (v->pool, v->data, a * size);
 	  v->allocated = a;
 	  v->data = d;
 	}
@@ -286,7 +286,7 @@ vector_reallocate (vector v, int n)
 {
   if (n > v->allocated)
 	{
-	  void *d = prealloc (v->pool, v->data, n * v->size);
+	  void *d = c2_prealloc (v->pool, v->data, n * v->size);
 	  v->allocated = n;
 	  v->data = d;
 	}

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/filter_pcl/AssertionFailed.java
+** mouse:~ppr/src/libppr/int_main.c
 ** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,14 +25,41 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 26 January 2004.
 */
 
-class AssertionFailed extends Exception
+#include "before_system.h"
+#include <stdarg.h>
+#include <string.h>
+#include "gu.h"
+#include "global_defines.h"
+#include "libppr_int.h"
+#include "interface.h"
+
+/** exception catching wrapper main() function
+ *
+ * This wraps the interface's main() function in order to install a special 
+ * exception handler which writes the exception to the printer's alerts log.
+ *
+ * Any program that provides its own main() won't link this in.  To use this
+ * function, you should omit main() and provided an int_main() instead.
+ */
+int main(int argc, char *argv[])
 	{
-	public AssertionFailed(String explain)
-		{
-		super(explain);
+	gu_Try {
+		return int_main(argc, argv);
 		}
-	}
+	gu_Catch {
+		alert(int_cmdline.printer, FALSE, "%s", gu_exception);
+
+		if(strstr(gu_exception, "alloc()") || strstr(gu_exception, "fork()"))
+			int_exit(EXIT_STARVED);
+		else
+			int_exit(EXIT_PRNERR_NORETRY);
+		}
+	/* NOTREACHED */
+	return 255;
+	} /* end of main() */
+
+/* end of file */
 

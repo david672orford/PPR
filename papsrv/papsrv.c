@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -80,8 +80,7 @@ static char *log_file_name = DEFAULT_PAPSRV_LOGFILE;
 static char *pid_file_name = DEFAULT_PAPSRV_PIDFILE;
 
 /*
-** This function is called by fatal(), debug(), error(),
-** and libppr_throw() below.
+** This function is called by fatal(), debug(), and error().
 */
 static void log(const char category[], const char atfunction[], const char format[], va_list va)
 	{
@@ -158,19 +157,6 @@ void fatal(int rval, const char string[], ... )
 	/* Exit with the code we were told to exit with. */
 	exit(rval);
 	} /* end of fatal() */
-
-/*
-** This is for libppr exceptions.  It overrides the version
-** in libppr.a.
-*/
-void libppr_throw(int exception_type, const char exception_function[], const char format[], ...)
-	{
-	va_list va;
-	va_start(va, format);
-	log("libppr exception", exception_function, format, va);
-	va_end(va);
-	exit(1);
-	} /* end of libppr_throw() */
 
 /*
 ** Return a copy of a string with control characters

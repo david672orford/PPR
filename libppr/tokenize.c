@@ -28,6 +28,7 @@ int tokens_count;
 
 void tokenize(void)
 	{
+	const char function[] = "tokenize";
 	int sptr, dptr, tptr;		/* source pointer, destionation ptr, token ptr */
 	int qlevel;					/* quote level */
 	int lastc = '\0';			/* the previous character */
@@ -37,7 +38,7 @@ void tokenize(void)
 	#endif
 
 	if(line_len > MAX_TOKENIZED)
-		libppr_throw(EXCEPTION_BADUSAGE, "tokenize", "line too long");
+		gu_Throw("%s(): line too long", function);
 
 	windex = sptr = dptr = tptr = qlevel = 0;
 

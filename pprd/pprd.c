@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -304,9 +304,9 @@ static void do_command(int FIFO)
 ** The Main Procedure
 ** Initialization and FIFO command dispatch routine.
 ========================================================================*/
-int main(int argc, char *argv[])
+static int real_main(int argc, char *argv[])
 	{
-	const char function[] = "main";
+	const char function[] = "real_main";
 	int option_foreground = FALSE;
 	int FIFO;					/* First-in-first-out which feeds us requests */
 	sigset_t lock_set;
@@ -478,7 +478,20 @@ int main(int argc, char *argv[])
 
 	state_update("SHUTDOWN");
 	fatal(0, "Received SIGTERM, exiting");
-	} /* end of main() */
+	} /* end of real_main() */
+
+int main(int argc, char *argv[])
+	{
+	gu_Try
+		{
+		return real_main(argc, argv);
+		}
+	gu_Catch {
+		fatal(0, "Caught exception: %s", gu_exception);
+		}
+	/* NOTREACHED */
+	return 255;
+	}
 
 /* end of file */
 

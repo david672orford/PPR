@@ -46,7 +46,7 @@ char *
 pstrdup (pool pool, const char *str)
 {
   int len = strlen (str);
-  char *ptr = pmalloc (pool, (len+1) * sizeof (char));
+  char *ptr = c2_pmalloc (pool, (len+1) * sizeof (char));
   return memcpy (ptr, str, len+1);
 }
 
@@ -55,7 +55,7 @@ char *
 pstrndup (pool pool, const char *str, int n)
 {
   int len = MIN (strlen (str), n);
-  char *ptr = pmalloc (pool, (len+1) * sizeof (char));
+  char *ptr = c2_pmalloc (pool, (len+1) * sizeof (char));
   memcpy (ptr, str, len);
   ptr[len] = '\0';
   return ptr;
@@ -65,7 +65,7 @@ pstrndup (pool pool, const char *str, int n)
 void *
 pmemdup (pool pool, const void *data, size_t size)
 {
-  void *ptr = pmalloc (pool, size);
+  void *ptr = c2_pmalloc (pool, size);
   return memcpy (ptr, data, size);
 }
 
@@ -229,7 +229,7 @@ pjoin (pool pool, vector v, const char *sep)
 char *
 pchrs (pool pool, char c, int n)
 {
-  char *s = pmalloc (pool, sizeof (char) * (n + 1));
+  char *s = c2_pmalloc (pool, sizeof (char) * (n + 1));
   int i;
 
   for (i = 0; i < n; ++i)
@@ -243,7 +243,7 @@ char *
 pstrs (pool pool, const char *str, int n)
 {
   int len = strlen (str);
-  char *s = pmalloc (pool, sizeof (char) * (len * n + 1));
+  char *s = c2_pmalloc (pool, sizeof (char) * (len * n + 1));
   int i, j;
 
   for (i = j = 0; i < n; ++i, j += len)
@@ -387,7 +387,7 @@ pvsprintf (pool pool, const char *format, va_list args)
 	   * and return it.
 	   */
 	  n = r + 1;
-	  t = pmalloc (pool, n);
+	  t = c2_pmalloc (pool, n);
 	  memcpy (t, s, n);
 
 	  return t;
@@ -398,7 +398,7 @@ pvsprintf (pool pool, const char *format, va_list args)
 	   * in the pool and repeat the vsnprintf into this buffer.
 	   */
 	  n = r + 1;
-	  t = pmalloc (pool, n);
+	  t = c2_pmalloc (pool, n);
 
 	  vsnprintf (t, n, format, args);
 
@@ -412,7 +412,7 @@ pvsprintf (pool pool, const char *format, va_list args)
 char *
 pitoa (pool pool, int n)
 {
-  char *s = pmalloc (pool, 16);
+  char *s = c2_pmalloc (pool, 16);
   snprintf (s, 16, "%d", n);
   return s;
 }
@@ -420,7 +420,7 @@ pitoa (pool pool, int n)
 char *
 pdtoa (pool pool, double n)
 {
-  char *s = pmalloc (pool, 16);
+  char *s = c2_pmalloc (pool, 16);
   snprintf (s, 16, "%f", n);
   return s;
 }
@@ -428,7 +428,7 @@ pdtoa (pool pool, double n)
 char *
 pxtoa (pool pool, unsigned n)
 {
-  char *s = pmalloc (pool, 16);
+  char *s = c2_pmalloc (pool, 16);
   snprintf (s, 16, "%x", n);
   return s;
 }
@@ -507,7 +507,7 @@ pstrcat (pool pool, char *str, const char *ending)
   int slen = strlen (str);
   int elen = strlen (ending);
 
-  str = prealloc (pool, str, slen + elen + 1);
+  str = c2_prealloc (pool, str, slen + elen + 1);
   strcat (str, ending);
   return str;
 }
@@ -520,7 +520,7 @@ pstrncat (pool pool, char *str, const char *ending, size_t n)
 
   elen = elen > n ? n : elen;
 
-  str = prealloc (pool, str, slen + elen + 1);
+  str = c2_prealloc (pool, str, slen + elen + 1);
   strncat (str, ending, n);
   return str;
 }
@@ -536,7 +536,7 @@ psubstr (pool pool, const char *str, int offset, int len)
 
   if (len >= 0)
 	{
-	  new_str = pmalloc (pool, len + 1);
+	  new_str = c2_pmalloc (pool, len + 1);
 	  memcpy (new_str, str + offset, len);
 	  new_str[len] = '\0';
 	  return new_str;
@@ -544,7 +544,7 @@ psubstr (pool pool, const char *str, int offset, int len)
   else
 	{
 	  len = strlen (str + offset);
-	  new_str = pmalloc (pool, len + 1);
+	  new_str = c2_pmalloc (pool, len + 1);
 	  memcpy (new_str, str + offset, len);
 	  new_str[len] = '\0';
 	  return new_str;
@@ -581,13 +581,13 @@ pgetline (pool pool, FILE *fp, char *line)
   int c;
 
   /* Reallocate the buffer. */
-  line = prealloc (pool, line, _PGETL_INITIAL_BUFFER);
+  line = c2_prealloc (pool, line, _PGETL_INITIAL_BUFFER);
 
   /* Read in the line until we reach EOF or a '\n' character. */
   while ((c = getc (fp)) != EOF && c != '\n')
 	{
 	  if (len == allocated)
-		line = prealloc (pool, line, allocated += _PGETL_INCR_BUFFER);
+		line = c2_prealloc (pool, line, allocated += _PGETL_INCR_BUFFER);
 	  line[len++] = c;
 	}
 
@@ -601,7 +601,7 @@ pgetline (pool pool, FILE *fp, char *line)
 
   /* Append a '\0' character to the buffer. */
   if (len == allocated)
-	line = prealloc (pool, line, ++allocated);
+	line = c2_prealloc (pool, line, ++allocated);
   line[len] = '\0';
 
   return line;

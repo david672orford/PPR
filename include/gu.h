@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/gu.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 October 2003.
+** Last modified 26 January 2004.
 */
 
 #ifndef _GU_H
@@ -252,23 +252,6 @@ int options_get_one(struct OPTIONS_STATE *o, char *name, int maxnamelen, char *v
 
 /*===================================================================
 ** Exception handling code
-===================================================================*/
-
-#define EXCEPTION_OTHER 0
-#define EXCEPTION_STARVED 1
-#define EXCEPTION_BADUSAGE 2
-#define EXCEPTION_MISSING 3
-#define EXCEPTION_OVERFLOW 4
-
-/* This function should be replaced if real exceptions are desired. */
-void libppr_throw(int exception_type, const char function[], const char format[], ...)
-#ifdef __GNUC__
-__attribute__ (( noreturn, format (printf, 3, 4) ))
-#endif
-;
-
-/*===================================================================
-** New exception handling code
 **
 ** Here is the pattern:
 **
@@ -310,12 +293,20 @@ void gu_Try_funct(jmp_buf *p_jmp_buf);
 /* This function calls longjmp() if there is a gu_Try() context, otherwise
    it prints the message on stderr and calls exit(255).
    */
-void gu_Throw(const char message[], ...);
+void gu_Throw(const char message[], ...)
+#ifdef __GNUC__
+__attribute__ (( noreturn, format (printf, 1, 2) ))
+#endif
+;
 
 /* This function throws a new exception using the exception message string
    stored by the last call to gu_Throw().
    */
-void gu_ReThrow(void);
+void gu_ReThrow(void)
+#ifdef __GNUC__
+__attribute__ (( noreturn ))
+#endif
+;
 
 /** Run cleanup code during exception handing.
 
@@ -336,7 +327,7 @@ gu_exception_try_depth--; \
 gu_exception_pop = 0; \
 if(1)
 
-/** Hancle exceptions encountered in gu_Try
+/** Handle exceptions encountered in gu_Try
 
 The block introduced by this macro is executed if an exception was
 caught in the gu_Try block.
@@ -393,16 +384,6 @@ void gu_pcs_append_cstr(void **pcs, const char cstr[]);
 void gu_pcs_append_pcs(void **pcs, void **pcs2);
 int gu_pcs_cmp(void **pcs1, void **pcs2);
 int gu_pcs_hash(void **pcs_key);
-
-/* Perl Compatible Hash */
-void *gu_pch_new(int buckets_count);
-void gu_pch_free(void **pch);
-void gu_pch_debug(void **pch, const char name[]);
-void gu_pch_set(void **pch, void **pcs_key, void **pcs_value);
-void *gu_pch_get(void **pch, void **pcs_key);
-void gu_pch_delete(void **pch, void **pcs_key);
-void gu_pch_rewind(void **pch);
-void *gu_pch_nextkey(void **pch);
 
 /*===================================================================
 ** Replacements for missing functions

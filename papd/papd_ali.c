@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_ali.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 23 January 2004.
 */
 
 /*============================================================================
@@ -78,7 +78,7 @@ void at_reply(int sesfd, char *s)
 	while(*s)
 		{
 		if(ocount == sizeof(out))
-			fatal(1, "%s(): output buffer overflow", function);
+			gu_Throw("%s(): output buffer overflow", function);
 
 		out[hindex++] = *(s++);
 		ocount++;
@@ -136,7 +136,7 @@ static void do_xmit(int sesfd)
 				}
 			else
 				{
-				fatal(1, "%s(): pap_write() failed, pap_errno=%d (%s), errno=%d (%s)", function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+				gu_Throw("%s(): pap_write() failed, pap_errno=%d (%s), errno=%d (%s)", function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 				}
 			}
 
@@ -169,7 +169,7 @@ void at_reply_eoj(int sesfd)
 			}
 		else
 			{
-			fatal(1, "%s(): pap_write(): pap_errno=%d (%s), errno=%d (%s)",
+			gu_Throw("%s(): pap_write(): pap_errno=%d (%s), errno=%d (%s)",
 				function,
 				pap_errno, pap_strerror(pap_errno),
 				errno, gu_strerror(errno));
@@ -257,7 +257,7 @@ int at_getc(int sesfd)
 
 			/* Error */
 			if( look_result == -1 )
-				fatal(1, "%s(): pap_look() failed", function);
+				gu_Throw("%s(): pap_look() failed", function);
 
 			/* Other end hung up */
 			else if( look_result == PAP_DISCONNECT )
@@ -289,7 +289,7 @@ int at_getc(int sesfd)
 				{
 				if( errno == EINTR )
 					continue;
-				fatal(1, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+				gu_Throw("%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
 				}
 			} /* end of while(TRUE) */
 
@@ -317,7 +317,7 @@ int at_getc(int sesfd)
 				}
 			else
 				{
-				fatal(1, "%s(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
+				gu_Throw("%s(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
 					function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 				}
 			}
@@ -423,7 +423,7 @@ int at_printjob_copy(int sesfd, int pipe)
 			DODEBUG_PRINTJOB_DETAILED(("%s(): wrote %d bytes", function, writelen));
 
 			if(writelen == -1)
-				fatal(1, "%s(): write error on pipe, errno=%d (%s)", function, errno, gu_strerror(errno));
+				gu_Throw("%s(): write error on pipe, errno=%d (%s)", function, errno, gu_strerror(errno));
 
 			bytesleft -= writelen;
 			}
@@ -435,7 +435,7 @@ int at_printjob_copy(int sesfd, int pipe)
 			bytesleft = pap_read(sesfd, readbuf, READBUF_SIZE, &eoj);
 
 			if(bytesleft==-1)
-				fatal(1, "(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
+				gu_Throw("(): pap_read() failed, pap_errno=%d (%s), errno=%d (%s)",
 						pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
 			DODEBUG_PRINTJOB_DETAILED(("%s(): pap_read(): %d bytes, eoj=%d", function, bytesleft, eoj));
@@ -486,7 +486,7 @@ void at_service(struct ADV *adv)
 			DODEBUG_LOOP(("%s(): EINTR", function));
 			return;
 			}
-		fatal(1, "%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		gu_Throw("%s(): select() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		}
 
 	/*
@@ -511,7 +511,7 @@ void at_service(struct ADV *adv)
 				{
 				if(look_result == -1)
 					{
-					fatal(1, "%s(): pap_look() failed, pap_errno=%d (%s), errno=%d (%s)",
+					gu_Throw("%s(): pap_look() failed, pap_errno=%d (%s), errno=%d (%s)",
 						function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 					}
 				else if(look_result == 0)		/* No real activity. */
@@ -531,7 +531,7 @@ void at_service(struct ADV *adv)
 			/* Accept the new job. */
 			rquantum = 1;				/* meaningless operation */
 			if((sesfd = paps_get_next_job(adv[x].fd, &rquantum, &remote_addr)) == -1)
-				fatal(1, "%s(): paps_get_next_job() failed, pap_errno=%d (%s), errno=%d (%s)", function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
+				gu_Throw("%s(): paps_get_next_job() failed, pap_errno=%d (%s), errno=%d (%s)", function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
 			DODEBUG_LOOP(("%s(): remote fd=%d quantum=%hd, net=%d, node=%d, socket=%d",
 				function,
@@ -589,7 +589,7 @@ void at_service(struct ADV *adv)
 				DODEBUG_LOOP(("shutting down child server"));
 
 				if(pap_close(sesfd) == -1)
-					fatal(1, "%s(): pap_close() failed, pap_errno=%d (%s), errno=%d (%s)",
+					gu_Throw("%s(): pap_close() failed, pap_errno=%d (%s), errno=%d (%s)",
 						function, pap_errno, pap_strerror(pap_errno), errno, gu_strerror(errno) );
 
 				exit(0);				/* child exits here */

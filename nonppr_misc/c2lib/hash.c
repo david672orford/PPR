@@ -78,7 +78,7 @@ _hash_new (pool pool, size_t key_size, size_t value_size)
   hash h;
   vector null = 0;
 
-  h = pmalloc (pool, sizeof *h);
+  h = c2_pmalloc (pool, sizeof *h);
   h->pool = pool;
   h->key_size = key_size;
   h->value_size = value_size;
@@ -97,7 +97,7 @@ copy_hash (pool pool, hash h)
   hash new_h;
   int b, i;
 
-  new_h = pmalloc (pool, sizeof *new_h);
+  new_h = c2_pmalloc (pool, sizeof *new_h);
   new_h->pool = pool;
   new_h->key_size = h->key_size;
   new_h->value_size = h->value_size;
@@ -365,7 +365,7 @@ new_sash (pool pool)
   sash h;
   vector null = 0;
 
-  h = pmalloc (pool, sizeof *h);
+  h = c2_pmalloc (pool, sizeof *h);
   h->pool = pool;
   h->buckets = new_vector (pool, sizeof (vector));
   vector_fill (h->buckets, null, HASH_NR_BUCKETS);
@@ -383,7 +383,7 @@ copy_sash (pool pool, sash h)
   sash new_h;
   int b, i;
 
-  new_h = pmalloc (pool, sizeof *new_h);
+  new_h = c2_pmalloc (pool, sizeof *new_h);
   new_h->pool = pool;
   new_h->buckets = copy_vector (pool, h->buckets);
 
@@ -481,7 +481,7 @@ sash_insert (sash h, const char *key, const char *value)
 			memcpy (entry.value, value, len + 1);
 		  else
 			{
-			  entry.value = prealloc (h->pool, entry.value, len + 1);
+			  entry.value = c2_prealloc (h->pool, entry.value, len + 1);
 			  memcpy (entry.value, value, len + 1);
 			  entry.value_allocated = len + 1;
 			}
@@ -661,7 +661,7 @@ _shash_new (pool pool, size_t value_size)
   shash h;
   vector null = 0;
 
-  h = pmalloc (pool, sizeof *h);
+  h = c2_pmalloc (pool, sizeof *h);
   h->pool = pool;
   h->value_size = value_size;
   h->buckets = new_vector (pool, sizeof (vector));
@@ -680,7 +680,7 @@ copy_shash (pool pool, shash h)
   shash new_h;
   int b, i;
 
-  new_h = pmalloc (pool, sizeof *new_h);
+  new_h = c2_pmalloc (pool, sizeof *new_h);
   new_h->pool = pool;
   new_h->value_size = h->value_size;
   new_h->buckets = copy_vector (pool, h->buckets);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/ppr_fnamef.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 23 January 2004.
 */
 
 /*! \file
@@ -72,7 +72,7 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 					{
 					case 'l':
 						if((c = *(si++)) != 'd')
-							libppr_throw(EXCEPTION_BADUSAGE, function, "unrecognized format: \"%s\" item %d", pattern, item_number);
+							gu_Throw("%s(): unrecognized format: \"%s\" item %d", function, pattern, item_number);
 						snprintf(tempint, sizeof(tempint), "%ld", va_arg(va, long int));
 						str = tempint;
 						goto skip;
@@ -91,7 +91,7 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 						if(len > space_left)
 							{
 							*di = '\0';
-							libppr_throw(EXCEPTION_BADUSAGE, function, "overflow: \"%s\" -> \"%s\" item %d: str=\"%s\", len=%d, space_left=%d", pattern, target, item_number, str, (int)len, (int)space_left);
+							gu_Throw("%s(): overflow: \"%s\" -> \"%s\" item %d: str=\"%s\", len=%d, space_left=%d", function, pattern, target, item_number, str, (int)len, (int)space_left);
 							}
 
 						/* debug("y1 pattern=\"%s\", target=%p, di=%p, str=%p, str=\"%s\", space_left=%d", pattern, target, di, str, str, space_left); */
@@ -104,7 +104,7 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 						break;
 
 					default:
-						libppr_throw(EXCEPTION_BADUSAGE, function, "unrecognized format: \"%s\" item %d", pattern, item_number);
+						gu_Throw("%s(): unrecognized format: \"%s\" item %d", function, pattern, item_number);
 						break;
 					}
 				break;
@@ -112,7 +112,7 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 				if(space_left < 1)
 					{
 					*di = '\0';
-					libppr_throw(EXCEPTION_BADUSAGE, function, "overflow in pattern: \"%s\" -> \"%s\"", pattern, target);
+					gu_Throw("%s(): overflow in pattern: \"%s\" -> \"%s\"", function, pattern, target);
 					}
 				*di++ = c;
 				space_left--;

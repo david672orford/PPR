@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/interfaces/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 23 January 2004.
 #
 
 include ../Makefile.conf
@@ -52,47 +52,47 @@ all-atalk: $(ATALK_PROGS)
 # Build the AppleTalk interface by linking the atalk.o created by the rule
 # below with the AppleTalk libraries for this system as defined in
 # Makefile.conf as ATALKLIBS.
-atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o atalk$(DOTEXE) atalk_$(ATALKTYPE).$(OBJ) \
 		$(ATALKLIBS) \
-		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 atalk_$(ATALKTYPE).$(OBJ): atalk_$(ATALKTYPE).c
 	$(CC) $(ATALKFLAGS) $(CFLAGS) -c atalk_$(ATALKTYPE).c
 
 # This target will only be compiled on AT&T systems with STREAMS NetBIOS.
-clispool$(DOTEXE): clispool.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+clispool$(DOTEXE): clispool.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o clispool$(DOTEXE) clispool.$(OBJ) \
 		-lnsl \
-		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # Berkely LPR/LPD protocol client:
-lpr$(DOTEXE): lpr.$(OBJ) throw.$(OBJ) ../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+lpr$(DOTEXE): lpr.$(OBJ) ../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o lpr$(DOTEXE) lpr.$(OBJ) \
-		throw.$(OBJ) ../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
+		../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
 
 # Parallel port interface:
-parallel$(DOTEXE): parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+parallel$(DOTEXE): parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o parallel$(DOTEXE) parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) \
-		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # Serial port interface
-serial$(DOTEXE): serial.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+serial$(DOTEXE): serial.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o serial$(DOTEXE) serial.$(OBJ) \
-		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # HP JetDirect style TCP/IP interface
-OBJS_TCPIP=tcpip.$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+OBJS_TCPIP=tcpip.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 tcpip$(DOTEXE): $(OBJS_TCPIP)
 	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) $(OBJS_TCPIP) $(SOCKLIBS) $(INTLLIBS)
 
 # USB printer
-usblp$(DOTEXE): usblp.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+usblp$(DOTEXE): usblp.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o usblp$(DOTEXE) usblp.$(OBJ) \
-		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
+		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
 
 # Axis PROS protocol
-OBJS_PROS=pros.$(OBJ) throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+OBJS_PROS=pros.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 pros$(DOTEXE): $(OBJS_PROS)
 	$(LD) $(LDFLAGS) -o pros$(DOTEXE) $(OBJS_PROS) $(SOCKLIBS) $(INTLLIBS)
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/olprsrv.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -34,7 +34,7 @@
 ** with PPR version 1.30.  It is provided because the lprsrv in PPR
 ** version 1.32 is a major rewrite.
 **
-** Notice that this server doesn't redefine libppr_throw().  This
+** Notice that this server doesn't define a global exception handler.  This
 ** isn't worth fixing since this is retired code.  All it means
 ** is that some fatal error messages get written to stderr rather
 ** than the log file.

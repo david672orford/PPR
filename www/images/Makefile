@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/images/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,15 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 April 2002.
+# Last modified 23 January 2004.
 #
 
 include ../../Makefile.conf
 
 #=== Inventory ==============================================================
 
-GENERATED_IMAGES=pprlogo2.eps pprlogo2-large.png pprlogo2-medium.png \
+GENERATED_IMAGES=pprlogo2.eps \
+	pprlogo2-large.png pprlogo2-medium.png pprlogo2-small.png \
 	prn_testpage1.png prn_testpage2.png \
 	cliconf1.png \
 	exclaim.png
@@ -54,6 +55,9 @@ pprlogo2-large.png: pprlogo2.fig
 
 pprlogo2-medium.png: pprlogo2.fig
 	./fig2png --half pprlogo2.fig $*.png
+
+pprlogo2-small.png: pprlogo2.fig
+	./fig2png --quarter pprlogo2.fig $*.png
 
 #=== Install ================================================================
 

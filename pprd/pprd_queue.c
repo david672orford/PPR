@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -505,7 +505,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				if(job_is_new)
 					{
 					respond2(ptr_destnode, ptr_destname, newent.id, newent.subid, ptr_homenode, -1, ptr_destname, RESP_CANCELED_BADDEST);
-					gu_Throw("");
+					gu_Throw("!!! MISSING MESSAGE !!!");
 					}
 				else
 					{
@@ -520,12 +520,12 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				if(job_is_new && ! destid_accepting(newent.destnode_id, newent.destid))
 					{
 					respond(newent.destnode_id, newent.destid, newent.id, newent.subid, newent.homenode_id, -1, RESP_CANCELED_REJECTING);
-					gu_Throw("");
+					gu_Throw("!!! MISSING MESSAGE !!!");
 					}
 
 				if(queue_read_queuefile(qfname, &newent) == -1)
 					{
-					gu_Throw("");
+					gu_Throw("!!! MISSING MESSAGE !!!");
 					}
 
 				/* Clear the time of next response. */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/serial.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -511,7 +511,7 @@ static void printer_error(int error_number)
 /*
 ** Tie it all together.
 */
-int main(int argc, char *argv[])
+int int_main(int argc, char *argv[])
 	{
 	int portfd;							/* file handle of the printer port */
 	struct termios settings;			/* printer port settings */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/libppr_int.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 23 January 2004.
 */
 
 #ifndef LIBPPR_INT_H
@@ -84,6 +84,7 @@ int int_tcp_probe(const struct sockaddr_in *printer_address, const char snmp_com
 ** Prototypes for other functions in libppr which are used
 ** only by interfaces.
 */
+int int_main(int argc, char *argv[]);
 void int_cmdline_set(int argc, char *argv[]);
 void int_addrcache_save(const char printer[], const char interface[], const char address[], const char resolution[]);
 char *int_addrcache_load(const char printer[], const char interface[], const char address[], int *age);

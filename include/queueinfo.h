@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/queueinfo.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,26 +25,31 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 December 2003.
+** Last modified 14 January 2004.
 */
 
 enum QUEUEINFO_TYPE { QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
 void queueinfo_delete(void *p);
 
+const char *queueinfo_name(void *p);
+const char *queueinfo_comment(void *p);
+gu_boolean  queueinfo_transparentMode(void *);
+gu_boolean  queueinfo_binaryOK(void *);
+const char *queueifno_ppdFile(void *p);
 const char *queueinfo_product(void *p);
 int         queueinfo_psLanguageLevel(void *p);
+const char *queueinfo_psVersionStr(void *p);
 double      queueinfo_psVersion(void *p);
 int         queueinfo_psRevision(void *p);
-int         queueinfo_psFreeVm(void *p);
+int         queueinfo_psFreeVM(void *p);
 const char *queueinfo_resolution(void *p);				/* "300dpi", "600x300dpi" */
 gu_boolean  queueinfo_colorDevice(void *p);
 const char *queueinfo_faxSupport(void *p);				/* "Base" */
 const char *queueinfo_ttRasterizer(void *p);			/* "None", "Type42", "Accept68K" */
-int        *queueinfo_fontCount(void *p);
+int         queueinfo_fontCount(void *p);
 const char *queueinfo_font(void *p, int index);
 gu_boolean  queueinfo_fontExists(void *p, const char name[]);
 const char *queueinfo_optionValue(void *p, const char name[]);
-
 
 /* end of file */

@@ -268,7 +268,7 @@ do_match_and_sub (pool pool, const char *str, char **newstrp,
 static void *
 malloc_in_pool (size_t n)
 {
-  return pmalloc (malloc_pool, n);
+  return c2_pmalloc (malloc_pool, n);
 }
 
 static void

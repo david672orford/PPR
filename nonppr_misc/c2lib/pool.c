@@ -24,7 +24,7 @@
 #error "This library currently assumes that sizeof (void *) == sizeof (long), which is not the case on your platform. This may cause the library to crash at runtime."
 #endif
 
-/* If set, then calls to pmalloc will initialise the memory to 0xefefef...,
+/* If set, then calls to c2_pmalloc will initialise the memory to 0xefefef...,
  * helping to catch uninitialised memory problems. This is very useful for
  * debugging new code, but should be turned off on production systems.
  */
@@ -247,7 +247,7 @@ delete_pool (pool p)
 }
 
 void *
-pmalloc (pool p, size_t n)
+c2_pmalloc (pool p, size_t n)
 {
   void *ptr;
 
@@ -266,22 +266,22 @@ pmalloc (pool p, size_t n)
 }
 
 void *
-pcalloc (pool p, size_t nmemb, size_t size)
+c2_pcalloc (pool p, size_t nmemb, size_t size)
 {
-  void *ptr = pmalloc (p, nmemb * size);
+  void *ptr = c2_pmalloc (p, nmemb * size);
   if (ptr) memset (ptr, 0, nmemb * size);
   return ptr;
 }
 
 void *
-prealloc (pool p, void *ptr, size_t n)
+c2_prealloc (pool p, void *ptr, size_t n)
 {
   struct _pool_allocs *pa;
   int i;
   void *new_ptr;
 
   if (ptr == 0)
-	return pmalloc (p, n);
+	return c2_pmalloc (p, n);
 
   new_ptr = realloc (ptr, n);
   if (new_ptr == 0) bad_malloc_handler ();

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_pcl/PSfont.java
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,74 +25,74 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 August 2001.
+** Last modified 23 January 2004.
 */
 
 /*
 ** This class selects PostScript fonts and returns information about them.
 */
 class PSfont
-    {
-    public PSfont()
 	{
-	family = "courier";
-	bold = false;
-	italic = false;
-	size = 1200;
-	postscript_name = "";
-	}
-
-    private String family;
-    private boolean italic;
-    private boolean bold;
-    private int size;			// hundredths of a PostScript point
-    private String postscript_name;	// "" when we don't know it yet
-
-    public void set_family(String new_family)
-	{
-	family = new_family;
-	postscript_name = "";
-	}
-
-    public void set_bold(boolean new_bold)
-	{
-	bold = new_bold;
-	postscript_name = "";
-	}
-
-    public void set_italic(boolean new_italic)
-	{
-	italic = new_italic;
-	postscript_name = "";
-	}
-
-    public void set_size(int new_size)
-	{
-	size = new_size;
-	}
-
-    public int get_size()
-	{
-	return size;
-	}
-
-    public String get_postscript_name()
-	{
-	if(postscript_name == "")
-	    {
-	    postscript_name = "Courier";
-	    if(bold)
-		postscript_name += "-Bold";
-	    if(italic)
+	public PSfont()
 		{
-		if(!bold)
-		    postscript_name += "-";
-		postscript_name += "Oblique";
+		family = "courier";
+		bold = false;
+		italic = false;
+		size = 1200;
+		postscript_name = "";
 		}
-	    }
-	return postscript_name;
-	}
 
-    }
+	private String family;
+	private boolean italic;
+	private boolean bold;
+	private int size;					// hundredths of a PostScript point
+	private String postscript_name;		// "" when we don't know it yet
+
+	public void set_family(String new_family)
+		{
+		family = new_family;
+		postscript_name = "";
+		}
+
+	public void set_bold(boolean new_bold)
+		{
+		bold = new_bold;
+		postscript_name = "";
+		}
+
+	public void set_italic(boolean new_italic)
+		{
+		italic = new_italic;
+		postscript_name = "";
+		}
+
+	public void set_size(int new_size)
+		{
+		size = new_size;
+		}
+
+	public int get_size()
+		{
+		return size;
+		}
+
+	public String get_postscript_name()
+		{
+		if(postscript_name == "")
+			{
+			postscript_name = "Courier";
+			if(bold)
+				postscript_name += "-Bold";
+			if(italic)
+				{
+				if(!bold)
+					postscript_name += "-";
+				postscript_name += "Oblique";
+				}
+			}
+		return postscript_name;
+		}
+
+	}
 
 // end of file

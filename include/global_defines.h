@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 5 November 2003.
+** This file was last modified 23 January 2004.
 */
 
 /*
@@ -486,9 +486,16 @@ const char *ppr_get_nodename(void)
 __attribute__ ((const))
 #endif
 ;
+
 char *ppd_find_file(const char ppdname[]);
 int ppd_open(const char name[], FILE *errors);
 char *ppd_readline(void);
+void *ppdobj_new(const char ppdname[]);
+void ppdobj_delete(void *p);
+char *ppdobj_readline(void *p);
+void *ppd_finish_quoted_string(char *initial_segment);
+int ppd_decode_QuotedValue(char *p);
+
 void set_ppr_env(void);
 void prune_env(void);
 gu_boolean is_unsafe_ps_name(const char name[]);

@@ -37,7 +37,7 @@ _tree_new (pool pool, size_t size)
 {
   tree t = (tree) new_vector (pool, tree);
 
-  t = prealloc (pool, t, sizeof (*t) + size);
+  t = c2_prealloc (pool, t, sizeof (*t) + size);
   t->size = size;
 
   return t;

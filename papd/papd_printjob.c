@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_printjob.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2003.
+** Last modified 23 January 2004.
 */
 
 #include "before_system.h"
@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdlib.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -56,7 +57,7 @@ static jmp_buf printjob_env;
 ** at_printjob_copy() to copy the printjob from the AppleTalk PAP socket
 ** to the pipe connected to ppr.
 ===========================================================================*/
-void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int node, const char log_file_name[])
+void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const char log_file_name[])
 	{
 	const char function[] = "printjob";
 	const char *username = NULL;
@@ -83,7 +84,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 			{
 			at_reply(sesfd, "%%[ Error: spooler is out of disk space ]%%\n");
 			postscript_stdin_flushfile(sesfd);
-			fatal(1, "insufficient disk space");
+			gu_Throw("insufficient disk space");
 			}
 		}
 
@@ -99,13 +100,13 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 		DODEBUG_PRINTJOB(("%s(): setjmp() returned zero, spawning ppr", function));
 
 		if(pipe(pipefds))				/* pipe for sending data to ppr */
-			fatal(0, "%s(): pipe() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			gu_Throw("%s(): pipe() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
 		if((ppr_pid = fork()) == -1)	/* if we can't fork, */
 			{							/* then tell the client */
 			at_reply(sesfd, "%%[ Error: spooler is out of processes ]%%\n");
 			postscript_stdin_flushfile(sesfd);
-			fatal(1, "%s(): fork() failed, errno=%d", function, errno, gu_strerror(errno));
+			gu_Throw("%s(): fork() failed, errno=%d", function, errno, gu_strerror(errno));
 			}
 
 		if(ppr_pid == 0)				/* if child */
@@ -119,7 +120,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 			close(pipefds[0]);			/* and close origional */
 
 			if((fd = open(log_file_name, O_WRONLY | O_APPEND | O_CREAT,UNIX_755)) == -1)
-				fatal(0, "%s(): can't open log file", function);
+				gu_Throw("%s(): can't open log file", function);
 			if(fd != 1) dup2(fd,1);		/* stdout and */
 			if(fd != 2) dup2(fd,2);		/* stderr */
 			if(fd > 2) close(fd);
@@ -152,10 +153,10 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 			argv[x++] = proxy_for;
 
 			/* Answer for TTRasterizer query */
-			if(qc->TTRasterizer)
+			if(queueinfo_ttRasterizer(qc))
 				{
 				argv[x++] = "-Q";
-				argv[x++] = qc->TTRasterizer;
+				argv[x++] = queueinfo_ttRasterizer(qc);
 				}
 
 			/* no responder */
@@ -210,7 +211,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 		*/
 		DODEBUG_PRINTJOB(("%s(): calling at_printjob_copy()", function));
 		if(! at_printjob_copy(sesfd, pipefds[1]))
-			fatal(1, "%s(): print job was truncated", function);
+			gu_Throw("%s(): print job was truncated", function);
 		DODEBUG_PRINTJOB(("%s(): at_printjob_copy() returned", function));
 
 		/* We will no longer be wanting to kill ppr, so we can forget its PID. */
@@ -300,7 +301,7 @@ void printjob(int sesfd, struct ADV *adv, struct QUEUE_CONFIG *qc, int net, int 
 	} /* end of printjob() */
 
 /*
-** This will be called from fatal(), possibly as the result of receiving
+** This will be called from main()'s exception handler, possibly as the result of receiving
 ** a signal telling us to shut down.
 */
 void printjob_abort(void)
@@ -324,7 +325,7 @@ void printjob_reapchild(int sig)
 */
 void printjob_sigpipe(int sig)
 	{
-	fatal(1, "SIGPIPE received");
+	gu_Throw("SIGPIPE received");
 	} /* end of sigpipe_handler() */
 
 /* end of file */

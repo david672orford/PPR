@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_conf.sgml
-Last Modified:
+Last Modified: 14 January 2004
 Last Proofread: 
 -->
 
@@ -9,7 +9,7 @@ Last Proofread:
 
 <para>Configuration files which the system administrator is expected to modify
 directly are described within the reference manual.  The files described
-in this section are modified automatically by programs such as ppad.  That
+in this section are modified automatically by programs such as <command>ppad</command>.  That
 is why they are described here in the Hacker's Guide.</para>
 
 <sect2 id="printer-config">

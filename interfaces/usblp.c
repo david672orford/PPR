@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/usblp.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -304,7 +304,7 @@ static int usblp_port_probe(const char address[])
 /*
 ** Tie it all together.
 */
-int main(int argc, char *argv[])
+int int_main(int argc, char *argv[])
 	{
 	int portfd;							/* file handle of the printer port */
 	struct OPTIONS options;

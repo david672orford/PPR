@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/lpr.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell and Damian Ivereigh.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -405,7 +405,7 @@ static void do_data_file_exaggerated(int sockfd, const char *local_nodename, con
 /*
 ** Main function.
 */
-int main(int argc, char *argv[])
+int int_main(int argc, char *argv[])
 	{
 	/* The address broken up into its components: */
 	const char *address_queue;			/* before "@" */

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_fault_debug.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 July 2001.
+** Last modified 23 January 2004.
 */
 
 #include "before_system.h"
@@ -237,28 +252,26 @@ void signal_debug(const char format[], ...)
 	}
 #endif
 
-/*
-** This function is called from within certain libppr functions
-** when they encounter truly exceptional conditions.
-** This function overrides the default libppr_throw() in libppr.a.
-*/
-void libppr_throw(int exception_type, const char exception_function[], const char format[], ...)
+/* This wraps the main() function in order to install a special 
+ * exception handler which writes the exception to the printer's alerts log.
+ */
+int main(int argc, char *argv[])
 	{
-	va_list va;
-	char tempstr[256];
+	gu_Try {
+		return real_main(argc, argv);
+		}
+	gu_Catch {
+		pprdrv_log_vprintf("FATAL", "%s", gu_exception);
+		job_log_vprintf("FATAL", "%s", gu_exception);
 
-	va_start(va, format);
-	snprintf(tempstr, sizeof(tempstr), "%s() failed: %s", exception_function, format);
-	va_end(va);
-
-	pprdrv_log_vprintf("FATAL", tempstr, va);
-	job_log_vprintf("FATAL", tempstr, va);
-
-	if(exception_type == EXCEPTION_STARVED)
-		hooked_exit(EXIT_STARVED, NULL);
-	else
-		hooked_exit(EXIT_PRNERR_NORETRY, NULL);
-	} /* end of libppr_throw() */
+		if(strstr(gu_exception, "alloc()") || strstr(gu_exception, "fork()"))
+			hooked_exit(EXIT_STARVED, NULL);
+		else
+			hooked_exit(EXIT_PRNERR_NORETRY, NULL);
+		}
+	/* NOREACHED */
+	return 255;
+	} /* end of main() */
 
 /* end of file */
 

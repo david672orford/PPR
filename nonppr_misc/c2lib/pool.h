@@ -58,9 +58,9 @@ extern pool new_subpool (pool);
  */
 extern void delete_pool (pool);
 
-/* Function: pmalloc - allocate memory in a pool
- * Function: pcalloc
- * Function: prealloc
+/* Function: c2_pmalloc - allocate memory in a pool
+ * Function: c2_pcalloc
+ * Function: c2_prealloc
  *
  * Allocate memory in a pool or, if pool is null, on the main heap
  * (equivalent to plain @code{malloc}). If memory is allocated in a real
@@ -71,18 +71,18 @@ extern void delete_pool (pool);
  * If a memory allocation fails, the @code{bad_malloc_handler} function is
  * called (which defaults to just calling @ref{abort(3)}).
  *
- * @code{pcalloc} is identical to @code{pmalloc} but also sets the memory
+ * @code{c2_pcalloc} is identical to @code{c2_pmalloc} but also sets the memory
  * to zero before returning it.
  *
- * @code{prealloc} increases the size of an existing memory allocation.
- * @code{prealloc} might move the memory in the process of reallocating it.
+ * @code{c2_prealloc} increases the size of an existing memory allocation.
+ * @code{c2_prealloc} might move the memory in the process of reallocating it.
  *
- * Bugs: @code{prealloc} cannot reduce the size of an existing memory
+ * Bugs: @code{c2_prealloc} cannot reduce the size of an existing memory
  * allocation.
  */
-extern void *pmalloc (pool, size_t n);
-extern void *pcalloc (pool, size_t nmemb, size_t size);
-extern void *prealloc (pool, void *ptr, size_t n);
+extern void *c2_pmalloc (pool, size_t n);
+extern void *c2_pcalloc (pool, size_t nmemb, size_t size);
+extern void *c2_prealloc (pool, void *ptr, size_t n);
 
 /* Function: pool_register_malloc - allow pool to own malloc'd memory
  *

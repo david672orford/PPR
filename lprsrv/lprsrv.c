@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -139,16 +139,6 @@ void uprint_error_callback(const char *format, ...)
 	va_end(va);
 	} /* end of uprint_error_callback() */
 
-void libppr_throw(int exception_type, const char exception_function[], const char format[], ...)
-	{
-	va_list va;
-	va_start(va, format);
-	log("libppr exception", exception_function, format, va);
-	va_end(va);
-	exit(1);
-	}
-
-
 /*=============================================================================
 ** main() and its support routines:
 =============================================================================*/
@@ -194,7 +184,7 @@ static void help(FILE *outfile)
 ** main server loop,
 ** dispatch commands
 */
-int main(int argc,char *argv[])
+static int real_main(int argc,char *argv[])
 	{
 	const char function[] = "main";
 	char client_dns_name[MAX_HOSTNAME+1];
@@ -410,6 +400,19 @@ int main(int argc,char *argv[])
 	} /* end of line reading context */
 
 	return 0;
+	} /* end of real_main() */
+
+int main(int argc, char *argv[])
+	{
+	gu_Try {
+		return real_main(argc, argv);
+		}
+	gu_Catch {
+		log("exception", NULL, "%s", gu_exception);
+		exit(1);
+		}
+	/* NOREACHED */
+	return 255;
 	} /* end of main() */
 
 /* end of file */

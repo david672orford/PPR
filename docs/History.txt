@@ -468,7 +468,7 @@ more information about RIPs and *pprRIP:.
 * refman/ppr-panel.1.pod: expanded the section about desktop icons.
 
 
-1.53a1, 24 September 2003--6 November 2003.
+1.53a1, 24 September 2003--22 January 2004.
 
 * index.html: added links to RFC's relevant to SNMP.
 
@@ -486,6 +486,8 @@ more information about RIPs and *pprRIP:.
 
 * rules.mk: fixed rule for pod2html to include --htmlroot=. option.
 
+* index.html: replaced dead links to HP documents with new live ones at
+  lprng.sourceforge.net.
 
 
 TODO

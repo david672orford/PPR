@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -140,6 +140,7 @@ extern int drvreq_count;
 extern int strip_binselects;	/* for pprdrv_ppd.c */
 extern int strip_signature;		/* for pprdrv_ppd.c */
 void fault_check(void);
+int real_main(int argc, char *argv[]);
 
 /* pprdrv_fault_debug.c: */
 void hooked_exit(int rval, const char *explain)

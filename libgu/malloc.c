@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/malloc.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*! \file
@@ -42,13 +42,6 @@ allocation failure is highly unlikely, PPR programs treats it as a fatal
 error, but, rather than test the return value of malloc() after each call,
 the calls are encapsulated in special functions which test the return value
 and abort the program if the allocation fails.
-
-A program calling these functions must provide a function called
-libppr_throw(). This function should print an error message and exit.  The
-first argument will be EXCEPTION_STARVED, the second will be the name of the
-function that failed to allocate memory, the third is a printf() style
-format string for the error message.  Any remaining arguments are the values
-specified by the format string.
 
 */
 
@@ -82,7 +75,7 @@ void *gu_alloc(size_t number, size_t size)
 	DODEBUG(("gu_alloc(number=%ld, size=%ld)", (long)number, (long)size));
 
 	if((rval = malloc(size*number)) == (void*)NULL)
-		libppr_throw(EXCEPTION_STARVED, "gu_alloc", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_Throw("gu_alloc(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 
@@ -105,7 +98,7 @@ char *gu_strdup(const char *string)
 		return NULL;
 
 	if((rval = (char*)malloc(strlen(string)+1)) == (char*)NULL)
-		libppr_throw(EXCEPTION_STARVED, "gu_strdup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_Throw("gu_strdup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 
@@ -128,7 +121,7 @@ char *gu_strndup(const char *string, size_t len)
 	DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
 
 	if((rval = (char*)malloc(len+1)) == (char*)NULL)
-		libppr_throw(EXCEPTION_STARVED, "gu_strndup", "malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_Throw("gu_strndup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 
@@ -151,7 +144,7 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 		{
 		*number = (len + 1);
 		if((ptr = (char*)realloc(ptr, *number)) == (char*)NULL)
-			libppr_throw(EXCEPTION_STARVED, "gu_restrdup", "realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
+			gu_Throw("gu_restrdup(): realloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		}
 	strcpy(ptr, string);
 	return ptr;
@@ -173,7 +166,7 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
 	DODEBUG(("gu_realloc(ptr=%p, number=%d, size=%d)", ptr, number, size));
 
 	if((rval = realloc(ptr, number*size)) == (void*)NULL)
-		libppr_throw(EXCEPTION_STARVED, "gu_realloc", "realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
+		gu_Throw("gu_realloc(): realloc(%p, %d) failed, errno=%d (%s)", ptr, (int)(number*size), errno, gu_strerror(errno));
 
 	return rval;
 	} /* end of ppr_realloc() */
@@ -189,7 +182,7 @@ void gu_free(void *ptr)
 	DODEBUG(("gu_free(%p)", ptr));
 
 	if(!ptr)
-		libppr_throw(EXCEPTION_BADUSAGE, "gu_free", "attempt to free NULL pointer");
+		gu_Throw("gu_free(): attempt to free NULL pointer");
 
 	free(ptr);
 

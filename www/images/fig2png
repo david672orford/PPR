@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/www/images/fig2png
-# Last modified 13 February 2003.
+# Last modified 23 January 2004.
 #
 
 #
@@ -27,6 +27,12 @@ case $1 in
 	shift
 	# Convert to half size
 	fig2dev -L ppm -m 2.0 -g '#f0f0f0' $1 | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $2
+	;;
+
+    --quarter )
+	shift
+	# Convert to half size
+	fig2dev -L ppm -m 1.0 -g '#f0f0f0' $1 | pnmscale 0.250 | pnmtopng -transparent '#f0f0f0' > $2
 	;;
 
     * )

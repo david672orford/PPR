@@ -1,7 +1,7 @@
 mouse:~ppr/src/www/images/README.txt
-13 February 2003
+23 January 2004
 
-This directory contains hand-build image files and FIG files from which
+This directory contains both hand-build image files and FIG files from which
 image files are automatically built during the build process.  (The file
 fig2png does the actual conversion.)
 

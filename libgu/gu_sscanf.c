@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_sscanf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 23 January 2004.
 */
 
 /*! \file
@@ -54,8 +54,9 @@ static int strings_count = 0;
 */
 void gu_sscanf_checkpoint(void)
 	{
+	const char function[] = "gu_sscanf_checkpoint";
 	if(checkpoint_depth != 0)
-		libppr_throw(EXCEPTION_OVERFLOW, "gu_sscanf_checkpoint", "checkpoint_depth is %d!", checkpoint_depth);
+		gu_Throw("%s(): checkpoint_depth is %d!", function, checkpoint_depth);
 	checkpoint_depth++;
 	}
 
@@ -65,8 +66,9 @@ void gu_sscanf_checkpoint(void)
 */
 void gu_sscanf_rollback(void)
 	{
+	const char function[] = "gu_sscanf_checkpoint";
 	if(checkpoint_depth != 1)
-		libppr_throw(EXCEPTION_OVERFLOW, "gu_sscanf_checkpoint", "checkpoint_depth is %d!", checkpoint_depth);
+		gu_Throw("%s(): checkpoint_depth is %d!", function, checkpoint_depth);
 	while(strings_count > 0)
 		{
 		strings_count--;
@@ -82,11 +84,12 @@ void gu_sscanf_rollback(void)
 */
 static char *gu_sscanf_strndup(const char *string, size_t len)
 	{
+	const char function[] = "gu_sscanf_strndup";
 	char *p = gu_strndup(string, len);
 	if(checkpoint_depth > 0)
 		{
 		if(strings_count >= MAX_ROLLBACK)
-			libppr_throw(EXCEPTION_OVERFLOW, "gu_sscanf_strndup", "rollback stack overflow");
+			gu_Throw("%s(): rollback stack overflow", function);
 		strings[strings_count++] = p;
 		}
 	return p;
@@ -180,6 +183,7 @@ a pointer to a char array.</dd>
 */
 int gu_sscanf(const char *input, const char *format, ...)
 	{
+	const char function[] = "gu_sscanf";
 	va_list va;
 	int count = 0;				/* number of things extracted so far. */
 	int maxextlen;				/* maximum characters to extract, including NULL */
@@ -463,7 +467,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 				 * Catch unimplemented formats here
 				 */
 				default:
-					libppr_throw(EXCEPTION_BADUSAGE, "gu_sscanf", "unrecognized format '%c' in \"%s\"", *(pattern - 1), format);
+					gu_Throw("%s(): unrecognized format '%c' in \"%s\"", function, *(pattern - 1), format);
 				}
 			}
 

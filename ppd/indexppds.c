@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppd/indexppds.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 20 January 2004.
 */
 
 #include "before_system.h"
@@ -40,7 +40,6 @@
 #include <locale.h>
 #include <libintl.h>
 #endif
-
 #include "gu.h"
 #include "global_defines.h"
 #include "util_exits.h"
@@ -55,86 +54,6 @@ const char myname[] = "lib/indexppds";
 const char ppr_conf[] = PPR_CONF;
 const char section_name[] = "ppds";
 const char ppdindex_db[] = PPD_INDEX;
-
-/*==========================================================================
-** Extra routines for PPD parsing 
-** These should probably go into libppr/readppd.c eventually.
-==========================================================================*/
-
-/*
- * Take initial_segment and possibly subsequent lines readable with ppd_readline()
- * (until one of them ends with a quote)
- * and assemble them into a PCS.
- */
-static void *ppd_finish_quoted_string(char *initial_segment)
-	{
-	char *p = initial_segment;
-	gu_boolean end_quote = FALSE;
-	int len;
-	void *text = gu_pcs_new();
-
-	do	{
-		len = strlen(p);
-		if(len > 0 && p[len-1] == '"')
-			{
-			p[len-1] = '\0';
-			end_quote = TRUE;
-			}
-		if(gu_pcs_length(&text) > 0)
-			gu_pcs_append_char(&text, '\n');
-		gu_pcs_append_cstr(&text, p);
-		} while(!end_quote && (p = ppd_readline()));
-	return text;
-	} /* end of ppd_finish_quoted_string() */
-
-/*
- * Edit a string in place, decoding hexadecimal substrings.  The length of the
- * resulting string (which will never be longer) is returned.  QuotedValues with hexadecimal
- * substrings are described in the "PostScript Printer File Format Specification"
- * version 4.0 on page 5.
- */
-static int ppd_decode_QuotedValue(char *p)
-	{
-	int len;
-	int si, di;
-
-	len = strlen(p); 
-	
-	for(si=di=0; si < len; si++)
-		{
-		if(p[si] == '<')
-			{
-			int count = 0;
-			int c, high_nibble = 0;
-
-			si++;
-			while((c = p[si]) && c != '>')
-				{
-				if(c >= '0' && c <= '9')
-					c -= '0';
-				else if(c >= 'a' && c <= 'f')
-					c -= ('a' + 10);
-				else if(c >= 'A' && c <= 'F')
-					c -= ('A' + 10);
-				else
-					continue;
-
-				if(count % 2 == 0)
-					high_nibble = c;
-				else
-					p[di++] = (high_nibble << 4) + c;
-				
-				count++;
-				}
-			}
-		else
-			{
-			p[di++] = p[si];
-			}
-		}
-	
-	return di;
-	} /* end of ppd_decode_QuotedValue() */
 
 /*==========================================================================
 ** functions which wrap the future library functions above in order

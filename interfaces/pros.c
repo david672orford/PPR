@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/pros.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -385,7 +385,7 @@ static int pros_reply_handler(unsigned char *buffer, int buffer_len, gu_boolean 
 /*=========================================================================
 ** Main
 =========================================================================*/
-int main(int argc, char *argv[])
+int int_main(int argc, char *argv[])
 	{
 	struct OPTIONS options;
 	const char *printer, *address;

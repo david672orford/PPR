@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_conffile.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 September 2001.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -19,9 +34,7 @@
 ** do not have to perform expensive disk accesses to get other
 ** lines from the file.
 **
-** This module now has support for aliases.  An alias can override the
-** passthru and switchset of the thing it points to but not the default
-** filter options or ACL list.
+** This module has much in common with ../libppr/queueinfo.c.
 */
 
 #include "before_system.h"
@@ -35,11 +48,13 @@
 #include "ppr_conffile.h"
 
 static int information_cached = FALSE;
-static const char *switchset;
-static const char *deffiltopts;
-static const char *passthru;
-static const char *forwhat;
-static const char *acls;
+static char *switchset;
+static char *deffiltopts;
+static char *passthru;
+static char *forwhat;
+static char *acls;
+
+#define set_field(name,value) if(name) gu_free(name); name = gu_strdup(value)
 
 /*
 ** First, we have a routine which finds the file and extracts
@@ -48,6 +63,10 @@ static const char *acls;
 ** To understand this code you must know that aliases may
 ** not have "Deffiltopts:" lines, for them we read it from the
 ** underlying queue.
+**
+** This this function has support for aliases.  An alias doesn't inherit the
+** passthru and switchset of the thing it points to it does inherit the default
+** filter options and the ACLs.
 */
 static void cache_info(void)
 	{
@@ -60,20 +79,30 @@ static void cache_info(void)
 		FILE *f;
 		int len = 128;
 		char *line = NULL;
+		char *tempptr;
 		const char *look_for_name;
 
-		/* Look for an alias first */
+		/* If  this is an alias, resolve it first. */
 		ppr_fnamef(fname, "%s/%s", ALIASCONF, qentry.destname);
 		if((f = fopen(fname, "r")))
 			{
 			while((line = gu_getline(line, &len, f)))
 				{
-				if(!switchset && gu_sscanf(line, "Switchset: %Z", &switchset) == 1)
+				if(gu_sscanf(line, "Switchset: %Z", &tempptr) == 1)
+					{
+					set_field(switchset, tempptr);
 					continue;
-				if(!passthru && gu_sscanf(line, "PassThru: %Z", &passthru) == 1)
+					}
+				if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
+					{
+					set_field(passthru, tempptr);
 					continue;
-				if(!forwhat && gu_sscanf(line, "ForWhat: %S", &forwhat) == 1)
+					}
+				if(gu_sscanf(line, "ForWhat: %S", &tempptr) == 1)
+					{
+					set_field(forwhat, tempptr);
 					continue;
+					}
 				}
 			fclose(f);
 
@@ -81,10 +110,11 @@ static void cache_info(void)
 				fatal(PPREXIT_OTHERERR, "The alias \"%s\" has no \"ForWhat:\" line", qentry.destname);
 			}
 
-		/* If we found an alias, look for the group or printer it points to. */
+		/* If we found an alias, look for the group or printer it points to.  Otherwise
+		   look for a group printer with the name which the user specified. */
 		look_for_name = forwhat ? forwhat : qentry.destname;
 
-		/* if not, then try a group */
+		/* try a group */
 		ppr_fnamef(fname, "%s/%s", GRCONF, look_for_name);
 		if(!(f = fopen(fname, "r")))
 			{
@@ -101,17 +131,29 @@ static void cache_info(void)
 			{
 			while((line = gu_getline(line, &len, f)))
 				{
-				if(!forwhat)
+				if(!forwhat)	/* If we didn't get here thru an alias, */
 					{
-					if(!switchset && gu_sscanf(line, "Switchset: %Z", &switchset) == 1)
+					if(gu_sscanf(line, "Switchset: %Z", &tempptr) == 1)
+						{
+						set_field(switchset, tempptr);
 						continue;
-					if(!passthru && gu_sscanf(line, "PassThru: %Z", &passthru) == 1)
+						}
+					if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
+						{
+						set_field(passthru, tempptr);
 						continue;
-					if(!acls && gu_sscanf(line, "ACLs: %Z", &acls) == 1)
-						continue;
+						}
 					}
-				if(!deffiltopts && gu_sscanf(line, "DefFiltOpts: %Z", &deffiltopts) == 1)
+				if(gu_sscanf(line, "DefFiltOpts: %Z", &tempptr) == 1)
+					{
+					set_field(deffiltopts, tempptr);
 					continue;
+					}
+				if(gu_sscanf(line, "ACLs: %Z", &tempptr) == 1)
+					{
+					set_field(acls, tempptr);
+					continue;
+					}
 				}
 			fclose(f);
 			}

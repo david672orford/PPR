@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/gnodename.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 23 January 2004.
 */
 
 /*! \file
@@ -54,6 +54,7 @@ that name and returned the saved name on subsequent calls.
 */
 const char *ppr_get_nodename(void)
 	{
+	const char function[] = "ppr_get_nodename";
 	static char *nodename = (char*)NULL;
 
 	if(!nodename)
@@ -72,7 +73,7 @@ const char *ppr_get_nodename(void)
 			** What we really care about is the nodename.
 			*/
 			if(uname(&s) == -1)
-				 libppr_throw(EXCEPTION_OTHER, "ppr_get_nodename", "uname() failed, errno=%d (%s)", errno, gu_strerror(errno));
+				 gu_Throw("%s(): uname() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 
 			/*
 			** If the domain name is included in the node name,

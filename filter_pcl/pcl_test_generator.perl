@@ -2,7 +2,7 @@
 #
 # PCL Test Generator
 #
-# Last modified 22 April 2002.
+# Last modified 22 January 2004.
 #
 
 sub do_reset
@@ -40,12 +40,17 @@ sub do_formfeed
 	}
 
 do_reset();
-#do_pagesize("Letter");
-do_pagesize("Legal");
-#do_bin("main");
-#do_bin("lower");
+
+do_pagesize("Letter");
+do_bin("main");
 print "Now is the time for all good men to come to the aid of the party.\r\n";
 do_formfeed();
+
+do_bin("lower");
+do_pagesize("Legal");
+print "Now is the time for all good men to come to the aid of the party.\r\n";
+do_formfeed();
+
 do_reset();
 
 exit 0;

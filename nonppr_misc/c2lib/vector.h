@@ -230,7 +230,7 @@ extern void _vector_fill (vector, const void *ptr, int n);
  * Increase the amount of space allocated to a vector. See also
  * @ref{vector_allocated(3)}. This function can be used to avoid
  * the vector itself making too many calls to the underlying
- * @ref{prealloc(3)}, particularly if you know in advance exactly
+ * @ref{c2_prealloc(3)}, particularly if you know in advance exactly
  * how many elements the vector will contain.
  */
 extern void vector_reallocate (vector v, int n);

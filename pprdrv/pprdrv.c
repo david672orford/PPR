@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 November 2003.
+** Last modified 23 January 2004.
 */
 
 /*
@@ -1943,8 +1943,11 @@ void fault_check(void)
 
 /*
 ** main procedure
+**
+** It is called real_main() rather than main() because that way we can
+** easily wrap it in an exception handler.
 */
-int main(int argc, char *argv[])
+int real_main(int argc, char *argv[])
 	{
 	int result;			/* exit code of interface */
 	int group_pass;		/* Number of the pass thru the group (a pprdrv invokation parameter). */
@@ -1987,7 +1990,7 @@ int main(int argc, char *argv[])
 
 	/* If any debugging at all is turned on, then log the program startup. */
 	#ifdef DEBUG
-	debug("main(): printer.Name=\"%s\", QueueFile=\"%s\", group_pass=%d", printer.Name, QueueFile, group_pass);
+	debug("real_main(): printer.Name=\"%s\", QueueFile=\"%s\", group_pass=%d", printer.Name, QueueFile, group_pass);
 	#endif
 
 	if(test_mode)
@@ -2011,10 +2014,10 @@ int main(int argc, char *argv[])
 	signal_interupting(SIGPIPE, sigpipe_handler);
 
 	/* Read the printer configuration. */
-	DODEBUG_MAIN(("main(): pprdrv_read_printer_conf()"));
+	DODEBUG_MAIN(("real_main(): pprdrv_read_printer_conf()"));
 	pprdrv_read_printer_conf();
-	DODEBUG_MAIN(("main(): interface=\"%s\", address=\"%s\", options=\"%s\"", printer.Interface, printer.Address, printer.Options));
-	DODEBUG_MAIN(("main(): feedback=%s, jobbreak=%d, codes=%d", printer.Feedback ? "TRUE" : "FALSE", printer.Jobbreak, (int)printer.Codes));
+	DODEBUG_MAIN(("real_main(): interface=\"%s\", address=\"%s\", options=\"%s\"", printer.Interface, printer.Address, printer.Options));
+	DODEBUG_MAIN(("real_main(): feedback=%s, jobbreak=%d, codes=%d", printer.Feedback ? "TRUE" : "FALSE", printer.Jobbreak, (int)printer.Codes));
 
 	/* If the outputorder is still unknown, make it forward. */
 	if(printer.OutputOrder == 0)
@@ -2044,7 +2047,7 @@ int main(int argc, char *argv[])
 	** Open the queue file.  We will keep it open until it is
 	** close automatically when we exit.
 	*/
-	DODEBUG_MAIN(("main(): reading queue file"));
+	DODEBUG_MAIN(("real_main(): reading queue file"));
 	{
 	char fname[MAX_PPR_PATH];
 	ppr_fnamef(fname, "%s/%s", QUEUEDIR, QueueFile);
@@ -2087,7 +2090,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Read and discard the AddOn section. */
-	DODEBUG_MAIN(("main(): Discarding Addon section"));
+	DODEBUG_MAIN(("real_main(): Discarding Addon section"));
 	{
 	char *line = NULL;
 	int line_max = 256;
@@ -2102,7 +2105,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Read the lines which list the required media. */
-	DODEBUG_MAIN(("main(): calling read_media_lines()"));
+	DODEBUG_MAIN(("real_main(): calling read_media_lines()"));
 	read_media_lines(qstream);
 
 	/*
@@ -2111,10 +2114,10 @@ int main(int argc, char *argv[])
 	** This routine takes the ProofMode into account.
 	** (See RBII p. 664.)
 	*/
-	DODEBUG_MAIN(("main(): calling check_if_capable()"));
+	DODEBUG_MAIN(("real_main(): calling check_if_capable()"));
 	if(check_if_capable(qstream, group_pass))
 		{
-		DODEBUG_MAIN(("main(): not capable, exiting"));
+		DODEBUG_MAIN(("real_main(): not capable, exiting"));
 		return EXIT_INCAPABLE;
 		}
 
@@ -2150,11 +2153,11 @@ int main(int argc, char *argv[])
 	page_computations();
 
 	/* Print banner or trailer page. */
-	DODEBUG_MAIN(("main(): calling print_flag_page(%d, 0)", printer.OutputOrder));
+	DODEBUG_MAIN(("real_main(): calling print_flag_page(%d, 0)", printer.OutputOrder));
 	flag_page_skiplines = print_flag_page(printer.OutputOrder, 0, 0);
 
 	/* Download any patchfile if it is not already downloaded. */
-	DODEBUG_MAIN(("main(): patchfile()"));
+	DODEBUG_MAIN(("real_main(): patchfile()"));
 	patchfile();
 
 	/*
@@ -2168,13 +2171,13 @@ int main(int argc, char *argv[])
 	*/
 	if(job.opts.hacks & HACK_TRANSPARENT)
 		{
-		DODEBUG_MAIN(("main(): sending job in transparent mode"));
+		DODEBUG_MAIN(("real_main(): sending job in transparent mode"));
 		transparent_hack_or_passthru_copy(QueueFile, TRUE);
 		goto feedthru_skip_point;
 		}
 	if(job.PassThruPDL)
 		{
-		DODEBUG_MAIN(("main(): sending PassThruPDL job"));
+		DODEBUG_MAIN(("real_main(): sending PassThruPDL job"));
 		transparent_hack_or_passthru_copy(QueueFile, FALSE);
 		goto feedthru_skip_point;
 		}
@@ -2182,7 +2185,7 @@ int main(int argc, char *argv[])
 	/*
 	** Open the job files.
 	*/
-	DODEBUG_MAIN(("main(): opening job files"));
+	DODEBUG_MAIN(("real_main(): opening job files"));
 	{
 	char fname[MAX_PPR_PATH];
 
@@ -2203,7 +2206,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* Download any persistent fonts or other resources. */
-	DODEBUG_MAIN(("main(): persistent_download_now()"));
+	DODEBUG_MAIN(("real_main(): persistent_download_now()"));
 	persistent_download_now();
 
 	/*
@@ -2222,11 +2225,11 @@ int main(int argc, char *argv[])
 		/* write the document over the pipe */
 
 		/* copy header comments */
-		DODEBUG_MAIN(("main(): calling copy_header()"));
+		DODEBUG_MAIN(("real_main(): calling copy_header()"));
 		copy_header();
 
 		/* copy document defaults */
-		DODEBUG_MAIN(("main(): calling copy_defaults()"));
+		DODEBUG_MAIN(("real_main(): calling copy_defaults()"));
 		copy_defaults();
 
 		/*
@@ -2277,7 +2280,7 @@ int main(int argc, char *argv[])
 		/*
 		** Copy the main prolog, document setup, and script sections:
 		*/
-		DODEBUG_MAIN(("main(): copying various code sections"));
+		DODEBUG_MAIN(("real_main(): copying various code sections"));
 		if(copy_prolog())				/* Copy prolog, and if it did not end */
 			{
 			if(copy_setup())			/* with "%%Trailer", copy Document Setup */
@@ -2291,7 +2294,7 @@ int main(int argc, char *argv[])
 			}
 
 		/* copy the trailer */
-		DODEBUG_MAIN(("main(): calling copy_trailer()"));
+		DODEBUG_MAIN(("real_main(): calling copy_trailer()"));
 		copy_trailer();
 
 		/*
@@ -2333,16 +2336,16 @@ int main(int argc, char *argv[])
 	** Print a header or trailer page if proper to do so.
 	** We must close the job log so we can print it.
 	*/
-	DODEBUG_MAIN(("main(): calling print_flag_page()"));
+	DODEBUG_MAIN(("real_main(): calling print_flag_page()"));
 	print_flag_page(printer.OutputOrder*-1, 1, flag_page_skiplines);
 
 	/*
 	** Close the pipes to the interface and wait
 	** for it to exit.
 	*/
-	DODEBUG_MAIN(("main(): calling job_nomore()"));
+	DODEBUG_MAIN(("real_main(): calling job_nomore()"));
 	result = job_nomore();
-	DODEBUG_MAIN(("main(): interface terminated with code %d", result));
+	DODEBUG_MAIN(("real_main(): interface terminated with code %d", result));
 
 	/*
 	** If we received a message about a PostScript error
@@ -2368,7 +2371,7 @@ int main(int argc, char *argv[])
 		*/
 		if(job.charge_to == (char*)NULL)
 			{
-			error("main(): can't charge because \"%%%%For:\" line is blank!");
+			error("real_main(): can't charge because \"%%%%For:\" line is blank!");
 			}
 		else
 			{
@@ -2380,7 +2383,7 @@ int main(int argc, char *argv[])
 				job.N_Up.sigsheets, job.N_Up.sigpart, job.opts.copies);
 
 			if(db_transaction(job.charge_to, charge.total, TRANSACTION_CHARGE) != USER_OK)
-				error("main(): failed to charge user using db_transaction()");
+				error("real_main(): failed to charge user using db_transaction()");
 			}
 		}
 
@@ -2427,8 +2430,8 @@ int main(int argc, char *argv[])
 	/*
 	** Exit with a code that probably indicates sucess or a job error.
 	*/
-	DODEBUG_MAIN(("main(): exiting with code %d", result));
+	DODEBUG_MAIN(("real_main(): exiting with code %d", result));
 	return result;
-	} /* end of main() */
+	} /* end of real_main() */
 
 /* end of file */
