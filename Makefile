@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 April 2004.
+# Last modified 24 May 2004.
 #
 
 #
@@ -195,6 +195,7 @@ clean:
 		echo; \
 		done
 	$(RMF) $(BACKUPS)
+	$(RMF) *-stamp		# debian package builder
 	$(RMF) root.sh
 	( cd include && $(RMF) $(BACKUPS) )
 	( cd nonppr_misc && $(RMF) $(BACKUPS) )

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 24 May 2004.
 */
 
 #include "before_system.h"
@@ -220,18 +220,21 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 
 						chdir(HOMEDIR);
 
+						/* Set real to effective because query_wrapper is
+						 * setuid root and wouldn't otherwise know that
+						 * it was invoked by USER_PPR.
+						 */
+						setreuid(geteuid(), -1);
+
 						/* launch interface program */
-						{
-						char fname[MAX_PPR_PATH];
-						ppr_fnamef(fname, "%s/%s", INTDIR, q->interface);
 						if(probe)
 							{
-							execl(fname, q->interface, "--probe", "-", q->address, NULL);
+							execl("lib/query_wrapper", q->interface, "--probe", "-", q->address, NULL);
 							}
 						else
 							{
 							#define STR(a) #a
-							execl(fname, q->interface,
+							execl("lib/query_wrapper", q->interface,
 								"-",							/* printer name */
 								q->address,						/* printer address */
 								q->options ? q->options : "",	/* interface options */
@@ -241,7 +244,6 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 								);
 							}
 						_exit(255);
-						}
 						break;
 					default:							/* parent */
 						if(close(q->pipe_stdin[0]) == -1)

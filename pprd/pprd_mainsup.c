@@ -146,8 +146,8 @@ void rename_old_log_file(void)
 /*
 ** This funtions makes sure that all of the user IDs are "ppr" and all
 ** the group IDs are "ppr".  For this to work, pprd must be setuid "ppr"
-** and setgid "ppr".  (Though of course it will also work if run by
-** with as ppr:ppr.)
+** and setgid "ppr".  (Though of course it will also work if run 
+** under ppr:ppr.)
 **
 ** This code must not call fatal(), fatal() should not be
 ** used until we are sure the permissions are right,
@@ -247,11 +247,12 @@ void adjust_ids(void)
 	** are set.
 	*/
 
-	/* MacOS 10.2 must not act as its manpage suggest since setuid(ppr_uid) doesn't work except for root. */
+	/* MacOS 10.2 must not act as its manpage suggest since setuid(ppr_uid) 
+	 * doesn't work except for root. */
 	seteuid(0);
 
-	/* MacOS 10.2 manpage (which is probably the BSD manpage)suggests that this will 
-		set the saved IDs. */
+	/* MacOS 10.2 manpage (which is probably the BSD manpage)suggests that
+	 * this will set the saved IDs. */
 	if(setgid(ppr_gid) == -1)
 		{
 		fprintf(stderr, _("%s: setgid(%ld) failed, errno=%d (%s)\n"), myname, (long)ppr_gid, errno, gu_strerror(errno));

@@ -61,7 +61,7 @@ LIBOBJS=\
 	destinfo.$(OBJ) \
 	ipp_utils.$(OBJ)
 
-TARGETS=../libppr.$(LIBEXT)
+TARGETS=../libppr.$(LIBEXT) query_wrapper$(DOTEXE)
 
 #=== Build ==================================================================
 
@@ -80,9 +80,13 @@ ali_str.$(OBJ): ali_str.c
 query$(DOTEXE): query.c
 	$(CC) $(CFLAGS) -o query -DTEST query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 
+query_wrapper$(DOTEXE): query_wrapper.c
+	$(CC) $(CFLAGS) -o query_wrapper -DTEST query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+
 #=== Install ================================================================
 
 install: all
+	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib query_wrapper$(DOTEXE)
 
 #=== Housekeeping ===========================================================
 

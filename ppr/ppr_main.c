@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 May 2004.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -1094,8 +1094,8 @@ HELP(_(
 "\t-R ignore-title            ignore \"%%Title:\" comment\n"));
 
 HELP(_(
-"\t-R copies                  read copy count from document\n"
-"\t-R ignore-copies           don't read copy count (default)\n"));
+"\t-R copies                  read copy count from document (default)\n"
+"\t-R ignore-copies           don't read copy count\n"));
 
 HELP(_(
 "\t-R duplex:softsimplex      read duplex mode, assume simplex (default)\n"

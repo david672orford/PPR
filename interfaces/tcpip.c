@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 March 2004.
+** Last modified 24 May 2004.
 */
 
 /*
@@ -169,7 +169,7 @@ static void snmp_status(void *p)
 					alert(int_cmdline.printer, TRUE,
 						_("This printer doesn't support the Host and Printer MIBs.  You should upgrade the\n"
 						"firmware, if possible.  If not, you can turn off SNMP queries by adding the\n"
-						"interface option \"snmp_status_interval=0\".\n")
+						"interface option \"snmp_status_interval=0\".")
 						);
 					}
 				}

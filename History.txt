@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--22 May 2004.
+1.53a2, 20 February 2004--23 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9229,6 +9229,17 @@ Internet Printing Protocol Work
 
 * pprdrv/lw-messages.conf: filled in many of the missing hrDeviceStatus
   and hrPrinterStatus fields with plausible-seeming values.
+
+* ppr/ppr_main.c: corrected --help output to indicate that -R copies is
+  the default.
+
+* Added libppr/query_wrapper.c and changed libppr/query.c to use it.
+
+* Removed nonppr_vendors/ppd_adobe/"HP LaserJet 4Si 4SiMX PS 300DPI" since
+  it didn't seem to server any real purpose.  However, just in case someone
+  is using it on an existing installation, it wasn't added to 
+  z_install_end/fixup_obsolete.sh.
+
 
 
 TODO
