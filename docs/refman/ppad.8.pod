@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 8 April 2003.
 #
 
 =head1 NAME
@@ -341,8 +341,17 @@ Ghostscript for your particular printer.  You should options such as
 B<-sOutputFile=>, B<-q>, or B<-dSAFER> since these are supplied
 automatically by B<ppr-gs>.
 
-To revert to the RIP settings in the PPD file, execute B<ppad rip> with just
-the printer name, like this:
+If you are writing a PPD file, the C<*pprRIP:> line that would coorespond to
+the example above is:
+
+    *pprRIP: ppr-gs pcl -sDEVICE=djet500
+
+Any printer to which you assign a PPD file with this line will behave just
+as if you had entered the B<ppad rip> command shown previously.  That is,
+unless you use the B<ppad rip> command to override the RIP name, output
+language, and options specified in the PPD file.  If you do override them
+and later wish to revert to the RIP specified in the PPD file, execute
+B<ppad rip> with just the printer name, like this:
 
     $ ppad rip myprn
 
@@ -351,22 +360,15 @@ RIP will be used and the printer will be expected to handle PostScript
 itself.  To see if an external RIP is being used, run B<ppad show> and look
 for a line begining with "RIP:".
 
-On a side note, if you are writing a PPD file, the "*pprRIP:" that would
-coorespond to the example above is:
-
-    *pprRIP: ppr-gs pcl -sDEVICE=djet500
-
 If you want to supply your own RIP to use instead of B<ppr-gs>, you should
-create a program and put it in /usr/lib/ppr/lib.  It should connect stdin,
-stdout, and stderr to the cooresponding file descriptors of the PostScript
-interpreter and should send the print date to file descriptor 3.  The RIP
-options will be on the command line and the filename of the printer's PPD
-file will be in the environment variable PPD.  If the B<ppr --ripopts>
-option is used, the argument will be passed to your RIP in the environment
-variable PPR_RIPOPTS.
+create a program and put it in F</usr/lib/ppr/lib/>.  It should connect
+stdin, stdout, and stderr to the cooresponding file descriptors of the
+PostScript interpreter and should send the print date to file descriptor 3. 
+See the PPR Hackers Guide for details.
 
-There is also support for specifying the path to a copy of Ghostscript, but
-you should not rely on this as it may be removed in the future.
+Note that while this command currently allows you to specify the path to a
+copy of Ghostscript as the RIP name, you should not rely on this as it may
+be removed in a future version of PPR.
 
 =item B<ppad ppd> I<printer> I<filename>
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 April 2003.
+# Last modified 8 April 2003.
 #
 
 =head1 NAME
@@ -671,6 +671,8 @@ Works.  The default port for these devices is 9100.
 
 Works as well as the B<lpr> interface ever works.
 
+=back
+
 
 
 
@@ -738,6 +740,7 @@ Works.  Offers three queues called C<HOLD>, C<PRINT>, and C<DIRECT>.
 Works as well as the B<lpr> interface ever works.
 
 =back
+
 
 
 

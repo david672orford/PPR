@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 March 2003.
+# Last modified 8 April 2003.
 #
 
 =head1 NAME
@@ -34,13 +34,40 @@ B<ppr-panel> - open PPR's Perl-Tk control panel
 
 =head1 SYNOPSIS
 
-B<ppr-panel>
+B<ppr-panel> [B<-d> I<destname>] [I<filename>] ... ]
 
 =head1 DESCRIPTION
 
-This command launches an GUI interface for PPR.  It is written in Perl with
-the Tk widget set.  It is less capable than the web-based GUI and hasn't
-been maintainted lately, but it still works.
+This command launches a GUI interface for PPR.  It is written in Perl with
+the Tk widget set.  It has some overlap in function with the
+web-browser-based GUI. Both can display queues, manage jobs, display printer
+status, and control printers.  However the web interface has management
+functions which the Tk GUI does not and the Tk GUI has a print dialog which
+the web interface does not.
+
+=head2 Control Panel
+
+If no arguments are supplied, then the PPR control panel will be opened.
+
+=head2 Queue Display
+
+To skip the PPR control panel and open a queue display window, use B<-d>
+I<destname>.  For example:
+
+	$ ppr-web -d myprn
+
+=head2 Job Submission
+
+If non-option command line parameters are present, they are understood to be
+the names of files to be printed on the indicated printer.  A print dialog
+will be opened.  This dialog will allow the user to select a different
+printer, select printer options, and select options provided by PPR such as
+multiple copies.
+
+=head2 Desktop Icons
+
+This command is the action command of KDE icons which you can double click
+on to open a queue or drop files onto to print them.
 
 =head1 SEE ALSO
 

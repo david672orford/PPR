@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 8 April 2003.
 #
 
 =head1 NAME
@@ -34,7 +34,7 @@ B<ppr-web> - Open PPR's Web-based Control Panel
 
 =head1 SYNOPSIS
 
-B<ppr-web> [B<-d> I<destname>] [I<filename>] ... ] 
+B<ppr-web> [B<-d> I<destname>] [I<filename>] ... ]
 
 =head1 DESCRIPTION
 
@@ -61,13 +61,14 @@ are understood to be the names of files to be printed on the indicated
 printer.  There will be no GUI manifestation of this operation, though a
 print dialog is planned for the future.
 
-=head2 KDE Icons
+=head2 Desktop Icons
 
-This command is the action command of KDE icons which you can double click
-on to open a queue or drop files onto to print them.  To create such an
-icon, click on the queue's icon in the Control Panel and choose the B<Client
-Configuration> item.  You will be able to choose to create an KDE icon.  You
-can save the icon on your desktop (or anywhere else for that matter).
+If this command is used as the action command of a KDE icon, you will be
+able to double click on it to open a queue window or drop files onto it to
+print them.  To create such an icon, click on the queue's icon in the
+Control Panel and choose the B<Client Configuration> item.  You will be able
+to choose to create an KDE icon.  You can save the icon on your desktop (or
+anywhere else for that matter).
 
 =head1 SEE ALSO
 
