@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 2 January 2002.
+# Last modified 19 August 2002.
 #
 
 =head1 NAME
@@ -63,7 +63,10 @@ This filter supports many B<-o> options.  These are described in the section
 which describes the B<-o> switch.
 
 The default value for the B<charset=> option is B<ISOLatin1>.  The default for
-toe B<fontfamily=> option is B<fixed>.
+the B<fontfamily=> option is B<fixed>.
+
+The default value for B<pmlm=>, B<pmrm=>, B<pmtm=>, and B<pmbm=> is 0.5in.  The
+default for B<lmlm=>, B<lmrm=>, B<lmtm=>, and B<lmbm=> is 0.375in.
 
 This filter supports the B<gutter=> option which specifies an amount to be
 added to the margin on the side on which the paper will be bound.  The

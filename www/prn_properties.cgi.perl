@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 15 August 2002.
+# Last modified 16 August 2002.
 #
 
 use lib "?";
@@ -924,7 +924,10 @@ sub save
 {
 require 'cgi_run.pl';
 
-my $name = $data{name};
+# See load() for remarks about taint.
+my ($name) = $data{name} =~ /^(.+)$/;
+defined($name) || die "No printer name specified!\n";
+
 my $i;
 
 defined($PPAD_PATH) || die;
