@@ -152,7 +152,7 @@ Content-Language: $content_language
 Vary: user-agent, accept-language
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html style=\"$fixed_html_style\">
+<html style="$fixed_html_style">
 <head>
 <title>$title</title>
 <meta http-equiv="Content-Script-Type" content="text/javascript">

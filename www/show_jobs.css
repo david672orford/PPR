@@ -12,26 +12,18 @@ BODY {
 DIV.menubar {
 	width: 100%;
 	padding: 2pt;
-	margin-top: 2pt;
-	margin-bottom: 2pt;
-	border-width: 1pt;
-	border-style: raised;
+	margin: 0pt;
+	border: solid black;
+	border-width: 1px 0px 1px 0px;
+	background-color: #d0d0d0;
 	}
 
-/* The table with the queue listing is 80% as high as the page. */
-DIV.queue {
-	/* overflow: auto; */
-	margin-top: 2pt;
-	margin-bottom: 2pt;
-	}
-
-/* This is for the queue display table. */
+/* These are for the queue display table. */
 TABLE.queue {
 	width: 100%;
 	border-style: solid;
 	border-color: black;
 	}
-
 TABLE.queue THEAD TH {
 	font-size: 10pt;
 	font-family: times,serif;	/* IE 5.5 prior to SP1 manges serif */
@@ -40,11 +32,6 @@ TABLE.queue THEAD TH {
 	border-style: outset;
 	border-width: thin;
 	padding: 0pt 5pt 0pt 5pt;
-	}
-
-TABLE.queue TBODY {
-	/* height: 7cm; */
-	overflow: auto;
 	}
 
 /* IE 5.5 stupidly passes the height of <TBODY> on to <TR>. */
@@ -68,8 +55,15 @@ TABLE.queue TR.checked TD {
 	}
 
 /* This style is for form buttons. */
-INPUT.buttons {
+INPUT.buttons,BUTTON {
 	background: #a0a0a0;
+	}
+
+/* In Mozilla (at least up to 1.0rc1) these settings of <button>
+   are incompatible with <input type="button">. */
+BUTTON {
+	padding: 0pt;
+	vertical-align: bottom;
 	}
 
 /* This is for the [Settings] screen. */

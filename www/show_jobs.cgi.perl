@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 22 February 2002.
+# Last modified 8 May 2002.
 #
 
 use 5.005;
@@ -196,14 +196,43 @@ exit 0;
 # Emmit the start of the document and the start of the form.
 #=============================================================
 
+#
+# Make descisions based on the browser.  Because of this code, we must emit
+# a "Vary: user-agent" header.
+#
+# For example, we turn on table borders unless we think the web browser is
+# likely be capable of displaying images.
+#
+my $table_border = 1;
+my $fixed_html_style = "";
+my $fixed_div_style_top = "";
+my $fixed_div_style_bottom = "";
+if(defined($ENV{HTTP_USER_AGENT}) && $ENV{HTTP_USER_AGENT} =~ /^Mozilla\/(\d+\.\d+)/)
+    {
+    my $mozilla_version = $1;
+
+    if(!cgi_data_peek("borders", "0"))
+	{ $table_border = 0 }
+
+    # If this is the new Mozilla, add style to the <html> element and the
+    # <div> element which encloses the toolbar so that the toolbar won't
+    # scroll.
+    if($mozilla_version >= 5.0)
+	{
+	$fixed_html_style = "margin-top: 2em";
+	$fixed_div_style_top = "position:fixed; top:0; left: 0;";
+	$fixed_div_style_bottom = "position:fixed; bottom: -5pt; left: 0;";
+	}
+    }
+
 my $title = html(sprintf(_("Jobs Queued for \"%s\" on \"%s\""), $queue, $ENV{SERVER_NAME}));
 
 print <<"Quote10";
 Content-Type: text/html;charset=$charset
 Content-Language: $content_language
-Vary: accept-language
+Vary: user-agent, accept-language
 
-<html>
+<html style="$fixed_html_style">
 <head>
 <title>$title</title>
 <HTA:APPLICATION navigable="yes"></HTA:APPLICATION>
@@ -218,7 +247,7 @@ Quote10
 if($controls)
 {
 print <<"Quote11";
-<div class="menubar">
+<div class="menubar" style="$fixed_div_style_top">
 <input class="buttons" type="submit" name="action" value="Settings">
 <spacer type="horizontal" size="400">
 <input class="buttons" type="submit" name="action" value="Refresh">
@@ -375,11 +404,12 @@ foreach my $i (@answer)
     my $jobid = shift(@list);
 
     # Print a checkbox and make it checked if the job was selected.
-    print "<tr";
+    print "<tr id=\"j$jobcount\"";
     print " class=\"checked\"" if(defined $checked_list{$jobid});
     print ">";
     print "<th scope=\"row\" title=", html_value(sprintf(_("Job \"%s\""), $jobid)), ">";
     print "<input type=\"checkbox\" name=\"jobs\" value=\"$jobid\"";
+    print " onclick=\"var row=document.getElementById('j$jobcount');if(row.className == '') {row.className ='checked'} else {row.className=''};return true;\"";
     print " checked" if(defined $checked_list{$jobid});
     print "></td>";
 
@@ -425,7 +455,7 @@ TFOOT10
 if($controls)
 {
 # Start the bottom menubar.
-print "<div class=\"menubar\">\n";
+print "<div class=\"menubar\" style=\"$fixed_div_style_bottom\">\n";
 
 # Create the move select box.
 {
