@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 July 2003.
+# Last modified 29 July 2003.
 #
 
 #
@@ -77,8 +77,18 @@ if [ "`$READLINK $RPM_BUILD_ROOT$target`" != "$source" ]
 	ln -s "$source" "$RPM_BUILD_ROOT$target"
 	if [ $? -ne 0 ]
 		then
-		echo "$0: can't create \"$target\" because not running as root."
-		exit 1
+		if [ -f $MYDIR/../root.sh ]
+			then
+			echo "Writing link installation command to $MYDIR/../root.sh."
+			echo "rm -f \"$RPM_BUILD_ROOT$target\"; ln -s \"$source\" \"$RPM_BUILD_ROOT$target\"" >>$MYDIR/../root.sh
+			else
+			echo "============================================================================="
+			echo " The above error almost certainly means that you must re-run make install as"
+			echo " root (as least in this one directory).  This will happen every time a link"
+			echo " in a system directory must be changed."
+			echo "============================================================================="
+			exit 1
+			fi
 		fi
 	fi
 #ls -l $RPM_BUILD_ROOT$target

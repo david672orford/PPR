@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 29 July 2003.
 #
 
 #
@@ -34,6 +34,8 @@
 # scripts) into place.	It is not used for Perl library or module (*.pl and
 # *.pm) files.
 #
+
+MYDIR=`dirname $0`
 
 USER=$1
 GROUP=$2
@@ -67,38 +69,54 @@ while [ "$1" != "" ]
 	dest="$DESTDIR/$name"
 	echo "    \"$file\" --> \"$RPM_BUILD_ROOT$dest\""
 
-	# If this file is to be owned by root, try very hard to to replace
+	#
+	# If this file is to be owned by root, try very hard not to replace
 	# it unless is has really changed.	We do this so that make install
 	# may be run by a non-root user after it has been run once by root.
+	#
 	if [ "$USER" = "root" -a -f "$RPM_BUILD_ROOT$dest" -a ! -w "$RPM_BUILD_ROOT$dest" ]
-	then
-	strip $file 2>/dev/null
-	if diff $file "$RPM_BUILD_ROOT$dest" >/dev/null 2>&1
 		then
-		echo "        (skipping copy because root ownership and unchanged)"
-		continue
+		strip $file 2>/dev/null
+		if diff $file "$RPM_BUILD_ROOT$dest" >/dev/null 2>&1
+			then
+			echo "        (skipping copy because root ownership and unchanged)"
+			continue
+			fi
 		fi
-	fi
 
+    #
+    # Remove the original file, copy the new one into place, and strip it.
+    # We explicitly remove the original because it may be running.  If it
+    # is, the OS either won't let use open it for write (text busy) or 
+    # writing over it will cause the running program to crash.
+    #
 	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
 	cp "$file" "$RPM_BUILD_ROOT$dest" || exit 1
 	strip "$RPM_BUILD_ROOT$dest" 2>/dev/null
 
+	#
+	# Here we try to set the file permissions.  If this doesn't work, they try
+	# to leave the command to be executed by root later.
+	#
 	chown $USER "$RPM_BUILD_ROOT$dest" \
 		&& chgrp $GROUP "$RPM_BUILD_ROOT$dest" \
 		&& chmod $MODE "$RPM_BUILD_ROOT$dest"
 	if [ $? -ne 0 ]
-	then
-	if [ "$USER" = "root" ]
 		then
-		echo "============================================================================="
-		echo "The above error almost certainly means that you must re-run make install as"
-		echo "root (as least in this one directory).  This will happen the first time and"
-		echo "every time you modify a setuid root program."
-		echo "============================================================================="
+		if [ -f $MYDIR/../root.sh ]
+			then
+			echo "Writing program permissions commands to $MYDIR/../root.sh."
+			echo "chown $USER \"$RPM_BUILD_ROOT$dest\" && chgrp $GROUP \"$RPM_BUILD_ROOT$dest\" && chmod $MODE \"$RPM_BUILD_ROOT$dest\" || exit $?" \
+				>>$MYDIR/../root.sh
+			else
+			echo "============================================================================="
+			echo " The above error almost certainly means that you must re-run make install as"
+			echo " root (as least in this one directory).  This will happen the first time and"
+			echo " every time you modify a setuid root program."
+			echo "============================================================================="
+			exit 1
+			fi
 		fi
-	exit 1
-	fi
 
 	echo "\"$dest\"" >>`dirname $0`/../z_install_begin/installed_files_list
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 24 July 2003.
+# Last modified 29 July 2003.
 #
 
 #
@@ -120,7 +120,7 @@ find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr -not -user 0 -not -grou
 # Remove the UPRINT symbolic links and put the native spooler programs back.
 /usr/lib/ppr/bin/uprint-newconf --remove
 
-# Remove PPR from /etc/inetd.conf.
+# Remove PPR from /etc/inetd.conf (if it exists).
 if [ -f /etc/inetd.conf ]
     then
     if grep /usr/lib/ppr/bin/ /etc/inetd.conf >/dev/null

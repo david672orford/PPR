@@ -8625,6 +8625,11 @@ line was being parsed twice.
 * makeprogs/installln.sh: fixed source existence check to work properly when
   installing relative symbolic links.
 
+* makeprogs/installln.sh,installprog.sh: added code to write commands that
+  fail because not running as root to ../root.sh (if it exists, otherwise the
+  error is still a fatal one.
+
+
 
 
 +++++++++++++++++++++
