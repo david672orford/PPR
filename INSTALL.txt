@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 20 February 2004.
+ Last revised 16 March 2004.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -87,11 +87,11 @@ Windows driver download for Samba won't work.
 
 If the following software is present, more input filters will be available:
 
-* NetPBM
+* NetPBM (pnmtops, etc.)
 
-* djpeg
+* IJG Jpeg utilites (djpeg)
 
-* Groff or Troff
+* Groff (groff, grog, grops, etc.) or AT&T Troff (troff, dpost, etc.)
 
 * TeX/LaTeX
 
@@ -99,7 +99,7 @@ If the following software is present, more input filters will be available:
 
 * DVIPS
 
-* plot2ps (Available from ftp://ppr-dist/pub/ppr/)
+* plot2ps (Available from ftp://ppr-dist.trincoll.edu/pub/ppr/)
 
 * Transfig
 

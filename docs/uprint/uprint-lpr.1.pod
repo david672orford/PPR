@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 March 2004.
+# Last modified 15 March 2004.
 #
 
 =head1 NAME
@@ -299,14 +299,20 @@ This option may not work when printing to PPR queues.
 
 =back
 
-=head1 AUTHOR
+=head1 ENVIRONMENT VARIABLES
 
-David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+To learn how the environment variable PRINTER is used, see the description of the B<-P> option.
 
 =head1 BUGS
 
 Many options are simply passed to the remote spooler without any validity
 checking.  This means that incorrect options will often simply be ignored.
+Some of the more obscure options may not be implemented correctly.  Bug reports are welcome 
+and should be sent to ppr-bugs@trincoll.edu.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
 
 =cut
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 March 2004.
+# Last modified 15 March 2004.
 #
 
 =head1 NAME
@@ -202,14 +202,23 @@ is not yet defined.
 
 =back
 
-=head1 AUTHOR
+=head1 ENVIRONMENT VARIABLES
 
-David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+To learn how the environment variables LPDEST and PRINTER are used, see the
+description of the B<-d> option.
 
 =head1 BUGS
 
-Many options are simply passed to the remote spooler without any validity
-checking.  Invalid options will likely have no effect. 
+While B<uprint-lp> is intended to be a drop-in replacement for B<lp>, not all
+possible options and option values are implemented.  Sometimes this is because
+the features in question simply aren't supported by B<ppr> or don't apply to 
+PostScript printers.  However, others are not implemented or may not be
+implemented correctly due to a lack of information.  Bug reports are welcome 
+and should be sent to ppr-bugs@trincoll.edu.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
 
 =cut
 

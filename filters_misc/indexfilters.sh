@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/filters_misc/indexfilters.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 16 March 2004.
 #
 
 #
@@ -149,6 +149,8 @@ echo "===================================================="
 # within backticks
 exec 3>&1
 
+echo "=== AT&T Troff ==="
+
 # look for dpost
 echo "Searching for dpost..."
 if [ -x /usr/lib/lp/postscript/dpost ]
@@ -171,32 +173,31 @@ if [ -x /usr/lib/lp/postscript/postreverse ]
 	echo "  Not found."
 	fi
 
-# look for the postplot filter from system V lp
-echo "Searching for postplot..."
-if [ -x /usr/lib/lp/postscript/postplot ]
-	then
-	POSTPLOT="/usr/lib/lp/postscript/postplot"
-	echo "  Found $POSTPLOT."
-	else
-	POSTPLOT=""
-	echo "  Not found."
-	fi
-
-# Look for text converters
-PR=`findprog_prog pr`
 TROFF=`findprog_prog troff`
+
+echo "=== GNU Troff ==="
+
 GROFF=`findprog_prog groff`
 GROPS=`findprog_prog grops`
 GROG=`findprog_prog grog`
+
+echo "=== TeX ==="
 TEX=`findprog_prog tex`
 LATEX=`findprog_prog latex`
 TEXI2DVI=`findprog_prog texi2dvi`
 DVIPS=`findprog_prog dvips`
-ACROREAD=`findprog_prog acroread`
-PDFTOPS=`findprog_prog pdftops`
+
+echo "=== Paginator ==="
+PR=`findprog_prog pr`
+
+echo "=== HTML ==="
 HTMLDOC=`findprog_prog htmldoc`
 
-# Look for picture converters
+echo "=== PDF ==="
+ACROREAD=`findprog_prog acroread`
+PDFTOPS=`findprog_prog pdftops`
+
+echo "=== Raster Image Converters ==="
 DJPEG=`findprog_prog djpeg`
 GIFTOPNM=`findprog_prog giftopnm`
 if [ -z "$GIFTOPNM" ]; then GITTOPNM=`findprog_prog giftoppm`; fi
@@ -210,8 +211,19 @@ PNMDEPTH=`findprog_prog pnmdepth`
 TIFFTOPNM=`findprog_prog tifftopnm`
 PNGTOPNM=`findprog_prog pngtopnm`
 
-# Look for plot converters
+echo "=== Plot ==="
+echo "Searching for postplot..."
+if [ -x /usr/lib/lp/postscript/postplot ]
+	then
+	POSTPLOT="/usr/lib/lp/postscript/postplot"
+	echo "  Found $POSTPLOT."
+	else
+	POSTPLOT=""
+	echo "  Not found."
+	fi
 PLOT2PS=`findprog_prog plot2ps`
+
+echo "=== Vector Formats ==="
 FIG2DEV=`findprog_prog fig2dev`
 
 # Separate next section
