@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 30 October 2001.
+# Last modified 5 November 2001.
 #
 
 use lib "?";
@@ -152,7 +152,7 @@ text_display(_("Job creator:"), cgi_data_peek('creator', ''), 40);
 
 	text_display(_("Submitter description:"), cgi_data_peek('for', ''), 30);
 	text_display(_("Submitted by Unix user:"), cgi_data_peek('username', ''), 16);
-	text_display(_("As proxy for:"), cgi_data_peek('proxy', ''), 30);
+	text_display(_("As proxy for:"), cgi_data_peek('proxy-for', ''), 30);
 	}
 },
 
