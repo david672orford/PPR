@@ -7601,3 +7601,6 @@ line was being parsed twice.
 
 * makeprogs/save_symlinks.sh: added -f to ln command.
 
+* pprpopup/: renamed icon files, renamed script to convert FIG files to Tcl
+  image data, added "make images".
+
