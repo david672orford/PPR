@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_perms.sh
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 December 2002.
+# Last modified 15 February 2003.
 #
 
 HOMEDIR="?"
@@ -134,8 +134,11 @@ chown root $HOMEDIR/bin/uprint-*
 chmod 4711 $HOMEDIR/bin/uprint-*
 
 # The Samba printer drivers editor must be setuid root.
-chown root $HOMEDIR/lib/sambaprint
-chmod 4711 $HOMEDIR/lib/sambaprint
+if [ -f $HOMEDIR/lib/sambaprint ]
+    then
+    chown root $HOMEDIR/lib/sambaprint
+    chmod 4711 $HOMEDIR/lib/sambaprint
+    fi
 
 echo "Done."
 echo

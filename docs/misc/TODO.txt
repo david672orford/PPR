@@ -1,8 +1,11 @@
 ==============================================================================
  mouse:~ppr/src/docs/misc/TODO.txt
  mouse:~ppr/src/TODO.txt (symbolic link)
- Last revised 31 January 2003
+ Last revised 17 February 2003
 ==============================================================================
+
+* Decide how pprd should handle the matter of the hostname changing due 
+  to dial-up networking.
 
 * Finish ppr-papd (a replacement for papsrv).
 

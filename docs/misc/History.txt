@@ -8220,3 +8220,35 @@ line was being parsed twice.
   command lines.  This problem resulted in a flood of e-mail to the user
   who run the regression tests.
 
+
+1.51, 15 February 2003--17 February 2003.
+
+* fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
+  Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
+  and ppr-indexfonts to /dev/null (since it isn't very interesting and 
+  scrolls by to quicly to read anyway).
+
+* fixup/fixup_perms.sh: skipped chown and chmod for sambaprint if it
+  doesn't exist (as it won't if the user chose to build without TDB).
+
+* www/index.html: fixed broken links to documentation.  I am more than 
+  a little annoyed that several browsers have been hiding the fact that
+  certain browers (including Mozilla and Links) have been hiding the fact
+  that these links pointed above the root.  Dillo finally gave the game
+  away.  Thanks Dillo!
+
+# www/cgi_run.pl: fixed run() and opencmd() so that they don't use die if
+  exec fails.  This was bad because the die was often caught.  The result 
+  was that both parent and child tried to issue the second half of the
+  HTML page.  The copy from the child was received by the parent, HTML
+  escaped, and displayed as command output!
+
+* www/*_addwiz.cgi.perl: changed run("/usr/bin/id") to run("id") since it
+  is often /bin/id.
+
+* ppad/ppad.c:priviledged(): commented out install-time exception because
+  it turns --su into a noop for user ppr.
+
+* www/cgi_run.pl, prn_addwiz.cgi.perl: fixed some more Perl 5.8.0 warnings,
+  suppressed program path in run() output.
+

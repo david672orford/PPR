@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 January 2003.
+# Last modified 15 February 2003.
 #
 
 #
@@ -97,17 +97,17 @@ $HOMEDIR/fixup/fixup_init || exit 1
 # Install crontab.  This may fail.
 su $USER_PPR -c $HOMEDIR/fixup/fixup_cron
 
-# Set up Inetd.
-$HOMEDIR/fixup/fixup_inetd || exit 1
+# Set up Inetd.  It it fails, maybe there is no Inetd installed.
+$HOMEDIR/fixup/fixup_inetd
 
 # Create index of system fonts.
-su $USER_PPR -c $HOMEDIR/bin/ppr-indexfonts || exit 1
+su $USER_PPR -c $HOMEDIR/bin/ppr-indexfonts >/dev/null || exit 1
 
 # Create a base set of media descriptions.
-$HOMEDIR/fixup/fixup_media || exit 1
+$HOMEDIR/fixup/fixup_media >/dev/null || exit 1
 
 # Create filter scripts using external programs.
-$HOMEDIR/fixup/fixup_filters || exit 1
+$HOMEDIR/fixup/fixup_filters >/dev/null || exit 1
 
 # Create link for AppleTalk getzones.
 $HOMEDIR/fixup/fixup_atalk || exit 1

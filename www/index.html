@@ -55,31 +55,37 @@ H3 { font-size: 10pt; }
 
 <h2>Documentation</h2>
 <ul>
-<li><a href="docs/index.html">
-	PPR Documentation</a>
+<li>PPR Documentation
+	<ul>
+	<li><a href="docs/">All PPR Documents</a>
+	<li><a href="docs/pprinst/pprinst.html">Installing and Using PPR</a>
+	<li><a href="docs/refman/ppr.1.html">ppr -- job submission program</a>
+	<li><a href="docs/refman/ppop.1.html">ppop -- queue viewing and management program</a>
+	<li><a href="docs/refman/ppad.8.html">ppad -- queue creation and modification program
+	</ul>
 <li>RPM Packages
 	<ul>
-	<li><a href="../cgi-bin/docs_rpms_list.cgi">Browsable List</a>
+	<li><a href="cgi-bin/docs_rpms_list.cgi">Browsable List</a>
 	<li>
-		<form action="../cgi-bin/docs_rpm.cgi" method="POST">
+		<form action="cgi-bin/docs_rpm.cgi" method="POST">
 		By name: <input type="text" size=16 name="pkg">
 			<input type="submit" value="Go">
 		</form>
 	</ul>
 <li>Man Pages
 	<ul>
-	<li><a href="../cgi-bin/docs_man.cgi">Browsable List</a>
+	<li><a href="cgi-bin/docs_man.cgi">Browsable List</a>
 	<li>
-		<form action="../cgi-bin/docs_man.cgi" method="POST">
+		<form action="cgi-bin/docs_man.cgi" method="POST">
 		By name: <input type="text" size=16 name="document">
 			<input type="submit" value="Go">
 		</form>
 	</ul>
 <li>Texinfo Documents
 	<ul>
-	<li><a href="../cgi-bin/docs_info.cgi/INFOPATH/dir">Browsable List</a>
+	<li><a href="cgi-bin/docs_info.cgi/INFOPATH/dir">Browsable List</a>
 	<li>
-		<form action="../cgi-bin/docs_info.cgi" method="POST">
+		<form action="cgi-bin/docs_info.cgi" method="POST">
 		By name: <input type="text" size=16 name="document">
 			<input type="submit" value="Go">
 		</form>

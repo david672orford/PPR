@@ -76,7 +76,8 @@ void fatal(int exitval, const char *message, ...)
     } /* end of fatal() */
 
 /*
-** Is the user privledged?  If the user identity has been changed
+** Is the user privledged?  In other words, is the user in the ppad
+** access control list?  If the user identity has been changed
 ** (by the --su switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.
 */
@@ -91,6 +92,8 @@ static gu_boolean privileged(void)
 	answer_username = gu_strdup(su_user);
 	answer = user_acl_allows(su_user, "ppad");
 
+	/* This breaks --su for user ppr! */
+	#if 0
 	/* This special exception comes into play when "make install"
 	   is done by a non-root user.  Basically, says that if
 	   we are not running setuid, we will let the file system
@@ -101,6 +104,7 @@ static gu_boolean privileged(void)
 	   */
 	if(!answer && getuid() == geteuid())
 	   answer = TRUE;
+	#endif
 	}
 
     return answer;

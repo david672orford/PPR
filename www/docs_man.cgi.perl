@@ -1,17 +1,32 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/docs_man.cgi.perl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appears in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is"
-# without express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 11 April 2002.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 16 January 2003.
 #
 
 #
@@ -109,12 +124,14 @@ if(defined(my $document = cgi_data_move("document", undef)))
 # content language and charset.
 my ($charset, $content_language) = cgi_intl_init();
 
-# This first try block catches errors in operations which must be done before the
-# HTTP header is generated.  If an error is caught, it produces an error document.
+# This first try block catches errors in operations which must be done before
+# the HTTP header is generated.  If an error is caught, it produces an error
+# document.
 eval {
     my $path;
 
-    # If the path begins with "/MANPATH/", find it.
+    # If the path begins with "/MANPATH/", find the man page in the
+    # MANPATH, just like man(1) would.
     if($ENV{PATH_INFO} =~ m#/MANPATH/(.+)#)
 	{
 	my $page = $1;
@@ -131,10 +148,18 @@ eval {
 	$path = $ENV{PATH_INFO};
 	}
 
-    my $cleaned_path = docs_open(DOC, $path);
-    $cleaned_path =~ m#/([^/]+)\.(\d+[a-zA-Z]*)(\.[^\./]+)?$# || die "Filename \"$cleaned_path\" is not that of a man page";
-    $html_title = html("$1($2)");
-    docs_last_modified(DOC);
+    if(defined $path)
+	{
+	my $cleaned_path = docs_open(DOC, $path);
+	$cleaned_path =~ m#/([^/]+)\.(\d+[a-zA-Z]*)(\.[^\./]+)?$# || die "Filename \"$cleaned_path\" is not that of a man page";
+	$html_title = html("$1($2)");
+	docs_last_modified(DOC);
+	}
+    else
+	{
+	$html_title = html(_("Available Manpages"));
+	}
+
     };
 if($@)
     {
@@ -159,7 +184,83 @@ EndOfHead
 # page text and prints an error message as a paragraph.
 eval {
 
-  while(my $line = <DOC>)
+    if(defined $path)
+	{
+	troff_to_html(DOC);
+	close(DOC) || die $!;
+	}
+    else
+	{
+	print "<h1>$html_title</h1>\n";
+	do_man_directory();
+	}
+
+    };
+if($@)
+    {
+    my $message = $@;
+    print "<p>", H_("Error:"), " ", html($message), "</p>\n";
+    }
+
+print <<"EndOfTail";
+</body>
+</html>
+EndOfTail
+
+exit 0;
+
+#=============================================================================
+# Directory Generation Routines
+#=============================================================================
+
+sub do_man_directory
+    {
+    my %sections;
+    foreach my $dir (@{$manpath})
+	{
+	next if(! -d $dir);	# skip MANPATH directories that don't exist
+
+	opendir(DIR, $dir) || die $!;
+	while(my $dent = readdir(DIR))
+	    {
+	    if($dent =~ /^man(.+)$/)
+		{
+		$section_number = $1;
+		opendir(SDID, "$dir/$dent") || die $!;
+		while($sdent = readdir(SDIR)))
+		    {
+		    if($sdent =~ /^([^\.]+)\./)
+			{
+			if(! defined $sections{$section_number})
+			    {
+			    $sections{$section_number} = [];
+			    }
+			push(@{$sections{$section_number}}, $1);
+			}
+		    }
+		closedir(SDIR) || die $!;
+		}
+	    }
+	    closedir(DIR) || die $!;
+	}
+
+    foreach my $key (keys %sections)
+	{
+	print "<h2>", html(sprintf(_("Section %s")), $key), "</h2>\n";
+
+
+	}
+    }
+
+#=============================================================================
+# Troff Processing Routines
+#=============================================================================
+
+sub troff_to_html
+  {
+  my $doc = shift;
+
+  while(my $line = <$doc>)
     {
     chomp $line;		# remove newline
     $line =~ s/\s+$//;		# remove confusing trailing whitespace
@@ -206,20 +307,20 @@ eval {
 	elsif($command eq "SH")
 	    {
 	    $argument =~ s/^"(.*)"$/$1/;
-	    print "<h2>", troff_to_html(html($argument)), "</h2>\n";
+	    print "<h2>", troff_escapes_to_html(html($argument)), "</h2>\n";
 	    }
 
 	# If it is the start of a new paragraph,
 	elsif($command eq "PP" || $command eq "P" || $command eq "LP")
 	    {
-	    print "<p>", troff_to_html(html($argument)), "\n";
+	    print "<p>", troff_escapes_to_html(html($argument)), "\n";
 	    }
 
 	# If an indented paragraph,
 	elsif($command eq "IP")
 	    {
 	    # This isn't right!!!
-	    print "<p>", troff_to_html(html($argument)), "\n";
+	    print "<p>", troff_escapes_to_html(html($argument)), "\n";
 	    }
 
 	# If argument is to be bolded,
@@ -249,7 +350,7 @@ eval {
 	# We can't figure it out.  Just print the command.
 	else
 	    {
-	    print "<br><b>.", $command, "</b> ", troff_to_html(html($argument)), "\n";
+	    print "<br><b>.", $command, "</b> ", troff_escapes_to_html(html($argument)), "\n";
 	    }
 	}
 
@@ -257,28 +358,13 @@ eval {
     # backslash commands to font changes.
     else
 	{
-	print troff_to_html(html($line)), "\n";
+	print troff_escapes_to_html(html($line)), "\n";
 	}
     }
-
-  close(DOC) || die $!;
-
-  };
-if($@)
-  {
-  my $message = $@;
-  print "<p>", H_("Error:"), " ", html($message), "</p>\n";
-  }
-
-print <<"EndOfTail";
-</body>
-</html>
-EndOfTail
-
-exit 0;
+  } # end of troff_to_html()
 
 # Convert Troff font changes to HTML font changes.
-sub troff_to_html
+sub troff_escapes_to_html
     {
     my $text = shift;
 
@@ -293,7 +379,7 @@ sub troff_to_html
     return $text;
     }
 
-# Display words in alternate fonts.
+# Display words in alternating fonts.
 sub alternate
     {
     my($argument, $first_open, $first_close, $second_open, $second_close) = @_;
@@ -309,4 +395,3 @@ sub alternate
     }
 
 # end of file
-

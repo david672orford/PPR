@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/po/Makefiles
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 November 2002.
+# Last modified 14 February 2003.
 #
 
 include ../Makefile.conf
@@ -37,7 +37,7 @@ LANGUAGES=fr ru
 
 #=== Build ==================================================================
 
-all:
+all: PPR.pot
 
 PPR.pot:
 	./extract_to_pot.sh
@@ -60,4 +60,3 @@ clean:
 	$(RMF) $(BACKUPS) *.mo
 
 # end of file
-

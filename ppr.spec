@@ -13,7 +13,7 @@
 
 Summary: A spooler for PostScript printers
 Name: ppr
-Version: 1.50
+Version: 1.51
 Release: 1
 Copyright: BSD
 Group: System Environment/Daemons

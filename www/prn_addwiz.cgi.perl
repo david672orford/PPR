@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 January 2003.
+# Last modified 17 February 2003.
 #
 
 #
@@ -517,7 +517,7 @@ $addprn_wizard_table = [
 			. "Description (PPD) file for this printer:"), "</span><br><br>\n";
 		print "<table class=\"ppd\"><tr><td>\n";
 
-		print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit()">', "\n";
+		print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit();">', "\n";
 		#print "<option>\n";
 		my $lastgroup = "";
 		foreach my $item (ppd_list())
@@ -657,21 +657,22 @@ $addprn_wizard_table = [
 	'dopage' => sub {
 		print "<p><span class=\"label\">", H_("Saving new printer:"), "</span></p>\n";
 		print "<pre>\n";
-		run("/usr/bin/id");
+		run("id");
 		defined($PPAD_PATH) || die;
 		my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
-		run(@PPAD, 'interface', $data{name}, $data{interface}, $data{address});
-		run(@PPAD, 'options', $data{name}, $data{options});
-		run(@PPAD, 'ppd', $data{name}, $data{ppd});
-		run(@PPAD, 'feedback', $data{name}, $data{feedback});
-		run(@PPAD, 'jobbreak', $data{name}, $data{jobbreak});
-		run(@PPAD, 'comment', $data{name}, $data{comment});
+		my $name = cgi_data_peek("name", "?");
+		run(@PPAD, 'interface', $name, $data{interface}, $data{address});
+		run(@PPAD, 'options', $name, cgi_data_peek("options", ""));
+		run(@PPAD, 'ppd', $name, $data{ppd});
+		run(@PPAD, 'feedback', $name, $data{feedback});
+		run(@PPAD, 'jobbreak', $name, $data{jobbreak});
+		run(@PPAD, 'comment', $name, $data{comment});
 		if($data{location} ne '')
-		    { run(@PPAD, 'location', $data{name}, $data{location}) }
+		    { run(@PPAD, 'location', $name, $data{location}) }
 		if($data{department} ne '')
-		    { run(@PPAD, 'department', $data{name}, $data{department}) }
+		    { run(@PPAD, 'department', $name, $data{department}) }
 		if($data{contact} ne '')
-		    { run(@PPAD, 'contact', $data{name}, $data{contact}) }
+		    { run(@PPAD, 'contact', $name, $data{contact}) }
 		run($PPR2SAMBA_PATH, '--nocreate');
 		print "</pre>\n";
 
