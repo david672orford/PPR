@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-04-16 11:25-0400\n"
+"POT-Creation-Date: 2004-06-01 14:52-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -104,7 +104,7 @@ msgstr ""
 #, c-format
 msgid ""
 "The printer \"%s\", which could print your job \"%s-%d\" (%s), reports the "
-"error \"%s%s%s%s\".  This condition must be corrected before you job can "
+"error \"%s%s%s%s\".  This condition must be corrected before your job can "
 "start."
 msgstr ""
 
@@ -112,7 +112,7 @@ msgstr ""
 #, c-format
 msgid ""
 "The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the "
-"error \"%s%s%s%s\".  This condition must be corrected before you job can "
+"error \"%s%s%s%s\".  This condition must be corrected before your job can "
 "continue."
 msgstr ""
 
@@ -323,16 +323,11 @@ msgstr ""
 msgid "PPD file does not have *ExitServer code"
 msgstr ""
 
-#: ../pprdrv/pprdrv_pfb.c:49 ../pprdrv/pprdrv_pfb.c:59
-#: ../pprdrv/pprdrv_pfb.c:74 ../pprdrv/pprdrv_pfb.c:101
-#: ../pprdrv/pprdrv_pfb.c:106
+#: ../pprdrv/pprdrv_pfb.c:64 ../pprdrv/pprdrv_pfb.c:74
+#: ../pprdrv/pprdrv_pfb.c:89 ../pprdrv/pprdrv_pfb.c:101
+#: ../pprdrv/pprdrv_pfb.c:116 ../pprdrv/pprdrv_pfb.c:121
 #, c-format
 msgid "PFB file \"%s\" is corrupt (defect type %d)"
-msgstr ""
-
-#: ../pprdrv/pprdrv_pfb.c:86
-#, c-format
-msgid "PFB file \"%s\" is currupt (defect type %d)"
 msgstr ""
 
 #: ../pprdrv/pprdrv_pjl_messages.c:123
@@ -340,30 +335,30 @@ msgstr ""
 msgid "%s: no match for %d \"%s\""
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:288
+#: ../pprdrv/pprdrv_ppd.c:533
 msgid "Can't parse RIP information in PPD file."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:292
+#: ../pprdrv/pprdrv_ppd.c:537
 msgid ""
 "Slashes are not allowed in RIP names in \"*pprRIP:\" lines in PPD files."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:881
+#: ../pprdrv/pprdrv_ppd.c:845
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:947
+#: ../pprdrv/pprdrv_ppd.c:911
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", retaining old code."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:957
+#: ../pprdrv/pprdrv_ppd.c:921
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
@@ -423,7 +418,7 @@ msgid ""
 "trigger the bug, so the spooler will arrest the job and move on."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:100
+#: ../pprdrv/pprdrv_rip.c:102
 msgid ""
 "The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led "
 "to\n"
@@ -432,7 +427,7 @@ msgid ""
 "post-processing filter is being used."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:108
+#: ../pprdrv/pprdrv_rip.c:111
 #, c-format
 msgid ""
 "The RIP (Ghostscript) was killed by signal %d (%s).\n"
@@ -440,11 +435,11 @@ msgid ""
 "is shutting down."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:120
+#: ../pprdrv/pprdrv_rip.c:123
 #, c-format
 msgid "RIP stopped by signal \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv_rip.c:122
+#: ../pprdrv/pprdrv_rip.c:125
 msgid "Bizaar RIP malfunction: SIGCHLD w/out signal or exit."
 msgstr ""

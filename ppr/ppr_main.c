@@ -975,7 +975,7 @@ HELP(_(
 "\t-d <destname>              selects desired printer or group\n"
 "\t-I                         insert destination's switchset macro here\n"));
 
-HELP((
+HELP(_(
 "\t-u yes                     use username to identify jobs in queue\n"
 "\t-u no                      use /etc/passwd comment instead (default)\n"
 "\t-f <string>                override user identication from -u\n"));
