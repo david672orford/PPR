@@ -82,7 +82,7 @@ static int int_connect_parallel(void)
     ** Set the open flags according to whether we are doing
     ** feedback or not.
     */
-    open_flags = (int_cmdline.feedback ? O_RDWR : O_WRONLY) | O_NONBLOCK | O_NOCTTY;
+    open_flags = (int_cmdline.feedback ? O_RDWR : O_WRONLY) | O_NONBLOCK | O_NOCTTY | O_EXCL;
 
     /*
     ** Open the port.  If the error EBUSY occurs, we will retry up to
