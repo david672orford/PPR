@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 10 May 2002.
+** Last modified 15 August 2002.
 */
 
 /*
@@ -208,7 +208,7 @@ int printer_flush(void)
 	   told people we were stalled, it can tell them the condition is cleared. */
 	writemon_unstalled("WRITE");
 
-	/* If we wanted throttle the bandwidth consumption, we could pause here. */
+	/* If we wanted to throttle the bandwidth consumption, we could pause here. */
 	#if 0
 	usleep(25000);
 	#endif

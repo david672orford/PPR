@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 August 2002.
+** Last modified 15 August 2002.
 */
 
 #include "before_system.h"
@@ -199,6 +199,10 @@ static int do_dir(FILE *indexfile, const char dirname[])
 	    fprintf(stderr, "%s: stat() failed on \"%s\", errno=%d (%s)\n", myname, filename, errno, gu_strerror(errno));
 	    return EXIT_INTERNAL;
 	    }
+
+	/* Skip editor backups. */
+	if(strlen(filename) > 0 && filename[strlen(filename)-1] == '~')
+	    continue;
 
 	/* Process regular files as PPD files. */
 	if(S_ISREG(statbuf.st_mode))

@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--14 August 2002.
+1.50a2, 27 February 2002--15 August 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7788,7 +7788,7 @@ the very start.
 * Added ppd/ppr-indexppds.c.
 
 * Renamed "Dot Matric 24 pin Ghostscript" PPD file to "NEC Pinwriter 7
-Ghostscript".
+  Ghostscript".
 
 * Changed www/prn_properties.cgi.perl to use the output of ppr-indexppds.
 
@@ -7802,5 +7802,19 @@ Ghostscript".
   being recognized as whitespace.
 
 * nonppr_misc/misc/snprintf.c: upgraded to more recent version with C99
-  support.
+  semantics, asprintf(), and vasprintf().
+
+* pprdrv/pprdrv_feedback.c, pprdrv_rip.c: changed Ghostscript error message
+  parsing code to identify error messages associated with the RIP's 
+  configuration and distinguish them from PostScript errors caused by errors
+  in the job.
+
+* pprdrv/pprdrv_rip.c:rip_start(): added missing call go gu_nonblock() to
+  put pprdrv's end of the pipe to the RIP into nonblocking mode.
+
+* www/ppr-httpd.perl: added "delete $ENV{PATH}" since Perl 5.8.0 isn't happy
+  with any PATH received from the environment.
+
+* libppr/int_copy_job.c: added handling of EAGAIN from read() and write() in
+  order to accomodate the nonblocking behavior of OSF1.
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 August 2002.
+** Last modified 15 August 2002.
 */
 
 #include "before_system.h"
@@ -87,19 +87,27 @@ static int rip_exit_screen(void)
 	    {
 	    give_reason("RIP malfunction");
 	    alert(printer.Name, TRUE,
-		_("The RIP (Ghostscript) malfunctioned while printing the job\n"
+		_("The RIP (Ghostscript) malfunctioned (caught SIGSEGV) while printing the job\n"
 		"%s.  Presumably it can print other jobs that don't\n"
-		"trigger the bug, so the spooler will arrest the job and move on.\n"),
+		"trigger the bug, so the spooler will arrest the job and move on."),
 			QueueFile
 		);
 	    hooked_exit(EXIT_JOBERR, "RIP segfault");
+	    }
+	else if(WTERMSIG(rip_wait_status) == SIGPIPE)
+	    {
+	    alert(printer.Name, TRUE,
+	    	_("The RIP (Ghostscript) died due to a broken pipe.  Presumably that pipe led to\n"
+	    	"a post-processing filter which died.  Look in the RIP options to find out what\n"
+	    	"post-processing filter is being used."));
+	    hooked_exit(EXIT_PRNERR, "RIP broken pipe");
 	    }
 	else
 	    {
 	    alert(printer.Name, TRUE,
 		_("The RIP (Ghostscript) was killed by signal %d (%s).\n"
-		"Perhaps a system operator did it or perhaps the system\n"
-		"is shutting down.\n"),
+		"Perhaps a system operator did this or perhaps the system\n"
+		"is shutting down."),
 			WTERMSIG(rip_wait_status),
 			gu_strsignal(WTERMSIG(rip_wait_status))
 		);
@@ -116,7 +124,9 @@ static int rip_exit_screen(void)
     } /* end of rip_exit_screen() */
 
 /*
-** This is called from pprdrv.c:fault_check().
+** This is called from pprdrv.c:fault_check().  It is supposed to check if
+** the RIP is still alive.  If the RIP is dead, this function should
+** call fatal().
 */
 void rip_fault_check(void)
     {
@@ -127,7 +137,7 @@ void rip_fault_check(void)
 	int exit_code;
 	DODEBUG_INTERFACE(("%s(): rip_wait_status=0x%04x", function, rip_wait_status));
 
-	/* Disconnect the dead RIP without flushing.  This code like this is also in job_end(). */
+	/* Disconnect the dead RIP without flushing.  Code like this is also in job_end(). */
 	intstdin = rip_stop(intstdin, FALSE);
 	gu_nonblock(intstdin, TRUE);
 
@@ -138,18 +148,10 @@ void rip_fault_check(void)
 	exit_code = rip_exit_screen();
 
 	/* Did Ghostscript indicate a command line problem?
-
-	   This is our lame solution.  It would be better to get the
-	   error message into the alerts file!!!
-
-	   Notice that if Ghostscript gave us a PostScript error message we nix this
-	   because a PostScript error message probably indicates a job error.
 	   */
-	if(exit_code == 1 && !feedback_posterror())
+	if(exit_code == 1 && feedback_ghosterror())
 	    {
-	    fatal(EXIT_PRNERR_NORETRY, "Possible error on RIP (Ghostscript?) command line.  Check options.\n"
-	    				"(Use \"ppop log %s:%s-%d.%d\" to view the error message.)",
-	    					job.destnode, job.destname, job.id, job.subid);
+	    hooked_exit(EXIT_PRNERR_NORETRY, "Ghostscript RIP aborted.");
 	    }
 
 	/* It still shouldn't have exited. */
@@ -163,6 +165,11 @@ void rip_fault_check(void)
 ** such as Ghostscript between pprdrv and the interface program.  It also
 ** connects stdout and stderr of the RIP to the write end of the pipe
 ** leading back to pprdrv.
+**
+** printdata_handle is the file descriptor that the RIP should write 
+**	the printer control language data to.
+** stdout_handle is the file descriptor to which the RIP should write
+**	the stdout and stderr of the PostScript program.
 */
 int rip_start(int printdata_handle, int stdout_handle)
     {
@@ -194,9 +201,8 @@ int rip_start(int printdata_handle, int stdout_handle)
 	/* Some sort of Ghostscript wrapper. */
 	else
 	    {
-    	    size_t len = sizeof(HOMEDIR) + sizeof("/lib/") + strlen(printer.RIP.name) + 1;
-    	    char *p = (char*)gu_alloc(len, sizeof(char));
-    	    snprintf(p, len, "%s/lib/%s", HOMEDIR, printer.RIP.name);
+	    char *p;
+    	    gu_asprintf(&p, "%s/lib/%s", HOMEDIR, printer.RIP.name);
     	    rip_exe = p;
     	    }
     	}
@@ -265,11 +271,9 @@ int rip_start(int printdata_handle, int stdout_handle)
 
 	/* Some RIPs need the PPD file to set themselves up. */
 	{
-	size_t len = 5 + strlen(printer.PPDFile);
-	char *temp = gu_alloc(len, sizeof(char));
-	snprintf(temp, len, "PPD=%s", printer.PPDFile);
-	putenv(temp);
-	gu_free(temp);
+	char *ppd_equals;	/* <-- don't free this! */
+	gu_asprintf(&ppd_equals, "PPD=%s", printer.PPDFile);
+	putenv(ppd_equals);
 	}
 
 	/* Launch Ghostscript. */
@@ -277,9 +281,18 @@ int rip_start(int printdata_handle, int stdout_handle)
 	_exit(1);
     	}
 
-    close(rip_pipe[0]);
+    DODEBUG_INTERFACE(("%s(): rip_args[0] = \"%s\", rip_pid=%ld", function, rip_args[0], (long)rip_pid));
+
+    close(rip_pipe[0]);		/* read end */
+
     gu_free(rip_args);
+
+    /* We will stash this away so that rip_stop() can return it.  Before then,
+       the file descriptor which we return will take its place. */
     saved_printdata_handle = printdata_handle;
+
+    /* We will be using select() to read and write simultaniously. */
+    gu_nonblock(rip_pipe[1], TRUE);
 
     DODEBUG_INTERFACE(("%s(): done", function));
     return rip_pipe[1];

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 18 April 2002.
+** Last revised 14 August 2002.
 */
 
 /*
@@ -19,7 +19,7 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 1
+#if 0
 #define DEBUG 1				/* include function debug() */
 #define DEBUG_MAIN 1			/* main() */
 #define DEBUG_INTERFACE 1		/* show opening, closing, etc. */
@@ -180,6 +180,7 @@ int feedback_wait(int timeout, gu_boolean return_on_signal);
 void feedback_pjl_wait(void);
 void feedback_drain(void);
 gu_boolean feedback_posterror(void);
+gu_boolean feedback_ghosterror(void);
 void feedback_close_log(void);
 int feedback_pjl_chargable_pagecount(void);
 

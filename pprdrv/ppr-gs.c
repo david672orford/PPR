@@ -25,7 +25,15 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 August 2002.
+** Last modified 14 August 2002.
+*/
+
+/*
+** This program is a wrapper around Ghostscript.  The version you see here
+** is designed to work with the PPR-GS Ghostscript distribution.  Its purpose
+** is to hide details such as the location of Ghostscript, CUPS filters,
+** IJS filters, etc.  This allows PPD file authors to write execution
+** information which ignores these issues.
 */
 
 #include "before_system.h"
@@ -33,6 +41,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
 
@@ -42,22 +51,39 @@ int main(int argc, char *argv[])
     {
     const char rip_exe[] = "../ppr-gs/bin/gs";
     char *outputfile = NULL;
+    gu_boolean saw_DEVICE = FALSE;
     const char **rip_args;
     int si, di;
     char *p;
 
-    rip_args = gu_alloc(argc + 6, sizeof(const char *));
+    /* Here we build the Ghostscript command line.  The extra space is 
+       for "-q -dSAFER -sOutputFile='...' -" and the NULL.
+       */
+    rip_args = gu_alloc(argc + 5, sizeof(const char *));
 
-    for(si=1,di=0; si<argc; si++)
+    di = 0;
+    rip_args[di++] = rip_exe;
+
+    for(si=1; si<argc; si++)
 	{
 	if((p=lmatchp(argv[si], "cupsfilter=")))
 	    {
-	    asprintf(&outputfile, "-sOutputFile=| %s x x x x '' 2>/dev/null >&3", p);
+	    gu_asprintf(&outputfile, "-sOutputFile=| %s x x x 1 '' >&3", p);
 	    }
+	/* Unrecognized options must be for Ghostscript. */
 	else
 	    {
+	    if(lmatch(argv[si], "-sDEVICE="))
+	    	saw_DEVICE=TRUE;
 	    rip_args[di++] = argv[si];
 	    }
+	}
+
+    /* Make sure -sDEVICE= was specified. */
+    if(!saw_DEVICE)
+	{
+	fprintf(stderr, "Unknown device: unspecified\n");
+	return 1;
 	}
 
     rip_args[di++] = "-q";
@@ -70,7 +96,21 @@ int main(int argc, char *argv[])
 
     rip_args[di++] = "-";
 
+    rip_args[di++] = NULL;
+
+    /* We add a directory to the PATH so that Ghostscript -sOutputfile= commands can
+       find CUPS and IJS filters.
+       */
+    {
+    char *path_equals;		/* <-- don't free this! */
+    gu_asprintf(&path_equals, "PATH=%s/../ppr-gs/bin:%s", HOMEDIR, getenv("PATH"));
+    putenv(path_equals);
+    }
+
+    /* Replace ourself with Ghostscript. */
     execv(rip_exe, (char**)rip_args);
+
+    /* We reach here only if execv() failed. */
     fprintf(stderr, "%s: can't exec Ghostscript, errno=%d (%s)\n", myname, errno, gu_strerror(errno));
     return 1;
     } /* end of main() */

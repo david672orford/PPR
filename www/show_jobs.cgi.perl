@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 8 August 2002.
+# Last modified 15 August 2002.
 #
 
 use 5.005;
@@ -246,13 +246,11 @@ Quote10
 
 if($controls)
 {
-print <<"Quote11";
-<div class="menubar" style="$fixed_div_style_top">
-<input class="buttons" type="submit" name="action" value="Settings">
-<input class="buttons" type="submit" name="action" value="Refresh">
-<input class="buttons" type="submit" name="action" value="Close" onclick="window.close()">
-</div>
-Quote11
+print "<div class=\"menubar\" style=\"$fixed_div_style_top\">\n";
+isubmit("action", "Settings", _("Settings"));
+isubmit("action", "Refresh", _("Refresh"));
+isubmit("action", "Close", _("Close"), 'onclick="window.close()"');
+print "</div>\n";
 }
 
 #=============================================================

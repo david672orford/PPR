@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 23 January 2002.
+# Last modified 15 August 2002.
 #
 
 =head1 NAME
@@ -168,7 +168,7 @@ sub launch
 
     # The first thing it does is print the PPR version number.
     my $junk = <$rdr>;
-    $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready";
+    $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready: $junk";
 
     #print STDERR "PID $pid, PPR version $1\n";
 

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 9 August 2002.
+# Last modified 15 August 2002.
 #
 
 use lib "?";
@@ -847,7 +847,11 @@ sub load
 {
 require "cgi_run.pl";
 
-my $name = $data{name};
+# Get the printer name.  This removes taint since Perl 5.8.0 complains about
+# tainted list members passed to exec().  I don't think this is a problem
+# since I don't think exec() will execute backticks inside one of its
+# arguments.
+my ($name) = $data{name} =~ /^(.+)$/;
 defined($name) || die "No printer name specified!\n";
 
 # Use "ppad -M show" to dump the printer's
@@ -856,7 +860,7 @@ opencmd(PPAD, $PPAD_PATH, '-M', 'show', $name) || die;
 while(<PPAD>)
     {
     chomp;
-    /^([^\t]+)\t(.*)$/ || die;
+    /^([^\t]+)\t(.*)$/ || die "Can't parse \"$_\"";
     my($key, $value) = ($1, $2);
     $data{$key} = $value;		# copy to modify
     $data{"_$key"} = $value;		# copy to keep

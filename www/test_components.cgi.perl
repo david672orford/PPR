@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 11 April 2002.
+# Last modified 15 August 2002.
 #
 
 use lib "?";
@@ -19,52 +19,109 @@ require 'paths.ph';
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
 
-# Test for existence of the needed version of Perl.
-sub test_perl5
-    {
-    return ($] >= 5.005);
-    }
-
-# Test for the existence of the Perl MD5 module.
-sub test_md5
-    {
-    return defined(eval { require MD5 });
-    }
-
-# Test for the presence of the PPR sound files.
-sub test_soundfiles
-    {
-    require "speach.pl";
-    return speach_soundfiles_installed();
-    }
-
-# Test for the presence of the Perl GNU Gettext module.
-sub test_gettext
-    {
-    return defined(eval { require Locale::gettext });
-    }
-
-# Test for the presence of the Perl Chart::PNGgraph module.
-sub test_chart
-    {
-    return defined(eval { require Chart::PNGgraph });
-    }
-
 #
 # This is a table of tests.
 #
 my @tests = (
-#	[\&test_md5, H_("Perl MD5 module"), 1, ""],
-#	[\&test_chart, H_("Perl Chart::PNGgraph module"), 0, ""]
-	[\&test_perl5, H_("Perl 5.005 or later"), 1, ""],
-	[\&test_soundfiles, H_("PPR sound files"), 0, ""],
-	[\&test_gettext, H_("Perl GNU Gettext module"), 0, H_("liblocale-gettext-perl")]
+	{'name' => _("Perl 5.005 or later"),
+		'testproc' => sub {
+			return ($] >= 5.005);
+			},
+		'required' => 1,
+		'source' => "http://www.cpan.org/src/stable.tar.gz"
+		},
+	{'name' => _("PPR sound files"),
+		'testproc' => sub {
+			require "speach.pl";
+			return speach_soundfiles_installed();
+			},
+		'required' => 0,
+		},
+	{'name' => _("Perl GNU Gettext module"),
+		'testproc' => sub {
+			return defined(eval { require Locale::gettext });
+			},
+		'required' => 0,
+		'debian' => "liblocale-gettext-perl"
+		},
+	{'name' => _("NetPBM image converters"),
+		'testproc' => sub {
+			return inpath("pnmtops");
+			},
+		'required' => 0
+		},
+	{'name' => _("PPR-GS Ghostscript distribution"),
+		'testproc' => sub {
+			return -x "$HOMEDIR/../ppr-gs/bin/gs";
+			},
+		'required' => 0
+		},
+	{'name' => _("Groff"),
+		'testproc' => sub {
+			return inpath("groff");
+			},
+		'required' => 0
+		},
+	{'name' => _("HTMLDOC"),
+		'testproc' => sub {
+			return inpath("htmldoc");
+			},
+		'required' => 0
+		},
+	{'name' => _("Acroread"),
+		'testproc' => sub {
+			return inpath("acroread");
+			},
+		'required' => 0
+		},
+	{'name' => _("JPEG utilities"),
+		'testproc' => sub {
+			return inpath("djpeg");
+			},
+		'required' => 0
+		},
 );
+
+sub cell
+    {
+    my $text = shift;
+    if(defined $text)
+	{
+	return "<td>" . html_nb($text) . "</td>";
+	}
+    else
+	{
+	return "<td>&nbsp;</td>";
+	}
+    }
+
+sub cell_url
+    {
+    my $text = shift;
+    if(defined $text)
+	{
+	return "<td><a href=" . html_value($text) . ">" . html($text) . "</a></td>";
+	}
+    else
+	{
+	return "<td>&nbsp;</td>";
+	}
+    }
+
+sub inpath
+    {
+    my $prog = shift;
+    foreach my $dir (split(/:/, $ENV{PATH}))
+	{
+	return 1 if(-x "$dir/$prog");
+	}
+    return 0;
+    }
 
 #
 # Create the top of the page.
 #
-my $title = H_("Are Required Packages Present?");
+my $title = H_("Inventory of Packages Which PPR can Use");
 my ($charset, $content_language) = cgi_intl_init();
 print <<"Quote10";
 Content-Type: text/html;charset=$charset
@@ -75,14 +132,13 @@ Vary: accept-language
 <head>
 <title>$title</title>
 <style type="text/css">
-BODY { background: lightgrey; color: black; }
-TH { text-align: left; padding: 1mm 8mm; }
-TD { text-align: left; padding: 1mm 8mm; }
+BODY { background: white; color: black; }
+TH, TD { text-align: left; padding: 0.5mm 1.0mm; }
 </style>
 </head>
 <body>
 <h1>$title</h1>
-<table border=1>
+<table border=1 cellspacing=0>
 Quote10
 
 #
@@ -91,9 +147,9 @@ Quote10
 {
 print "<tr>";
 my $i;
-foreach $i (H_("Component"), H_("Present?"), H_("Critical?"), H_("Debian Package Name"))
+foreach $i (_("Component"), _("Present?"), _("Critical?"), _("Redhat Package Name"), _("Debian Package Name"), _("Source Download"))
     {
-    print "<th>$i</th>";
+    print "<th>", html_nb($i), "</th>";
     }
 print "</tr>\n";
 }
@@ -102,13 +158,17 @@ print "</tr>\n";
 # Run the tests and print the results.
 #
 {
-my $test;
-foreach $test (@tests)
+foreach my $test (@tests)
     {
-    my($funct, $desc, $critical, $debian) = @{$test};
-    $found = &$funct ? H_("Yes") : H_("No");
-    $critical = $critical ? H_("Yes") : H_("No");
-    print "<tr><td>$desc</td><td>$found</td><td>$critical</td><td>$debian</td></tr>\n";
+    my $found = &{$test->{testproc}} ? _("Yes") : _("No");
+    my $critical = $test->{critical} ? _("Yes") : _("No");
+    print "<tr>", cell($test->{name}),
+		cell($found),
+		cell($critical),
+		cell($test->{redhat}),
+		cell($test->{debian}),
+		cell_url($test->{source}),
+		"</tr>\n";
     }
 }
 
@@ -122,4 +182,3 @@ print <<"Quote100";
 Quote100
 
 exit 0;
-

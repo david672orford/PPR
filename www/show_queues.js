@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2002, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 8 August 2002.
+// Last revised 14 August 2002.
 //
 
 //
@@ -246,7 +246,7 @@ function printer(event, name)
 		w = document.getElementById("popup");
 
 		w.style.left = window.scrollX + event.clientX - 40 + "px";	// scrollX, scrollY may be Mozilla only
-		w.style.top = window.scrollY + event.clientY - 15 + "px";
+		w.style.top = window.scrollY + event.clientY - 50 + "px";
 
 		var rng = document.createRange();
 		rng.selectNodeContents(w);
@@ -323,7 +323,7 @@ function group(event, name)
 		{
 		w = document.getElementById("popup");
 		w.style.left = window.scrollX + event.clientX - 40 + "px";
-		w.style.top = window.scrollY + event.clientY - 15 + "px";
+		w.style.top = window.scrollY + event.clientY - 50 + "px";
 		var rng = document.createRange();
 		rng.selectNodeContents(w);
 		rng.deleteContents();
@@ -385,7 +385,7 @@ function alias(event, name)
 		{
 		w = document.getElementById("popup");
 		w.style.left = window.scrollX + event.clientX - 40 + "px";
-		w.style.top = window.scrollY + event.clientY - 15 + "px";
+		w.style.top = window.scrollY + event.clientY - 50 + "px";
 		var rng = document.createRange();
 		rng.selectNodeContents(w);
 		rng.deleteContents();

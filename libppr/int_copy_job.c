@@ -234,7 +234,10 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    if((len = write(portfd, xmit_ptr, xmit_len)) < 0)
 	    	{
 	    	DODEBUG(("write() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-		(*fatal_prn_err)(errno);
+		if(errno == EAGAIN)
+		    len = 0;
+		else
+		    (*fatal_prn_err)(errno);
 		}
 
 	    DODEBUG(("wrote %d byte%s to printer", len, len != 1 ? "s" : ""));
@@ -258,7 +261,10 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
 	    if((recv_len = read(portfd, recv_ptr = recv_buffer, sizeof(recv_buffer))) < 0)
 	    	{
 	    	DODEBUG(("read() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-		(*fatal_prn_err)(errno);
+		if(errno == EAGAIN)
+		    recv_len = 0;
+		else
+		    (*fatal_prn_err)(errno);
 		}
 
 	    DODEBUG(("read %d byte%s from printer", recv_len, recv_len != 1 ? "s" : ""));

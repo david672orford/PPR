@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 August 2002.
+# Last modified 14 August 2002.
 #
 
 include ../Makefile.conf
@@ -163,6 +163,7 @@ depend:
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS)
 	( cd q_icons; $(RMF) $(BACKUPS) )
+	( cd images; $(MAKE) clean )
 
 veryclean: clean
 	$(RMF) q_icons/*.png

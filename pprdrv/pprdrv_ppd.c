@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 August 2002.
+** Last modified 15 August 2002.
 */
 
 /*
@@ -267,7 +267,7 @@ void ppd_callback_rip(const char text[])
 	{
 	char *p;
 	p = gu_strdup(text);
-	if(!(printer.RIP.name = gu_strsep(&p, " \t")) || !(printer.RIP.output_language = gu_strsep(&p, "")))
+	if(!(printer.RIP.name = gu_strsep(&p, " \t")) || !(printer.RIP.output_language = gu_strsep(&p, " \t")))
 	    {
 	    fatal(EXIT_PRNERR_NORETRY, _("Can't parse RIP information in PPD file."));
 	    }
@@ -286,14 +286,18 @@ void ppd_callback_cups_filter(const char text[])
     DODEBUG_PPD(("ppd_callback_cups_filter(\"%s\")", text));
     if(!cups_filter)
     	{
-	char *temp, *p, *p2;
+	char *temp, *p, *p1, *p2, *p3;
 	p = temp = gu_strdup(text);
-	if(strcmp(gu_strsep(&p, " \t"), "application/vnd.cups-raster") == 0
-	    && strcmp(gu_strsep(&p, " \t"), "0") == 0
-	    && (p2 = gu_strsep(&p, "\t")))
-		{
-		cups_filter = gu_strdup(p2);
-		}
+
+	if((p1 = gu_strsep(&p, " \t"))					/* first exists */
+		&& strcmp(p1, "application/vnd.cups-raster") == 0	/* and mime type matches */
+		&& (p2 = gu_strsep(&p, " \t"))				/* second exists */
+		&& strspn(p2, "0123456789") == strlen(p2)		/* and is numberic */
+		&& (p3 = gu_strsep(&p, "\t"))				/* third exists */
+	    )
+	    {
+	    cups_filter = gu_strdup(p3);
+	    }
 	gu_free(temp);
     	}
     DODEBUG_PPD(("ppd_callback_cups_filter(): done"));
@@ -380,7 +384,7 @@ void read_PPD_file(const char *ppd_file_name)
 	{
 	printer.RIP.name = "ppr-gs";
 	printer.RIP.output_language = "pcl";
-	asprintf(&printer.RIP.options_storage, "-sDEVICE=cups -r%d cupsfilter=%s", default_resolution, cups_filter);
+	gu_asprintf(&printer.RIP.options_storage, "-sDEVICE=cups -r%d cupsfilter=%s", default_resolution, cups_filter);
 	}
 
     if(cups_filter)

@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 8 March 2002.
+# Last modified 15 August 2002.
 #
 
 use lib "?";
@@ -70,6 +70,10 @@ Vary: accept-language
 <html>
 <head>
 <title>$title</title>
+<style type="text/css">
+BODY { background: white; color: black; }
+TH, TD { text-align: left; padding: 0.5mm 1.0mm; }
+</style>
 </head>
 <body>
 <h1>$title</h1>
@@ -147,7 +151,7 @@ while(<LOG>)
             }
 
         print "<h2>", html($qdate), "</h2>\n";
-        print "<table border=1>\n";
+        print "<table border=1 cellspacing=0>\n";
         print "<tr>";
 	foreach my $field (N_("Time"), N_("Job ID"), N_("Printer"), N_("For"), N_("Unix User"), N_("Proxy For"),
 			N_("Pages"), N_("Total Sheets"), N_("Total Sides"), N_("Queued Time"), N_("Printing Time"),

@@ -11,7 +11,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 5 August 2002.
+** Last modified 13 August 2002.
 */
 
 /*
@@ -162,7 +162,7 @@ int yywrap(void)
 	ppd_callback_new_string(yytext);
 	BEGIN PAPDIM;
 	}
-<PAPDIM>[0-9]+[ ]+[0-9]+ {
+<PAPDIM>[0-9]+[ \t]+[0-9]+ {
 	sscanf(yytext,"%lf %lf",
 		&papersize[papersizex].width,
 		&papersize[papersizex].height);
@@ -175,7 +175,7 @@ int yywrap(void)
 	ppd_callback_new_string(yytext);
 	BEGIN IMGAREA;
 	}
-<IMGAREA>[0-9]+[ ]+[0-9]+ {
+<IMGAREA>[0-9]+[ \t]+[0-9]+[ \t]+[0-9]+[ \t]+[0-9]+ {
 	sscanf(yytext,"%lf %lf %lf %lf",
 		&papersize[papersizex].lm,
 		&papersize[papersizex].tm,
@@ -292,7 +292,7 @@ int yywrap(void)
 	BEGIN INSTR;
 	ppd_callback_new_string(yytext);
 	}
-<INITIAL>^\*[^? \t:\n]+[ \t]+[^ \t:\n]+(\/[^:\n]+)*:[ ]+["] {
+<INITIAL>^\*[^? \t:\n]+[ \t]+[^ \t:\n\/]+(\/[^:\n]+)*:[ \t]+["] {
 	BEGIN INSTR;
 	ppd_callback_new_string(yytext);
 	}

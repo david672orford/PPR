@@ -452,14 +452,14 @@ int main(int argc, char *argv[])
 
     do_startpage(1);
 
-    do_border(pw, ph, 36.0, NULL);
-    do_border(pw, ph, 31.5, "[1 1] 1");
-    do_border(pw, ph, 27.0, "[3 1] 2");
-    do_border(pw, ph, 22.5, "[1 1] 1");
-    do_border(pw, ph, 18.0, NULL);
-    do_border(pw, ph, 13.5, "[1 1] 1");
-    do_border(pw, ph, 09.0, "[3 1] 2");
-    do_border(pw, ph, 04.5, "[1 1] 1");
+    do_border(pw, ph, 36.0, NULL);		/* 1/2" */
+    do_border(pw, ph, 31.5, "[1 1] 1");		/* 7/16" */
+    do_border(pw, ph, 27.0, "[3 1] 2");		/* 3/8" */
+    do_border(pw, ph, 22.5, "[1 1] 1");		/* 5/16" */
+    do_border(pw, ph, 18.0, NULL);		/* 1/8" */
+    do_border(pw, ph, 13.5, "[1 1] 1");		/* 3/16" */
+    do_border(pw, ph, 09.0, "[3 1] 2");		/* 1/8" */
+    do_border(pw, ph, 04.5, "[1 1] 1");		/* 1/16" */
 
     /* We place the EPS file at the upper right. */
     {

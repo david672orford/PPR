@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2002.
+# Last modified 15 August 2002.
 #
 
 use lib "?";
@@ -139,6 +139,9 @@ delete $ENV{LINGUAS};		# Who knows
 
 # This is the PATH that we will feed to CGI scripts.
 $ENV{PATH} = $SAFE_PATH;
+
+# The above isn't good enough for Perl 5.8.0!
+delete $ENV{PATH};
 
 # These variables specify files which sh, ksh, and bash should source during
 # startup.  Since taint checks are on, Perl won't do exec() if these
