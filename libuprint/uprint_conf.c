@@ -3,14 +3,29 @@
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 26 April 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 25 October 2002.
 */
 
 #include "before_system.h"
@@ -96,6 +111,8 @@ void uprint_read_conf(void)
     char *p1, *p2;
     char *name, *value;
     int linenum = 0;
+    gu_boolean saw_real_lp_installed = FALSE;
+    gu_goolean saw_real_lpr_installed = FALSE;
 
     conf.well_known.lpr = 
 	conf.well_known.lpq =
@@ -116,8 +133,8 @@ void uprint_read_conf(void)
     conf.lp.flavor = NULL;
     conf.lp.flavor_version = 0.0;
 
-    conf.lpr.installed = FALSE;
-    conf.lpr.sidelined = FALSE;
+    conf.lpr.installed = TRUE;			/* !!! maybe should be FALSE someday !!! */
+    conf.lpr.sidelined = TRUE;
     conf.default_destinations.lpr = NULL;
     conf.lpr.flavor = NULL;
     conf.lpr.flavor_version = 0.0;
@@ -251,6 +268,7 @@ void uprint_read_conf(void)
 			    conf.lpr.installed = FALSE;
 			    break;
 		    	}
+		    saw_real_lpr_installed = TRUE;
 		    }
 		else if(strcmp(line, "flavor") == 0)
 		    {
@@ -290,6 +308,7 @@ void uprint_read_conf(void)
 			    conf.lp.installed = FALSE;
 			    break;
 		    	}
+		    saw_real_lp_installed = TRUE;
 		    }
 		else
 		    break;
@@ -319,6 +338,12 @@ void uprint_read_conf(void)
 
     validate_path_set("well known", &conf.well_known);
     validate_path_set("sidelined", &conf.sidelined);
+
+    if(!saw_real_lp_installed)
+	uprint_error_callback("Warning: \"%s\" [real lp] doesn't define installed=", UPRINTCONF);
+    if(!saw_real_lpr_installed)
+	uprint_error_callback("Warning: \"%s\" [real lpr] doesn't define installed=", UPRINTCONF);
+
     }
     } /* end of uprint_read_conf() */
 
@@ -389,7 +414,8 @@ const char *uprint_default_destinations_lp(void)
     }
 
 /*
-**
+** Return TRUE if we should look for queues in BSD lpr's printcap and hand
+** off to lpr, lpq, lprm if we find a match.
 */
 gu_boolean uprint_lpr_installed(void)
     {
@@ -398,7 +424,9 @@ gu_boolean uprint_lpr_installed(void)
     }
 
 /*
-**
+** Return TRUE if we should look for queues in System V lp's
+** queue configuration directories and hand off to lp, lpstat,
+** cancel, etc. if we find a match.
 */
 gu_boolean uprint_lp_installed(void)
     {
@@ -407,7 +435,7 @@ gu_boolean uprint_lp_installed(void)
     }
 
 /*
-**
+** Return the name of the BSD printcap file.
 */
 const char *uprint_lpr_printcap(void)
     {
@@ -415,7 +443,8 @@ const char *uprint_lpr_printcap(void)
     }
 
 /*
-**
+** Return the name of the directory which should have a file for each System V
+** lp printer.
 */
 const char *uprint_lp_printers(void)
     {
@@ -427,7 +456,8 @@ const char *uprint_lp_printers(void)
     }
 
 /*
-**
+** Return name of the directory which should have a file for each System V lp
+** class (group or printers).
 */
 const char *uprint_lp_classes(void)
     {
@@ -439,7 +469,7 @@ const char *uprint_lp_classes(void)
     }
 
 /*
-**
+** Return TRUE if support for Solaris's /etc/printers.conf is turned on.
 */
 gu_boolean uprint_lp_printers_conf(void)
     {
