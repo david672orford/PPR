@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 6 December 2001.
+** This file was last modified 15 March 2002.
 */
 
 /*
@@ -249,10 +249,6 @@
 #define MAX_GROUPS 150			/* no more than this may groups */
 #define MAX_GROUPSIZE 8			/* no more than 8 printers per group */
 #define MAX_ALIASES 150			/* no more than 150 queue aliases */
-
-#define MAX_RESPONSE_METHOD 16		/* Max length of method name (responder name) */
-#define MAX_RESPONSE_ADDRESS 100	/* Max length of address to pass to responder */
-#define MAX_RESPONDER_OPTIONS 100	/* Max length of options list */
 
 #define MAX_STATUS_MESSAGE 80		/* maximum length of last message from printer */
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/sysdep.h
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 6 December 2001.
+** Last modified 12 March 2002.
 */
 
 /*
@@ -84,6 +84,9 @@
 **			The BSD/GNU function mkstemp() is available.  This
 **			is a replacement for POSIX mktemp() which avoids
 **			symbolic link exploits.
+**
+** #define HAVE_NETGROUP 1
+**			Do we have netdb.h and innetgrp()?
 **
 ** =====================================================================
 ** When PASS2 is defined, this file should define the paths to various
@@ -188,6 +191,7 @@
 #define HAVE_PUTENV 1
 #define HAVE_TERMIOS_H 1
 #define HAVE_MKFIFO 1
+#define HAVE_NETGROUP 1
 #endif
 
 #ifdef PASS2

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv-test.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 23 May 2001.
+** Last modified 23 March 2002.
 */
 
 #include "before_system.h"
@@ -162,6 +162,12 @@ int main(int argc, char *argv[])
 	const char *proxy_class;
 	const char *username;
 	char proxy_for[82];
+
+	printf(_("Based on the lprsrv.conf section shown above, the following table shows the local\n"
+		"user IDs and proxy for strings that will be used when accepting remote jobs from\n"
+		"the node \"%s\" for the remote user or users which you have\n"
+		"specified.\n"), hostname);
+	printf("\n");
 
 	printf(FORMAT, _("Spooler"), _("Remote User"), _("Local User"), _("As Proxy For"));
 	printf("----------------------------------------------------------------\n");

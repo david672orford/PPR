@@ -36,7 +36,7 @@
 #define MAX_REMOTE_QUANTUM 1 			/* don't increase this, Mac client can't take it! */
 #define WRITEBUF_SIZE MAX_REMOTE_QUANTUM * 512	/* buffer size for writing to the client */
 
-/* #define DEBUG 1 */
+#define DEBUG 1
 
 #ifdef DEBUG
 #define DEBUG_STARTUP 1			/* reading config, adding names and such */

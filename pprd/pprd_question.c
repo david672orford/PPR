@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2002.
+** Last modified 12 March 2002.
 */
 
 #include "before_system.h"
@@ -198,7 +198,7 @@ static void question_look_for_work(void)
 	    	}
 	    }
 
-	/* If we ended up scanning the whole queue, we now know how 
+	/* If we ended up scanning the whole queue, we now know how
 	   many outstanding questions there _really_ are. */
 	if(x==queue_entries)
 	    outstanding_questions = count;
@@ -214,7 +214,7 @@ static void question_look_for_work(void)
 ** This is called whenever a job with an outstanding question is inserted
 ** into the queue.  We try to launch a questioner processor right away,
 ** but if we can't we increment the count of the number of questions that
-** would like to go.
+** would like to be asked.
 */
 void question_job(struct QEntry *job)
     {
@@ -328,5 +328,29 @@ void question_tick(void)
 
     DODEBUG_QUESTIONS(("%s(): done", function));
     } /* end of question_tick() */
+
+/*
+** Turn a job's question state on or off.
+*/
+void question_on_off(struct QEntry *job, gu_boolean on_off)
+    {
+    FUNCTION4DEBUG("question_on_off")
+    DODEBUG_QUESTIONS(("%s(job={id=%d})", function, job->id));
+
+    job->resend_message_at = 0;
+
+    if(on_off)
+	{
+	job->flags |= JOB_FLAG_QUESTION_UNANSWERED;
+	if(!(job->flags & JOB_FLAG_QUESTION_ASKING_NOW))
+	    question_job(job);
+	}
+    else
+	{
+	job->flags &= ~JOB_FLAG_QUESTION_UNANSWERED;
+	}
+
+    queue_write_status_and_flags(job);
+    }
 
 /* end of file */

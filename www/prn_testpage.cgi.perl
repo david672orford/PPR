@@ -26,15 +26,16 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 March 2002.
+# Last modified 18 March 2002.
 #
 
 use lib "?";
-require 'paths.ph';
-require 'cgi_data.pl';
-require 'cgi_wizard.pl';
+require "paths.ph";
+require "cgi_data.pl";
+require "cgi_wizard.pl";
+require "cgi_widgets.pl";
 require "cgi_intl.pl";
-require 'cgi_run.pl';
+require "cgi_run.pl";
 
 #===========================================
 # This is the table for this wizard:
@@ -47,7 +48,12 @@ $addprn_wizard_table = [
 	'title' => N_("PPR Print Test Page"),
 	'picture' => "wiz-newprn.jpg",
 	'dopage' => sub {
-		print "<p>", H_("Right now the test page is pretty poor.  It is just a blank page."), "</p>\n";
+		print "<p>", H_("To print a PPR test page, select the desired page size below\n"
+			. "and press Print."), "</p>\n";
+
+		my $pagesize = cgi_data_move("pagesize", "Letter");
+		labeled_select("pagesize", _("Page Size:"), "Letter", $pagesize, qw(Letter A4));
+
 		},
 	'buttons' => [N_("_Cancel"), N_("_Print")]
 	},
@@ -59,8 +65,10 @@ $addprn_wizard_table = [
 	'picture' => "wiz-newprn.jpg",
 	'dopage' => sub {
 		my $name = cgi_data_peek("name", "_missing_");
+		my $pagesize = cgi_data_peek("pagesize", "Letter");
+		$pagesize =~ /^[a-zA-Z0-9]+$/ || die "$pagesize is not a valid pagesize";
 		print "<pre>\n";
-		run("$HOMEDIR/bin/ppr-testpage | $HOMEDIR/bin/ppr -d $name");
+		run("$HOMEDIR/bin/ppr-testpage --pagesize=$pagesize | $HOMEDIR/bin/ppr -d $name");
 		print "</pre>\n";
 		},
 	'buttons' => [N_("_Close")]

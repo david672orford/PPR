@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papsrv/papsrv_authorize.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 21 June 2001.
+** Last modified 13 March 2002.
 */
 
 /*
@@ -56,16 +56,6 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
     DODEBUG_AUTHORIZE(("preauthorize(sesfd=%d, prnid=%d, net=%d, node=%d, *preauthorized)", sesfd, prnid, net, node));
 
     /*
-    ** If the destination is not protected and ForceAUFSSecurity
-    ** is false, this routine has no work to do.
-    */
-    if( ! adv[prnid].isprotected && ! adv[prnid].ForceAUFSSecurity )
-	{
-	DODEBUG_AUTHORIZE(("preauthorize(): nothing to do"));
-	return;
-	}
-
-    /*
     ** This code looks for a "%%For:" line in the first buffer of the
     ** print job.  If one is found, it checks to see if that name is
     ** among those authorized to use the printer.  This is a pretty
@@ -91,6 +81,8 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	    if(strlen(dsc_username) == 0)
 	    	dsc_username = "[blank Macintosh owner]";
 
+	    dsc_username = gu_strdup(dsc_username);
+
 	    DODEBUG_AUTHORIZE(("DSC user name: \"%s\"", dsc_username));
 
 	    break;
@@ -99,6 +91,20 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 
     /* Soft buffer reset to undo the damage we did by reading lines. */
     reset_buffer(FALSE);
+
+    /* This is the default.  It will survive is AUFS security isn't being used
+       or if AUFSSecurityUsername is set to "DSC". */
+    *username = dsc_username;
+
+    /*
+    ** If the destination is not protected and ForceAUFSSecurity
+    ** is false, this routine has no more work to do.
+    */
+    if( ! adv[prnid].isprotected && ! adv[prnid].ForceAUFSSecurity )
+	{
+	DODEBUG_AUTHORIZE(("preauthorize(): nothing to do"));
+	return;
+	}
 
     /*
     ** We will insist on a "%%For:" line even though we might not need
@@ -112,10 +118,6 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	exit(5);
 	}
 
-    /* This is the default.  It will survive is AUFS security isn't being used
-       or if AUFSSecurityUsername is set to "DSC". */
-    *username = dsc_username;
-
     /*
     ** If AUFS security is available, use it.
     */
@@ -125,14 +127,13 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	** Get the logged in username from the AUFS security file.
 	*/
 	{
+	char aufs_security_file[MAX_PPR_PATH];
 	FILE *f;
 
 	/*
 	** Try to open the AUFS security file.  If it can't be found,
 	** say the user doesn't have a volume mounted.
 	*/
-	{
-	char aufs_security_file[MAX_PPR_PATH];
 	ppr_fnamef(aufs_security_file, "%s/net%d.%dnode%d", aufs_security_dir, net / 256, net % 256, node);
 	if((f = fopen(aufs_security_file, "r")) == (FILE*)NULL)
 	    {
@@ -141,7 +142,6 @@ void preauthorize(int sesfd, int prnid, int net, int node, const char **username
 	    postscript_stdin_flushfile(sesfd);
 	    exit(5);
 	    }
-	}
 
 	/*
 	** Try to read a line from the AUFS security file.  If we can't

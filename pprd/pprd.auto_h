@@ -63,6 +63,7 @@ void question_init(void);
 void question_job(struct QEntry *job);
 gu_boolean question_child_hook(pid_t pid, int wstat);
 void question_tick(void);
+void question_on_off(struct QEntry *job, gu_boolean on_off);
 void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homenode_id);
 struct QEntry *queue_p_job_new_status(struct QEntry *job, int newstat);
 struct QEntry *queue_job_new_status(int id, int subid, int homenode_id, int newstat);

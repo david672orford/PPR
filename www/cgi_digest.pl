@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2002.
+# Last modified 13 March 2002.
 #
 
 require "paths.ph";
@@ -78,12 +78,12 @@ sub digest_nonce_validate
     my $domain = shift;
     my $nonce = shift;
 
-    $nonce =~ /^(\d+):(.+)$/ || die;
+    $nonce =~ /^(\d+):(.+)$/ || die "Nonce \"$nonce\" is malformed.\n";
     my($nonce_time, $nonce_hash) = ($1, $2);
 
     my $correct_nonce_hash = digest_nonce_hash($nonce_time, $domain);
     print STDERR "digest_nonce_validate(): \$nonce_time=$nonce_time, \$domain=\"$domain\", \$nonce_hash=\"$nonce_hash\", \$correct_nonce_hash=\"$correct_nonce_hash\"\n";
-    die "Nonce hash is incorrect\n" if($nonce_hash ne $correct_nonce_hash);
+    die "Nonce hash is incorrect.\n" if($nonce_hash ne $correct_nonce_hash);
 
     my $time_now = time();
     #print STDERR "\$time_now=$time_now, \$nonce_time=$nonce_time\n";
@@ -120,7 +120,7 @@ sub digest_getpw
     close(PW) || die;
 
     return $answer if(defined($answer));
-    die "User \"$sought_username\" not in \"$PWFILE\"\n";
+    die "User \"$sought_username\" not listed in \"$PWFILE\".\n";
     }
 
 1;

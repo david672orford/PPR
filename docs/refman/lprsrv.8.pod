@@ -1,6 +1,6 @@
 #
 # lprsrv.8.pod
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last revised 13 December 2000.
+# Last revised 12 March 2002.
 #
 
 =head1 NAME
@@ -54,13 +54,7 @@ B<lprsrv> to work.  See L<UPRINT(1)> for details.
 If you want to run B<lprsrv> on the standard port (and you almost certainly do),
 you must disable any RFC 1179 server already running on that port.
 
-If you are using IRIX 6.3, you should edit F</etc/init.d/lp> and find the place
-where F</usr/lib/lpsched> is started.  Add the option "-nobsd" to the line.
-That will make sure LP doesn't grab the port at the next reboot.  So that you
-don't have to reboot after making the change, run these commands:
-
- # /usr/lib/lpshut
- # /usr/lib/lpsched -nobsd
+=head3 Berkely LPD
 
 If you are using B<lpd> from Berkely (which is popular on Linux),
 you must either run B<lprsrv> on a port other than 515, or you must arrange
@@ -69,6 +63,31 @@ B<lpd> will be unable to bind to port 515 but will still work in other respects
 and B<lprsrv> will pass remote jobs to B<lpr>.  (Unfortunately, some versions
 of B<lpd> will die when they fail to bind to the port.  Can anyone give
 better advice than this?)
+
+=head3 LPR-NG
+
+If you are using LPR-NG, you must add a line such as this to F</etc/lpd.conf>:
+
+ lpd_port=1501
+
+You can choose any unused port that you wish.  If you wish you can also restrict
+access to the loopback device:
+
+ lpd_port=127.0.0.1%1501
+
+You should then restart lpd.
+
+=head3 IRIX
+
+If you are using IRIX 6.3, you should edit F</etc/init.d/lp> and find the place
+where F</usr/lib/lpsched> is started.  Add the option "-nobsd" to the line.
+That will make sure LP doesn't grab the port at the next reboot.  So that you
+don't have to reboot after making the change, run these commands:
+
+ # /usr/lib/lpshut
+ # /usr/lib/lpsched -nobsd
+
+=head SunOS 5.6 (Solaris 2.6)
 
 If you are using SunOS 5.6 (Solaris 2.6) then you need only edit /etc/inetd.conf
 and remove the line which reads:

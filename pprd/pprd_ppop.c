@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 January 2002.
+** Last modified 13 March 2002.
 */
 
 /*
@@ -1441,6 +1441,67 @@ static void ppop_rush(const char command[])
     } /* end of ppop_rush() */
 
 /*
+** Set a job's question on or off.
+*/
+static void ppop_modify_question(const char command[])
+    {
+    const char function[] = "ppop_modify_question";
+    char *destnode, *destname, *homenode;
+    int destnode_id, destid, id, subid, homenode_id;
+    gu_boolean on_off;
+    int x;
+
+    DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
+
+    /* Parse the command we received over the pipe. */
+    if(gu_sscanf(command, "q %S %S %d %d %S %d", &destnode, &destname, &id, &subid, &homenode, &on_off) != 6)
+	{
+	error("%s(): invalid \"q\" command", function);
+	return;
+	}
+
+    destnode_id = nodeid_by_name(destnode);
+    homenode_id = nodeid_by_name(homenode);
+
+    /*
+    ** Look up the destination id for the destination name.
+    ** If the lookup fails it return -1 indicating that the
+    ** destination in question does not exist.
+    */
+    if((destid = destid_by_name(destnode_id, destname)) == -1)
+	{
+	fprintf(reply_file, "%d\n", EXIT_BADDEST);
+	fprintf(reply_file, _("No printer or group is called \"%s\".\n"), destname);
+	return;
+	}
+
+    lock();                             /* exclusive right to modify queue */
+
+    for(x=0; x<queue_entries; x++)	/* Examine the whole */
+	{				/* queue if we must. */
+	if(queue[x].destid == destid	/* If we have a match, */
+		&& queue[x].id == id
+		&& (subid == WILDCARD_SUBID || queue[x].subid == subid)
+		&& (destnode_id == NODEID_WILDCARD || queue[x].destnode_id == destnode_id)
+		&& (homenode_id == NODEID_WILDCARD || queue[x].homenode_id == homenode_id))
+	    {                           /* save the matching entry, */
+	    fprintf(reply_file, "%d\n", EXIT_OK);
+	    question_on_off(&queue[x], on_off);
+	    break;
+	    }
+	}
+
+    unlock();                           /* done with queue */
+
+    if(x==queue_entries)                /* if ran to end with no match */
+	{
+	fprintf(reply_file, "%d\n", EXIT_BADJOB);
+	fprintf(reply_file, _("Queue entry \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
+	}
+
+    } /* end of ppop_modify_question() */
+
+/*
 ** This is the ppop interface command dispatcher.
 */
 void ppop_dispatch(const char command[])
@@ -1489,7 +1550,7 @@ void ppop_dispatch(const char command[])
     /* Do the command. */
     switch(ppop_command[0])
 	{
-	case 'l':                   /* list print jobs */
+	case 'l':			/* list print jobs */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_list(ppop_command);
@@ -1497,7 +1558,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 's':                   /* show printer status */
+	case 's':			/* show printer status */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_status(ppop_command);
@@ -1505,7 +1566,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 't':                   /* starT a printer */
+	case 't':			/* starT a printer */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_start_stop_wstop_halt(ppop_command,0);
@@ -1513,7 +1574,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'p':                   /* stoP a printer */
+	case 'p':			/* stoP a printer */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_start_stop_wstop_halt(ppop_command,1);
@@ -1521,7 +1582,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'P':                   /* stoP a printer, wait */
+	case 'P':			/* stoP a printer, wait */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_start_stop_wstop_halt(ppop_command,129);
@@ -1529,7 +1590,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'b':                   /* stop printer with a Bang */
+	case 'b':			/* stop printer with a Bang */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_start_stop_wstop_halt(ppop_command,2);
@@ -1537,7 +1598,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'h':                   /* place job on hold */
+	case 'h':			/* place job on hold */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_hold_release(ppop_command,0);
@@ -1545,7 +1606,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'r':                   /* release a job */
+	case 'r':			/* release a job */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_hold_release(ppop_command,1);
@@ -1553,13 +1614,13 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'c':                   /* cancel */
+	case 'c':			/* cancel */
 	    gu_sscanf_checkpoint();
 	    ppop_cancel_purge(ppop_command);
 	    gu_sscanf_rollback();
 	    break;
 
-	case 'f':                   /* media */
+	case 'f':			/* media */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_media(ppop_command);
@@ -1567,13 +1628,13 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'M':                   /* mount media */
+	case 'M':			/* mount media */
 	    gu_sscanf_checkpoint();
 	    ppop_mount(ppop_command);
 	    gu_sscanf_rollback();
 	    break;
 
-	case 'A':                   /* accept for printer or group */
+	case 'A':			/* accept for printer or group */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_accept_reject(ppop_command,1);
@@ -1581,7 +1642,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'R':                   /* reject for printer or group */
+	case 'R':			/* reject for printer or group */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_accept_reject(ppop_command,0);
@@ -1589,7 +1650,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'D':                   /* show destinations */
+	case 'D':			/* show destinations */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_dest(ppop_command);
@@ -1597,7 +1658,7 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'm':                   /* move job(s) */
+	case 'm':			/* move job(s) */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_move(ppop_command);
@@ -1605,10 +1666,18 @@ void ppop_dispatch(const char command[])
 	    gu_alloc_assert(0);
 	    break;
 
-	case 'U':                   /* rush job */
+	case 'U':			/* rush job */
 	    gu_alloc_checkpoint();
 	    gu_sscanf_checkpoint();
 	    ppop_rush(ppop_command);
+	    gu_sscanf_rollback();
+	    gu_alloc_assert(0);
+	    break;
+
+	case 'q':			/* turn a question on or off */
+	    gu_alloc_checkpoint();
+	    gu_sscanf_checkpoint();
+	    ppop_modify_question(ppop_command);
 	    gu_sscanf_rollback();
 	    gu_alloc_assert(0);
 	    break;

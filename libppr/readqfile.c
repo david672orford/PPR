@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2002.
+** Last modified 15 March 2002.
 */
 
 #include "before_system.h"
@@ -275,7 +275,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 		break;
 
 	    case 'U':
-		MATCH("User: ", _4("%ld %S %S", &job->user, &job->username, &job->proxy_for), <2, found_user)
+		MATCH("User: ", _4("%ld %S %Z", &job->user, &job->username, &job->proxy_for), <2, found_user)
 		break;
 	    }
 

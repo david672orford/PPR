@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 February 2002.
+# Last modified 12 March 2002.
 #
 
 #
@@ -120,7 +120,7 @@ $result = <SEND>;
 # Close the connexion to pprpopup.
 close(SEND);
 
-if($result !~ /^+OK/)
+if($result !~ /^\+OK/)
     {
     die $result;
     }
@@ -130,15 +130,6 @@ if($result !~ /^+OK/)
 if($@)
     {
     print "pprd-question ", join(" ", @ARGV), ": $@";
-
-    # If this script hasn't been running for 10 seconds yet, sleep.
-    # This prevents a storm of processes.
-    my $sleep_left = alarm(0);
-    if($sleep_left > 20)
-    	{
-	sleep 7;
-    	}
-
     exit 1;
     }
 

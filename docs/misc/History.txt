@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a1, 27 February 2002--12 March 2002.
+1.50a1, 27 February 2002--19 March 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7572,6 +7572,28 @@ line was being parsed twice.
 * pprdrv/pprdrv_rip.c: changed code to interpret killing of the RIP
   by SIGSEGV as a sign of a bad job.  Previously WCOREDUMP() was used
   to determine if the error was a bad job but this didn't work
-  because (at least on Linux) WCOREDUMP() was returning false if 
+  because (at least on Linux) WCOREDUMP() was returning false if
   core would have been dumped but the ulimit prohibited it.
+
+* Configure: changed everything but Linux to include -lint if international
+  messages is selected.
+
+* Added "ppop question" to disable the question.  Added support for this
+  to pprd and www/job_public.cgi.perl.
+
+* pprd/pprd_question.perl: fix to recognize "+OK" as success.
+
+* lprsrv/lprdrv_conf.c: netgroup support from Gerard Verdier
+  <Gerard.Verdier@ensic.inpl-nancy.fr>.
+
+* lprsrv/lprsrv_conf.c: code cleanup
+
+* lprsrv/lprsrv-test.c: added paragraph of explanation before the table.
+
+* Removed limits on length of responder name, address, and options.
+
+* Allowed spaces in proxy-for strings.
+
+* pprdrv/pprdrv_capable.c: moved the handling of internal resources to a
+  table.  Added CIDInit.
 

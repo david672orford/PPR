@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2002.
+# Last modified 13 March 2002.
 #
 
 
@@ -42,25 +42,31 @@ sub validate_password
     my $username = shift;
     my $password = shift;
 
-    if($username eq "")
-    	{
-	return "You didn't enter your username.\n";
-    	}
-
-    $password =~ /^(\S+) (\S+)$/ || die;
-    my($nonce, $response) = ($1, $2);
-    my $H1 = digest_getpw($username);
-    my $correct_response = md5hex("$H1:$nonce");
-
-    if($response ne $correct_response)
-	{
-	return "Password is incorrect."
-	}
-
     eval {
+	if($username eq "")
+	    {
+	    die "You didn't enter your username.\n";
+	    }
+
+	# Split the password (as encoded by the HTML form) into the nonce
+	# and response portions.
+	$password =~ /^(\S+) (\S+)$/ || die;
+	my($nonce, $response) = ($1, $2);
+
+	# Get the password from the password file.
+	my $H1 = digest_getpw($username);
+
+	# Compute a correct response based on the correct password.
+	my $correct_response = md5hex("$H1:$nonce");
+
+	if($response ne $correct_response)
+	    {
+	    die "Password is incorrect."
+	    }
+
 	if(!digest_nonce_validate($domain, $nonce))
 	    {
-	    return "MD5 digest authentication nonce was too stale.  Please try again.";
+	    die "MD5 digest authentication nonce was too stale.  Please try again.";
 	    }
 	};
     if($@)

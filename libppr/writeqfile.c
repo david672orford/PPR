@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 March 2002.
+** Last modified 15 March 2002.
 */
 
 #include "before_system.h"
@@ -83,9 +83,9 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
     fprintf(Qfile, "Banners: %d %d\n", qentry->do_banner, qentry->do_trailer);
 
-    fprintf(Qfile, "Response: %.*s %.*s %.*s\n", MAX_RESPONSE_METHOD, qentry->responder,
-	MAX_RESPONSE_ADDRESS, qentry->responder_address,
-	MAX_RESPONDER_OPTIONS, qentry->responder_options ? qentry->responder_options : "");
+    fprintf(Qfile, "Response: %s %s %s\n", qentry->responder,
+	qentry->responder_address,
+	qentry->responder_options ? qentry->responder_options : "");
 
     /* If the --commentatary switch was used, emmit a "Commentary:" line.
        */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_conf.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,16 +10,19 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 16 November 2001.
+** Last modified 13 March 2002.
 */
 
 #include "before_system.h"
+#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
 #include <pwd.h>
-#include <sys/types.h>
+#ifdef HAVE_NETGROUP
+#include <netdb.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "lprsrv.h"
@@ -42,46 +45,83 @@ void clipcopy(char *dest, const char *source, int maxlen)
     } /* end of clipcopy() */
 
 /*
+** This function return TRUE if if an entry matching the
+** triple (node,NULL,NULL) is found in the netgroup.
+*/
+static gu_boolean netgroup_matched(const char node[], const char netgroup[])
+    {
+    #ifdef HAVE_NETGROUP
+    if(innetgr(netgroup, node, NULL, NULL))
+	return TRUE;
+    else
+    #endif
+	return FALSE;
+    }
+
+/*
+** This is used when reading lprsrv.conf, hosts.lpd, and hosts.equiv.  It
+** tests whether a node name matches one of the patterns from one of those
+** files.
+*/
+static gu_boolean node_pattern_match(const char node[], const char pattern[])
+    {
+    /* if it specifies a domain, */
+    if(pattern[0] == '.')
+	{
+	int lendiff = strlen(node) - strlen(pattern);
+	if(lendiff >= 1)
+	    {
+	    if(gu_strcasecmp(pattern, &node[lendiff]) == 0)
+		{
+		return TRUE;
+	    	}
+	    }
+	}
+
+    /* If it specifies a netgroup, */
+    else if(pattern[0] == '@' && netgroup_matched(node, pattern + 1))
+	{
+	return TRUE;
+	}
+
+    /* It must specify a host. */
+    else
+    	{
+    	if(gu_strcasecmp(pattern, node) == 0)
+    	    {
+	    return TRUE;
+    	    }
+	}
+
+    return FALSE;
+    }
+
+/*
 ** This function used used by authorized().  This function checks to see
 ** if the indicated node or a domain which encompasses it is named
-** in the indicated file.  This is used for files such as hosts.lpd.
+** in the indicated file.  This is used for files such as hosts.lpd
+** and hosts.equiv.
 */
 static gu_boolean authorized_file_check(const char name[], const char file[])
     {
     FILE *f;
-    char line[256];
-    int strlen_line;
-    int strlen_name = strlen(name);
+    char *line = NULL;
+    int line_space = 80;
     gu_boolean answer = FALSE;
 
     if((f = fopen(file, "r")))
     	{
-	while(fgets(line, sizeof(line), f))
+	while((line = gu_getline(line, &line_space, f)))
 	    {
-	    strlen_line = strcspn(line, " \t\n");
-	    line[strlen_line] = '\0';
-
-	    if(line[0] == '.')				/* if it specifies a domain, */
+	    if(node_pattern_match(name, line))
 	    	{
-		int lendiff = strlen_name - strlen_line;
-	    	if(lendiff >= 1)
-	    	    {
-	    	    if(gu_strcasecmp(line, &name[lendiff]) == 0)
-	    	    	{
-			answer = TRUE;
-			break;
-	    	    	}
-	    	    }
+	    	answer = TRUE;
+	    	break;
 	    	}
-	    else
-	    	{
-	    	if(strlen_name == strlen_line && gu_strcasecmp(line, name) == 0)
-	    	    {
-		    answer = TRUE;
-		    break;
-	    	    }
-		}
 	    }
+
+	if(line)
+	    gu_free(line);
 
 	fclose(f);
     	}
@@ -270,81 +310,98 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
     access->ppr_from_format[0] = '\0';
 
     /*
-    ** Find the best matching section and read it in.
+    ** Find the [global] section and the section and note their locations.
     */
     {
     FILE *f;
-    char line[1024];
-    int linenum = 0;
-    long global = -1;
-    long traditional = -1;
-    long best = -1;
-    long other = -1;
-    int linenum_global = -1000;			/* -1000 is an obviously */
-    int linenum_traditional = -1000;		/* wrong value that should */
-    int linenum_best = -1000;			/* stick out like a sore */
-    int linenum_other = -1000;			/* thumb. */
+    char *line = NULL;
+    int line_space = 80;
+    int linenum = 0;				/* line we are processing right now */
     char *p;
-    int len_best = 0;
-    int len_hostname, len;
+    int len;
 
-    len_hostname = strlen(hostname);
+    long offset_global = -1;			/* offset of [global] section */
+    long offset_traditional = -1;		/* offset of [traditional] section */
+    long offset_best = -1;			/* offset of longest match so far */
+    long offset_other = -1;			/* offset of [other] section */
+    int linenum_global = -1000;			/* -1000 is an obviously */
+    int linenum_traditional = -1000;		/*   wrong value that should */
+    int linenum_best = -1000;			/*   stick out like a sore */
+    int linenum_other = -1000;			/*   thumb. */
+    int len_best = 0;				/* length of longest match so far */
 
     if((f = fopen(LPRSRV_CONF, "r")) == (FILE*)NULL)
     	fatal(1, "Can't open \"%s\", errno=%d (%s)", LPRSRV_CONF, errno, gu_strerror(errno));
 
-    while(fgets(line, sizeof(line), f) != (char*)NULL)
+    while((line = gu_getline(line, &line_space, f)))
 	{
 	linenum++;
 
 	/* Skip lines that don't follow pattern [*]. */
-	if(line[0] != '[') continue;
-	if((p = strchr(line, ']')) == (char*)NULL) continue;
+	if(line[0] != '[')
+	    continue;
+	if(!(p = strchr(line, ']')))
+	    continue;
 
  	*p = '\0';
  	len = (p - line - 1);
 
 	if(strcmp(line+1, "global") == 0)
 	    {
-	    global = ftell(f);
+	    offset_global = ftell(f);
 	    linenum_global = linenum;
 	    continue;
 	    }
 	if(strcmp(line+1, "other") == 0)
 	    {
-	    other = ftell(f);
+	    offset_other = ftell(f);
 	    linenum_other = linenum;
 	    continue;
 	    }
 	if(strcmp(line+1, "traditional") == 0)
 	    {
-	    traditional = ftell(f);
+	    offset_traditional = ftell(f);
 	    linenum_traditional = linenum;
 	    continue;
 	    }
 
-	if(len > len_hostname) continue;		/* Long pattern can't match short hostname. */
+	/* Pretend netgroup patterns very short so anything will override them.
+	   This may not be the best way to do it, but it is easy to code.
+	   Other ideas welcome!  */
+	if(line[1] == '@')
+	    len = 0;
 
-	if(len < len_best) continue;			/* Long matches are better than short ones. */
+	/* Long matches are better than short ones. */
+	if(len < len_best)
+	    continue;
 
-	if((line[1] == '.' && gu_strcasecmp(line+1, hostname + len_hostname - len) == 0)
-		|| (len == len_hostname && gu_strcasecmp(line+1, hostname) == 0) )
+	/* Run it through the host pattern matcher. */
+	if(node_pattern_match(hostname, line + 1))
 	    {
 	    len_best = len;
-	    best = ftell(f);
+	    offset_best = ftell(f);
 	    linenum_best = linenum;
+
 	    }
 	} /* end of line reading loop */
 
-    DODEBUG_CONF(("get_access_settings(): global=%ld, traditional=%ld, best=%ld, other=%ld", global, traditional, best, other));
+    if(line)
+    	gu_free(line);
 
-    if(global == -1)
+    DODEBUG_CONF(("get_access_settings(): offset_global=%ld, offset_traditional=%ld, offset_best=%ld, offset_other=%ld", offset_global, offset_traditional, offset_best, offset_other));
+
+    /* The [global] and [other] sections are mandatory. */
+    if(offset_global == -1)
     	fatal(1, "No [global] section in \"%s\"", LPRSRV_CONF);
-    if(other == -1)
+    if(offset_other == -1)
     	fatal(1, "No [other] section in \"%s\"", LPRSRV_CONF);
 
+    /*
+    ** OK, we know where they are, now we must read them in.
+    */
+
     /* Read the [global] section. */
-    get_access_settings_read_section(access, f, global, linenum_global);
+    get_access_settings_read_section(access, f, offset_global, linenum_global);
 
     /* Make sure the [global] section has set everything. */
     if(access->ppr_root_as[0] == '\0')
@@ -360,23 +417,24 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
     if(access->ppr_from_format[0] == '\0')
 	fatal(1, "No \"%s =\" in \"%s\" [global]", "ppr user format", LPRSRV_CONF);
 
-    /* If no section matched, choose the [traditional] or the [other] section. */
-    if(best == -1)
+    /* If no section matched, and the client is listed in hosts.lpd or hosts.equiv,
+       choose the [traditional] section, otherwise choose the [other] section. */
+    if(offset_best == -1)
     	{
-    	if(traditional != -1 && authorized(hostname))
+    	if(offset_traditional != -1 && authorized(hostname))
     	    {
-    	    best = traditional;
+    	    offset_best = offset_traditional;
     	    linenum_best = linenum_traditional;
     	    }
     	else
     	    {
-    	    best = other;
+    	    offset_best = offset_other;
     	    linenum_best = linenum_other;
     	    }
     	}
 
     /* Whatever section was finally chosen, read it now. */
-    get_access_settings_read_section(access, f, best, linenum_best);
+    get_access_settings_read_section(access, f, offset_best, linenum_best);
 
     fclose(f);
     }

@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 31 August 2001.
+# Last modified 12 March 2002.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -724,14 +724,8 @@ cat >&3 <<===EndOfHere20===
 # Do we want international messages support?
 # This uses GNU Gettext or Solaris Gettext.
 #
-# Notice that INTLLIBS is set to nothing.  The commented
-# out value is sometimes needed, such as when you build
-# GNU gettext yourself so that it is not integrated into
-# the C library, but on RedHat 5.1 systems which have been
-# upgraded from certain earlier versions the /usr/lib/libintl.a
-# is poison.  That is why it is commented out by default.
 ${INTERNATIONAL}INTERNATIONAL=-DINTERNATIONAL
-${INTERNATIONAL}INTLLIBS=#-lintl
+${INTERNATIONAL}INTLLIBS=-lintl
 ${INTERNATIONAL}INTERNATIONAL_INSTALL=install-international
 
 # Define the owner and group of most PPR files.  If any of USER_PPR,
@@ -983,6 +977,15 @@ SOCKLIBS=
 LEX=flex
 LEX_LIB=
 PARALLEL=linux
+
+# Here we clear INTLLIBS which may been set above.  Modern Linux distrubions
+# use glibc 2.0 and later include include Gettext, so including a separate
+# library isn't necessary.  Worse, on RedHat 5.1 systems which have been
+# upgraded from certain earlier versions the /usr/lib/libintl.a
+# is poison.  That is why we clear it here.  Comment this line out if
+# this decisoin is wrong for your system.
+INTLLIBS=
+
 ===EndLINUX===
 fi
 

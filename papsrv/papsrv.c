@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 22 February 2002.
+** Last modified 13 March 2002.
 */
 
 /*
@@ -270,6 +270,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
     int error;
     unsigned int free_blocks, free_files;
     char netnode[10];
+    char proxy_for[64];
 
     DODEBUG_PRINTJOB(("printjob(sesfd=%d, prnid=%d, net=%d, node=%d, preauthorized=%d)",
 	sesfd, prnid, net, node, preauthorized));
@@ -294,6 +295,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
 
     /* Turn the network and node numbers into a string. */
     snprintf(netnode, sizeof(netnode), "%d.%d", net, node);
+    snprintf(proxy_for, sizeof(proxy_for), "%s@%s.atalk", username ? username : "?", netnode);
 
     /*
     ** Fork and exec a copy of ppr and accept the job.
@@ -346,7 +348,7 @@ void printjob(int sesfd, int prnid, int net, int node, const char username[], in
 	    	{ argv[x++] = "-R"; argv[x++] = "for"; }
 
 	    /* Indicate for whom the user "ppr" is acting as proxy. */
-	    argv[x++] = "-X"; argv[x++] = netnode;
+	    argv[x++] = "-X"; argv[x++] = proxy_for;
 
 	    /* Answer for TTRasterizer query */
 	    if(adv[prnid].TTRasterizer)

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 March 2002.
+** Last modified 12 March 2002.
 */
 
 /*
@@ -229,7 +229,7 @@ void queue_dequeue_job(int destnode_id, int destid, int id, int subid, int homen
 /*=========================================================================
 ** Edit the "Status-and-Flags: XX XXXX\n" in the queue file.
 =========================================================================*/
-static void queue_write_status_and_flags(struct QEntry *job)
+void queue_write_status_and_flags(struct QEntry *job)
     {
     const char function[] = "queue_write_status_and_flags";
     /* start of exception handling block */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_capable.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 23 May 2001.
+** Last modified 18 March 2002.
 */
 
 /*
@@ -33,6 +33,7 @@
 #include "interface.h"
 #include "pprdrv.h"
 
+/* This defines the resource search path when --cache-priority=low. */
 static const enum RES_SEARCH cache_priority_low_search_list[] =
     {
     RES_SEARCH_FONTINDEX,
@@ -40,11 +41,28 @@ static const enum RES_SEARCH cache_priority_low_search_list[] =
     RES_SEARCH_END
     };
 
+/* This defines the resource search path when --cache-priority=high. */
 static const enum RES_SEARCH cache_priority_high_search_list[] =
     {
     RES_SEARCH_CACHE,
     RES_SEARCH_FONTINDEX,
     RES_SEARCH_END
+    };
+
+/* These are the resources that PostScript printers have built in that
+   are not mentioned in the PPD files. */
+static struct INTERNAL_RESOURCES
+    {
+    const char *type;
+    const char *name;
+    int minlevel;
+    } internal_resources[] =
+    {
+    {"encoding", "StandardEncoding", 1},
+    {"encoding", "SymbolEncoding", 1},
+    {"encoding", "ISOLatin1Encoding", 2},
+    {"procset", "CIDInit", 3},			/* ??? */
+    {NULL, NULL, 0}
     };
 
 /*
@@ -240,6 +258,7 @@ int check_if_capable(FILE *qfile, int group_pass)
 	** "Standard" and "Symbol", for level 2 printers, "ISOLatin1"
 	** is also built in.
 	*/
+#if 0
 	if(strcmp(d->type, "encoding") == 0)
 	    {
 	    if(strcmp(d->name, "StandardEncoding") == 0 || strcmp(d->name, "SymbolEncoding") == 0
@@ -249,6 +268,21 @@ int check_if_capable(FILE *qfile, int group_pass)
 	        continue;
 	        }
 	    }
+#else
+	{
+	int i;
+	for(i=0; internal_resources[i].type; i++)
+	    {
+	    if(strcmp(d->type, internal_resources[i].type) == 0
+	    		&& strcmp(d->name, internal_resources[i].name) == 0
+	    		&& Features.LanguageLevel >= internal_resources[i].minlevel)
+	    	{
+		DODEBUG_RESOURCES(("Resource %s %s is in printer", d->type, d->name));
+	        continue;
+		}
+	    }
+	}
+#endif
 
 	/*
 	** See if the resource in question is in the cache.

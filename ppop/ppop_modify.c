@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_modify.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 19 December 2001.
+** Last modified 13 March 2002.
 */
 
 #include "before_system.h"
@@ -288,6 +288,7 @@ int ppop_modify(char *argv[])
     FILE *qf;
     struct JOB job;
     int ret = EXIT_OK;
+    gu_boolean question_touched = FALSE;
 
     if(!argv[0] || !argv[1])
     	{
@@ -301,7 +302,7 @@ int ppop_modify(char *argv[])
     	return EXIT_SYNTAX;
 
     /* Do we have permission to modify this job? */
-    if( job_permission_check(&job.jobname) )
+    if(job_permission_check(&job.jobname))
 	return EXIT_DENIED;
 
     /* Take a wild guess as to the home node, if it is not specified. */
@@ -358,14 +359,43 @@ int ppop_modify(char *argv[])
 	/* Replace it with a NULL and move ptr past it. */
 	*(ptr++) = '\0';
 
-	/* Dispatch the name=value pair. */
+	/* Dispatch the name=value pair.  Abort if this one isn't ok. */
 	if((ret = dispatch(argv[x], ptr, &job)) != EXIT_OK)
 	    break;
+
+	/* If the question has changed, we will need to inform pprd,
+	   so make a note of it. */
+	if(strcmp(argv[x], "question") == 0)
+	    question_touched = TRUE;
+
 	}
     }
 
+    /* If all of the changes were valid, */
     if(ret == EXIT_OK)
+	{
+	/* Write the new structure and the remainder of the queue file to a new queue file. */
 	write_changes(qf, &job);
+
+	/* If the question has changed, */
+	if(question_touched)
+	    {
+	    /* Open a connection to pprd. */
+	    FILE *FIFO = get_ready(job.jobname.destnode);
+
+	    /* Let it know what has happened. */
+	    fprintf(FIFO, "q %s %s %d %d %s %d\n",
+		job.jobname.destnode, job.jobname.destname, job.jobname.id, job.jobname.subid, job.jobname.homenode,
+		&job.qentry.question ? 1 : 0);
+	    fflush(FIFO);
+
+	    /* Wait for it to respond. */
+	    wait_for_pprd(TRUE);
+
+	    /* Print the response and accept its code as our return code. */
+	    ret = print_reply();
+	    }
+	}
 
     /* Close the origional queue file (which may already be unlinked). */
     fclose(qf);

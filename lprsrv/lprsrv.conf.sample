@@ -1,6 +1,6 @@
 ;
 ; lprsrv.conf.sample
-; Last modified 7 May 1998.
+; Last modified 12 March 2002.
 ;
 ; This is a sample security configuration file for the PPR LPR/LPD
 ; server.  The intent of this sample file is to duplicate as closely
@@ -102,6 +102,17 @@ ppr become user = yes
 other become user = yes
 ppr proxy class = equivalent
 ppr user format = $user
+
+;
+; This section matches all nodes in a certain NIS netgroup.  Any section
+; which explicitly specifies a matching hostname or domain will take
+; precedence over this section.
+;
+;[@mynetgroup]
+;ppr become user = yes
+;other become user = yes
+;ppr proxy class = mynetgroup
+;ppr user format = $user
 
 ;
 ; This section matches all nodes in a certain domain.  Notice
