@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 11 March 2003.
 #
 
 include ../Makefile.conf
@@ -34,7 +34,8 @@ include ../Makefile.conf
 
 PROGS_LIB=cron_daily cron_hourly cron_run_daily$(DOTEXE)
 PROGS_BIN=ppr-clean ppr-index$(DOTEXE)
-PROGS=$(PROGS_FIXUP) $(PROGS_LIB) $(PROGS_BIN)
+PROGS_BIN_SETUID=ppr-index$(DOTEXE)
+PROGS=$(PROGS_LIB) $(PROGS_BIN) $(PROGS_BIN_SETUID)
 USELIBS=../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 
 
 #=== Build ==================================================================
@@ -50,8 +51,9 @@ ppr-index$(DOTEXE): ppr-index.$(OBJ) $(USELIBS)
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(PROGS_LIB)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS_BIN)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/lib $(PROGS_LIB)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin $(PROGS_BIN)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(PROGS_BIN_SETUID)
 
 #=== Housekeeping ===========================================================
 

@@ -8445,6 +8445,9 @@ line was being parsed twice.
 * makeprogs/readlink.c: added and changed installln.sh to use instead of
   (probably nonexistent) system version.
 
+* z_install_end/install_bin_links.sh: added ppr-panel.
+
+
 
 
 TODO

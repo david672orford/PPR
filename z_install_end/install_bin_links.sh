@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 March 2003.
+# Last modified 11 March 2003.
 #
 
 . ../makeprogs/paths.sh
@@ -36,7 +36,7 @@
 #======================================================================
 
 echo "Creating symbolic links in \"$SYSBINDIR\"..."
-for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web ppr-passwd ppr-followme ppr-popup
+for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-panel ppr-web ppr-passwd ppr-followme ppr-popup
     do
     ../makeprogs/installln.sh $HOMEDIR/bin/$i $SYSBINDIR/$i || exit 1
     done
