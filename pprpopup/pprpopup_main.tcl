@@ -4,22 +4,26 @@
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last revised 11 December 2001.
+# Last revised 14 December 2001.
 #
 
 set register_url "${ppr_root_url}cgi-bin/popup_register.cgi"
 set help_url "${ppr_root_url}docs/"
 
-set about_text "PPR Popup 0.5
-11 December 2001
+set about_text "PPR Popup 1.50a1
+14 December 2001
 Copyright 1995--2001, Trinity College Computing Center
 Written by David Chappell"
 
 source ./urlfetch.itk
 source ./browser.itk
+source ./md5pure.tcl
 
 # This is the port that this server should listen on:
-set server_socket 15009
+set server_port 15009
+
+# This is the token which the server must present for access.
+set magic_cookie "wrmvosrm324"
 
 # Set options in order to make the Macintosh version look more like the others.
 option add *foreground black
@@ -52,6 +56,43 @@ if {$tcl_platform(platform) == "macintosh"} {
     proc activate {} {}
     }
 
+# Different operating systems need different id getting functions.
+switch -exact -- $tcl_platform(platform) {
+    macintosh {
+	proc get_client_id {} {
+		package require Tclapplescript
+		return [AppleScript execute {
+tell application "Network Setup Scripting"
+	try
+		try
+			close database
+		on error
+		end try
+		open database
+		set con_set to current configuration set
+		set conAt to item 1 of AppleTalk configurations of con_set
+		set network to network ID of conAt
+		set node to node ID of conAt
+		close database
+		return (network as string) & "." & (node as string)
+	on error errmsg
+		tell application "Finder"
+			display dialog "Error: " & errmsg
+		end tell
+	end try
+end tell
+}]
+		}
+	}
+    windows {
+	package require registry 1.0
+	proc get_client_id {} { return [registry get "HKEY_LOCAL_MACHINE\System\CurrentControlSet\control\ComputerName" "ComputerName"] }
+	}
+    unix {
+	proc get_client_id {} { return [exec uname -n] }
+	}
+    }
+
 #
 # Put up a dialog box for bad errors.
 #
@@ -63,13 +104,19 @@ proc alert {message} {
     .alert buttonconfigure OK -text "Close"
     .alert hide "Cancel"
     .alert activate
-    exit 1
     }
 
 #
-# Call attention to a window that the user is neglecting.
+# Make a window that we have kept withdrawn while we are
+# preparing it appear or call attention to a window that
+# the user has been neglecting.
+#
+# The call to update works around a problem in the X-Windows
+# version which causes windows to appear at a default size
+# for a few seconds.
 #
 proc window_reopen {win} {
+    update
     wm deiconify $win
     raise $win
     focus $win
@@ -153,8 +200,10 @@ proc command_MESSAGE {file for} {
 
     set w [toplevel .message_[incr wserial]]
     wm title $w "Message for $for"
+
     frame $w.message
     pack $w.message -side top -fill both -expand true
+    wm withdraw $w
 
     text $w.message.text \
  	-width 75 -height 8 \
@@ -175,12 +224,10 @@ proc command_MESSAGE {file for} {
 	-text "Dismiss" \
 	-command [list destroy $w]
     pack $w.dismiss \
-	-side right
+	-side right \
+	-padx 20 -pady 5
 
     bind $w <Return> [list $w.dismiss invoke]
-
-    # Keep it iconified until it is full
-    wm iconify $w
 
     # Arange for a callback whenever data is available.
     fileevent $file readable [list command_MESSAGE_datarecv $file $w]
@@ -204,8 +251,8 @@ proc command_MESSAGE_datarecv {file w} {
 	    # Return the socket to the command dispatcher.
 	    fileevent $file readable [list server_reader $file]
 
-	    #wm deiconify $w
-	    #focus $w
+	    # Deiconify the finished window and bring it the the front.
+	    window_reopen $w
 
 	    return
 	    }
@@ -218,41 +265,9 @@ proc command_MESSAGE_datarecv {file w} {
 
 #
 # Create a web browser window and download a page into it.
+# We have to list the close function first due to forward
+# reference problems.
 #
-proc command_QUESTION {file url width height} {
-    global wserial
-    global open_windows
-
-    if [info exists open_windows($jobname)] {
-    	puts "  Already exists"
-	window_reopen $open_windows($jobname)
-    	return
-    	}
-
-    set w .html_[incr wserial]
-    set open_windows($jobname) $w
-    .questions.list insert end $jobname
-
-    toplevel $w
-    urlfetch $w.urlfetch
-    Browser $w.browser \
-	-width $width -height $height \
-	-wrap word -linkcommand "$w.browser import" -padx 10 \
-	-hscrollmode dynamic \
-	-vscrollmode dynamic \
-	-getcommand [itcl::code $w.urlfetch get] \
-	-postcommand [itcl::code $w.urlfetch post]
-    pack $w.browser -side top -anchor w -fill both -expand 1
-    $w.browser import $url
-
-    wm protocol $w WM_DELETE_WINDOW [list command_QUESTION_close $jobname]
-
-    raise $w
-    focus $w
-
-    puts $file "+OK"
-    }
-
 proc command_QUESTION_close {jobname} {
     global open_windows
     puts "Window manager request to close window $open_windows($jobname) for $jobname."
@@ -260,6 +275,41 @@ proc command_QUESTION_close {jobname} {
     destroy $open_windows($jobname)
     unset open_windows($jobname)
     .questions.list delete [lsearch -exact [.questions.list get 0 end] $jobname]
+    }
+
+proc command_QUESTION {file jobname url width height} {
+    global wserial
+    global open_windows
+
+    if [info exists open_windows($jobname)] {
+    	puts "  Already exists"
+	window_reopen $open_windows($jobname)
+	puts $file "+OK already exists"
+    	return
+    	}
+
+    set w .html_[incr wserial]
+    toplevel $w
+    wm withdraw $w
+
+    set open_windows($jobname) $w
+    .questions.list insert end $jobname
+    wm protocol $w WM_DELETE_WINDOW [list command_QUESTION_close $jobname]
+
+    Browser $w.browser \
+	-width $width -height $height \
+	-wrap word -linkcommand "$w.browser import" -padx 10 \
+	-hscrollmode dynamic \
+	-vscrollmode dynamic \
+	-getcommand [itcl::code shared_urlfetch get] \
+	-postcommand [itcl::code shared_urlfetch post] \
+	-closecommand [itcl::code command_QUESTION_close $jobname]
+    pack $w.browser -side top -anchor w -fill both -expand 1
+    $w.browser import $url
+
+    window_reopen $w
+
+    puts $file "+OK"
     }
 
 #
@@ -359,13 +409,27 @@ proc server_reader {file} {
   }
 
 #========================================================================
-#
+# This is what we use to register with the server.
 #========================================================================
+
 proc do_register {} {
     package require http 2.2
     global register_url
+    global server_socket
+    global magic_cookie
+
     puts "Registering with server at $register_url..."
-    set data "zone=haha"
+
+    set client [get_client_id]
+
+    set sockname [fconfigure $server_socket -sockname]
+    set ip [lindex $sockname 0]
+    set port [lindex $sockname 2]
+    set pprpopup_address "$ip:$port"
+
+    puts "client=$client, pprpopup_address=$pprpopup_address, magic_cookie=$magic_cookie"
+    set data [eval ::http::formatQuery [list client $client pprpopup_address $pprpopup_address magic_cookie $magic_cookie]]
+
     ::http::geturl $register_url -query $data -command [namespace code register_callback]
     }
 
@@ -401,6 +465,10 @@ set menu_view_console_visibility 0
 proc main {} {
     console_visibility 0
 
+    # Create a URL fetching object which will be used for registration and for
+    # fetching questions.
+    urlfetch shared_urlfetch
+
     # Set up a Quit handler for the main window.  This will get called if
     # the user uses the window manager to close the main window.
     wm protocol . WM_DELETE_WINDOW { menu_file_quit }
@@ -434,7 +502,7 @@ proc main {} {
 
     # Create the scrolling listbox with the outstanding questions.
     frame .questions -border 3
-    label .questions.label -text "Question Windows:"
+    label .questions.label -text "Outstanding Questions:"
     iwidgets::scrolledlistbox .questions.list \
 	-borderwidth 2 -relief groove \
 	-hscrollmode none \
@@ -460,7 +528,8 @@ proc main {} {
 
     # Set up the server to listen on a TCP socket
     global server_socket
-    if [catch {socket -server server_function $server_socket} result] {
+    global server_port
+    if [catch {set server_socket [socket -server server_function $server_port]} result] {
 	alert "Can't bind to port: $result"
 	exit 1
 	}

@@ -3,7 +3,7 @@
 # browser_test.tcl
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 5 November 2001.
+# Last modified 14 December 2001.
 #
 
 source ./urlfetch.itk
@@ -28,11 +28,11 @@ Browser .t1.sh \
 	-hscrollmode dynamic \
 	-vscrollmode dynamic \
 	-getcommand [itcl::code .url get] \
-	-postcommand [itcl::code .url post]
+	-postcommand [itcl::code .url post] \
+	-closecommand [itcl::code destroy .t1]
 pack .t1.sh -side top -anchor w -fill both -expand 1
 
 # Load a page into the browser.
-.t1.sh import http://mouse.trincoll.edu/~chappell/pprpopup/testdoc.html
-#.t1.sh import http://mouse.trincoll.edu:15010/html/test-cgi.html
+.t1.sh import http://localhost:15010/html/test_forms.html
 
 # end of file

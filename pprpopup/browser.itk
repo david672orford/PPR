@@ -3,7 +3,7 @@
 # Copyright (c) 1996 DSC Technologies Corporation
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 7 December 2001.
+# Last modified 14 December 2001.
 #
 
 package require Itcl
@@ -47,6 +47,16 @@ itcl::class Browser::form {
     foreach element $elements {
       $element reset
       }
+    }
+
+  # This method gets the value of a form element by name.
+  public method get_value_by_name {name} {
+    foreach element $elements {
+      if {[string compare [$element get_name] $name] == 0} {
+	return [lindex [$element get_value] 1]
+      	}
+      }
+    return ""
     }
 
   # This is the function which is called to submit the form.
@@ -108,6 +118,11 @@ itcl::class Browser::form_element {
     set value $value_initial
     }
 
+  # Return the name.
+  public method get_name {} {
+    return $name
+    }
+
   # Get the name and value as a list suitable for submitting.
   public method get_value {} {
     if {[string compare $name ""] != 0} {
@@ -137,8 +152,18 @@ itcl::configbody Browser::form_element::value_initial {
 itcl::class Browser::form_element_input_button {
   inherit form_element
 
+  public variable onclick ""
+
+  public method press {} {
+    puts "input button press"
+    if {$onclick == "window.close()"} {
+	puts "  Trying to close browser..."
+	[$containing_form get_browser] close
+	}
+    }
+
   public method window {newname} {
-    button $newname
+    button $newname -command [itcl::code $this press]
     if [info exists value] {
       $newname configure -text $value
       }
@@ -326,6 +351,8 @@ itcl::class Browser::form_element_input_text {
 itcl::class Browser::form_element_input_password {
   inherit form_element_input_text
 
+  public variable auth_md5 ""
+
   public method window {newname} {
     entry $newname \
 	-textvariable [itcl::scope value] \
@@ -336,6 +363,24 @@ itcl::class Browser::form_element_input_password {
     return $newname
     }
 
+  public method get_value {} {
+    if {[string compare $name ""] != 0} {
+      if {[string compare $auth_md5 ""] != 0} {
+	regexp {^([^ ]+) ([^ ]+) ([^ ]+)$} $auth_md5 junk username_field domain nonce
+        puts "  username_field=$username_field, domain=$domain, nonce=$nonce"
+	set username [$containing_form get_value_by_name $username_field]
+	puts "  username=$username"
+	set H1 [md5pure::md5 "$username:$domain:$value"]
+	puts "  H1=$H1"
+	set result [md5pure::md5 "$H1:$nonce"]
+	puts "  result=$result"
+	return [list $name $result]
+      	} else {
+        return [list $name $value]
+        }
+      }
+    return {}
+    }
   }
 
 #-----------------------------------------------------------
@@ -509,6 +554,7 @@ itcl::class Browser {
     eval itk_initialize $args
     }
 
+  public method close {} { $closecommand }
   public method clear {}
   public method import {args}
   public method import_callback {code message content_type data}
@@ -547,6 +593,7 @@ itcl::class Browser {
   protected method _entity_textarea {args}
   protected method _entity_/textarea {args}
 
+  public variable closecommand
   public variable getcommand
   public variable postcommand
 
@@ -1112,6 +1159,12 @@ itcl::body Browser::_entity_input {args} {
     }
   if [info exists ar(src)] {
     catch { $obj configure -src $ar(src) }
+    }
+  if [info exists ar(onclick)] {
+    catch { $obj configure -onclick $ar(onclick) }
+    }
+  if [info exists ar(auth_md5)] {
+    catch { $obj configure -auth_md5 $ar(auth_md5) }
     }
 
   # Create the form elements visible manifestation (window) and

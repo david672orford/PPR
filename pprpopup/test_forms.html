@@ -41,7 +41,7 @@ This is the second preformatted line.
 <p>The quick brown fox jumped over the lazy yellow dog.  Now is the time for
 all <i>good</i> men to come to the aid of the party.</p>
 
-<form action="submit_test.cgi" method="POST">
+<form action="/cgi-bin/test_cgi.cgi" method="POST">
 <input type="hidden" name="hidden_information" value="6 is 9">
 Name: <input type="text" name="name" value="David Chappell" size=32>
 <br>
@@ -77,6 +77,7 @@ I am:
 <input type="button" name="donothing" value="Do Nothing">
 <input type="reset" name="reset" value="Reset Form">
 <input type="submit" name="action" value="Login">
+<input type="button" value="Close" onclick="window.close()">
 </form>
 
 </body>

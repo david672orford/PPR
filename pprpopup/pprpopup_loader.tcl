@@ -3,7 +3,7 @@
 # pprpopup_loader.tcl
 # Copyright 1995--2001, Trinity College Computing Center.
 # Written by David Chappell.
-# Last modified 11 December 2001.
+# Last modified 13 December 2001.
 #
 
 # This is the server we should load from and register with.
@@ -20,7 +20,7 @@ package require Tk 8.3
 #
 namespace eval pprpopup_loader {
     global ppr_root_url
-    set code_url "${ppr_root_url}pprpopup/pprpopup.tcl"
+    set code_url "${ppr_root_url}clientsoft/pprpopup.tcl"
 
     # Hide Win32 and MacOS consoles.
     if {$tcl_platform(platform) == "windows" || $tcl_platform(platform) == "macintosh"} {
@@ -185,7 +185,19 @@ bpjg+hyGuGLjVJkEI4035rhjjz8GOWSROc7YYpMtjWVklVdmuWWMYpklIAA7
     label .splash.label -image $splash_image
     pack .splash.label -side top
     wm overrideredirect .splash 1
-    wm geometry .splash +400+300
+
+    set screen_width [winfo screenwidth .splash]
+    set screen_height [winfo screenheight .splash]
+    #tkwait visibility .splash
+    #set window_width [winfo width .splash]
+    #set window_height [winfo height .splash]
+    #puts "screen_width=$screen_width, screen_height=$screen_height, window_width=$window_width, window_height=$window_height"
+    set window_width 370
+    set window_height 266
+    set window_x [expr ($screen_width - $window_width) / 2]
+    set window_y [expr ($screen_height - $window_height) / 2]
+    puts "window_x=$window_x, window_y=$window_y"
+    wm geometry .splash +$window_x+$window_y
 
     # Add a progress bar.
     scale .splash.scale \
