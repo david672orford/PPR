@@ -1,7 +1,7 @@
 #
 # mouse:~ppr/src/nonppr_tcl/Makefile
 #
-# Last modified 19 February 2002.
+# Last modified 4 December 2002.
 #
 
 include ../Makefile.conf
@@ -64,7 +64,7 @@ libtcl.a: $(OBJS)
 	$(RMF) libtcl.a
 	ar cr libtcl.a $(OBJS)
 
-ppr-tclsh: tclAppInit.o libtcl.a
+ppr-tclsh$(DOTEXE): tclAppInit.o libtcl.a
 	$(CC) $(CC_SWITCHES) tclAppInit.o libtcl.a $(MATH_LIBS) -o ppr-tclsh
 
 #=== Test == ================================================================

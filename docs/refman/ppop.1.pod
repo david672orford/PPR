@@ -1,16 +1,31 @@
 #
 # ppop.1.pod
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last updated 18 June 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last updated 4 December 2002.
 #
 
 =head1 NAME
@@ -85,9 +100,8 @@ theory that they are unimportant.  It takes an integer as its argument.
 This integer is an interval in seconds.  Jobs which were arrested more than
 I<integer> seconds ago are ommited from queue listings.
 
-The B<--verbose> switch will cause some commands to display more detailed 
-information.  For example, the B<ppop status> command will display status
-information from LaserWriter messages, PJL messages, and SNMP separately.
+The B<--verbose> switch will cause some subcommands to display more
+detailed information.  The B<ppop status> subcommand is one such.
 
 Most operations performed by the ppop command require PPR operator privileges.
 Only those operations which do not alter the spooler state (such as listing
@@ -565,8 +579,47 @@ it is not yet finished, there is no documentation for it yet.
 =item B<ppop status> {I<destination-name>, B<all>}
 
 Display the status of the indicated printer, or, if I<destination-name> is a
-group, all printers in the indicated group, or, if "B<all>" is used, all
+group, of all printers in the indicated group, or, if "B<all>" is used, all
 printers known to PPR.
+
+The printer status has multiple parts.  It is important to understand to what
+each part applies if one is to interpret them correctly.
+
+The first part is displayed on the same line as the name of the printer.  It
+explains what PPR is doing to the printer, or if it is doing nothing,
+explains why.  Examples include "printing", "idle", or "fault, retry 5 in 60
+seconds".
+
+When PPR is attempting to print a job, is will display a piece of status
+information labeled "Operation".  Print a job involves many steps, such as
+connecting, sending the data, and waiting for the printer to indicate that
+it is done.  The Operation indicate the current state of the operation.
+
+Another aspect is the state of the printer hardware as described to PPR by
+the printer's controller.  Different printers have different ways of
+reporting this information.  These include specially formatted
+LaserWriter-style message sent over the normal communications channel, PJL
+status messages, SNMP messages, and status AppSocket messages.  PPR will 
+examine these message as they arrive and look them up in directories of
+known messages.  It will then attempt to integrate them into a unified
+understanding of the printer's current status.  This unified understanding
+will appear in the B<ppop status> output on lines labeled "Printer Status"
+and "Printer Problem".
+
+If PPR is using the B<pjl> or B<signal/pjl> jobbreak method (see B<ppad
+jobbreak>), and the printer is connected over a bidirectional communications
+channel, it may (if if implements PJL to a sufficient degree) report to PPR
+whenever it drops a sheet of paper into the output tray.  If PPR is
+receiving such messages, then B<ppop status> will display a "Page Clock". 
+The page clock indicate the number of seconds that have elapsed since the
+last page was dropt.  This excludes time when the printer reported that it
+was off line.
+
+This command will display more detailed information if the B<--verbose>
+option is used.  In particular it will show the raw status messages received
+from the printer.  Without B<--verbose> it will generally display only a
+unified status description which reflects its (possibly imperfect)
+understanding of the status messages it has received.
 
 =item B<ppop message> I<printer>
 

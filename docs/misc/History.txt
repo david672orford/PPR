@@ -8039,3 +8039,5 @@ line was being parsed twice.
 * samba/ppr2samba.c: fixed test for driver download share to check for it
   under its current name (which is pprprnt$).
 
+* ppr/ppr_main.c: added severe warning for zero length input file.
+

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 November 2002.
+** Last modified 4 December 2002.
 */
 
 /*
@@ -449,7 +449,7 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif /* PPR_IRIX */
 
 /*==========================================================================
-** MS-Windows 95/NT with Cygnus GNU tools
+** MS-Windows 95 or NT with Cygwin 1.1
 ** Sample machine: Jane
 ==========================================================================*/
 #ifdef PPR_CYGWIN
@@ -467,7 +467,11 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #define COLON_FILENAME_BUG 1
 #undef SAFE_PATH
 #define SAFE_PATH "/bin:/usr/bin:/winnt/system32:/winnt"
+
 int seteuid(uid_t);		/* not defined in header files */
+
+#define setreuid(a,b) setuid(a)
+#define setregid(a,b) setgid(a)
 
 #endif /* PASS2 */
 #endif /* PPR_CYGWIN */

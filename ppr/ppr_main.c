@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 18 November 2002.
+** Last revised 4 December 2002.
 */
 
 /*
@@ -2356,7 +2356,10 @@ int main(int argc, char *argv[])
     ** If no file was specified, real_filename will still be NULL.
     */
     if(infile_open(real_filename))	/* If input file is of zero length, */
-	goto zero_length_file;		/* we have nothing to do. */
+	{				/* we have nothing to do. */
+	warning(WARNING_SEVERE, "Input file is empty, doing nothing");
+	goto zero_length_file;		
+	}
 
     /*
     ** Open the FIFO now so we will find out right away if the daemon is running.
