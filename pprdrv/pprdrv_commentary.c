@@ -344,8 +344,8 @@ void commentary(int category, const char cooked[], const char raw1[], const char
     {
     char buffer[256];
     snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d\n",
-	 printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", severity);
-    state_update_pprdrv_addline(buffer);
+	printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", severity);
+    state_update_pprdrv_puts(buffer);
     }
 
     } /* end of commentary() */

@@ -1,16 +1,31 @@
 /*
-** mouse:~ppr/pprdrv/pprdrv_progress.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** mouse:~ppr/src/pprdrv/pprdrv_progress.c
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 9 May 2001.
+** Last modified 27 March 2003.
 */
 
 /*
@@ -55,9 +70,9 @@ static long total_bytes = 0;
 **
 ** Note that this is also called from pprdrv_commentary.c.
 */
-void state_update_pprdrv_addline(const char line[])
+void state_update_pprdrv_puts(const char line[])
     {
-    const char function[] = "state_update_pprdrv_addline";
+    const char function[] = "state_update_pprdrv_puts";
     const char filename[] = STATE_UPDATE_PPRDRV_FILE;
     static int handle = -1;
     int retry;
@@ -147,29 +162,30 @@ void state_update_pprdrv_addline(const char line[])
        */
     if(write(handle, line, strlen(line)) < 0 && errno != ENOSPC)
 	fatal(EXIT_PRNERR_NORETRY, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-    } /* end of state_update_pprdrv_addline() */
+    } /* end of state_update_pprdrv_puts() */
 
 /*
-** This routine writes the current values to the end of the queue file.
-** The first time it is called it opens the file, seeks to the end,
-** records where the end is, and writes the line.  On subsequent calls
-** it returns to the recorded file position and overwrites the line
-** with a new one.  The file handle is never closed.
-**
-** Note that if the number of bytes transmitted is less than
-** SLACK_BYTES_COUNT, then a "Progress:" lines of all zeros is
-** written because so few bytes have probably only filled the
-** buffers and may not have reached the printer at all.
+
+This routine writes the current values to the end of the queue file.
+The first time it is called it opens the file, seeks to the end,
+records where the end is, and writes the line. On subsequent calls it
+returns to the recorded file position and overwrites the line with a
+new one. The file handle is never closed.
+
+Note that if the number of bytes transmitted is less than
+SLACK_BYTES_COUNT, then a byte count of zero is written because so few
+bytes have probably only filled the buffers and may not have reached
+the printer at all.
+
 */
-static void progress_write(void)
+static void queuefile_progress_write(void)
     {
-    const char function[] = "progress_write";
+    const char function[] = "queuefile_progress_write";
     static char qfname[MAX_PPR_PATH];	/* The name of the queue file */
     static int handle = -1;		/* The handle of the open queue file */
     static off_t spot;			/* The offset at which we will write the line */
 
     char buffer[80];
-    char *line;
     int len = 31;		/* Length of progress line. */
     int retval;
 
@@ -184,27 +200,30 @@ static void progress_write(void)
 	return;
 	}
 
-    if(handle == -1)		/* If file not open yet, */
+    /* If the job's queue file is not open yet, */
+    if(handle == -1)
     	{
 	/* Open the file for read and write. */
     	ppr_fnamef(qfname, "%s/%s", QUEUEDIR, QueueFile);
     	if((handle = open(qfname, O_RDWR)) == -1)
-    	    fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): open(\"%s\",O_WRONLY) failed, errno=%d (%s)", __FILE__, qfname, errno, gu_strerror(errno) );
+    	    fatal(EXIT_PRNERR_NORETRY, _("%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"), function, qfname, errno, gu_strerror(errno));
 	gu_set_cloexec(handle);
 
 	/* Seek to a spot 31 bytes from the end. */
 	if((spot = lseek(handle, (off_t)(0-len), SEEK_END)) < 0)
-	    fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): lseek(%d,-len,SEEK_END) failed, errno=%d (%s)", __FILE__, handle, errno, gu_strerror(errno) );
+	    fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, %d, SEEK_END) failed, errno=%d (%s)"), function, handle, (0-len), errno, gu_strerror(errno));
 
 	/* Read what will be "Progress: " if this was done before. */
-	if((retval = read(handle, buffer, 10)) != 10)
-	    fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): read() returned %d, errno=%d (%s)", __FILE__, retval, errno, gu_strerror(errno));
+	if((retval = read(handle, buffer, 10)) == -1)
+	    fatal(EXIT_PRNERR_NORETRY, _("%s(): read() failed, errno=%d (%s)"), function, errno, gu_strerror(errno));
+	else if(retval != 10)
+	    fatal(EXIT_PRNERR_NORETRY, _("%s(): read() read %d bytes instead of %d"), function, retval, 10);
 
 	/* If it isn't, seek to the end. */
 	if(memcmp(buffer, "Progress: ", 10) != 0)
 	    {
 	    if((spot = lseek(handle, (off_t)0, SEEK_END)) < 0)
-		fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): lseek(%d,0,SEEK_END) failed, errno=%d (%s)", __FILE__, handle, errno, gu_strerror(errno));
+		fatal(EXIT_PRNERR_NORETRY, _("%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"), function, handle, errno, gu_strerror(errno));
 	    }
     	}
 
@@ -212,68 +231,26 @@ static void progress_write(void)
     if(lseek(handle, spot, SEEK_SET) < 0)
 	fatal(EXIT_PRNERR_NORETRY, "%s: progress_write(): lseek(%d,%ld,SEEK_SET) failed, errno=%d (%s)", __FILE__, handle, (long)spot, errno, gu_strerror(errno));
 
-    /* If enough bytes have been sent that we are pretty sure that some
-       of them have actually reached the printer, write the "Progress:"
-       line which is in the buffer.  Otherwise, just use one with
-       all zeros. */
-    if(total_bytes > SLACK_BYTES_COUNT)
-	{
-	snprintf(buffer, sizeof(buffer), "Progress: %010ld %04d %04d\n", total_bytes, total_pages_started, total_pages_printed);
-	line = buffer;
-	}
-    else
-	{
-    	line = "Progress: 0000000000 0000 0000\n";
-	}
+    /* Format the progress line while suppressing small byte counts. */
+    snprintf(buffer, sizeof(buffer), "Progress: %010ld %04d %04d\n", (total_bytes > SLACK_BYTES_COUNT) ? total_bytes : 0, total_pages_started, total_pages_printed);
 
     /*
     ** Write the new "Progress:" line.
     ** I can't remember why this might be
     ** interupted by a system call and not restarted.
     */
-    while((retval = write(handle, line, len)) != len)
+    while((retval = write(handle, buffer, len)) != len)
 	{
 	if(retval == -1 && errno == EINTR)
 	    continue;
 
 	if(retval == -1)
-	    fatal(EXIT_PRNERR_NORETRY, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+	    fatal(EXIT_PRNERR_NORETRY, _("%s(): write() failed, errno=%d (%s)"), function, errno, gu_strerror(errno) );
 	else
-	    fatal(EXIT_PRNERR, "%s(): write() returned %d when %d was expected", function, retval, len);
+	    fatal(EXIT_PRNERR, _("%s(): write() wrote %d bytes instead of %d"), function, retval, len);
     	}
 
-    } /* end of progress_write() */
-
-/*
-** This routine is called from the progress hook routines to possibly
-** append a progress line to the "state_update_pprdrv" file.
-*/
-static void progress_write2(int linetype, const char text[])
-    {
-    char buffer[80];
-
-    if(total_bytes <= SLACK_BYTES_COUNT)
-	return;
-
-    /*
-    ** Create, in the buffer, a progress line of the
-    ** requested type.
-    */
-    switch(linetype)
-	{
-	case 0:
-	    snprintf(buffer, sizeof(buffer), "PGSTA %s %d\n", printer.Name, total_pages_started);
-	    break;
-	case 1:
-	    snprintf(buffer, sizeof(buffer), "PGFIN %s %d\n", printer.Name, total_pages_printed);
-	    break;
-	case 2:
-	    snprintf(buffer, sizeof(buffer), "BYTES %s %ld %ld\n", printer.Name, total_bytes, job.attr.postscript_bytes);
-	    break;
-	}
-
-    state_update_pprdrv_addline(buffer);
-    }
+    } /* end of queuefile_progress_write() */
 
 /*
 ** This routine is called just after each "%%Page:" comment is emitted.  Thus,
@@ -282,9 +259,14 @@ static void progress_write2(int linetype, const char text[])
 */
 void progress_page_start_comment_sent(void)
     {
+    char buffer[80];
+
     total_pages_started++;
-    progress_write();
-    progress_write2(0, (char*)NULL);
+
+    queuefile_progress_write();
+
+    snprintf(buffer, sizeof(buffer), "PGSTA %s %d\n", printer.Name, total_pages_started);
+    state_update_pprdrv_puts(buffer);
     }
 
 /*
@@ -294,9 +276,14 @@ void progress_page_start_comment_sent(void)
 */
 void progress_pages_truly_printed(int n)
     {
+    char buffer[80];
+
     total_pages_printed += n;
-    progress_write();
-    progress_write2(1, (char*)NULL);
+
+    queuefile_progress_write();
+
+    snprintf(buffer, sizeof(buffer), "PGFIN %s %d\n", printer.Name, total_pages_printed);
+    state_update_pprdrv_puts(buffer);
     }
 
 /*
@@ -306,8 +293,15 @@ void progress_pages_truly_printed(int n)
 void progress_bytes_sent(int n)
     {
     total_bytes += n;
-    progress_write();
-    progress_write2(2, (char*)NULL);
+
+    queuefile_progress_write();
+
+    if(total_bytes > SLACK_BYTES_COUNT)
+	{
+	char buffer[80];
+	snprintf(buffer, sizeof(buffer), "BYTES %s %ld %ld\n", printer.Name, total_bytes, job.attr.postscript_bytes);
+	state_update_pprdrv_puts(buffer);
+	}
     }
 
 /*
@@ -320,15 +314,14 @@ void progress_new_status(const char text[])
     {
     char buffer[80];
     snprintf(buffer, sizeof(buffer), "STATUS %s %s\n", printer.Name, text);
-    state_update_pprdrv_addline(buffer);
+    state_update_pprdrv_puts(buffer);
     }
 
 /*
-** This is used to subtract bytes we are using to constantly
-** update the printers LCD or LED display.  This routine
-** doesn't cause anything to be written to the queue file
-** or the status update file.  It just changes the next
-** value written.
+** This is used to subtract bytes we are using to constantly update the 
+** printers LCD or LED display.  This routine doesn't cause anything to 
+** be written to the queue file or the status update file.  It just changes 
+** the next value written.
 **
 ** (It should be noted that the LCD/LED update feature described above
 ** was a failure.  It didn't work because the HP printer didn't actually
@@ -349,4 +342,3 @@ long int progress_bytes_sent_get(void)
     }
 
 /* end of file */
-

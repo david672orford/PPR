@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 March 2003.
+# Last modified 27 March 2003.
 #
 
 package PrintDesk::PPRprnstatus;
@@ -240,16 +240,24 @@ sub pstatus
     {
     my($self, $printer, $status, $retry, $countdown) = @_;
     ($self->{status}, $self->{retry}, $self->{countdown}) = ($status, $retry, $countdown);
-    if($countdown > 0 && ! defined($self->{tick})) { $self->{tick} = $self->{window}->repeat(1000, [\&do_tick, $self]) }
+    if($countdown > 0 && ! defined($self->{tick}))
+	{
+	$self->{tick} = $self->{window}->repeat(1000, [\&do_tick, $self]);
+	}
 
     # Every status change also means that these are no longer valid.
-    $self->{percent_sent} = "";
-    $self->{pages_started} = "";
-    $self->{pages_completed} = "";
+    if($status !~ /^printing/)
+	{
+	$self->{percent_sent} = "";
+	$self->{pages_started} = "";
+	$self->{pages_completed} = "";
+	}
 
     # If the state is fault, update the alert window.
     if($status =~ /^fault/)
-	{ $self->update_alerts() }
+	{
+	$self->update_alerts();
+	}
     }
 
 #

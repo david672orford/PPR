@@ -77,19 +77,37 @@ sub do_queue
 
     #print "do_queue(\"$main\", \"$queuename\")\n";
 
-    my $toplevel = my_window($main, "Queue \"$queuename\"");
+    my $w = my_window($main, "Queue \"$queuename\"");
+
+    # Create a menu bar at the top.
+    my $menuframe = $w->Frame(
+	)->pack(-side => 'top', -fill => 'x');
+
+    # Create the File menu.
+    my $menu_file = $menuframe->Menubutton(
+	-text => 'File',
+	-tearoff => 0
+	)->pack(-side => 'left');
+    $menu_file->command(
+	-label => 'Exit',
+	-command => sub { $w->destroy() });
 
     # Create queue listing frame, divider and button frame.
-    my $queue_frame = $toplevel->Frame()->pack(-side, 'top', -fill, 'both', -expand, 1);
-    $toplevel->Frame(-height, 1, -bg, 'black')->pack(-side, 'top', -fill, 'x');
-    my $job_buttons_frame = $toplevel->Frame()->pack(-side, 'top', -fill, 'x');
+    my $queue_frame = $w->Frame(
+	)->pack(-side, 'top', -fill, 'both', -expand, 1);
+    $w->Frame(
+	-height => 1,
+	-bg => 'black'
+	)->pack(-side => 'top', -fill => 'x');
+    my $job_buttons_frame = $w->Frame(
+	)->pack(-side => 'top' => -fill, 'x');
 
     # Put a queue lister in the top frame.
     my $queue = new PrintDesk::PPRlistqueue($queue_frame, $queuename);
 
-    # Put job control buttons in the next frame.
+    # Put job control buttons in the bottom frame.
     my $job_buttons = new PrintDesk::GENjobbuttons($job_buttons_frame, $queue);
-    $job_buttons->AddButton("Close", sub { $toplevel->destroy });
+    $job_buttons->AddButton("Close", sub { $w->destroy() });
 
     # Make the queue appear.
     $queue->Show();
@@ -97,7 +115,7 @@ sub do_queue
 
     # When this window is closed, destroy the queue display
     # and button box widgets.
-    $toplevel->OnDestroy(sub
+    $w->OnDestroy(sub
 	{
 	$queue->destroy();
 	$job_buttons->destroy()

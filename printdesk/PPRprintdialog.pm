@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 March 2003.
+# Last modified 27 March 2003.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -54,6 +54,31 @@ sub Show
     $self->{pressed} = undef;
     my $w = $self->{window};
 
+    # Fill the queue select list.
+    my @qlist = ();
+    {
+    my $control = new PPR::PPOP("all");
+    foreach my $dest ($control->list_destinations_comments())
+	{
+	my($dest_name, $dest_type, $dest_comment) = @$dest[0, 1, 4];
+	my $longname = "$dest_name - $dest_comment";
+	$self->{dest_longname} = $longname if($dest_name eq $self->{dest});
+	push(@qlist, [$longname, $dest_name]);
+	}
+    $control->destroy();
+    }
+
+    my @dlist = ();
+    for my $i (["None", "None"],
+		["Long Edge", "DuplexNoTumble"],
+		["Short Edge", "DuplexTumble"]
+		)
+	{
+	my($longname, $option) = @$i;
+	$self->{duplex_longname} = $longname if($option eq $self->{duplex});
+	push(@dlist, $i);
+	}
+	
     # The bottom right frame contains two buttons which set a flag
     # and then destroy the widget.
     my $br_frame = $w->Frame(
@@ -80,7 +105,9 @@ sub Show
 	)->pack(-side => 'left');
     my $qlist = $tl_frame->Optionmenu(
 	-variable => \$self->{dest},
+	-textvariable => \$self->{dest_longname},
 	-justify => 'left',
+	-options => \@qlist
 	)->pack(-side => 'left');
     $tl_frame->Button(-text => 'Options', -command =>
 	sub {
@@ -159,25 +186,9 @@ sub Show
     my $dlist = $duplex_frame->Optionmenu(
 	-justify => 'left',
 	-variable => \$self->{duplex},
-	-options => [
-		["None", "None"],
-		["Long Edge", "DuplexNoTumble"],
-		["Short Edge", "DuplexTumble"]
-		]
+	-textvariable => \$self->{duplex_longname},
+	-options => \@dlist
 	)->pack(-side => 'left', -anchor => 'n');
-
-    # Fill the queue select listbox.
-    {
-    my $control = new PPR::PPOP("all");
-    my @list = ();
-    foreach my $dest ($control->list_destinations_comments())
-	{
-	my($dest_name, $dest_type, $dest_comment) = @$dest[0, 1, 4];
-	push(@list, ["$dest_name - $dest_comment", $dest_name]);
-	}
-    $qlist->configure(-options => \@list);
-    $control->destroy();
-    }
 
     # Wait until the window disappears, presumably because the user has
     # closed it using the window manager or has pressed [Cancel] or [Print].

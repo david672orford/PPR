@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 March 2003.
+# Last modified 27 March 2003.
 #
 
 =pod
@@ -66,7 +66,7 @@ sub Show
     my $scrollbar = $window->Scrollbar();
     $scrollbar->pack(-side, 'right', -fill, 'y');
 
-    my $canvas = $window->Canvas(-height, 400, -width, 400, -bg, 'white',
+    my $canvas = $window->Canvas(-height, 400, -width, 200, -bg, 'white',
 	-yscrollcommand, ['set', $scrollbar]);
     $canvas->pack(-side, 'left', -fill, 'both', -expand, 1);
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 13 March 2003.
+# Last modified 27 March 2003.
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
@@ -85,6 +85,8 @@ rm -rf $RPM_BUILD_ROOT
 # This is run after unpacking the cpio archive from the binary .rpm file.
 #============================================================================
 %post
+
+find /usr/lib/ppr /usr/share/ppr /var/spool/ppr /etc/ppr -not -user 0 -not -group 0 | xargs chown ppr:ppr
 
 /usr/lib/ppr/bin/ppr-index >/dev/null
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 March 2003.
+** Last modified 27 March 2003.
 */
 
 /*
@@ -296,7 +296,7 @@ void send_font_pfb(const char filename[], FILE *ifile);
 void send_font_mactt(const char filename[]);
 
 /* pprdrv_progress.c: */
-void state_update_pprdrv_addline(const char line[]);
+void state_update_pprdrv_puts(const char line[]);
 void progress_page_start_comment_sent(void);
 void progress_pages_truly_printed(int n);
 void progress_bytes_sent(int n);
