@@ -48,8 +48,8 @@ CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
 
 # These are the subdirectories we will do make in:
 SUBDIRS=\
-	makeprogs \
 	z_install_begin \
+	makeprogs \
 	libgu \
 	nonppr_tcl \
 	libppr \

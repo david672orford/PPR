@@ -8,8 +8,8 @@ if [ ! -f ./libscript/MD5pp.pm ]; then ln -sf ../nonppr_misc/md5/MD5pp.pm ./libs
 if [ ! -f ./libttf/ps_type3.c ]; then ln -sf ../nonppr_misc/ps_type3/ps_type3.c ./libttf/ps_type3.c || exit 1; fi
 if [ ! -f ./makeprogs/squeeze.c ]; then ln -sf ../nonppr_misc/squeeze/squeeze.c ./makeprogs/squeeze.c || exit 1; fi
 if [ ! -f ./misc/README.txt ]; then ln -sf ../docs/misc/misc_dir_contents.txt ./misc/README.txt || exit 1; fi
+if [ ! -f ./nonppr_misc/docbook-xsl ]; then ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl || exit 1; fi
 if [ ! -f ./nonppr_misc/docbook-xml ]; then ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml || exit 1; fi
-if [ ! -f ./nonppr_misc/docbook-xsl ]; then ln -sf docbook-xsl-1.59.2/ ./nonppr_misc/docbook-xsl || exit 1; fi
 if [ ! -f ./po/README.txt ]; then ln -sf ../docs/misc/internationalization.txt ./po/README.txt || exit 1; fi
 if [ ! -f ./pprpopup/md5pure.tcl ]; then ln -sf ../nonppr_misc/md5/md5pure.tcl ./pprpopup/md5pure.tcl || exit 1; fi
 if [ ! -f ./www/md5.js ]; then ln -sf ../nonppr_misc/md5/md5.js ./www/md5.js || exit 1; fi
@@ -18,3 +18,5 @@ if [ ! -f ./PORTING.txt ]; then ln -sf docs/misc/PORTING.txt ./PORTING.txt || ex
 if [ ! -f ./TODO.txt ]; then ln -sf docs/misc/TODO.txt ./TODO.txt || exit 1; fi
 if [ ! -f ./LICENSE.txt ]; then ln -sf docs/misc/LICENSE.txt ./LICENSE.txt || exit 1; fi
 if [ ! -f ./INSTALL.txt ]; then ln -sf docs/misc/INSTALL.txt ./INSTALL.txt || exit 1; fi
+if [ ! -f ./z_install_begin/getpwnam.c ]; then ln -sf ../libscript/getpwnam.c ./z_install_begin/getpwnam.c || exit 1; fi
+if [ ! -f ./z_install_begin/getgrnam.c ]; then ln -sf ../libscript/getgrnam.c ./z_install_begin/getgrnam.c || exit 1; fi

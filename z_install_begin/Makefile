@@ -32,7 +32,7 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=
+ALL=getpwnam$(DOTEXE) getgrnam$(DOTEXE)
 
 #=== Build ==================================================================
 
@@ -40,8 +40,8 @@ all: $(ALL)
 
 #=== Install ================================================================
 
-install:
-	./install_create_accounts.sh
+install: $(ALL)
+	./install_create_accounts.sh $(HOMEDIR) $(USER_PPR) $(USER_PPRWWW) $(GROUP_PPR)
 	./install_create_dirs.sh
 
 #=== Housekeeping ===========================================================

@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/fixup/fixup_accounts.sh
+# mouse:~ppr/src/z_install_begin/install_create_accounts.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -28,7 +28,13 @@
 # Last modified 4 March 2003.
 #
 
-. ../makeprogs/paths.sh
+# The makefile has to feed us this information since ../makeprogs/paths.sh
+# doesn't exist yet.
+HOMEDIR=$1
+USER_PPR=$2
+USER_PPRWWW=$3
+GROUP_PPR=$4
+COMMENT="PPR Spooling System"
 
 my_uid=`id | sed -e 's/^uid=\([0-9]*\).*$/\1/'`
 my_gid=`id | sed -e 's/^.* gid=\([0-9]*\).*$/\1/'`
@@ -40,7 +46,7 @@ echo "uid=$my_uid gid=$my_gid"
 #=============================================================================
 
 echo "Checking for group $GROUP_PPR..."
-group_ppr_gid=`$HOMEDIR/lib/getgrnam $GROUP_PPR`
+group_ppr_gid=`./getgrnam $GROUP_PPR`
 if [ $group_ppr_gid -ne -1 ]
     then
     echo "    already exists, good."
@@ -68,7 +74,7 @@ if [ $group_ppr_gid -ne -1 ]
     fi
     fi
 
-    group_ppr_gid=`$HOMEDIR/lib/getgrnam $GROUP_PPR`
+    group_ppr_gid=`./getgrnam $GROUP_PPR`
     if [ $group_ppr_gid -lt 1 ]
         then
         echo
@@ -86,7 +92,7 @@ if [ $group_ppr_gid -ne -1 ]
 for user in $USER_PPR $USER_PPRWWW
     do
     echo "Checking for user $user..."
-    user_ppr_uid=`$HOMEDIR/lib/getpwnam $user`
+    user_ppr_uid=`./getpwnam $user`
     if [ $user_ppr_uid -ne -1 ]
         then
         echo "    already exists, good."
@@ -104,28 +110,28 @@ for user in $USER_PPR $USER_PPRWWW
 	# System V release 4
         if [ -x /usr/sbin/passmgmt ]
             then
-            /usr/sbin/passmgmt -a -h $HOMEDIR -c 'PPR Spooling System' -g $group_ppr_gid $user
+            /usr/sbin/passmgmt -a -h $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
             exitval=$?
 
 	# Linux
         else
         if [ -x /usr/sbin/useradd -a `uname -s` = "Linux" ]
             then
-            /usr/sbin/useradd -M -d $HOMEDIR -c 'PPR Spooling System' -g $group_ppr_gid $user
+            /usr/sbin/useradd -M -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
             exitval=$?
 
 	# OSF?
 	else
         if [ -x /usr/sbin/useradd ]
             then
-            /usr/sbin/useradd -d $HOMEDIR -c 'PPR Spooling System' -g $group_ppr_gid $user
+            /usr/sbin/useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
             exitval=$?
 
 	# FreeBSD
 	else
 	if [ -x /usr/sbin/pw ]
 	    then
-	    /usr/sbin/pw useradd -d $HOMEDIR -c 'PPR Spooling System' -g $group_ppr_gid $user
+	    /usr/sbin/pw useradd -d $HOMEDIR -c $COMMENT -g $group_ppr_gid $user
 	    exitval=$?
 
 	else                # no user passmgmt or useradd
@@ -152,7 +158,7 @@ for user in $USER_PPR $USER_PPRWWW
 #
 #=======================================================================
 
-user_ppr_uid=`$HOMEDIR/lib/getpwnam $USER_PPR`
+user_ppr_uid=`./getpwnam $USER_PPR`
 echo "user_ppr_uid=$user_ppr_uid group_ppr_gid=$group_ppr_gid"
 
 if [ $my_uid != 0 -a $my_uid != $user_ppr_uid ]
