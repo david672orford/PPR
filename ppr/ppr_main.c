@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 16 August 2002.
+** Last revised 27 September 2002.
 */
 
 /*
@@ -110,7 +110,7 @@ int option_editps_level = 1;			/* 1 thru 10 */
 enum MARKUP option_markup = MARKUP_FALLBACK_LP;	/* how to treat markup languages */
 
 /* -R switch command line option settings. */
-int read_copies = FALSE;		/* TRUE if should read copies from file */
+int read_copies = TRUE;			/* TRUE if should read copies from file */
 int read_duplex = TRUE;			/* TRUE if we should guess duplex */
 int read_duplex_enforce = FALSE;	/* TRUE if we should insert duplex code after determination */
 int current_duplex = DUPLEX_NONE;	/* set when we read duplex */
@@ -1534,6 +1534,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    	{
 		if((qentry.opts.copies = atoi(optarg)) < 1)
 		    fatal(PPREXIT_SYNTAX, _("Number of copies must be positive"));
+		read_copies = FALSE;
 		}
 	    break;
 

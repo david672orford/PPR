@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 5 August 2002.
+# Last modified 27 September 2002.
 #
 
 =head1 NAME
@@ -688,6 +688,10 @@ document is printed in simplex or duplex mode.
 Print the specified number of copies.  PPR may or may not use the printer's
 multple copies feature.
 
+Note that B<-n> implies B<-R ignore-copies>.  If you intend the value
+specified with B<-n> to be only a default, then put B<-R copies> after
+B<-n> to turn that feature back on.
+
 =item B<-n collate>
 
 =item B<--copies collate>
@@ -701,8 +705,14 @@ collated copies whether or not you use this option.
 
 =item B<-R ignore-copies>
 
-Read any copy count which appears in a document "%%Requirements:" comment
-and print that many copies.  The default is B<-R ignore-copies>.
+If B<-R copies> is in effect, PPR will read any copy count which appears in a
+document "%%Requirements:" comment and print that many copies.  The default is 
+B<-R copies>.
+
+Note that if the copy count is specified with B<-n>, then B<-R
+ignore-copies> is implied.  If you want to set a default number of copies
+but to allow comments in the job to override it, then you must put
+B<-R copies> after B<-n> in order to turn this feature back on.
 
 =back
 

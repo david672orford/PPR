@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--27 September 2002.
+1.50a2, 27 February 2002--2 October 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7879,4 +7879,19 @@ line was being parsed twice.
 
 * ppr/ppr_dscdoc.c: added support for "%%BeginNonPPDFeature: NumCopies X" to 
   "-R copies"; marked all warnings for internationalization.
+
+* ppr/ppr_main.c: changed default to "-R copies" and made "-n" imply "-R
+  ignore-copies".
+
+* pprdrv/pprdrv_notppd.c: added code for "%%BeginNonPPDFeature: NumCopies
+  X", both the insert it and to modify it.
+
+* pprdrv/: added support for in-printer collating for printers that define
+  *Collate in their PPD files but left it turned off for now since it is 
+  unclear how to determine how many pages a printer can collate and 
+  because pprdrv doesn't yet parse *UIContraint: lines.
+
+* pprdrv/pprdrv_ppd.c: rewrote begin_feature() and include_feature()
+  combining their common code for changing and deleting features and 
+  adding code to support new colating features.
 

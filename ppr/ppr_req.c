@@ -55,7 +55,7 @@ void requirement(int reftype, const char req_name[])
 	{					/* and we should pay attention */
 	if(read_copies)				/* to copies data, */
 	    qentry.opts.collate = TRUE;		/* Then, set collate to true */
-	return;
+	return;					/* <-- and filter out */
 	}
 
     if(strncmp(req_name, "numcopies(", 10) == 0)
@@ -68,7 +68,7 @@ void requirement(int reftype, const char req_name[])
 	    else
 	    	qentry.opts.copies = x;
 	    }
-	return;
+	return;					/* <-- filter out */
 	}
 
     /* Look for this requirement in the list of known ones. */

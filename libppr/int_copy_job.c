@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 24 September 2002.
+** Last modified 2 October 2002.
 */
 
 #include "before_system.h"
@@ -93,9 +93,12 @@ void int_copy_job(int portfd, int idle_status_interval, void (*fatal_prn_err)(in
     ** to do so for as long as read() on stdin doesn't return 0 and we
     ** have data in the receive buffer from the printer that we haven't
     ** sent to pprdrv yet.
+    **
+    ** If send_eoj_funct is defined, then also wait for a definite end-
+    ** of-job indication from the printer.
     */
     while(last_stdin_read || recv_len > 0 
-		|| (!send_eoj_funct && !recv_eoj)
+		|| (send_eoj_funct && !recv_eoj)
     		)
     	{
 	FD_ZERO(&rfds);

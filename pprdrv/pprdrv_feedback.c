@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 August 2002.
+** Last modified 2 October 2002.
 */
 
 /*
@@ -973,7 +973,7 @@ void feedback_pjl_wait(void)
 
 /*===================================================================
 ** Read final output from the interface program.  This is called
-** from reapchild() and close_interface() after intstdin has been
+** from reapchild() and interface_close() after intstdin has been
 ** closed.
 ===================================================================*/
 void feedback_drain(void)
