@@ -7258,7 +7258,7 @@ line was being parsed twice.
   BSD license.
 
 
-1.44, 5 June 2001--13 June 2001
+1.44, 5 June 2001--18 June 2001
 
 * moved misc/modes-3.3.mf to filters_misc/ and improved the documentation at
   the top of filters_misc/mfmodes.conf.

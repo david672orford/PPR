@@ -5,7 +5,7 @@
 <Articleinfo>
 	<Title>PPR, a Print Spooler for PostScript</Title>
 	<AUTHOR><FirstName>David</firstname><surname>Chappell</surname></AUTHOR>
-	<PubDate>7 May 2001</pubdate>
+	<PubDate>18 June 2001</pubdate>
 	<copyright><year>1995--2001</year><holder>Trinity College Computing Center</holder></copyright>
 </articleinfo>
 
@@ -1219,9 +1219,9 @@ virtual pages to be put on each side of the physical page.
 <Title>Signature Printing</Title>
 
 <Para>
-A signiture is a booklet which is sewn or glued together with other signatures
-to make a book.  A signiture is printed in such a way that the sheets of paper on
-which it is printed may be stacked and folded in the center.  When they are thus
+A signature is a booklet-like unit of a book which is sewn or glued together with 
+other signatures to make a book complete.  A signature is printed in such a way 
+that the sheets of paper on which it is printed may be stacked and folded in the center.  When they are thus
 folded and glued, stapled, or sewn at the fold, the pages will be in the correct
 order.  PPR can print a DSC conforming document as one or more signatures.  2-Up
 mode is used to accomplish this. The pages are re-ordered before they are sent to
@@ -1229,8 +1229,8 @@ the printer.  It is necessary to send the pages to the printer out of sequence s
 that when the signatures are folded the pages will be in the correct order.
 Signiture printing is invoked with the <Emphasis remap="bf">-s</Emphasis> switch.  This switch takes an
 argument which is the number of sheets of paper which should be used to make each
-signiture.  This switch also turns on 2-Up mode and duplex mode. The number of
-pages which will fit in a signiture is the number of sheets multiplied by 4.
+signature.  This switch also turns on 2-Up mode and duplex mode. The number of
+pages which will fit in a signature is the number of sheets multiplied by 4.
 </Para>
 
 <Para>
@@ -1251,10 +1251,10 @@ time is not easy.
 <Title>Booklet Printing</Title>
 
 <Para>
-Booklet printing is just like signiture printing, except PPR automatically
-selects the minimum number of signiture sheets needed to print the entire document
+Booklet printing is just like signature printing, except PPR automatically
+selects the minimum number of signature sheets needed to print the entire document
 in one booklet.  Booklet mode is invoked with the <Emphasis remap="bf">-s booklet</Emphasis> switch.  As with
-signiture mode, booklets can be printed on a simplex printer by passing the paper
+signature mode, booklets can be printed on a simplex printer by passing the paper
 through twice the first time with the <Emphasis remap="bf">-s fronts</Emphasis> switch and the second time
 with the <Emphasis remap="bf">-s backs</Emphasis> switch.
 </Para>
@@ -2089,7 +2089,7 @@ method is the most reliable.  The second is employed only if the first fails.
 <Para>
 The first method is to look for a ``magic number'' at the start of the
 file.  Many file format specifications dictate that files conforming to them
-always begin with certain signiture bytes.  Formats which specify a signiture
+always begin with certain signature bytes.  Formats which specify a signature
 or magic number include DSC conforming PostScript, JFIF, GIF, PNG, DVI,
 WordPerfect documents, PBM, XPM and others.
 </Para>
