@@ -54,11 +54,11 @@ sub test_chart
 # This is a table of tests.
 #
 my @tests = (
-	[\&test_perl5, H_("Perl 5.005 or later"), 1, ""],
 #	[\&test_md5, H_("Perl MD5 module"), 1, ""],
+#	[\&test_chart, H_("Perl Chart::PNGgraph module"), 0, ""]
+	[\&test_perl5, H_("Perl 5.005 or later"), 1, ""],
 	[\&test_soundfiles, H_("PPR sound files"), 0, ""],
-	[\&test_gettext, H_("Perl GNU Gettext module"), 0, H_("liblocale-gettext-perl")],
-	[\&test_chart, H_("Perl Chart::PNGgraph module"), 0, ""]
+	[\&test_gettext, H_("Perl GNU Gettext module"), 0, H_("liblocale-gettext-perl")]
 );
 
 #

@@ -62,7 +62,7 @@ Vary: accept-language
 <body bgcolor="white">
 <h1>$title</h1>
 HEAD10
-print "<p>", html(scalar localtime(time())), "<br>\n";
+print "<p>As of ", html(scalar localtime(time())), ".</p>\n";
 
 # Begining of exception handling block.
 eval {
@@ -94,13 +94,26 @@ while(<D>)
     $total_with_commas =~ s/(\d)(\d\d\d)$/$1,$2/;
     while($total_with_commas =~ s/(\d)(\d\d\d,)/$1,$2/) { }
 
-    # Here is the little table in all its glory.
     print <<"BODY10";
-<table border=0 hspace=15 vspace=15 cellpadding=5 align="left">
-<tr><td><img width=200 height=150 src="df_img.cgi?used=$percent_used;available=$percent_available;reserved=$percent_reserved" alt="${\H_("Image Missing")}"></td></tr>
-<tr><td align="center">Partition $mountpt<br>Device $dev<br>${total_with_commas}K</td></tr>
+<table border=1 hspace=5 vspace=5 cellpadding=5 cellspacing=0 align="left">
+<tr><td><table border=0 cellspacing=0 cellpadding=0>
+		<tr><td><img width=100 height=$percent_reserved border=0 src="../images/pixel-blue.png"></td></tr>
+		<tr><td><img width=100 height=$percent_available border=0 src="../images/pixel-green.png"></td></tr>
+		<tr><td><img width=100 height=$percent_used border=0 src="../images/pixel-red.png"></td></tr>
+		</table>
+	</td>
+    <td>
+	<img width=10 height=10 src="../images/pixel-blue.png"> ${percent_reserved}% Reserved
+	<br>
+	<img width=10 height=10 src="../images/pixel-green.png"> ${percent_available}% Available
+	<br>
+	<img width=10 height=10 src="../images/pixel-red.png"> ${percent_used}% Used
+	</td>
+    </tr>
+<tr><td align="center" colspan=2>Partition $mountpt<br>Device $dev<br>${total_with_commas}K</td></tr>
 </table>
 BODY10
+
     }
 
 # Close the pipe from df.
@@ -116,10 +129,8 @@ close(D) || die sprintf(_("Error while closing pipe from df (%s)"), $!);
 
 # Close the HTML.
 print <<"TAIL10";
-</p>
 </body>
 </html>
 TAIL10
 
 exit 0;
-

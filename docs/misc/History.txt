@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--10 April 2002.
+1.50a2, 27 February 2002--11 April 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7613,5 +7613,18 @@ line was being parsed twice.
   to generate some of the images automatically from their FIG files.  Added
   FIG pictures for the test page and replaced the hand-drawn exclaim.png
   with exclaim.fig.
+
+* www/docs_info.cgi.perl: added
+
+* www/docs_man.cgi.perl: added support for MANPATH searching
+
+* www/index.html: added boxes to enter names of desired man pages, info
+  page, and RPM pages; changed logo to pprlogo2-medium.png.
+
+* docs/index.html: chnaged logo to pprlogo2-medium.png.
+
+* www/df_html.cgi.perl, df_img.cgi.perl: removed df_img.cgi.perl and changed
+  df_html.cgi.perl to make a percentage line graph with stretched
+  single-pixel images; added df_img.cgi to fixup/fixup_obsolete.sh.
 
 

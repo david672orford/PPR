@@ -73,7 +73,7 @@ CGI_PROGS=show_queues.cgi show_queues_nojs.cgi \
 	commentary_select.cgi commentary_speach.cgi \
 	responder_speach.cgi \
 	test_cgi.cgi test_components.cgi test_tail_status.cgi \
-	df_html.cgi df_img.cgi \
+	df_html.cgi \
 	login_cookie.cgi \
 	show_log.cgi show_printlog.cgi \
 	docs_cat.cgi docs_man.cgi docs_plain.cgi docs_info.cgi docs_rpm.cgi docs_rpms_list.cgi \
