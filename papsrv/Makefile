@@ -1,6 +1,6 @@
 #
 # mouse:~src/ppr/papsrv/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 11 February 2001.
+# Last modified 23 October 2002.
 #
 
 include ../Makefile.conf
@@ -24,10 +24,10 @@ BIN_PROGS=papsrv$(DOTEXE) papsrv-kill
 # If we aren't building with AppleTalk support, then ALLATALK will be 
 # undefined and this will do nothing.  If we are building with AppleTalk
 # support then it will be set to "allatalk".
-all: $(ALLATALK)
+all: $(ALL_ATALK)
 
 # List if things to build if we have AppleTalk.
-allatalk: $(BIN_PROGS)
+all-atalk: $(BIN_PROGS)
 
 # This is the server.
 OBJS1=papsrv.$(OBJ) \
@@ -57,10 +57,10 @@ papsrv_ppd_parse.c: papsrv_ppd_parse.l
 
 # The install target.  This also does nothing if we
 # don't have AppleTalk.
-install: $(INSTALLATALK)
+install: $(INSTALL_ATALK)
 
 # List if things to install if we have AppleTalk.
-installatalk: $(BIN_PROGS)
+install-atalk: $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(HOMEDIR)/bin papsrv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin papsrv-kill
 
@@ -78,4 +78,3 @@ veryclean: clean
 	$(RMF) papsrv_ppd_parse.c
 
 # end of file
-

@@ -5,7 +5,7 @@
 
 #
 # mouse:~ppr/src/Configure
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -15,7 +15,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 31 July 2002.
+# Last modified 23 October 2002.
 #
 
 # Find an echo that will support "echo -n".  If we
@@ -441,6 +441,44 @@ if [ "$USE_GDBM" = "yes" ]
 echo
 
 #
+# Ask about gdbm:
+#
+echo
+echo "Do you have Samba's Trivial DataBase library (TDB)?"
+echo
+echo "(If you say no, then automatic Samba client printer driver download"
+echo "will not work."
+echo
+USE_TDB="?"
+while [ "$USE_TDB" = "?" ]
+    do
+    $NECHO -n "Use tdb? [yes] "
+    read USE_TDB
+    case "$USE_TDB" in
+	[yY]* )
+	    USE_TDB="yes"
+	    ;;
+	[nN]* )
+	    USE_TDB="no"
+	    ;;
+	'' )
+	    USE_TDB="yes"
+	    ;;
+	* )
+	    USE_TDB="?";
+	    ;;
+	esac
+done
+
+if [ "$USE_TDB" = "yes" ]
+  then
+  echo "PPR will use TDB."
+  else
+  echo "PPR features which require TDB will be disabled."
+  fi
+echo
+
+#
 # Ask about internationalized of messages
 #
 echo
@@ -800,7 +838,7 @@ cat >&3 <<===EndOfHere25===
 NECHO=$NECHO_EXPORT
 EECHO=$EECHO_EXPORT
 
-# Location of Perl interpreter.
+# Location of Perl interpreter
 PERL=$PERL
 
 ===EndOfHere25===
@@ -808,7 +846,7 @@ PERL=$PERL
 if [ "$USE_GDBM" = "yes" ]
 then
 cat >&3 <<===EndOfHere30===
-# Decide which user database module to use
+# Decide which user database module to use.
 USER_DBM=gdbm
 #USER_DBM=none
 
@@ -820,13 +858,31 @@ DBLIBS=-lgdbm
 ===EndOfHere30===
 else
 cat >&3 <<===EndOfHere40===
-# Decide which user database module to use
+# Decide which user database module to use.
 #USER_DBM=gdbm
 USER_DBM=none
 
-# Libraries which should be linked in for the user database:
+# Extra libraries which should be included when linking to the PPR user
+# database library.
 #DBLIBS=-lgdbm
 DBLIBS=
+
+===EndOfHere40===
+fi
+
+if [ "$USE_TDB" = "yes" ]
+then
+cat >&3 <<===EndOfHere30===
+# Enable building and installing of programs that require Samba's TDB.
+ALL_TDB=all-tdb
+INSTALL_TDB=install-tdb
+
+===EndOfHere30===
+else
+cat >&3 <<===EndOfHere40===
+# Enable building and installing of programs that require Samba's TDB.
+#ALL_TDB=all-tdb
+#INSTALL_TDB=install-tdb
 
 ===EndOfHere40===
 fi
@@ -879,8 +935,8 @@ LIB_LEX=-ll
 PARALLEL=generic
 
 # If you don't have NetBIOS, comment these out.
-ALLNETBIOS=allnetbios
-INSTALLNETBIOS=installnetbios
+ALL_NETBIOS=all-netbios
+INSTALL_NETBIOS=install-netbios
 ===EndSYSATTWGS===
 fi
 
@@ -1358,16 +1414,16 @@ if [ -n "$ATALKTYPE" ]
 then
 cat >&3 <<===EndATALK2===
 # Enable building and installing of programs that require AppleTalk.
-ALLATALK=allatalk
-INSTALLATALK=installatalk
+ALL_ATALK=all-atalk
+INSTALL_ATALK=install-atalk
 
 ===EndATALK2===
 
 else
 cat >&3 <<===EndATALK3===
 # Enable building and installing of programs that require AppleTalk.
-#ALLATALK=allatalk
-#INSTALLATALK=installatalk
+#ALL_ATALK=all-atalk
+#INSTALL_ATALK=install-atalk
 
 ===EndATALK3===
 fi

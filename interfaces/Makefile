@@ -10,10 +10,12 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 5 September 2002.
+# Last modified 23 October 2002.
 #
 
 include ../Makefile.conf
+
+#=== Inventory ==============================================================
 
 PROGS=dummy simple parallel$(DOTEXE) serial$(DOTEXE) \
 	tcpip$(DOTEXE) lpr$(DOTEXE) smb
@@ -22,27 +24,15 @@ ATALK_PROGS=atalk$(DOTEXE)
 
 NETBIOS_PROGS=clispool$(DOTEXE)
 
-all: $(ALLNETBIOS) $(ALLATALK) $(PROGS)
+#=== Build ==================================================================
+
+all: $(ALL_NETBIOS) $(ALL_ATALK) $(PROGS)
 
 # Extra stuff to build if we have NetBIOS.
-allnetbios: $(NETBIOS_PROGS)
+all-netbios: $(NETBIOS_PROGS)
 
 # Extra stuff to build if we have AppleTalk.
-allatalk: $(ATALK_PROGS)
-
-install: $(INSTALLNETBIOS) $(INSTALLATALK) $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(PROGS)
-	-chown root $(HOMEDIR)/interfaces/lpr$(DOTEXE) && chmod 4711 $(HOMEDIR)/interfaces/lpr$(DOTEXE)
-
-# Extra stuff to install if we have AppleTalk.
-installatalk: $(ATALK_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(ATALK_PROGS)
-
-# Extra stuff to install if we have NetBIOS.
-installnetbios: $(NETBIOS_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(NETBIOS_PROGS)
-
-include .depend
+all-atalk: $(ATALK_PROGS)
 
 # Build the AppleTalk interface by linking the atalk.o
 # created by the rule below with the AppleTalk libraries
@@ -80,6 +70,24 @@ serial$(DOTEXE): serial.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEX
 tcpip$(DOTEXE): tcpip.$(OBJ) throw.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o tcpip$(DOTEXE) tcpip.$(OBJ) \
 		throw.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(SOCKLIBS) $(INTLLIBS)
+
+#=== Install ================================================================
+
+install: $(INSTALL_NETBIOS) $(INSTALL_ATALK) $(PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(PROGS)
+	-chown root $(HOMEDIR)/interfaces/lpr$(DOTEXE) && chmod 4711 $(HOMEDIR)/interfaces/lpr$(DOTEXE)
+
+# Extra stuff to install if we have AppleTalk.
+install-atalk: $(ATALK_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(ATALK_PROGS)
+
+# Extra stuff to install if we have NetBIOS.
+install-netbios: $(NETBIOS_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/interfaces $(NETBIOS_PROGS)
+
+#=== Housekeeping ===========================================================
+
+include .depend
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS) atalk$(DOTEXE) clispool$(DOTEXE)

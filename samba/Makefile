@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 August 2002.
+# Last modified 23 October 2002.
 #
 
 include ../Makefile.conf
@@ -36,12 +36,15 @@ PROGS=ppr2samba$(DOTEXE) \
 	ppd2win95drv \
 	ppd2windrv \
 	samba_submitter \
-	smb-protos.conf \
-	sambaprint$(DOTEXE)
+	smb-protos.conf
+
+PROGS_TDB=sambaprint$(DOTEXE)
 
 #=== Build ==================================================================
 
-all: $(PROGS)
+all: $(PROGS) $(ALL_TDB)
+
+all-tdb: $(PROGS_TDB)
 
 smb-protos.conf: smb-protos.conf.template
 	$(RMF) smb-protos.conf
@@ -65,13 +68,15 @@ sambaprint$(DOTEXE): $(OBJS_SAMBAPRINT)
 
 #=== Install ================================================================
 
-install: $(PROGS) smb-protos.conf WIN95CP.BAT
+install: $(PROGS) smb-protos.conf WIN95CP.BAT $(INSTALL_TDB)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(HOMEDIR)/bin ppr2samba$(DOTEXE)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppd2win95drv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppd2windrv
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib samba_submitter
 	$(INSTALLCP) WIN95CP.BAT $(VAR_SPOOL_PPR)/drivers/WIN40/WIN95CP.BAT
 	$(INSTALLCP) smb-protos.conf $(HOMEDIR)/lib/smb-protos.conf
+
+install-tdb: $(PROGS_TDB)
 	$(INSTALLPROGS) root $(GROUP_PPR) 4755 $(HOMEDIR)/lib sambaprint$(DOTEXE)
 
 #=== Housekeeping ===========================================================

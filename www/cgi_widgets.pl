@@ -56,7 +56,8 @@ sub labeled_entry
 	print '<span class="label">', html($label), "</span> ";
 	print "<br>\n " if($size >= 50);
 	}
-    print "<input name=\"$name\" size=$size value=", html_value($value), ">\n";
+    print "<input name=\"$name\" size=$size value=", html_value($value), ">";
+    print "</span>\n";
     }
 
 sub labeled_blank
