@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 19 April 2004.
 #
 
 #
@@ -160,7 +160,7 @@ switch -exact $selected_browser {
 				window.resizeTo($width,$height);
 				if(!window.open('$final_url', '_self', '', true))
 					{
-					alert('Popup blocking has messed up the close button.');
+					/* alert('Popup blocking has messed up the close button.'); */
 					window.location = '$final_url';
 					}
 				}
