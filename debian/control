@@ -1,0 +1,17 @@
+Source: ppr
+Section: unknown
+Priority: optional
+Maintainer: David Chappell <David.Chappell@trincoll.edu>
+Build-Depends: debhelper (>= 4.0.0)
+Standards-Version: 3.6.0
+
+Package: ppr
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
+
+Package: ppr-doc
+Architecture: all
+Description: Documentation for ppr
+ <insert long description, indented with spaces>
