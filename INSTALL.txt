@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 24 July 2003.
+ Last revised 6 August 2003.
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -27,13 +27,13 @@ version of PPR is still considered experimental.
 * Notes for MS-Windows NT 4.0 and UWIN 2.0
 * Notes for MS-Windows NT 4.0 and Cygwin
 * Simple Compiling Instructions
-* Upgrading to PPR 1.51 from previous versions
+* Upgrading to PPR 1.52 from previous versions
 
 =============================================================================
  Requirements for Installing PPR
 =============================================================================
 
-1) The PPR source archive (ppr-1.51.tar.gz)
+1) The PPR source archive (ppr-1.52.tar.gz)
 
 2) Gzip (to uncompress the source archive)
    (Gzip may be obtained from <http://www.gzip.org/>.)
@@ -150,6 +150,46 @@ other operating systems without a lot of trouble.
 NOTE: be sure to read the README.txt file that comes with NATALI.  If you
 don't follow the directions, there will be an unresolved symbol when you try
 to link a program with NATALI and Netatalk.
+
+=============================================================================
+ Notes for Solaris
+=============================================================================
+
+PPR version 1.52 and later will use zlib if available.  However, the version
+of zlib supplied with Solaris 9.0 appears to be old and doesn't have all of
+the functions required by PPR.  It is recomended that you install a recent
+version of Zlib such as 1.1.4.  If you have installed zlib in /usr or
+/usr/local, then Configure will find it.
+
+If you are depending on LD_LIBRARY_PATH to help PPR to find the shared
+libraries such as Zlib, you will have problems.  This is because
+LD_LIBRARY_PATH doesn't work with setuid programs and because processes
+started by Init or Inetd probably don't have it set.  It is recomended that
+you add all of your shared library directories to the system search path
+by using the crle command.
+
+To see the current search path:
+
+# crle
+
+Configuration file [3]: /var/ld/ld.config
+  Default Library Path (ELF):   /usr/lib
+  Trusted Directories (ELF):    /usr/lib/secure  (system default)
+
+Command line:
+  crle -c /var/ld/ld.config -l /usr/lib
+
+The command line show is the command needed to establish the current
+configuration.  Write it down.  To add a directory:
+
+# crle -u -l /usr/local/lib
+
+Note that you can easily disable your system with the crle command.  For
+example, if you leave out the -u in the command above it will replace the
+current search path with one that contains only /usr/local/lib.  Now most
+programs won't work.  Fortunately, crle seems to be unaffected, so you
+should be able to restore the original settings by running the command which
+you wrote down above.
 
 =============================================================================
  Notes for RedHat Linux 4.x
@@ -306,13 +346,13 @@ the AppleTalk libraries, that would be very helpful.
 
 	mkdir /usr/local/src
 	cd /usr/local/src
-	gunzip -c ppr-1.51.tar.gz | tar xvf -
+	gunzip -c ppr-1.52.tar.gz | tar xvf -
 
    Or if you have GNU Tar, you can change the last command to:
 
-	tar zxvf ppr-1.51.tar.gz
+	tar zxvf ppr-1.52.tar.gz
 
-2) Change directory to "ppr-1.51" and run "./Configure".  Answer the questions.
+2) Change directory to "ppr-1.52" and run "./Configure".  Answer the questions.
 
 3) Run "make".
 
@@ -327,7 +367,7 @@ should probably read docs/misc/PORTING.txt first.
 
 Note that if you start hacking PPR, you won't always need to run "make
 install" as root.  The first time it runs it will create a user called
-"ppr".  If you subsequently do "chmod -R ppr:ppr ppr-1.51" to set the
+"ppr".  If you subsequently do "chmod -R ppr:ppr ppr-1.52" to set the
 ownership of the source directory, you can work in it as the user "ppr",
 make changes, and do "make install" as that user.  However if you edit a few
 specific things such as a setuid root program or the init script, "make
@@ -355,7 +395,7 @@ An RPM spec file (called ppr.spec) can be found in the top-level source
 directory.
 
 ============================================================================
- Upgrading to PPR 1.51 from previous versions
+ Upgrading to PPR 1.5X from previous versions
 ============================================================================
 
 This is a list of important changes you should be aware of when upgrading

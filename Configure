@@ -79,24 +79,24 @@ cat - <<EndOfHelp
 	--libdir=
 	--datadir=
 	--spooldir=
-	--x11bindir=
-	--with-gcc
-	--without-gcc
+	--x11bindir=		-- where is xterm?
+	--with-gcc		-- use GCC
+	--without-gcc		-- use native compiler
 	--user-ppr=
 	--user-pprwww=
 	--group-ppr=
-	--with-gdbm
+	--with-gdbm		-- link with GDBM
 	--without-gdbm
-	--with-tdb
+	--with-tdb		-- link with TBD
 	--without-tdb
-	--with-gettext
+	--with-gettext		-- link with GNU Gettext
 	--without-gettext
 	--help
 
 Environment variables heeded:
 
 PATH		used to search for programs such as perl
-RPM_OPT_FLAGS	processor specific compiler options
+CFLAGS		flags to pass to C compiler
 
 EndOfHelp
 }
@@ -1086,7 +1086,7 @@ ${ZLIB}ZLIBLIBS=-lz
 
 ===EndOfHere50===
 
-cat >&3 <<'===EndOfHere51==='
+cat >&3 <<'===EndOfHere52==='
 # Wrap several options together into one
 MISC_OPTS=-DPPR_$(PORT_NAME) $(CHANGE) $(USER_GROUP) $(INTERNATIONAL) $(ZLIBOPTS)
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 July 2003.
+** Last modified 6 August 2003.
 */
 
 #include "before_system.h"
@@ -49,12 +49,24 @@ static const char *printer_uri(struct IPP *ipp)
 	return p->values[0].string.text;
 	}
 
+static const char *printer_uri_basename(struct IPP *ipp)
+	{
+	const char *p = printer_uri(ipp);
+	if(p && (p = strrchr(p, '/')))
+		return p + 1;
+	return NULL;
+	}
+
 static void do_print_job(struct IPP *ipp)
 	{
+	const char *printer;
 	pid_t pid;
 	int toppr_fds[2];
 	int jobid_fds[2];
 		
+	if(!(printer = printer_uri_basename(ipp)))
+		gu_Throw("no printer name");
+
 	if(pipe(toppr_fds) == -1)
 		gu_Throw("pipe() failed");
 
@@ -95,7 +107,7 @@ static void do_print_job(struct IPP *ipp)
 
 		snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
 
-		execl(PPR_PATH, PPR_PATH, "-d", "dummy", "--print-id-to-fd", fd_str, NULL);
+		execl(PPR_PATH, PPR_PATH, "-d", printer, "--print-id-to-fd", fd_str, NULL);
 
 		_exit(242);
 		}
@@ -211,9 +223,13 @@ static void do_get_default(struct IPP *ipp)
 
 static void do_get_printers(struct IPP *ipp)
 	{
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "test");
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "dummy");
 	ipp_add_end(ipp, IPP_TAG_PRINTER);
-	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "test2");
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "aardvark");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "chipmunk");
+	ipp_add_end(ipp, IPP_TAG_PRINTER);
+	ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", "adshp4si");
 	ipp_add_end(ipp, IPP_TAG_PRINTER);
 	}
 	

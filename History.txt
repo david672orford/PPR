@@ -8673,12 +8673,16 @@ Bug Fixes
 
 * Added -R/usr/local/lib to LDFLAGS= for Solaris (both new and old)
 
+* editps/Makefile: fixed Makefile to install Qt_2.2.0.
+
 Misc. Added Material
 
 * added nonppr_vendors/ppd_hp/"HP LaserJet 2300 PS".
 
 * libgu/gu_exceptions.c: added.  This is intended to eventually replace
   cexcept.h and libppr_exception().
+
+* editps/Qt_3.1.1
 
 Misc. Removed Material
 
