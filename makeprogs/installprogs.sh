@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 August 2003.
+# Last modified 2 November 2003.
 #
 
 #
@@ -98,7 +98,7 @@ while [ "$1" != "" ]
 	# Here we try to set the file permissions.  If this doesn't work, they try
 	# to leave the command to be executed by root later.
 	#
-	chown $USER "$RPM_BUILD_ROOT$dest" 2>/dev/null \
+	chown $USER "$RPM_BUILD_ROOT$dest" \
 		&& chgrp $GROUP "$RPM_BUILD_ROOT$dest" 2>/dev/null
 	if [ $? -ne 0 ]
 		then

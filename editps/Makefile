@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 August 2003.
+# Last modified 2 November 2003.
 #
 
 include ../Makefile.conf
@@ -38,7 +38,6 @@ EDITORS=Windows_NT_4.0 Windows_95_4.0 \
 	dvipsk_5.58f \
 	LaserWriter_8_8.4 \
 	Mozilla_1.0 \
-	Mozilla_1.4 \
 	Qt_2.2.0 Qt_3.1.1
 
 #=== Build ==================================================================
