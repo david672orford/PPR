@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 May 2002.
+** Last modified 16 May 2002.
 */
 
 /*
@@ -287,7 +287,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 	    	}
 	    if(written_size != to_write_size)
 	    	{
-		error("%s(): tried to write %d bytes but wrote %d instead", function, to_write_size, written_size);
+		error("%s(): tried to write %d bytes but wrote %d instead", function, (int)to_write_size, (int)written_size);
 		}
 
 	    break;	/* end of inner exception handling block */
