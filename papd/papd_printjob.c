@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 30 January 2004.
 */
 
 #include "before_system.h"
@@ -147,11 +147,14 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const cha
 		argv[x++] = proxy_for;
 
 		/* Answer for TTRasterizer query */
-		if(queueinfo_ttRasterizer(qc))
+		{
+		const char *p;
+		if((p = queueinfo_ttRasterizer(qc)))
 			{
 			argv[x++] = "-Q";
-			argv[x++] = queueinfo_ttRasterizer(qc);
+			argv[x++] = p;
 			}
+		}
 
 		/* no responder */
 		argv[x++] = "-m";

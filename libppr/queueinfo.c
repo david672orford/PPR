@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 January 2004.
+** Last modified 30 January 2004.
 */
 
 /*+ \file
@@ -42,6 +42,7 @@ PPR queue.
 #include <sys/stat.h>
 #include "gu.h"
 #include "global_defines.h"
+#include "interface.h"
 #include "queueinfo.h"
 
 #include "pool.h"
@@ -58,6 +59,11 @@ PPR queue.
 /* printer information */
 struct PRINTER_INFO {
 	char *name;
+	char *interface;
+	struct PPD_PROTOCOLS protocols;
+	int feedback;					/* really a boolean */
+	int jobbreak;
+	int codes;
 	gu_boolean binaryOK;
 	char *ppdFile;
 	char *product;
@@ -72,6 +78,7 @@ struct PRINTER_INFO {
 	char *ttRasterizer;
 	sash fonts;
 	sash options;
+	sash VMOptions;
 	};
 
 /* queue information */
@@ -133,7 +140,13 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 	pip = c2_pmalloc(qip->subpool, sizeof(struct PRINTER_INFO));
 	vector_push_back(qip->printers, pip);
 	pip->name = pstrdup(qip->subpool, name);
-	pip->binaryOK = TRUE;
+	pip->interface = NULL;
+	pip->protocols.TBCP = FALSE;
+	pip->protocols.PJL = FALSE;
+	pip->feedback = -1;
+	pip->jobbreak = JOBBREAK_DEFAULT;
+	pip->codes = CODES_DEFAULT;
+	pip->binaryOK = FALSE;
 	pip->ppdFile = NULL;
 	pip->product = NULL;
 	pip->psLanguageLevel = 1;
@@ -147,6 +160,7 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 	pip->ttRasterizer = NULL;
 	pip->fonts = new_sash(qip->subpool);
 	pip->options = new_sash(qip->subpool);
+	pip->VMOptions = new_sash(qip->subpool);
 
 	while((line = gu_getline(line, &line_available, conf)))
 		{
@@ -157,6 +171,36 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 				if((p = lmatchp(line, "Comment:")) && depth == 0)
 					{
 					qip->comment = pstrdup(qip->subpool, p);
+					continue;
+					}
+				if((p = lmatchp(line, "Codes:")))
+					{
+					pip->codes = atoi(p);
+					continue;
+					}
+				break;
+			case 'F':
+				if((p = lmatchp(line, "Feedback:")))
+					{
+					gu_torf_setBOOL(&pip->feedback, p);
+					continue;
+					}
+				break;
+			case 'I':
+				if((p = lmatchp(line, "Interface:")))
+					{
+					pip->interface = pstrdup(qip->subpool, p);
+					/* Invalidate lines which preceed "Interface:". */
+					pip->feedback = -1;
+					pip->jobbreak = JOBBREAK_DEFAULT;
+					pip->codes = CODES_DEFAULT;
+					continue;
+					}
+				break;
+			case 'J':
+				if((p = lmatchp(line, "JobBreak:")))
+					{
+					pip->jobbreak = atoi(p);
 					continue;
 					}
 				break;
@@ -294,6 +338,18 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 									}
 								continue;
 								}
+							if((p = lmatchp(line, "*Protocols:")))
+								{
+								char *f;
+								while((f = gu_strsep(&p, " \t")))
+									{
+									if(strcmp(f, "TBCP") == 0)
+										pip->protocols.TBCP = TRUE;
+									if(strcmp(f, "PJL") == 0)
+										pip->protocols.PJL = TRUE;
+									}
+								continue;
+								}
 							break;
 						case 'T':
 							if((p = lmatchp(line, "*TTRasterizer:")))
@@ -305,9 +361,56 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 								continue;
 								}
 							break;
+						case 'V':
+							if((p = lmatchp(line, "*VMOption ")))
+								{
+								char *name = pstrndup(qip->subpool, p, strcspn(p, "/:"));
+								p += strcspn(p, ":");
+								if(*p == ':')
+									{
+									p++;
+									p += strspn(p, " \t");
+									if(*p == '"')
+										{
+										p++;
+										sash_insert(pip->VMOptions, name, pstrndup(qip->subpool, p, strcspn(p, "\"")));	
+										}
+									}
+								continue;
+								}
+							break;
 						}
 					}
 				}
+
+			/* If these wern't specified in the configuration file, choose defaults based 
+			 * on the interface and supported protocols as indicated in the PPD file.
+			 */
+			if(pip->feedback == -1)
+				pip->codes = interface_default_codes(pip->interface, &pip->protocols);
+			if(pip->jobbreak == JOBBREAK_DEFAULT)
+				pip->codes = interface_default_codes(pip->interface, &pip->protocols);
+			if(pip->codes == CODES_DEFAULT)
+				pip->codes = interface_default_codes(pip->interface, &pip->protocols);
+
+			/* These two codes settings mean that any 8 bit value can be passed to the
+			 * PostScript interpreter without being interpreted as a control code.
+			 */
+			if(pip->codes == CODES_Binary || pip->codes == CODES_TBCP)
+				pip->binaryOK = TRUE;
+		
+			/* Is a memory expansion module installed? */
+			{
+			const char *name;
+			if(sash_get(pip->options, "*InstalledMemory", name))
+				{
+				const char *value_string;
+				if(sash_get(pip->VMOptions, name, value_string))
+					{
+					pip->psFreeVM = atoi(value_string);
+					}
+				}
+			}
 			}
 		gu_Final {
 			ppdobj_delete(ppd);

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_printer.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 30 January 2004.
 */
 
 /*==============================================================
@@ -317,10 +317,12 @@ static const char *codes_description(int codes)
 	} /* end of codes_description() */
 
 /*
-** Read a printer's configuration file and
-** print a report.
-** It is not necessary to be an operator in order to
-** execute this command.
+** Read a printer's configuration file and print a report.
+** It is not necessary to be an operator in order to execute this command.
+**
+** We might someday be able to replace much of this function with a
+** queueinfo object (../libppr/queueinfo.c) but as of 30 January 2004 it
+** isn't mature enough.
 */
 int printer_show(const char *argv[])
 	{

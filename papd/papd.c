@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 January 2004.
+** Last modified 30 January 2004.
 */
 
 /*
@@ -77,7 +77,7 @@ static void write_logline(const char category[], const char message[])
 	{
 	int fd;
 	pid_t mypid;
-	char temp[100];
+	char temp[256];
 	
 	if(master_pid != 0 && master_pid != (mypid = getpid()))
 		snprintf(temp, sizeof(temp), "%s: %s: child %ld: %s\n", category, datestamp(), (long)mypid, message);
@@ -202,18 +202,18 @@ static void sigchld_handler(int signum)
 		{
 		if(WCOREDUMP(wstat))
 			{
-			debug("Child papd (pid=%i) dumped core",pid);
+			debug("Child (pid=%i) dumped core",pid);
 			}
 		else if(WIFSIGNALED(wstat))
 			{
-			debug("Child papd (pid=%i) died on signal %i", pid, WTERMSIG(wstat));
+			debug("Child (pid=%i) died on signal %i", pid, WTERMSIG(wstat));
 			}
 		else if(WIFEXITED(wstat))
 			{
 			#ifndef DEBUG_REAPCHILD
 			if(WEXITSTATUS(wstat))
 			#endif
-			debug("Child papd (pid=%i) terminated, exit=%i", pid, WEXITSTATUS(wstat));
+				debug("Child (pid=%i) terminated, exit=%i", pid, WEXITSTATUS(wstat));
 			}
 		else
 			{
@@ -297,6 +297,8 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 	char *cptr;
 	void *queue_config;
 
+	debug("connexion to %s (%s) from %d:%d", this_adv->PPRname, this_adv->PAPname, net, node);
+	
 	/* Load more queue configuration information so we can answer queries. */
 	if(!(queue_config = queueinfo_new(this_adv->queue_type, this_adv->PPRname)))
 		gu_Throw("%s(): can't information about queue \"%s\"", function, this_adv->PPRname);
@@ -328,7 +330,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 			{
 			DODEBUG_LOOP(("start of print job: \"%s\"", line));
 
-			printjob(sesfd, this_adv, &queue_config, net, node, LOGFILE);
+			printjob(sesfd, this_adv, queue_config, net, node, LOGFILE);
 
 			DODEBUG_LOOP(("print job processing complete"));
 			}
@@ -616,54 +618,10 @@ static void init(void)
 	signal_interupting(SIGPIPE, sig_empty_handler);
 	} /* end of init() */
 
-/*
-** The main loop alternates between calling at_service() (which 
-** contains AppleTalk-implementation-dependent code) and calling
-** conf_load().
-*/
-static int main_loop(void)
-	{
-	struct ADV *adv = NULL;
-	gu_Try {
-		debug("Starting up...");
-		while(keep_running)
-			{
-			if(reload_config)
-				{
-				debug("Loading configuration...");
-				adv = conf_load(adv);
-				reload_config = FALSE;
-				debug("Waiting for connexions...");
-				}
-			at_service(adv);
-			}
-		debug("Shutting down...");
-		}
-	gu_Final {
-		if(adv)
-			{
-			int i;
-			debug("Removing advertised names...");
-			for(i = 0; adv[i].adv_type != ADV_LAST; i++)
-				{
-				if(adv[i].adv_type == ADV_ACTIVE)
-					{
-					debug("%s: unbinding PAP name \"%s\"", adv[i].PPRname, adv[i].PAPname);
-					at_remove_name(adv[i].PAPname, adv[i].fd);
-					}
-				}
-			}
-		}
-	gu_Catch {
-		gu_ReThrow();
-		}
-	debug("Shutdown complete");
-	return 0;
-	} /* end of main_loop() */
-
 int main(int argc, char *argv[])
 	{
-	int ret;
+	struct ADV *adv = NULL;
+	int ret = 0;
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
@@ -681,18 +639,57 @@ int main(int argc, char *argv[])
 	
 		init();
 
-		ret = main_loop();
+		/*
+		** The main loop alternates between calling at_service() (which 
+		** contains AppleTalk-implementation-dependent code) and calling
+		** conf_load().
+		*/
+		debug("Starting up...");
+		while(keep_running)
+			{
+			if(reload_config)
+				{
+				debug("Loading configuration...");
+				adv = conf_load(adv);
+				reload_config = FALSE;
+				debug("Waiting for connexions...");
+				}
+			at_service(adv);
+			}
 		}
 	gu_Catch {
 		write_logline("FATAL", gu_exception);
-
+		
 		/* This is for children which might have a copy of ppr running. */
 		printjob_abort();
+
+		ret = 1;
 		}
 
-	/* remove file with our pid in it */
+	/*
+	 * If this is the master process, unadvertise any names which may be 
+	 * advertised and remove the PID file.
+	 */
 	if(master_pid && master_pid == getpid())
+		{
+		debug("Shutting down...");
+		if(adv)
+			{
+			int i;
+			debug("Removing advertised names...");
+			for(i = 0; adv[i].adv_type != ADV_LAST; i++)
+				{
+				if(adv[i].adv_type == ADV_ACTIVE)
+					{
+					debug("%s: unbinding PAP name \"%s\"", adv[i].PPRname, adv[i].PAPname);
+					at_remove_name(adv[i].PAPname, adv[i].fd);
+					}
+				}
+			}
+
 		unlink(PIDFILE);
+		debug("Shutdown complete");
+		}
 	
 	return ret;
 	} /* end of main() */
