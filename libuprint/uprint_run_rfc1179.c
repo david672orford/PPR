@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 7 May 2003.
 */
 
 #include "before_system.h"
@@ -42,6 +42,10 @@
 #include "uprint.h"
 #include "uprint_private.h"
 
+/*
+** This function runs the setuid-root program uprint_rfc1179 which does all of our 
+** priviledged socket operations.
+*/
 int uprint_run_rfc1179(const char exepath[], const char *const argv[])
 	{
 	const char function[] = "uprint_run_rfc1179";

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 February 2003.
+** Last modified 7 May 2003.
 */
 
 /*
@@ -346,11 +346,11 @@ static int do_command(int sockfd, char *argv[])
 	/* Make sure the command is ok. */
 	switch(command[0])
 		{
-		case 3:					/* send queue status (short) */
+		case 3:					/* ^C -- send queue status (short) */
 			break;
-		case 4:					/* send queue status (long) */
+		case 4:					/* ^D -- send queue status (long) */
 			break;
-		case 5:					/* remove job */
+		case 5:					/* ^E -- remove job */
 			/*
 			From RFC 1179:
 				+----+-------+----+-------+----+------+----+
@@ -361,17 +361,17 @@ static int do_command(int sockfd, char *argv[])
 				Operand 2 - User name making request (the agent)
 				Other operands - User names or job numbers
 				*/													  
-			/* Verify that the agent cooresponds to the real UID. */
+			/* Verify that the agent coresponds to the real UID. */
 			{
 			const char *correct_username = get_username();
 			char *p;
 			if(!(p = strchr(command, ' '))
-				|| strcspn(++p, " ") != strlen(correct_username)
+				|| strcspn(++p, " \n") != strlen(correct_username)
 				|| strncmp(p, correct_username, strlen(correct_username)) != 0
 				)
 				{
 				uprint_errno = UPE_DENIED;
-				uprint_error_callback(X_("%s(): bad command"), function);
+				uprint_error_callback(X_("%s(): bad command: ^%c%.*s"), function, command[0] + 'A' - 1, strcspn(command + 1, "\n"), command + 1);
 				return -1;
 				}
 			}

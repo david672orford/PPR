@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 7 May 2003.
 */
 
 #include "before_system.h"
@@ -104,7 +104,7 @@ int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue,
 
 	for(x = 0; arglist[x] != (const char *)NULL; x++)
 		{
-		if((y + 2 + strlen(arglist[x])) > sizeof(temp))
+		if((y + 3 + strlen(arglist[x])) > sizeof(temp))
 			{
 			uprint_errno = UPE_BADARG;
 			uprint_error_callback("%s(): arglist too long", function);
@@ -117,6 +117,7 @@ int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue,
 		}
 
 	temp[y++] = '\n';
+	temp[y++] = '\0';
 
 	args[0] = UPRINT_RFC1179;
 	args[1] = "command";

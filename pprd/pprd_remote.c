@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_remote.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 December 2001.
+** Last modified 6 May 2003.
 */
 
 /*
@@ -40,6 +40,14 @@
 #include "./pprd.auto_h"
 
 /*
+** Spawn a process to transmit the job.
+*/
+static void remote_spawn(struct QEntry *qentry)
+	{
+    
+	}
+
+/*
 ** This is called whenever a remote job enters the queue, either as a new
 ** job or as one from a previous life of pprd.
 */
@@ -48,6 +56,7 @@ void remote_job(struct QEntry *qentry)
 	FUNCTION4DEBUG("remote_new_job")
 	DODEBUG_REMOTE(("%s()", function));
 
+    remote_spawn(struct QEntry *qentry);
 	}
 
 /*
