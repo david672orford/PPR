@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 16 August 2002.
+# Last modified 18 October 2002.
 #
 
 sub labeled_checkbox
@@ -91,10 +91,17 @@ sub labeled_boolean
 #
 sub help_button
 {
+my $helpdir = shift;
 my $topic = shift;
 
 $ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
-my $helpfile = "../help/$1.$ENV{LANG}.html";
+my $basename = $1;
+
+my $lang = defined $ENV{LANG} ? $ENV{LANG} : "en";
+
+my $append = defined($helpdir) ? "" : "_help";
+
+my $helpfile = "$helpdir$basename$append.$lang.html";
 
 my $fragment = defined($topic) ? "#$topic" : "";
 

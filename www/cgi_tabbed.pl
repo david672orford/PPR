@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_tabbed.pl
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 28 August 2002.
+# Last modified 18 October 2002.
 #
 
 use 5.004;
@@ -264,7 +264,7 @@ if($bottom eq "Save")
     eval { &$save_function };
     if($@)
     	{
-	print "<p>Save failed: $@</p>\n";
+	print "<p>Save failed: ", html($@), "</p>\n";
     	}
     }
 else
@@ -274,7 +274,7 @@ else
     eval { &$dopage };
     if($@)
     	{
-	print "<p>$@</p>\n";
+	print "<p>", html($@), "</p>\n";
     	}
     }
 
@@ -312,7 +312,7 @@ else
     if(defined $help)
 	{
 	require "cgi_widgets.pl";
-	help_button($help);
+	help_button("../help/", $help);
 	}
     isubmit("tab_bottom", "Cancel", N_("_Cancel"), "class=\"buttons\" onclick=\"self.close()\"");
     isubmit("tab_bottom", "Save", N_("_Save"), "class=\"buttons\"");

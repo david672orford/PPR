@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 28 August 2002.
+# Last modified 4 October 2002.
 #
 
 use 5.004;
@@ -229,7 +229,7 @@ if(defined($dopage))
     eval { &$dopage };
     if($@)			# if error,
     	{			# print message from die
-	print "<p>$@</p>\n";
+	print "<p>", html($@), "</p>\n";
     	}
     }
 
