@@ -322,7 +322,7 @@ print "<span style='margin-left: 9cm'></span>\n";
 if(defined $controls{Help})
     {
     require "cgi_widgets.pl";
-    help_button(undef);
+    help_button("../help/", undef);
     }
 
 print "</div>\n";

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_load.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2001.
+** Last modified 12 December 2002.
 */
 
 /*
@@ -155,19 +155,20 @@ static void load_printer(struct Printer *printer, const char filename[])
 	** we will charge and if so, make the printer a
 	** protected printer
 	*/
-	else if((count=sscanf(tempstr, "Charge: %f %f", &x1, &x2)) >= 1)
+	else if((count = sscanf(tempstr, "Charge: %f %f", &x1, &x2)) >= 1)
 	    {
-	    printer->charge_per_duplex = (int)(x1 * 100.0);
+	    printer->charge_per_duplex = (int)(x1 * 100.0 + 0.5);
 
 	    /* In order to be backwards compatible, we will set the per-page
 	       charge the same as the per sheet charge if it is missing. */
 	    if(count == 2)
-	    	printer->charge_per_simplex = (int)(x2 * 100.0);
+	    	printer->charge_per_simplex = (int)(x2 * 100.0 + 0.5);
 	    else
 	    	printer->charge_per_simplex = printer->charge_per_duplex;
 
 	    printer->protect = TRUE;
 	    }
+
 	} /* end of while(), unknown lines are ignored */
 
     /*
@@ -642,4 +643,3 @@ void initialize_queue(void)
     } /* end of initialize_queue() */
 
 /* end of file */
-

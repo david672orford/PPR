@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 March 2002.
+** Last modified 12 December 2002.
 */
 
 /*
@@ -36,6 +36,18 @@
 ** file, it is opened and information is read from it.  A well formed
 ** message is generated and then the responder program is run to transmit
 ** the message to the user.
+**
+** Note that the calling conventions of this program will change as PPR
+** changes.  One goal of this program is to hide those calling convention
+** changes by keeping the interface to the responder scripts as unchanging
+** as possible.
+**
+** Note though that I (David Chappell) intent to completely change that
+** interface before declaring a new stable interface.  This will be done
+** because the current interface to the responder scripts doesn't allow
+** for the adding of new parameters except by adding new command line
+** parameters at fixed positions.  This is simple but error prone.  It will
+** be replaced with a system of named parameters.
 */
 
 #include "before_system.h"
@@ -393,7 +405,7 @@ int main(int argc, char *argv[])
 	    return 1;
 	}
 
-    /* pprd provides no queue file but it makes up for it in parameters */
+    /* ppr provides no queue file but it makes up for it in parameters */
     else if(strcmp(argv[1], "ppr") == 0)
 	{
 	rinfo.responder = argv[5];
