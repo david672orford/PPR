@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/ghostscript/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 November 2002.
+# Last modified 19 April 2004.
 #
 
 include ../../Makefile.conf
@@ -45,7 +45,7 @@ FONTS=-DFONTS_TO35 -DFONTS_GHOSTSCRIPT
 
 #========================================================================
 
-all: hpiiigs.ppd hpdj5gs.ppd dm24gs.ppd hpdj550c.ppd epsc62gs.ppd
+all: hpiiigs.ppd hpdj5gs.ppd dm24gs.ppd hpdj550c.ppd hpdj880c.ppd epsc62gs.ppd
 
 hpiiigs.ppd: ghostscript_master Makefile
 	$(CPP) -DPRINTER_HPIII $(FONTS) ghostscript_master >hpiiigs.ppd
@@ -59,6 +59,9 @@ dm24gs.ppd: ghostscript_master Makefile
 hpdj550c.ppd: ghostscript_master Makefile
 	$(CPP) -DPRINTER_HPDJ550C $(FONTS) ghostscript_master >hpdj550c.ppd
 
+hpdj880c.ppd: ghostscript_master Makefile
+	$(CPP) -DPRINTER_HPDJ880C $(FONTS) ghostscript_master >hpdj880c.ppd
+
 epsc62gs.ppd: ghostscript_master Makefile
 	$(CPP) -DPRINTER_EPSC62 $(FONTS) ghostscript_master >epsc62gs.ppd
 
@@ -67,6 +70,7 @@ install: all
 	../$(INSTALLCP) hpdj5gs.ppd $(SHAREDIR)/PPDFiles/'HP DeskJet 500 Ghostscript'
 	../$(INSTALLCP) dm24gs.ppd $(SHAREDIR)/PPDFiles/'NEC Pinwriter 6 Ghostscript'
 	../$(INSTALLCP) hpdj550c.ppd $(SHAREDIR)/PPDFiles/'HP DeskJet 550C Ghostscript'
+	../$(INSTALLCP) hpdj880c.ppd $(SHAREDIR)/PPDFiles/'HP DeskJet 880C Ghostscript'
 	../$(INSTALLCP) epsc62gs.ppd $(SHAREDIR)/PPDFiles/'Epson Stylus C62 Ghostscript'
 
 clean:

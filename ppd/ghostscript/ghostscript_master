@@ -33,7 +33,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 1 November 2003.
+*% which was last revised 19 April 2004.
 *%
 #endif
 
@@ -78,12 +78,37 @@
 *Product: "(HP DeskJet 500 Ghostscript)"
 *ModelName: "HP DeskJet 500 Ghostscript"
 *NickName: "HP DeskJet 500 Ghostscript"
-*PCFileName: "HPDJ5GS.PPD"
+*PCFileName: "HPDJ500.PPD"
 *DefaultResolution: 300dpi
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "4"
 *pprRIP: ppr-gs pcl -sDEVICE=djet500
+#endif
+
+#ifdef PRINTER_HPDJ550C
+*Product: "(HP DeskJet 550C Ghostscript)"
+*ModelName: "HP DeskJet 550C Ghostscript"
+*NickName: "HP DeskJet 550C Ghostscript"
+*PCFileName: "HPDJ5GS.PPD"
+*DefaultResolution: 300dpi
+*ColorDevice: True
+*DefaultColorSpace: CMYK
+*Throughput: "8"
+*pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
+#endif
+
+#ifdef PRINTER_HPDJ880C
+*Product: "(HP DeskJet 880C Ghostscript)"
+*ModelName: "HP DeskJet 880C Ghostscript"
+*NickName: "HP DeskJet 880C Ghostscript"
+*PCFileName: "HPDJ880C.PPD"
+*1284DeviceID: "CLASS=PRINTER; MODEL=DESKJET 880C; MANUFACTURER=HEWLETT-PACKARD; DESCRIPTION=Hewlett-Packard DeskJet 880C; COMMAND SET=MLC,PCL,PML"
+*DefaultResolution: 600dpi
+*ColorDevice: True
+*DefaultColorSpace: CMYK
+*Throughput: "8"
+*pprRIP: ppr-gs pcl -sDEVICE=cdj880 -dBitsPerPixel=24
 #endif
 
 #ifdef PRINTER_DM24
@@ -97,18 +122,6 @@
 *DefaultColorSpace: Gray
 *Throughput: "1"
 *pprRIP: ppr-gs x -sDEVICE=necp6
-#endif
-
-#ifdef PRINTER_HPDJ550C
-*Product: "(HP DeskJet 550C Ghostscript)"
-*ModelName: "HP DeskJet 550C Ghostscript"
-*NickName: "HP DeskJet 550C Ghostscript"
-*PCFileName: "HPDJ5CGS.PPD"
-*DefaultResolution: 300dpi
-*ColorDevice: True
-*DefaultColorSpace: CMYK
-*Throughput: "8"
-*pprRIP: ppr-gs pcl -sDEVICE=cdj550 -dBitsPerPixel=24
 #endif
 
 #ifdef PRINTER_EPSC62
