@@ -107,7 +107,7 @@ static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q)
 			{
 			char *p;
 			gu_boolean is_stderr;
-			int timeout = 10;
+			int timeout = 2;
 
 			if(!machine_readable)
 				printf("Reading response...\n");
@@ -115,6 +115,8 @@ static int ppd_ppdq_interface_probe(const char printer[], struct QUERY *q)
 				{
 				printf("%s%s\n", is_stderr ? "stderr: " : "", p);
 				timeout = 60;
+
+				/* missing code */
 				}
 			}
 		gu_Final
@@ -151,6 +153,7 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 			{
 			char *p;
 			gu_boolean is_stderr;
+			int timeout = 10;
 
 			if(!machine_readable)
 				printf("Sending PJL query...\n");
@@ -160,8 +163,10 @@ static int ppd_ppdq_pjl(const char printer[], struct QUERY *q, char **pjl_info_i
 
 			if(!machine_readable)
 				printf("Reading response...\n");
-			while((p = query_getline(q, &is_stderr, 60)))
+			while((p = query_getline(q, &is_stderr, timeout)))
 				{
+				timeout = 60;
+
 				if(strcmp(p, "\f") == 0)
 					break;
 
@@ -228,7 +233,7 @@ static int ppd_ppdq_postscript(const char printer[], struct QUERY *q, char **pro
 
 			if(!machine_readable)
 				printf("Reading response...\n");
-			for(i=0; i < 3 && (p = query_getline(q, &is_stderr, 10)); )
+			for(i=0; i < 3 && (p = query_getline(q, &is_stderr, 30)); )
 				{
 				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
 
