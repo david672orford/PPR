@@ -1,16 +1,31 @@
 #
 # mouse:~ppr/src/docs/refman/ppad.8.pod
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software and documentation are provided "as is" without
-# express or implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last revised 19 July 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last revised 19 November 2002.
 #
 
 =head1 NAME
@@ -296,33 +311,60 @@ whether the printer's PPD file indicates that the printer supports TBCP.
 
 =item B<ppad rip> I<printer> [I<rip> I<output_language> [I<options>]]
 
-This option is new and experimental in PPR version 1.44.  It has already changed once 
-during the beta testing period and may change again.
+PPR has the ability to execute external Raster Image Processors such as
+Ghostscript to convert PostScript to a form usable by non-PostScript
+printers.  It does so when it finds a "*pprRIP:" line in the PPD file or if
+B<ppad rip> has been used to set a RIP in the printer's configuration file. 
+RIP settings set with this command override those in the PPD file.
 
-PPR has the ability to execute external Raster Image Processors such as Ghostscript to
-convert PostScript to a form usable by non-PostScript printers.  It does so when it
-finds a "*pprRIP:" line in the PPD file or if this command has been used to set a RIP
-in the printer's configuration file.  RIP settings set with this command override those
-in the PPD file.
+The parameter I<rip> indicates the Raster Image Processor to use.  Normally
+you will want to use a value of B<ppr-gs>.  The B<ppr-gs> RIP is a small
+wrapper program for Ghostscript.  It will look for the B<gs> program first
+in F</usr/lib/ppr-gs/bin>, then in F</usr/local/bin>, and finally in
+F</usr/bin>.
 
-The parameter I<rip> indicates the Raster Image Processor to use.  If the value is B<gs>,
-then PPR will use the copy of Ghostscript pointed to by the first value of B<gs=> in the 
-B<[ghostscript]> section of F</etc/ppr/ppr.conf>.  If it is B<ppr-gs> then it will use
-the special copy of Ghostscript from the PPR-Ghostscript distribution.  (You must of course 
-download this special Ghostscript distribution from the place you obtained PPR and install
-it before this option will be useful.)
+The parameter I<output_language> is the name of the printer language which
+the selected Ghostscript driver will produce output in.  It is used as the
+parameter to the PJL B<@PJL ENTER LANGUAGE> command.  If you will not be
+using the B<pjl> or B<signal/pjl> jobbreak method, then the actual value
+doesn't matter, you can set it to "x".
 
-The parameter I<output_language> is the name of the printer language which the
-selected Ghostscript driver will produce output in.  It is used as the parameter to the
-PJL B<@PJL ENTER LANGUAGE> command.  If you will not be using the B<pjl> or B<signal/pjl>
-jobbreak method, then the actual value doesn't matter, you can set it to "x".
+The option I<options> contains options for the RIP.  When using the
+B<ppr-gs> RIP these should include the Ghostscript option to select the
+proper output device driver.  For example, for an HP DeskJet 500, you would
+use a B<ppad> command like this:
 
-The option I<options> contains options for Ghostscript.  These should select the desired 
-Ghostscript device driver.
+    $ ppad rip myprn ppr-gs pcl -sDEVICE=djet500
 
-To revert to the RIP settings in the PPD file, execute this command with just the
-printer name.
+You should include such other Ghostscript options as well help to configure
+Ghostscript for your particular printer.  You should options such as
+B<-sOutputFile=>, B<-q>, or B<-dSAFER> since these are supplied
+automatically by B<ppr-gs>.
 
+To revert to the RIP settings in the PPD file, execute B<ppad rip> with just
+the printer name, like this:
+
+    $ ppad rip myprn
+
+Of course, if there are no RIP settings in the PPD file, then no external
+RIP will be used and the printer will be expected to handle PostScript
+itself.  To see if an external RIP is being used, run B<ppad show> and look
+for a line begining with "RIP:".
+
+On a side note, if you are writing a PPD file, the "*pprRIP:" that would
+coorespond to the example above is:
+
+    *pprRIP: ppr-gs pcl -sDEVICE=djet500
+
+If you want to supply your own RIP to use instead of B<ppr-gs>, you should
+create a program and put it in /usr/lib/ppr/lib.  It should connect stdin,
+stdout, and stderr to the cooresponding file descriptors of the PostScript
+interpreter and should send the print date to file descriptor 3.  The RIP
+option will be on the command line and the filename of the printer's PPD
+file will be in the environment variable PPD.
+
+There is also support for specifying the path to a copy of Ghostscript, but
+you should not rely on this as it may be removed in the future.
 
 =item B<ppad ppd> I<printer> I<filename>
 

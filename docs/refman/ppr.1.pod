@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 18 November 2002.
+# Last modified 19 November 2002.
 #
 
 =head1 NAME
@@ -466,32 +466,34 @@ The currently recognized values for I<string> are:
 
 =item B<infile:autotype>
 
-display information about file auto type detection.
+This will display information about automatic file type detection process.
 
 =item B<infile:filter>
 
-display the name of of each filter that is run on the input file as well as
-the arguments which are passed to the filter.
+This will display the name of of each filter that is run on the input file
+as well as the arguments which are passed to the filter.
 
 =item B<infile:editps>
 
-displays information about the action enabled by the B<-H editps> option.
+This will displays information about the actions enabled by the B<-H editps>
+option.
 
 =item B<structure:nesting>
 
-displays information about nestable Document Structuring Convention structures
-such as procedure sets, files, and documents.
+This will displays information about nestable Document Structuring
+Convention structures such as procedure sets, files, and documents.
 
 =item B<structure:sections>
 
-causes B<ppr> to print a message as it enters each section of a Document
+This will cause B<ppr> to print as it enters each section of a Document
 Structuring Convention compliant document.
 
 =item B<media:matching>
 
-causes B<ppr> to print messages as it attemps to find matches for the
-document's media requirements in the media database.  The media database
-is manipulated with the B<ppad media> commands.
+This will cause B<ppr> to print messages as it attemps to find matches for
+the document's media requirements in the media database.  (The media
+database is a list of possible paper sizes and their names.  It is
+manipulated with the B<ppad media> commands.)
 
 =back
 
@@ -591,6 +593,13 @@ This makes binding the pages easier.  If you don't know what this paragraph
 means, don't worry about it.  This is just another way that PPR tries to
 make things easier for you by managing its default behavior to do what you
 would expect.
+
+=item B<--ripopts> I<list>
+
+This option takes a space separated list of options for an external RIP.  If
+no external RIP is being used, this will have no effect.  This option exists
+in order to support certain features of Foomatic as a RIP.  See
+<http://www.linuxprinting.org> to learn about Foomatic.
 
 =item B<--features>
 
@@ -1193,10 +1202,10 @@ the queue's default filter options and the options which you supply with one
 or more B<-o> switches.
 
 The default filter options are derived from the PPD file or files and may be
-seen by running B<ppad show>, B<ppad group show>, or B<ppad alias show>)
-
-To learn how the implied options are implied, see the sections about the
-B<-F> and B<-R> options.  They do the implying.
+seen by running B<ppad show>, B<ppad group show>, or B<ppad alias show>) for
+printers, groups, and aliases respectively.   To learn how the implied options
+are implied, see the sections about the B<-F> and B<-R> options.  They do
+the implying.
 
 If two name value pairs assign different values to the same name, the last
 one prevails.  That means that filter options specified with the B<-o>
@@ -1210,6 +1219,12 @@ and a hyphen prepended.  For example:
 This will pass the option "dvipsconfig=hp4" to all filters, pass
 "dvipsconfig=hp4 width=132" to the B<fortran> filter, and pass
 "dvipsconfig=hp4 width=80" to the B<pr> filter.
+
+If you find the forgoing confusing or are having trouble figuring out a
+problem related to filter options, you should use the B<--gab infile:filter>
+option to enable debugging messages.  These messages will show the implied,
+default, and user-supplied options and then show the final set of options
+passed to the filter.
 
 The filters supplied with PPR and the options they understand are listed in
 the L<ppr-filters(1)> manpage.

@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--18 November 2002.
+1.50b1, 13 November 2002--19 November 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -7960,4 +7960,13 @@ line was being parsed twice.
   handles the pr-title= option.
 
 * fixup/fixup_filters.sh: added "#! ppr-tclsh" to things rewritten by sed.
+
+* pprdrv/pprdrv_flag.c:print_flag_page_standard(): fixed pslinef() call
+  without format string.
+
+* pprdrv/lw-messages.conf: added "PrinterError: paper tray missing".
+
+* commentators/pprpopup.perl: added
+
+* pprdrv/pprdrv_commentary.c: restored support for "ppr --commentary".
 

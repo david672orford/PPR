@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 September 2002.
+** Last modified 19 November 2002.
 */
 
 /*
@@ -1291,7 +1291,8 @@ static void pprdrv_read_printer_conf(void)
 	    	gu_free(printer.RIP.output_language);
 	    if(printer.RIP.options_storage)
 	    	gu_free(printer.RIP.options_storage);
-	    if((count = gu_sscanf(tptr, "%S %S %Z", &printer.RIP.name, &printer.RIP.output_language, &printer.RIP.options_storage)) < 3)
+	    printer.RIP.options_storage = NULL;
+	    if((count = gu_sscanf(tptr, "%S %S %Z", &printer.RIP.name, &printer.RIP.output_language, &printer.RIP.options_storage)) < 2)
 	    	fatal(EXIT_PRNERR_NORETRY, "Invalid \"%s\" (%s line %d).", "RIP:", cfname, linenum);
 	    }
 

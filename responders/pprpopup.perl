@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 August 2002.
+# Last modified 19 November 2002.
 #
 
 #
@@ -66,8 +66,8 @@ print "\$pages = $pages\n";
 $reason =~ s/,/, /g;
 $reason =~ s/[|]/ /g;
 
-# If a user is specified in the address,
-# break the address into user and machine.
+# If a user is specified in the address, note the user part for future
+# reference.
 my $user = "";
 if($addr =~ /^([^\@]+)\@.+$/)
     {
@@ -140,7 +140,7 @@ if($code == $RESP_ARRESTED || $code == $RESP_STRANDED_PRINTER_INCAPABLE || $code
 SEND->autoflush(1);
 print SEND ".\n";
 $result = <SEND>;
-print "MESSAGE failed: $result\n" if(/^-ERR/);
+print "MESSAGE failed: $result\n" if($result =~ /^-ERR/);
 
 # Close the connexion to pprpopup.
 close(SEND);

@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 5 August 2002.
+** This file was last modified 19 November 2002.
 */
 
 /*
@@ -297,6 +297,7 @@ typedef short int SHORT_INT;
 #define PACKAGE_PPRD "PPRD"
 #define PACKAGE_PPRDRV "PPRDRV"
 #define PACKAGE_PAPSRV "PAPSRV"
+#define PACKAGE_PPR_PAPD "PPR_PAPD"
 #define PACKAGE_PPRWWW "PPRWWW"
 
 #ifdef INTERNATIONAL

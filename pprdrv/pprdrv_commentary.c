@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_commentary.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 4 May 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 19 November 2002.
 */
 
 #include "before_system.h"
@@ -169,18 +184,6 @@ static void commentary_spawn(const struct COMMENTATOR *com, int category, const 
     } /* end of commentary_spawn() */
 
 /*
-** This is used to post commentator messages in a public place so that they
-** can be read by the WWW interface to PPR.
-*/
-static void commentary_state_update_pprdrv(int category, const char cooked[], const char raw1[], const char raw2[], int severity)
-    {
-    char buffer[256];
-    snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d\n",
-	 printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", severity);
-    state_update_pprdrv_addline(buffer);
-    }
-
-/*
 ** This is the function which is called by other parts of pprdrv when
 ** there is something interesting to report.
 */
@@ -199,7 +202,7 @@ void commentary(int category, const char cooked[], const char raw1[], const char
 
     /*
     ** Filter out EXIT_ENGAGED messages that follow the printer
-    ** error "off line".
+    ** error "off line" since they would be annoyingly redundant.
     */
     {
     static char prev_pmsg[15] = {'\0'};
@@ -324,18 +327,27 @@ void commentary(int category, const char cooked[], const char raw1[], const char
     ** commentator names which contain slashes.  This is to limit users to
     ** the commentators in the commentators/ directory.
     */
-    DODEBUG_COMMENTARY(("%s(): job.commentator.interests = %d", function, job.commentator.interests));
+    DODEBUG_COMMENTARY(("%s(): job.commentary = %d", function, job.commentary));
     if((category & job.commentary) == category)
 	{
+	struct COMMENTATOR temp;
 	DODEBUG_COMMENTARY(("commentary(): job submitter is interested"));
-/*	commentary_spawn(&job.responder, category, cooked, raw1, raw2, severity, canned_message);
-*/
+	temp.progname = job.responder;
+	temp.address = job.responder_address;
+	temp.options = job.responder_options;
+	commentary_spawn(&temp, category, cooked, raw1, raw2, severity, canned_message);
 	}
 
     /*
     ** Allow the WWW interface and things like that to see the message.
     */
-    commentary_state_update_pprdrv(category, cooked, raw1, raw2, severity);
+    {
+    char buffer[256];
+    snprintf(buffer, sizeof(buffer), "COMMENTARY %s %d \"%s\" \"%s\" \"%s\" %d\n",
+	 printer.Name, category, cooked, raw1 ? raw1 : "", raw2 ? raw2 : "", severity);
+    state_update_pprdrv_addline(buffer);
+    }
+
     } /* end of commentary() */
 
 /*

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 April 2002.
+** Last modified 19 November 2002.
 */
 
 /*
@@ -102,6 +102,11 @@ static const char *reversed_for(void)
 ** Print a formatted line to the interface.  This is used
 ** when printing the banner page text.
 */
+static void pslinef(const char *string, ... )
+#ifdef __GNUC__
+__attribute__ ((format (printf, 1, 2)))
+#endif
+;
 static void pslinef(const char *string, ... )
     {
     va_list va;
@@ -521,7 +526,7 @@ static void print_flag_page_standard(int flag_type, int position, int mediumfoun
     else			/* header page */
 	{
 	printer_puts("large_type ");
-	pslinef(reversed_for());
+	pslinef("%s", reversed_for());
 
 	printer_puts("small_type\n");
 

@@ -3,14 +3,29 @@
 ** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last revised 27 September 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last revised 19 November 2002.
 */
 
 /*
@@ -19,14 +34,14 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 0
+#if 1
 #define DEBUG 1				/* include function debug() */
 #define DEBUG_MAIN 1			/* main() */
 #define DEBUG_INTERFACE 1		/* show opening, closing, etc. */
 /* #define DEBUG_INTERFACE_GRITTY 1 */	/* show what we send to and receive from the interface */
 /* #define DEBUG_FEEDBACK 1 */		/* show twoway operations */
 #define DEBUG_FEEDBACK_LINES 1		/* show the lines read from printer */
-#define DEBUG_PPD 1			/* PPD file parsing */
+/* #define DEBUG_PPD 1 */		/* PPD file parsing */
 /* #define DEBUG_PPD_DETAILED 1 */
 /* #define DEBUG_FLAGS 1 */		/* banner and trailer pages */
 /* #define DEBUG_RESOURCES 1 */		/* fonts, procset, etc. */
@@ -35,7 +50,7 @@
 /* #define DEBUG_SIGNITURE_INLINE 1 */	/* add comments about signitures to output */
 #define DEBUG_LW_MESSAGES 1		/* LaserWriter message interpretation */
 /* #define DEBUG_DIE_DELAY 60 */	/* seconds to delay after receiving sigterm */
-/* #define DEBUG_COMMENTARY 1 */
+#define DEBUG_COMMENTARY 1
 /* #define DEBUG_TRUETYPE 1 */		/* truetype fonts, conversion to Postscript */
 /* #define DEBUG_CUSTOM_HOOK 1 */
 /* #define DEBUG_PPOP_STATUS 1 */	/* code to leave info for "ppop status" */
