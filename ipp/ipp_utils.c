@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,8 +25,10 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 August 2002.
+** Last modified 4 April 2003.
 */
+
+/*! \file */
 
 #include "before_system.h"
 #include <stdio.h>
@@ -38,134 +40,179 @@
 #include "ipp_except.h"
 #include "ipp_utils.h"
 
+/** create IPP request handling object
+
+This function creates an IPP service object.  The IPP request will be read 
+from stdin and the response will be sent to stdout.	 IPP data of various
+types can be read from the request and appended to the response using the
+member functions.
+
+*/
 struct IPP *ipp_new(int content_length)
-    {
-    struct IPP *p = gu_alloc(1, sizeof(struct IPP));
+	{
+	struct IPP *p = gu_alloc(1, sizeof(struct IPP));
 
-    p->bytes_left = content_length;
+	p->bytes_left = content_length;
 
-    p->readbuf_i = 0;
-    p->readbuf_remaining = 0;
+	p->readbuf_i = 0;
+	p->readbuf_remaining = 0;
 
-    p->writebuf_i = 0;
-    p->writebuf_remaining = sizeof(p->writebuf);
+	p->writebuf_i = 0;
+	p->writebuf_remaining = sizeof(p->writebuf);
 
-    return p;
-    }
+	return p;
+	}
 
+/*
+** Read a bufferful of an IPP request from stdin.
+*/
 static void ipp_readbuf_load(struct IPP *p)
-    {
-    if((p->readbuf_remaining = read(0, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? sizeof(p->readbuf) : p->bytes_left)) == -1)
 	{
-	Throw("Read failed");
+	if((p->readbuf_remaining = read(0, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? sizeof(p->readbuf) : p->bytes_left)) == -1)
+		{
+		Throw("Read failed");
+		}
+	p->readbuf_i = 0;
 	}
-    p->readbuf_i = 0;
-    }
 
+/*
+** Flush the response buffer.
+*/
 static void ipp_writebuf_flush(struct IPP *p)
-    {
-    int i, remaining, len;
-    i=0;
-    remaining=p->writebuf_remaining;
-    while(remaining > 0)
 	{
-	if((len = write(1, p->writebuf, p->writebuf_i)) == -1)
-	    Throw("Write error");
-	remaining -= len;
+	int i, remaining, len;
+	i=0;
+	remaining=p->writebuf_remaining;
+	while(remaining > 0)
+		{
+		if((len = write(1, p->writebuf, p->writebuf_i)) == -1)
+			Throw("Write error");
+		remaining -= len;
+		}
+	p->writebuf_i = 0;
+	p->writebuf_remaining = sizeof(p->writebuf);
 	}
-    p->writebuf_i = 0;
-    p->writebuf_remaining = sizeof(p->writebuf);
-    }
 
+/** Finish the IPP service transaction
+
+Any remaining request input bytes are read and discarded.  Any bytes remaining
+in the The response output buffer are sent on their way.  Finally, the IPP 
+service object is destroyed.
+
+*/
 void ipp_end(struct IPP *p)
-    {
-    while(p->bytes_left > 0)
 	{
-	ipp_readbuf_load(p);
+	while(p->bytes_left > 0)
+		{
+		ipp_readbuf_load(p);
+		}
+
+	ipp_writebuf_flush(p);
+
+	gu_free(p);
 	}
 
-    ipp_writebuf_flush(p);
+/** fetch an unsigned byte from the IPP request
 
-    gu_free(p);
-    }
+Note that unsigned bytes are not an IPP datatype.  However they are part of some
+IPP datatypes, hence we need to be able to write them.
 
+*/
 static unsigned char ipp_get_byte(struct IPP *p)
-    {
-    if(p->readbuf_remaining < 1)
-    	ipp_readbuf_load(p);
-    if(p->readbuf_remaining < 1)
-    	Throw("Data runoff!");
-    p->readbuf_remaining--;
-    return p->readbuf[p->readbuf_i++];
-    }
+	{
+	if(p->readbuf_remaining < 1)
+		ipp_readbuf_load(p);
+	if(p->readbuf_remaining < 1)
+		Throw("Data runoff!");
+	p->readbuf_remaining--;
+	return p->readbuf[p->readbuf_i++];
+	}
 
+/** append an unsigned byte to the IPP response
+
+Note that unsigned bytes are not an IPP datatype.  However they are part of some IPP datatypes,
+hence we need to be able to write them.
+
+*/
 static void ipp_put_byte(struct IPP *p, unsigned char val)
-    {
-    p->writebuf[p->writebuf_i++] = val;
-    p->writebuf_remaining--;
-    if(p->writebuf_remaining < 1)
-	ipp_writebuf_flush(p);
-    }
+	{
+	p->writebuf[p->writebuf_i++] = val;
+	p->writebuf_remaining--;
+	if(p->writebuf_remaining < 1)
+		ipp_writebuf_flush(p);
+	}
 
-/* Get an IPP signed byte. */
+/** fetch a signed byte from the IPP request 
+*/
 int ipp_get_sb(struct IPP *p)
-    {
-    return (int)(signed char)ipp_get_byte(p);
-    }
+	{
+	return (int)(signed char)ipp_get_byte(p);
+	}
 
-/* Get an IPP signed short. */
+/** fetch a signed short from the IPP request
+*/
 int ipp_get_ss(struct IPP *p)
-    {
-    unsigned char a, b;
-    a = ipp_get_byte(p);
-    b = ipp_get_byte(p);
-    return (int)(!0xFFFF | a << 8 | b);
-    }
+	{
+	unsigned char a, b;
+	a = ipp_get_byte(p);
+	b = ipp_get_byte(p);
+	return (int)(!0xFFFF | a << 8 | b);
+	}
 
-/* Get an IPP signed integer. */
+/** fetch a signed integer from the IPP request
+*/
 int ipp_get_si(struct IPP *p)
-    {
-    unsigned char a, b, c, d;
-    a = ipp_get_byte(p);
-    b = ipp_get_byte(p);
-    c = ipp_get_byte(p);
-    d = ipp_get_byte(p);
-    return (int)(!0xFFFFFFFF | a << 24 | b << 16 | c << 8 | d);
-    }
+	{
+	unsigned char a, b, c, d;
+	a = ipp_get_byte(p);
+	b = ipp_get_byte(p);
+	c = ipp_get_byte(p);
+	d = ipp_get_byte(p);
+	return (int)(!0xFFFFFFFF | a << 24 | b << 16 | c << 8 | d);
+	}
 
-/* Set an IPP signed byte. */
+/** append a signed byte to the IPP response
+*/
 void ipp_put_sb(struct IPP *p, int val)
-    {
-    ipp_put_byte(p, (unsigned char)val);
-    }
+	{
+	ipp_put_byte(p, (unsigned char)val);
+	}
 
-/* Set an IPP signed short. */
+/** append a signed short to the IPP response
+*/
 void ipp_put_ss(struct IPP *p, int val)
-    {
-    unsigned int temp = (unsigned int)val;
-    ipp_put_byte(p, (temp & 0xFF00) >> 8);
-    ipp_put_byte(p, (temp & 0X00FF));
-    }
+	{
+	unsigned int temp = (unsigned int)val;
+	ipp_put_byte(p, (temp & 0xFF00) >> 8);
+	ipp_put_byte(p, (temp & 0X00FF));
+	}
 
-/* Set an IPP signed integer. */
+/** append a signed integer to the IPP response
+*/
 void ipp_put_si(struct IPP *p, int val)
-    {
-    unsigned int temp = (unsigned int)val;
-    ipp_put_byte(p, (temp & 0xFF000000) >> 24);
-    ipp_put_byte(p, (temp & 0x00FF0000) >> 16);
-    ipp_put_byte(p, (temp & 0x0000FF00) >> 8);
-    ipp_put_byte(p, (temp & 0x000000FF));
-    }
+	{
+	unsigned int temp = (unsigned int)val;
+	ipp_put_byte(p, (temp & 0xFF000000) >> 24);
+	ipp_put_byte(p, (temp & 0x00FF0000) >> 16);
+	ipp_put_byte(p, (temp & 0x0000FF00) >> 8);
+	ipp_put_byte(p, (temp & 0x000000FF));
+	}
 
-/* Send a debug message to the HTTP server's error log. */
+/** Send a debug message to the HTTP server's error log
+
+This function sends a message to stderr.  Messages sent to stderr end up in 
+the HTTP server's error log.  The function takes a printf() style format 
+string and argument list.  The marker "ipp: " is prepended to the message.
+
+*/
 void debug(const char message[], ...)
-    {
-    va_list va;
-    va_start(va, message);
-    fputs("ipp: ", stderr);
-    vfprintf(stderr, message, va);
-    fputc('\n', stderr);
-    va_end(va);
-    } /* end of debug() */
+	{
+	va_list va;
+	va_start(va, message);
+	fputs("ipp: ", stderr);
+	vfprintf(stderr, message, va);
+	fputc('\n', stderr);
+	va_end(va);
+	} /* end of debug() */
 
 /* end of file */

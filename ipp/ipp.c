@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 August 2002.
+** Last modified 3 April 2003.
 */
 
 #include "before_system.h"
@@ -42,52 +42,57 @@
 struct exception_context the_exception_context[1];
 
 int main(int argc, char *argv[])
-    {
-    const char *e;
+	{
+	const char *e;
 
-    Try {
-	char *p;
-	int content_length;
-	char *path_info;
-	struct IPP *ipp;
-	int operation_id, request_id;
+	Try {
+		char *p;
+		int content_length;
+		char *path_info;
+		struct IPP *ipp;
+		int version_major, version_minor;
+		int operation_id, request_id;
 
-	/* Do basic input validation */
-	if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
-	    Throw("REQUEST_METHOD is not POST");
-	if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
-	    Throw("CONTENT_TYPE is not application/ipp");
-	if(!(path_info = getenv("PATH_INFO")) || strlen(path_info) < 1)
-	    Throw("PATH_INFO is missing");
-	if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
-	    Throw("CENTENT_LENGTH is missing or invalid");
-	if(content_length < 9)
-	    Throw("request is too short to be an IPP request");
+		/* Do basic input validation */
+		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
+			Throw("REQUEST_METHOD is not POST");
+		if(!(p = getenv("CONTENT_TYPE")) || strcmp(p, "application/ipp") != 0)
+			Throw("CONTENT_TYPE is not application/ipp");
+		if(!(path_info = getenv("PATH_INFO")) || strlen(path_info) < 1)
+			Throw("PATH_INFO is missing");
+		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
+			Throw("CENTENT_LENGTH is missing or invalid");
+		if(content_length < 9)
+			Throw("request is too short to be an IPP request");
 
-	debug("request for %s, %d bytes", path_info, content_length);
+		debug("request for %s, %d bytes", path_info, content_length);
 
-	ipp = ipp_new(content_length);
+		ipp = ipp_new(content_length);
 
-	debug("version-number: %d.%d, operation-id: 0x%.4X, request-id: %d",
-		ipp_get_sb(ipp), ipp_get_sb(ipp),
-		(operation_id = ipp_get_ss(ipp)),
-		(request_id = ipp_get_si(ipp))
-		);
+		version_major = ipp_get_sb(ipp);
+		version_minor = ipp_get_sb(ipp);
+		operation_id = ipp_get_ss(ipp);
+		request_id = ipp_get_si(ipp);
 
-	switch(operation_id)
-	    {
+		debug("version-number: %d.%d, operation-id: 0x%.4X, request-id: %d",
+				version_major, version_minor, operation_id, request_id
+				);
+
+		switch(operation_id)
+			{
+			case 0x08:
 
 
-	    }
+			}
+		}
+
+	Catch(e)
+		{
+		fprintf(stderr, "ipp: exception caught: %s\n", e);
+		return 1;
+		}
+
+	return 0;
 	}
-
-    Catch(e)
-    	{
-	fprintf(stderr, "ipp: exception caught: %s\n", e);
-	return 1;
-    	}
-
-    return 0;
-    }
 
 /* end of file */

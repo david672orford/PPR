@@ -8222,7 +8222,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--29 March 2003.
+1.51, 15 February 2003--4 April 2003.
 
 * www/index.html: fixed broken links to documentation.  I am more than
   a little annoyed that several browsers have been hiding the fact that
@@ -8514,12 +8514,12 @@ line was being parsed twice.
   of the arrival of messages from pprd relative to the timeing of messages
   from pprdrv.
 
-* printdesk/: added -d switch and support for printing files named on the 
-  ppr-panel command line.  This means it can be used as a desktop 
-  drag-and-drop printing target.  Added menu bar to queue listing so that
-  the printer status windows can be opened from there.  Made queue listing
-  background white.  Made backgrounds of changing status fields in the printer
-  status windows white as well.
+* printdesk/ppr-panel.perl: added -d for selecting queue; added print dialog 
+  for printing files named on the ppr-panel command line so that ppr-panel
+  can be used as a desktop  drag-and-drop printing target; added menu bar to
+  queue listing so that the printer status windows can be opened from there;
+  made queue listing background white; made backgrounds of changing status 
+  fields in the printer status windows white as well.
 
 
 
