@@ -9389,7 +9389,7 @@ no final tarball was released.
 * added uprint/uprint-lpc.c.
 
 
-1.53, 5 October 2004--15 October 2004
+1.53, 5 October 2004--22 October 2004
 
 * z_install_end/ppr.sh: added code it bail out if PPR is no longer installed.
   This is needed because initscripts are considered configuration files in
@@ -9397,17 +9397,19 @@ no final tarball was released.
 
 * editps/editps.conf: adjusted Mozilla 1.6 rule to include Mozilla 1.7.
 
-* libppr/readppd.c: removed extra newline from message about
-  missing PPD file.
+* libppr/readppd.c: removed extra newline from message about missing PPD file.
+  This was messing up the load fucntion in www/prn_properties.cgi.perl.
+
+* docs/Makefile: changed "make" to "$(MAKE)".
 
 
 TODO
 
 * Fix Debian package.
 
-* Make a tiny GtkEmbed or Mozilla chrome Mozilla browser
+* Make a stripped-down GtkEmbed or Mozilla chrome Mozilla browser
 
-* Make a tiny browser with the Mozilla ActiveX control
+* Make a stripped-down browser with the Mozilla ActiveX control
 
 * Finish the IPP server.
 

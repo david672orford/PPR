@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 22 October 2004.
 #
 
 # Pull in settings from Configure.
@@ -61,11 +61,11 @@ depend:
 
 clean:
 	$(RMF) $(BACKUPS) $(PROGS)
-	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && make clean ); done
+	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && $(MAKE) clean ); done
 
 veryclean:
 	$(RMF) $(BACKUPS) $(PROGS)
-	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && make veryclean ); done
+	@for i in $(SUBDIRS); do echo "=== $$i ==="; ( cd $$i && $(MAKE) veryclean ); done
 
 # end of file
 
