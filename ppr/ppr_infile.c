@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 28 March 2005.
 */
 
 /*
@@ -1924,8 +1924,8 @@ static const char *compressed(void)
 		/* Check for files compressed with gzip. */
 		if(in_ptr[0] == (unsigned char)'\37' && in_ptr[1] == (unsigned char)'\213')
 			{
-			#ifdef GUNZIP
-			exec_filter(GUNZIP, "gunzip", "-c", (char*)NULL);
+			#ifdef GUNZIP_PATH
+			exec_filter(GUNZIP_PATH, "gunzip", "-c", (char*)NULL);
 			#else
 			no_filter("gzipped files");
 			#endif
@@ -1936,10 +1936,10 @@ static const char *compressed(void)
 		if(in_ptr[0] == (unsigned char)0x1f && in_ptr[1] == (unsigned char)0x9d
 						&& in_ptr[2] == (unsigned char)0x90)
 			{
-			#ifdef GUNZIP
-			exec_filter(GUNZIP, "gunzip", "-c", (char*)NULL);
-			#elif defined(UNCOMPRESS)
-			exec_filter(UNCOMPRESS, "uncompress", "-c", (char*)NULL);
+			#ifdef GUNZIP_PATH
+			exec_filter(GUNZIP_PATH, "gunzip", "-c", (char*)NULL);
+			#elif defined(UNCOMPRESS_PATH)
+			exec_filter(UNCOMPRESS_PATH, "uncompress", "-c", (char*)NULL);
 			#else
 			no_filter("compressed files");
 			#endif
