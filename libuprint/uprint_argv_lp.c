@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_argv_lp.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 24 August 2001.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
@@ -20,7 +20,6 @@
 #include "uprint.h"
 #include "uprint_private.h"
 
-#ifdef HAVE_LP
 /*
 ** Generate an lp -o option:
 */
@@ -193,6 +192,5 @@ int uprint_print_argv_lp(void *p, const char **lp_argv, int argv_size)
 
     return i;
     } /* end of uprint_print_argv_lp() */
-#endif
 
 /* end of file */

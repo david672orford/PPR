@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 16 April 2002.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
@@ -22,6 +22,7 @@
 #include "global_defines.h"
 #include "uprint.h"
 #include "uprint_conf.h"
+#include "uprint_private.h"
 
 /* Have we read the config file yet? */
 static gu_boolean loaded = FALSE;
@@ -95,12 +96,21 @@ void uprint_read_conf(void)
     char *p1, *p2;
     int linenum = 0;
 
-    conf.well_known.lpr = conf.well_known.lpq = conf.well_known.lprm =
-    conf.well_known.lp = conf.well_known.lpstat = conf.well_known.cancel =
-    conf.sidelined.lpr = conf.sidelined.lpq = conf.sidelined.lprm =
-    conf.sidelined.lp = conf.sidelined.lpstat = conf.sidelined.cancel = (const char *)NULL;
+    conf.well_known.lpr = 
+	conf.well_known.lpq =
+	conf.well_known.lprm =
+	conf.well_known.lp =
+	conf.well_known.lpstat =
+	conf.well_known.cancel =
+	conf.sidelined.lpr =
+	conf.sidelined.lpq =
+	conf.sidelined.lprm =
+	conf.sidelined.lp =
+	conf.sidelined.lpstat =
+	conf.sidelined.cancel = (const char *)NULL;
 
     conf.lp.sidelined = conf.lpr.sidelined = FALSE;
+    conf.lp.installed = conf.lpr.installed = FALSE;
 
     conf.default_destinations.lpr = NULL;
     conf.default_destinations.lp = NULL;
@@ -211,6 +221,21 @@ void uprint_read_conf(void)
 			    break;
 		    	}
 		    }
+		else if(strncmp(line2, "installed=", 10) == 0)
+		    {
+		    switch(gu_torf(line2 + 10))
+		    	{
+			case ANSWER_UNKNOWN:
+			    uprint_error_callback("Invalid value for [lpr] installed");
+			    break;
+			case ANSWER_TRUE:
+			    conf.lpr.installed = TRUE;
+			    break;
+			case ANSWER_FALSE:
+			    conf.lpr.installed = FALSE;
+			    break;
+		    	}
+		    }
 		else
 		    break;
 		continue;
@@ -228,6 +253,21 @@ void uprint_read_conf(void)
 			    break;
 			case ANSWER_FALSE:
 			    conf.lp.sidelined = FALSE;
+			    break;
+		    	}
+		    }
+		else if(strncmp(line2, "installed=", 10) == 0)
+		    {
+		    switch(gu_torf(line2 + 10))
+		    	{
+			case ANSWER_UNKNOWN:
+			    uprint_error_callback("Invalid value for [lp] installed");
+			    break;
+			case ANSWER_TRUE:
+			    conf.lp.installed = TRUE;
+			    break;
+			case ANSWER_FALSE:
+			    conf.lp.installed = FALSE;
 			    break;
 		    	}
 		    }
@@ -326,6 +366,24 @@ const char *uprint_default_destinations_lp(void)
     if((p = getenv("PRINTER")))				/* lpr's environment variable */
     	return p;
     return "lp";					/* last resort */
+    }
+
+/*
+**
+*/
+gu_boolean *uprint_lpr_installed(void)
+    {
+    uprint_read_conf();
+    return conf.lpr.installed;
+    }
+
+/*
+**
+*/
+gu_boolean *uprint_lp_installed(void)
+    {
+    uprint_read_conf();
+    return conf.lp.installed;
     }
 
 /* end of file */

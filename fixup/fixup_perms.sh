@@ -61,13 +61,17 @@ set_user_group_mode $HOMEDIR
 set_user_group_mode $SHAREDIR
 set_user_group_mode $VAR_SPOOL_PPR
 
+# This is done so that the DVI filters work.
+chmod 775 $VAR_SPOOL_PPR/dvips
+
 # These changes are made so that ppr-httpd can write its log
 # as the user "pprwww", group "ppr".
 chmod 775 $VAR_SPOOL_PPR/logs
 chmod 664 $VAR_SPOOL_PPR/logs/ppr-httpd 2>/dev/null
 
-# This is done so that the DVI filters work.
-chmod 775 $VAR_SPOOL_PPR/dvips
+# This is so that ordinary users can't see the PPR Popup registration
+# information but the CGI script can write it.
+chmod 770 "$VAR_SPOOL_PPR/pprpopup.db"
 
 echo "Done."
 echo

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_samples.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 1 November 2000.
+# Last modified 23 April 2002.
 #
 
 CONFDIR="?"
@@ -44,9 +44,11 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
     if [ ! -f $CONFDIR/$f -a -f $CONFDIR/$f.sample ]
     	then
 	echo $CONFDIR/$f
+	# Use Sed to copy it while removing the "Last modified" comment.
     	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $CONFDIR/$f.sample >$CONFDIR/$f
     	chown $USER_PPR $CONFDIR/$f
     	chgrp $GROUP_PPR $CONFDIR/$f
+	chmod 644 $CONFDIR/$f
     	fi
     done
 echo "Done."

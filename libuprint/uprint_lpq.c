@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_lpq.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,14 +10,13 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 February 2000.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
 #include <stdio.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -86,7 +85,6 @@ int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, co
     ** System V lp:
     ** Use the lpstat program.
     */
-    #ifdef HAVE_LP
     else if(printdest_claim_lp(queue))
 	{
 	const char *args[ARGS_SIZE];
@@ -125,13 +123,11 @@ int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, co
 
 	return uprint_run(uid, uprint_path_lpstat(), args);
     	}
-    #endif
 
     /*
     ** BSD lpr:
     ** Use the lpq program.
     */
-    #ifdef HAVE_LPR
     if(printdest_claim_lpr(queue))
 	{
 	const char *args[ARGS_SIZE];
@@ -156,7 +152,6 @@ int uprint_lpq(uid_t uid, const char agent[], const char queue[], int format, co
 
 	return uprint_run(uid, uprint_path_lpq(), args);
 	}
-    #endif
 
     /*
     ** Thru lpr/lpd protocol over the network:

@@ -55,6 +55,7 @@ if [ $squeeze != 0 ]
     else
     echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\""
     cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
+    chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
     fi
 
 echo "\"$target\"" >>`dirname $0`/installed_files_list

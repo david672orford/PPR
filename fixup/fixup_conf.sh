@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/fixup/fixup_conf.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 1 November 2000.
+# Last modified 22 April 2002.
 #
 
 #
@@ -84,8 +84,9 @@ cat - >&5 <<===EndHere20===
 # Facts About Ghostscript
 [ghostscript]
 
-  # This is the Ghostscript interpreter you want PPR to use by default
-  # when sending jobs to non-PostScript printers.
+  # This is the Ghostscript interpreter that PPR will use if you specify a
+  # RIP of "gs" with the "ppad rip" command.  It has no effect if you
+  # specify a different RIP such as "ppr-gs".
   gs = "$gs"
 
 ===EndHere20===
@@ -120,8 +121,13 @@ cat - >&5 <<'===EndHere41==='
   default medium  = Letter, 612, 792, 75, white, ""
   #default medium = A4, 595, 842, 75, white, ""
 
-  # Choose a money format for banner pages and ppuser output.
-  # The example here is for the USA.
+  # Choose a money format for banner pages and ppuser output.  There should
+  # be two values.  The first is a sprintf() template for positive quantities,
+  # the second is a template for negative quantities.
+  #
+  # The first example is the default.  It doesn't specify the currency.
+  # The second and third examples are for US dollars.  They differn only
+  # in who negative quantities are represented.
   #money = "%d.%02d", "-%d.%02d"		# Default generic: 1.25 -1.25
   #money = "\$%d.%02d", "(\$%d.%02d)"		# USA: $1.25 ($1.25)
   #money = "\$%d.%02d", "-\$%d.%02d"		# USA: $1.25 -$1.25

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/claim_lpr.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 29 July 1999.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
@@ -18,7 +18,6 @@
 #include <ctype.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 
 /*
@@ -30,7 +29,8 @@
 */
 int printdest_claim_lpr(const char *destname)
     {
-    #ifdef HAVE_LPR
+    if(uprint_lpr_installed())
+    {
     FILE *f;
 
     if((f = fopen(LPR_PRINTCAP, "r")) != (FILE*)NULL)
@@ -60,7 +60,7 @@ int printdest_claim_lpr(const char *destname)
 
     	fclose(f);
     	}
-    #endif /* HAVE_LPR */
+    }
 
     return FALSE;
     } /* end of printdest_claim_lpr() */

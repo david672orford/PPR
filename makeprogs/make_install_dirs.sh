@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/makeprogs/make_install_dirs.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,12 +11,14 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 18 December 2001.
+# Last modified 23 April 2002.
 #
 
 #
 # This script is called by the top level PPR Makefile to
 # create the directories necessary to build and install PPR.
+#
+# Changes to this should be coordinated with ../fixup/fixup_perms.sh.
 #
 
 # System configuration values:
@@ -130,11 +132,12 @@ directory $VAR_SPOOL_PPR/printers 755
 directory $VAR_SPOOL_PPR/printers/alerts 755
 directory $VAR_SPOOL_PPR/printers/status 755
 directory $VAR_SPOOL_PPR/printers/addr_cache 755
-directory $VAR_SPOOL_PPR/logs 775
+directory $VAR_SPOOL_PPR/logs 775	# <-- group can write
 directory $VAR_SPOOL_PPR/cache 755
 directory $VAR_SPOOL_PPR/cache/font 755
 directory $VAR_SPOOL_PPR/cache/procset 755
-# The next one is commented out because to many drivers are too ill-behaved.
+# The next one is commented out because to many drivers are too ill-behaved
+# and generate multiple files with the same name.
 #directory $VAR_SPOOL_PPR/cache/file
 directory $VAR_SPOOL_PPR/cache/encoding 755
 directory $VAR_SPOOL_PPR/dvips 755
@@ -143,7 +146,7 @@ directory $VAR_SPOOL_PPR/drivers/win95 755
 directory $VAR_SPOOL_PPR/drivers/macos 755
 directory $VAR_SPOOL_PPR/sambaspool 1777
 directory $VAR_SPOOL_PPR/pprclipr 755
-directory $VAR_SPOOL_PPR/pprpopup.db 775
+directory $VAR_SPOOL_PPR/pprpopup.db 770	# <-- group can write
 
 # Make the directories for web documentation and managment tools
 directory $HOMEDIR/cgi-bin 755

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 February 2000.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
@@ -20,7 +20,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -220,7 +219,6 @@ int uprint_lprm_ppr(uid_t uid, const char agent[], const char proxy_class[], con
     return result_code;
     } /* end of uprint_lprm_ppr() */
 
-#ifdef HAVE_LP
 int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
     {
     int retval = 0;
@@ -292,9 +290,7 @@ int uprint_lprm_lp(uid_t uid, const char agent[], const char proxy_class[], cons
 
     return retval;
     } /* end of uprint_lprm_lp() */
-#endif
 
-#ifdef HAVE_LPR
 int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
     {
     int retval = 0;
@@ -329,7 +325,6 @@ int uprint_lprm_lpr(uid_t uid, const char agent[], const char proxy_class[], con
 
     return retval;
     } /* end of uprint_lprm_lpr() */
-#endif
 
 /*
 ** Handle an lprm style cancel request.  The file names
@@ -347,15 +342,11 @@ int uprint_lprm(uid_t uid, const char agent[], const char proxy_class[], const c
     if(printdest_claim_ppr(queue))
     	return uprint_lprm_ppr(uid, agent, proxy_class, queue, arglist);
 
-    #ifdef HAVE_LP
     if(printdest_claim_lp(queue))
     	return uprint_lprm_lp(uid, agent, proxy_class, queue, arglist);
-    #endif
 
-    #ifdef HAVE_LPR
     if(printdest_claim_lpr(queue))
     	return uprint_lprm_lpr(uid, agent, proxy_class, queue, arglist);
-    #endif
 
     {
     struct REMOTEDEST info;

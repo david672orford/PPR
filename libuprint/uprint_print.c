@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_print.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 September 2001.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
@@ -87,7 +87,6 @@ int uprint_print(void *p, gu_boolean remote_too)
 	}
 
     /* System V spooler: */
-    #ifdef HAVE_LP
     else if(printdest_claim_lp(upr->dest))
 	{
 	command_path = uprint_path_lp();
@@ -101,10 +100,8 @@ int uprint_print(void *p, gu_boolean remote_too)
 		return -1;
 	    }
 	}
-    #endif
 
     /* BSD lpr spooler: */
-    #ifdef HAVE_LPR
     else if(printdest_claim_lpr(upr->dest))
 	{
 	command_path = uprint_path_lpr();
@@ -118,7 +115,6 @@ int uprint_print(void *p, gu_boolean remote_too)
 		return -1;
 	    }
 	}
-    #endif
 
     /* Remote network spooler: */
     else if(remote_too && printdest_claim_remote(uprint_get_dest(upr), &info))

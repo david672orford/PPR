@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/fixup/fixup_media.sh
-# Copyright 1995--2000, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 13 September 2000.
+# Last modified 23 April 2002.
 #
 
 #
@@ -34,6 +34,7 @@ if [ -f "$CONFDIR/media" ]
 
 touch "$CONFDIR/media.db"
 chown $USER_PPR "$CONFDIR/media.db"
+chmod 644 "$CONFDIR/media.db"
 
 PATH="$HOMEDIR/bin:$PATH"
 

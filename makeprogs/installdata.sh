@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/makeprogs/installdata.sh
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 18 June 2001.
+# Last modified 23 April 2002.
 #
 
 #
@@ -49,6 +49,7 @@ while [ "$1" != "" ]
 	echo "    \"$1\" --> \"$RPM_BUILD_ROOT$dest\""
 	rm -f "$RPM_BUILD_ROOT$dest" || exit 1
 	cp "$1" "$RPM_BUILD_ROOT$dest" || exit 1
+	chmod 644 "$RPM_BUILD_ROOT$dest" || exit 1
 	echo "\"$dest\"" >>`dirname $0`/installed_files_list
 	fi
     shift

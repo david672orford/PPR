@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_argv_lpr.c
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,13 +10,12 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 14 February 2000.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 #include "uprint_private.h"
 
@@ -25,7 +24,6 @@
 ** is not included.  The return value is the number of
 ** argument list entries used.
 */
-#ifdef HAVE_LPR
 int uprint_print_argv_lpr(void *p, const char **lpr_argv, int argv_size)
     {
     struct UPRINT *upr = (struct UPRINT *)p;
@@ -56,6 +54,7 @@ int uprint_print_argv_lpr(void *p, const char **lpr_argv, int argv_size)
     ** LPR may not think we have sufficent priviledge
     ** to be allowed to declare ourself to be representing
     ** somebody else.  (See the lpr(1) man page.)  Also,
+    **
     ** I have been unable to get this feature to work,
     ** even when the user running lpr is root.
     */
@@ -212,6 +211,5 @@ int uprint_print_argv_lpr(void *p, const char **lpr_argv, int argv_size)
 
     return i;
     } /* end of uprint_print_argv_lpr() */
-#endif
 
 /* end of file */

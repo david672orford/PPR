@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 19 April 2002.
+# Last modified 23 April 2002.
 #
 
 use 5.005;
@@ -230,7 +230,7 @@ Top9
 print <<"TopCookie";
 <spacer type="horizontal" size=10>
 <label title="Use this if your browser doesn't support Digest authentication.">
-<input type="button" value=${\html_value(_("Cookie Login"))}
+<input class="buttons" type="button" value=${\html_value(_("Cookie Login"))}
 	onclick="window.open('../html/login_cookie.html', '_blank', 'width=350,height=250,resizable')">
 </label>
 TopCookie

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/claim_lp.c
-** Copyright 1995--1999, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 29 July 1999.
+** Last modified 22 April 2002.
 */
 
 #include "before_system.h"
@@ -23,7 +23,6 @@
 #include <ctype.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "uprint.h"
 
 /*
@@ -32,7 +31,8 @@
 */
 int printdest_claim_lp(const char *destname)
     {
-    #ifdef HAVE_LP
+    if(uprint_lp_installed())
+    {
     char fname[MAX_PPR_PATH];
     struct stat statbuf;
 
@@ -133,7 +133,7 @@ int printdest_claim_lp(const char *destname)
     }
     #endif
 
-    #endif	/* HAVE_LP */
+    }
 
     return FALSE;
     } /* end of printdest_claim_lp() */

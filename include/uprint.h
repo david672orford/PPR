@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/uprint.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Permission to use, copy, modify, and distribute this software and its
@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 18 November 2000.
+** Last modified 22 April 2002.
 */
 
 /* Maximum lengths of control file fields. */
@@ -194,14 +194,10 @@ int uprint_lprm(uid_t uid, const char agent[], const char proxy_class[], const c
 int uprint_lprm_rfc1179(const char *user, const char *athost, const char *queue, const char **arglist, struct REMOTEDEST *scratchpad);
 
 /* uprint_conf.c: */
-const char *uprint_path_lpr(void);
-const char *uprint_path_lpq(void);
-const char *uprint_path_lprm(void);
-const char *uprint_path_lp(void);
-const char *uprint_path_lpstat(void);
-const char *uprint_path_cancel(void);
 const char *uprint_default_destinations_lpr(void);
 const char *uprint_default_destinations_lp(void);
+const char *uprint_path_lpstat(void);
+const char *uprint_path_cancel(void);
 
 /* Values for uprint_errno: */
 #define UPE_NONE 0	/* not an error */
