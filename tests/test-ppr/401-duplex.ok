@@ -1,0 +1,1955 @@
+====================================================================
+test: nospec -F None
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -F DuplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -F DuplexNoTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -F SimplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%IncludeFeature: *Duplex SimplexTumble
+} stopped {(PPD error: *Duplex SimplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -R ignore-duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -R duplex:simplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -R duplex:duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -R duplex:duplextumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: nospec -R duplex:softsimplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-nospec.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -F None
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -F DuplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -F DuplexNoTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -F SimplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%IncludeFeature: *Duplex SimplexTumble
+} stopped {(PPD error: *Duplex SimplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -R ignore-duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -R duplex:simplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -R duplex:duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -R duplex:duplextumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: none -R duplex:softsimplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-none.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -F None
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -F DuplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -F DuplexNoTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%+ duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -F SimplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%IncludeFeature: *Duplex SimplexTumble
+} stopped {(PPD error: *Duplex SimplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -R ignore-duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -R duplex:simplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -R duplex:duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -R duplex:duplextumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: tumble -R duplex:softsimplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-tumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -F None
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -F DuplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%+ duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -F DuplexNoTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -F SimplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%IncludeFeature: *Duplex SimplexTumble
+} stopped {(PPD error: *Duplex SimplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -R ignore-duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -R duplex:simplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -R duplex:duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -R duplex:duplextumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: notumble -R duplex:softsimplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-notumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -F None
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -F DuplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -F DuplexNoTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -F SimplexTumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%IncludeFeature: *Duplex SimplexTumble
+} stopped {(PPD error: *Duplex SimplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -R ignore-duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -R duplex:simplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex None
+<</Duplex false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex None failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -R duplex:duplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexNoTumble
+<</Duplex true /Tumble false>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexNoTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -R duplex:duplextumble
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%Requirements: duplex(tumble)
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+{currentpoint} stopped %PPR
+[0 0 0 0 0 0] currentmatrix %PPR
+[ { %PPR
+%%BeginFeature: *Duplex DuplexTumble
+<</Duplex true /Tumble true>>setpagedevice
+%%EndFeature
+} stopped {(PPD error: *Duplex DuplexTumble failed\n)print} if cleartomark %PPR
+setmatrix %PPR
+not {moveto} if %PPR
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+
+====================================================================
+test: simplextumble -R duplex:softsimplex
+====================================================================
+Queue ID        For                      Time      Pgs Status
+----------------------------------------------------------------------------
+clear_output: ppop: 0
+Printer          Status
+------------------------------------------------------------
+regression-test1 idle
+clear_output: ppop: 0
+clear_output: rm: 0
+%!PS-Adobe-3.0
+%%For: (PPR Spooling System)
+%%Title: (test-ppr/401-duplex-simplextumble.ps)
+%%Pages: 1
+%%PageOrder: Ascend
+%%ProofMode: Substitute
+%TCHCTSpooler: PPR-x.xx
+%%EndComments
+
+%%BeginProlog
+%%EndProlog
+
+%%BeginSetup
+% jobname line removed
+%%IncludeFeature: *Duplex SimplexTumble
+%%EndSetup
+
+%%Page: 1 1
+showpage
+
+%%Trailer
+%%EOF
+% regtest interface done %
+

@@ -10,6 +10,10 @@ getline.$(OBJ): getline.c ../include/gu.h
 
 getopt.$(OBJ): getopt.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
+snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
+
+gu_wildmat.$(OBJ): gu_wildmat.c
+
 gu_dtostr.$(OBJ): gu_dtostr.c ../include/before_system.h ../include/gu.h
 
 gu_fscanf.$(OBJ): gu_fscanf.c ../include/before_system.h ../include/gu.h
@@ -19,6 +23,8 @@ gu_getdouble.$(OBJ): gu_getdouble.c ../include/before_system.h ../include/gu.h
 gu_mkstemp.$(OBJ): gu_mkstemp.c ../include/before_system.h ../include/gu.h
 
 gu_nonblock.$(OBJ): gu_nonblock.c ../include/gu.h
+
+pcre.$(OBJ): pcre.c ../nonppr_misc/pcre/internal.h ../nonppr_misc/pcre/chartables.c
 
 gu_pcs.$(OBJ): gu_pcs.c ../include/before_system.h ../include/gu.h
 
@@ -38,9 +44,11 @@ gu_strsep2.$(OBJ): gu_strsep2.c ../include/before_system.h ../include/gu.h ../in
 
 gu_strsignal.$(OBJ): gu_strsignal.c ../include/before_system.h ../include/gu.h
 
-gu_throw.$(OBJ): gu_throw.c ../include/before_system.h ../include/gu.h
+c2lib_hash.$(OBJ): c2lib_hash.c ../nonppr_misc/c2lib/config.h
 
 gu_timeval.$(OBJ): gu_timeval.c ../include/before_system.h ../include/gu.h
+
+pcre_get.$(OBJ): pcre_get.c ../nonppr_misc/pcre/internal.h
 
 ini_section.$(OBJ): ini_section.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
@@ -60,23 +68,9 @@ torf.$(OBJ): torf.c ../include/before_system.h ../include/gu.h
 
 wordwrap.$(OBJ): wordwrap.c ../include/before_system.h ../include/gu.h
 
-snprintf.$(OBJ): snprintf.c ../include/sysdep.h ../include/gu.h
-
-gu_wildmat.$(OBJ): gu_wildmat.c
-
-gu_run.$(OBJ): gu_run.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
-
-pcre.$(OBJ): pcre.c ../nonppr_misc/pcre/internal.h ../nonppr_misc/pcre/chartables.c
-
-c2lib_hash.$(OBJ): c2lib_hash.c ../nonppr_misc/c2lib/config.h
-
-pcre_get.$(OBJ): pcre_get.c ../nonppr_misc/pcre/internal.h
-
 pcre_maketables.$(OBJ): pcre_maketables.c ../nonppr_misc/pcre/internal.h
 
 pcre_study.$(OBJ): pcre_study.c ../nonppr_misc/pcre/internal.h
-
-gu_exceptions.$(OBJ): gu_exceptions.c ../include/before_system.h ../include/gu.h
 
 c2lib_pool.$(OBJ): c2lib_pool.c ../nonppr_misc/c2lib/config.h
 
@@ -87,6 +81,12 @@ c2lib_pstring.$(OBJ): c2lib_pstring.c ../nonppr_misc/c2lib/config.h
 c2lib_tree.$(OBJ): c2lib_tree.c ../nonppr_misc/c2lib/config.h ../include/tree.h
 
 c2lib_vector.$(OBJ): c2lib_vector.c ../nonppr_misc/c2lib/config.h
+
+gu_run.$(OBJ): gu_run.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
+
+gu_exceptions.$(OBJ): gu_exceptions.c ../include/before_system.h ../include/gu.h
+
+gu_psprintf.$(OBJ): gu_psprintf.c ../include/before_system.h ../include/gu.h ../include/global_defines.h
 
 gu_strlcat.$(OBJ): gu_strlcat.c ../include/gu.h ../nonppr_misc/openbsd/strlcat.c
 

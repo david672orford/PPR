@@ -37,15 +37,15 @@
 %%IncludeFeature: *PageSize Letter
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeResource: font Courier
-/ptsize 8.1 def
+/ptsize 8.1081 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 10.909 def
-/lm 36.00 def
-/tm 36.00 def
-/gut_lr 0.00 def
-/gut_tb 0.00 def
-/ph 792.00 def
+/width 0.6 def
+/yspace 10.9091 def
+/lm 36 def
+/tm 36 def
+/gut_lr 0 def
+/gut_tb 0 def
+/ph 792 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -210,15 +210,15 @@ ep
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeFeature: *Duplex None
 %%IncludeResource: font Courier
-/ptsize 7.0 def
+/ptsize 7.027 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 10.909 def
-/lm 108.00 def
-/tm 36.00 def
-/gut_lr 0.00 def
-/gut_tb 0.00 def
-/ph 792.00 def
+/width 0.6 def
+/yspace 10.9091 def
+/lm 108 def
+/tm 36 def
+/gut_lr 0 def
+/gut_tb 0 def
+/ph 792 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -383,15 +383,15 @@ ep
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeFeature: *Duplex DuplexNoTumble
 %%IncludeResource: font Courier
-/ptsize 7.0 def
+/ptsize 7.027 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 10.909 def
-/lm 36.00 def
-/tm 36.00 def
-/gut_lr 72.00 def
-/gut_tb 0.00 def
-/ph 792.00 def
+/width 0.6 def
+/yspace 10.9091 def
+/lm 36 def
+/tm 36 def
+/gut_lr 72 def
+/gut_tb 0 def
+/ph 792 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -556,15 +556,15 @@ ep
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeFeature: *Duplex DuplexTumble
 %%IncludeResource: font Courier
-/ptsize 8.1 def
+/ptsize 8.1081 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 9.818 def
-/lm 36.00 def
-/tm 36.00 def
-/gut_lr 0.00 def
-/gut_tb 72.00 def
-/ph 792.00 def
+/width 0.6 def
+/yspace 9.8182 def
+/lm 36 def
+/tm 36 def
+/gut_lr 0 def
+/gut_tb 72 def
+/ph 792 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -728,15 +728,15 @@ ep
 %%IncludeFeature: *PageSize Letter
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeResource: font Courier
-/ptsize 8.5 def
+/ptsize 8.4545 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 8.455 def
-/lm 27.00 def
-/tm 27.00 def
-/gut_lr 0.00 def
-/gut_tb 0.00 def
-/ph 612.00 def
+/width 0.6 def
+/yspace 8.4545 def
+/lm 27 def
+/tm 27 def
+/gut_lr 0 def
+/gut_tb 0 def
+/ph 612 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -748,7 +748,7 @@ ptsize 35 div setlinewidth
 %%BeginPageSetup
 /page 1 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (total 18067)p
 (lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
@@ -822,7 +822,7 @@ ep
 %%BeginPageSetup
 /page 2 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
 (-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
@@ -903,15 +903,15 @@ ep
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeFeature: *Duplex None
 %%IncludeResource: font Courier
-/ptsize 7.4 def
+/ptsize 7.3636 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 7.364 def
-/lm 27.00 def
-/tm 99.00 def
-/gut_lr 0.00 def
-/gut_tb 0.00 def
-/ph 612.00 def
+/width 0.6 def
+/yspace 7.3636 def
+/lm 27 def
+/tm 99 def
+/gut_lr 0 def
+/gut_tb 0 def
+/ph 612 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -923,7 +923,7 @@ ptsize 35 div setlinewidth
 %%BeginPageSetup
 /page 1 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (total 18067)p
 (lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
@@ -997,7 +997,7 @@ ep
 %%BeginPageSetup
 /page 2 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
 (-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
@@ -1078,15 +1078,15 @@ ep
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeFeature: *Duplex DuplexNoTumble
 %%IncludeResource: font Courier
-/ptsize 7.4 def
+/ptsize 7.3636 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 7.364 def
-/lm 27.00 def
-/tm 27.00 def
-/gut_lr 0.00 def
-/gut_tb 72.00 def
-/ph 612.00 def
+/width 0.6 def
+/yspace 7.3636 def
+/lm 27 def
+/tm 27 def
+/gut_lr 0 def
+/gut_tb 72 def
+/ph 612 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -1098,7 +1098,7 @@ ptsize 35 div setlinewidth
 %%BeginPageSetup
 /page 1 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (total 18067)p
 (lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
@@ -1172,7 +1172,7 @@ ep
 %%BeginPageSetup
 /page 2 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
 (-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p
@@ -1253,15 +1253,15 @@ ep
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeFeature: *Duplex DuplexTumble
 %%IncludeResource: font Courier
-/ptsize 8.5 def
+/ptsize 8.4545 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 8.455 def
-/lm 27.00 def
-/tm 27.00 def
-/gut_lr 72.00 def
-/gut_tb 0.00 def
-/ph 612.00 def
+/width 0.6 def
+/yspace 8.4545 def
+/lm 27 def
+/tm 27 def
+/gut_lr 72 def
+/gut_tb 0 def
+/ph 612 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i
@@ -1273,7 +1273,7 @@ ptsize 35 div setlinewidth
 %%BeginPageSetup
 /page 1 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (total 18067)p
 (lrwxrwxrwx   1 root)B(root)I(9 Feb  4 01:46 Mail -> /bin/mail)p
@@ -1347,7 +1347,7 @@ ep
 %%BeginPageSetup
 /page 2 def
 sp
-90 rotate 0 612.00 neg translate
+90 rotate 0 612 neg translate
 %%EndPageSetup
 (-rwxr-xr-x   1 root)B(root)F(4616 Sep  9  1996 colcrt)p
 (-rwxr-xr-x   1 root)B(root)F(3512 Sep  9  1996 colrm)p

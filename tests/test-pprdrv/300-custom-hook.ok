@@ -57,15 +57,15 @@ letter
 %%EndFeature
 } stopped {(*Pagesize Letter failed.\n)print} if cleartomark
 %%IncludeResource: font Courier
-/ptsize 10.9 def
+/ptsize 10.9091 def
 /RFont /Courier findfont ptsize scalefont def
-/width 0.60 def
-/yspace 10.909 def
-/lm 36.00 def
-/tm 36.00 def
-/gut_lr 0.00 def
-/gut_tb 0.00 def
-/ph 792.00 def
+/width 0.6 def
+/yspace 10.9091 def
+/lm 36 def
+/tm 36 def
+/gut_lr 0 def
+/gut_tb 0 def
+/ph 792 def
 /y ph tm sub ptsize 2 div sub def
 /m 0 def
 0 i

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/prop.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 September 2003.
+** Last modified 15 April 2004.
 */
 
 /*
@@ -411,13 +411,13 @@ static void genmetrics(char *infile, int italic)
 					}
 
 				#if 0
-				printf("% %d %s required_width=%d, normal_width=%d, lsb=%d, normal_lsb=%d\n",i,name,required_width,normal_width,lsb,llx);
+				printf("%% %d %s required_width=%d, normal_width=%d, lsb=%d, normal_lsb=%d\n",i,name,required_width,normal_width,lsb,llx);
 				#endif
 
 				/* If the computed metrics or other than normal, add to table. */
 				if(required_width != 600 || lsb != llx)
 					{
-					printf("/%s [%d %d] def", name, lsb, required_width);
+					gu_psprintf("/%s [%d %d] def", name, lsb, required_width);
 
 					if(++icount == 2)			/* decide whether to */
 						{						/* start a new line */
@@ -450,15 +450,15 @@ int main(int argc, char *argv[])
 		}
 
 	puts("%!PS-Adobe-3.0 Resource-Procset");
-	printf("%%%%Title: Auto Generated Epson %s metrics\n", argv[2]);
+	gu_psprintf("%%%%Title: Auto Generated Epson %s metrics\n", argv[2]);
 	puts("%%EndComments");
 
 	load_cp437();
 	puts("pprdotmatrix begin");
-	printf("/MetricsEpson_%s 256 dict def\n", argv[2]);
-	printf("MetricsEpson_%s begin\n", argv[2]);
+	gu_psprintf("/MetricsEpson_%s 256 dict def\n", argv[2]);
+	gu_psprintf("MetricsEpson_%s begin\n", argv[2]);
 	genmetrics(argv[1], atoi(argv[3]));
-	printf("end %% MetricsEpson_%s\n", argv[2]);
+	gu_psprintf("end %% MetricsEpson_%s\n", argv[2]);
 
 	puts("end % pprdotmatrix");
 	puts("%%EOF");

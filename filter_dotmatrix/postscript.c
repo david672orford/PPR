@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 March 2004.
+** Last modified 15 April 2004.
 */
 
 #include "filter_dotmatrix.h"
@@ -146,7 +146,7 @@ void top_of_document(void)
 	puts("%%Creator: PPR dotmatrix printer emulator");
 	puts("%%Pages: (atend)");
 	puts("%%DocumentData: Clean7Bit");
-	printf("%%%%DocumentNeededResources: procset %s\n", DOTMATRIX);
+	gu_psprintf("%%%%DocumentNeededResources: procset %s\n", DOTMATRIX);
 
 	/* If we need graphics routines, mention the procedure sets that contain
 	   them.  We will show where to insert them later.
@@ -164,13 +164,13 @@ void top_of_document(void)
 	   */
 	if(encoding_name)
 		{
-		printf("%%%%+ procset %s\n", REENCODE);
-		printf("%%%%+ encoding %s\n", encoding_name);
+		gu_psprintf("%%%%+ procset %s\n", REENCODE);
+		gu_psprintf("%%%%+ encoding %s\n", encoding_name);
 		}
 
 	/* Do we need to proportional-spacing conversion procset? */
 	if(need_proportional_procset)
-		printf("%%%%+ procset %s\n", NEWMETRICS);
+		gu_psprintf("%%%%+ procset %s\n", NEWMETRICS);
 
 	/* Emmit requirement comments for those fonts we will actually use.
 	  */
@@ -179,11 +179,11 @@ void top_of_document(void)
     for(i=0; i<4; i++)
     	{
 		if(*fonts[i].uses)
-			printf("%%%%+ font %s\n", fonts[i].font_info->font_psname);
+			gu_psprintf("%%%%+ font %s\n", fonts[i].font_info->font_psname);
 
 		/* This will never be set if .uses isn't.  We are bug hunting. */
 		if(*fonts[i].uses_proportional)
-			printf("%%%%+ procset "METRICSEPSON"\n", i+1);			
+			gu_psprintf("%%%%+ procset "METRICSEPSON"\n", i+1);			
     	}
 	}
 
@@ -212,10 +212,10 @@ void top_of_document(void)
 	** If level 2 PostScript required, say so.  Level 2 features
 	** are only required if we have generated compressed graphics.
 	*/
-	printf("%%%%LanguageLevel: %d\n",(level2 && uses_graphics) ? 2 : 1);
+	gu_psprintf("%%%%LanguageLevel: %d\n",(level2 && uses_graphics) ? 2 : 1);
 
 	/* Describe the media we have formatted for: */
-	printf("%%%%DocumentMedia: lpform %.1f %.1f %.1f %s (%s)\n",
+	gu_psprintf("%%%%DocumentMedia: lpform %f %f %f %s (%s)\n",
 		phys_pu_width, phys_pu_height, MediaWeight, MediaColor, MediaType);
 
 	puts("%%EndComments");
@@ -227,15 +227,15 @@ void top_of_document(void)
 	** printer emulation proceedures.
 	*/
 	puts("%%BeginProlog");
-	printf("%%%%IncludeResource: procset %s\n", DOTMATRIX);
+	gu_psprintf("%%%%IncludeResource: procset %s\n", DOTMATRIX);
 
 	/* If we will be printing graphics, emmit the routines here. */
 	if(uses_graphics)
 		{
 		if(level2)
-			printf("%%IncludeResource: procset %s\n", DOTMATRIXG2);
+			gu_psprintf("%%IncludeResource: procset %s\n", DOTMATRIXG2);
 		else
-			printf("%%%%IncludeResource: procset %s\n", DOTMATRIXG1);
+			gu_psprintf("%%%%IncludeResource: procset %s\n", DOTMATRIXG1);
 		}
 
 	/*
@@ -246,8 +246,8 @@ void top_of_document(void)
 	*/
 	if(encoding_name)
 		{
-		printf("%%%%IncludeResource: procset %s\n", REENCODE);
-		printf("%%%%IncludeResource: encoding %s\n", encoding_name);
+		gu_psprintf("%%%%IncludeResource: procset %s\n", REENCODE);
+		gu_psprintf("%%%%IncludeResource: encoding %s\n", encoding_name);
 		}
 
 	/*
@@ -255,19 +255,19 @@ void top_of_document(void)
 	** the proportional font metrics procedure sets.
 	*/
 	if(need_proportional_procset)
-		printf("%%%%IncludeResource: procset %s\n", NEWMETRICS);
+		gu_psprintf("%%%%IncludeResource: procset %s\n", NEWMETRICS);
 	{
     int i;
     for(i=0; i<4; i++)
     	{
 		if(*fonts[i].uses_proportional)
-			printf("%%%%IncludeResource: procset "METRICSEPSON"\n", i+1);
+			gu_psprintf("%%%%IncludeResource: procset "METRICSEPSON"\n", i+1);
     	}
 	}
 
 	/* If colour needed, download that proceedure set. */
 	if(uses_colour)
-		printf("%%%%IncludeResource: procset %s\n", COLOUR);
+		gu_psprintf("%%%%IncludeResource: procset %s\n", COLOUR);
 
 	fputs("%%EndProlog\n\n",stdout);
 
@@ -279,7 +279,7 @@ void top_of_document(void)
 	puts("%%BeginSetup");
 
 	/* Select the page size we want. */
-	printf("%%%%IncludeFeature: *PageSize %s\n", PageSize);
+	gu_psprintf("%%%%IncludeFeature: *PageSize %s\n", PageSize);
 
 	/* Set duplex mode if we have been asked to set one: */
 	switch(duplex_mode)
@@ -324,11 +324,11 @@ void top_of_document(void)
 	** If an x or y shift has been specified, emmit it.
 	*/
 	if(xshift)
-		printf("/xshift xshift %d add def\n", xshift);
+		gu_psprintf("/xshift xshift %d add def\n", xshift);
 	if(yshift)
-		printf("/yshift yshift %d add def\n", yshift);
+		gu_psprintf("/yshift yshift %d add def\n", yshift);
 
-	printf("\n");
+	gu_psprintf("\n");
 
 	/* Download all the fonts we need. */
 	{
@@ -336,17 +336,17 @@ void top_of_document(void)
 	for(i=0; i<4; i++)
 		{
 		if(*fonts[i].uses)
-			printf("%%%%IncludeResource: font %s\n", fonts[i].font_info->font_psname);
+			gu_psprintf("%%%%IncludeResource: font %s\n", fonts[i].font_info->font_psname);
 		if(*fonts[i].uses_nonascii)
-			printf("/%s /%s /%s ReEncode\n", fonts[i].font_info->font_psname, fonts[i].font_info->font_psname, encoding_name);
+			gu_psprintf("/%s /%s /%s ReEncode\n", fonts[i].font_info->font_psname, fonts[i].font_info->font_psname, encoding_name);
 		if(*fonts[i].uses)
-			printf("/%s /%s findfont 12 scalefont def\n", fonts[i].command, fonts[i].font_info->font_psname);
+			gu_psprintf("/%s /%s findfont 12 scalefont def\n", fonts[i].command, fonts[i].font_info->font_psname);
 		if(*fonts[i].uses_proportional)
 			{
-			printf("/%s /PS%s MetricsEpson_%s NewMetrics\n", fonts[i].font_info->font_psname, fonts[i].font_info->font_psname, fonts[i].prop_tbl_name);
-			printf("/p%s /PS%s findfont 12 scalefont def\n", fonts[i].command, fonts[i].font_info->font_psname);
+			gu_psprintf("/%s /PS%s MetricsEpson_%s NewMetrics\n", fonts[i].font_info->font_psname, fonts[i].font_info->font_psname, fonts[i].prop_tbl_name);
+			gu_psprintf("/p%s /PS%s findfont 12 scalefont def\n", fonts[i].command, fonts[i].font_info->font_psname);
 			}
-		printf("\n");
+		gu_psprintf("\n");
 		}
 	}
 	
@@ -367,7 +367,7 @@ void bottom_of_document(void)
 	{
 	puts("%%Trailer");
 	puts("end % pprdotmatrix");
-	printf("%%%%Pages: %d\n",current_page);
+	gu_psprintf("%%%%Pages: %d\n",current_page);
 	puts("%%EOF");
 	} /* end of bottom_of_document() */
 
@@ -386,7 +386,7 @@ void top_of_page(void)
 	postscript_print_colour=COLOUR_BLACK;
 
 	/* emmit appropriate postscript code to start a page */
-	printf("%%%%Page: %d %d\n",current_page,current_page);
+	gu_psprintf("%%%%Page: %d %d\n",current_page,current_page);
 	puts("%%BeginPageSetup");
 	puts("bp");
 	puts("%%EndPageSetup");
@@ -415,8 +415,8 @@ void bottom_of_page(void)
 void achieve_position(void)
 	{
 	#ifdef DEBUG_COMMENTS
-	if( xpos != postscript_xpos || ypos != postscript_ypos )
-		printf("%% xpos=%d, ypos=%d, lm=%d, ls=%d, postscript_xpos=%.1f, postscript_ypos=%d\n",
+	if(xpos != postscript_xpos || ypos != postscript_ypos)
+		gu_psprintf("%% xpos=%d, ypos=%d, lm=%d, ls=%d, postscript_xpos=%f, postscript_ypos=%d\n",
 				xpos, ypos, lm, ls, postscript_xpos, postscript_ypos);
 	#endif
 
@@ -430,7 +430,7 @@ void achieve_position(void)
 			}
 		else
 			{
-			printf("%d %d mxy\n", xpos, ypos);
+			gu_psprintf("%d %d mxy\n", xpos, ypos);
 			lm = xpos;
 			ls = postscript_ypos - ypos;
 			}
@@ -439,7 +439,7 @@ void achieve_position(void)
 	/* If only y must change, */
 	else if( ypos != postscript_ypos )
 		{
-		printf("%d my\n", ypos);
+		gu_psprintf("%d my\n", ypos);
 		ls = postscript_ypos - ypos;
 		}
 
@@ -449,9 +449,9 @@ void achieve_position(void)
 		int movement = xpos - postscript_xpos;
 
 		if(movement > 0 && movement < HORIZONTAL_UNITS)
-			printf("%d m\n", movement);
+			gu_psprintf("%d m\n", movement);
 		else
-			printf("%d mx\n", xpos);
+			gu_psprintf("%d mx\n", xpos);
 		}
 
 	/* We believe at one of the above did the job. */

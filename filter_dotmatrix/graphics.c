@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/dotmatrix/graphics.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 September 2003.
+** Last modified 15 April 2004.
 */
 
 /*
@@ -192,7 +192,7 @@ void graphic(int mode, int pins, int length)
 		/* Make sure we have the correct colour set. */
 		if(print_colour != postscript_print_colour)
 			{
-			printf(" %d colour\n", print_colour);
+			gu_psprintf(" %d colour\n", print_colour);
 			postscript_print_colour = print_colour;
 			}
 
@@ -321,8 +321,8 @@ void graphic(int mode, int pins, int length)
 				gbuffer2[di++]=0;				/* 4-tuple. */
 
 			/* start the graphic */
-			printf("%%%%BeginData: %d ASCII Lines\n",((countdown+A85_BPL-1)/A85_BPL)+1);
-			printf("%d %d cgraphic%d\n", density, length, true_pins);
+			gu_psprintf("%%%%BeginData: %d ASCII Lines\n",((countdown+A85_BPL-1)/A85_BPL)+1);
+			gu_psprintf("%d %d cgraphic%d\n", density, length, true_pins);
 
 			/* Emmit in ASCII85 */
 			linelen=0;
@@ -377,8 +377,8 @@ void graphic(int mode, int pins, int length)
 		else									
 			{									
 			/* start the graphic */
-			printf("%%%%BeginData: %d Hex Lines\n",((countdown+HEX_BPL-1)/HEX_BPL)+1);
-			printf("%d %d graphic%d\n", density, length, true_pins);
+			gu_psprintf("%%%%BeginData: %d Hex Lines\n",((countdown+HEX_BPL-1)/HEX_BPL)+1);
+			gu_psprintf("%d %d graphic%d\n", density, length, true_pins);
 
 			/* Emmit the data in hexadecimal. */
 			linelen=0;

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 March 2004.
+# Last modified 15 April 2004.
 #
 
 #
@@ -476,7 +476,7 @@ $addprn_wizard_table = [
 				}
 			print "</select>\n";
 			print "</span></p>\n";
-			close(PRINTERS) || die $!;
+			close(PRINTERS) || die "\$!=$!, \$?=$?";
 			if(scalar @browser_comments > 0)
 				{
 				my $html = html(join("\n", @browser_comments));

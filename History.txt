@@ -9056,7 +9056,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--5 April 2004.
+1.53a2, 20 February 2004--15 April 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9100,6 +9100,20 @@ Internet Printing Protocol Work
 * browsers/ip_scan_snmp.c: added
 
 * lprsrv/: added "force mail" option for lprsrv.conf.
+
+* libgu/gu_psprintf.c: added file.  It contains a very minimul 
+  printf() designed to embed strings, decimal numbers, and floating
+  point numbers without regard to locale.  It is intended for
+  generating PostScript code.
+
+* filter_lp/filter_lp.c: changed all printf() calls to gu_psprintf() calls
+  (which included removing the precision specifiers) because the former 
+  uses local-specific decimal separators which PostScript doesn't understand.
+  Examined and accepted the resulting changes in the regression test output.
+
+* tests/test-ppr/401-duplex.ok: added
+
+* filter_dotmatrix/: converted to use gu_psprintf().
 
 
 +++++++++++++++++++++

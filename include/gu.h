@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2004.
+** Last modified 15 April 2004.
 */
 
 /*! \file
@@ -138,6 +138,7 @@ enum GU_INI_TYPES {
 
 struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[]);
 const struct GU_INI_ENTRY *gu_ini_section_get_value(const struct GU_INI_ENTRY *section, const char key_name[]);
+const struct GU_INI_ENTRY *gu_ini_section_get_value_by_index(const struct GU_INI_ENTRY *section, int key_index);
 void gu_ini_section_free(struct GU_INI_ENTRY *section);
 const char *gu_ini_value_index(const struct GU_INI_ENTRY *array, int array_index, const char *default_value);
 int gu_ini_assign(const struct GU_INI_ENTRY *array, ...);
@@ -194,6 +195,11 @@ void gu_timeval_add(struct timeval *t1, const struct timeval *t2);
 void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2);
 void gu_timeval_zero(struct timeval *t);
 int gu_runl(const char *myname, FILE *errors, const char *progname, ...);
+void gu_psprintf(const char *format, ...)
+#ifdef __GNUC__
+__attribute__ (( format (printf, 1, 2) ))
+#endif
+;
 
 /*
 ** Values for gu_torf(), a function which examines a string
@@ -386,8 +392,8 @@ void gu_snmp_get(struct gu_snmp *p, ...);
 int gu_snmp_fd(struct gu_snmp *p);
 char *gu_snmp_recv_buf(struct gu_snmp *p, int *len);
 void gu_snmp_set_result_len(struct gu_snmp *p, int len);
-int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items *items, int items_count);
-int gu_snmp_parse_response(struct gu_snmp *p, struct gu_snmp_items *items, int items_count);
+int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, int *request_id, struct gu_snmp_items *items, int items_count);
+int gu_snmp_parse_response(struct gu_snmp *p, int request_id, struct gu_snmp_items *items, int items_count);
 
 #define GU_SNMP_INT 1		/**< tells gu_snmp_get() to fetch an integer value */
 #define GU_SNMP_STR 2		/**< tells gu_snmp_get() to fetch a string value */

@@ -223,6 +223,19 @@ void gu_ini_section_free(struct GU_INI_ENTRY *section)
 		}
 	} /* end of gu_ini_section_free() */
 
+/** Return the first INI value
+ */
+const struct GU_INI_ENTRY *gu_ini_section_get_value_by_index(const struct GU_INI_ENTRY *section, int key_index)
+	{
+	int x;
+	for(x=0; x <= key_index; x++)	
+		{
+		if(!section[x].name)
+			return NULL;
+		}
+	return &section[key_index];
+	}
+
 /** Extract value list from loaded section
 
 This function extracts a value from a section loaded by the
@@ -234,7 +247,8 @@ const struct GU_INI_ENTRY *gu_ini_section_get_value(const struct GU_INI_ENTRY *s
 	int x;
 	const struct GU_INI_ENTRY *match = NULL;
 
-	if(!section) return NULL;
+	if(!section)
+		return NULL;
 
 	for(x=0; section[x].name; x++)
 		{
@@ -372,8 +386,11 @@ line, close it again, and clean up.
 The arguments are as follows:
 
 		file_name		The name of the config file
+		
 		section_name	The section, without the []'s
+
 		key_name		The name on the left hand side of the equals sign
+
 		...				alternating enum GU_INI_TYPES and pointers
 
 */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 March 2004.
+** Last modified 15 April 2004.
 */
 
 #include "before_system.h"
@@ -304,7 +304,7 @@ void gu_snmp_set_result_len(struct gu_snmp *p, int len)
 
 /** Create the SNMP query packet
 */
-int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items *items, int items_count)
+int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, int *request_id, struct gu_snmp_items *items, int items_count)
 	{
 	int start_pdu, start_values_list;				/* place markers to things we can't fill in until the end */
 	int i = 0;
@@ -336,6 +336,8 @@ int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items 
 	/* Generate a request id and encode it. */
 		{
 		p->request_id++;
+		if(request_id)
+			*request_id = p->request_id;
 		#ifdef TEST
 		printf("request_id = 0x%X\n", p->request_id);
 		#endif
@@ -430,7 +432,7 @@ int gu_snmp_create_packet(struct gu_snmp *p, char *buffer, struct gu_snmp_items 
 
 /** Parse an SNMP response packet
 */
-int gu_snmp_parse_response(struct gu_snmp *p, struct gu_snmp_items *items, int items_count)
+int gu_snmp_parse_response(struct gu_snmp *p, int request_id, struct gu_snmp_items *items, int items_count)
 	{
 	char *ptr;
 	int len;
@@ -456,7 +458,7 @@ int gu_snmp_parse_response(struct gu_snmp *p, struct gu_snmp_items *items, int i
 		return -1;
 	if(!(ptr = decode_int(ptr, &len, &obj_ival)))				/* request id */
 		return -1;
-	if(obj_ival != p->request_id)								/* request id should match */
+	if(obj_ival != request_id)									/* request id should match */
 		return -1;
 
 	/* OK, now things are serious.  If the packet is bad, we treat it as a fatal error.
@@ -550,7 +552,7 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 		}
 
 	/* Construct the SNMP query packet. */
-	packet_length = gu_snmp_create_packet(p, buffer, items, items_count);
+	packet_length = gu_snmp_create_packet(p, buffer, NULL, items, items_count);
 
 	/* Send and resend the request until we get a response or the retries
 	   are exhausted. */
@@ -589,7 +591,7 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 
 		/* If the packet isn't an SNMP response, then we get -1,
 		   for other errors an exception is thrown. */
-		if(gu_snmp_parse_response(p, items, items_count) != -1)
+		if(gu_snmp_parse_response(p, p->request_id, items, items_count) != -1)
 			return;
 		} /* end of retry loop */
 	}

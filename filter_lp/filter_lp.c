@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_lp/filter_lp.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 October 2003.
+** Last modified 15 April 2004.
 */
 
 /*
@@ -702,7 +702,8 @@ static void pass1(void)
 	** factor and converted to points.
 	*/
 	pointsize = (page_width-left_margin-right_margin-gutter_lr)/columns/char_width;
-	if(noisy) fprintf(stderr, "pointsize = %.1f\n", pointsize);
+	if(noisy)
+		fprintf(stderr, "pointsize = %.1f\n", pointsize);
 
 	/*
 	** If the above computation yielded a point size which is
@@ -712,7 +713,8 @@ static void pass1(void)
 	if(pointsize > (line_spacing * char_height) )
 		{
 		pointsize = line_spacing * char_height;
-		if(noisy) fprintf(stderr, "pointsize reduced to %.1f because line_spacing is %.1f\n",pointsize,line_spacing);
+		if(noisy)
+			fprintf(stderr, "pointsize reduced to %.1f because line_spacing is %.1f\n",pointsize,line_spacing);
 		}
 
 	/* If simplex mode is selected, turn the gutter into a bigger
@@ -888,8 +890,9 @@ static void prolog(void)
 	** Assume that Courier will always be required, name Courier-Bold
 	** only if it is needed.
 	*/
-	printf("%%%%DocumentNeededResources: font %s\n", font_normal.font_psname);
-	if(uses_bold) printf("%%%%+ font %s\n", font_bold.font_psname);
+	gu_psprintf("%%%%DocumentNeededResources: font %s\n", font_normal.font_psname);
+	if(uses_bold)
+		gu_psprintf("%%%%+ font %s\n", font_bold.font_psname);
 
 	/*
 	** If the encoding matters because we have non-ASCII characters,
@@ -899,7 +902,7 @@ static void prolog(void)
 	if(newencoding)
 		{
 		fputs("%%+ procset (TrinColl-PPR-ReEncode) 1.1 0\n", stdout);
-		printf("%%%%+ encoding %s\n", newencoding);
+		gu_psprintf("%%%%+ encoding %s\n", newencoding);
 		}
 
 	/*
@@ -907,7 +910,7 @@ static void prolog(void)
 	*/
 	if(should_specify_medium)
 		{
-		printf("%%%%DocumentMedia: lpform %.1f %.1f %.1f %s (%s)\n",
+		gu_psprintf("%%%%DocumentMedia: lpform %f %f %f %s (%s)\n",
 			phys_pu_width, phys_pu_height, MediaWeight, MediaColor, MediaType);
 		}
 
@@ -935,12 +938,12 @@ static void prolog(void)
 		}
 	fputc('\n', stdout);
 
-	fputs("%%EndComments\n",stdout);
+	fputs("%%EndComments\n", stdout);
 
 	/*---------------------------------------------
 	** Send some proceedure sets
 	---------------------------------------------*/
-	fputs("%%BeginProlog\n",stdout);
+	fputs("%%BeginProlog\n", stdout);
 
 	/* Send the filter_lp procedure set. */
 	our_procset();
@@ -952,7 +955,7 @@ static void prolog(void)
 	if(newencoding)
 		{
 		fputs("%%IncludeResource: procset (TrinColl-PPR-ReEncode) 1.1 0\n", stdout);
-		printf("%%%%IncludeResource: encoding %s\n", newencoding);
+		gu_psprintf("%%%%IncludeResource: encoding %s\n", newencoding);
 		}
 
 	fputs("%%EndProlog\n\n", stdout);
@@ -964,7 +967,7 @@ static void prolog(void)
 	fputs("%%BeginSetup\n",stdout);
 
 	/* Select the page size we want. */
-	printf(
+	gu_psprintf(
 		"[ {\n"
 		"%%%%IncludeFeature: *PageSize %s\n"
 		"} stopped {(*Pagesize %s failed.\\n)print} if cleartomark\n",
@@ -985,37 +988,39 @@ static void prolog(void)
 		}
 
 	/* Download our fonts. */
-	printf("%%%%IncludeResource: font %s\n",font_normal.font_psname);
-	if(uses_bold) printf("%%%%IncludeResource: font %s\n", font_bold.font_psname);
+	gu_psprintf("%%%%IncludeResource: font %s\n", font_normal.font_psname);
+	if(uses_bold)
+		gu_psprintf("%%%%IncludeResource: font %s\n", font_bold.font_psname);
 
 	/* Re-encode those we must. */
 	if(newencoding_normal)
-		printf("/%s /%s /%s ReEncode\n", font_normal.font_psname, font_normal.font_psname, newencoding_normal);
+		gu_psprintf("/%s /%s /%s ReEncode\n", font_normal.font_psname, font_normal.font_psname, newencoding_normal);
 	if(newencoding_bold)
-		printf("/%s /%s /%s ReEncode\n", font_bold.font_psname, font_bold.font_psname, newencoding_bold);
+		gu_psprintf("/%s /%s /%s ReEncode\n", font_bold.font_psname, font_bold.font_psname, newencoding_bold);
 
 	/*
 	** We must set the point size variable before we can
 	** select the fonts.
 	*/
-	printf("/ptsize %.1f def\n", pointsize);
+	gu_psprintf("/ptsize %f def\n", pointsize);
 
 	/*
 	** Find, scale, and save the fonts.
 	*/
-	printf("/RFont /%s findfont ptsize scalefont def\n", font_normal.font_psname);
-	if(uses_bold) printf("/BFont /%s findfont ptsize scalefont def\n", font_bold.font_psname);
+	gu_psprintf("/RFont /%s findfont ptsize scalefont def\n", font_normal.font_psname);
+	if(uses_bold)
+		gu_psprintf("/BFont /%s findfont ptsize scalefont def\n", font_bold.font_psname);
 
 	/*
 	** Set a lot of PostScript variables.
 	*/
-	printf("/width %.2f def\n", char_width);
-	printf("/yspace %.3f def\n", line_spacing); /* vertical spacing */
-	printf("/lm %.2f def\n", left_margin);		/* left margin in inches */
-	printf("/tm %.2f def\n", top_margin);		/* top margin in inches */
-	printf("/gut_lr %.2f def\n", gutter_lr);	/* gutter width */
-	printf("/gut_tb %.2f def\n", gutter_tb);	/* gutter width */
-	printf("/ph %.2f def\n", page_height);		/* page height in inches */
+	gu_psprintf("/width %f def\n", char_width);
+	gu_psprintf("/yspace %f def\n", line_spacing);	/* vertical spacing */
+	gu_psprintf("/lm %f def\n", left_margin);		/* left margin in inches */
+	gu_psprintf("/tm %f def\n", top_margin);		/* top margin in inches */
+	gu_psprintf("/gut_lr %f def\n", gutter_lr);		/* gutter width */
+	gu_psprintf("/gut_tb %f def\n", gutter_tb);		/* gutter width */
+	gu_psprintf("/ph %f def\n", page_height);		/* page height in inches */
 	fputs("/y ph tm sub ptsize 2 div sub def\n", stdout);
 		/* y at top minus top margin minus half the point size */
 	fputs("/m 0 def\n", stdout);				/* no moveto yet */
@@ -1038,13 +1043,13 @@ int indent;				/* spaces to indent next line */
 */
 static void startpage(int page)
 	{
-	printf("%%%%Page: %i %i\n", page, page);
+	gu_psprintf("%%%%Page: %d %d\n", page, page);
 	puts("%%BeginPageSetup");
 
-	printf("/page %d def\nsp\n", page);
+	gu_psprintf("/page %d def\nsp\n", page);
 	if(landscape)								/* landscape */
 		{
-		printf("90 rotate 0 %.2f neg translate\n", phys_pu_width);
+		gu_psprintf("90 rotate 0 %f neg translate\n", phys_pu_width);
 		}
 
 	puts("%%EndPageSetup");
@@ -1094,13 +1099,13 @@ static int underline(int skip)
 				{
 				if(ul)				/* if not all spaces */
 					{				/* print an underlining command */
-					printf("%d %d u\n",ulstart,index-ulstart);
+					gu_psprintf("%d %d u\n", ulstart, index-ulstart);
 					}
 				else				/* if all spaces, */
 					{
 					if( (index-ulstart) > 7 )
 						{			/* if rather long, */
-						printf("%d %d u\n",ulstart,index-ulstart);
+						gu_psprintf("%d %d u\n", ulstart, index-ulstart);
 						}
 					else			/* if short, */
 						{			/* convert to underscores */
@@ -1132,9 +1137,9 @@ static void outline(int skip)
 	int newindent=0;
 	int c;
 
-	if( (len=strspn((char*)cptr," ")) != indent )  /* if number of leading spaces */
+	if((len = strspn((char*)cptr," ")) != indent)  /* if number of leading spaces */
 		{									/* is not equal to the current */
-		printf("%d i",len);					/* indent, then change current */
+		gu_psprintf("%d i", len);			/* indent, then change current */
 		indent=len;							/* indent */
 		newindent=-1;						/* set flag so space can be */
 		}									/* added if "b" or "r" used */
@@ -1144,12 +1149,12 @@ static void outline(int skip)
 	started=0;
 	while( (c=*cptr) )
 		{
-		if( (len=strspn((char*)cptr," ")) > 3 )
+		if((len = strspn((char*)cptr," ")) > 3)
 			{
-			if(len>29)						/* if too long to abreviate, */
-				printf(")%d t(",len);		/* then writ it out long */
-			else							/* if short enough */
-				printf(")%c(",len-4+'A');	/* abreviate with single letter */
+			if(len>29)							/* if too long to abreviate, */
+				gu_psprintf(")%d t(", len);		/* then writ it out long */
+			else								/* if short enough */
+				gu_psprintf(")%c(", len-4+'A');	/* abreviate with single letter */
 			cptr+=len;
 			aptr+=len;
 			continue;
@@ -1157,7 +1162,7 @@ static void outline(int skip)
 
 		if(c != ' ')					/* spaces have no font */
 			{
-			if( *aptr & ATTR_BOLD )		/* if this character is bold */
+			if(*aptr & ATTR_BOLD)		/* if this character is bold */
 				{
 				if(font==0)				/* if font is currently roman, */
 					{
@@ -1213,9 +1218,9 @@ static void outline(int skip)
 				break;
 			default:					/* just print everything else */
 				if(c<' ' || c>'~')		/* possibly in octal */
-					printf("\\%.3o",c);
+					gu_psprintf("\\%o", c);
 				else
-					fputc(c,stdout);
+					fputc(c, stdout);
 				break;
 			}
 
@@ -1232,8 +1237,8 @@ static void outline(int skip)
 static void trailer(int pagecount)
 	{
 	fputs("%%Trailer\n",stdout);
-	printf("%%%%Pages: %d\n",pagecount);
-	fputs("%%EOF\n",stdout);
+	gu_psprintf("%%%%Pages: %d\n", pagecount);
+	fputs("%%EOF\n", stdout);
 	}
 
 /*
@@ -1277,10 +1282,10 @@ static void pass2(void)
 					}
 				if(nlpend)		/* send all pending newlines */
 					{
-					if(nlpend==1)				/* use "n" command for */
-						fputs("n\n",stdout);	/* a single newline, */
-					else						/* "nx" command for */
-						printf("%d nx\n",nlpend);	/* multiple newline */
+					if(nlpend==1)						/* use "n" command for */
+						fputs("n\n", stdout);			/* a single newline, */
+					else								/* "nx" command for */
+						gu_psprintf("%d nx\n", nlpend);	/* multiple newline */
 					nlpend = 0;
 					}
 

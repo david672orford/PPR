@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/linebuf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 September 2003.
+** Last modified 15 April 2004.
 */
 
 /*
@@ -244,7 +244,7 @@ void empty_buffer(void)
 
 				xpos=p->xpos;
 				achieve_position();
-				printf("%d ul\n",ul_start);
+				gu_psprintf("%d ul\n",ul_start);
 				ul_start=-1;
 
 				postscript_out_style &= ~OSTYLE_UNDERLINE;
@@ -285,7 +285,7 @@ void empty_buffer(void)
 
 			/* We we have changed baseline bias, say so now. */
 			if(blbias != postscript_blbias)
-				printf("%d bb\n",blbias);
+				gu_psprintf("%d bb\n",blbias);
 
 			/* Select proportional if appropriate. */
 			if(p->style & OSTYLE_PROPORTIONAL)
@@ -299,9 +299,9 @@ void empty_buffer(void)
 				fputc('o', stdout);
 
 			if(p->vscale == 1.0)				/* scale */
-				printf(" %2.2f sf\n",p->hscale);
+				gu_psprintf(" %f sf\n", p->hscale);
 			else
-				printf(" %2.2f %2.2f sfh\n",p->hscale,p->vscale);
+				gu_psprintf(" %f %f sfh\n",p->hscale,p->vscale);
 
 			postscript_out_style = p->style;
 			postscript_out_hscale = p->hscale;
@@ -320,9 +320,9 @@ void empty_buffer(void)
 				string_open=FALSE;
 				}
 
-			printf("%d colour\n",p->colour);
+			gu_psprintf("%d colour\n", p->colour);
 
-			postscript_print_colour=p->colour;
+			postscript_print_colour = p->colour;
 			}
 
 		/* See if we must select a new extra spacing. */
@@ -334,7 +334,7 @@ void empty_buffer(void)
 				string_open=FALSE;
 				}
 
-			printf("%d e\n",p->extra_space);
+			gu_psprintf("%d e\n", p->extra_space);
 
 			postscript_extra_space=p->extra_space;
 			}
@@ -384,34 +384,37 @@ void empty_buffer(void)
 			achieve_position();
 			if(postscript_space_width != average)
 				{
-				printf("%1.1f s ",average);
+				gu_psprintf("%f s ",average);
 				postscript_space_width=average;
 				}
 			fputc('(',stdout);
 			string_open=TRUE;
 			}
 
-		/* Send the character, possibly as an octal number */
-		if(isprint(c))
+		/*
+		** Send the string character in a manner which conforms to
+		** Clean7Bit encoding.  This means that non-ASCII characters
+		** and control codes must be encoding in octal.  Additionally,
+		** some characters must be escaped because they have special
+		** meaning in PostScript strings.
+		*/
+		if(c < ' ' || c > '~')
+			{
+			gu_psprintf("\\%o", c);		/* octal */
+			}
+		else
 			{
 			switch(c)
 				{
 				case '(':				/* Escape these */
 				case ')':				/* characters which have */
 				case 0x5C:				/* special significance within */
-					printf("\\%c",c);	/* PostScript strings. */
+					gu_psprintf("\\%c", c);	/* PostScript strings. */
 					break;
-				default:				/* Just write most characters. */
-					if( c<' ' || c>'~') /* possibly in octal */
-						printf("\\%.3o",c);
-					else
-						fputc(c,stdout);
+				default:
+					fputc(c, stdout);
 					break;
 				}
-			}
-		else							/* If not printable, */
-			{							/* express it in octal. */
-			printf("\\%o",c);
 			}
 
 		/*
@@ -430,7 +433,7 @@ void empty_buffer(void)
 	if(ul_start != -1)					/* End underline */
 		{
 		achieve_position();
-		printf("%d ul\n",ul_start);
+		gu_psprintf("%d ul\n", ul_start);
 		}
 
 	buffer_count=0;						/* buffer is empty now */
