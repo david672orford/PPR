@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/fixup/fixup_conf.sh
+# mouse:~ppr/src/create_ppr_conf.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,22 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 January 2003.
+# Last modified 21 February 2003.
 #
 
 #
-# The purpose of this shell script is to generate /etc/ppr/ppr.conf.sample.
-# On the initial install the sample will be later be copied to
-# /etc/ppr/ppr.conf.
+# The purpose of this shell script is to generate ppr.conf.sample.  It will be
+# installed as /etc/ppr/ppr.conf.sample.  On a clean install it will also
+# be installed as /etc/ppr/ppr.conf.
 #
 
-CONFDIR="?"
-SHAREDIR="?"
-USER_PPR=?
-GROUP_PPR=?
+. ../makeprogs/paths.sh
 
-CONF="$CONFDIR/ppr.conf"
-SAMPLE="$CONF.sample"
+SAMPLE="ppr.conf.sample"
 
 # Function to find a program in the specified $PATH style
 # search list.  The first argument is the program to find,
@@ -193,8 +189,5 @@ echo
 
 chown $USER_PPR $SAMPLE
 chgrp $GROUP_PPR $SAMPLE
-
-echo "Done."
-echo
 
 exit 0

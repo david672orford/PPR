@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/misc_filters/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# mouse:~ppr/src/filters_misc/Makefile
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 November 2002.
+# Last modified 21 February 2002.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS=filter_hexdump$(DOTEXE) make_dvips_conf$(DOTEXE)
+BUILT=filter_hexdump$(DOTEXE) make_dvips_conf$(DOTEXE) ppr-indexfilters
 
 SCRIPTS_SH=troff_real.sh ditroff_real.sh troff_groff.sh ditroff_groff.sh \
 	dvi.sh texinfo.sh \
@@ -47,7 +47,7 @@ SCRIPTS_TCL=pr.tcl
 
 #=== Build ==================================================================
 
-all: $(PROGS)
+all: $(BUILT)
 
 filter_hexdump$(DOTEXE): filter_hexdump.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o filter_hexdump$(DOTEXE) filter_hexdump.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT) $(INTLLIBS)
@@ -58,8 +58,9 @@ make_dvips_conf$(DOTEXE): make_dvips_conf.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(
 #=== Install ================================================================
 
 install: $(PROGS) $(SCRIPTS_SH) $(SCRIPTS_PERL)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/filters filter_hexdump$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/filters filter_hexdump$(DOTEXE)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 2755 $(HOMEDIR)/lib make_dvips_conf$(DOTEXE)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(HOMEDIR)/bin ppr-indexfilters
 	$(INSTALLDATA) $(SHAREDIR)/lib mfmodes.conf
 	for f in $(SCRIPTS_SH);\
 		do\
@@ -73,6 +74,7 @@ install: $(PROGS) $(SCRIPTS_SH) $(SCRIPTS_PERL)
 		do\
 		$(INSTALLCP) $$f $(HOMEDIR)/fixup/filter_`basename $$f .tcl`;\
 		done
+	#./ppr-indexfilters >/dev/null
 
 #=== Housekeeping ===========================================================
 
@@ -82,7 +84,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT)
 
 # end of file
 

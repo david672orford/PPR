@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 January 2003.
+# Last modified 21 February 2003.
 #
 
 #
@@ -48,6 +48,7 @@ CVSROOT=:ext:chappell@cvs.ppr.sourceforge.net:/cvsroot/ppr
 
 # These are the subdirectories we will do make in:
 SUBDIRS=\
+	z_install_begin \
 	makeprogs \
 	libgu \
 	nonppr_tcl \
@@ -88,7 +89,8 @@ SUBDIRS=\
 	fixup \
 	init_and_cron \
 	templates \
-	docs
+	docs \
+	z_install_end
 
 # These subdirectories are not ready for use yet.  We will only do
 # "make clean" in them but not "make" or "make install".

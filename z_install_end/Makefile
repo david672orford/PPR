@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/misc/Makefile
+# mouse:~ppr/src/templates/Makefile
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -32,39 +32,25 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS=ppr-sync \
-	customs.ppr \
-	sgi_glp_hack \
-	ppd2macosdrv \
-	custom_hook_docutech \
-	xmessage \
-	ppr-testpage
+ALL=ppr.conf.sample
 
 #=== Build ==================================================================
 
-all: $(PROGS)
+all: $(ALL)
 
-xmessage: xmessage.tcl
-	cp xmessage.tcl xmessage
-	$(CHMOD) 755 xmessage
-
-OBJS1=\
-	ppr-testpage.$(OBJ) \
-	../libppr.$(LIBEXT) \
-	../libgu.$(LIBEXT)
-ppr-testpage$(DOTEXE): $(OBJS1)
-	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(INTLLIBS)
+ppr.conf.sample: make_ppr_conf_sample.sh
+	./make_ppr_conf_sample.sh
 
 #=== Install ================================================================
 
-install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-sync ppd2macosdrv ppr-testpage
-	if [ `uname -s` = "IRIX" ];\
-		then\
-		$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin sgi_glp_hack;\
-		fi
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib custom_hook_docutech xmessage
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/fixup customs.ppr
+install: $(ALL)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
+	./install_sample_config.sh
+	./install_mediadb.sh >/dev/null
+	./install_atalk_links.tcl
+	$(HOMEDIR)/bin/ppr-indexfilters >/dev/null
+	$(HOMEDIR)/bin/ppr-indexfonts >/dev/null
+	$(HOMEDIR)/bin/ppr-indexppds >/dev/null
 
 #=== Housekeeping ===========================================================
 
@@ -74,6 +60,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.$(OBJ) $(BACKUPS) $(ALL)
 
 # end of file

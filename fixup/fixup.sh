@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 February 2003.
+# Last modified 21 February 2003.
 #
 
 #
@@ -82,15 +82,6 @@ $HOMEDIR/fixup/fixup_lmx || exit 1
 # Create links in public bin directory.
 $HOMEDIR/fixup/fixup_links || exit 1
 
-# Install login profile scripts.
-#$HOMEDIR/fixup/fixup_login || exit 1
-
-# Create a sample ppr.conf.
-$HOMEDIR/fixup/fixup_conf || exit 1
-
-# Create missing config file from samples.
-$HOMEDIR/fixup/fixup_samples || exit 1
-
 # Install init code.
 $HOMEDIR/fixup/fixup_init || exit 1
 
@@ -99,18 +90,6 @@ su $USER_PPR -c $HOMEDIR/fixup/fixup_cron
 
 # Set up Inetd.  It it fails, maybe there is no Inetd installed.
 $HOMEDIR/fixup/fixup_inetd
-
-# Create index of system fonts.
-su $USER_PPR -c $HOMEDIR/bin/ppr-indexfonts >/dev/null || exit 1
-
-# Create a base set of media descriptions.
-$HOMEDIR/fixup/fixup_media >/dev/null || exit 1
-
-# Create filter scripts using external programs.
-$HOMEDIR/fixup/fixup_filters >/dev/null || exit 1
-
-# Create link for AppleTalk getzones.
-$HOMEDIR/fixup/fixup_atalk || exit 1
 
 echo "PPR installation done.  You may now start the spooler."
 echo

@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 13 March 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 21 February 2003.
 */
 
 /*
@@ -544,11 +559,11 @@ int parse_dest_name(struct Destname *dest, const char *destname)
 **==================================================================*/
 
 /*
-** Is the user privledged?  If the user identity has been changed
+** Is the user privileged?  If the user identity has been changed
 ** (by the --su switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.
 */
-static gu_boolean privledged(void)
+static gu_boolean privileged(void)
     {
     static gu_boolean answer = FALSE;
     static char *answer_username = NULL;
@@ -562,22 +577,22 @@ static gu_boolean privledged(void)
 	}
 
     return answer;
-    } /* end of privledged() */
+    } /* end of privileged() */
 
 /*
 ** Set the user who should be considered to be running this program.
-** Only privledged users may do this.  Thus, a privledged user may
-** become a different privledged user or become an unprivledged user.
-** Thus a privledged user can use this feature to drop privledge, but
+** Only privileged users may do this.  Thus, a privileged user may
+** become a different privileged user or become an unprivileged user.
+** Thus a privileged user can use this feature to drop privledge, but
 ** not to gain additional access.
 **
-** Generally, this will be used by servers running under privledged
+** Generally, this will be used by servers running under privileged
 ** user identities.  They will use this so as not to exceed the privledge
 ** of the user for whom they are acting.
 */
 static int su(const char username[])
     {
-    if(privledged())
+    if(privileged())
     	{
 	gu_free(su_user);
 	su_user = gu_strdup(username);
@@ -600,7 +615,7 @@ static int su(const char username[])
 */
 int assert_am_operator(void)
     {
-    if(privledged())
+    if(privileged())
 	{
 	return 0;
 	}
@@ -672,7 +687,7 @@ int job_permission_check(struct Jobname *job)
     ** job.  This will save us the time and trouble of opening the
     ** queue file to figure out whose job it is.
     */
-    if(privledged() && !proxy_for && !magic_cookie)
+    if(privileged() && !proxy_for && !magic_cookie)
 	return 0;
 
     /*
@@ -747,7 +762,7 @@ int job_permission_check(struct Jobname *job)
     **
     ** (In all this we obey the --su switch.)
     */
-    if(!privledged() && strcmp(job_username, su_user))
+    if(!privileged() && strcmp(job_username, su_user))
 	{
 	fprintf(errors,
 		_("You may not manipulate the job \"%s\" because it\n"

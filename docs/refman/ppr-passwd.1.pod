@@ -1,5 +1,5 @@
 #
-# mouse:~ppr/src/fixup/fixup_login.sh
+# mouse:~ppr/src/docs/refman/ppr-indexfonts.8.pod
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -25,34 +25,67 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 January 2002.
+# Last modified 21 February 2003.
 #
 
-HOMEDIR="?"
-PROFILE_D="/etc/profile.d"
+=head1 NAME
 
-#======================================================================
-# Add shell startup files to select PPR responders.
-# This will soon be obsolete.
-#======================================================================
+B<ppr-passwd> - Change a password for the PPR web interface
 
-# Formerly we kept these files in $HOMEDIR/lib and put symbolic links in 
-# /etc/profile.d, but it doesn't seem a good idea to have ppr writable login
-# files in a place where root will execute them.
-if [ -d $PROFILE_D ]
-    then
-    echo "Copying login files to \"$PROFILE_D\"..."
-    for i in login_ppr.sh login_ppr.csh
-        do
-        echo "    cp $HOMEDIR/fixup/$i $PROFILE_D/$i"
-        rm -f $PROFILE_D/$i
-        cp $HOMEDIR/fixup/$i $PROFILE_D/$i || exit 1
-	chown root $PROFILE_D/$i
-	chmod 555 $PROFILE_D/$i
-        done
-    echo "Done."
-    echo
-    fi
+=head1 SYNOPSIS
 
-exit 0
+B<ppr-passwd> [B<--add>] [B<--delete>] I<username>
 
+=head1 DESCRIPTION
+
+This program is used to edit the password file for the PPR web interface. 
+The web interface needs its own password file in order to support MD5 Digest
+HTTP authentication.
+
+If no I<username> is specified, then the invoking users own password will be
+changed.  Users listed in B</etc/ppr/acl/passwd.allow> (as well as root and
+ppr) may change other people's passwords and needn't know the old password.
+
+This program supports the following options:
+
+=over 4
+
+=item B<--add>
+
+=item B<-a>
+
+Add the user to the password file if he doesn't already exist.
+
+=item B<--delete>
+
+=item B<-x>
+
+Delete the user from the password database.
+
+=item B<--help>
+
+Prints a short usage summary.
+
+=item B<--version>
+
+Prints the PPR version number and copyright information.
+
+=back
+
+=head1 FILES
+
+The password file whic this program modifies is F</etc/ppr/htpasswd>.
+
+=head1 SEE ALSO
+
+"PPR, a PostScript Print Spooler"
+
+=head1 HISTORY
+
+PPR was written at Trinity College during 1993--2003.
+
+=head1 AUTHOR
+
+David Chappell, Trinity College Computing Center, Hartford, Connecticut.
+
+=cut

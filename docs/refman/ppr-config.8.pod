@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 February 2003.
+# Last modified 21 February 2003.
 #
 
 =head1 NAME
@@ -54,18 +54,22 @@ Print a makefile fragment, suitable for including in a makefile.
 
 =item --sh
 
-Print a shell script fragment, suitable for including in a Borne shell
-script.
+Print a shell script fragment, suitable for including in a Borne shell script.
 
 =item --ph
 
-Print a Perl header file containing PPR configuration information, suitable for 
-including using B<require>.  (PPR's F<paths.ph> is created by this command.)
+Print a Perl header file containing PPR configuration information, suitable
+for including using B<require>.  (PPR's F<paths.ph> is created by this
+command.)
 
 =item --pm
 
 Print a Perl module containing PPR configuration information, suitable for
 including using B<use>.  (PPR's F<paths.pm> is created by this command.)
+
+=item --tcl
+
+Print a Tcl script fragment, suitable for including in a Tcl script.
 
 =item --confdir
 

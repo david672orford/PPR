@@ -25,7 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 February 2003.
+** Last modified 21 February 2003.
+*/
+
+/*
+** This program updates /etc/ppr/htpasswd, a file which contains MD5 digests
+** for use with MD5 Digest HTTP authentication.
 */
 
 #include "before_system.h"
@@ -53,18 +58,20 @@ const char htpasswd[] = CONFDIR"/htpasswd";
 const char htpasswd_new[] = CONFDIR"/htpasswd_new";
 const char realm[] = "printing";
 
-static int body(FILE *rfile, FILE *wfile, const char username[], const char realm[]);
+static int old_password(const char username[], const char realm[], const char digested[]);
 static int new_password(FILE *wfile, const char username[], const char realm[]);
 static void md5_digest(char *buffer, const char username[], const char realm[], const char password[]);
 
 /*
 ** Command line options:
 */
-static const char *option_chars = "";
+static const char *option_chars = "ax";
 static const struct gu_getopt_opt option_words[] =
 	{
-	{"help", 1000, FALSE},
-	{"version", 1001, FALSE},
+	{"add", 'a', FALSE},
+	{"delete", 'x', FALSE},
+	{"help", 9000, FALSE},
+	{"version", 9001, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -85,7 +92,11 @@ static void help_usage(FILE *outfile)
 
 int main(int argc, char *argv[])
     {
+    gu_boolean privileged;
+    const char *invoking_user;
     const char *username;
+    gu_boolean opt_add = FALSE;
+    gu_boolean opt_delete = FALSE;
     int rfd, wfd;
     FILE *rfile, *wfile;
 
@@ -96,6 +107,27 @@ int main(int argc, char *argv[])
     textdomain(PACKAGE);
     #endif
 
+    {
+    struct passwd *pw;
+    uid_t uid = getuid();
+    if(!(pw = getpwuid(uid)))
+	{
+	fprintf(stderr, _("%s: getpwuid(%ld) failed, errno=%d (%s)\n"), myname, (long)getuid(), errno, gu_strerror(errno));
+	return EXIT_NOTFOUND;
+	}
+    invoking_user = gu_strdup(pw->pw_name);
+
+    /* Check if this user is root or ppr or is listed in /etc/ppr/acl/passwd.allow. */
+    privileged = user_acl_allows(invoking_user, "passwd");
+
+    /* Prevent user from sending us signals. */
+    if(setreuid(geteuid(), -1) == -1)
+	{
+	fprintf(stderr, "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)geteuid(), (long)-1, errno, gu_strerror(errno));
+	return EXIT_INTERNAL;
+	}
+    }
+
     /* Parse the options. */
     {
     struct gu_getopt_state getopt_state;
@@ -105,11 +137,19 @@ int main(int argc, char *argv[])
     	{
     	switch(optchar)
     	    {
-	    case 1000:			/* --help */
+	    case 'a':			/* --add */
+		opt_add = TRUE;
+		break;
+	    
+	    case 'x':			/* --delete */
+		opt_delete = TRUE;
+		break;
+
+	    case 9000:			/* --help */
 	    	help_usage(stdout);
 	    	exit(EXIT_OK);
 
-	    case 1001:			/* --version */
+	    case 9001:			/* --version */
 		puts(VERSION);
 		puts(COPYRIGHT);
 		puts(AUTHOR);
@@ -121,25 +161,37 @@ int main(int argc, char *argv[])
 		break;
     	    }
     	}
+
     if(argc > getopt_state.optind)
 	{
+	if(!privileged)
+	    {
+	    fprintf(stderr, _("%s: only privileged users may change passwords for others.\n"), myname);
+	    return EXIT_DENIED;
+	    }
 	username = argv[getopt_state.optind];
 	}
     else
 	{
-	struct passwd *pw;
-	if(!(pw = getpwuid(getuid())))
-	    {
-	    fprintf(stderr, _("%s: getpwuid(%ld) failed, errno=%d (%s)\n"), myname, (long)getuid(), errno, gu_strerror(errno));
-	    return EXIT_NOTFOUND;
-	    }
-	username = gu_strdup(pw->pw_name);
+	username = invoking_user;
 	}
     }
 
+    if(opt_add && opt_delete)
+	{
+	fprintf(stderr, _("%s: cannot add and delete a user at the same time.\n"), myname);
+	return EXIT_ERROR;
+	}
+
+    if((opt_add || opt_delete) && !privileged)
+	{
+	fprintf(stderr, _("%s: only privileged users may add and delete entries.\n"), myname);
+	return EXIT_DENIED;
+	}
+
     if((rfd = open(htpasswd, O_RDWR)) == -1)
 	{
-	fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s)\n"), myname, htpasswd, errno, gu_strerror(errno));
+	fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s).\n"), myname, htpasswd, errno, gu_strerror(errno));
 	return EXIT_INTERNAL;
 	}
 
@@ -162,71 +214,49 @@ int main(int argc, char *argv[])
 	}
 
     {
-    int ret;
-    ret = body(rfile, wfile, username, realm);
-
-    if(fclose(wfile))
-	{
-	fprintf(stderr, _("%s: fclose() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
-	ret = -1;
-	}
-
-    if(fclose(rfile))
-	{
-	fprintf(stderr, _("%s: fclose() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
-	ret = -1;
-	}
-
-    if(ret)
-	{
-	if(unlink(htpasswd_new) == -1)
-	    {
-	    fprintf(stderr, _("%s: unlink(\"%s\") failed, errno=%d (%s)\n"), myname, htpasswd_new, errno, gu_strerror(errno));
-	    }
-	}
-
-    else
-	{
-	if(rename(htpasswd_new, htpasswd) == -1)
-	    {
-	    fprintf(stderr, _("%s: rename(\"%s\", \"%s\") failed, errno=%d (%s)\n"), myname, htpasswd_new, htpasswd, errno, gu_strerror(errno));
-	    ret = -1;
-	    }
-	}
-
-    if(ret == 1)
-    	return EXIT_SYNTAX;
-    if(ret == -1)
-	return EXIT_INTERNAL;
-    }
-
-    printf(_("Password updated sucessfully.\n"));
-    return EXIT_OK;
-    } /* end of main() */
-
-static int body(FILE *rfile, FILE *wfile, const char username[], const char realm[])
+    int ret = -1;
     {
     char *line = NULL;
     int line_available = 80;
     gu_boolean found = FALSE;
     char *p, *f1, *f2, *f3;
     int linenum = 0;
-    int ret = -1;
 
+    /* Step thru all the lines of /etc/ppr/htpasswd. */
     while((p = line = gu_getline(line, &line_available, rfile)))
 	{
 	linenum++;
+
+	/* Locate the three fields.  Each line looks like this:
+		david:printing:c2e93b4cf3b62bdfd5b4680c2a1b8460
+	*/
 	if(!(f1 = gu_strsep(&p,":")) || !(f2 = gu_strsep(&p,":")) || !(f3 = gu_strsep(&p, ":")))
 	    {
 	    fprintf(stderr, _("%s: line %d of %s is invalid, aborting\n"), myname, linenum, htpasswd);
 	    break;
 	    }
+
+	/* If this is the one we are looking for, */
 	if(strcmp(f1, username) == 0 && strcmp(f2, realm) == 0)
 	    {
-	    if((ret = new_password(wfile, username, realm)))
-	    	break;
 	    found = TRUE;
+
+	    if(!opt_delete)
+		{
+		/* Non-privileged users must prove that they know the old password. */
+		if(!privileged)
+		    {
+	    	    if((ret = old_password(username, realm, f3)) != 0)
+			break;
+		    }
+		
+		/* Get new password from user and write out the user:realm:digest line. */
+		if((ret = new_password(wfile, username, realm)) != 0)
+		    break;
+		}
 	    }
+
+	/* Others just get copied. */
 	else
 	    {
 	    if(fprintf(wfile, "%s:%s:%s\n", f1, f2, f3) < 0)
@@ -237,41 +267,149 @@ static int body(FILE *rfile, FILE *wfile, const char username[], const char real
 	    }
 	}
 
+    /* Line won't have been freed if break in loop. */
     if(line)
 	gu_free(line);
 
-    else if(!found)
+    /* If we haven't already changed an existing password, */
+    if(!found)
 	{
-	ret = new_password(wfile, username, realm);
+	if(!opt_add)
+	    {
+	    fprintf(stderr, _("%s: user \"%s\" not found in \"%s\".\n"), myname, username, htpasswd);
+	    ret = EXIT_NOTFOUND;
+	    }
+	else
+	    {
+	    ret = new_password(wfile, username, realm);
+	    }
 	}
 
-    return ret;
     }
 
-static int new_password(FILE *wfile, const char username[], const char realm[])
+    /* /etc/ppr/htpasswd_new */
+    if(fclose(wfile))
+	{
+	fprintf(stderr, _("%s: fclose() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
+	ret = -1;
+	}
+
+    /* /etc/ppr/htpasswd */
+    if(fclose(rfile))
+	{
+	fprintf(stderr, _("%s: fclose() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
+	ret = -1;
+	}
+
+    /* If we failed, get rid of /etc/ppr/htpasswd_new. */
+    if(ret != 0)
+	{
+	if(unlink(htpasswd_new) == -1)
+	    {
+	    fprintf(stderr, _("%s: unlink(\"%s\") failed, errno=%d (%s)\n"), myname, htpasswd_new, errno, gu_strerror(errno));
+	    }
+	printf(_("No changes made.\n"));
+	}
+
+    /* Otherwise rename /etc/ppr/htpasswd_new --> /etc/ppr/htpasswd (an atomic operation). */
+    else
+	{
+	if(rename(htpasswd_new, htpasswd) == -1)
+	    {
+	    fprintf(stderr, _("%s: rename(\"%s\", \"%s\") failed, errno=%d (%s)\n"), myname, htpasswd_new, htpasswd, errno, gu_strerror(errno));
+	    ret = -1;
+	    }
+	printf(_("Password file updated sucessfully.\n"));
+	}
+
+    if(ret > 0)
+    	return ret;
+    if(ret == -1)
+	return EXIT_INTERNAL;
+    }
+
+    return EXIT_OK;
+    } /* end of main() */
+
+static int old_password(const char username[], const char realm[], const char digested[])
     {
     char prompt[80];
     char *pass_ptr = NULL;
-    char crypted[33];
+    char old_digested[33];
 
-    snprintf(prompt, sizeof(prompt), _("Enter new password for %s: "), username);
+    snprintf(prompt, sizeof(prompt), _("Please enter old password for user %s in realm %s: "), username, realm);
 
     while(!pass_ptr)
 	{
 	if(!(pass_ptr = getpass(prompt)))
 	    return -1;
 	if(strlen(pass_ptr) == 0)
-	    return 1;
-	if(strlen(pass_ptr) < 6)
-	    {
-	    printf(_("That password is too short.  Please pick another.\n"));
-	    pass_ptr = NULL;
-	    continue;
-	    }
-	break;
+	    return EXIT_USER_ABORT;
 	}
 
+    md5_digest(old_digested, username, realm, pass_ptr);
+
+    if(strcmp(old_digested, digested) != 0)
+	{
+	printf(_("Password incorrect, access denied.\n"));
+	return EXIT_DENIED;
+	}
+
+    return 0;
+    }
+
+static int new_password(FILE *wfile, const char username[], const char realm[])
+    {
+    char prompt[80];
+    char *pass_ptr_first = NULL;
+    char *pass_ptr = NULL;
+    char crypted[33];
+    gu_boolean match;
+
+    snprintf(prompt, sizeof(prompt), _("Please enter new password for user %s in realm %s: "), username, realm);
+
+    do	{
+	while(!pass_ptr_first)
+	    {
+	    if(!(pass_ptr_first = getpass(prompt)))
+		return -1;
+	    if(strlen(pass_ptr_first) == 0)
+		return EXIT_USER_ABORT;
+	    if(strlen(pass_ptr_first) < 6)
+		{
+		printf(_("That password is too short.  Please pick another.\n"));
+		pass_ptr = NULL;
+		continue;
+		}
+	    break;
+	    }
+
+	pass_ptr_first = gu_strdup(pass_ptr_first);
+
+	while(!pass_ptr)
+	    {
+	    if(!(pass_ptr = getpass(_("Please verify new password: "))))
+		break;
+	    }
+
+	match = (pass_ptr && strcmp(pass_ptr_first, pass_ptr) == 0);
+	memset(pass_ptr_first, 0, strlen(pass_ptr_first));
+	gu_free(pass_ptr_first);
+	pass_ptr_first = NULL;
+
+	if(!match)
+	     {
+	     fputc('\n', stdout);
+	     printf(_("Passwords do not match, please try again.\n"));
+	     pass_ptr = NULL;
+	     }
+	} while(!match);
+
+    /* Create the MD5 signiture and then zero the cleartext password out
+       to keep it from prying eyes.
+       */
     md5_digest(crypted, username, realm, pass_ptr);
+    memset(pass_ptr, 0, strlen(pass_ptr));
 
     if(fprintf(wfile, "%s:%s:%s\n", username, realm, crypted) < 0)
 	{

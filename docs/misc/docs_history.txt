@@ -361,7 +361,13 @@ more information about RIPs and *pprRIP:.
 
 
 
-1.51, 15 February 2003--19 February 2003.
+1.51, 15 February 2003--21 February 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
+
+* refman/ppr-passwd.1.pod: added
+
+* refman/ppr-config.8.pod: added --tcl
+
+* refman/ppr-indexfilters.8.pod: added
 

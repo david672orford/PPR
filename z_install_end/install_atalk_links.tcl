@@ -1,7 +1,7 @@
-#! ppr-tclsh
+#! ../nonppr_tcl/ppr-tclsh
 #
 # mouse:~ppr/src/fixup/fixup_atalk.tcl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 May 2002.
+# Last modified 21 February 2003.
 #
 
-set HOMEDIR "?"
+source ../makeprogs/paths.tcl
 
 #======================================================================
 # Find getzones and create a links to it where PPR programs will
@@ -46,12 +46,8 @@ foreach file {/usr/local/atalk/bin/getzones /usr/bin/getzones} {
 	break
 	}	
     }
-if [ file executable "$HOMEDIR/lib/getzones" ] {
-    puts "Done."
-    } else {
-    puts "No getzones found."
+if {! [ file executable "$HOMEDIR/lib/getzones" ]} {
+    puts "  No getzones found."
     }
-puts ""
 
 exit 0
-

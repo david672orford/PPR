@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 November 2002.
+** Last modified 21 February 2003.
 */
 
 /*
@@ -76,7 +76,7 @@ void fatal(int exitval, const char *message, ...)
     } /* end of fatal() */
 
 /*
-** Is the user privledged?  In other words, is the user in the ppad
+** Is the user privileged?  In other words, is the user in the ppad
 ** access control list?  If the user identity has been changed
 ** (by the --su switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.

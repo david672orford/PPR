@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 21 February 2003.
 */
 
 #include "before_system.h"
@@ -218,10 +218,10 @@ static void uninstall_mainstream_link(const char linkname[], const char linkto[]
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
 	{
-	{"help", 1000, FALSE},
-	{"version", 1001, FALSE},
-	{"remove", 1002, FALSE},
-	{"force", 1003, FALSE},
+	{"remove", 1000, FALSE},
+	{"force", 1001, FALSE},
+	{"help", 9000, FALSE},
+	{"version", 9001, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -256,9 +256,6 @@ int main(int argc, char *argv[])
     textdomain(PACKAGE);
     #endif
 
-    if(getuid() != 0)
-    	fatal(1, _("must be run by root"));
-
     /* Parse the options. */
     {
     struct gu_getopt_state getopt_state;
@@ -268,23 +265,23 @@ int main(int argc, char *argv[])
     	{
     	switch(optchar)
     	    {
-	    case 1000:			/* --help */
+	    case 1000:			/* --remove */
+	    	opt_remove = TRUE;
+	    	break;
+	    
+	    case 1001:			/* --force */
+	    	opt_force = TRUE;
+		break;
+
+	    case 9000:			/* --help */
 	    	help_switches(stdout);
 	    	exit(EXIT_OK);
 
-	    case 1001:			/* --version */
+	    case 9001:			/* --version */
 		puts(VERSION);
 		puts(COPYRIGHT);
 		puts(AUTHOR);
 	    	exit(EXIT_OK);
-
-	    case 1002:			/* --remove */
-	    	opt_remove = TRUE;
-	    	break;
-	    
-	    case 1003:			/* --force */
-	    	opt_force = TRUE;
-		break;
 
 	    default:			/* other getopt errors or missing case */
 		gu_getopt_default(myname, optchar, &getopt_state, stderr);
@@ -293,6 +290,9 @@ int main(int argc, char *argv[])
     	    }
     	}
     }
+
+    if(getuid() != 0)
+    	fatal(1, _("must be run by root"));
 
     if(!opt_remove && !opt_force && access("/etc/alternatives", X_OK) != -1)
     	{

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 22 January 2003.
+# Last modified 21 February 2003.
 #
 # This spec file hasn't been heavily tested.  I am sure it contains
 # a few mistakes.  Please point them out.
@@ -61,7 +61,7 @@ RPM_BUILD_ROOT=$RPM_BUILD_ROOT make install
 #============================================================================
 # This tells RPM what files go in the cpio section of the binary .rpm file.
 #============================================================================
-%files -f makeprogs/installed_files_list
+%files -f z_install_end/installed_files_list
 %docdir /usr/share/ppr/man
 %docdir /usr/share/ppr/www/docs
 #%config /etc/ppr/media.db
@@ -83,7 +83,6 @@ rm -rf $RPM_BUILD_ROOT
 %post
 /usr/lib/ppr/fixup/fixup >/dev/null
 /etc/rc.d/init.d/ppr start
-killall -USR1 xinetd || killall -HUP inetd || echo "Inetd isn't running.  Please start it."
 
 #============================================================================
 # This is run before uninstalling.
@@ -106,7 +105,7 @@ rm /etc/rc.d/init.d/ppr
 rm -f /var/spool/ppr/cache/*/*
 
 # Remove boring log files.
-for l in pprd pprd.old papsrv lprsrv ppr-indexfonts ppr-clean ppr-httpd uprint
+for l in pprd pprd.old pprdrv papsrv papd lprsrv ppr-indexfonts ppr-clean ppr-httpd uprint
     do
     rm -f /var/spool/ppr/logs/$l
     done
@@ -146,16 +145,21 @@ rm -f /var/spool/ppr/run/state_update
 rm -f /var/spool/ppr/run/state_update_pprdrv
 
 # Remove links in /usr/bin.
-rm -f /usr/bin/ppr /usr/bin/ppop /usr/bin/ppad /usr/bin/ppuser /usr/bin/ppdoc /usr/bin/ppr-xgrant
-
-# Remove the links in /etc/profile.d.
-rm -f /etc/profile.d/login_ppr.sh /etc/profile.d/login_ppr.csh
+rm -f /usr/bin/ppr \
+	/usr/bin/ppop \
+	/usr/bin/ppad \
+	/usr/bin/ppuser \
+	/usr/bin/ppdoc \
+	/usr/bin/ppr-xgrant \
+	/usr/bin/ppr-config \
+	/usr/bin/ppr-web \
+	/usr/bin/ppr-passwd
 
 # Remove the UPRINT symbolic links and put the native spooler programs back.
 /usr/lib/ppr/bin/uprint-newconf --remove
 
 # Remove ACL files that are still empty.
-for l in pprprox.allow ppop.allow ppad.allow ppuser.allow
+for l in pprprox.allow ppop.allow ppad.allow ppuser.allow passwd.allow
     do
     if [ -f /etc/ppr/acl/$l -a ! -s /etc/ppr/acl/$l ]
 	then
@@ -175,11 +179,18 @@ for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
 # Remove the generated sample configuration file.
 rm -f /etc/ppr/ppr.conf.sample
 
-# Remove the PPR entries from inetd.
+# Remove the PPR entries from Inetd's config file.
 rm -f /etc/inetd.conf~
 mv /etc/inetd.conf /etc/inetd.conf~
 grep -v '/usr/lib/ppr/' </etc/inetd.conf~ >/etc/inetd.conf
 killall -HUP inetd
+
+# Do the same for Xinetd.
+if [ -f /etc/xinetd.c/ppr ]
+    then
+    rm -f /etc/xinetd.d/ppr
+    killall -HUP xinetd
+    fi
 
 # Remove the crontab.
 /usr/bin/crontab -u ppr -r

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/makeprogs/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,19 +25,25 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 July 2002.
+# Last modified 21 February 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-TARGETS=ppr-config$(DOTEXE) paths.ph paths.mk paths.sh PPR.pm \
+TARGETS=ppr-config$(DOTEXE) paths.mk paths.sh paths.ph PPR.pm paths.tcl \
 	squeeze$(DOTEXE)
 
 #=== Build ==================================================================
 
 all: $(TARGETS)
+
+paths.mk: ppr-config$(DOTEXE)
+	./ppr-config --mk >paths.mk
+
+paths.sh: ppr-config$(DOTEXE)
+	./ppr-config --sh >paths.sh
 
 paths.ph: ppr-config$(DOTEXE)
 	./ppr-config --ph >paths.ph
@@ -45,11 +51,8 @@ paths.ph: ppr-config$(DOTEXE)
 PPR.pm: ppr-config$(DOTEXE)
 	./ppr-config --pm >PPR.pm
 
-paths.mk: ppr-config$(DOTEXE)
-	./ppr-config --mk >paths.mk
-
-paths.sh: ppr-config$(DOTEXE)
-	./ppr-config --sh >paths.sh
+paths.tcl: ppr-config$(DOTEXE)
+	./ppr-config --tcl >paths.tcl
 
 configure: configure.in
 	autoheader
@@ -59,8 +62,6 @@ configure: configure.in
 #=== Install ================================================================
 
 install: all
-	$(RMF) installed_files_list
-	./make_install_dirs.sh
 	$(INSTALLDATA) $(HOMEDIR)/lib paths.ph PPR.pm
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin ppr-config$(DOTEXE)
 

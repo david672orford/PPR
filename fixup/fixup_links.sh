@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/fixup/fixup_links.sh
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 November 2002.
+# Last modified 21 February 2003.
 #
 
 BINDIR="?"
@@ -37,7 +37,7 @@ HOMEDIR="?"
 #======================================================================
 
 echo "Creating symbolic links in \"$BINDIR\"..."
-for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web
+for i in ppr ppop ppad ppuser ppdoc ppr-xgrant ppr-config ppr-web ppr-passwd
     do
     echo "    ln -s $HOMEDIR/bin/$i $BINDIR/$i"
     rm -f $BINDIR/$i

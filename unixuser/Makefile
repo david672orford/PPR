@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/unixuser/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 December 2002.
+# Last modified 21 February 2003.
 #
 
 include ../Makefile.conf
@@ -35,7 +35,6 @@ include ../Makefile.conf
 BIN_PROGS_SUID=ppr-xgrant$(DOTEXE)
 BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE)
 LIB_PROGS=
-FIXUP_SCRIPTS=login_ppr.sh login_ppr.csh
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 
 #=== Build ==================================================================
@@ -52,7 +51,6 @@ install: $(PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(HOMEDIR)/bin $(BIN_PROGS_SUID)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/bin $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(HOMEDIR)/lib $(LIB_PROGS) 
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 644  $(HOMEDIR)/fixup $(FIXUP_SCRIPTS)
 
 #=== Housekeeping ===========================================================
 

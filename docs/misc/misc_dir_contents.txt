@@ -1,5 +1,5 @@
 mouse:~ppr/src/docs/misc/misc_README.txt
-7 March 2002
+21 February 2003
 
 The PPR source directory "misc/" contains a number of small programs and other
 files.  Some of these are not described in the primary documentation.  Some
@@ -80,14 +80,6 @@ If you don't do this, their browse lists of print queues will be empty.
 
 If the operating system is IRIX, then this script will be installed in
 $HOMEDIR/bin/.
-
-
-=========================
- remove_ppr.sh
-=========================
-
-This script is installed in $HOMEDIR/install/.  It can be used to remove
-PPR from the system.  It has not been tested recently.
 
 
 =========================

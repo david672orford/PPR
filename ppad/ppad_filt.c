@@ -1,20 +1,41 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_filt.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 19 April 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 21 February 2003.
 */
 
 /*
-** This file contains the code which generates a "DefFiltOpts:" line.
+** This file contains the code which generates default filter options
+** ("DefFiltOpts:") line for a printer or group configuration file.  It does 
+** this by examining all of the PPD files (only one for a printer) and
+** by trying to find a matching mode in mfmodes.conf.  The result will look 
+** something like this:
+**
+** level=2 colour=False resolution=600 freevm=17000000 mfmode=ljfive
 */
 
 #include "before_system.h"
@@ -27,7 +48,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "ppad.h"
 #include "util_exits.h"
 
@@ -189,6 +209,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
     {
     int ret;
     char *line;				/* the line we are working on */
+    char *p;				/* pointer into that line */
     int tempint;			/* integer for gu_sscanf() */
     char *tempptr;			/* char pointer for gu_sscanf() */
     int thisppd_resolution = FALSE;	/* <-- We use these variables in */
@@ -239,7 +260,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	** been no previous such line or this is a lower level,
 	** then accept this as the final level.
 	*/
-	if( !thisppd_level && gu_sscanf(line, "*LanguageLevel: \"%d\"", &tempint) == 1)
+	if(!thisppd_level && gu_sscanf(line, "*LanguageLevel: \"%d\"", &tempint) == 1)
 	    {
 	    if(level == -1 || tempint < level)
 	    	level = tempint;
@@ -251,41 +272,41 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	** If this is the first "*DefaultResolution:" line in this file
 	** and there has been no resolution conflict detected previously,
 	*/
-	if( ! thisppd_resolution && ! resolution_conflict && gu_sscanf(line, "*DefaultResolution: %S", &tempptr) == 1 )
+	if(!thisppd_resolution && ((p = lmatchp(line, "*DefaultResolution:")) || (p = lmatchp(line, "*DefaultJCLResolution:"))))
 	    {
-            /* Replace resolution variants like "600x600dpi" with things
-               like "600dpi". */
-	    {
-            char *p;
-            if((p = strchr(tempptr, 'x')))
-                {
-                int nlen = (p - tempptr);
-                if(strncmp(tempptr, tempptr + nlen + 1, nlen) == 0 && strcmp(tempptr + nlen + nlen + 1, "dpi") == 0)
+	    if(! resolution_conflict && gu_sscanf(p, "%S", &tempptr) == 1 )
+		{
+		/* Replace resolution variants like "600x600dpi" with things like "600dpi". */
+		{
+		char *p;
+		if((p = strchr(tempptr, 'x')))
 		    {
-		    p = gu_strdup(tempptr + nlen + 1);
-		    gu_free(tempptr);
-		    tempptr = p;
+		    int nlen = (p - tempptr);
+		    if(strncmp(tempptr, tempptr + nlen + 1, nlen) == 0 && strcmp(tempptr + nlen + nlen + 1, "dpi") == 0)
+			{
+			p = gu_strdup(tempptr + nlen + 1);
+			gu_free(tempptr);
+			tempptr = p;
+			}
 		    }
-                }
-	    }
+		}
 
-	    /* If no resolution statement in prior file, save this one. */
-	    if(!resolution)
-	    	{
-		resolution = tempptr;
-	    	}
-	    /* If resolution statement in prior file, */
-	    else
-	    	{
-		/* If they disagree, declare a conflict. */
-		if(strcmp(resolution, tempptr) != 0)
+		if(!resolution)			/* If no resolution statement in prior file, save this one. */
 		    {
-		    gu_free(resolution);
-		    resolution = (char*)NULL;
-		    resolution_conflict = TRUE;
+		    resolution = tempptr;
 		    }
-		gu_free(tempptr);
-	    	}
+		else				/* If there was a resolution statement in prior file, */
+		    {
+		    /* If they disagree, declare a conflict. */
+		    if(strcmp(resolution, tempptr) != 0)
+			{
+			gu_free(resolution);
+			resolution = (char*)NULL;
+			resolution_conflict = TRUE;
+			}
+		    gu_free(tempptr);
+		    }
+		}
 	    thisppd_resolution = TRUE;
 	    continue;
 	    }
@@ -393,7 +414,7 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
 	    printf("vmoptions %d: %s %d\n", x, vmoptions[x].opt, vmoptions[x].val);
 	    #endif
 
-	    if( strcmp(InstalledMemory, vmoptions[x].opt) == 0 )
+	    if(strcmp(InstalledMemory, vmoptions[x].opt) == 0)
 	    	{
 		#ifdef DEBUG_FILT
 		printf("match!\n");
@@ -412,22 +433,33 @@ int deffiltopts_add_ppd(const char printer_name[], const char ppd_name[], const 
     	freevm = thisppd_freevm;
 
     /*
-    ** If we have not yet determined that not all the devices use the
-    ** same mfmode then see if this one uses the same mfmode
-    ** as the others.
-    **
-    ** Notice that we skip this step if get_mfmode() fails.  There might
-    ** be a better way to handle such a failure.
+    ** This will help explain the subsequent warning about the failed mfmode search.
     */
-    if(! mfmode_conflict)
+    if( ! thisppd_resolution && ! resolution_conflict )
+	{
+     	fprintf(errors, _("Warning: PPD file \"%s\" (for printer \"%s\") does not have\n"
+     	"\ta \"*DefaultResolution:\" line.\n"), ppd_name, printer_name);
+	}
+
+    /*
+    ** If we have not yet determined that not all the devices use the same 
+    ** mfmode then see if this one uses the same mfmode as the others.
+    **
+    ** Notice that we skip this step if get_mfmode() fails.  There might be 
+    ** a better way to handle such a failure.
+    **
+    ** Also notice that we don't even try if we didn't find a 
+    ** "*DefaultResolution:" line in the PPD.  (The else takes care of that.)
+    */
+    else if(! mfmode_conflict)
     	{
     	if((tempptr = get_mfmode(product, modelname, nickname, resolution)))
 	    {
-            if(mfmode == (char*)NULL)       /* If 1st printer, */
-                {                           /* keep it. */
+            if(!mfmode)			/* If we are doing the 1st printer, */
+                {			/* keep it without question. */
                 mfmode = tempptr;
                 }
-            else                            /* otherwise, */
+            else			/* otherwise, */
                 {
                 if(strcmp(mfmode, tempptr) != 0)	/* if they don't match, */
                     {

@@ -8223,7 +8223,7 @@ line was being parsed twice.
   user ran the regression tests.
 
 
-1.51, 15 February 2003--20 February 2003.
+1.51, 15 February 2003--21 February 2003.
 
 * fixup/fixup.sh: no longer exits if fixup_inetd fails (as it may since
   Inetd may not be installed), directs stdout of fixup_media, fixup_filters,
@@ -8317,5 +8317,26 @@ line was being parsed twice.
   HOWTO".
 
 * www/: replaced ppr-passwd.sh with ppr-passwd.c.  This new implementation
-  doesn't depend on Apache's htpasswd.
+  doesn't depend on Apache's htpasswd.  Added ppr-passwd to the list of
+  programs which are made setuid/setgid ppr/ppr by fixup/fixup_perms.sh.
+
+* ppad/ppad_filter.c: added warning for PPD files which don't specify the
+  default resolution.  This is probably better than leaving users to wonder
+  why there was no match in mfmodes.conf.  Also added support for
+  "*DefaultJCLResolution:" as a way to deal with recent HP PPD files.
+
+* makeprogs/installdata.sh: made mode of installed data files 444 instead of
+  644.  This seems right since this is used in install *.sample and 
+  $HOMEDIR/lib/*.conf and we want the user to understand that they shouldn't
+  ordinarily be modified.
+
+* Rearanged things in makeprogs/, fixup/, filters_misc/ and the new
+  directories z_install_begin/ and z_install_end/ in order to cut down what
+  fixup.sh does and otherwise simply the build process.
+
+* Moved fixup/fixup_filters.sh to filters_misc/ppr-indexfilters.sh.
+
+* makeprogs/ppr-config.c: added --tcl, added paths.tcl to Makefile.
+
+
 

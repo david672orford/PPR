@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 November 2002.
+# Last modified 21 February 2003.
 #
 
 include ../Makefile.conf
@@ -62,7 +62,8 @@ HELPDIR=$(WWWDIR)/help
 #== Inventory ================================================================
 
 # These programs go into PPR's bin directory.
-BIN_PROGS=ppr-passwd ppr-web
+BIN_PROGS=ppr-web
+BIN_PROGS_SETID=ppr-passwd
 
 # These programs go into PPR's lib directory.
 LIB_PROGS=ppr-httpd ppr-push-httpd$(DOTEXE)
@@ -111,7 +112,7 @@ STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 
 #== Build ====================================================================
 
-all: $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLES) $(HTML_TOP) $(HTML_GUI) $(Q_ICONS_LAST) images_subdir
+all: $(BIN_PROGS) $(BIN_PROGS_SETID) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLES) $(HTML_TOP) $(HTML_GUI) $(Q_ICONS_LAST) images_subdir
 
 OBJS=\
 	ppr-push-httpd.$(OBJ) \
@@ -126,17 +127,18 @@ $(Q_ICONS_LAST):
 images_subdir:
 	( cd images && $(MAKE) )
 
-ppr-passwd$(DOTEXE): ppr-passwd.$(OBJ) ../libgu.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o $@ ppr-passwd.$(OBJ) ../libgu.$(LIBEXT)
+ppr-passwd$(DOTEXE): ppr-passwd.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+	$(LD) $(LDFLAGS) -o $@ ppr-passwd.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 
 #== Install ==================================================================
 
 install: install-progs install-libs install-styles install-html install-images
 
-install-progs: $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BIN_DIR) $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIB_DIR) $(LIB_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CGI_BIN) $(CGI_PROGS)
+install-progs: $(BIN_PROGS) $(BIN_PROGS_SETID) $(LIB_PROGS) $(CGI_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(BIN_DIR) $(BIN_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BIN_DIR) $(BIN_PROGS_SETID)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(LIB_DIR) $(LIB_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(CGI_BIN) $(CGI_PROGS)
 
 install-libs: $(LIBS) $(JAVASCRIPT)
 	$(MAKE_NEW_DIR) $(JS_DIR)
@@ -168,7 +170,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS)
+	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS) $(BIN_PROGS_SETID) $(LIB_PROGS) $(CGI_PROGS)
 	( cd q_icons; $(RMF) $(BACKUPS) )
 	( cd images; $(MAKE) clean )
 

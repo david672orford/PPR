@@ -1,6 +1,5 @@
-#! /bin/sh
 #
-# mouse:~ppr/src/makeprogs/installcp.sh
+# mouse:~ppr/src/z_install_end/install_sample_to_conf.sh
 # Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -29,51 +28,47 @@
 # Last modified 21 February 2003.
 #
 
-#
-# This script copies a single file into place.
-#
+#CONFDIR="?"
+#USER_PPR=?
+#GROUP_PPR=?
+. ../makeprogs/paths.sh
 
-squeeze=0
-if [ "$1" = "--squeeze" ]
-  then
-  squeeze=1
-  shift
-  fi
+#===========================================================================
+# Creating empty ACL files if they are absent
+#===========================================================================
+echo "Creating missing ACL files..."
 
-if [ -z "$1" -o -z "$2" ]
-  then
-  echo "Usage: installcp.sh: <sourcefile> <destfile>"
-  exit 1
-  fi
+for f in pprprox.allow ppop.allow ppad.allow ppuser.allow
+    do
+    echo "  $CONFDIR/acl/$f"
+    if [ ! -f $CONFDIR/acl/$f ]
+    	then
+	echo "    creating"
+    	touch $CONFDIR/acl/$f
+	else
+	echo "    exists"
+    	fi
+    done
 
-if [ -n "$RPM_BUILD_ROOT" -a ! -d "$RPM_BUILD_ROOT" ]
-  then
-  echo "The RPM_BUILD_ROOT \"$RPM_BUILD_ROOT\" does not exist!"
-  exit 1
-  fi
+#===========================================================================
+# Make configuration files with sample versions
+#===========================================================================
+echo "Making missing configuration files from the samples..."
 
-source="$1"
-target="$2"
-
-if [ ! -f "$source" ]
-  then
-  echo "The source file \"$source\" doesn't exist."
-  exit 1
-  fi
-
-rm -f "$RPM_BUILD_ROOT$target"
-
-if [ $squeeze != 0 ]
-    then
-    echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\" (squeezing)"
-    `dirname $0`/squeeze "$source" "$RPM_BUILD_ROOT$target" || exit 1
-    else
-    echo "    \"$source\" --> \"$RPM_BUILD_ROOT$target\""
-    cp "$source" "$RPM_BUILD_ROOT$target" || exit 1
-    chmod 644 "$RPM_BUILD_ROOT$target" || exit 1
-    fi
-
-echo "\"$target\"" >>`dirname $0`/../z_install_begin/installed_files_list
+for f in ppr.conf uprint.conf uprint-remote.conf lprsrv.conf
+    do
+    echo "  $f"
+    if [ ! -f $CONFDIR/$f -a -f $CONFDIR/$f.sample ]
+    	then
+	echo "    $CONFDIR/$f.sample --> $CONFDIR/$f"
+	# Use Sed to copy it while removing the "Last modified" comment.
+    	sed -e 's/\.sample$//' -e '/^[#;] Last modified/d' $CONFDIR/$f.sample >$CONFDIR/$f
+    	chown $USER_PPR $CONFDIR/$f
+    	chgrp $GROUP_PPR $CONFDIR/$f
+	chmod 644 $CONFDIR/$f
+	else
+	echo "    exists"
+    	fi
+    done
 
 exit 0
-

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 February 2003.
+** Last modified 21 February 2003.
 */
 
 #include "before_system.h"
@@ -48,8 +48,8 @@ const char myname[] = "template";
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
 	{
-	{"help", 1000, FALSE},
-	{"version", 1001, FALSE},
+	{"help", 9000, FALSE},
+	{"version", 9001, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -87,11 +87,11 @@ int main(int argc, char *argv[])
     	{
     	switch(optchar)
     	    {
-	    case 1000:			/* --help */
+	    case 9000:			/* --help */
 	    	help_usage(stdout);
 	    	exit(EXIT_OK);
 
-	    case 1001:			/* --version */
+	    case 9001:			/* --version */
 		puts(VERSION);
 		puts(COPYRIGHT);
 		puts(AUTHOR);
