@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 November 2002.
+** Last modified 18 November 2002.
 */
 
 #include "before_system.h"
@@ -166,12 +166,12 @@ void uprint_read_conf(void)
 	    	path_set = &conf.sidelined;
 	    	continue;
 	    	}
-	    else if(lmatch(line, "[real lpr]") || lmatch(line, "[to lpr]"))
+	    else if(lmatch(line, "[real lpr]") || lmatch(line, "[to lpr]"))	/* current and obsolete */
 	    	{
 	    	state = STATE_REAL_LPR;
 	    	continue;
 	    	}
-	    else if(lmatch(line, "[real lp]") || lmatch(line, "[to lp]"))
+	    else if(lmatch(line, "[real lp]") || lmatch(line, "[to lp]"))	/* current and obsolete */
 	    	{
 	    	state = STATE_REAL_LP;
 	    	continue;
@@ -188,7 +188,9 @@ void uprint_read_conf(void)
 	    	}
 	    else		/* unrecognized will be caught below */
 	    	{
+		uprint_error_callback("Warning: \"%s\" line %d contains unrecognized section %s", UPRINTCONF, linenum, line);
 		state = STATE_INIT;
+		continue;
 	    	}
 	    }
 
@@ -272,7 +274,7 @@ void uprint_read_conf(void)
 		    }
 		else if(strcmp(line, "flavor") == 0)
 		    {
-
+		    /* code missing */
 		    }
 		else
 		    break;
@@ -309,6 +311,10 @@ void uprint_read_conf(void)
 			    break;
 		    	}
 		    saw_real_lp_installed = TRUE;
+		    }
+		else if(strcmp(name, "flavor") == 0)
+		    {
+		    /* code missing */
 		    }
 		else
 		    break;

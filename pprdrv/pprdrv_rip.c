@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 November 2002.
+** Last modified 18 November 2002.
 */
 
 #include "before_system.h"
@@ -282,6 +282,18 @@ int rip_start(int printdata_handle, int stdout_handle)
 	gu_asprintf(&ppd_equals, "PPD=%s", printer.PPDFile);
 	putenv(ppd_equals);
 	}
+
+	/* Foomatic likes its own special options. */
+	if(job.ripopts)
+	    {
+	    char *ppr_ripopts_equals;	/* <-- don't free this either! */
+	    gu_asprintf(&ppr_ripopts_equals, "PPR_RIPOPTS=%s", job.ripopts);
+	    putenv(ppr_ripopts_equals);
+	    }
+	else
+	    {
+	    putenv("PPR_RIPOPTS=");
+	    }
 
 	/* Launch Ghostscript. */
 	execv(rip_exe, (char**)rip_args);

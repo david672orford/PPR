@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2002.
+** Last modified 18 Novemer 2002.
 */
 
 #include "before_system.h"
@@ -155,6 +155,9 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 
     if(qentry->question)
     	fprintf(Qfile, "Question: %s\n", qentry->question);
+
+    if(qentry->ripopts)
+    	fprintf(Qfile, "RIPopts: %s\n", qentry->ripopts);
 
     return 0;
     }

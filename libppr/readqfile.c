@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2002.
+** Last modified 18 November 2002.
 */
 
 #include "before_system.h"
@@ -117,6 +117,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
     job->page_list.mask = NULL;
     job->draft_notice = (char*)NULL;		/* optional */
     job->question = NULL;
+    job->ripopts = NULL;
 
     while((line = gu_getline(line, &line_available, qfile)))
 	{
@@ -260,6 +261,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 	    case 'R':
 		MATCH("Routing: ", _2("%Z", &job->Routing), !=1, found_other)
 		MATCH("Response: ", _4("%S %S %Z", &job->responder, &job->responder_address, &job->responder_options), <2, found_response)
+	    	MATCH("RIPopts: ", _2("%Z", &job->ripopts), !=1, found_other)
 		break;
 
 	    case 'S':

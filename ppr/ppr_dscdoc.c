@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 September 2002.
+** Last modified 18 November 2002.
 */
 
 /*
@@ -165,7 +165,16 @@ static int handle_atend(const char *keyword, const char *argument, int argcount,
 	/* If there is an old (atend) in the header, we
 	   will ommit the warning. */
 	if( ! (*atend_flag & ATEND_WAS_DEFERED) )
-	    warning(WARNING_SEVERE, _("Ignoring \"%s\" in trailer because no \"%s (atend)\" in header"), keyword, keyword);
+	    {
+	    /* We will also omit the warning if this is a continuation line 
+	       since we will have already issued the warning. */
+	    static int last_dsc_comment_number = -1;
+	    if(dsc_comment_number != last_dsc_comment_number)
+	    	{
+		warning(WARNING_SEVERE, _("Ignoring \"%s\" in trailer because no \"%s (atend)\" in header"), keyword, keyword);
+		last_dsc_comment_number = dsc_comment_number;
+		}
+	    }
 	return -1;
     	}
     return 0;

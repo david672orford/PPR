@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 March 2002.
+** Last modified 18 November 2002.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -119,6 +119,7 @@ struct QFileEntry
 	int count;			/* how many 1's in the mask? */
 	} page_list;
     const char *question;		/* partial URL for question */
+    const char *ripopts;		/* name=value pairs for Ghostscript and such */
     } ;
 
 /* Possible values for orientation member of struct QFileEntry. */

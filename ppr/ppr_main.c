@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last revised 17 November 2002.
+** Last revised 18 November 2002.
 */
 
 /*
@@ -419,6 +419,7 @@ int write_queue_file(struct QFileEntry *qentry)
     assert_ok_value(qentry->responder, FALSE, FALSE, FALSE, "qentry->responder", FALSE);
     assert_ok_value(qentry->responder_address, FALSE, FALSE, FALSE, "qentry->responder_address", FALSE);
     assert_ok_value(qentry->responder_options, TRUE, TRUE, TRUE, "qentry->responder_options", FALSE);
+    assert_ok_value(qentry->ripopts, TRUE, TRUE, TRUE, "qentry->ripopts", FALSE); 
 
     if(qentry->CachePriority == CACHE_PRIORITY_AUTO)
     	fatal(PPREXIT_OTHERERR, "%s(): CachePriority assertion failed", function);
@@ -947,6 +948,7 @@ static const struct gu_getopt_opt option_words[] =
 	{"strip-printer", 1016, TRUE},
 	{"save", 1017, FALSE},
 	{"question", 1018, TRUE},
+	{"ripopts", 1019, TRUE},
 	{"commentary", 1100, TRUE},
 
 	/* These are also documented and final. */
@@ -1037,6 +1039,9 @@ HELP(_(
 "\t-F '<feature name>'        inserts setup code for a printer feature\n"
 "\t--feature '<feature name>' same as above\n"
 "\t--features                 list available printer features\n"));
+
+HELP(_(
+"\t--ripopts '<options>'      options to pass to external RIP\n"));
 
 HELP(_(
 "\t-K true                    keep feature code though not in PPD file\n"
@@ -1890,6 +1895,10 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 	    qentry.flags |= JOB_FLAG_QUESTION_UNANSWERED;
 	    break;
 
+	case 1019:				/* --ripopts */
+	    qentry.ripopts = optarg;
+	    break;
+
 	case 1100:				/* --commentary */
 	    qentry.commentary = atoi(optarg);
 	    break;
@@ -2061,6 +2070,7 @@ int main(int argc, char *argv[])
     qentry.CachePriority = CACHE_PRIORITY_AUTO;
     qentry.StripPrinter = FALSE;
     qentry.page_list.mask = NULL;
+    qentry.ripopts = NULL;
 
     /* Figure out what language the user is getting messages in and
        attach its name to the job. */

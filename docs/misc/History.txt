@@ -7914,7 +7914,7 @@ line was being parsed twice.
 * pprdrv/pprdrv_ppd.c: added code to ban slashes in RIP names in PPD files.
 
 
-1.50b1, 13 November 2002--17 November 2002.
+1.50b1, 13 November 2002--18 November 2002.
 
 * libuprint/claim_lpr.c: Added code to skip spurious blanks before the list
   of queue names in printcap.
@@ -7946,4 +7946,13 @@ line was being parsed twice.
   of GCC 3.2's gcc --version output.
 
 * Added regression test test-ppr/401-duplex.
+
+* libuprint/uprint.conf.sample: reordered lines; libuprint/uprint_conf.c:
+  added error message for unrecognized sections and added missing code to 
+  ignore flavor= lines in [real lp].
+
+* ppr/ppr_nest.c: error message improvement for unmatched section begin/end
+
+* ppr/ppr_dscdoc.c: suppressed duplicate messages about lack of atend for
+  stuff in trailer.
 

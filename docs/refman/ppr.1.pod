@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last modified 27 September 2002.
+# Last modified 18 November 2002.
 #
 
 =head1 NAME
@@ -578,6 +578,20 @@ Paper input trays are another example:
 
 	$ ppr -d adshp4m -F '*InputSlot Upper'
 
+And now for an obscure note about the B<-F> switch.  If you uses this switch
+to invoke a *PageSize or *Duplex option, a cooresponding option will be
+automatically prepended to the filter options.  This is in addition to the
+default filter options for the queue and those that you choose with the
+B<-o> switch.  This prevents the filter from fighting with the rest of PPR
+about what the pagesize will be.  It also allows the filter to change the
+page formatting in consideration of the fact that the output will be printed
+in duplex.  For example, the lp filter will leave extra space in the left
+margin of odd numbered pages and in the right margin of even numbered pages. 
+This makes binding the pages easier.  If you don't know what this paragraph
+means, don't worry about it.  This is just another way that PPR tries to
+make things easier for you by managing its default behavior to do what you
+would expect.
+
 =item B<--features>
 
 If you use this option, B<ppr> won't print the job.  Rather it will list all
@@ -641,38 +655,88 @@ generally assumed that if the feature is not described in the PPD file it
 does not exist in the printer in question.  That being so, attempting to
 invoke it could result in an error.
 
+=item B<-R duplex:>
+
+The B<-R duplex:> family of options controls the mechanism which PPR uses to
+determine if an incoming was intended to be printed in duplex mode or
+simplex mode and if in duplex mode, which variant of duplex mode.  It does
+this by looking for DSC comments which mark the PostScript code that
+controls duplexing or which request the insertion of such code.
+
+For example, if B<ppr> sees this in the file:
+
+	%%BeginFeature: *Duplex DuplexNoTumble
+	<</Duplex true /Tumble false>> setpagedevice
+	%%EndFeature
+
+it will conclude that the document is 'wants' to be printed in duplex mode.
+
+PPR makes two uses of this knowledge.  The first is that it uses it to
+coorelate the number of pages (printed sides) in the job with the number of
+sheets of paper that will be needed to print those pages.  For example, a
+nine page job printed in simplex will require nine sheets of paper but in
+duplex it will require only five sheets.  This can be important if you are
+charging money for use of the printers.
+
+The second thing it does with the information is try to make sure that the
+job is not trying to trick it by pretending to be turning on duplex mode but
+really turning on simplex mode.  PPR can't completely prevent this, but it
+can make it more difficult by inserting its own code to set the duplexer to
+the ostensible mode.  This code is inserted at the very end of the document
+setup section.
+
+Note that each of these options implies an assumption about the duplex mode
+or actually sets the default.  This assumption or default will be used to
+automatically create default filter options.  This is discussed more fully
+in the sections for the B<-F> and B<-o> options.
+
 =item B<-R duplex:softsimplex>
 
-These and the following options cause B<ppr> to look for comments in the file
-which may indicate the desired duplex mode.  "B<-R duplex:softsimplex>" is the
-default.  In this mode, B<ppr> reads the comments and alters its page
-counting if comments which indicate code which turns duplexing on are found,
-however it does not insert simplex invocation code if it finds no duplex
-comments.  Simplex is "soft" in this case in that a document which includes
-uncommented code to invoke duplex mode will go unnoticed and turn on duplex
-mode without PPR's knowledge.
+This is the default.  In this mode, B<ppr> reads the comments and takes note
+of the duplex mode, but it trusts the job to set the duplex mode to the what
+it says it is setting it to.  Using this mode while charging for printing is
+not recomended since overcharging is likely and cheating is less difficult.
+
+Simplex is "soft" in this case in that a document which includes code to
+invoke duplex mode but omits the cooresponding DSC comments will turn on
+duplex mode without PPR's knowledge.  In such a case, PPR would log the
+consumption of more sheets of paper than were actually consumed and the user
+would be overcharged.
+
+Similiarly, a document could contain this devious code:
+
+	%%BeginFeature: *Duplex DuplexNoTumble
+	<</Duplex true /Tumble false>> setpagedevice
+	%%EndFeature
+	% Ha!  We can change our mind!
+	<</Duplex false /Tumble false>> setpagedevice
+
+would fool PPR into thinking the job was going to come out in duplex when it
+would really come out in simplex.  Thus the user would be undercharged.
 
 =item B<-R duplex:simplex>
 
-Reads duplex comments, if none found, force simplex mode.  If duplex
-"on" comments are found, PPR turns duplexing off itself anyway for good
-measure.
+Look for duplexing comments, but if none are found, assume that simplex
+printing is intended and turn duplexing off. on.
 
 =item B<-R duplex:duplex>
 
-Same as above, but duplexing (long edge duplexing) is the default.  PPR
-turns duplexing on itself so that is will be harder for to pretend to be
-printing in duplex while they are really printing in simplex.
+Look for duplexing comments, but if none are found, assume that duplexing
+(specifically the no-tumble or long-edge variant) is intended and turn it
+on.
 
 =item B<-R duplex:duplextumble>
 
-same as above, but tumble duplexing (short edge duplexing) is the default.
+Look for duplexing comments, but if none are found, assume that duplexing
+(specifically the tumble or short-edge variant) is intended and turn it
+on.
 
 =item B<-R ignore-duplex>
 
-Ignore the possibility of duplex mode.  Without this switch, PPR reads
-"C<%%BeginFeature: *Duplex>" comments in order to determine whether the
-document is printed in simplex or duplex mode.
+Ignore the possibility of duplex mode.  No comments will be examined, and
+unless there is an B<-F *Duplex> option on the command line that turns on
+duplex mode, B<ppr> will assume that the job will naturally be printed in
+simplex mode and charge accordingly.
 
 
 =back
@@ -1118,22 +1182,37 @@ list of known MIME types except by examining the source code.
 
 This switch specifies a set of options which will be passed to the input
 filter.  The I<string> is appended to the default filter options.  The
-string should take the form "option1=value option2=value".  If two name value
-pairs assign different values to the same name, the last one prevails.  That
-means that filter options specified with the B<-o> switch can override the
-default options.  If multiple B<-o> switches may be used, each instance
-simply adds additional options.
+string should take the form "option1=value option2=value".  If the B<-o>
+switch appears more than once on the command line, the options they specify
+are combined into a long list in the order of their appearance.
+
+Note that the filter options which you supply with the B<-o> switch are in
+addition to those that are supplied automatically.  The full list of options
+is formed by combining the options implied by the B<-F> and B<-R> switches,
+the queue's default filter options and the options which you supply with one
+or more B<-o> switches.
+
+The default filter options are derived from the PPD file or files and may be
+seen by running B<ppad show>, B<ppad group show>, or B<ppad alias show>)
+
+To learn how the implied options are implied, see the sections about the
+B<-F> and B<-R> options.  They do the implying.
+
+If two name value pairs assign different values to the same name, the last
+one prevails.  That means that filter options specified with the B<-o>
+switch can override the default options and the implied options.  
 
 Options which should apply to only one filter should have the filter name
 and a hyphen prepended.  For example:
 
 	$ ppr -d aardvark -o 'dvipsconfig=hp4 fortran-width=132 pr-width=80'
 
-This will pass the option "dvipsconfig=hp4" to all filters, pass "width=132"
-to the B<fortran> filter, and pass "width=80" to the B<pr> filter.
+This will pass the option "dvipsconfig=hp4" to all filters, pass
+"dvipsconfig=hp4 width=132" to the B<fortran> filter, and pass
+"dvipsconfig=hp4 width=80" to the B<pr> filter.
 
-The filters and the options they understand are listed in the
-L<ppr-filters(1)> manpage.
+The filters supplied with PPR and the options they understand are listed in
+the L<ppr-filters(1)> manpage.
 
 =item B<--markup> <option>
 

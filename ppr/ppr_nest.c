@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is" without
 ** express or implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 18 November 2002.
 */
 
 #include "before_system.h"
@@ -181,11 +181,11 @@ void outermost_end(int sectioncode)
 	if(outermost == OUTERMOST_UNDEFINED)
 	    {
 	    if(sectioncode != OUTERMOST_PROLOG)
-		warning(WARNING_SEVERE, _("End %s without Begin"), str_outermost_types(sectioncode));
+		warning(WARNING_SEVERE, _("maked end of %s section without marked begin"), str_outermost_types(sectioncode));
 	    }
 	else
 	    {
-    	    warning(WARNING_SEVERE, _("End %s in %s"), str_outermost_types(sectioncode), str_outermost_types(outermost) );
+    	    warning(WARNING_SEVERE, _("marked end of %s section in %s section"), str_outermost_types(sectioncode), str_outermost_types(outermost) );
     	    }
 	}
 
