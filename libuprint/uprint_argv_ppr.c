@@ -237,6 +237,7 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	    	temp[di++] = '\\';
 	    temp[di++] = c;
 	    }
+	temp[di] = '\0';
 
 	ppr_argv[i++] = "-o";
 	snprintf(upr->str_pr_title, sizeof(upr->str_pr_title), "title=\"%s\"", temp);
