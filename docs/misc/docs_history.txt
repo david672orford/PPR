@@ -361,7 +361,7 @@ more information about RIPs and *pprRIP:.
 
 
 
-1.51, 15 February 2003--5 March 2003.
+1.51, 15 February 2003--6 March 2003.
 
 * uprint/UPRINT.1.pod: minimul updates to track changes in uprint-newconf.
 
@@ -385,4 +385,13 @@ more information about RIPs and *pprRIP:.
 * pprhack/: added pprhack_custom_hooks.sgml
 
 * refman/ppr-clean.8.pod: added
+
+* refman/ppad.8.pod: added "ppad media import", improved documentation of
+  "ppad acl".
+
+* refman/ppop.8.pod: brought "ppop qquery" field list up to date.
+
+* doxygen/: added
+
+* pprhack/pprhack_srcnotes.sgml: removed
 

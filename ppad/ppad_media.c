@@ -466,9 +466,9 @@ int media_export(void)
 
     ffile = open_database("rb");
 
-    puts("#!/bin/sh");
+    puts("#! /bin/sh");
 
-    while( fread(&media,sizeof(struct Media),1,ffile) == 1 )
+    while(fread(&media,sizeof(struct Media),1,ffile) == 1 )
 	{
 	padded_to_ASCIIZ(name,media.medianame,sizeof(media.medianame));
 	padded_to_ASCIIZ(colour,media.colour,sizeof(media.colour));
@@ -493,6 +493,14 @@ int media_export(void)
 int media_import(const char *argv[])
     {
     const char *filename;
+    FILE *f;
+    int line_available = 80;
+    char *line = NULL;
+    int linenum = 0;
+    #define MAX_CMD_WORDS 64
+    char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
+    char *p;			/* used to parse arguments */
+    int i;
 
     if( ! am_administrator() )
 	return EXIT_DENIED;
@@ -503,6 +511,57 @@ int media_import(const char *argv[])
 	return EXIT_SYNTAX;
 	}
 
+    if(strcmp(filename, "-") == 0)
+	{
+	f = fdopen(dup(0), "r");
+	}
+    else
+	{
+	if(!(f = fopen(filename, "r")))
+	    {
+	    fprintf(errors, _("Can't open \"%s\", errno=%d (%s)\n"), filename, errno, gu_strerror(errno));
+	    return EXIT_NOTFOUND;
+	    }
+	}
+
+    while((p = line = gu_getline(line, &line_available, f)))
+	{
+	linenum++;
+
+	if(line[0] == '#' || strlen(line) == 0)
+	    continue;
+
+	for(i=0; (ar[i] = gu_strsep_quoted(&p, " \t\n", NULL)); i++)
+	    {
+            if(i == MAX_CMD_WORDS)
+            	{
+		puts(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
+		ar[i] = NULL;
+		break;
+            	}
+	    }
+
+	if(ar[0] && gu_strcasecmp(ar[0], "ppad") == 0
+		&& ar[1] && gu_strcasecmp(ar[1], "media") == 0
+		&& ar[2] && gu_strcasecmp(ar[2], "put") == 0
+		)
+	    {
+	    media_put(&ar[3]);
+	    }
+	else
+	    {
+	    fprintf(errors, _("Command on line %d is not ppad media put.\n"), linenum);
+	    break;
+	    }
+	}
+
+    if(line)
+	{
+	gu_free(line);
+	return EXIT_SYNTAX;
+	}
+
+    return EXIT_OK;
     }
 
 /* end of file */

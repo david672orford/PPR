@@ -16,9 +16,18 @@ found in the file <Filename>include/global defines.h</Filename> with a few in
 
 <Para>
 This function should return the node name which other nodes will use when
-sending jobs to this node.  In the current implementation this is the system
+sending jobs to this node.  
+In the current implementation this is the system
 name truncated before the first period (if present) and furthur truncated to 16
 characters.
+</Para>
+
+</Sect2>
+
+<Sect2>
+<Title>fname_sprintf()</Title>
+
+<Para>
 </Para>
 
 </Sect2>

@@ -26,10 +26,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 March 2003.
+# Last modified 6 March 2003.
 #
 
 . ../makeprogs/paths.sh
+
+if [ "$USER_PPR" = "" -o "$HOMEDIR" = "" ]
+    then
+    echo "$0: ../makeprogs/paths.sh is bad"
+    exit 1
+    fi
+if [ ! -x ../z_install_begin/id ]
+    then
+    echo "$0: ../z_install_begin/id doesn't exist"
+    exit 1
+    fi
 
 ./puts "Making sure we are $USER_PPR..."
 if [ "`../z_install_begin/id -un`" = "$USER_PPR" ]

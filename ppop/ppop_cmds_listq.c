@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 6 May 2002.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 March 2003.
 */
 
 /*
@@ -1658,7 +1673,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		    PUTS(")");
 		    }
 		break;
-	    case 48:
+	    case 48:			/* pagesxcopies */
 		if(qfileentry->attr.pages >= 0)
 		    printf("%d", qfileentry->attr.pages);
 		else
@@ -1666,7 +1681,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		if(qfileentry->opts.copies > 1)
 		    printf("x%d", qfileentry->opts.copies);
 		break;
-	    case 49:
+	    case 49:			/* page-list */
 	    	pagemask_print(qfileentry);
 	    	break;
 
@@ -1732,6 +1747,10 @@ int ppop_qquery(char *argv[])
 	    addon_count++;
 	    }
 
+	/*
+	** If you change this list, don't forget to change
+	** ../docs/refman/ppad.8.pod too.
+	*/
 	else if(strcmp(ptr,"jobname")==0)
 	    qquery_query[x] = 0;
 	else if(strcmp(ptr,"for")==0)

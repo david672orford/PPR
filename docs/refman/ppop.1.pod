@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last updated 14 January 2003.
+# Last updated 6 March 2003.
 #
 
 =head1 NAME
@@ -199,29 +199,22 @@ B<lprsrv>.
 
 =item B<ppop progress> I<job-id>
 
-This command is new and experimental.  It reports the amount of an indicated
-job which has been printed.  The output is terse because it is intended for
-use by GUI front ends.
+This command reports the amount of an indicated job which has been printed. 
+The output is terse because it is intended for use by GUI front ends.
 
 =item B<ppop qquery> {I<destination-name>, I<job_id>, B<all>} I<field1 ... fieldN>
 
-This command is new and experimental.  It is designed for use by programs
-such as GUI front ends which might wish to invoke ppop in order to get
-information about print queues.
+This command is designed for use by programs such as GUI front ends which
+might wish to invoke ppop in order to get information about print queues.
 
 The first parameter is name name of the queue to be listed, the name of a
 job to be listed or "all".
 
 The output is a table.  The columns of the table are separated by tabs.  The
-second and subsequent parameters are the names of columns desired in the
-output.  These are the valid column names:
+second and subsequent parameters are the names of the columns to be
+displayed in the output.  These are the valid column names:
 
 =over 4
-
-=item destname
-
-This is the name of the printer or group to which the job was submitted.
-If the destination node is this node, it is ommited.
 
 =item jobname
 
@@ -229,18 +222,6 @@ The PPR job id.  If the subid is zero it is ommited.  If the destination
 node is this node, it is ommited.  If the home node is this node it is
 ommited.  (In the current version of PPR, the last two conditions will
 always be true.)  A typical jobname will be "chipmunk-2001".
-
-=item fulljobname
-
-The PPR job id in long form.  A typical fulljobname will be
-"mouse:chipmunk-2001.0(mouse)".
-
-=item lpqfilename
-
-For jobs received through B<lprsrv>, the name of the origional input file, if known.
-If it is unknown, this field will contain the same string as the B<title>
-field.  This is the information that the B<ppop lpq> command displays in the
-"Files" column.
 
 =item for
 
@@ -411,6 +392,13 @@ confused with the number of printed sides or the number of sheets of paper
 that will be used.  The value in this field does not take into account the
 number of copies to be printed, duplex, or N-Up.)
 
+=item lpqfilename
+
+For jobs received through B<lprsrv>, the name of the origional input file, if known.
+If it is unknown, this field will contain the same string as the B<title>
+field.  This is the information that the B<ppop lpq> command displays in the
+"Files" column.
+
 =item totalpages
 
 The number of page descriptions in the document multiplied by the number of
@@ -428,6 +416,11 @@ The number of sheets of paper which will be used to print this job.  (That
 is, totalpages divided by the N-Up factor and furthur divided by two for
 duplex mode, the whole being rounded up to the next whole number.)
 
+=item fulljobname
+
+The PPR job id in long form.  A typical fulljobname will be
+"mouse:chipmunk-2001.0(mouse)".
+
 =item filters
 
 A space-separated list of the filters that were run on the input file in order
@@ -439,20 +432,10 @@ This is a bitmap expressed as a binary number.  It indicates which categories
 of commentary messages should be sent to the user while this job is being
 printed.  See B<ppr --commenatary>.
 
-=item commentator
+=item destname
 
-This is the name of the commentator program which will be used.
-See B<ppr --commentator>.
-
-=item commentator-address
-
-This is the address which will be passed to the commentator program.
-See B<ppr --commentator-address>.
-
-=item commentator-options
-
-This is the space-separated list of options which will be passed to the
-commentator program.  See B<ppr --commentator-options>.
+This is the name of the printer or group to which the job was submitted.
+If the destination node is this node, it is ommited.
 
 =item responder
 
@@ -468,6 +451,20 @@ B<ppr --responder-address>.
 
 This is the space-separated list of options which will be passed to the
 responder program.  See B<ppr --responder-options>.
+
+=item status-explain
+
+The value of B<status> with the value of B<explain> (if not empty) added to
+it, separated by a space, and enclosed in parentheses.
+
+=item pagesxcopies
+
+The value of filed B<pages> multiplied by the value of field B<copies>.
+
+=item page-list
+
+The list of pages to be printed, if the user has chosen to print only a
+subset of the pages.
 
 =back
 

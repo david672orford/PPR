@@ -161,7 +161,8 @@ static void help_media(FILE *out)
 	"\tppad media show <name>\n"
 	"\tppad media put <name> <width> <length> <weight> <colour> <type> <banner>\n"
 	"\tppad media delete <name>\n"
-	"\tppad media export\n", out);
+	"\tppad media export\n"
+	"\tppad media import\n", out);
     } /* end of help_media() */
 
 static void help_printer(FILE *out)
@@ -579,7 +580,7 @@ int main(int argc, char *argv[])
 
     errors = stderr;		/* set default */
 
-    chdir(HOMEDIR);
+    /* chdir(HOMEDIR); */
     umask(PPR_UMASK);
 
     /* Figure out the user's name and make it the initial value for su_user. */

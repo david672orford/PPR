@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last revised 14 February 2003.
+# Last revised 6 March 2003.
 #
 
 =head1 NAME
@@ -728,8 +728,9 @@ This option sets a list of PPR access control lists for the indicated printer.
 A user must be in at least one of these ACLs in order to submit jobs directly
 to the printer.
 
-PPR ACLs are stored in files in B</etc/ppr/acl>.  The ACL system is still under
-development, so no furthur information is available at this time.
+PPR ACLs are stored in files in B</etc/ppr/acl>.  To create a new ACL, say
+B<professors>, create a file called F</etc/ppr/acl/professors.allow> and
+enter the usernames of the members, one per line.
 
 
 =item B<ppad userparams> I<printer> I<options>
@@ -1009,6 +1010,11 @@ will be prompted for it.
 This command writes a Borne shell script to stdout.  This shell script consists
 of a series of B<ppad media put> commands which will re-create the current
 media database.
+
+=item B<ppad media import> I<filename>]
+
+This command imports a file in the format of those created by B<ppad media
+export>.
 
 =back
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 February 2003.
+# Last modified 6 March 2003.
 #
 
 #
@@ -69,6 +69,6 @@ chown $USER_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 chgrp $GROUP_PPR "$RPM_BUILD_ROOT$dir" 2>/dev/null
 chmod 755 "$RPM_BUILD_ROOT$dir"
 
-echo "%dir \"$dir\"" >>`dirname $0`/z_install_begin/installed_files_list
+echo "%dir \"$dir\"" >>`dirname $0`/../z_install_begin/installed_files_list
 
 exit 0

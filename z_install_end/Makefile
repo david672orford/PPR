@@ -32,7 +32,7 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) id$(DOTEXE) ppr
+ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) ppr
 
 #=== Build ==================================================================
 
@@ -47,7 +47,7 @@ install: $(ALL)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CONFDIR) ppr.conf.sample
 	./fixup_obsolete.sh
 	./install_sample_config.sh
-	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample
+	$(HOMEDIR)/bin/ppad media import $(CONFDIR)/media.sample >/dev/null
 	./install_atalk_links.tcl
 	./install_crontab.sh
 	./install_bin_links.sh

@@ -25,14 +25,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2002.
+# Last modified 6 March 2003.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-PROGS_FIXUP=init_ppr
 PROGS_LIB=cron_daily cron_hourly cron_run_daily$(DOTEXE)
 PROGS_BIN=ppr-clean
 PROGS=$(PROGS_FIXUP) $(PROGS_LIB) $(PROGS_BIN)
@@ -48,7 +47,6 @@ cron_run_daily$(DOTEXE): cron_run_daily.$(OBJ) $(USELIBS)
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/fixup $(PROGS_FIXUP)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(PROGS_LIB)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/bin $(PROGS_BIN)
 

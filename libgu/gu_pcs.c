@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_pcs.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,16 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 November 2002.
+** Last modified 6 March 2003.
 */
 
-#include "before_system.h"
-#include <stdio.h>
-#include <string.h>
-#include "gu.h"
-
-/*
-=head1 gu_pcs
+/*! \file
+    \brief Perl Compatible Strings
 
 This module implements a string library.  This library is designed to make it
 easier to port Perl code to C.  The strings are stored in objects known
@@ -43,8 +38,12 @@ as PCS (Perl Compatible String).
 PCS objects can contain strings with embedded NULLs, but such string cannot
 be converted to C strings because C strings can't contain embedded NULLs.
 
-=cut
 */
+
+#include "before_system.h"
+#include <stdio.h>
+#include <string.h>
+#include "gu.h"
 
 struct PCS {
     char *storage;
@@ -53,14 +52,12 @@ struct PCS {
     int refcount;
 };
 
-/*
-=head2 void *gu_pcs_new(void)
-
-This function creates a new PCS (Perl compatible string) object and returns a
-void pointer which should be passed to other gu_pcs_*() functions in order
+/** create a PCS object
+  
+This function creates a new PCS (Perl compatible string) object and returns
+a void pointer which should be passed to other gu_pcs_*() functions in order
 to use it.
 
-=cut
 */
 void *gu_pcs_new(void)
     {
@@ -72,14 +69,12 @@ void *gu_pcs_new(void)
     return (void *)p;
     }
 
-/*
-=head2 void gu_pcs_free(void **I<pcs>)
+/** destroy a PCS object
 
 This function decrements the reference count of a PCS object and sets the
-pointer I<pcs> to NULL.  If the reference counter reaches zero, then the
-object is freed.
+pointer pointed to by pcs to NULL.  If the reference counter reaches zero,
+then the object is freed.
 
-=cut
 */
 void gu_pcs_free(void **pcs)
     {
@@ -96,9 +91,7 @@ void gu_pcs_free(void **pcs)
     *pcs = (void*)NULL;
     }
 
-/*
-=head2 void gu_pcs_debug(void **I<pcs>)
-=cut
+/** print a description of a PCS object on stdout
 */
 void gu_pcs_debug(void **pcs, const char name[])
     {
@@ -113,14 +106,14 @@ void gu_pcs_debug(void **pcs, const char name[])
 	p->refcount);
     }
 
-/*
-=head2 void gu_pcs_snapshot(void **I<pcs>)
+/** obtain a copy of a PCS object that won't be unexpectedly changed
 
 This function increments the reference count of a PCS object.  A function
 should call this if it is going to keep a pointer to a PCS object that was
-passed to it as an argument.
+passed to it as an argument.  If an attempt is made to modify a PCS object
+with a non-zero reference count, a copy is made and the caller gets a
+modified copy, but the copy held by other code is unmodified.
 
-=cut
 */
 void *gu_pcs_snapshot(void **pcs)
     {
@@ -129,13 +122,11 @@ void *gu_pcs_snapshot(void **pcs)
     return *pcs;
     }
 
-/*
-=head2 void gu_pcs_grow(void **I<pcs>, int I<size>)
+/** expand the internal storage of a PCS in anticipation of future growth
 
 This function enlarges the specified PCS so that it can hold a string of the
 specified size (excluding final NULL).
 
-=cut
 */
 void gu_pcs_grow(void **pcs, int new_size)
     {
@@ -148,12 +139,11 @@ void gu_pcs_grow(void **pcs, int new_size)
     	}
     }
 
-/*
-=head2 void *gu_pcs_new_pcs(void **I<pcs>)
+/** create new PCS and initialize from a PCS
 
-This function creates a new PCS which is a duplicate of the one supplied.
+This function creates a new PCS and copies the string value from the a
+pre-existing PCS supplied as an argument.
 
-=cut
 */
 void *gu_pcs_new_pcs(void **pcs)
     {
@@ -163,12 +153,11 @@ void *gu_pcs_new_pcs(void **pcs)
     }
 
 
-/*
-=head2 void *gu_pcs_new_cstr(const char cstr[])
+/** create new PCS and initialize from a char[]
 
-This function creates a new PCS and initializes it rom the C string provided.
+This function creates a new PCS and initializes it from the C character
+array (string) provided.
 
-=cut
 */
 void *gu_pcs_new_cstr(const char cstr[])
     {
@@ -177,8 +166,7 @@ void *gu_pcs_new_cstr(const char cstr[])
     return p;
     }
 
-/*
-=head2 void gu_pcs_set_cstr(void **I<pcs>, const char I<cstr>[])
+/** copy a char[] into an existing PCS
 
 This function copies the contents of a C string (a NULL terminated character
 array into the PCS object.  The function may have to allocate a new object
@@ -186,7 +174,6 @@ and change the pointer pointed to by I<pcs> to point to the new object.  A new
 object will be allocated if the value has a reference count greater than one
 (which means it should be copied on write).
 
-=cut
 */
 void gu_pcs_set_cstr(void **pcs, const char cstr[])
     {
@@ -204,15 +191,13 @@ void gu_pcs_set_cstr(void **pcs, const char cstr[])
     strncpy(p->storage, cstr, p->storage_size);
     }
 
-/*
-=head2 void gu_pcs_set_pcs(void **I<pcs>, void *I<pcs2>)
+/** copy a PCS into an existing PCS
 
 This function copies the contents of a PCS into the PCS object.  The function
 may have to allocate a new object and change the pointer pointed to by I<pcs>
 to point to the new object.  A new object will be allocated if the value has a
 reference count greater than one (which means it should be copied on write).
 
-=cut
 */
 void gu_pcs_set_pcs(void **pcs, void **pcs2)
     {
@@ -232,15 +217,13 @@ void gu_pcs_set_pcs(void **pcs, void **pcs2)
 	}
     }
 
-/*
-=head2 const char *gu_pcs_get_cstr(void **I<pcs>)
+/** get pointer to char[] within PCS
 
 This function returns a pointer to a NULL terminated C string which contains
 the value of the PCS object.  This pointer may cease to be valid if the PCS
 object is modified or freed, so if you won't be using the value imediately,
 you should call B<gu_strdup()> on the result.
 
-=cut
 */
 const char *gu_pcs_get_cstr(void **pcs)
     {
@@ -248,12 +231,10 @@ const char *gu_pcs_get_cstr(void **pcs)
     return p->storage;
     }
 
-/*
-=head2 int gu_pcs_size(void **pcs)
+/** get length of PCS in bytes
 
 This function returns the length of the PCS in bytes.
 
-=cut
 */
 int gu_pcs_bytes(void **pcs)
     {
@@ -261,12 +242,10 @@ int gu_pcs_bytes(void **pcs)
     return p->length;
     }
 
-/*
-=head2 void gu_pcs_append_cchar(void **I<pcs>, char I<c>[])
+/** append char to PCS
 
-This function appends a C character to the the PCS object.
+This function appends a C char to the the PCS object.
 
-=cut
 */
 void gu_pcs_append_byte(void **pcs, int c)
     {
@@ -288,8 +267,7 @@ void gu_pcs_append_byte(void **pcs, int c)
     p->length = new_length;
     }
 
-/*
-=head2 void gu_pcs_append_cstr(void **I<pcs>, const char I<cstr>[])
+/** append C char[] to PCS
 
 This function appends a C string the the PCS object.
 
@@ -314,12 +292,10 @@ void gu_pcs_append_cstr(void **pcs, const char cstr[])
     p->length = new_length;
     }
 
-/*
-=head2 void gu_pcs_append_pcs(void **I<pcs>, void *I<pcs2>)
+/* append PCS to existing PCS
 
 This function appends a PCS object to the the PCS object.
 
-=cut
 */
 void gu_pcs_append_pcs(void **pcs, void **pcs2)
     {
@@ -343,13 +319,10 @@ void gu_pcs_append_pcs(void **pcs, void **pcs2)
     p->length = new_length;
     }
 
-/*
-=head2 int gu_pcs_hash(void **pcs_key)
+/** create a hash value from a PCS
 
-This function hashes a PCS.
-This function is attibuted to P. J Weinberger.
+This function hashes a PCS.  The hash function is attibuted to P. J Weinberger.
 
-=cut
 */
 int gu_pcs_hash(void **pcs_key)
     {
@@ -369,12 +342,10 @@ int gu_pcs_hash(void **pcs_key)
 	}
     }
 
-/*
-=head int gu_pcs_cmp(void *pcs1, void *pcs2)
+/** compare PCSs
 
 This function does for PCSs what strcmp() does for C strings.
 
-=cut
 */
 int gu_pcs_cmp(void **pcs1, void **pcs2)
     {

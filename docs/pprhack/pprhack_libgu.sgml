@@ -171,17 +171,4 @@ a pointer to a char array.
 
 </Sect2>
 
-<Sect2>
-<Title>fname_sprintf()</Title>
-
-<Para>
-This is a special version of sprintf().  It will never write more than
-<Constant>MAX_PPR_PATH</Constant> characters.  It only understands %s and %d.  On
-MS-Windows systems it will convert <Literal>:</Literal> to
-<Literal>!</Literal> because they are confused
-by colons in filenames.
-</Para>
-
-</Sect2>
-
 </Sect1>

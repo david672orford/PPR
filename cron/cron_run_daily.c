@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/init_and_cron/cron_run_daily.c
-** Copyright 1995--2001, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appears in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is"
-** without express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 30 August 2001.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 March 2003.
 */
 
 #include "before_system.h"
@@ -25,7 +40,7 @@
 #include "util_exits.h"
 #include "version.h"
 
-const char myname[] = "template";
+const char myname[] = "cron_run_daily";
 
 /*
 ** Command line options:
@@ -33,11 +48,11 @@ const char myname[] = "template";
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
 	{
-	{"help", 1000, FALSE},
-	{"version", 1001, FALSE},
-	{"best-time", 1002, TRUE},
-	{"touch-file", 1003, TRUE},
-	{"script", 1004, TRUE},
+	{"best-time", 1000, TRUE},
+	{"touch-file", 1001, TRUE},
+	{"script", 1002, TRUE},
+	{"help", 9000, FALSE},
+	{"version", 9001, FALSE},
 	{(char*)NULL, 0, FALSE}
 	} ;
 
@@ -70,24 +85,24 @@ int main(int argc, char *argv[])
     	{
     	switch(optchar)
     	    {
-	    case 1000:			/* --help */
+	    case 1000:			/* --best-time */
+		break;
+
+	    case 1001:			/* --touch-file */
+		break;
+
+	    case 1002:			/* --script */
+		break;
+
+	    case 9000:			/* --help */
 	    	help_switches(stdout);
 	    	exit(EXIT_OK);
 
-	    case 1001:			/* --version */
+	    case 9001:			/* --version */
 		puts(VERSION);
 		puts(COPYRIGHT);
 		puts(AUTHOR);
 	    	exit(EXIT_OK);
-
-	    case 1002:			/* --best-time */
-		break;
-
-	    case 1003:			/* --touch-file */
-		break;
-
-	    case 1004:			/* --script */
-		break;
 
 	    default:			/* other getopt errors or missing case */
 		gu_getopt_default(myname, optchar, &getopt_state, stderr);

@@ -1,16 +1,35 @@
 /*
 ** mouse:~ppr/src/libppr/gnodename.c
-** Copyright 1996, 1998, Trinity College Computing Center.
+** Copyright 1995--2003, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software and documentation are provided "as is" without
-** express or implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 22 November 2000.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 6 March 2003.
+*/
+
+/*! \file
+    \brief determine name of this node
 */
 
 #include "before_system.h"
@@ -20,14 +39,18 @@
 #include "gu.h"
 #include "global_defines.h"
 
-/*
-** This function returns the nodename which identifies this PPR node.
-** All jobs coming from this node will be stamped with this name.  Other
-** nodes will use this name to send jobs to this node.
-**
-** Notice that this routine is call frequently.  It should determine
-** the node name only the first time it is called.  It should save
-** that name and returned the saved name on subsequent calls.
+/** determine name of this node
+
+This function returns the nodename which identifies this PPR node.
+All jobs coming from this node will be stamped with this name.  Other
+nodes will use this name to send jobs to this node.  In the current
+implementation this is the system name truncated before the first period (if
+present) and furthur truncated to 16 characters.
+
+Notice that this routine is call frequently.  It should determine
+the node name only the first time it is called.  It should save
+that name and returned the saved name on subsequent calls.
+
 */
 const char *ppr_get_nodename(void)
     {
