@@ -1,7 +1,7 @@
-#! /bin/sh
+#! @SHELL@
 #
 # mouse:~ppr/src/commentators/mail.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 13 January 2005.
 #
 
 #
@@ -34,8 +34,8 @@
 #
 
 # Filled in at install time:
-SENDMAIL_PATH=?
-USER_PPR=?
+SENDMAIL_PATH="@SENDMAIL_PATH@"
+USER_PPR=@USER_PPR@
 
 # Give the perameters names.
 address="$1"

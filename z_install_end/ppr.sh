@@ -1,7 +1,7 @@
-#! /bin/sh
+#! @SHELL@
 #
 # mouse:~ppr/src/z_install_end/ppr.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 October 2004.
+# Last modified 13 January 2005.
 #
 
 #
@@ -48,10 +48,10 @@
 
 # System configuration values in this section are filled in when the
 # script is installed.
-HOMEDIR="?"
-CONFDIR="?"
-VAR_SPOOL_PPR="?"
-EECHO="?"
+HOMEDIR="@HOMEDIR@"
+CONFDIR="@CONFDIR@"
+VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
+EECHO="@EECHO@"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is
 # considered to be a configuration file and isn't deleted if the package is

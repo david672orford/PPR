@@ -1,7 +1,7 @@
-#! /bin/sh
+#! @SHELL@
 #
 # mouse:~ppr/src/filters_misc/indexfilters.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 16 March 2004.
+# Last modified 13 January 2005.
 #
 
 #
@@ -36,12 +36,12 @@
 #
 
 # System configuration information:
-HOMEDIR="?"
-CONFDIR="?"
-VAR_SPOOL_PPR="?"
-TEMPDIR="?"
-USER_PPR=?
-GROUP_PPR=?
+HOMEDIR="@HOMEDIR@"
+CONFDIR="@CONFDIR@"
+VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
+TEMPDIR="@TEMPDIR@"
+USER_PPR=@USER_PPR@
+GROUP_PPR=@GROUP_PPR@
 
 # Derived things
 STORE="$HOMEDIR/fixup"

@@ -1,7 +1,7 @@
-#! /usr/bin/perl -wT
+#! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/about.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 13 January 2005.
 #
 
 use 5.005;
-use lib "?";
+use lib "@PERL_LIBDIR@";
 use strict;
 use vars qw{%data};
 require 'cgi_data.pl';

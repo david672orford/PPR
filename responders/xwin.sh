@@ -1,7 +1,7 @@
-#! /bin/sh
+#! @SHELL@
 #
 # mouse:~ppr/src/responders/xwin.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 13 January 2005.
 #
 
 #
@@ -38,17 +38,17 @@
 
 # Place where the system X-Windows binaries are kept.  It is
 # normally "/usr/bin/X11".
-XWINBINDIR="?"
+XWINBINDIR="@XWINBINDIR@"
 
 # This helps use find our mkstemp.
-HOMEDIR="?"
+HOMEDIR="@HOMEDIR@"
 
 # We may need to write the message into a temporary file.
 # It is normally "/tmp".
-TEMPDIR="?"
+TEMPDIR="@TEMPDIR@"
 
 # We need the echo that will accept escape codes.
-EECHO="?"
+EECHO="@EECHO@"
 
 # Give names to all the parameters.
 for="$1"

@@ -1,7 +1,7 @@
-#! /bin/sh
+#! @SHELL@
 #
 # mouse:~ppr/src/cron/cron_hourly.sh
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,11 +26,11 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 13 January 2005.
 #
 
-HOMEDIR="?"
-VAR_SPOOL_PPR="?"
+HOMEDIR="@HOMEDIR@"
+VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 
 # This is a list of files which might be lists of installed packages.  The
 # file /var/lib/rpm/packages.rpm is for Red Hat Linux's RPM format, the file

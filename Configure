@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2005.
+# Last modified 13 January 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -1102,10 +1102,6 @@ export PPR_TCLSH=$(HOMEDIR)/bin/ppr-tclsh
 ===EndOfHere16===
 
 cat >&3 <<===EndOfHere20===
-# Shell script which modifies shell and Perl scripts to use the above values.
-# Don't change this setting.
-SCRIPTFIXUP=../makeprogs/scriptfixup.sh
-
 # New program to substitute the variables defined in Makefile.conf.
 SUBST_TOOL=../subst_tool
 
@@ -1799,11 +1795,10 @@ fi
 
 cat >&3 <<===EndULTRIX4===
 SOCKLIBS=
-# For makeprogs/scriptfixup.sh to change #! lines:
-SH=/bin/sh5
-# So make will use the good shell:
-SHELL=/bin/sh5
 PARALLEL=generic
+
+# So make will use the good shell:
+export SHELL=/bin/sh5
 ===EndULTRIX4===
 fi
 
@@ -1851,18 +1846,15 @@ cat >&3 <<'===MakeRules==='
 
 # Convert .sh files to shell scripts.
 .sh:
-	#$(SCRIPTFIXUP) $*.sh $*
-	../makeprogs/script_convert.sh <$*.sh | ../subst_tool >$*
+	../subst_tool <$*.sh >$*
 
 # Convert .perl files to Perl scripts.
 .perl:
-	#$(SCRIPTFIXUP) $*.perl $*
-	../makeprogs/script_convert.sh <$*.perl | ../subst_tool >$*
+	../subst_tool <$*.perl >$*
 
 # Convert .tcl files to Tcl scripts.
 .tcl:
-	#$(SCRIPTFIXUP) $*.tcl $*
-	../makeprogs/script_convert.sh <$*.tcl | ../subst_tool >$*
+	../subst_tool <$*.tcl >$*
 
 # Build an object file from a single .c file.
 .c.$(OBJ):

@@ -1,7 +1,7 @@
-#! /usr/bin/perl -w
+#! @PERL_PATH@ -w
 #
 # mouse:~ppr/src/samba/ppd2windrv.perl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 December 2004.
+# Last modified 13 January 2005.
 #
 
 #
@@ -34,9 +34,9 @@
 # installations.  This script should run with Perl 4 or 5.
 #
 
-$CONFDIR="?";
-$HOMEDIR="?";
-$VAR_SPOOL_PPR="?";
+$CONFDIR="@CONFDIR@";
+$HOMEDIR="@HOMEDIR@";
+$VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
 
 # This is the directory which contains the PPR printer configuration files.
 $PRINTERSDIR = "$CONFDIR/printers";

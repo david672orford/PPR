@@ -1,6 +1,6 @@
-#! /usr/bin/perl
+#! @PERL_PATH@
 
-use lib "?";
+use lib "@PERL_LIBDIR@";
 require "cgi_data.pl";
 cgi_read_data();
 

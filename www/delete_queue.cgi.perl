@@ -1,7 +1,7 @@
-#! /usr/bin/perl -wT
+#! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/delete_queue.cgi.perl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,10 +26,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2004.
+# Last modified 13 January 2005.
 #
 
-use lib "?";
+use lib "@PERL_LIBDIR@";
 require 'cgi_data.pl';
 require 'cgi_intl.pl';
 

@@ -1,7 +1,7 @@
-#! /bin/sh
+#! @SHELL@
 #
 # mouse:~ppr/src/misc/ppr-sync.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 December 2004.
+# Last modified 13 January 2005.
 #
 
 #
@@ -38,9 +38,9 @@ PATH="/usr/local/bin:/usr/bin:/bin"
 export PATH
 
 # The directories in which we will work.
-HOMEDIR="?"
-CONFDIR="?"
-TEMPDIR="?"
+HOMEDIR="@HOMEDIR@"
+CONFDIR="@CONFDIR@"
+TEMPDIR="@TEMPDIR@"
 
 # Determine the user name of the current user.
 MYUID=`id | sed -ne 's/^uid=[0-9][0-9]*(\([^)]*\)).*$/\1/p'`

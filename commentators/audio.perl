@@ -1,7 +1,7 @@
-#! /usr/bin/perl -w
+#! @PERL_PATH@ -w
 #
 # mouse:~ppr/src/commentators/audio.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 13 January 2005.
 #
 
 #
@@ -49,12 +49,12 @@
 #
 
 # These will be filled in when this script is installed:
-$HOMEDIR = "?";
-$SHAREDIR = "?";
-$VAR_SPOOL_PPR = "?";
-$TEMPDIR="?";
+$HOMEDIR="@HOMEDIR@";
+$SHAREDIR="@SHAREDIR@";
+$VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
+$TEMPDIR="@TEMPDIR@";
 
-use lib "?";
+use lib "@PERL_LIBDIR@";
 require 'speach.pl';
 require 'speach_play.pl';
 require 'speach_commentary.pl';

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--11 January 2005
+2.00a1, 11 December 2004--13 January 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9513,6 +9513,14 @@ no final tarball was released.
   idle_status_interval defaults to 15 not only if the jobbreak method is 
   control-d but for pjl also.  This appears to solve a problem with HP 
   JetDirect cards reporting error "40 eio 2 bad transmission".
+
+* editps/OpenOffice.org: added
+
+* printdesk/ppr-chooser.perl: removed (it was supposed to have been removed
+  a long time ago).
+
+* makeprogs/scriptfixup.sh: removed (since all scripts have been converted to
+  subst_tool).
 
 
 TODO
