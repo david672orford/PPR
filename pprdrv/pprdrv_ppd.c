@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 August 2002.
+** Last modified 27 September 2002.
 */
 
 /*
@@ -392,9 +392,9 @@ void read_PPD_file(const char *ppd_file_name)
     	
     } /* read_PPD_file() */
 
-/*==========================================================
+/*=========================================================================
 ** Routines for feature inclusion.
-==========================================================*/
+=========================================================================*/
 
 /*
 ** Add a warning to the log file about a printer feature
@@ -453,6 +453,59 @@ const char *find_feature(const char *featuretype, const char *option)
     } /* end of find_feature() */
 
 /*
+** This is called by both include_feature() and begin_feature().  It
+** determines if we have to remove or change this feature.  A feature
+** is changed by replacing featuretype or option using the 
+** pointers provided.  To remove a feature, set both to NULL.
+*/
+static void feature_change(const char **featuretype, const char **option)
+    {
+    if(strip_binselects)
+	{
+	if(strcmp(*featuretype, "*InputSlot") == 0)
+	    {
+	    *featuretype = *option = NULL;
+	    return;
+	    }
+	if(strcmp(*featuretype, "*TraySwitch") == 0)
+	    {
+	    *featuretype = *option = NULL;
+	    return;
+	    }
+	if(strcmp(*featuretype, "*PageSize") == 0)
+	    {
+	    *featuretype = "*PageRegion";
+	    return;
+	    }
+	}
+    if(strip_signature)
+	{
+	if(strcmp(*featuretype, "*Signature") == 0)
+	    {
+	    *featuretype = *option = NULL;
+	    return;
+	    }
+	if(strcmp(*featuretype, "*Booklet") == 0)
+	    {
+	    *featuretype = *option = NULL;
+	    return;
+	    }
+	}
+    if(copies_auto_collate)
+	{
+	if(strcmp(*featuretype, "*Collate") == 0)
+	    {
+	    if(copies_auto_collate != -1)
+		{
+		*option = copies_auto_collate > 0 ? "True" : "False";
+		copies_auto_collate = -1;
+		}
+	    return;
+	    }
+	}
+    } /* end of feature_change() */
+
+/*
 ** Insert feature code, if we have it.  If not, insert an
 ** "%%IncludeFeature:" comment so that a spooler furthur down
 ** the line can insert it if it has it.
@@ -478,41 +531,21 @@ void include_feature(const char *featuretype, const char *option)
     if(option && !option[0])
     	fatal(EXIT_PRNERR_NORETRY, "%s(): assertion failed", function);
 
-    /*
-    ** If we are removing binselects, then don't copy them and comment
-    ** out certain features.
-    */
-    if(strip_binselects)
-    	{
-	if(strcmp(featuretype, "*InputSlot") == 0 || strcmp(featuretype, "*TraySwitch") == 0)
-	    {
-	    #ifdef KEEP_OLD_CODE
-	    printer_printf("%% %%%%IncludeFeature: %s %s\n", featuretype, option ? option : "");
-	    #endif
-	    return;
-	    }
-
-	if(strcmp(featuretype, "*PageSize") == 0)	/* change *PageSize */
-	    {
-	    #ifdef KEEP_OLD_CODE
-	    printer_printf("%% %%%%IncludeFeature: *PageSize %s\n", option ? option : "");
-	    #endif
-	    featuretype = "*PageRegion";		/* to *PageRegion */
-	    }
-	}
-
-    /*
-    ** This is used to strip out signature and
-    ** booklet mode invokation code if PPR is doing the job.
-    */
-    if(strip_signature && ( (strcmp(featuretype,"*Signature")==0) || (strcmp(featuretype,"*Booklet")==0) ) )
+    /* Here we call feature_change() so it can tell us if we have to remove or change this feature. */
+    {
+    const char *new_featuretype = featuretype, *new_option = option;
+    feature_change(&new_featuretype, &new_option);
+    if(new_featuretype != featuretype || new_option != option)
 	{
 	#ifdef KEEP_OLD_CODE
-	printer_printf("%% %%%%IncludeFeature: %s %s\n", featuretype, option ? option : "");
+	printer_printf("%% %%%%IncludeFeature: %s%s%s\n", featuretype, option ? " " : "", option ? option : "");
 	#endif
-	return;
+	if(!new_featuretype)
+	    return;
+	featuretype = new_featuretype;
+	option = new_option;
 	}
-
+    }
 
     /* The feature code is available, */
     if((string = find_feature(featuretype, option)))
@@ -534,50 +567,36 @@ void include_feature(const char *featuretype, const char *option)
 	}
 
     /*
-    ** If the feature code is was not found in the PPD file.
+    ** If we are using N-Up and it is a *PageRegion feature, guess at the 
+    ** correct code.  We do this because N-Up prints virtual pages and the
+    ** the N-Up machinery may be able to interpret many commands that the 
+    ** printer can't.
+    */
+    else if(job.N_Up.N != 1 && strcmp(featuretype, "*PageRegion") == 0 && option)
+	{
+	const char *ptr;
+	printer_printf("%%%%BeginFeature: *PageRegion %s\n", option);
+	for(ptr=option; *ptr; ptr++)
+	    printer_putc(tolower(*ptr));
+	printer_puts(option);
+	printer_puts("\n%%EndFeature\n");
+	}
+
+    /*
+    ** As a last ditch effort, just insert an "%%IncludeFeature:" comment.
     */
     else
 	{
-	/*
-	** If we are using N-Up and it is a *PageRegion
-	** feature, guess at the correct code.
-	**
-	** We do this because the N-Up machinery may be able
-	** to interpret many commands that the printer can't.
-	*/
-	if(job.N_Up.N != 1 && strcmp(featuretype,"*PageRegion") == 0 && option)
-	    {
-	    char *ptr = gu_strdup(option);
-	    printer_printf("%%%%BeginFeature: *PageRegion %s\n", option);
-	    while(ptr)
-	        {
-	        *ptr = tolower(*ptr);
-	        ptr++;
-	        }
-	    printer_puts(option);
-	    printer_puts("\n%%EndFeature\n");
-	    gu_free(ptr);
-	    }
+	feature_warning(_("The PPD file doesn't contain code for the printer feature\n"
+		"called \"%s %s\", skipping it."), featuretype, option ? option : "");
 
-	/*
-	** As a last ditch effort, just insert an "%%IncludeFeature:" comment.
-	*/
-	else
-	    {
-	    feature_warning(_("The PPD file doesn't contain code for the printer feature\n"
-	    	"called \"%s %s\", skipping it."), featuretype, option ? option : "");
-
-	    if(option)
-		printer_printf("%%%%IncludeFeature: %s %s\n",featuretype,option);
-	    else
-		printer_printf("%%%%IncludeFeature: %s\n",featuretype);
-	    }
+	printer_printf("%%%%IncludeFeature: %s%s%s\n", featuretype, option ? " " : "", option ? option : "");
 	}
 
     } /* end of include_feature() */
 
 /*
-** Call this function when we have "%%BeginFeature: ..." in line[].
+** We call this function when we have "%%BeginFeature: ..." in line[].
 **
 ** Generally, the "%%BeginFeature:" line is written out and the feature is
 ** looked up in the table we built from the PPD file.  If it is found in the
@@ -588,12 +607,14 @@ void include_feature(const char *featuretype, const char *option)
 ** retailed (if -K true).
 **
 ** The second parameter (option) may be a NULL pointer.
+**
+** This function does not leave anything useful in line[].
 */
-void begin_feature(char *featuretype, char *option, FILE *infile)
+void begin_feature(const char featuretype[], const char option[], FILE *infile)
     {
     const char *function = "begin_feature";
-    const char *string;
-    gu_boolean fallback;		/* keep old code if PPD doesn't have it? */
+    const char *string = NULL;
+    gu_boolean keep = FALSE;
 
     DODEBUG_PPD(("%s()", function));
 
@@ -601,91 +622,46 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
     if(!featuretype)
     	return;
 
-    /* Start with -K setting */
-    fallback = job.opts.keep_badfeatures;
-
-    /*
-    ** If this is bin select code and we are stripping bin select code, or
-    ** this is signature mode code and we are stripping signature code, then
-    ** read until "%%EndFeature" and return.  If KEEP_OLD_CODE is defined
-    ** then the whole block (including "%%BeginFeature:" and "%%EndFeature")
-    ** is copied through but "% " is prepended to each line.
-    */
-    if( ( strip_binselects
- 		&& ( (strcmp(featuretype, "*InputSlot") == 0)
- 		|| (strcmp(featuretype, "*TraySwitch") == 0) ) )
- 	|| ( strip_signature
- 		&& ( (strcmp(featuretype, "*Signature") == 0)
- 		|| (strcmp(featuretype, "*Booklet") == 0) ) )
- 	)
+    /* Here we call feature_change() so it can tell us if we have to remove or change this feature. */
+    {
+    const char *new_featuretype = featuretype, *new_option = option;
+    feature_change(&new_featuretype, &new_option);
+    if(new_featuretype != featuretype || new_option != option)
 	{
 	#ifdef KEEP_OLD_CODE
-	printer_printf("%% %s\n",line);		/* print "%%BeginFeature:" line commented out */
+	printer_printf("%% %%%%BeginFeature: %s%s%s\n", featuretype, option ? " " : "", option ? option : "");
 	#endif
+        featuretype = new_featuretype;
+        option = new_option;
+	}
+    }
 
-	/* Swallow the rest of the feature block. */
-	while(TRUE)
+    /* If feature isn't being deleted, send the start comment. */
+    if(featuretype)
+	{
+	if(option)
+	    printer_printf("%%%%BeginFeature: %s %s\n", featuretype, option);
+	else
+	    printer_printf("%%%%BeginFeature: %s\n", featuretype);
+	}
+
+    /* If the feature isn't going to be deleted, try to find its PPD code. */
+    if(featuretype)
+	{
+	if((string = find_feature(featuretype, option)))
 	    {
-	    if(dgetline(infile) == (char*)NULL)
-		{
-		give_reason("defective feature invokation");
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
-		}
-
-	    #ifdef KEEP_OLD_CODE
-	    printer_printf("%% %s\n", line);	/* Print old line, commented out. */
-	    #endif
-
-	    if(strcmp(line, "%%EndFeature") == 0)
-		break;
 	    }
-	return;
-	}
+	else if(job.opts.keep_badfeatures)
+	    {
+	    feature_warning(_("The PPD file doesn't contain code for the printer feature\n"
+			"called \"%s %s\", retaining old code."), featuretype, option ? option : "");
 
-    /*
-    ** This is where we write the "%%BeginFeature:" line if the block above
-    ** didn't do it and return.
-    **
-    ** If we are stripping bin select code, then we must change "*PaperSize"
-    ** features to "*PageRegion" features, otherwise they will change the
-    ** bin selection on some printers.
-    */
-    if(strip_binselects && (strcmp(featuretype, "*PageSize") == 0))
-	{
-	#ifdef KEEP_OLD_CODE
-	printer_printf("%% %s\n", line);
-	#endif
-	featuretype = "*PageRegion";
-	printer_printf("%%%%BeginFeature: *PageRegion %s\n", option ? option : "");
-	fallback = FALSE;		/* Don't fall back to old code, it is wrong! */
-	}
-    else
-	{
-	printer_putline(line);
-	}
-
-    /*
-    ** If duplex code is not in the PPD file then the printer does
-    ** not support duplex, so we want the code stript out even
-    ** if the -K true switch was used with PPR.
-    **
-    ** I cannot remember a good reason for this code.  Since it makes
-    ** the -K switch's effect more complicated, I have removed it.
-    */
-    #if 0
-    if(strcmp(featuretype, "*Duplex") == 0)
-	fallback = FALSE;
-    #endif
-
-    /*
-    ** If the PPD file supplies PostScript code to invoke the requested
-    ** printer feature or fallback is FALSE, eat the code from here `til
-    ** the "%%EndFeature" comment.  Then, insert the code from the PPD file
-    ** (if any) and write the "%%EndFeature" comment.
-    */
-    if((string = find_feature(featuretype, option)) || !fallback)
-	{
-	if(!string)
+	    printer_puts("% PPR retained the following feature code despite fact that no such\n"
+			     "% feature is listed in the PPD file.  Use ppr's -K switch to change\n"
+			     "% this behavior.\n");
+	    keep = TRUE;
+	    }
+	else
 	    {
 	    feature_warning(_("The PPD file doesn't contain code for the printer feature\n"
 	    	"called \"%s %s\", removing existing code."), featuretype, option ? option : "");
@@ -694,76 +670,49 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
  	    		    "% there is no such feature listed in the PPD file.  Use ppr's -K\n"
  	    		    "% switch to change this behavior.");
 	    }
+	}
 
-	/* Comment out the old code */
-	while(TRUE)
+    /* Chug through the old feature lines. */
+    while(TRUE)
+	{
+	if(dgetline(infile) == (char*)NULL)
 	    {
-	    if(dgetline(infile) == (char*)NULL)
-		{
-		give_reason("defective feature invokation");
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
-		}
+	    give_reason("defective feature invokation");
+	    fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
+	    }
 
-	    if(strcmp(line, "%%EndFeature") == 0)
-		break;
+	if(strcmp(line, "%%EndFeature") == 0)
+	    break;
 
-	    /* Retain old line commented out. */
-	    #ifdef KEEP_OLD_CODE
+	if(keep)
+	    {
+	    printer_putline(line);
+	    }
+	#ifdef KEEP_OLD_CODE
+	else
 	    printer_printf("%% %s\n", line);
-	    #endif
-	    }
-
-	/*
-	** If the PPD file has code for this, insert it.  If there is an option
-	** it is just straight text.  If there is no option, then it is what
-	** the PPD spec calls a QuotedValue and must be converted before use.
-	*/
-	if(string)
-	    {
-	    if(option)
-		printer_puts(string);
-	    else
-		printer_puts_QuotedValue(string);
-
-	    printer_putc('\n');
-	    }
-
-	/* and flag the end */
-	printer_putline("%%EndFeature");
+	#endif
 	}
 
     /*
-    ** If we don't have PPD file code for this and we have determined that we
-    ** should fall back to the code in the file, just copy it and the
-    ** "%%EndFeature" comment.
+    ** If the PPD file has code for this, insert it.  If there is an option
+    ** it is just straight text.  If there is no option, then it is what
+    ** the PPD spec calls a QuotedValue and must be converted before use.
     */
-    else
+    if(string)
 	{
-	feature_warning(_("The PPD file doesn't contain code for the printer feature\n"
-		"called \"%s %s\", retaining old code."), featuretype, option ? option : "");
+	if(option)
+	    printer_puts(string);
+	else
+	    printer_puts_QuotedValue(string);
 
-	printer_puts("% PPR retained the following feature code despite fact that no such\n"
-		     "% feature is listed in the PPD file.  Use ppr's -K switch to change\n"
-		     "% this behavior.\n");
-
-	/* Copy it all through.  This is the only such loop in which we could
-	   get away with just doing break and not fatal() on EOF, but we don't.
-	   */
-	while(TRUE)
-	    {
-	    if(dgetline(infile) == (char*)NULL)
-		{
-		give_reason("defective feature invokation");
-		fatal(EXIT_JOBERR, "%s(): unterminated feature code", function);
-		}
-
-	    printer_putline(line);
-
-	    if(strcmp(line, "%%EndFeature") == 0)
-		break;
-	    }
+	printer_putc('\n');
 	}
 
+    if(featuretype)
+	printer_putline("%%EndFeature");
+    else
+	printer_putline("% %%EndFeature");
     } /* end of begin_feature() */
 
 /*
@@ -773,6 +722,9 @@ void begin_feature(char *featuretype, char *option, FILE *infile)
 ** invokation that we insert.  This bracketing code catches errors
 ** so that if, say, the duplex command failes, the job will still
 ** print.
+**
+** We call these functions to bracket additional feature invokations
+** which we add.
 */
 void begin_stopped(void)
     {
@@ -785,7 +737,9 @@ void end_stopped(const char *feature, const char *option)
     } /* end of end_stopped() */
 
 /*
-** Insert one feature for each "Feature:" line read from qstream.
+** Insert one feature for each "Feature:" line read from qstream.  These lines
+** represent the -F switches from the ppr command line.
+**
 ** This is called twice.  When it is called with set==1, is will
 ** insert all code which does not set the duplex mode, when it is
 ** called with set==2, it will insert just the duplex setting code.
@@ -866,11 +820,11 @@ void insert_features(FILE *qstream, int set)
 
     } /* end of insert_features() */
 
-/*================================================================
+/*======================================================================
 ** ppd_find_font() is called from pprdrv_res.c and pprdrv_capable.c.
 ** ppd_find_font() returns non-zero if it can't find the font
 ** in the list from the PPD file.
-================================================================*/
+======================================================================*/
 gu_boolean ppd_font_present(const char fontname[])
     {
     int h;
@@ -888,6 +842,31 @@ gu_boolean ppd_font_present(const char fontname[])
 
     return FALSE;
     } /* end of ppd_font_present() */
+
+/*======================================================================
+** Printer collate support
+======================================================================*/
+
+gu_boolean printer_can_collate(void)
+    {
+    /* Disable until we can parse UIContraints */
+    return FALSE;
+
+    if(find_feature("*Collate", "True"))
+    	return TRUE;
+    else
+	return FALSE;
+    }
+
+void set_collate(gu_boolean collate)
+    {
+    if(collate)
+	{
+	begin_stopped();
+	include_feature("*Collate", "True");
+	end_stopped("*Collate", "True");
+	}
+    }
 
 /* end of file */
 

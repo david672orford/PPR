@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last revised 14 August 2002.
+** Last revised 27 September 2002.
 */
 
 /*
@@ -109,6 +109,8 @@ extern char line[];
 extern int line_len;
 extern int line_overflow;
 extern struct timeval start_time;
+int copies_auto;
+int copies_auto_collate;
 char *dgetline(FILE *infile);
 extern const char *QueueFile;
 extern struct QFileEntry job;
@@ -191,9 +193,11 @@ void begin_stopped(void);
 void end_stopped(const char *feature, const char *option);
 void insert_features(FILE *qstream, int set);
 void include_feature(const char *featuretype, const char *option);
-void begin_feature(char *featuretype, char *option, FILE *infile);
+void begin_feature(const char featuretype[], const char option[], FILE *infile);
 void include_resource(void);
 gu_boolean ppd_font_present(const char fontname[]);
+gu_boolean printer_can_collate(void);
+void set_collate(gu_boolean collate);
 
 /* pprdrv_res.c: */
 void insert_noinclude_fonts(void);
@@ -302,8 +306,9 @@ int translate_snmp_error(int bit, const char **description, int *severity);
 int translate_snmp_status(int device_status, int printer_status, const char **description, const char **raw1, int *severity);
 
 /* pprdrv_notppd.c: */
-void set_jobname(void);
-void set_copies(int copies);
+void set_jobname(const char jobname[]);
+void set_numcopies(int copies);
+void begin_nonppd_feature(const char feature_name[], const char feature_value[], FILE *infile);
 
 /* pprdrv_persistent.c: */
 int persistent_query_callback(char *message);

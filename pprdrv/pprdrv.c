@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 July 2002.
+** Last modified 27 September 2002.
 */
 
 /*
@@ -150,7 +150,8 @@ struct timeval start_time;
 ** The first is actually global because pprdrv_req.c must
 ** read it.
 */
-int copies_auto;			/* TRUE if should define #copies */
+int copies_auto;			/* value for /#copies */
+int copies_auto_collate;		/* -1=unset, 0=no, 1=yes */
 static int copies_doc_countdown;	/* number of times to send document */
 static int copies_pages_countdown;	/* number of times to send pages */
 
@@ -255,8 +256,9 @@ static char *dgetline_read(FILE *infile)
     } /* end of dgetline_read() */
 
 /*
-** If the line should not be returned to the caller, this
-** routine returns -1, otherwise it returns 0.
+** If the line should not be returned to the caller (in other words, if the
+** caller should read and process the next line imediately, this routine 
+** returns -1, otherwise it returns 0.
 **
 ** This routine quitely copies feature code, documents, and resources.
 ** End feature or resource marker lines which occur without begin
@@ -276,6 +278,12 @@ static int dgetline_parse(FILE *infile)
 	    {
 	    tokenize();
 	    include_feature(tokens[1], tokens[2]);
+	    return -1;
+	    }
+	if(lmatch(line, "%%BeginNonPPDFeature:"))
+	    {
+	    tokenize();
+	    begin_nonppd_feature(tokens[1], tokens[2], infile);
 	    return -1;
 	    }
 	if(lmatch(line, "%%IncludeResource:"))
@@ -607,7 +615,7 @@ static gu_boolean copy_setup(void)
     ** Set the job name so that others who want to use the printer will be
     ** able to see who is using it and come looking for our blood.
     */
-    set_jobname();
+    set_jobname(QueueFile);
 
     /* Do this now as the document setup code may select fonts. */
     insert_noinclude_fonts();
@@ -681,13 +689,11 @@ static gu_boolean copy_setup(void)
 	    {
 	    insert_features(qstream,2);	/* insert ppr -F *Duplex switch things */
 
-	    if(job.opts.copies != -1)   /* specify number of copies */
-		{
-		if(copies_auto)         /* if auto, insert auto code */
-		    set_copies(job.opts.copies);
-		else                    /* if not auto copies, */
-		    set_copies(1);      /* disable any old auto copies code */
-		}
+	    if(copies_auto != -1)
+	    	set_numcopies(copies_auto);
+
+	    if(copies_auto_collate != -1)
+	    	set_collate(copies_auto_collate ? TRUE : FALSE);
 
 	    insert_userparams();
 
@@ -1532,38 +1538,51 @@ static void pprdrv_read_printer_conf(void)
 /*
 ** Choose the method by which we will print multiple copies.
 ** This routine will always return.  It is called once by main().
+**
+** copies_auto			-- number of copies we should ask the printer to make
+** copies_auto_collate		-- should the printer collate?
+** copies_doc_countdown		-- how many times to send the whole PostScript file
+** copies_pages_countdown	-- how many times to send the script section
 */
 static void select_copies_method(void)
     {
-    if(job.opts.copies < 2)
+    /* If copies not specified, or specified as 1, or no collating required,
+       let the printer do it. */
+    if(job.opts.copies < 2 || !job.opts.collate)
 	{
-	copies_auto = FALSE;
+	copies_auto = job.opts.copies;	/* printer should make one impression each page */
+	copies_auto_collate = 0;
+	copies_doc_countdown = 1;	/* send the PostScript file only once */
+	copies_pages_countdown = 1;	/* send the script section only once */
+	return;
+	}
+
+    /* If the printer can collate, then do it that way. */
+    if(printer_can_collate())
+	{
+	copies_auto = job.opts.copies;
+	copies_auto_collate = 1;
 	copies_doc_countdown = 1;
 	copies_pages_countdown = 1;
 	return;
 	}
 
-    if(!job.opts.collate)
+    /* If we don't know where the pages are in the PostScript file or if they
+       are not independent, then we will repeat the whole PostScript file. */
+    if(!job.attr.script || job.attr.pageorder==PAGEORDER_SPECIAL)
 	{
-	copies_auto = TRUE;
-	copies_doc_countdown = 1;
+	copies_auto = 1;
+	copies_auto_collate = 0;
+	copies_doc_countdown = job.opts.copies;
 	copies_pages_countdown = 1;
+	return;
 	}
-    else
-	{
-	if( !job.attr.script || (job.attr.pageorder==PAGEORDER_SPECIAL) )
-	    {
-	    copies_auto = FALSE;
-	    copies_doc_countdown = job.opts.copies;
-	    copies_pages_countdown = 1;
-	    }
-	else
-	    {
-	    copies_auto = FALSE;
-	    copies_doc_countdown = 1;
-	    copies_pages_countdown = job.opts.copies;
-	    }
-	}
+
+    /* Repeat just the script section to produce collated copies. */
+    copies_auto = 1;
+    copies_auto_collate = 0;
+    copies_doc_countdown = 1;
+    copies_pages_countdown = job.opts.copies;
     } /* end of select_copies_method() */
 
 /*
@@ -2246,15 +2265,17 @@ int main(int argc, char *argv[])
 	if(!job.attr.docsetup)			/* if no conforming doc setup section, */
 	    {					/* put non-conforming one at job start */
 	    printer_puts("% No DSC document setup, PPR will add code here ---v\n");
-	    set_jobname();
+	    set_jobname(QueueFile);
 	    insert_noinclude_fonts();
 	    if(media_count==1 && job.opts.binselect)
 		select_medium(media_xlate[0].pprname);
 	    insert_features(qstream, 1);	/* insert most ppr -F switch things */
 	    invoke_N_Up();
 	    insert_features(qstream, 2);	/* insert ppr -F *Duplex switch thing */
-	    if(job.opts.copies != -1)		/* don't worry about copies_auto==FALSE */
-		printer_printf("/showpage { /#copies %d def showpage } bind def %%PPR\n", job.opts.copies);
+	    if(copies_auto != -1)
+		set_numcopies(copies_auto);
+	    if(copies_auto_collate != -1)
+	    	set_collate(copies_auto_collate ? TRUE : FALSE);
 	    custom_hook(CUSTOM_HOOK_DOCSETUP, 0);
 	    printer_puts("% ^--- end of non-DSC document setup\n");
 	    }

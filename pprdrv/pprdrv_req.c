@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_req.c
-** Copyright 1995, 1996, 1997, 1998, Trinity College Computing Center.
+** Copyright 1995--2002, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
 **
-** Last modified 4 December 1998.
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+**
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+** POSSIBILITY OF SUCH DAMAGE.
+**
+** Last modified 27 September 2002.
 */
 
 /*
@@ -23,15 +38,8 @@
 #include <sys/types.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprdrv.h"
-
-/*
-** This is declared external here rather than in pprdrv.h because this
-** is the only module besides pprdrv.c that uses it.
-*/
-extern int copies_auto;
 
 /*
 ** Print all the requirements including those
@@ -39,14 +47,18 @@ extern int copies_auto;
 */
 void write_requirement_comments(void)
     {
-    int x;
+    int i;
 
-    for(x=0;x<drvreq_count;x++)
+    /*
+    ** Copy requirements from the original PostScript file.  Note that "collate"
+    ** and "numcopies(X)" have already been filtered out.
+    */
+    for(i=0; i < drvreq_count; i++)
     	{
-	if(x)					/* not 1st requirement */
-	    printer_printf("%%%%+ %s\n",drvreq[x]);
+	if(i)					/* not 1st requirement */
+	    printer_printf("%%%%+ %s\n", drvreq[i]);
 	else					/* 1st requirement */
-	    printer_printf("%%%%Requirements: %s\n",drvreq[x]);
+	    printer_printf("%%%%Requirements: %s\n", drvreq[i]);
     	}
 
     /*
@@ -54,21 +66,21 @@ void write_requirement_comments(void)
     ** specifying the requirements which the _printer_ must meet.
     ** If we are producing the copies, it is not a printer requirement.
     */
-    if(copies_auto)
+    if(copies_auto > 1)			/* note that copies_auto==1 is not a requirement */
     	{
-	if(x)				/* if %%Requirements: started, */
+	if(i)				/* if %%Requirements: started, */
 	    printer_puts("%%+");	/* just continue it */
 	else				/* if not started, */
 	    printer_puts("%%Requirements:");	/* start it now */
 
-	printer_printf(" numcopies(%d)",job.opts.copies);
+	printer_printf(" numcopies(%d)", job.opts.copies);
 
-	if(job.opts.collate)		/* Since I know of no printer which can collate */
-	    printer_puts(" collate");	/* auto copies, it seems likely that this will */
-					/* never be TRUE. */
+	if(copies_auto_collate)
+	    printer_puts(" collate");
+
 	printer_putc('\n');
 	}
 
-    } /* end of dump_document_requirements() */
+    } /* end of write_requirement_comments() */
 
 /* end of file */
