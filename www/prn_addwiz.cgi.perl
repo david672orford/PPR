@@ -11,7 +11,7 @@
 # documentation.  This software is provided "as is" without express or
 # implied warranty.
 #
-# Last modified 6 April 2001.
+# Last modified 27 August 2001.
 #
 
 #
@@ -52,12 +52,12 @@ $NBP_LOOKUP = "$HOMEDIR/lib/nbp_lookup";
 	'lpr' => N_("RFC 1179 (lpr/lpd protocol)"),
 	'smb' => N_("LAN Manager/MS-Windows"),
 	'gssimple' => "--hide",
-	'gsatalk' => N_("GS & PAP"),
-	'gstcpip' => N_("GS & AppSocket"),
-	'gsserial' => N_("GS & Server Serial Port"),
-	'gsparallel' => N_("GS & Server Parallel Port"),
-	'gslpr' => N_("GS & lpr/lpd"),
-	'gssmb' => N_("GS & LANMAN")
+	'gsatalk' => "--hide",
+	'gstcpip' => "--hide",
+	'gsserial' => "--hide",
+	'gsparallel' => "--hide",
+	'gslpr' => "--hide",
+	'gssmb' => "--hide"
 	);
 
 #====================================================================

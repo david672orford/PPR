@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 29 August 2001.
 */
 
 /*
@@ -334,6 +334,7 @@ int printer_show(const char *argv[])
     char *rip_name = NULL;
     char *rip_output_language = NULL;
     char *rip_options = NULL;
+    gu_boolean rip_from_ppd = FALSE;
     char *PPDFile = (char*)NULL;
     char *bins[MAX_BINS];
     int outputorder = 0;		/* unknown outputorder */
@@ -609,20 +610,18 @@ int printer_show(const char *argv[])
                 } /* "*Protocols:" */
 	    if((p = lmatchp(pline, "*pprRIP:")))
 	    	{
-		if(!rip_name)	/* if not specified in printer config, */
+		char *f1, *f2, *f3;
+		if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
 		    {
-		    char *f1, *f2, *f3;
-		    if((f1 = gu_strsep(&p, " \t\n")) && (f2 = gu_strsep(&p, " \t\n")))
-			{
-			rip_name = gu_strdup(f1);
-			rip_output_language = gu_strdup(f2);
-			if((f3 = gu_strsep(&p, "")))
-			    rip_options = gu_strdup(f3);
-			}
-		    else
-		        {
-		        fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
-			}
+		    rip_from_ppd = TRUE;
+		    rip_name = gu_strdup(f1);
+		    rip_output_language = gu_strdup(f2);
+		    if((f3 = gu_strsep(&p, "\n")))
+			rip_options = gu_strdup(f3);
+		    }
+		else
+		    {
+		    fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
 		    }
 	    	} /* "*pprRIP:" */
             } /* while() */
@@ -673,7 +672,7 @@ int printer_show(const char *argv[])
 	/* RIP */
 	if(rip_name)
 	    {
-	    printf(_("RIP: %s %s \"%s\"\n"),
+	    printf(rip_from_ppd ? _("RIP: %s %s \"%s\" (from PPD)\n") : _("RIP: %s %s \"%s\"\n"),
 		rip_name,
 		rip_output_language ? rip_output_language : "?",
 		rip_options ? rip_options : "");
@@ -1468,13 +1467,25 @@ int printer_rip(const char *argv[])
     if(!printer || (printer && rip && !output_language))
 	{
 	fputs(_("You must supply the name of an existing printer.  If you supply no other\n"
-		"parameters, the RIP setting will revert to the PPD file default.  To set\n"
+		"parameters, the RIP setting will revert to the PPD file default.  To select\n"
 		"a different RIP, supply the RIP name (such as \"gs\" or \"ppr-gs\"), an\n"
-		"output language (such as \"pcl\"), and a RIP options string.\n"), errors);
+		"output language (such as \"pcl\" or \"other\"), and a RIP options string.\n"), errors);
 	return EXIT_SYNTAX;
 	}
 
-    if(argv[3] && argv[4])
+    if(strlen(rip) == 0)
+        {
+        fputs(_("The RIP name may not be an empty string.\n"), errors);
+        return EXIT_SYNTAX;
+        }
+
+    if(strlen(output_language) == 0)
+        {
+        fputs(_("The RIP output language may not be an empty string.\n"), errors);
+        return EXIT_SYNTAX;
+        }
+
+    if(rip && output_language && options && argv[4])
     	{
 	fputs(_("Too many parameters.  Did you forget to quote the list of options?\n"), errors);
 	return EXIT_SYNTAX;

@@ -11,7 +11,7 @@
 ** without express or implied warranty.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 4 May 2001.
+** This file was last modified 28 August 2001.
 */
 
 /*
@@ -229,7 +229,7 @@
 #define MAX_DESTNAME 16			/* max length of destination name */
 #define MAX_NODENAME 16			/* max length of node name */
 #define MAX_NODES 25			/* max number of nodes pprd can keep track of */
-#define MAX_PRINTERS 150		/* no more than 150 printers */
+#define MAX_PRINTERS 250		/* no more than 250 printers */
 #define MAX_BINS 10			/* max bins per printer */
 #define MAX_GROUPS 150			/* no more than this may groups */
 #define MAX_GROUPSIZE 8			/* no more than 8 printers per group */

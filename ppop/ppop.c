@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 31 July 2001.
+** Last modified 24 August 2001.
 */
 
 /*
@@ -352,7 +352,7 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 	{
 	if(len > MAX_NODENAME)
 	    {
-	    fprintf(errors, _("Destination node name \"%*s\" is too long.\n"), len, ptr);
+	    fprintf(errors, _("Destination node name \"%*s\" is too long.\n"), (int)len, ptr);
 	    return -1;
 	    }
 	if(len == 0)
@@ -397,7 +397,7 @@ int parse_job_name(struct Jobname *job, const char *jobname)
     */
     if(len > MAX_DESTNAME)
 	{
-	fprintf(errors, _("Destination name \"%*s\" is too long.\n"), len, ptr);
+	fprintf(errors, _("Destination name \"%*s\" is too long.\n"), (int)len, ptr);
 	return -1;
 	}
     if(len == 0)

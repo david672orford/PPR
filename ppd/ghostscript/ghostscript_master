@@ -32,7 +32,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 19 July 2001.
+*% which was last revised 28 August 2001.
 *%
 #endif
 
@@ -71,7 +71,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "6"
-*% *pprRIP: ppr-gs pcl -sDEVICE=ljet3
+*pprRIP: ppr-gs pcl -sDEVICE=ljet3
 #endif
 
 #ifdef PRINTER_HPDJ500
@@ -84,7 +84,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "4"
-*% *pprRIP: ppr-gs pcl -sDEVICE=djet500
+*pprRIP: ppr-gs pcl -sDEVICE=djet500
 #endif
 
 #ifdef PRINTER_DM24
@@ -97,7 +97,7 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "1"
-*% *pprRIP: ppr-gs x -sDEVICE=necp6
+*pprRIP: ppr-gs x -sDEVICE=necp6
 #endif
 
 #ifdef PRINTER_HPDJ550C
@@ -110,7 +110,7 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*% *pprRIP: ppr-gs pcl -sDEVICE=cdj550
+*pprRIP: ppr-gs pcl -sDEVICE=cdj550
 #endif
 
 *% ===== General Information =====

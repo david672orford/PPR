@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_tabbed.css
-** Last modified 5 April 2001.
+** Last modified 29 August 2001.
 */
 
 BODY {	background: #C0C0C0;
@@ -86,6 +86,25 @@ SPAN.value {
 TEXTAREA {
 	font-size: 10pt;
 	font-family: sans-serif;
+	}
+
+/* A DIV and SPAN of class "section" are used to enclose controls
+   in a labeled box.
+   */
+DIV.section {
+	border: thin solid black;
+	padding: 10pt;
+	margin-bottom: 10pt;
+	}
+SPAN.section {
+	position: relative;
+	top: -1.5em;
+	right: 0pt;
+	background: beige;
+	border-width: 0.5pt;
+	border-style: solid;
+	padding-left: 1ex;  
+	padding-right: 1ex; 
 	}
 
 /* end of file */

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 9 May 2001.
+** Last modified 17 August 2001.
 */
 
 /*
@@ -1307,21 +1307,23 @@ static void ppop_move(const char command[])
 
     unlock(); 			/* we are done modifying the queue array */
 
-    switch(moved)               /* tell how many jobs where moved */
+    /* Tell how many files were moved. */
+    switch(moved)
 	{
 	case 0:
-	    if(id == -1)	/* if moving all files on destination, */
+	    if(id == -1)		/* If we tried to move all files on destination, */
 		{
 		fprintf(reply_file, "%d\n", EXIT_BADJOB);
 		fprintf(reply_file, _("No jobs are queued for \"%s\".\n"), destname);
 		}
-	    else
+	    else if(printing > 0)	/* If files not moved because they were printing, */
 		{
-		if(printing==0) /* suppress if we already said it was */
-		    {           /* printing */
-		    fprintf(reply_file, "%d\n", EXIT_BADJOB);
-		    fprintf(reply_file, _("Job \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
-		    }
+		fprintf(reply_file, "%d\n", EXIT_OK);	/* Is this right? !!! */
+		}
+	    else			/* If no matching file, */
+		{
+		fprintf(reply_file, "%d\n", EXIT_BADJOB);
+		fprintf(reply_file, _("Job \"%s\" does not exist.\n"), local_jobid(destname,id,subid,nodeid_to_name(homenode_id)));
 		}
 	    break;
 	case 1:
@@ -1334,6 +1336,7 @@ static void ppop_move(const char command[])
 	    break;
 	}
 
+    /* Say how many files wern't moved because they were being printed. */
     if(printing > 0)
     	{
 	if(printing == 1)

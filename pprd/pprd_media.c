@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 19 July 2001.
+** Last modified 28 August 2001.
 */
 
 #include "before_system.h"
@@ -207,20 +207,22 @@ static void media_update_notnow2(int destid, int prnbit, int prnid);
 */
 void media_startstop_update_waitreason(int prnid)
     {
-    int g;
-
     lock();
 
     /* Update for jobs with this printer as their dest. */
     media_startstop_update_waitreason2(prnid);
 
-    /* For each group if this prn is a member update it. */
+    /* Check each group to see if this printer is a member. */
+    {
+    int g, g_destid;
     for(g=0; g < group_count; g++)
 	{
-	if(destid_local_get_member_offset(g + MAX_PRINTERS, prnid) != -1)
-	    media_startstop_update_waitreason2(g + MAX_PRINTERS);
+	g_destid = destid_local_by_gindex(g);
+	if(destid_local_get_member_offset(g_destid, prnid) != -1)
+	    media_startstop_update_waitreason2(g_destid);
 	}
-
+    }
+    
     unlock();
     } /* end of media_startstop_update_waitreason() */
 
@@ -255,8 +257,6 @@ static void media_startstop_update_waitreason2(int destid)
 */
 void media_update_notnow(int prnid)
     {
-    int g;
-    int prnbit;
 
     DODEBUG_NOTNOW(("media_update_notnow()"));
 
@@ -265,12 +265,16 @@ void media_update_notnow(int prnid)
     /* Update for jobs with this printer as their dest. */
     media_update_notnow2(prnid, 1, prnid);
 
-    /* For each group if this prn is a member update it. */
+    /* For each group if this prn is a member, update it. */
+    {
+    int g, g_destid, prnbit;
     for(g = 0; g < group_count; g++)
 	{
-	if( (prnbit = destid_printer_bit(g + MAX_PRINTERS, prnid)) )
-	    media_update_notnow2(g + MAX_PRINTERS, prnbit, prnid);
+	int g_destid = destid_local_by_gindex(g);
+	if((prnbit = destid_printer_bit(g_destid, prnid)))
+	    media_update_notnow2(g_destid, prnbit, prnid);
 	}
+    }
 
     unlock();
     } /* end of media_update_notnow() */

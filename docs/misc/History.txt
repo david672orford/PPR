@@ -7337,7 +7337,7 @@ line was being parsed twice.
   does not exist.  This brings the code back in line with the comments.
 
 
-1.50a1, 1 August 2001--14 August 2001
+1.50a1, 1 August 2001--29 August 2001
 
 * Replaced makeprogs/global.mk.4rpm with a series of them for different
   arch-vendor-os combinations.
@@ -7355,5 +7355,30 @@ line was being parsed twice.
 
 * Added nonppr/tcl7.4_hacked.
 
-* Added the job title to the arguments passed to the interface programs.
+* Added the job title to the arguments passed to the interface programs. 
+  Changed the lpr interface program to pass it to the remote system.
 
+* pprd/pprd_ppopint.c: Fixed message in case where "ppop move" moves no files 
+  because they are all printing.
+
+* pprd/pprd_destid.c:destid_local_is_group(): fixed to return the current
+  answer for the first group id when the printer table is full.  It was 
+  returning false for a group with destid 150 when there were 150 printers
+  with ids 0--149.  This bug would cause a spooler crash if "ppop start"
+  was run on a faulted printer since destid_local_get_member_offset() would
+  panic and throw an assertion failure since it though it was being asked
+  to find a printer in a printer.
+
+* include/global_defines.h: Increased MAX_PRINTERS to 250.
+
+* pprd/pprd_media.c: Replaced references to MAX_PRINTERS with calls to
+  functions in pprd_destid.c.
+
+* www/prn_addwiz.cgi.perl: set to hide gs* interfaces.
+
+* interfaces/: removed gs* interfaces.
+
+* ppd/ghostscript/: uncommented *pprRIP: lines.
+
+* ppad/ppad_printer.c:printer_rip(): fixed so that "ppad rip _printer_" can
+  clear the RIP setting rather than triggering a spurious syntax error.

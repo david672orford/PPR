@@ -85,6 +85,7 @@ SUBDIRS=\
 	po \
 	fixup \
 	init_and_cron \
+	nonppr/tcl7.4_hacked \
 	templates \
 	docs
 
