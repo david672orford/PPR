@@ -7551,7 +7551,7 @@ line was being parsed twice.
   rather than papsrv.conf.
 
 
-1.50a2, 27 February 2002--17 July 2002.
+1.50a2, 27 February 2002--19 July 2002.
 
 * Moved responder message building out of pprd/pprd_respond.c and into
   responders/ppr-respond.c.
@@ -7751,5 +7751,9 @@ line was being parsed twice.
 
 * pprdrv/pprdrv.c: fixed messed up decimal point splitting in formatting of
   money in the printlog.  (Again, thanks to Jacques Sansdrap.)
+
+* libgu/gu_pch.c:
+
+* uprint/uprint-lpstat.c:
 
 

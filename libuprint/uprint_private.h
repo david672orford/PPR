@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 May 2002.
+** Last modified 19 July 2002.
 */
 
 /* Do not turn this on when linking with lprsrv!  Such
@@ -144,8 +144,6 @@ extern struct LP_LPR_TYPE_XLATE lp_lpr_type_xlate[];
 /* uprint_conf.c */
 const char *uprint_path_lpq(void);
 const char *uprint_path_lprm(void);
-gu_boolean uprint_lpr_installed(void);
-gu_boolean uprint_lp_installed(void);
 const char *uprint_lpr_printcap(void);
 const char *uprint_lp_printers(void);
 const char *uprint_lp_classes(void);

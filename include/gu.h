@@ -10,7 +10,7 @@
 ** documentation.  This software and documentation are provided "as is"
 ** without express or implied warranty.
 **
-** Last modified 21 February 2002.
+** Last modified 19 July 2002.
 */
 
 #ifndef _GU_H

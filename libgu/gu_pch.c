@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 July 2002.
+** Last modified 19 July 2002.
 */
 
 #include "before_system.h"
@@ -63,7 +63,8 @@ struct PCH {
 
 This function creates a new PCH (Perl compatible hash) object and returns a
 void pointer which should be passed to other gu_pch_*() functions in order
-to use it.
+to use it.  It takes a single integer argument which is the number of
+hash that the new hash should have.
 
 =cut
 */
@@ -85,6 +86,10 @@ void *gu_pch_new(int buckets_count)
 /*
 =head2 void gu_pch_free(void **I<pch>)
 
+This function frees a PCH object.  This includes freeing all of the memory
+it uses and decrementing the reference counts on any objects it holds
+references to (which may result in their being freed too).
+
 =cut
 */
 void gu_pch_free(void **pch)
@@ -92,16 +97,21 @@ void gu_pch_free(void **pch)
     struct PCH *p = (struct PCH *)*pch;
     int x;
 
+    /* Decrement the reference count on each PCS which is a key or a value. */
     for(x=0; x < p->buckets_count; x++)
 	{
+
 	}
 
-    gu_free(*pch);
-    *pch = (void*)NULL;
+    gu_free(p->buckets);	/* free the buckets within the object */
+    gu_free(*pch);		/* free the object itself */
+    *pch = (void*)NULL;		/* voiding the pointer will prevent accidental reuse */
     }
 
 /*
 =head2 void gu_pch_debug(void **I<pcs>)
+
+This function prints a dump of a hash object.
 
 =cut
 */
@@ -110,30 +120,36 @@ void gu_pch_debug(void **pch, const char name[])
     struct PCH *p = (struct PCH *)*pch;
     int x;
 
+    printf("%p ->\n", pch);
+
     for(x=0; x < p->buckets_count; x++)
 	{
+	struct PCH_BUCKET *bucket = p->buckets[x];
+	printf("  buckets[%d]\n", x);
+	while(bucket)
+	    {
+	    printf("    {%s} = \"%s\"\n", gu_pcs_get_cstr(&bucket->key), gu_pcs_get_cstr(&bucket->key));
+	    bucket = bucket->next;
+	    }
 	}
-
-
     }
 
 /*
 ** This internal function returns a pointer to the pointer which should be set
 ** to point to a given key.
 */
-static struct PCH_BUCKET *gu_pch_find(void **pch, void **pcs_key)
+static struct PCH_BUCKET **gu_pch_find(void **pch, void **pcs_key)
     {
     struct PCH *p = (struct PCH *)*pch;
     int hash;
-    struct PCH_BUCKET *bp;
-
-    hash = gu_pch_hash_pcs(pcs_key) % p->buckets_count;
-    bp = p->buckets[hash];
-
+    hash = gu_pcs_hash(pcs_key) % p->buckets_count;
+    return &p->buckets[hash];
     }
 
 /*
 =head2 void gu_pch_set(void **pch, void **pcs_key, void **pcs_value)
+
+This function sets a given key of a given hash object to a given value.
 
 =cut
 */
@@ -146,8 +162,8 @@ void gu_pch_set(void **pch, void **pcs_key, void **pcs_value)
 /*
 =head2 void gu_pch_get(void **pch, void **pcs_key)
 
-This function looks up the indicated key and returns a PCS (or NULL if the key
-is not found).
+This function looks up the indicated key and returns the value as a PCS (or
+NULL if the key is not found).
 
 =cut
 */
@@ -217,6 +233,11 @@ void *gu_pch_nextkey(void **pch)
 #ifdef TEST
 int main(int argc, char *argv[])
     {
+    void *thash = gu_pch_new(10);
+
+    gu_pch_debug(&thash, "thash");
+
+    gu_pch_free(&thash);
 
     return 0;
     }

@@ -10,7 +10,7 @@
 ** documentation.  This software is provided "as is" without express or
 ** implied warranty.
 **
-** Last modified 7 May 2002.
+** Last modified 19 July 2002.
 */
 
 /* Maximum lengths of control file fields. */
@@ -200,6 +200,8 @@ const char *uprint_path_lpr(void);
 const char *uprint_path_lp(void);
 const char *uprint_path_lpstat(void);
 const char *uprint_path_cancel(void);
+gu_boolean uprint_lpr_installed(void);
+gu_boolean uprint_lp_installed(void);
 
 /* Values for uprint_errno: */
 #define UPE_NONE 0	/* not an error */
