@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 March 2003.
+** Last modified 26 March 2003.
 */
 
 #include "before_system.h"
@@ -167,15 +167,19 @@ static const int clear_on_exit_bits[] = {
 ============================================================================*/
 
 static struct {
+
     struct {
 	gu_boolean important;
 	char message[80];
 	} lw_status;
+
     struct {
 	int online;
+
 	gu_boolean important;
 	int code;
 	char message[80];
+
 	gu_boolean important2;
 	int code2;
 	char message2[80];
@@ -209,14 +213,20 @@ void ppop_status_init(void)
     {
     const char function[] = "ppop_status_init";
 
+    /* Initialize the LaserWriter-style status to unknown. */
     ppop_status.lw_status.important = FALSE;
     ppop_status.lw_status.message[0] = '\0';
 
+    /* Initialize the PJL status to unknown. */
     ppop_status.pjl_status.online = PJL_ONLINE_UNKNOWN;
+
     ppop_status.pjl_status.code = -1;
     ppop_status.pjl_status.message[0] = '\0';
+    ppop_status.pjl_status.important = FALSE;
+
     ppop_status.pjl_status.code2 = -1;
     ppop_status.pjl_status.message2[0] = '\0';
+    ppop_status.pjl_status.important2 = FALSE;
 
     /* Initialize the device and printer status to unknown */
     status.hrDeviceStatus = -1;
@@ -732,7 +742,13 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 	int hrDeviceStatus, hrPrinterStatus, hrPrinterDetectedErrorState;
 	const char *details;
 
-        if(translate_pjl_message(ustatus[i].code, ustatus[i].message, &hrDeviceStatus, &hrPrinterStatus, &hrPrinterDetectedErrorState, &details) != -1)
+	/* The code will be zero if the printer didn't send one. */
+	if(ustatus[i].code == 0)
+	    {
+	    ustatus[i].understood = TRUE;
+	    }
+
+        else if(translate_pjl_message(ustatus[i].code, ustatus[i].message, &hrDeviceStatus, &hrPrinterStatus, &hrPrinterDetectedErrorState, &details) != -1)
 	    {
 	    /* If we derived an SNMP device or printer status from that code, */
 	    if(hrDeviceStatus != -1 || hrPrinterStatus != -1)
@@ -773,9 +789,11 @@ void handle_ustatus_device(enum PJL_ONLINE online, int code, const char message[
 
     /* Copy this into the record as raw PJL status information. */
     ppop_status.pjl_status.online = online;
+
     ppop_status.pjl_status.important = !ustatus[0].understood;
     ppop_status.pjl_status.code = ustatus[0].code;
     gu_StrCopyMax(ppop_status.pjl_status.message, sizeof(ppop_status.pjl_status.message), ustatus[0].message);
+
     ppop_status.pjl_status.important2 = !ustatus[1].understood;
     ppop_status.pjl_status.code2 = ustatus[1].code;
     gu_StrCopyMax(ppop_status.pjl_status.message2, sizeof(ppop_status.pjl_status.message2), ustatus[1].message);
