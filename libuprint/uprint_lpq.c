@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_lpq.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -94,78 +94,6 @@ int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue[], int
 		args[i] = (const char *)NULL;
 
 		return uprint_run(uid, gid, PPOP_PATH, args);
-		}
-
-	/*
-	** System V lp:
-	** Use the lpstat program.
-	*/
-	else if(printdest_claim_sysv(queue))
-		{
-		const char *args[ARGS_SIZE];
-		int i, x;
-		#ifdef LP_LPSTAT_BROKEN
-		char temp[32+3];
-		#endif
-
-		i = 0;
-		args[i++] = "lpstat";
-
-		/* Certain very old versions of lpstat can't parse
-		   options arranged according to POSIX rules, with
-		   a space between option and argument.  The 32
-		   character limit is chosen arbitrarily. */
-		#ifdef LP_LPSTAT_BROKEN
-		snprintf(temp, sizeof(temp), "-o%s", queue);
-		args[i++] = temp;
-		#else
-		args[i++] = "-o";
-		args[i++] = queue;
-		#endif
-
-		/* If there are file names (as opposed to no file names
-		   which indicates stdin) then add them now. */
-		if(arglist != (const char **)NULL)
-			{
-			for(x = 0; arglist[x] && x < ARGS_SIZE; x++, i++)
-				{
-				args[i] = arglist[x];
-				}
-			}
-
-		/* Terminate the argument list. */
-		args[i] = (const char *)NULL;
-
-		return uprint_run(uid, gid, uprint_path_lpstat(), args);
-		}
-
-	/*
-	** BSD lpr:
-	** Use the lpq program.
-	*/
-	if(printdest_claim_bsd(queue))
-		{
-		const char *args[ARGS_SIZE];
-		int i, x;
-
-		args[0] = "lpq";
-		args[1] = "-P";
-		args[2] = queue;
-		i = 3;
-		if(format != 0)
-			args[i++] = "-l";
-
-		if(arglist != (const char **)NULL)
-			{
-			for(x = 0; arglist[x] != (const char *)NULL && x < ARGS_SIZE; x++, i++)
-				{
-				args[i] = arglist[x];
-				}
-			}
-
-		args[i] = (const char *)NULL;
-
-		return uprint_run(uid, gid, uprint_path_lpq(), args);
 		}
 
 	/*

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_print.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 February 2003.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -99,36 +99,6 @@ int uprint_print(void *p, gu_boolean remote_too)
 		command_path = PPR_PATH;
 		if((i = uprint_print_argv_ppr(p, argv, MAX_ARGV)) == -1)
 			return -1;
-		}
-
-	/* System V spooler: */
-	else if(printdest_claim_sysv(upr->dest))
-		{
-		command_path = uprint_path_lp();
-		if(strcmp(upr->fakername, "lp") == 0)
-			{
-			upr->argv[0] = "lp";
-			}
-		else
-			{
-			if((i = uprint_print_argv_sysv(p, argv, MAX_ARGV)) == -1)
-				return -1;
-			}
-		}
-
-	/* BSD lpr spooler: */
-	else if(printdest_claim_bsd(upr->dest))
-		{
-		command_path = uprint_path_lpr();
-		if(strcmp(upr->fakername, "lpr") == 0)
-			{
-			upr->argv[0] = "lpr";
-			}
-		else
-			{
-			if((i = uprint_print_argv_bsd(p, argv, MAX_ARGV)) == -1)
-				return -1;
-			}
 		}
 
 	/* Remote network spooler: */

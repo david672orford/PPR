@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libuprint/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 14 January 2005.
 #
 
 include ../Makefile.conf
@@ -37,10 +37,8 @@ LIBUPRINT_OBJS=uprint_obj.$(OBJ) \
 	uprint_conf.$(OBJ) uprint_sysv.$(OBJ) \
 	uprint_xlate.$(OBJ) \
 	lpr_connect.$(OBJ) lpr_failover.$(OBJ) lpr_sendfile.$(OBJ) \
-	claim_ppr.$(OBJ) claim_sysv.$(OBJ) claim_bsd.$(OBJ) claim_remote.$(OBJ) \
+	claim_ppr.$(OBJ) claim_remote.$(OBJ) \
 	uprint_print.$(OBJ) \
-	uprint_print_sysv.$(OBJ) \
-	uprint_print_bsd.$(OBJ) \
 	uprint_print_ppr.$(OBJ) \
 	uprint_print_rfc1179.$(OBJ) \
 	uprint_lpq.$(OBJ) uprint_lpq_rfc1179.$(OBJ) \

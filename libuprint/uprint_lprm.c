@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libuprint/uprint_lprm.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 14 January 2005.
 */
 
 #include "config.h"
@@ -234,113 +234,6 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 	return result_code;
 	} /* end of uprint_lprm_ppr() */
 
-static int uprint_lprm_lp(uid_t uid, uid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
-	{
-	int retval = 0;
-	int x;
-	const char *item_ptr;
-	int item_length;
-	const char *args[10];
-	char request_id[30 + 1 + 8 + 1];	/* generous but arbitrary */
-
-	DODEBUG(("uprint_lprm_cancel(agent = \"%s\", proxy_class = \"%s\", queue = \"%s\", arglist = %p", agent, proxy_class != (const char *)NULL ? proxy_class : "", queue, arglist));
-
-	if(strlen(queue) > 30)
-		{
-		uprint_errno = UPE_BADARG;
-		uprint_error_callback(_("The print queue name \"%s\" is too long."), queue);
-		return -1;
-		}
-
-	args[0] = "cancel";
-
-	for(x = 0; (item_ptr = arglist[x]) != (const char *)NULL; x++)
-		{
-		item_length = strlen(item_ptr);
-
-		/* If it is a job number, */
-		if(strspn(item_ptr, "0123456789") == item_length)
-			{
-			if(item_length > 8)
-				{
-				uprint_error_callback(_("The queue id \"%s\" is too long."), item_ptr);
-				retval = -1;
-				continue;
-				}
-			snprintf(request_id, sizeof(request_id), "%s-%s", queue, item_ptr);
-			args[1] = request_id;
-			args[2] = (const char *)NULL;
-			}
-
-		/* If it is a username, */
-		else
-			{
-			if(strcmp(item_ptr, agent) && strcmp(agent, "root"))
-				{
-				printf(_("You cannot delete jobs belonging to \"%s\" because\n"
-						"you are not root."), item_ptr);
-				fputc('\n', stdout);
-				fflush(stdout);
-
-				retval = -1;
-				continue;
-				}
-			args[1] = "--su";
-			args[2] = item_ptr;
-			args[3] = queue;
-			args[4] = (const char *)NULL;
-			}
-
-		if(uprint_run(uid, gid, uprint_path_cancel(), args) == -1)
-			retval = 1;
-		}
-
-	if(arglist[0] == (const char *)NULL)		/* cancel current request */
-		{
-		args[1] = queue;
-		args[2] = (const char *)NULL;
-		if(uprint_run(uid, gid, uprint_path_cancel(), args) == -1)
-			retval = 1;
-		}
-
-	return retval;
-	} /* end of uprint_lprm_lp() */
-
-static int uprint_lprm_lpr(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist)
-	{
-	int retval = 0;
-	int x, item_length;
-	const char *item_ptr;
-	int y;
-	const char *args[101];
-
-	DODEBUG(("uprint_lprm_lpr(agent = \"%s\", proxy_class = \"%s\", queue = \"%s\", arglist = %p", agent, proxy_class ? proxy_class : "", queue, arglist));
-
-	y = 0;
-	args[y++] = "lprm";
-	args[y++] = "-P";
-	args[y++] = queue;
-
-	/*
-	** Separate the list into words and add each word to the
-	** argument list we will pass to lprm.
-	*/
-	for(x=0; (item_ptr = arglist[x]) != (const char *)NULL; x++)
-		{
-		item_length = strlen(item_ptr);
-
-		if(y < 100)				/* only use it if there is room */
-			args[y++] = item_ptr;
-		}
-
-	args[y++] = (const char *)NULL;
-
-	if(uprint_run(uid, gid, uprint_path_lprm(), args) == -1)
-		retval = 1;
-
-	return retval;
-	} /* end of uprint_lprm_lpr() */
-
 /*
 ** Handle an lprm style cancel request.  The file names
 ** list is filled with a list of job numbers and
@@ -356,12 +249,6 @@ int uprint_lprm(uid_t uid, gid_t gid, const char agent[], const char proxy_class
 	{
 	if(printdest_claim_ppr(queue))
 		return uprint_lprm_ppr(uid, gid, agent, proxy_class, queue, arglist);
-
-	if(printdest_claim_sysv(queue))
-		return uprint_lprm_lp(uid, gid, agent, proxy_class, queue, arglist);
-
-	if(printdest_claim_bsd(queue))
-		return uprint_lprm_lpr(uid, gid, agent, proxy_class, queue, arglist);
 
 	{
 	struct REMOTEDEST info;
