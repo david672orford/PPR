@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 26 May 2004.
 #
 
 # This creates a checkbox followed by a label.  If the box is checked,
@@ -132,9 +132,12 @@ sub help_button
 
 	my $fragment = defined($topic) ? "#$topic" : "";
 
+	my $legend = _("Help");
+	$legend =~ s/_//;
+
 	print '<a class="buttons" href="', $helpfile, $fragment, '" target="_blank"',
 		" onclick=\"window.open(this.href,'_blank','menubar,resizable,scrollbars,toolbar');return false;\">",
-		H_("Help"),
+		html($legend),
 		"</a>\n";
 	}
 

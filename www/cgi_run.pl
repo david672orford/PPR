@@ -25,8 +25,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 May 2004.
+# Last modified 26 May 2004.
 #
+
+require 'cgi_data.pl';
 
 #===============================================================
 # Run a command.  The output is HTML escaped and sent to the
@@ -41,34 +43,29 @@ sub run
 	run_detaint(\@command_list);
 
 	# Print the command we are about to execute.
+	print '$ ';
 	run_print(@command_list);
+	print "\n";
 
 	my $pid;
-	my $result;
+	my $result = 0;
 
 	if($pid = open(RUNHANDLE, "-|"))	# parent
 		{
 		while(<RUNHANDLE>)
 			{
-			s/&/&amp;/g;				# order is important here
-			s/</&lt;/g;
-			s/>/&gt;/g;
-			print;
+			print html($_);
 			}
-		close(RUNHANDLE);
-		$result = $?
+		if(!close(RUNHANDLE))
+			{
+			$result = 1;
+			}
 		}
 	elsif(defined($pid))				# child
 		{
 		# Make sure errors go the the web page rather than
 		# to the server error log.
 		open(STDERR, ">&STDOUT");
-
-		# Swap the real and effective user ids.	 I don't remember why. 
-		# Maybe it has something to do with running under Apache (which
-		# isn't currently supported.  Under ppr-httpd it does nothing
-		# since both IDs are pprwww.
-		($<,$>) = ($>,$<);
 
 		# If the full path to the program is specified, clear PATH to
 		# avoid problems with tainted PATHs.
@@ -84,6 +81,81 @@ sub run
 		{
 		print "Can't fork!\n";
 		$result = 255;
+		}
+
+	return $result;
+	}
+
+sub run_pipeline
+	{
+	my $i = 0;
+	my $handle;
+	my $previous_handle;
+	foreach my $command_list (@_)
+		{
+		# Perl 5.8.0 spews warnings if exec() arguments are tainted.
+		run_detaint($command_list);
+
+		# Print the command we are about to execute.
+		if($i == 0)
+			{
+			print '$ ';
+			}
+		else
+			{
+			print '  | ';
+			}
+		run_print(@$command_list);
+		if($i == $#_)
+			{
+			print "\n";
+			}
+		else
+			{
+			print " \\\n";
+			}
+
+	    $handle = "RUNHANDLE$i";
+		my $pid;
+	
+		if(!defined($pid = open($handle, "-|")))
+			{
+			print "Can't fork!\n";
+			return 255;
+			}
+		elsif($pid == 0)					# child
+			{
+			open(STDERR, ">&STDOUT");
+			if($i == 0)
+				{
+				open(STDIN, "</dev/null");
+				}
+			else
+				{
+				open(STDIN, "<&$previous_handle") 
+				}
+			$ENV{PATH} = "";
+			exec(@$command_list);
+			exit(255);
+			}
+
+		$previous_handle = $handle;
+		$i++;
+		}
+
+	print STDERR "\$handle = $handle\n";
+	while(<$handle>)
+		{
+		print;
+		}
+	my $result = 0;
+	while(--$i >= 0)
+		{
+	    $handle = "RUNHANDLE$i";
+		if(!close($handle))
+			{
+			$result++;
+			}
 		}
 
 	return $result;
@@ -114,7 +186,7 @@ sub opencmd
 		$stderr_fate = ">$1";
 		shift @command_list;
 		}
-print STDERR "\$stderr_fate=$stderr_fate\n";
+
 	# Perl 5.8.0 spews warnings if exec() arguments are tainted.
 	run_detaint(\@command_list);
 
@@ -160,7 +232,9 @@ sub run_or_die
 		{
 		my $error = $! ? $! : ("exit code " . ($? >> 8));
 		print "<pre>\n";
+		print '$ ';
 		run_print(@_);
+		print "\n";
 		print html($result);
 		print "</pre>\n";
 		die "external command failed: $error\n";
@@ -211,16 +285,23 @@ sub run_detaint
 #===============================================================
 # This is an internal function.	 Print the command in HTML.
 # We assume we are in a <PRE> environment.
+#
+# You will probably want to call it like this:
+# 	print '$ ';
+# 	run_print(@command);
+# 	print "\n";
+# This provides a pseudo prompt and closes the line.  This is 
+# not done for you by run_print() because run_pipeline() uses
+# it to print partial commands.
 #===============================================================
 sub run_print
 	{
 	my @command_list = @_;
 
 	# Remove the path from the program.	 It is distracting.
-	$command_list[0] = $1 if($command_list[0] =~ m#/([^/]+)$#);
+	$command_list[0] = $1 if($command_list[0] =~ m#^(?:/[^/\s]*)*/([^/\s]+)$#);
 
-	print '$';
-	my $total_length = 1;
+	my $total_length = 0;
 
 	foreach my $arg (@command_list)
 		{
@@ -233,7 +314,7 @@ sub run_print
 			}
 		# Otherwise, just print a space to separate it from 
 		# the previous one.
-		else
+		elsif($total_length > 0)
 			{
 			print ' ';
 			$total_length++;
@@ -241,7 +322,7 @@ sub run_print
 
 		# If it has funny characters or spaces, print it quoted
 		# (and count two characters for the two quote marks).
-		if($arg !~ /^[-_0-9a-zA-Z\/]+$/)
+		if($arg !~ /^[-_0-9a-zA-Z\/=]+$/)
 			{
 			print html("\"$arg\"");
 			$total_length += 2;
@@ -253,8 +334,6 @@ sub run_print
 
 		$total_length += length($arg);
 		}
-
-	print "\n";
 	}
 	
 1;

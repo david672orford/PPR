@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 April 2004.
+# Last modified 26 May 2004.
 #
 
 use lib "?";
@@ -58,96 +58,101 @@ foreach my $i (keys %IMAGES)
 # This is the table for this wizard:
 #===========================================
 $addprn_wizard_table = [
-		#===========================================
-		# Welcome
-		#===========================================
-		{
-		'title' => N_("PPR Print Test Page"),
-		'picture' => "prn_testpage1.png",
-		'dopage' => sub {
-				print "<p>", H_("To print a PPR test page, select the desired options below\n"
-						. "and press [Print]."), "</p>\n";
+	#===========================================
+	# Welcome
+	#===========================================
+	{
+	'title' => N_("PPR Print Test Page"),
+	'picture' => "prn_testpage1.png",
+	'dopage' => sub {
+		print "<p>", H_("To print a PPR test page, select the desired options below\n"
+				. "and press [Print]."), "</p>\n";
 
-				print "<p>\n";
-				my $default_pagesize = "Letter";
-				my $pagesize = cgi_data_move("pagesize", $default_pagesize);
-				labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize,
-						qw(Letter Legal A4));
-				print "</p>\n";
+		print "<p>\n";
+		my $default_pagesize = "Letter";
+		my $pagesize = cgi_data_move("pagesize", $default_pagesize);
+		labeled_select("pagesize", _("Page Size:"), $default_pagesize, $pagesize,
+				qw(Letter Legal A4));
+		print "</p>\n";
 
-				print "<p>\n";
-				my $default_image = "PPR Logo";
-				my $image = cgi_data_move("image", $default_image);
-				labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", keys(%IMAGES)));
-				print "</p>\n";
+		print "<p>\n";
+		my $default_image = "PPR Logo";
+		my $image = cgi_data_move("image", $default_image);
+		labeled_select("image", _("Image:"), $default_image, $image, ("PPR Logo", keys(%IMAGES)));
+		print "</p>\n";
 
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\">", H_("Color Space Test Patterns"), "</span>\n";
-						print "<p>\n";
-						labeled_boolean("test_grayscale", _("Grayscale"), cgi_data_move("test_grayscale", 0));
-						print "</p>\n";
-						print "<p>\n";
-						labeled_boolean("test_rgb", _("RGB"), cgi_data_move("test_rgb", 0));
-						print "</p>\n";
-						print "<p>\n";
-						labeled_boolean("test_cmyk", _("CMYK"), cgi_data_move("test_cmyk", 0));
-						print "</p>\n";
-				print "</div>\n";
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\">", H_("Color Space Test Patterns"), "</span>\n";
+			print "<p>\n";
+			labeled_boolean("test_grayscale", _("Grayscale"), cgi_data_move("test_grayscale", 0));
+			print "</p>\n";
+			print "<p>\n";
+			labeled_boolean("test_rgb", _("RGB"), cgi_data_move("test_rgb", 0));
+			print "</p>\n";
+			print "<p>\n";
+			labeled_boolean("test_cmyk", _("CMYK"), cgi_data_move("test_cmyk", 0));
+			print "</p>\n";
+		print "</div>\n";
 
-				print "<div class=\"section\">\n";
-				print "<span class=\"section_label\">", H_("Other Test Patterns"), "</span>\n";
-				print "<p>\n";
-				labeled_boolean("test_spokes", _("Spoked Wheel"), cgi_data_move("test_spokes", 0));
-				print "</p>\n";
-				print "</div>\n";
-
-				},
-		'buttons' => [N_("_Cancel"), N_("_Print")]
+		print "<div class=\"section\">\n";
+		print "<span class=\"section_label\">", H_("Other Test Patterns"), "</span>\n";
+		print "<p>\n";
+		labeled_boolean("test_spokes", _("Spoked Wheel"), cgi_data_move("test_spokes", 0));
+		print "</p>\n";
+		print "</div>\n";
 		},
-		#===========================================
-		# Do It
-		#===========================================
-		{
-		'title' => N_("PPR Print Test Page"),
-		'picture' => "prn_testpage2.png",
-		'dopage' => sub {
-				my $name = cgi_data_peek("name", "_missing_");
+	'buttons' => [N_("_Cancel"), N_("_Print")]
+	},
+	#===========================================
+	# Do It
+	#===========================================
+	{
+	'title' => N_("PPR Print Test Page"),
+	'picture' => "prn_testpage2.png",
+	'dopage' => sub {
+		my $name = cgi_data_peek("name", "_missing_");
 
-				my $options = "";
+		my @ppr_testpage = ("$HOMEDIR/bin/ppr-testpage");
+		my @ppr = ("$HOMEDIR/bin/ppr", "-d", $name,
+			"-m", "pprpopup",
+			"-r", "$ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}"
+			);
 
-				my $pagesize = cgi_data_move("pagesize", "Letter");
-				$pagesize =~ /^[a-zA-Z0-9]+$/ || die "$pagesize is not a valid pagesize";
-				$options .= " --pagesize=$pagesize";
+		my $pagesize = cgi_data_move("pagesize", "Letter");
+		$pagesize =~ /^[a-zA-Z0-9]+$/ || die "$pagesize is not a valid pagesize";
+		push(@ppr_testpage, "--pagesize=$pagesize");
 
-				my $image = cgi_data_move("image", "");
-				if($image ne "PPR Logo")
-					{
-					$options .= " --eps-file=$IMAGES{$image}->[0] --eps-scale=$IMAGES{$image}->[1]";
-					}
+		my $image = cgi_data_move("image", "");
+		if($image ne "PPR Logo")
+			{
+			push(@ppr_testpage, "--eps-file=$IMAGES{$image}->[0]",
+				"--eps-scale=$IMAGES{$image}->[1]"
+				);
+			}
 
-				if(cgi_data_move("test_grayscale", 0))
-					{
-					$options .= " --test-grayscale";
-					}
-				if(cgi_data_move("test_rgb", 0))
-					{
-					$options .= " --test-rgb";
-					}
-				if(cgi_data_move("test_cmyk", 0))
-					{
-					$options .= " --test-cmyk";
-					}
-				if(cgi_data_move("test_spokes", 0))
-					{
-					$options .= " --test-spokes";
-					}
+		if(cgi_data_move("test_grayscale", 0))
+			{
+			push(@ppr_testpage, "--test-grayscale");
+			}
+		if(cgi_data_move("test_rgb", 0))
+			{
+			push(@ppr_testpage, "--test-rgb");
+			}
+		if(cgi_data_move("test_cmyk", 0))
+			{
+			push(@ppr_testpage, "--test-cmyk");
+			}
+		if(cgi_data_move("test_spokes", 0))
+			{
+			push(@ppr_testpage, "--test-spokes", "--eps-scale=0.75");
+			}
 
-				print "<pre>\n";
-				run("$HOMEDIR/bin/ppr-testpage$options | $HOMEDIR/bin/ppr -d $name -m pprpopup -r $ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}");
-				print "</pre>\n";
-				},
-		'buttons' => [N_("_Close")]
-		}
+		print "<pre>\n";
+		run_pipeline(\@ppr_testpage, \@ppr);
+		print "</pre>\n";
+		},
+	'buttons' => [N_("_Back"), N_("_Close")]
+	}
 ];
 
 #===========================================

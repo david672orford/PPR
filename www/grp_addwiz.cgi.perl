@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/www/prn_addwiz.cgi.perl
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 June 2003.
+# Last modified 26 May 2004.
 #
 
 use lib "?";
@@ -158,10 +158,20 @@ my $addgrp_wizard_table = [
 				run("id");
 				my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
 				my $name = cgi_data_peek("name", "?");
-				run(@PPAD, 'group', 'members', $name, split(/ /, $data{members}));
-				run(@PPAD, 'group', 'comment', $name, $data{comment});
-				run($PPR2SAMBA_PATH, '--nocreate');
+				my $e = 0;
+				$e || ($e=run(@PPAD, 'group', 'members', $name, split(/ /, $data{members})));
+				$e || ($e=run(@PPAD, 'group', 'comment', $name, $data{comment}));
+				$e || ($e=run($PPR2SAMBA_PATH, '--nocreate'));
 				print "</pre>\n";
+
+				if($e == 0)
+					{
+					print "<p>", H_("The queue has been created."), "</p>\n";
+					}
+				else
+					{
+					print "<p>", H_("Due to the problem indicated above, the queue was not created."), "</p>\n";
+					}
 
 				# Make the show_queues.cgi screen reload.  We really should
 				# try to make sure there is one first!

@@ -9057,7 +9057,7 @@ Internet Printing Protocol Work
 * pprd/pprd_ipp.c: added handlers for queue listing, listing printers, and listing groups.
 
 
-1.53a2, 20 February 2004--23 May 2004.
+1.53a2, 20 February 2004--25 May 2004.
 
 * Put in a request for removal of junk and corrupt entries from the 
   Sourceforge.net CVS repository.  Added www/images/cliconf1.png once is was 
@@ -9253,8 +9253,34 @@ Internet Printing Protocol Work
 
 * nonppr_tcl/tclUnixUtil.c: changed vfork() to fork().
 
-* pprdrv/pprdrv_buf.c:printer_flush(): added code to handle EAGAIN from write().
-  (Problem showed up on IRIX 6.5.)
+* pprdrv/pprdrv_buf.c:printer_flush(): added code to handle EAGAIN from 
+  write().  (Problem showed up on IRIX 6.5.)
+
+* ppuser/ppuser.c: changed call to strtof() to call to (float)strtod() 
+  because strtof() is part of C99 whereas strtod() is part of C89.
+
+* misc/ppr-testpage.c: added --test-spoked
+
+* libscripts/readppd.pl: ppd_open() now returns the name of the PPD file which
+  it opened.
+
+* www/cgi_run.pl: added run_pipeline()
+
+* www/prn_testpage.cgi.perl: added support for --test-spoked; changed from
+  run() to the new run_pipeline(); added [Back] button on the last page so 
+  that one may go back, choose new options, and print another test page.
+
+* samba/ppr2samba.c: changed message produced by --nocreate when 
+  smb-include.conf is absent to make it clearer that it is not an error 
+  message.
+
+* www/*_addwiz.cgi.perl: added code to save routines to stop after the
+  first error; also added code to clearly indicate whether the operation
+  succeeded or failed.
+
+* z_install_end/install_inetd_conf.sh: added check for Inetd at
+  /usr/etc/inetd.  (This is the wierd location used by some early System V
+  TCP/IP implemenations.)
 
 
 

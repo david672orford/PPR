@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 May 2004.
+# Last modified 26 May 2004.
 #
 
 defined($PPD_INDEX) || die;
@@ -90,6 +90,7 @@ sub ppd_summary
 
 	eval {
 		my $line;
+		my $modelname = "?";
 		my $fileversion = "?";
 		my $languagelevel = 1;
 		my $psversion = "?";
@@ -97,10 +98,15 @@ sub ppd_summary
 		my $ttrasterizer = "None";
 		my $rip = "Internal";
 	
-		ppd_open($ppdname);
+		my $filename = ppd_open($ppdname);
 	
 		while(defined($line = ppd_readline()))
 			{
+			if($line =~ /^\*ModelName:\s*"([^"]+)"/)
+				{
+				$modelname = $1;
+				next;
+				}
 			if($line =~ /^\*FileVersion:\s*"([^"]+)"/)
 				{
 				$fileversion = $1;
@@ -132,6 +138,7 @@ sub ppd_summary
 				my @options = split(/ /, $options);
 				$rip = "Ghostscript+CUPS";
 				$rip .= "+GIMP" if($options[2] eq "rastertoprinter");
+				$rip .= "+GIMP" if($options[2] =~ /^rastertogimpprint/);
 				next;
 				}
 			if($line =~ /^\*pprRIP:\s*(.+)$/)
@@ -149,7 +156,10 @@ sub ppd_summary
 			}
 	
 		print "<table class=\"lines\" cellspacing=0>\n";
-		print "<tr><th>", H_("PPD File"), "</th><td>", html($ppdname), "</td></tr>\n";
+		$filename = html($filename);
+		$filename =~ s/\//\/<wbr>/g;
+		print "<tr><th>", H_("PPD File"), "</th><td>", $filename, "</td></tr>\n";
+		print "<tr><th>", H_("ModelName"), "</th><td>", html($modelname), "</td></tr>\n";
 		print "<tr><th>", H_("PPD File Version"), "</th><td>", html($fileversion), "</td></tr>\n";
 		print "<tr><th>", H_("LanguageLevel"), "</th><td>", html($languagelevel), "</td></tr>\n";
 		print "<tr><th>", H_("PostScript Version"), "</th><td>", html($psversion), "</td></tr>\n";
@@ -205,8 +215,8 @@ sub ppd_list_decode
 	my @list = ();
 	foreach my $i (split(/\n/, $ppd_detect_list))
 		{
-		my($mfg, $mdl) = split(/:/,$i);
-		push(@list, [$mfg, $mdl]);
+		my($mfg, $mdl, $fuzzy) = split(/:/,$i);
+		push(@list, [$mfg, $mdl, $fuzzy]);
 		}
 	return @list;
 	} # ppd_list_decode()

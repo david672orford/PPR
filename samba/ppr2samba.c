@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 February 2004.
+** Last modified 26 May 2004.
 */
 
 /*
@@ -431,7 +431,7 @@ int main(int argc, char *argv[])
 	
 				/* File not found, say so and get out since we
 				   have been asked not to create it. */
-				printf("No action taken because \"%s\" does not exist.\n", smb_include_conf);
+				printf(_("Absence of \"%s\" indicates that export to Samba is not desired.\n"), smb_include_conf);
 				return EXIT_OK;
 				}
 			}

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 May 2004.
+# Last modified 26 May 2004.
 #
 
 use lib "?";
@@ -209,7 +209,7 @@ my $tabbed_table = [
 				my $lastgroup = "";
 				foreach my $item (ppd_list(cgi_data_peek("ppd_probe_list", undef)))
 					{
-					my($item_manufacturer, $item_modelname) = @{$item};
+					my($item_manufacturer, $item_modelname, $item_fuzzy) = @{$item};
 					if($item_manufacturer ne $lastgroup)
 						{
 						print "</optgroup>\n" if($lastgroup ne "");
@@ -218,7 +218,9 @@ my $tabbed_table = [
 						}
 					print "<option value=", html_value($item_modelname);
 					print " selected" if($item_modelname eq $ppd);
-					print ">", html($item_modelname), "\n";
+					print ">", html($item_modelname);
+					print " (fuzzy match)" if(defined $item_fuzzy && $item_fuzzy);
+					print "\n";
 					}
 				print "</optgroup>\n" if($lastgroup ne "");
 				print "</select>\n";

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 26 May 2004.
 */
 
 #include "before_system.h"
@@ -65,9 +65,9 @@ struct THE_FACTS
 
 struct MATCH
 	{
-	gu_boolean fuzzy;
 	char *manufacturer;
 	char *description;
+	gu_boolean fuzzy;
 	};
 
 /*
@@ -742,7 +742,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 
 			if(machine_readable)	/* for the web front end */
 				{
-				printf("%s:%s\n", matches[i].manufacturer, matches[i].description);
+				printf("%s:%s:%s\n", matches[i].manufacturer, matches[i].description, matches[i].fuzzy ? "1" : "0");
 				}
 			else					/* for human beings */
 				{

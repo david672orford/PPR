@@ -40,8 +40,7 @@
 GETSERVBYNAME="./getservbyname"
 SERVICES="/etc/services"
 
-#INETD="/usr/sbin/inetd"
-INETD="/usr/etc/inetd"
+INETD="/usr/sbin/inetd:/usr/etc/inetd"
 INETD_CONF="/etc/inetd.conf"
 
 XINETD="/usr/sbin/xinetd"
@@ -84,6 +83,23 @@ file_ok ()
 		esac
 		#exit 10
 		fi
+	}
+
+prog_ok ()
+	{
+	for i in `echo $1 | tr ':' ' '`
+		do
+		./puts "  Checking for \"$i\"..."
+		if [ -x $i ]
+			then
+			echo " found."
+			return
+			else
+			echo " not found."
+			fi
+		done
+	echo "No Inetd, aborting."
+	exit 10
 	}
 
 #==========================================================================
@@ -298,7 +314,7 @@ if [ -x "$XINETD" -a -f "$XINETD_CONF" ]
 #==========================================================================
 # See if we have what we need to run with plain old Inetd.
 #==========================================================================
-file_ok $INETD -x
+prog_ok $INETD
 file_ok $INETD_CONF -w
 
 # Find TCP wrappers.

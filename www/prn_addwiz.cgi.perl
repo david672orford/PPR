@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 May 2004.
+# Last modified 26 May 2004.
 #
 
 #
@@ -676,11 +676,11 @@ $addprn_wizard_table = [
 					print H_("All Available PPD Files:");
 					}
 				print "<br>\n";
-				print '<select tabindex=1 name="ppd" size="15" style="max-width: 300px" onchange="forms[0].submit();">', "\n";
+				print '<select tabindex=1 name="ppd" size="15" style="min-width: 300px" onchange="forms[0].submit();">', "\n";
 				my $lastgroup = "";
 				foreach my $item (ppd_list(cgi_data_peek("ppd_probe_list", undef)))
 					{
-					my($item_manufacturer, $item_modelname) = @{$item};
+					my($item_manufacturer, $item_modelname, $item_fuzzy) = @{$item};
 					if($item_manufacturer ne $lastgroup)
 						{
 						print "</optgroup>\n" if($lastgroup ne "");
@@ -689,7 +689,9 @@ $addprn_wizard_table = [
 						}
 					print "<option value=", html_value($item_modelname);
 					print " selected" if($item_modelname eq $ppd);
-					print ">", html($item_modelname), "\n";
+					print ">", html($item_modelname); 
+					print " (fuzzy match)" if(defined $item_fuzzy && $item_fuzzy);
+					print "\n";
 					}
 				print "</optgroup>\n" if($lastgroup ne "");
 				print "</select>\n";
@@ -831,21 +833,31 @@ $addprn_wizard_table = [
 				defined($PPAD_PATH) || die;
 				my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
 				my $name = cgi_data_peek("name", "?");
-				run(@PPAD, 'interface', $name, $data{interface}, $data{address});
-				run(@PPAD, 'options', $name, cgi_data_peek("options", ""));
-				run(@PPAD, 'jobbreak', $name, $data{jobbreak});
-				run(@PPAD, 'feedback', $name, $data{feedback});
-				run(@PPAD, 'codes', $name, $data{codes});
-				run(@PPAD, 'ppd', $name, $data{ppd});
-				run(@PPAD, 'comment', $name, $data{comment});
+				my $e = 0;
+				$e || ($e=run(@PPAD, 'interface', $name, $data{interface}, $data{address}));
+				$e || ($e=run(@PPAD, 'options', $name, cgi_data_peek("options", "")));
+				$e || ($e=run(@PPAD, 'jobbreak', $name, $data{jobbreak}));
+				$e || ($e=run(@PPAD, 'feedback', $name, $data{feedback}));
+				$e || ($e=run(@PPAD, 'codes', $name, $data{codes}));
+				$e || ($e=run(@PPAD, 'ppd', $name, $data{ppd}));
+				$e || ($e=run(@PPAD, 'comment', $name, $data{comment}));
 				if($data{location} ne '')
-					{ run(@PPAD, 'location', $name, $data{location}) }
+					{ $e || ($e=run(@PPAD, 'location', $name, $data{location})) }
 				if($data{department} ne '')
-					{ run(@PPAD, 'department', $name, $data{department}) }
+					{ $e || ($e=run(@PPAD, 'department', $name, $data{department})) }
 				if($data{contact} ne '')
-					{ run(@PPAD, 'contact', $name, $data{contact}) }
-				run($PPR2SAMBA_PATH, '--nocreate');
+					{ $e || ($e=run(@PPAD, 'contact', $name, $data{contact})) }
+				$e || ($e=run($PPR2SAMBA_PATH, '--nocreate'));
 				print "</pre>\n";
+
+				if($e == 0)
+					{
+					print "<p>", H_("The print queue has been created."), "</p>\n";
+					}
+				else
+					{
+					print "<p>", H_("Due to the problem indicated above, the queue was not created."), "</p>\n";
+					}
 
 				# Make the display queues screen reload.  We really should
 				# try to make sure there is one first!

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 21 April 2004.
+# Last modified 26 May 2004.
 #
 
 require "paths.ph";
@@ -131,7 +131,9 @@ sub main::ppd_open
 	{
 	my $ppdname = shift;
 	(scalar @nest_stack == 0) || die;
-	_ppd_open(_ppd_find_file($ppdname));
+	my $filename = _ppd_find_file($ppdname);
+	_ppd_open($filename);
+	return $filename;
 	}
 
 #
