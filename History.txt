@@ -8424,6 +8424,9 @@ line was being parsed twice.
 
 * Removed atalk responder (responders/atalk).
 
+* Added "followme" meta responder support to responders/ppr-respond.c.
+
+* Added unixuser/ppr-followme.c.
 
 
 

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 9 March 2003.
 #
 
 # Pull in settings from Configure.
@@ -60,7 +60,8 @@ ALL_HTML=ppdoc.1.html \
 	ppr-testpage.1.html \
 	ppr-ttf2ps.1.html \
 	ppr-web.1.html \
-	ppr-panel.1.html
+	ppr-panel.1.html \
+	ppr-followme.1.html
 
 # List of man pages in nroff format
 ALL_TROFF=ppdoc.1.man \
@@ -87,10 +88,11 @@ ALL_TROFF=ppdoc.1.man \
 	ppr-testpage.1.man \
 	ppr-ttf2ps.1.man \
 	ppr-web.1.man \
-	ppr-panel.1.man
+	ppr-panel.1.man \
+	ppr-followme.1.man
 
 # List of PODs for cross references
-LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1
+LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papsrv.8,papd.8,ppr-xfm.1,ppr-xgrant.1,ppuser.8,lprsrv.8,olprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1,ppr-followme.1
 
 #=== Build ==================================================================
 
