@@ -11,7 +11,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 19 April 2002.
+# Last modified 5 November 2002.
 #
 
 use lib "?";
@@ -113,7 +113,7 @@ my $addalias_wizard_table = [
 	'title' => N_("Describe the Alias"),
 	'picture' => "wiz-name.jpg",
 	'dopage' => sub {
-		print "<p>", html(sprintf(_("While short group names are convient in certain contexts,\n"
+		print "<p>", html(sprintf(_("While short group names are convenient in certain contexts,\n"
 			. "it is sometimes helpful to have a longer, more informative\n"
 			. "description.  Please supply a longer description for\n"
 			. "\"%s\" below."), $data{name})), "\n";

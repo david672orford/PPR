@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 August 2002.
+** Last modified 5 November 2002.
 */
 
 /*
@@ -49,20 +49,41 @@ const char myname[] = "ppr-gs";
 
 int main(int argc, char *argv[])
     {
-    const char rip_exe[] = "../ppr-gs/bin/gs";
+    const char *gs_exe = NULL;
+    const char *gs_exe_list[] = {"../ppr-gs/bin/gs", "/usr/local/bin/gs", "/usr/bin/gs", NULL};
     char *outputfile = NULL;
     gu_boolean saw_DEVICE = FALSE;
-    const char **rip_args;
+    const char **gs_args;
     int si, di;
     char *p;
 
-    /* Here we build the Ghostscript command line.  The extra space is 
-       for "-q -dSAFER -sOutputFile='...' -" and the NULL.
-       */
-    rip_args = gu_alloc(argc + 5, sizeof(const char *));
+    /* Find a copy of Ghostscript which we can use. */
+    {
+    int i;
+    for(i=0 ; gs_exe_list[i]; i++)
+	{
+	if(access(gs_exe_list[i], X_OK) == 0)
+	    {
+	    gs_exe = gs_exe_list[i];
+	    break;
+	    }
+	}
+    if(!gs_exe)
+	{
+	fprintf(stderr, "Can't find Ghostscript!\n");
+	return 1;
+	}
+    }
+
+    /*
+    ** Here we build the Ghostscript command line.  The extra space allocated
+    ** in the array is for "-q -dSAFER -sOutputFile='...' -" and the NULL
+    ** which terminates the array.
+    */
+    gs_args = gu_alloc(argc + 5, sizeof(const char *));
 
     di = 0;
-    rip_args[di++] = rip_exe;
+    gs_args[di++] = "gs";
 
     for(si=1; si<argc; si++)
 	{
@@ -75,40 +96,50 @@ int main(int argc, char *argv[])
 	    {
 	    if(lmatch(argv[si], "-sDEVICE="))
 	    	saw_DEVICE=TRUE;
-	    rip_args[di++] = argv[si];
+	    gs_args[di++] = argv[si];
 	    }
 	}
 
-    /* Make sure -sDEVICE= was specified. */
+    /* 
+    ** Make sure -sDEVICE= was specified.  If it wasn't, we print a message 
+    ** that looks like the message that Ghostscript prints if one asks for
+    ** a device that doesn't exist.
+    */
     if(!saw_DEVICE)
 	{
 	fprintf(stderr, "Unknown device: unspecified\n");
 	return 1;
 	}
 
-    rip_args[di++] = "-q";
-    rip_args[di++] = "-dSAFER";
+    /*
+    ** OK, here come the boilerplate options.  Notice that we allow
+    ** an -sOutputFile= option from above the override the boilerplate
+    ** one here.
+    */
+    gs_args[di++] = "-q";
+    gs_args[di++] = "-dSAFER";
 
     if(outputfile)
-	rip_args[di++] = outputfile;
+	gs_args[di++] = outputfile;
     else
-	rip_args[di++] = "-sOutputFile=| cat - >&3";
+	gs_args[di++] = "-sOutputFile=| cat - >&3";
 
-    rip_args[di++] = "-";
+    gs_args[di++] = "-";
 
-    rip_args[di++] = NULL;
+    gs_args[di++] = NULL;
 
-    /* We add a directory to the PATH so that Ghostscript -sOutputfile= commands can
-       find CUPS and IJS filters.
-       */
+    /*
+    ** We add a directory to the PATH so that Ghostscript -sOutputfile= commands can
+    ** find CUPS and IJS filters.
+    */
     {
-    char *path_equals;		/* <-- don't free this! */
+    char *path_equals;		/* <-- don't free this!  putenv() keeps a reference. */
     gu_asprintf(&path_equals, "PATH=%s/../ppr-gs/bin:%s", HOMEDIR, getenv("PATH"));
     putenv(path_equals);
     }
 
     /* Replace ourself with Ghostscript. */
-    execv(rip_exe, (char**)rip_args);
+    execv(gs_exe, (char**)gs_args);
 
     /* We reach here only if execv() failed. */
     fprintf(stderr, "%s: can't exec Ghostscript, errno=%d (%s)\n", myname, errno, gu_strerror(errno));

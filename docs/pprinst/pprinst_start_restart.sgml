@@ -17,7 +17,7 @@ You can start it manually with the following commands:
 </screen>
 The first command starts the spooler daemon, the second starts the server
 for Macintosh clients. (Note that until you create a
-configuration file for <command/papsrv/, it will only run long enough to
+configuration file for <command>papsrv</command>, it will only run long enough to
 discover that the configuration file is missing.)
 </para>
 
@@ -37,19 +37,20 @@ Shutdown complete.
 
 <para>
 You may of course use the <command>kill</command> command to kill the processes.
-If you do though, remember that it is important to never kill <command/papsrv/ 
-with the command <command/kill -9/ or <command/kill -KILL/ unless gentler means 
+If you do though, remember that it is important to never kill
+<command>papsrv</command>
+with the command <command>kill -9</command> or <command>kill -KILL</command> unless gentler means 
 have already failed.
 </para>
 
 <para>
 One reason this is important is because, depending on which AppleTalk implementation
 you are using,
-<command/papsrv/ may have to call shutdown code to remove the advertised names
-from the AppleTalk network. If killed by SIGKILL, <command/papsrv/ will be
+<command>papsrv</command> may have to call shutdown code to remove the advertised names
+from the AppleTalk network. If killed by SIGKILL, <command>papsrv</command> will be
 unable to call the shutdown code and the names will remain.  You might then
 have to stop and restart the AppleTalk protocol stack to get rid of them. Until
-you get rid of them, you will be unable to restart <command/papsrv/ and any
+you get rid of them, you will be unable to restart <command>papsrv</command> and any
 Macintosh clients which attempt to print to the now dead names will probably
 crash.
 </para>
@@ -61,11 +62,13 @@ crash.
 <para>
 The above paragraphs describe how to start and stop the PPR daemons individually 
 with simple Unix commands.  There are other, more automated ways to
-do it. For example, if your system uses a System V style <command/init/, you
-can stop all of the PPR daemons and once by finding the <filename/init.d/
+do it. For example, if your system uses a System V style
+<command>init</command>, you
+can stop all of the PPR daemons and once by finding the
+<filename>init.d</filename>
 directory (which is in different places in different operating systems) and
-running the <command/ppr/ script which PPR installed there with the parameter
-<command/stop/.  In the example below we have a RedHat Linux system and are
+running the <command>ppr</command> script which PPR installed there with the parameter
+<command>stop</command>.  In the example below we have a RedHat Linux system and are
 logged in as ``root''.  We start and then stop the PPR daemons:
 <screen>
 # /etc/rc.d/init.d/ppr start

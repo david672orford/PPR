@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-08-25 18:00-0400\n"
+"POT-Creation-Date: 2002-11-05 16:21-0500\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -13,29 +13,29 @@ msgstr ""
 "Content-Type: text/plain; charset=koi8-r\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../pprdrv/pprdrv.c:1239 ../pprdrv/pprdrv.c:1262 ../pprdrv/pprdrv.c:1328
-#: ../pprdrv/pprdrv.c:1365 ../pprdrv/pprdrv.c:1371 ../pprdrv/pprdrv.c:1376
-#: ../pprdrv/pprdrv.c:1381 ../pprdrv/pprdrv.c:1394
+#: ../pprdrv/pprdrv.c:1245 ../pprdrv/pprdrv.c:1268 ../pprdrv/pprdrv.c:1334
+#: ../pprdrv/pprdrv.c:1371 ../pprdrv/pprdrv.c:1377 ../pprdrv/pprdrv.c:1382
+#: ../pprdrv/pprdrv.c:1387 ../pprdrv/pprdrv.c:1400
 #, c-format
 msgid "Invalid \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1411
+#: ../pprdrv/pprdrv.c:1417
 #, c-format
 msgid "Syntax error in \"%s\" (%s line %d)."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1423
+#: ../pprdrv/pprdrv.c:1429
 #, c-format
 msgid "Value of \"%s\" in \"%s\" must be boolean."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1428
+#: ../pprdrv/pprdrv.c:1434
 #, c-format
 msgid "Unrecognized userparams variable \"%s\"."
 msgstr ""
 
-#: ../pprdrv/pprdrv.c:1441
+#: ../pprdrv/pprdrv.c:1447
 #, c-format
 msgid "No \"Interface:\" line in %s"
 msgstr ""
@@ -338,25 +338,25 @@ msgstr ""
 msgid "Can't parse RIP information in PPD file."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:567
+#: ../pprdrv/pprdrv_ppd.c:590
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", skipping it."
 msgstr ""
 
-#: ../pprdrv/pprdrv_ppd.c:690
-#, c-format
-msgid ""
-"The PPD file doesn't contain code for the printer feature\n"
-"called \"%s %s\", removing existing code."
-msgstr ""
-
-#: ../pprdrv/pprdrv_ppd.c:742
+#: ../pprdrv/pprdrv_ppd.c:656
 #, c-format
 msgid ""
 "The PPD file doesn't contain code for the printer feature\n"
 "called \"%s %s\", retaining old code."
+msgstr ""
+
+#: ../pprdrv/pprdrv_ppd.c:666
+#, c-format
+msgid ""
+"The PPD file doesn't contain code for the printer feature\n"
+"called \"%s %s\", removing existing code."
 msgstr ""
 
 #: ../pprdrv/pprdrv_rip.c:90

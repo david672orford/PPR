@@ -5,17 +5,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
-"POT-Creation-Date: 2002-08-25 18:00-0400\n"
-"PO-Revision-Date: 2001-01-30 17:01-0500\n"
-"Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
-"Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
+"POT-Creation-Date: 2002-11-05 16:21-0500\n"
+"PO-Revision-Date: 2002-11-05 16:52-0500\n"
+"Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
+"Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=koi8-r\n"
-"Content-Transfer-Encoding: none\n"
+"Content-Type: text/plain; charset=KOI8-R\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 0.9.6\n"
 
 #: ../www/alias_addwiz.cgi.perl:38
 msgid "Add an Alias"
-msgstr ""
+msgstr "Сделеть Новый Alias"
 
 #: ../www/alias_addwiz.cgi.perl:41
 msgid "PPR Alias Creation"
@@ -48,24 +49,24 @@ msgstr ""
 msgid "The alias \"%s\" already exists!"
 msgstr ""
 
-#: ../www/alias_addwiz.cgi.perl:62 ../www/cgi_wizard.pl:277
+#: ../www/alias_addwiz.cgi.perl:62 ../www/cgi_wizard.pl:283
 #: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
 #: ../www/prn_addwiz.cgi.perl:144
 msgid "_Next"
 msgstr "На Следеющую"
 
 #: ../www/alias_addwiz.cgi.perl:62 ../www/alias_addwiz.cgi.perl:130
-#: ../www/cgi_tabbed.pl:308 ../www/cgi_wizard.pl:277
+#: ../www/cgi_tabbed.pl:316 ../www/cgi_wizard.pl:283
 #: ../www/cliconf.cgi.perl:65 ../www/grp_addwiz.cgi.perl:62
 #: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:144
-#: ../www/prn_addwiz.cgi.perl:643 ../www/prn_testpage.cgi.perl:95
+#: ../www/prn_addwiz.cgi.perl:631 ../www/prn_testpage.cgi.perl:95
 #: ../www/show_jobs.cgi.perl:500
 msgid "_Cancel"
 msgstr "Отменять"
 
 #: ../www/alias_addwiz.cgi.perl:69
 msgid "For What an Alias"
-msgstr ""
+msgstr "Чтого Alias"
 
 #: ../www/alias_addwiz.cgi.perl:89
 #, c-format
@@ -88,24 +89,27 @@ msgid ""
 "description.  Please supply a longer description for\n"
 "\"%s\" below."
 msgstr ""
+"Хоте коротие названия полезными в несколкых контестах,\n"
+"длинее опесевание часто помогает.  Воводите, пажплеста\n"
+"длинее описеванее о том, что такой \"%s\", в место внизу. "
 
 #: ../www/alias_addwiz.cgi.perl:121 ../www/grp_addwiz.cgi.perl:119
-#: ../www/prn_addwiz.cgi.perl:604
+#: ../www/prn_addwiz.cgi.perl:592
 msgid "Description:"
 msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:127 ../www/grp_addwiz.cgi.perl:125
-#: ../www/prn_addwiz.cgi.perl:610
+#: ../www/prn_addwiz.cgi.perl:598
 msgid "You must supply a description!"
 msgstr ""
 
 #: ../www/alias_addwiz.cgi.perl:130 ../www/grp_addwiz.cgi.perl:128
-#: ../www/prn_addwiz.cgi.perl:643
+#: ../www/prn_addwiz.cgi.perl:631
 msgid "_Finish"
 msgstr ""
 
-#: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:277
-#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:643
+#: ../www/alias_addwiz.cgi.perl:130 ../www/cgi_wizard.pl:283
+#: ../www/grp_addwiz.cgi.perl:128 ../www/prn_addwiz.cgi.perl:631
 msgid "_Back"
 msgstr "Обротно"
 
@@ -117,9 +121,9 @@ msgstr ""
 msgid "Saving new alias:"
 msgstr ""
 
-#: ../www/alias_addwiz.cgi.perl:155 ../www/cgi_tabbed.pl:299
+#: ../www/alias_addwiz.cgi.perl:155 ../www/cgi_tabbed.pl:307
 #: ../www/cliconf.cgi.perl:115 ../www/delete_queue.cgi.perl:135
-#: ../www/grp_addwiz.cgi.perl:153 ../www/prn_addwiz.cgi.perl:677
+#: ../www/grp_addwiz.cgi.perl:153 ../www/prn_addwiz.cgi.perl:665
 #: ../www/prn_control.cgi.perl:432 ../www/prn_media.cgi.perl:197
 #: ../www/prn_testpage.cgi.perl:134 ../www/show_queues.cgi.perl:257
 msgid "_Close"
@@ -190,7 +194,7 @@ msgstr ""
 #: ../www/alias_properties.cgi.perl:139 ../www/grp_properties.cgi.perl:141
 #: ../www/prn_properties.cgi.perl:592
 msgid "Other"
-msgstr ""
+msgstr "Другие"
 
 #: ../www/alias_properties.cgi.perl:141 ../www/grp_properties.cgi.perl:155
 msgid "Passthru Printer Languages:"
@@ -234,20 +238,19 @@ msgid ""
 "JavaScript and a CGI script."
 msgstr ""
 
-#: ../www/cgi_tabbed.pl:64
-msgid ""
-"The load function for this dialog failed with the following error message:"
+#: ../www/cgi_tabbed.pl:67
+msgid "The load function for this dialog failed with the following error message:"
 msgstr ""
 
-#: ../www/cgi_tabbed.pl:198
+#: ../www/cgi_tabbed.pl:201
 msgid "<<More"
 msgstr "<<Дополнителный"
 
-#: ../www/cgi_tabbed.pl:224
+#: ../www/cgi_tabbed.pl:227
 msgid "More>>"
 msgstr "Дополнительный>>"
 
-#: ../www/cgi_tabbed.pl:309
+#: ../www/cgi_tabbed.pl:317
 msgid "_Save"
 msgstr "Сохроить"
 
@@ -741,8 +744,7 @@ msgstr ""
 
 #: ../www/login_cookie.cgi.perl:138
 #, c-format
-msgid ""
-"You are already logged in as user \"%s\" using authentication method \"%s\"."
+msgid "You are already logged in as user \"%s\" using authentication method \"%s\"."
 msgstr ""
 
 #: ../www/ppd_select.pl:135
@@ -801,7 +803,7 @@ msgstr ""
 msgid "LAN Manager/MS-Windows"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:138 ../www/prn_addwiz.cgi.perl:559
+#: ../www/prn_addwiz.cgi.perl:138 ../www/prn_addwiz.cgi.perl:547
 msgid "Add a Printer"
 msgstr "Добавлять принтер"
 
@@ -840,45 +842,45 @@ msgstr ""
 msgid "AppleTalk Interface: Choose a Zone"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:247
+#: ../www/prn_addwiz.cgi.perl:235
 msgid "Please choose the zone which contains the printer you want to use."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:249
+#: ../www/prn_addwiz.cgi.perl:237
 msgid "AppleTalk Zones:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:263
+#: ../www/prn_addwiz.cgi.perl:251
 msgid ""
 "When you press the [Next] button, the selected zone will\n"
 "be searched.  This will take about 10 seconds."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:268
+#: ../www/prn_addwiz.cgi.perl:256
 msgid "You must choose a zone before you may proceed!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:278
+#: ../www/prn_addwiz.cgi.perl:266
 msgid "AppleTalk Interface: Choose a Printer"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:285
+#: ../www/prn_addwiz.cgi.perl:273
 msgid "Please choose the printer you want to use from the list below."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:287
+#: ../www/prn_addwiz.cgi.perl:275
 msgid "Available Printers:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:315
+#: ../www/prn_addwiz.cgi.perl:303
 msgid "You must select a printer before you can proceed!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:336
+#: ../www/prn_addwiz.cgi.perl:324
 msgid "Raw TCP/IP Interface: Choose an Address"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:339
+#: ../www/prn_addwiz.cgi.perl:327
 msgid ""
 "It is necessary to know the IP address of the printer,\n"
 "or preferably a DNS name which represents that address.\n"
@@ -886,11 +888,11 @@ msgid ""
 "of an IP address is \"157.252.200.22\"."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:344 ../www/prn_addwiz.cgi.perl:413
+#: ../www/prn_addwiz.cgi.perl:332 ../www/prn_addwiz.cgi.perl:401
 msgid "DNS Name or IP Address:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:348
+#: ../www/prn_addwiz.cgi.perl:336
 msgid ""
 "HP JetDirect cards accept jobs on TCP port 9100.\n"
 "With some other equipment, the port number the printer\n"
@@ -898,11 +900,11 @@ msgid ""
 "come from the factory."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:353
+#: ../www/prn_addwiz.cgi.perl:341
 msgid "TCP Port Number:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:368
+#: ../www/prn_addwiz.cgi.perl:356
 msgid ""
 "Internal JetDirect cards support bidirectional communication.\n"
 "External print servers will only support bidirectional\n"
@@ -910,23 +912,23 @@ msgid ""
 "through a serial port or through a bidirectional parallel port."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:373
+#: ../www/prn_addwiz.cgi.perl:361
 msgid "Bidirectional:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:387
+#: ../www/prn_addwiz.cgi.perl:375
 msgid "You must fill in the printer's DNS name or IP address!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:389
+#: ../www/prn_addwiz.cgi.perl:377
 msgid "You must fill in the TCP port number!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:405
+#: ../www/prn_addwiz.cgi.perl:393
 msgid "LPR Interface: Choose an Address"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:408
+#: ../www/prn_addwiz.cgi.perl:396
 msgid ""
 "It is necessary to know the IP address of the server,\n"
 "or preferably a DNS name which represents that address.\n"
@@ -934,29 +936,29 @@ msgid ""
 "of an IP address is \"157.252.200.52\"."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:417
+#: ../www/prn_addwiz.cgi.perl:405
 msgid ""
 "The remote queue name may be different from the local queue name.\n"
 "If so, change it below."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:420
+#: ../www/prn_addwiz.cgi.perl:408
 msgid "Remote Queue Name:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:426
+#: ../www/prn_addwiz.cgi.perl:414
 msgid "You must fill in the remote host's DNS name or IP address!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:428
+#: ../www/prn_addwiz.cgi.perl:416
 msgid "You must fill in the remote queue name!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:444
+#: ../www/prn_addwiz.cgi.perl:432
 msgid "Interface Setup"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:447
+#: ../www/prn_addwiz.cgi.perl:435
 #, c-format
 msgid ""
 "No special help is available for the interface called\n"
@@ -966,41 +968,41 @@ msgid ""
 "for the values of the fields below."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:453
+#: ../www/prn_addwiz.cgi.perl:441
 msgid "Enter Printer Address:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:457
+#: ../www/prn_addwiz.cgi.perl:445
 msgid "Enter Interface Options:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:461
+#: ../www/prn_addwiz.cgi.perl:449
 msgid "Do the Interface and Printer Support 2-Way Communication?"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:471
+#: ../www/prn_addwiz.cgi.perl:459
 msgid "Choose a Jobbreak Method:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:485
+#: ../www/prn_addwiz.cgi.perl:473
 msgid "You must enter an address for the printer!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:503
+#: ../www/prn_addwiz.cgi.perl:491
 msgid "Choose a PPD File"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:511
+#: ../www/prn_addwiz.cgi.perl:499
 msgid ""
 "Please select a appropriate PostScript Printer\n"
 "Description (PPD) file for this printer:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:550
+#: ../www/prn_addwiz.cgi.perl:538
 msgid "You must choose a PPD file first!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:562
+#: ../www/prn_addwiz.cgi.perl:550
 msgid ""
 "The printer must have a name.  The name may be up\n"
 "to 16 characters long.  Control codes, tildes, and spaces\n"
@@ -1008,24 +1010,24 @@ msgid ""
 "a period or a hyphen."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:573 ../www/prn_properties.cgi.perl:37
+#: ../www/prn_addwiz.cgi.perl:561 ../www/prn_properties.cgi.perl:37
 msgid "Printer Name:"
 msgstr "Название Принтера:"
 
-#: ../www/prn_addwiz.cgi.perl:579
+#: ../www/prn_addwiz.cgi.perl:567
 msgid "You must enter a name for the printer!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:581
+#: ../www/prn_addwiz.cgi.perl:569
 #, c-format
 msgid "The printer \"%s\" already exists!"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:590
+#: ../www/prn_addwiz.cgi.perl:578
 msgid "Describe the Printer"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:593
+#: ../www/prn_addwiz.cgi.perl:581
 #, c-format
 msgid ""
 "While short printer names are convenient in certain contexts,\n"
@@ -1034,47 +1036,47 @@ msgid ""
 "\"%s\" below."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:619
+#: ../www/prn_addwiz.cgi.perl:607
 msgid "Additional Information"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:622
+#: ../www/prn_addwiz.cgi.perl:610
 msgid ""
 "On this screen you may record additional information\n"
 "about the printer for future reference."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:625
+#: ../www/prn_addwiz.cgi.perl:613
 msgid "Where is the printer located?"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:627 ../www/prn_properties.cgi.perl:43
+#: ../www/prn_addwiz.cgi.perl:615 ../www/prn_properties.cgi.perl:43
 msgid "Location:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:631
+#: ../www/prn_addwiz.cgi.perl:619
 msgid "Which department within your organization uses this printer?"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:633 ../www/prn_properties.cgi.perl:46
+#: ../www/prn_addwiz.cgi.perl:621 ../www/prn_properties.cgi.perl:46
 msgid "Department:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:637
+#: ../www/prn_addwiz.cgi.perl:625
 msgid ""
 "Whom should the print server's system administrator contact to discuss "
 "problems with the printer?"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:639
+#: ../www/prn_addwiz.cgi.perl:627
 msgid "On Site Contact:"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:650
+#: ../www/prn_addwiz.cgi.perl:638
 msgid "Save New Printer"
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:653
+#: ../www/prn_addwiz.cgi.perl:641
 msgid "Saving new printer:"
 msgstr ""
 
@@ -2031,8 +2033,7 @@ msgid "Add New Group"
 msgstr "Добавлять Новую Группу"
 
 #: ../www/show_queues.cgi.perl:306
-msgid ""
-"Click here and you will be guided through the process of adding a new alias."
+msgid "Click here and you will be guided through the process of adding a new alias."
 msgstr ""
 
 #: ../www/show_queues.cgi.perl:309
@@ -2047,7 +2048,7 @@ msgstr ""
 #: ../www/show_queues_nojs.cgi.perl:57
 #, c-format
 msgid "Group \"%s\""
-msgstr ""
+msgstr "группа \"%s\""
 
 #: ../www/show_queues_nojs.cgi.perl:61
 #, c-format
@@ -2096,7 +2097,7 @@ msgstr ""
 
 #: ../www/test_components.cgi.perl:149
 msgid "Critical?"
-msgstr ""
+msgstr "Важно?"
 
 #: ../www/test_components.cgi.perl:149
 msgid "Source Download"
@@ -2117,3 +2118,4 @@ msgstr ""
 #: ../www/test_components.cgi.perl:149
 msgid "Component"
 msgstr ""
+

@@ -24,7 +24,7 @@
 <articleinfo>
   <title>Installing and Using PPR</title>
   <author><firstname>David</firstname><surname>Chappell</surname></author>
-  <pubdate>22 February 2002</pubdate>
+  <pubdate>5 November 2002</pubdate>
   <copyright><year>1995--2002</year><holder>Trinity College Computing Center</holder></copyright>
 </articleinfo>
 
@@ -32,8 +32,9 @@
 <para>
 This document tells how to install PPR version 1.50 and how to manage it.  It
 does not attempt to describe all of PPR's features or theory of operation.
-More information can be found in the <citetitle/PPR Reference Manual/
-and <citetitle/PPR, a Print Spooler for PostScript/.
+More information can be found in the <citetitle>PPR Reference
+Manual</citetitle>
+and <citetitle>PPR, a Print Spooler for PostScript</citetitle>.
 </para>
 </abstract>
 

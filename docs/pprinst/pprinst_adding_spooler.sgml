@@ -240,123 +240,6 @@ described in the ppad(8) manual page.
 </Sect3>
 
 <Sect3>
-<Title>Using Ghostscript with PPR</Title>
-
-<Para>
-Using Ghostscript, a freely available PostScript interpreter, it is possible
-to print PostScript jobs on non-PostScript printers. PPR supports this through
-three interfaces, <Emphasis remap="bf">gssimple</Emphasis>, <Emphasis remap="bf">gstcpip</Emphasis>, and <Emphasis remap="bf">gsatalk</Emphasis>.
-These interface scripts assume that you have installed Ghostscript as
-<Emphasis remap="bf">/usr/bin/gs</Emphasis>.  If you have not then you should set the <Emphasis remap="bf">gs=</Emphasis> option.
-</Para>
-
-<Para>
-PPR has been tested with the 3.12 through 5.01 versions of the Aladdin
-releases of Ghostscript.  It is not know if it will work with earlier
-versions.  Most of the fonts supplied with Ghostscript prior to version 4.0
-are of very poor quality.  If you possibly can you should replace them with
-better ones.  Some operating systems include a number of PostScript type 1
-fonts, possibly as part of X-Windows.  The Adobe Acrobat Reader for Unix
-includes a basic set of 14 fonts.  If you have replacement fonts you should
-either put them in one of Ghostscript's font directories and make entries
-for them in Ghostscript's Fontmap, or copy them to or place symbolic links
-to them in the directory <Literal remap="tt">/usr/ppr/cache/font</Literal>.  The <Emphasis remap="bf">gs*</Emphasis>
-interface scripts set Ghostscript's FONT&lowbar;PATH variable so that Ghostscript
-can find the fonts in this directory.  The name of each font file should be
-the same as the font's PostScript name.  Note that it is ok to put PFB
-format fonts in <Literal remap="tt">/usr/ppr/cache/font</Literal> since both PPR and Ghostscript
-can read that format.
-</Para>
-
-<Para>
-A number of PPD files are provided for use with Ghostscript.  These are all
-generated from one master file.  The master file contains sections to describe
-different output devices.  You should edit the makefile which generates these PPD
-files.  It is in the <Literal remap="tt">ppd/ghostscript</Literal> directory of the PPR source tree.  In
-this makefile you can select the list of fonts to be included.
-</Para>
-
-<Para>
-The interface <Emphasis remap="bf">gssimple</Emphasis> will process the job using Ghostscript and send
-the output to the printer through a parallel port.  In order to set PPR up to
-print to an HP DeskJet 500 connected to the parallel port of our print server
-we could use these commands:
-</Para>
-
-<Para>
-
-<Screen>
-# ppad interface my_dj500 gssimple /dev/lp0
-# ppad options my_dj500 'device=djet500 gs=/usr/local/bin/gs'
-# ppad ppd my_dj500 'HP DeskJet 500 Ghostscript'
-</Screen>
-
-</Para>
-
-<Para>
-Notice that the <Emphasis remap="bf">gs=</Emphasis> option is used to tell PPR to use a Ghostscript executable
-other than <Literal remap="tt">/usr/bin/gs</Literal>.
-</Para>
-
-<Para>
-The interface <Emphasis remap="bf">gstcpip</Emphasis> will process the job with Ghostscript and
-send the result to the printer using TCP/IP.  For example, in order to use an
-HP III connected to an Extended Systems Pocket Print Server, we would set it
-up with commands like these:
-</Para>
-
-<Para>
-
-<Screen>
-# ppad interface your_hpiii gstcpip hpiii.prn.trincoll.edu:9100
-# ppad options your_hpiii 'device=ljet3'
-# ppad ppd your_hpiii 'HP LaserJet III Ghostscript'
-</Screen>
-
-</Para>
-
-<Para>
-(Note: an HP III may require a memory upgrade before it can print full page
-Ghostscript output at 300DPI)
-</Para>
-
-<Para>
-Ghostscript must have the correct Ghostscript device driver for the printer
-compiled in.  You must use the <Emphasis remap="bf">driver=</Emphasis> option to indicate which of Ghostscript's output formats should be
-used.  For a complete list of options supported by the
-various Ghostscript interfaces, see the ppad(8) man page.
-</Para>
-
-<Para>
-The interface <Emphasis remap="bf">gsatalk</Emphasis> can be used to print on a printer with an
-AppleTalk interface.  For example:
-</Para>
-
-<Para>
-
-<Screen>
-# ppad interface melab_colour gsatalk "M.E. Lab DeskJet 870C:DeskWriter@Acad MCEC"
-# ppad options melab_colour "device=cdj550"
-# ppad ppd melab_colour "HP DeskJet 550C Ghostscript"
-# ppad comment melab_colour "The HP DJ 870C in the ME lab"
-</Screen>
-
-</Para>
-
-<Para>
-Since Ghostscript doesn't have a driver specifically for the 870C, we used the
-option <Emphasis remap="bf">device=cdj550</Emphasis>.  Again, you must see to it that the driver ``cdj550''
-is compiled into your Ghostscript executable.
-</Para>
-
-<Para>
-It will help to consult the Ghostscript documentation when selecting a driver.
-The files <Literal remap="tt">devs.mak</Literal> and <Literal remap="tt">devices.txt</Literal> contain useful information.
-</Para>
-
-</Sect3>
-
-<Sect3>
 <Title>Adding Printers With Other Connexion Methods</Title>
 
 <Para>
@@ -504,15 +387,6 @@ A typical Level 1 printer with 35 fonts and two bins
 </listitem>
 </VarListEntry>
 
-<VarListEntry>
-<Term>``HP DeskJet 550C PPD Ghostscript''</Term>
-<ListItem>
-<Para>
-A non-PostScript inkjet printer combined with Ghostscript.
-</Para>
-</listitem>
-</VarListEntry>
-
 </VariableList>
 
 <Para>
@@ -557,6 +431,36 @@ configuration. You set it like this:
 </Screen>
 
 </Para>
+
+</Sect3>
+
+<Sect3>
+<Title>Using Ghostscript with PPR</Title>
+
+<Para>
+Using Ghostscript, a freely available PostScript interpreter, it is possible
+to print PostScript jobs on non-PostScript printers.
+</Para>
+
+<Para>
+Previous versions of PPR had special printer interface programs which
+accepted PostScript from PPR, processed it with Ghostscript, and sent the
+Ghostscript output to the printer.  However, these special interface
+programs are obsolete.  We will describe only the new mechanism here.
+</Para>
+
+<VariableList>
+
+<VarListEntry>
+<Term>``HP DeskJet 550C PPD Ghostscript''</Term>
+<ListItem>
+<Para>
+A non-PostScript inkjet printer combined with Ghostscript.
+</Para>
+</listitem>
+</VarListEntry>
+
+</VariableList>
 
 </Sect3>
 

@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is"
 # without express or implied warranty.
 #
-# Last modified 28 February 2002.
+# Last modified 8 November 2002.
 #
 
 # Where do we install the documentation?
@@ -26,8 +26,10 @@ DVIPS=dvips
 PS2PDF=ps2pdf
 
 # Where are the style sheets?
-DSSSL_SPEC_HTML=/usr/share/sgml/docbook/dsssl-stylesheets/html/docbook.dsl
-DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets/print/docbook.dsl
+#DSSSL_SPEC_HTML=/usr/share/sgml/docbook/dsssl-stylesheets/html/docbook.dsl
+#DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/dsssl-stylesheets/print/docbook.dsl
+DSSSL_SPEC_HTML=/usr/share/sgml/docbook/stylesheet/dsssl/modular/html/docbook.dsl
+DSSSL_SPEC_PRINT=/usr/share/sgml/docbook/stylesheet/dsssl/modular/print/docbook.dsl
 
 # Additional file extensions to be used in our rules.
 .SUFFIXES: .pod .html .man .dvi .tex .eps .ps .pdf .sgml .fig .gif .jpeg .png

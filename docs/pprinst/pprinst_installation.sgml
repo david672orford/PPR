@@ -6,7 +6,7 @@
 <title>Obtaining the PPR Source Code</title>
 
 <para>
-The <application/PPR/ source code may be obtained by anonymous FTP from
+The <application>PPR</application> source code may be obtained by anonymous FTP from
 <ulink url="ftp://ppr-dist.trincoll.edu/pub/ppr/">
 ftp://ppr-dist.trincoll.edu/pub/ppr/</ulink>.  If you prefer to use
 HTTP, the URL is <ulink url="http://ppr-dist.trincoll.edu/pub/ppr/">
@@ -21,7 +21,7 @@ The file size is about 3 megabytes.
 <title>Unpacking, Compiling, and Installing PPR</title>
 
 <para>
-The <application/PPR/ source code comes as a tar archive compressed with
+The <application>PPR</application> source code comes as a tar archive compressed with
 gzip. To unpack it use this command:
 
 <screen>
@@ -42,7 +42,8 @@ Compiling and installing PPR consists of 4 basic steps:
 <listitem><para>Running the <command>fixup</command> script</para></listitem>
 </orderedlist>
 
-These steps are described in detail in the file <filename/INSTALL.txt/ which
+These steps are described in detail in the file
+<filename>INSTALL.txt</filename> which
 may be found in the top level source code directory.
 </para>
 
@@ -65,7 +66,7 @@ like this one:
 
 After this command has been executed, then the configuration of each printer
 you add will be set so that on every fifth printer fault a notice will be
-mailed to <email/alertreaders@myorg.org/.
+mailed to <email>alertreaders@myorg.org</email>.
 </para>
 
 </sect2>
@@ -74,12 +75,14 @@ mailed to <email/alertreaders@myorg.org/.
 <sect2><title>Filter Setup</title>
 
 <para>
-The last thing the <command/fixup/ script does is run the script
+The last thing the <command>fixup</command> script does is run the script
 <command>/usr/lib/ppr/fixup/fixup_filters</command>.  The
-<command/fixup_filters/ script searches for certain programs which it will be
+<command>fixup_filters</command> script searches for certain programs which it will be
 able to use to convert files you may want printed to PostScript.  These
-programs include <application/Troff/, <application/TeX/, <application/DVIPS/,
-the <application/NetPBM/ utilities, and the <application/Adobe Acrobat Reader/.
+programs include <application>Troff</application>,
+<application>TeX</application>, <application>DVIPS</application>,
+the <application>NetPBM</application> utilities, and the <application>Adobe Acrobat 
+Reader</application>.
 For those that are found in the current path, PPR generates small shell scripts
 in <filename>/usr/lib/ppr/filters/</filename>. Later, PPR calls these shell
 scripts to automatically convert input files to PostScript.
