@@ -36,7 +36,7 @@ The RFC 2565 names are noted in the comments.
 
 The structures too are intentionaly similiar to those used by CUPS.  This is to make the
 code easier to understand by those who are already programming using the CUPS API.  It
-also saved me the trouble of designing that part of the API.
+also saved me the trouble of designing that part of the API.  :-)
 
 */
 
