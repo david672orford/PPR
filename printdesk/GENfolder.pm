@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 March 2003.
+# Last modified 18 March 2003.
 #
 
 =pod
@@ -50,7 +50,6 @@ sub new
     bless $self;
 
     shift;
-    $self->{main} = shift;
     $self->{window} = shift;
     $self->{double_action} = shift;
     $self->{popup_menu} = shift;
@@ -87,8 +86,8 @@ sub Show
 	{
 	my($dest_name, $dest_type) = @$dest[0, 1];
 	my $bitmap = $canvas->createImage($x, $y, -anchor, 'w', -image, $dest_type eq "printer" ? $bm_printer : $bm_group);
-	$canvas->bind($bitmap, '<Double-1>', sub{&$double_action($self->{main}, $dest_name, $dest_type)});
-	$canvas->bind($bitmap, '<3>', sub{&$popup_menu($self->{main}, $dest_name, $dest_type)});
+	$canvas->bind($bitmap, '<Double-1>', sub{&$double_action($self->{window}, $dest_name, $dest_type)});
+	$canvas->bind($bitmap, '<3>', sub{&$popup_menu($self->{window}, $dest_name, $dest_type)});
 	$canvas->createText($x + 50, $y, -anchor, 'w', -text, $dest_name);
 	$y += 50;
 	}

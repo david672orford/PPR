@@ -1,10 +1,32 @@
-#================================================================
+#
 # mouse:~ppr/src/printdesk/PPRstateupdate.pm
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last modified 15 December 1999.
-#================================================================
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 18 March 2003.
+#
 
 package PrintDesk::PPRstateupdate;
 
@@ -254,11 +276,10 @@ sub new
     shift;
     my $self = {};
     bless $self;
-    $self->{main} = shift;
-    $self->{window} = shift;
+    $self->{widget} = shift;
     $self->{queue} = shift;
 
-    print STDERR "PrintDesk::PPRstateupdate::new(): main=$self->{main}, window=$self->{window}, queue=\"$self->{queue}\" " if($debug);
+    print STDERR "PrintDesk::PPRstateupdate::new(): main=$self->{widget}, window=$self->{window}, queue=\"$self->{queue}\" " if($debug);
 
     # Create a unique id so that we can later locate this instance
     # in the array @instances.  This is necessary because its possition
@@ -275,7 +296,7 @@ sub new
     if(! $tail_status_launched)
 	{
 	open(UPDATES, "$PrintDesk::TAIL_STATUS_PATH |") || die;
-	$self->{main}->fileevent(UPDATES, 'readable', \&handler);
+	$self->{widget}->fileevent(UPDATES, 'readable', \&handler);
 	fcntl(UPDATES, &F_SETFL, &O_NONBLOCK);
 	$tail_status_launched = 1;
 	}
@@ -340,7 +361,7 @@ __END__
 
 =head1 SYNOPSIS
 
-$updater = new PrintDesk::PPRstateupdate($main, $window, $queue);
+$updater = new PrintDesk::PPRstateupdate($window, $queue);
 $updater->register("add", $object, $method);
 $updater->register("delete", $object, $method);
 $updater->register("newstatus", $object, $method);

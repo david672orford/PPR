@@ -1,10 +1,32 @@
-#================================================================
+#
 # mouse:~ppr/src/printdesk/PPRlistqueue.pm
-# Copyright 1995--2000 Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Last modified 22 September 2000.
-#================================================================
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 18 March 2003.
+#
 
 package PrintDesk::PPRlistqueue;
 
@@ -20,7 +42,6 @@ sub new
   bless $self;
 
   shift;				# junk
-  $self->{main} = shift;		# Application's 1st window
   $self->{window} = shift;		# frame or toplevel it build it in
   $self->{queue} = shift;		# queue to display
 
@@ -208,7 +229,7 @@ sub Show
 
   # Create an updater object and tell it what routines to
   # call when the queue listing changes.
-  my $updater = new PrintDesk::PPRstateupdate($self->{main}, $window, $self->{queue});
+  my $updater = new PrintDesk::PPRstateupdate($self->{window}, $window, $self->{queue});
   $updater->register('add', $self, \&add);
   $updater->register('delete', $self, \&delete);
   $updater->register('newstatus', $self, \&newstatus);
@@ -436,7 +457,7 @@ PrintDesk::PPRlistqueue
 
 =head1 SYNOPSIS
 
-$list = new PrintDesk::PPRlistqueue($main, $window, $queue);
+$list = new PrintDesk::PPRlistqueue($window, $queue);
 $list->Show();
 @selected_list = $list->getSelection();
 $list->destroy();

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 March 2003.
+# Last modified 18 March 2003.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -36,7 +36,7 @@ sub new
     shift;
     my $self = {};
     bless $self;
-    $self->{main} = shift;
+    $self->{window} = shift;
     return $self;
     }
 
@@ -44,23 +44,27 @@ sub Show
     {
     my $self = shift;
 
-    my $window = $self->{main}->Toplevel();
-    $window->title("Print");
+    my $w = $self->{window};
 
-    my $right_buttons_frame = $window->Frame();
-    $right_buttons_frame->pack(-side, 'right', -anchor, 'n');
+    my $right_buttons_frame = $w->Frame();
+    $right_buttons_frame->pack(-side, 'bottom', -anchor, 'se');
+
     my $print_button = $right_buttons_frame->Button(-text, "Print");
-    $print_button->pack(-side, 'top', -fill, 'x');
-    my $cancel_button = $right_buttons_frame->Button(-text, "Cancel");
-    $cancel_button->pack(-side, 'top', -fill, 'x');
+    $print_button->pack(-side, 'right');
 
-    $self->{window} = $window;
+    my $cancel_button = $right_buttons_frame->Button(-text, "Cancel");
+    $cancel_button->pack(-side, 'right');
+
+    $w->waitWindow;
+    undef $self->{window};
+
+    return ();
     }
 
 sub destroy
     {
     my $self = shift;
-    $self->{window}->destroy();
+    $self->{window}->destroy() if(defined $self->{window});
     }
 
 1;
