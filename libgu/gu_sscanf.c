@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 27 January 2004.
 */
 
 /*! \file
@@ -133,6 +133,10 @@ It implements the following formats:
 <dt>%u</dt>
 
 <dd>read an unsigned int</dd>
+
+<dt>%f</dt>
+
+<dd>read a floating point number</dd>
 
 <dt>%s</dt>
 

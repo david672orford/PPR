@@ -468,7 +468,7 @@ more information about RIPs and *pprRIP:.
 * refman/ppr-panel.1.pod: expanded the section about desktop icons.
 
 
-1.53a1, 24 September 2003--22 January 2004.
+1.53a1, 24 September 2003--26 January 2004.
 
 * index.html: added links to RFC's relevant to SNMP.
 
@@ -488,6 +488,8 @@ more information about RIPs and *pprRIP:.
 
 * index.html: replaced dead links to HP documents with new live ones at
   lprng.sourceforge.net.
+
+* refman/ppad.8.pod: changed "ppad ppd" subcommands to "ppad ppdlib".
 
 
 TODO

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 November 2003.
+** Last modified 26 January 2004.
 */
 
 /*
@@ -278,13 +278,14 @@ static void help_alias(FILE *out)
 		}
 	} /* end of help_alias() */
 
-static void help_ppd(FILE *out)
+static void help_ppdlib(FILE *out)
 	{
 	int i;
 	const char *command_list[] =
 		{
-		N_("ppad ppd query <interface> <address> [<quoted_options_list>]"),
-		N_("ppad ppd list <pattern>"),
+		N_("ppad ppdlib query <interface> <address> [<quoted_options_list>]"),
+		N_("ppad ppdlib list <pattern>"),
+		N_("ppad ppdlib get <name>"),
 		NULL
 		};
 
@@ -295,7 +296,7 @@ static void help_ppd(FILE *out)
 		fprintf(out, "    %s\n", p);
 		}
 	
-	} /* end of help_ppd() */
+	} /* end of help_ppdlib() */
 
 static void help_other(FILE *out)
 	{
@@ -328,7 +329,7 @@ static void help(FILE *out)
 		N_("ppad help group"),
 		N_("ppad help alias"),
 		N_("ppad help media"),
-		N_("ppad help ppd"),
+		N_("ppad help ppdlib"),
 		N_("ppad help other"),
 		NULL
 		};
@@ -402,8 +403,8 @@ static int dispatch(const char *argv[])
 			help_alias(stdout);
 		else if(gu_strcasecmp(argv[1], "media") == 0)
 			help_media(stdout);
-		else if(gu_strcasecmp(argv[1], "ppd") == 0)
-			help_ppd(stdout);
+		else if(gu_strcasecmp(argv[1], "ppdlib") == 0)
+			help_ppdlib(stdout);
 		else if(gu_strcasecmp(argv[1], "other") == 0)
 			help_other(stdout);
 		else
@@ -464,13 +465,15 @@ static int dispatch(const char *argv[])
 			return group_addon(&argv[2]);
 		}
 
-	/* PPD commands */
-	if(gu_strcasecmp(argv[0], "ppd") == 0 && argv[1])
+	/* PPD library commands */
+	if(gu_strcasecmp(argv[0], "ppdlib") == 0 && argv[1])
 		{
 		if(gu_strcasecmp(argv[1], "query") == 0)
-			return ppd_query(&argv[2]);
+			return ppdlib_query(&argv[2]);
 		if(gu_strcasecmp(argv[1], "list") == 0)
-			return ppd_list(&argv[2]);
+			return ppdlib_list(&argv[2]);
+		if(gu_strcasecmp(argv[1], "get") == 0)
+			return ppdlib_get(&argv[2]);
 		}
 
 	/* printer commands */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_ppd.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2004, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 November 2003.
+** Last modified 26 January 2004.
 */
 
 #include "before_system.h"
@@ -737,13 +737,13 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	return EXIT_OK;
 	} /* end of ppd_query_core() */
 
-/*
-** ppad ppd query
+/*==========================================================================
+** ppad ppdlib query
 **
 ** Send a query to a printer using a specified interface and address and
 ** produce a list of suitable PPD files.
-*/
-int ppd_query(const char *argv[])
+==========================================================================*/
+int ppdlib_query(const char *argv[])
 	{
 	const char *interface, *address, *options;
 	struct QUERY *q = NULL;
@@ -778,12 +778,12 @@ int ppd_query(const char *argv[])
 	return ret;
 	} /* end of ppd_query */
 
-/*
- * ppad ppd list
+/*=========================================================================
+ * ppad ppdlib list
  *
  * List PPD files matching a pattern.
- */
-int ppd_list(const char *argv[])
+=========================================================================*/
+int ppdlib_list(const char *argv[])
 	{
 	const char *pattern;
 	gu_boolean wildcards;
@@ -833,7 +833,9 @@ int ppd_list(const char *argv[])
 				||
 			(!wildcards && strstr(f_description_lowered, pattern_lowered))
 			)
-				printf("\"%s\"\n", f_description);
+			{
+			printf("\"%s\"\n", f_description);
+			}
 
 		gu_free(f_description_lowered);
 		}	
@@ -841,6 +843,50 @@ int ppd_list(const char *argv[])
 	gu_free(pattern_lowered);
 
 	return EXIT_OK;
-	} /* end of ppd_list() */
+	} /* end of ppdlib_list() */
+
+/*=========================================================================
+** Display the text of the requested PPD file.
+=========================================================================*/
+int ppdlib_get(const char *argv[])
+	{
+	const char *name;
+	void *ppd = NULL;;
+
+	if(!(name = argv[0]) || argv[1])
+		{
+		fputs(
+			_("You must supply the name of a PPD file.\n"),
+			errors
+			);
+		return EXIT_SYNTAX;
+		}
+
+	gu_Try {
+		ppd = ppdobj_new(name);
+		}
+	gu_Catch
+		{
+		fprintf(errors, "%s", gu_exception);
+		return EXIT_NOTFOUND;	/* a guess */
+		}
+
+	gu_Try {
+		const char *p;
+		while((p = ppdobj_readline(ppd)))
+			{
+			printf("%s\n", p);
+			}
+		}
+	gu_Final {
+		ppdobj_delete(ppd);
+		}
+	gu_Catch {
+		fprintf(errors, "%s\n", gu_exception);
+		return EXIT_INTERNAL;
+		}
+	
+	return EXIT_OK;
+	} /* end of ppdlib_get() */
 
 /* end of file */

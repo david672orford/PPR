@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2004.
+** Last modified 27 January 2004.
 */
 
 #include "before_system.h"
@@ -56,43 +56,29 @@ const char section_name[] = "ppds";
 const char ppdindex_db[] = PPD_INDEX;
 
 /*==========================================================================
-** functions which wrap the future library functions above in order
-** to accomodate this modules allocation scheme
+** This wraps a library function in order to use the pool allocater.
 ==========================================================================*/
 
-/* get the rest, decode it */
-static char *finish_decode(char *initial_segment)
-	{
-	void *pcs = ppd_finish_quoted_string(initial_segment);
-	char *p = gu_pcs_get_editable_cstr(&pcs);
-	gu_pcs_truncate(&pcs, ppd_decode_QuotedValue(p));
-	return gu_pcs_free_keep_cstr(&pcs);
-	}
-
 /* get the rest, decode it, register it in a c2lib pool */
-static char *finish_decode_pool(pool thepool, char *initial_segment)
+static char *finish_decode_pool(pool thepool, void *obj, char *initial_segment)
 	{
-	char *p = finish_decode(initial_segment);
+	char *p = ppd_finish_QuotedValue(obj, initial_segment);
 	pool_register_malloc(thepool, p);
 	return p;
 	}
 
 /*==========================================================================
-** This routine is called for each file found in the PPD
-** directories.
+** This routine is called for each file found in the PPD directories.
 ==========================================================================*/
 static int do_file(FILE *indexfile, const char filename[], const char base_filename[])
 	{
-	{
-	int ret;
-	printf("  %s", base_filename);
-
-	if((ret = ppd_open(filename, stderr)) != EXIT_OK)
-		return ret;
-	}
-	{
-	pool temp_pool = new_subpool(global_pool);
+	void *obj;
+	pool temp_pool;
 	char *pline, *p;
+
+	printf("  %s", base_filename);
+	obj = ppdobj_new(filename);
+	pool temp_pool = new_subpool(global_pool);
 
 	/* the information we are gathering */
 	char *Manufacturer = NULL;
@@ -112,27 +98,27 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 	char *vendor;
 	const char *description;
 	
-	while((pline = ppd_readline()))
+	while((pline = ppdobj_readline(obj)))
 		{
 		if(!Manufacturer && (p = lmatchp(pline, "*Manufacturer:")) && *p == '"')
 			{
-			Manufacturer = finish_decode_pool(temp_pool, p + 1);
+			Manufacturer = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		if(!ModelName && (p = lmatchp(pline, "*ModelName:")) && *p == '"')
 			{
-			ModelName = finish_decode_pool(temp_pool, p + 1);
+			ModelName = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		if(!NickName && (p = lmatchp(pline, "*NickName:")) && *p == '"')
 			{
-			NickName = finish_decode_pool(temp_pool, p + 1);
+			NickName = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		/* ShortNickName is only valid if it comes before NickName. */
 		if(!ShortNickName && !NickName && (p = lmatchp(pline, "*ShortNickName:")) && *p == '"')
 			{
-			ShortNickName = finish_decode_pool(temp_pool, p + 1);
+			ShortNickName = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		/* For some reason this string is double quoted in PPD files.  The outer
@@ -208,17 +194,17 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 			}
 		if(pprPJLID && (p = lmatchp(pline, "*pprPJLID:")) && *p == '"')
 			{
-			pprPJLID = finish_decode_pool(temp_pool, p + 1);
+			pprPJLID = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		if(pprSNMPsysDescr && (p = lmatchp(pline, "*pprSNMPsysDescr:")) && *p == '"')
 			{
-			pprSNMPsysDescr = finish_decode_pool(temp_pool, p + 1);
+			pprSNMPsysDescr = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		if(pprSNMPhrDeviceDescr && (p = lmatchp(pline, "*pprSNMPhrDeviceDescr:")) && *p == '"')
 			{
-			pprSNMPhrDeviceDescr = finish_decode_pool(temp_pool, p + 1);
+			pprSNMPhrDeviceDescr = finish_decode_pool(temp_pool, obj, p + 1);
 			continue;
 			}
 		}
@@ -297,9 +283,9 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		);
 
 	delete_pool(temp_pool);
+	ppdobj_delete(obj);
 		
 	return EXIT_OK;
-	}
 	} /* end of do_file() */
 
 /*============================================================================

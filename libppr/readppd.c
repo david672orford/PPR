@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 27 January 2004.
 */
 
 /*+ \file
@@ -43,6 +43,9 @@ files.  Includes are handled automatically.
 #ifdef HAVE_ZLIB
 #include <zlib.h>
 #endif
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "util_exits.h"
@@ -59,6 +62,9 @@ char *ppd_find_file(const char ppdname[])
 	char *f_description, *f_filename;
 	char *filename = NULL;
 	
+	/* If it is an absolute path, our services aren't needed.  But return a copy of
+	 * the name since the caller expects to receive a block of heap memory.
+	 */
 	if(ppdname[0] == '/')
 		return gu_strdup(ppdname);
 
@@ -85,16 +91,19 @@ char *ppd_find_file(const char ppdname[])
 	if(filename)
 		return filename;
 
+	/* If we reach here, fall back to the assumption that the name is the name
+	 * of a file in /usr/share/ppr/PPDFiles.
+	 */
 	gu_asprintf(&filename, "%s/%s", PPDDIR, ppdname);
 	return filename;
-	}
+	} /* end of ppd_find_file() */
 
-/** decode PPD file quoted string
+/** read in a PPD file quoted string
  *
  * Take initial_segment and possibly subsequent lines readable with ppd_readline()
  * (until one of them ends with a quote) and assemble them into a PCS.
  */
-void *ppd_finish_quoted_string(char *initial_segment)
+void *ppd_finish_quoted_string(void *obj, char *initial_segment)
 	{
 	char *p = initial_segment;
 	gu_boolean end_quote = FALSE;
@@ -111,9 +120,19 @@ void *ppd_finish_quoted_string(char *initial_segment)
 		if(gu_pcs_length(&text) > 0)
 			gu_pcs_append_char(&text, '\n');
 		gu_pcs_append_cstr(&text, p);
-		} while(!end_quote && (p = ppd_readline()));
+		} while(!end_quote && (p = ppdobj_readline(obj)));
 	return text;
 	} /* end of ppd_finish_quoted_string() */
+
+/** read in a PPD file QuotedValue and decode it
+*/
+char *ppd_finish_QuotedValue(void *obj, char *initial_segment)
+	{
+	void *pcs = ppd_finish_quoted_string(obj, initial_segment);
+	char *p = gu_pcs_get_editable_cstr(&pcs);
+	gu_pcs_truncate(&pcs, ppd_decode_QuotedValue(p));
+	return gu_pcs_free_keep_cstr(&pcs);
+	}
 
 /** Decode PPD file QuotedValue
  *
@@ -395,11 +414,11 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 	const char function[] = "ppdobj_open";
 
 	if((self->nest + 1) >= MAX_PPD_NEST)			/* are we too deep? */
-		gu_Throw("PPD files nested too deeply");
+		gu_Throw("PPD files nested too deeply (to %d levels)", self->nest);
 
-	if(nest < 0)			/* if first level, */
+	if(self->nest < 0)			/* if first level, */
 		{
-		self->nest = -1;	/* <-- we are paranoid */
+		self->nest = -1;		/* <-- we are paranoid */
 		self->fname[self->nest + 1] = ppd_find_file(ppdname);
 		}
 	else if(ppdname[0] == '/')
@@ -408,26 +427,26 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 		}
 	else					/* if an include file, */
 		{
-		char *dirend;
+		char *ptr;
 
 		/* We should always be able to find the final slash. */
-		if(!(dirend = strrchr(self->fname[self->nest], '/')))
-			gu_Throw("%s(): internal error\n", function);
+		if(!(ptr = strrchr(self->fname[self->nest], '/')))
+			gu_Throw("%s(): assertion failed\n", function);
 
 		/* Build the path in malloced memory. */
-		gu_asprintf(&(self->fname[self->nest + 1]), "%.*s/%s", (dirend - self->fname[self->nest]), self->fname[self->nest], ppdname);
+		gu_asprintf(&(self->fname[self->nest + 1]), "%.*s/%s", (ptr - self->fname[self->nest]), self->fname[self->nest], ppdname);
 		}
 
 	self->nest++;
 
 	/* Open the PPD file for reading. */
 	#ifdef HAVE_ZLIB
-	if(!(f[nest] = gzopen(self->fname[self->nest], "r")))
+	if(!(self->f[self->nest] = gzopen(self->fname[self->nest], "r")))
 	#else
-	if(!(f[nest] = fopen(self->fname[self->nest], "r")))
+	if(!(self->f[self->nest] = fopen(self->fname[self->nest], "r")))
 	#endif
 		{
-		gu_Throw("PPD file \"%s\" does not exist.\n", self->fname[self->nest]);
+		gu_Throw(_("Can't open \"%s\", errno=%d (%s).\n"), self->fname[self->nest], errno, gu_strerror(errno));
 		}
 	}
 
@@ -455,9 +474,9 @@ void ppdobj_delete(void *p)
 		if(self->f[self->nest])		/* watch out for open failures! */
 			{
 			#ifdef HAVE_ZLIB
-			gzclose(f[nest]);
+			gzclose(self->f[self->nest]);
 			#else
-			fclose(f[nest]);
+			fclose(self->f[self->nest]);
 			#endif
 			}
 		gu_free(self->fname[self->nest]);

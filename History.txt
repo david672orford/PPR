@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--23 January 2004.
+1.53a1, 24 September 2003--27 January 2004.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8984,11 +8984,23 @@ Internet Printing Protocol Work
 
 * ppd/indexppds.c: moved two PPD file related functions to libppr/readppd.c.
 
-* libppr/queueinfo.c: fleshed out functions.
-
 * libgu/gu_throw.c: removed this function and edit everything that defined
   its own libppr_throw() to wrap main().  That is the last of the old
   library exception handling.
+
+* cron/ppr-clean.perl: fixed so works again.  It was appearently broken by the
+  partial renaming of some of the file handles.
+
+* libppr/readppd.c: added object-oriented version of the PPD file reading 
+  functions.  The old ones should be phased out.
+
+* ppad/: changed "ppad ppd" subcommand group to "ppad ppdlib" since there is a 
+  "ppad ppd" command with which the group clashed.
+
+* ppad/: added "ppad ppdlib get".
+
+* libppr/queueinfo.c: fleshed out functions.
+
 
 
 +++++++++++++++++++++

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2004, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 November 2003.
+# Last modified 26 January 2004.
 #
 
 =head1 NAME
@@ -1069,9 +1069,10 @@ export>.
 
 =over 4
 
-=item B<ppad ppd list> I<pattern>
+=item B<ppad ppdlib list> I<pattern>
 
-This command displays the names of the PPD files which match I<pattern>.  If I<pattern> 
+This command searches PPR's library of PPD files and displays the names of those PPD files which
+match I<pattern>.  If I<pattern> 
 contains the wildcard characters '*', '?', or '[', then pattern is understood to be a shell-style wildcard.  Any PPD files 
 whose names match the pattern are listed.  If no wildcard characters are present in I<pattern>, then 
 PPD files whose names which contain the substring I<pattern> are listed.  For example:
@@ -1093,7 +1094,7 @@ PPD files whose names which contain the substring I<pattern> are listed.  For ex
 	"HP LaserJet 4P/4MP PS 600 dpi"
 	"HP LaserJet 4V/4MV PostScript"
 
-=item B<ppad ppd query> I<interface> I<address> [I<option>]
+=item B<ppad ppdlib query> I<interface> I<address> [I<option>]
 
 This command uses the interface program I<interface> to connect to the printer
 at address I<address>.  The printer is probed in an attempt to determine its make,
@@ -1116,6 +1117,11 @@ This command is intended to enable you to determine the type of a printer
 without first creating a queue for it.  If you have already created a queue, it
 will likely be easier to use the B<ppad ppdq> command which reads the interface
 name and address from the print queue's configuration.
+
+=item B<ppad ppdlib get> I<name>
+
+This command retrieves the text of the indicated PPD file and prints it on stdout.  If
+the PPD file includes other PPD files, these other PPD files are included inline.
 
 =back
 

@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 23 January 2004.
+** This file was last modified 27 January 2004.
 */
 
 /*
@@ -493,7 +493,8 @@ char *ppd_readline(void);
 void *ppdobj_new(const char ppdname[]);
 void ppdobj_delete(void *p);
 char *ppdobj_readline(void *p);
-void *ppd_finish_quoted_string(char *initial_segment);
+void *ppd_finish_quoted_string(void *obj, char *initial_segment);
+char *ppd_finish_QuotedValue(void *obj, char *initial_segment);
 int ppd_decode_QuotedValue(char *p);
 
 void set_ppr_env(void);
