@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
-"POT-Creation-Date: 2000-12-28 23:44+0100\n"
+"POT-Creation-Date: 2001-06-09 20:58+0200\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -17,7 +17,7 @@ msgstr ""
 # "../papsrv/papsrv_authorize.c ../papsrv/papsrv_cap.c ../papsrv/papsrv_conf.c "
 # "../papsrv/papsrv_query.c\n"
 #: ../papsrv/papsrv_conf.c:518
-#, fuzzy, c-format
+#, c-format
 msgid "\"%s\" is not a printer or group (line %d)"
 msgstr "\"%s\" n'est ni une imprimante ni un groupe (ligne %d)"
 

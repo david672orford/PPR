@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2000-12-28 23:44+0100\n"
+"POT-Creation-Date: 2001-06-09 20:58+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -28,7 +28,7 @@ msgstr ""
 # "Files: ../pprd/pprd.c ../pprd/pprd_alert.c ../pprd/pprd_load.c "
 # "../pprd/pprd_log.c ../pprd/pprd_mainsup.c ../pprd/pprd_nag.c "
 # "../pprd/pprd_ppopint.c ../pprd/pprd_queue.c ../pprd/pprd_respond.c\n"
-#: ../pprd/pprd_ppop.c:963
+#: ../pprd/pprd_ppop.c:964
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
@@ -38,33 +38,33 @@ msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 msgid "\"%s\" is a group of printers, not a printer.\n"
 msgstr "\"%s\" est un groupe d'imprimantes, pas une imprimante.\n"
 
-#: ../pprd/pprd_ppop.c:951
+#: ../pprd/pprd_ppop.c:952
 #, c-format
 msgid "\"%s\" is not a printer.\n"
 msgstr "\"%s\" n'est pas une imprimante.\n"
 
-#: ../pprd/pprd_ppop.c:1027 ../pprd/pprd_ppop.c:1113
+#: ../pprd/pprd_ppop.c:1028 ../pprd/pprd_ppop.c:1114
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1342
+#: ../pprd/pprd_ppop.c:1343
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr ""
 "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1333
+#: ../pprd/pprd_ppop.c:1334
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_mainsup.c:296
+#: ../pprd/pprd_mainsup.c:312
 #, c-format
 msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
 msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
 
-#: ../pprd/pprd_mainsup.c:252
+#: ../pprd/pprd_mainsup.c:268
 #, c-format
 msgid ""
 "%s: Security problem: egid = %u\n"
@@ -73,7 +73,7 @@ msgstr ""
 "%s : problème de sécurité : egid = %u\n"
 "(Ce programme devrait être setgid \"%s\".)\n"
 
-#: ../pprd/pprd_mainsup.c:244
+#: ../pprd/pprd_mainsup.c:260
 #, c-format
 msgid ""
 "%s: Security problem: euid = %u\n"
@@ -82,37 +82,37 @@ msgstr ""
 "%s : problème de sécurité : euid = %u\n"
 "(Ce programme devrait être setuid \"%s\".)\n"
 
-#: ../pprd/pprd_mainsup.c:225
+#: ../pprd/pprd_mainsup.c:241
 #, c-format
 msgid "%s: The group \"%s\" doesn't exist.\n"
 msgstr "%s : le groupe \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_mainsup.c:219
+#: ../pprd/pprd_mainsup.c:235
 #, c-format
 msgid "%s: The user \"%s\" doesn't exist.\n"
 msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_mainsup.c:302
+#: ../pprd/pprd_mainsup.c:318
 #, c-format
 msgid ""
 "%s: User \"%s\" may only start %s if group is \"%s\".\n"
-"(Change 4th field in /etc/passwd for user \"%s\".)\n"
+"(Change 4th field in /etc/passwd for user \"%s\" to \"%d\".)\n"
 msgstr ""
 "%s : l'utilisateur \"%s\" ne peut démarrer %s que si le groupe est \"%s\".\n"
-"(Modifiez le 4ème champ de /etc/passwd pour l'utilisateur \"%s\".)\n"
+"(Modifiez le 4ème champ de /etc/passwd pour l'utilisateur \"%s\" en \"%d\".)\n"
 
-#: ../pprd/pprd_mainsup.c:233
+#: ../pprd/pprd_mainsup.c:249
 #, c-format
 msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
 msgstr ""
 "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas "
 "\"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1329
+#: ../pprd/pprd_ppop.c:1330
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1340
+#: ../pprd/pprd_ppop.c:1341
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
@@ -158,22 +158,22 @@ msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
 msgstr ""
 "Erreur interne de pprd : l'imprimante \"%s\" est dans un état indéfini.\n"
 
-#: ../pprd/pprd_ppop.c:1323
+#: ../pprd/pprd_ppop.c:1324
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1316
+#: ../pprd/pprd_ppop.c:1317
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1159 ../pprd/pprd_ppop.c:1168 ../pprd/pprd_ppop.c:1380
+#: ../pprd/pprd_ppop.c:1160 ../pprd/pprd_ppop.c:1169 ../pprd/pprd_ppop.c:1382
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:944
+#: ../pprd/pprd_ppop.c:945
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
@@ -186,7 +186,7 @@ msgstr "Imprimante placée en mode de tentative automatique."
 msgid "Printer placed in fault mode, no auto-retry."
 msgstr "Imprimante placée en mode de panne, pas de tentative automatique."
 
-#: ../pprd/pprd_ppop.c:1416
+#: ../pprd/pprd_ppop.c:1432
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"

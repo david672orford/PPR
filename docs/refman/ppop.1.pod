@@ -10,7 +10,7 @@
 # documentation.  This software and documentation are provided "as is" without
 # express or implied warranty.
 #
-# Last updated 7 May 2001.
+# Last updated 18 June 2001.
 #
 
 =head1 NAME
@@ -288,12 +288,12 @@ around virtual pages when printing in N-Up mode.
 
 =item sigsheets
 
-The number of sheets per signiture when printing in signiture mode, 0 if not
-printing in signiture mode.
+The number of sheets per signature when printing in signature mode, 0 if not
+printing in signature mode.
 
 =item sigpart
 
-The part of each signiture which should be printed.  The values are
+The part of each signature which should be printed.  The values are
 "Fronts", "Backs", and "Both".  This is specified at the time a job is
 submitted by using B<ppr>'s B<-s> switch.
 

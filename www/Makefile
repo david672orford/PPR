@@ -38,6 +38,9 @@ STYLE_DIR=$(WWWDIR)/style
 # HTML files for the GUI.
 WWWDIR_GUI=$(WWWDIR)/html
 
+# Last Queue Icon to be build.
+Q_ICONS_LAST=q_icons/11110.png
+
 #== Inventory ================================================================
 
 # These programs go into PPR's bin directory.
@@ -80,7 +83,7 @@ STYLES=show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 
 #== Build ====================================================================
 
-all: $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLE) $(HTML_TOP) $(HTML_GUI)
+all: $(BIN_PROGS) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLES) $(HTML_TOP) $(HTML_GUI) $(Q_ICONS_LAST)
 
 OBJS=\
 	ppr-push-httpd.$(OBJ) \
@@ -88,6 +91,9 @@ OBJS=\
 	../libgu.$(LIBEXT)
 ppr-push-httpd$(DOTEXE): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $(OBJS)
+
+$(Q_ICONS_LAST):
+	( cd q_icons; ./make_composit_figs.perl )
 
 #== Install ==================================================================
 
@@ -112,7 +118,7 @@ install-html: $(HTML_TOP) $(HTML_GUI)
 	$(MAKE_NEW_DIR) $(WWWDIR_GUI)
 	$(INSTALLDATA) $(WWWDIR_GUI) $(HTML_GUI)
 
-install-images:
+install-images: $(Q_ICONS_LAST)
 	$(MAKE_NEW_DIR) $(IMAGES_DIR)
 	$(INSTALLDATA) $(IMAGES_DIR) images/*
 	$(MAKE_NEW_DIR) $(Q_ICONS_DIR)
