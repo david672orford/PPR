@@ -1,7 +1,7 @@
 #! ppr-tclsh
 #
 # mouse:~ppr/src/misc_filters/pr.tcl
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2003, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 November 2002.
+# Last modified 17 December 2003.
 #
 
 #
@@ -51,7 +51,7 @@ set title [lindex $argv 2]
 set arglist {-f}
 foreach option $options {
 	regexp {^([^=]+)=(.*)$} $option junk name value
-	puts stderr "name=$name, value=$value"
+	#puts stderr "name=$name, value=$value"
 	switch -exact -- $name {
 		width {
 			lappend arglist -w $value

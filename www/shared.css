@@ -1,6 +1,8 @@
 /*
 ** mouse:~ppr/src/www/shared.css
-** Last modified 17 December 2003.
+** Last modified 18 December 2003.
+**
+** This style sheet is imported by all of the PPR web interface applets.
 */
 
 BODY {
@@ -20,7 +22,7 @@ TABLE TD {
 ** padding and alignment as <button>.  We try to even that out.  We also
 ** style hyperlinks of class button to have the same appearance.
 */
-INPUT.buttons,BUTTON,A.buttons {
+INPUT.buttons,BUTTON.buttons,A.buttons {
 	font-family: sans-serif;
 	background-color: #b0b0b0;
 	vertical-align: middle; /* IE 6 doesn't like baseline */
@@ -82,7 +84,7 @@ DIV.popup A:hover, DIV.popup LABEL:hover {
 	background-color: #808080;
 	color: #d0d0d0;
 	}
-DIV.popup BUTTON {
+DIV.popup BUTTON.buttons, DIV.popup INPUT.buttons {
 	border: none;
 	background-color: transparent;
 	}

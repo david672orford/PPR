@@ -41,7 +41,7 @@
 /* #define DEBUG_INTERFACE_GRITTY 1 */	/* show what we send to and receive from the interface */
 /* #define DEBUG_FEEDBACK 1 */			/* show twoway operations */
 #define DEBUG_FEEDBACK_LINES 1			/* show the lines read from printer */
-#define DEBUG_PPD 1				/* PPD file parsing */
+#define DEBUG_PPD 1						/* PPD file parsing */
 #define DEBUG_PPD_DETAILED 1
 /* #define DEBUG_FLAGS 1 */				/* banner and trailer pages */
 /* #define DEBUG_RESOURCES 1 */			/* fonts, procset, etc. */

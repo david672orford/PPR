@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 December 2003.
+# Last modified 18 December 2003.
 #
 
 include ../Makefile.conf
@@ -98,7 +98,7 @@ HTML_TOP=index.html robots.txt
 
 HTML_GUI=robots.txt \
 	commentary_select.html \
-	test.html test-audio-commentary.html test-audio-responder.html test-cgi.html \
+	test.html test-css.html test-audio-commentary.html test-audio-responder.html test-cgi.html \
 	show_logs.html \
 	login_cookie.html login_cookie_frame2.html
 
@@ -108,7 +108,7 @@ HTML_HELP_RU=show_queues.ru.html prn_properties.ru.html show_jobs.ru.html
 
 HTML_HELP=$(HTML_HELP_EN) $(HTML_HELP_RU)
 
-STYLES=shared.css show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
+STYLES=shared.css help.css show_queues.css show_jobs.css cgi_wizard.css cgi_tabbed.css \
 	prn_control.css prn_media.css
 
 #== Build ====================================================================

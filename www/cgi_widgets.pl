@@ -237,7 +237,7 @@ sub menu_help
 sub menu_start
     {
 	my($id, $name) = @_;
-	print "\t<a href=\"\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
+	print "\t<a href=\".\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
 	print '<div class="popup" name="menubar"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
 	}
 

@@ -2,7 +2,7 @@
 // mouse:~ppr/src/www/show_queues.js
 // Copyright 1995--2003, Trinity College Computing Center.
 // Written by David Chappell.
-// Last revised 17 December 2003.
+// Last revised 18 December 2003.
 //
 
 // Width in pixels of invisible border round the table.
@@ -101,6 +101,8 @@ function popup(event, name)
 	}
 
 // This is called when the user clicks on one of the items on the menu bar.
+// container: the <a> object
+// name: the id attribute of the <table> containing the menu
 function popup2(container, name)
 	{
 	// Close any other menus
@@ -109,11 +111,13 @@ function popup2(container, name)
 		{
 		menus.item(i).style.visibility = 'hidden';
 		}
+	
+	// Find the popup menu.
+	var w = document.getElementById(name);
 
 	// Move the popup menu under the menu bar item that activated it.
-	var w = document.getElementById(name);
 	w.style.left = container.offsetLeft - 50 + 'px';
-	w.style.top = '25px';
+	w.style.top = container.offsetParent.offsetHeight + 'px';	// buttom of menubar <div>
 
 	w.style.visibility = 'visible';
 	page_locked = 1;

@@ -8829,7 +8829,7 @@ Internet Printing Protocol Work
   operations.  This is sufficient for basic printing.
 
 
-1.53a1, 24 September 2003--17 December 2003.
+1.53a1, 24 September 2003--18 December 2003.
 
 * z_install_end/: fixed minor RPM build problems.
 
@@ -8949,11 +8949,18 @@ Internet Printing Protocol Work
 
 * www/show_queues.en.html,show_queues.ru.html: added placeholder files.
 
-* www/show_jobs*: added new menu bar.
+* www/show_jobs*: added a version of the new menu bar previously written for 
+  show_queues.cgi.
 
-* www/cgi_user_agent.pl: added
+* www/cgi_user_agent.pl: new module which parses the HTTP_USER_AGENT variable and
+  attempts to make inferences about questions such as whether the brower supports
+  images or CSS :hover.
 
-* www/shared.css: added, moved material from other CSS files.
+* www/shared.css: added as a central file for shared CSS styles, moved material
+  from other CSS files.
+
+* www/test-css.html: added as a place to try out style posibilities and as a 
+  way of testing browsers.
 
 
 

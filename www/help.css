@@ -1,0 +1,30 @@
+/*
+** mouse:~ppr/src/www/help.css
+** Last modified 18 December 2003.
+**
+** This is the style sheet for PPR web interface help files.
+*/
+
+BODY {
+	font-family: serif;
+	font-size: 12pt;
+	background-color: white;
+	color: black;
+	}
+
+H2 {
+	font-family: sans-serif;
+	font-size: 8pt;
+	font-weight: normal;
+	background: beige;
+	border-style: solid;
+	border-width: 1px 1px 1px 1px;
+	border-color: #000000 black beige #000000;
+	-moz-border-radius: 1mm 1mm 0mm 0mm;
+	padding: 1mm;
+	width: 2cm;
+	margin-left: 0;		/* turn off Konqueror's centering */
+	}
+
+/* end of file */
+
