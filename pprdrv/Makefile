@@ -1,29 +1,44 @@
 #
 # mouse:~ppr/src/pprdrv/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2002, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-# Last modified 8 May 2001.
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+#
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+#
+# Last modified 2 August 2002.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS=pprdrv$(DOTEXE)
+LIB_PROGS=pprdrv$(DOTEXE) ppr-gs$(DOTEXE)
 
 LIB_DATA=lw-messages.conf pjl-messages.conf pserrors.conf
 
 #=== Build ==================================================================
 
-all: $(BIN_PROGS)
+all: $(LIB_PROGS)
 
 OBJS1=pprdrv.$(OBJ) pprdrv_interface.$(OBJ) pprdrv_feedback.$(OBJ) \
 	pprdrv_rip.$(OBJ) \
@@ -42,7 +57,7 @@ OBJS1=pprdrv.$(OBJ) pprdrv_interface.$(OBJ) pprdrv_feedback.$(OBJ) \
 	pprdrv_persistent.$(OBJ) pprdrv_fault_debug.$(OBJ) \
 	pprdrv_userparams.$(OBJ) \
 	../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libttf.$(LIBEXT) ../libpprdb.$(LIBEXT)
-pprdrv$(DOTEXE): $(OBJS1) 
+pprdrv$(DOTEXE): $(OBJS1)
 	$(LD) $(LDFLAGS) -o $@ $(OBJS1) $(DBLIBS) $(SOCKLIBS) $(INTLLIBS)
 
 # How to build the C source for the PPD file lexer:
@@ -50,10 +65,14 @@ pprdrv_ppd_parse.c: pprdrv_ppd_parse.l
 	$(LEX) -v pprdrv_ppd_parse.l
 	$(MV) lex.yy.c pprdrv_ppd_parse.c
 
+OBJS2=ppr-gs.$(OBJ) ../libgu.$(LIBEXT)
+ppr-gs$(DOTEXE): $(OBJS2)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS2)
+
 #=== Install ================================================================
 
-install: $(BIN_PROGS) $(LIB_DATA)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(BIN_PROGS)
+install: $(LIB_PROGS) $(LIB_DATA)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(HOMEDIR)/lib $(LIB_PROGS)
 	$(INSTALLDATA) $(SHAREDIR)/lib $(LIB_DATA)
 
 #=== Housekeeping ===========================================================
@@ -64,7 +83,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(BIN_PROGS)
+	$(RMF) $(BACKUPS) *.$(OBJ) $(LIB_PROGS)
 
 veryclean: clean
 	$(RMF) pprdrv_ppd_parse.c

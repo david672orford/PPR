@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 April 2002.
+** Last modified 2 August 2002.
 */
 
 #include "before_system.h"
@@ -173,23 +173,26 @@ int rip_start(int printdata_handle, int stdout_handle)
 
     DODEBUG_INTERFACE(("%s()", function));
 
-    /* Get the path to the Ghostscript interpreter from ppr.conf. */
+    /* If we haven't figured out where the RIP is yet and whether it is Ghostscript
+      or now, do so now. */
     if(!rip_exe)
 	{
+	/* Just plain, unwrapped Ghostscript.  The location comes from ppr.conf. */
 	if(strcmp(printer.RIP.name, "gs") == 0)
 	    {
 	    if(!(rip_exe = gu_ini_query(PPR_CONF, "ghostscript", "gs", 0, NULL)))
 		fatal(EXIT_PRNERR_NORETRY, "Failed to get value \"gs\" from section [ghostscript] of \"%s\"", PPR_CONF);
 	    rip_is_ghostscript = TRUE;
 	    }
-	else if(strcmp(printer.RIP.name, "ppr-gs") == 0)
+	/* Just plain, unwrapped Ghostscript.  The location is specified. */
+	else if(rmatch(printer.RIP.name, "/gs"))
 	    {
-	    rip_exe = HOMEDIR"/lib/ppr-gs";
+	    rip_exe = printer.RIP.name;
 	    rip_is_ghostscript = TRUE;
 	    }
+	/* Some sort of Ghostscript wrapper. */
 	else
 	    {
-    	    /* fatal(EXIT_PRNERR_NORETRY, "Unknown RIP \"%s\".", printer.RIP.name); */
     	    size_t len = sizeof(HOMEDIR) + sizeof("/lib/") + strlen(printer.RIP.name) + 1;
     	    char *p = (char*)gu_alloc(len, sizeof(char));
     	    snprintf(p, len, "%s/lib/%s", HOMEDIR, printer.RIP.name);
@@ -205,6 +208,7 @@ int rip_start(int printdata_handle, int stdout_handle)
 
     /* Build the argument vector. */
     {
+    gu_boolean saw_OutputFile = FALSE;
     int si, di;
     rip_args = gu_alloc(printer.RIP.options_count + 6, sizeof(const char *));
     di = 0;
@@ -212,17 +216,20 @@ int rip_start(int printdata_handle, int stdout_handle)
     for(si = 0; si < printer.RIP.options_count; si++)	/* copy user supplied arguments */
 	{
 	rip_args[di++] = printer.RIP.options[si];
+	if(gu_strncasecmp(printer.RIP.options[si], "-sOutputFile=", 13) == 0)
+	    saw_OutputFile = TRUE;
 	}
     if(rip_is_ghostscript)				/* Ghostscript gets extra arguments */
 	{
 	rip_args[di++] = "-q";
 	rip_args[di++] = "-dSAFER";
-	rip_args[di++] = "-sOutputFile=| cat - >&3";
+	if(!saw_OutputFile)
+	    rip_args[di++] = "-sOutputFile=| cat - >&3";
 	rip_args[di++] = "-";
 	}
     rip_args[di++] = NULL;				/* terminate the arguments list */
     }
-    
+
     /* Reset flags related to the RIP dying. */
     rip_died = FALSE;
     rip_fault_check_disable = FALSE;
