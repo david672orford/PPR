@@ -28,7 +28,8 @@ require 'cgi_data.pl';
 require 'cgi_intl.pl';
 use Sys::Hostname;
 
-# This is because Sys::Hostname:hostname() might have to exec uname.
+# This is because Sys::Hostname:hostname() might have to exec uname
+# and because we have to run df.
 defined($SAFE_PATH) || die;
 $ENV{PATH} = $SAFE_PATH;
 
@@ -78,6 +79,9 @@ while(<D>)
     # Some pseudo file systems have a total size of 0.  We aren't interested
     # in them.
     next if($total <= 0);
+
+    # Some things aren't real devices.  Skip them.
+    next if(!m#^/#);
 
     # Deduce the amount of space reserved for use only be root.
     my $reserved = ($total - $used - $available);
