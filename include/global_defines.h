@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 31 March 2005.
+** This file was last modified 7 April 2005.
 */
 
 /*
@@ -214,12 +214,16 @@ typedef short int SHORT_INT;
 #ifdef INTERNATIONAL
 #define _(String) gettext(String)
 #else
-#define gettext(String) (String)
 #define _(String) (String)
+#define gettext(String) (String)
+#define ngettext(sing,plur,n) (n == 1 ? sing : plur)
 #endif
 
-#define gettext_noop(String) (String)
+/** Mark for translation but don't pass thru gettext() */
 #define N_(String) (String)
+#define gettext_noop(String) (String)
+
+/** Not worth translating */
 #define X_(String) (String)
 
 /*==================================================================

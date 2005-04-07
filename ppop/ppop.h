@@ -32,10 +32,6 @@
 ** This is the include file for all the modules in the ppop utility.
 */
 
-/* A useful macros considering how often we write to stdout. */
-#define PUTS(string) fputs(string, stdout)
-#define PUTC(c) fputc(c, stdout)
-
 /* ========================== Things in ppop.c ================================= */
 
 struct Jobname

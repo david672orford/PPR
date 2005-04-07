@@ -1,6 +1,6 @@
 #
-# mouse:~ppr/src/po/Makefiles
-# Copyright 1995--2004, Trinity College Computing Center.
+# mouse:~ppr/src/po/Makefile
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 June 2004.
+# Last modified 7 April 2005.
 #
 
 include ../Makefile.conf
@@ -33,20 +33,73 @@ include ../makeprogs/paths.mk
 
 #=== Inventory ==============================================================
 
+# Run "make depend" if you change these.
 LANGUAGES=fr_FR ru_RU de_DE
+DIVISIONS=PPR PPRD PPRWWW PAPD
 
 #=== Build ==================================================================
 
-all: PPR.pot
+all:
 
-PPR.pot:
-	./extract_to_pot.sh
+merge: pot all
+
+pot:
+	xgettext \
+		--default-domain=PPR \
+		--output=PPR.tmp \
+		--keyword=_ --keyword=N_ \
+		--sort-output \
+		../filter*/*.c \
+		../fontutils/*.c \
+		../interfaces/*.c \
+		../lib*/*.c \
+		../lprsrv/*.c \
+		../ppad/ppad*.c \
+		../ppop/ppop*.c \
+		../ppr/ppr*.c \
+		../ppuser/*.c \
+		../samba/*.c \
+		../unixuser/*.c \
+		../libuprint/*.c \
+		../ppr-sysv/*.c \
+		../ppr-bsd/*.c \
+		../pprdrv/pprdrv*.c
+	xgettext \
+		--default-domain=PPRD \
+		--output=PPRD.tmp \
+		--keyword=_ --keyword=N_ \
+		--sort-output \
+		../pprd/pprd*.c
+	xgettext --default-domain=PAPD \
+		--output=PAPD.tmp \
+		--keyword=_ --keyword=N_ \
+		--sort-output \
+		../papd/papd*.c
+	xgettext \
+		--default-domain=PPRWWW \
+		--output=PPRWWW.tmp \
+		--keyword=_ --keyword=N_ --keyword=H_ --keyword=H_NB_ \
+		--sort-output \
+		--language=Perl \
+		../www/*.perl ../www/*.pl
+	@for division in $(DIVISIONS); \
+		do \
+		perl -p -i -e 's/charset=CHARSET/charset=iso-8859-1/g' $$division.tmp; \
+		if diff $$division.tmp $$division.pot >/dev/null; \
+			then \
+			echo "No changes to $$division."; \
+			rm $$division.tmp; \
+			else \
+			echo "Changes found in $$division."; \
+			mv $$division.tmp $$division.pot; \
+			fi \
+		done
 
 #=== Install ================================================================
 
 install: $(INTERNATIONAL_INSTALL)
 
-install-international: PPR.pot
+install-international: all
 	for lang in $(LANGUAGES); \
 		do \
 		./install_mo.sh $$lang $(LOCALEDIR) || exit 1; \
@@ -54,7 +107,18 @@ install-international: PPR.pot
 
 #=== Housekeeping ===========================================================
 
+include .depend
+
 depend:
+	@for language in $(LANGUAGES); \
+		do \
+		for division in $(DIVISIONS); \
+			do \
+			echo "$$language-$$division.po: $$division.pot"; \
+			echo '	msgmerge --update --no-wrap --sort-by-file --backup=numbered $$@ $$^ && touch $$@'; \
+			echo "all: $$language-$$division.po"; \
+			done \
+		done >.depend
 
 clean:
 	$(RMF) $(BACKUPS) *.mo

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-03-29 21:23-0500\n"
+"POT-Creation-Date: 2005-04-07 12:15-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -33,6 +33,7 @@ msgstr ""
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
+
 #: ../papd/papd.c:443
 #, c-format
 msgid "Shutdown complete.\n"
@@ -59,4 +60,3 @@ msgstr ""
 #, c-format
 msgid "%s(): fork() failed, errno=%d (%s)"
 msgstr ""
-

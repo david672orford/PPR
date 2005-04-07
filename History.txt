@@ -9698,3 +9698,5 @@ no final tarball was released.
   moved /var/spool/ppr/printers/addr_cache/$PRINTER to /var/cache/ppr/printers/$PRINTER/address
   moved /var/spool/ppr/dvips/config.$MODE to /var/cache/ppr/printers/$PRINTER/config.$MODE
 
+* po/: revamped everything moving most of the scripts into the Makefile.
+

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 April 2005.
+** Last modified 6 April 2005.
 */
 
 /*
@@ -707,7 +707,7 @@ int job_permission_check(struct Jobname *job)
 		   */
 		if(proxy_for)
 			{
-			PUTC('\n');
+			putchar('\n');
 			fprintf(errors, _("(The user \"%s\" is acting as your proxy.)\n"), su_user);
 			}
 

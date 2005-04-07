@@ -86,6 +86,53 @@ struct RESPONSE_INFO
 	int commentary_severity_threshold;
 	} ;
 
+/*
+ * We call this function when we want to print a message expressing a
+ * period of elapsed time in days, hours, and minutes.
+ *
+ * It is not yet clear if this will do for all languages.  The Gettext
+ * plural mechanisms doesn't handle two numbers in the same message.
+ */
+static char *elapsed_time_description(int elapsed_time)
+	{
+	int days, hours, minutes;
+	char *message = NULL;
+	char *part2;
+
+	minutes = elapsed_time % 60;
+	elapsed_time /= 60;
+	hours = elapsed_time % 24;
+	days = elapsed_time / 60;
+						
+	if(days >= 1)
+		{
+		if(minutes >= 30)	/* round off hours */
+			hours++;
+		if(hours == 24)		/* handle carry */
+			{
+			days++;
+			hours = 0;
+			}
+		gu_asprintf(&part2, ngettext("%d hour", "%d hours", hours), hours);
+		/* Translators: %s is replaced with "%d minutes" */
+		gu_asprintf(&message, ngettext("%d day %s", "%d days %s", days), days, part2);
+		gu_free(part2);
+		}
+	else if(hours >= 1)
+		{
+		gu_asprintf(&part2, ngettext("%d minute", "%d minutes", minutes), minutes);
+		/* Translators: %s is replaced with "%d minutes" */
+		gu_asprintf(&message, ngettext("%d hour %s", "%d hours %s", hours), hours, part2);
+		gu_free(part2);
+		}
+	else
+		{
+		gu_asprintf(&message, ngettext("%d minute", "%d minutes", minutes), minutes);
+		}
+
+	return message;
+	}
+
 static char *build_subject(struct RESPONSE_INFO *rinfo)
 	{
 	void *message;
@@ -263,7 +310,11 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 					{
 					gu_pcs_append_char(&message, ' ');
 					gu_pcs_append_sprintf(&message,
-						_("The job is %d page(s) long."),
+						ngettext(
+							"The job is %d page long.",
+							"The job is %d pages long.",
+							rinfo->pages
+							),
 						rinfo->pages
 						);
 					}
@@ -437,31 +488,9 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 
 					if(rinfo->commentary_duration >= 300)	/* if longer than 5 minutes */
 						{
-						long elapsed_time;
-						int days, hours, minutes;
-
-						elapsed_time = rinfo->commentary_duration / 60;
-						minutes = elapsed_time % 60;
-						elapsed_time /= 60;
-						hours = elapsed_time % 24;
-						days = elapsed_time / 60;
-						
-						gu_pcs_append_char(&message, ' ');
-						if(days >= 1)
-							{
-							if(minutes >= 30)	/* round off hours */
-								hours++;
-							if(hours == 24)		/* handle carry */
-								{
-								days++;
-								hours = 0;
-								}
-							gu_pcs_append_sprintf(&message, _("This condition has persisted for %d day(s) %d hours(s)."), days, hours);
-							}
-						else if(hours >= 1)
-							gu_pcs_append_sprintf(&message, _("This condition has persisted for %d hour(s) %d minute(s)."), hours, minutes);
-						else
-							gu_pcs_append_sprintf(&message, _("This condition has persisted for %d minutes."), minutes);
+						char *temp = elapsed_time_description(rinfo->commentary_duration / 60);
+						gu_pcs_append_sprintf(&message, _("This condition has persisted for %s."), temp);
+						gu_free(temp);
 						}
 					}
 				}
@@ -517,7 +546,7 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 				{
 				gu_pcs_append_sprintf(&message,
 					_("The printer %s, which could print your job %s (%s) cannot at present: %s."),
-					rinfo->printer, rinfo->job, rinfo->commentary_cooked);	
+					rinfo->printer, rinfo->job, title, rinfo->commentary_cooked);	
 				}
 			else
 				{
@@ -548,36 +577,9 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 		long elapsed_time = (time(NULL) - rinfo->qentry.time);
 		if(elapsed_time > rinfo->commentary_duration_threshold)
 			{
-			int seconds, minutes, hours, days;
-			seconds = elapsed_time % 60;			/* remainder seconds */
-			elapsed_time /= 60;						/* total minutes */
-			if(seconds >= 30)
-				elapsed_time++;
-			minutes = elapsed_time % 60;			/* remainder minutes */
-			elapsed_time /= 60;						/* total hours */
-			hours = elapsed_time % 24;				/* remainder hours */
-			days = elapsed_time / 24;				/* total days */
-
-			gu_pcs_append_char(&message, ' ');
-			if(days >= 1)
-				{
-				if(minutes >= 30)	/* round off hours */
-					hours++;
-				if(hours == 24)		/* handle carry */
-					{
-					days++;
-					hours = 0;
-					}
-				gu_pcs_append_sprintf(&message, _("This print job was submitted %d day(s) %d hours ago."), days, hours);
-				}
-			else if(hours >= 1)
-				{
-				gu_pcs_append_sprintf(&message, _("This print job was submitted %d hour(s) %d minute(s) ago."), hours, minutes);
-				}
-			else if(hours >= 1)
-				{
-				gu_pcs_append_sprintf(&message, _("This print job was submitted %d minute(s) ago."), minutes);
-				}
+			char *temp = elapsed_time_description(elapsed_time / 60);
+			gu_pcs_append_sprintf(&message, _("This print job was submitted %s ago."), temp);
+			gu_free(temp);
 			}
 		}
 	

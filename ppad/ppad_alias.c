@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_alias.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 6 April 2005.
 */
 
 #include "config.h"
@@ -91,7 +91,7 @@ int alias_show(const char *argv[])
 		printf(_("Alias name: %s\n"), alias);
 		printf(_("Comment: %s\n"), comment ? comment : "");
 		printf(_("For what: %s\n"), forwhat ? forwhat : "<missing>");
-		PUTS(_("Switchset: ")); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_puts(_("Switchset: ")); if(switchset) print_switchset(switchset); putchar('\n');
 		printf(_("PassThru types: %s\n"), passthru ? passthru : "");
 		}
 	else
@@ -99,7 +99,7 @@ int alias_show(const char *argv[])
 		printf("name\t%s\n", alias);
 		printf("comment\t%s\n", comment ? comment : "");
 		printf("forwhat\t%s\n", forwhat ? forwhat : "");
-		PUTS("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
 		printf("passthru\t%s\n", passthru ? passthru : "");
 		}
 

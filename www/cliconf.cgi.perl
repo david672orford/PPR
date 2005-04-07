@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 1 April 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -59,9 +59,9 @@ $printcap_wizard_table = [
 
 				print "<p><span class=\"label\">", sprintf(_("What do you want to download for the queue \"%s\"?"), $name), "</span><br>\n";
 
-				print '<input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "<br>\n";
-				print '<input type="radio" name="what_to_download" value="kde_shortcut_web">', H_("KDE Shortcut to Web Interface"), "<br>\n";
-				print '<input type="radio" name="what_to_download" value="kde_shortcut_perltk">', H_("KDE Shortcut to Perl/Tk Interface"), "<br>\n";
+				print '<label><input type="radio" name="what_to_download" value="spooler_config">', H_("Spooler Configuration Script"), "</label><br>\n";
+				print '<label><input type="radio" name="what_to_download" value="kde_shortcut_web">', H_("KDE Shortcut to Web Interface"), "</label><br>\n";
+				print '<label><input type="radio" name="what_to_download" value="kde_shortcut_perltk">', H_("KDE Shortcut to Perl/Tk Interface"), "</label><br>\n";
 				#print '<input type="radio" name="what_to_download" value="mswin_shortcut">', H_("MS-Windows Shortcut"), "<br>\n";
 				#print '<input type="radio" name="what_to_download" value="ppd">', H_("PPD File"), "<br>\n";
 				},

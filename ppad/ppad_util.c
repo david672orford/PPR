@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_util.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 6 April 2005.
 */
 
 #include "config.h"
@@ -275,7 +275,7 @@ int print_wrapped(const char *text, int starting_column)
 
 		if((out_len+word_len+1) >= 80)				/* If leading space and element */
 			{										/* will not fit, */
-			PUTS("\n    ");							/* start a new line. */
+			gu_puts("\n    ");							/* start a new line. */
 			out_len = 4 + word_len;
 			}
 		else										/* Otherwise, */

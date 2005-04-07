@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 7 April 2005.
 */
 
 /*
@@ -481,10 +481,17 @@ int main(int argc, char *argv[])
 			}
 	
 		/* Report on what we did. */
-		if(total == 1)
-			gu_wrap_printf(_("%d of 1 queue exported to \"%s\".\n"), total_exported, smb_include_conf);
-		else
-			gu_wrap_printf(_("%d of %d queues exported to \"%s\".\n"), total_exported, total, smb_include_conf);
+		{
+		char *part2 = gu_asprintf(ngettext("of %d queue", "of %d queues", total), total);
+		/* Translators: first %s is "of %d queues". */
+		gu_wrap_printf(ngettext(
+						"%d %s exported to \"%s\".\n",
+						"%d %s exported to \"%s\".\n",
+						total_exported
+						),
+			total_exported, total, smb_include_conf);
+		}
+
 		if(total_errors > 0)
 			gu_wrap_printf(_("%d of %d queue(s) skipt due to errors.\n"), total_errors, total);
 	

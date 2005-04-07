@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 6 April 2005.
 */
 
 #include "config.h"
@@ -59,7 +59,7 @@ static int write_record(const char username[], const char responder[], const cha
 	ppr_fnamef(fname, "%s/%s", dbdir, username);
 	if(!(f = fopen(fname, "w")))
 		{
-		fprintf(stderr, _("%s: fopen(\"%s\", \"w\") failed, errno=%d (%s)\n"), myname, fname, errno, gu_strerror(errno));
+		fprintf(stderr, _("%s: fopen(\"%s\", \"%s\") failed, errno=%d (%s)\n"), myname, fname, "w", errno, gu_strerror(errno));
 		return -1;
 		}
 
@@ -89,7 +89,7 @@ static int do_show(const char username[])
 			}
 		else
 			{
-			fprintf(stderr, _("%s: fopen(\"%s\", \"r\") failed, errno=%d (%s)\n"), myname, fname, errno, gu_strerror(errno));
+			fprintf(stderr, _("%s: fopen(\"%s\", \"%s\") failed, errno=%d (%s)\n"), myname, fname, "r", errno, gu_strerror(errno));
 			return EXIT_INTERNAL;
 			}
 		}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_editps.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 February 2004.
+** Last modified 6 April 2005.
 */
 
 #include "config.h"
@@ -39,7 +39,6 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
-
 #include "ppr.h"
 #include "ppr_gab.h"
 #include "ppr_exits.h"
@@ -72,7 +71,10 @@ static char *find_header(const unsigned char *in_ptr, const char name[])
 		ptr = gu_strndup(ptr, ptr_len);
 
 		if(option_gab_mask & GAB_INFILE_EDITPS)
-			printf(_("%sHeader \"%s\" value is \"%s\".\n"), "  ", name, ptr);
+			{
+			gu_puts("  ");
+			printf(_("Header \"%s\" value is \"%s\".\n"), name, ptr);
+			}
 		}
 	else
 		{
@@ -153,7 +155,10 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 		if(line[0] == '\0' || line[0] == '#' || line[0] == ';') continue;
 
 		if(option_gab_mask & GAB_INFILE_EDITPS)
-			printf(_("%sConsidering line: %s\n"), "  ", line);
+			{
+			gu_puts("  ");
+			printf(_("Considering line: %s\n"), line);
+			}
 
 		/*
 		** Find the first 4 fields on the line.
@@ -184,7 +189,10 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 		if(option_editps_level < min_editps_level || option_editps_level > max_editps_level)
 			{
 			if(option_gab_mask & GAB_INFILE_EDITPS)
-				printf(_("%sDesired editps level (%d) is not this range.\n"), "    ", option_editps_level);
+				{
+				gu_puts("    ");
+				printf(_("Desired editps level (%d) is not this range.\n"), option_editps_level);
+				}
 			continue;
 			}
 
@@ -235,8 +243,9 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 			{
 			if(option_gab_mask & GAB_INFILE_EDITPS)
 				{
-				item[strlen(item)] = '=';						/* put equals sign back */
-				printf(_("%sCondition \"%s\" is not met.\n"), "    ", item);
+				item[strlen(item)] = '=';				/* put equals sign back */
+				gu_puts("    ");
+				printf(_("Condition \"%s\" is not met.\n"), item);
 				}
 			}
 		else
@@ -250,7 +259,10 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 			else
 				{
 				if(option_gab_mask & GAB_INFILE_EDITPS)
-					printf(_("%sRequired interpreter \"%s\" is not available.\n"), "    ", interpreter);
+					{
+					gu_puts("    ");
+					printf(_("Required interpreter \"%s\" is not available.\n"), interpreter);
+					}
 				}
 			}
 		} /* end of line reading loop */

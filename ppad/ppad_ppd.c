@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_ppd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 May 2004.
+** Last modified 6 April 2005.
 */
 
 #include "config.h"
@@ -500,7 +500,7 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 		}
 
 /*	if(!machine_readable)
-		PUTS("\n"); */
+		gu_puts("\n"); */
 		
 	return retval;
 	} /* end of ppd_query_interface_probe() */
@@ -576,7 +576,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 		}
 
 	if(!machine_readable)
-		PUTS("\n");
+		gu_puts("\n");
 		
 	return retval;
 	} /* end of ppd_query_pjl() */
@@ -673,7 +673,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 		}
 
 	if(!machine_readable)
-		PUTS("\n");
+		gu_puts("\n");
 		
 	return 1;
 	} /* end of ppd_query_postscript() */

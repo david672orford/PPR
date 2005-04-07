@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/po/install_mo.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 April 2004.
+# Last modified 7 April 2005.
 #
 
 #
@@ -89,10 +89,10 @@ for potfile in *.pot
 	do
 	division=`basename $potfile .pot`
 	if [ "$division" = "*" ]
-	then
-	echo "No .pot files!"
-	exit 1
-	fi
+		then
+		echo "No .pot files!"
+		exit 1
+		fi
 	if [ -f "$lang-$division.po" ]
 		then
 		echo -n " $division"

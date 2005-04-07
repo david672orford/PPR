@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-03-29 21:23-0500\n"
+"POT-Creation-Date: 2005-04-07 17:25-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -61,6 +61,11 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 msgid "waiting for resource ration"
 msgstr ""
 
+#: ../pprd/pprd_load.c:197 ../pprd/pprd_load.c:200
+#, c-format
+msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
+msgstr ""
+
 #: ../pprd/pprd_mainsup.c:171
 #, c-format
 msgid "%s: The user \"%s\" doesn't exist.\n"
@@ -74,9 +79,7 @@ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
 #: ../pprd/pprd_mainsup.c:182
 #, c-format
 msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-msgstr ""
-"%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%"
-"s\".\n"
+msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
 
 #: ../pprd/pprd_mainsup.c:208
 #, fuzzy, c-format
@@ -208,8 +211,7 @@ msgstr "Il y a une commande d'arrêt en cours pour l'imprimante \"%s\".\n"
 #: ../pprd/pprd_ppop.c:406 ../pprd/pprd_ppop.c:464
 #, c-format
 msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
-msgstr ""
-"Erreur interne de pprd : l'imprimante \"%s\" est dans un état indéfini.\n"
+msgstr "Erreur interne de pprd : l'imprimante \"%s\" est dans un état indéfini.\n"
 
 # msgid "\"%s\" is already halting.\n"
 # msgstr "\"%s\" est déjà en train de s'arrêter.\n"
@@ -383,8 +385,7 @@ msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 #: ../pprd/pprd_ppop.c:1245
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
-msgstr ""
-"%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
+msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
 #: ../pprd/pprd_ppop.c:1327 ../pprd/pprd_ppop.c:1384
 #, c-format
@@ -403,10 +404,8 @@ msgstr ""
 
 #: ../pprd/pprd_pprdrv.c:448
 msgid ""
-"Printing aborted because pprdrv died.  The stated reason for its death "
-"(killed\n"
-"by signal 0) is nonsense but may indicate that dynamic linking failed due to "
-"a\n"
+"Printing aborted because pprdrv died.  The stated reason for its death (killed\n"
+"by signal 0) is nonsense but may indicate that dynamic linking failed due to a\n"
 "problem with the shared library search path."
 msgstr ""
 
@@ -418,9 +417,7 @@ msgid ""
 msgstr ""
 
 #: ../pprd/pprd_pprdrv.c:462
-msgid ""
-"Unexpected pprdrv shutdown.  It claims to have received a signal to "
-"terminate."
+msgid "Unexpected pprdrv shutdown.  It claims to have received a signal to terminate."
 msgstr ""
 
 #: ../pprd/pprd_pprdrv.c:482
@@ -458,18 +455,15 @@ msgstr ""
 
 #: ../pprd/pprd_remind.c:144
 #, c-format
-msgid ""
-"The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
+msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
 #~ msgid ""
 #~ "%s: User \"%s\" may only start %s if group is \"%s\".\n"
 #~ "(Change 4th field in /etc/passwd for user \"%s\" to \"%d\".)\n"
 #~ msgstr ""
-#~ "%s : l'utilisateur \"%s\" ne peut démarrer %s que si le groupe est \"%s"
-#~ "\".\n"
-#~ "(Modifiez le 4ème champ de /etc/passwd pour l'utilisateur \"%s\" en \"%d"
-#~ "\".)\n"
+#~ "%s : l'utilisateur \"%s\" ne peut démarrer %s que si le groupe est \"%s\".\n"
+#~ "(Modifiez le 4ème champ de /etc/passwd pour l'utilisateur \"%s\" en \"%d\".)\n"
 
 #~ msgid "Undefined response code %d for your job \"%s\"."
 #~ msgstr "Code de réponse %d indéfini pour votre travail \"%s\"."
@@ -516,6 +510,4 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "la destination \"%s\" n'accepte pas les requêtes."
 
 #~ msgid "Your print job \"%s\" was canceled while printing on \"%s\"."
-#~ msgstr ""
-#~ "Votre travail d'impression \"%s\" a été annulé pendant l'impression sur "
-#~ "\"%s\"."
+#~ msgstr "Votre travail d'impression \"%s\" a été annulé pendant l'impression sur \"%s\"."

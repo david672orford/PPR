@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 7 April 2005.
 */
 
 /*
@@ -61,19 +61,16 @@
 ===================================================================*/
 static void say_canceled(int count, int mine_only)
 	{
-	switch(count)
+	if(count == 0)
 		{
-		case 0:
-			if(mine_only)
-				printf(_("You had no jobs to cancel.\n"));
-			else
-				printf(_("There were no jobs to cancel.\n"));
-			break;
-		case 1:
-			printf(_("1 job was canceled.\n"));
-			break;
-		default:
-			printf(_("%d jobs were canceled.\n"), count);
+		if(mine_only)
+			printf(_("You had no jobs to cancel.\n"));
+		else
+			printf(_("There were no jobs to cancel.\n"));
+		}
+	else
+		{
+		printf(ngettext("%d job was canceled.\n", "%d jobs were canceled.\n", count), count);
 		}
 	} /* end of say_canceled() */
 
@@ -127,7 +124,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		const char *cp;
 		if((cp = fault_translate(atoi(p))))
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			if(machine_readable)
 				printf("fault: %s", cp);
 			else
@@ -148,13 +145,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 		if(machine_readable)
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			printf("status: %s", description);
 			return 1;
 			}
 		else if(verbose || printer_status != PRNSTATUS_IDLE)
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			printf(_("Printer Status: %s"), gettext(description));
 			return 1;
 			}
@@ -185,7 +182,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		if(last_minutes_ago > (4 * 60) && !verbose)
 			return 0;
 
-		PUTS(sep);
+		gu_puts(sep);
 
 		{
 		const char *description;
@@ -207,18 +204,28 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		if(print_howlong || verbose)
 			{
 			if(start_minutes_ago < 120)
-				printf(" for %d minutes", start_minutes_ago);
+				{
+				printf(ngettext(" for %d minute", " for %d minutes", start_minutes_ago), start_minutes_ago);
+				}
 			else
-				printf(" for %d hours", (int)((start_minutes_ago + 30) / 60));
+				{
+				int start_hours_ago = (start_minutes_ago + 30) / 60;
+				printf(ngettext(" for %d hour", " for %d hours", start_hours_ago), start_hours_ago);
+				}
 			}
 
 		/* If the last notification was more than 15 minutes ago, say so. */
 		if(print_ago || verbose)
 			{
 			if(last_minutes_ago < 120)
-				printf(" (as of %d minute(s) ago)", last_minutes_ago);
+				{
+				printf(ngettext(" (as of %d minute ago)", " (as of %d minutes ago)", last_minutes_ago), last_minutes_ago);
+				}
 			else
-				printf(" (as of %d hours ago)", (int)((last_minutes_ago + 30) / 60));
+				{
+				int last_hours_ago = (last_minutes_ago + 30) / 60;
+				printf(ngettext(" (as of %d hour ago)", " (as of %d hours ago)", last_hours_ago), last_hours_ago);
+				}
 			}
 
 		return 1;
@@ -254,15 +261,15 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 				p = operation;
 			}
 
-		PUTS(sep);
+		gu_puts(sep);
 
 		if(machine_readable)
-			PUTS("operation: ");
+			gu_puts("operation: ");
 		else
-			PUTS(_("Operation: "));
+			gu_puts(_("Operation: "));
 
 		if(minutes >= 2)
-			printf(_("%s, stalled for %d minutes"), p, minutes);
+			printf(ngettext("%s, stalled for %d minute", "%s, stalled for %d minutes", minutes), p, minutes);
 		else
 			printf(_("%s..."), p);
 
@@ -277,14 +284,14 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		p += strspn(p, " \t");
 		if(machine_readable)
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			printf("lw-status: %d ", important ? 1 : 0);
 			puts_detabbed(p);
 			return 1;
 			}
 		else if(verbose || important)
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			printf(_("Raw LW Status: \"%s\""), p);
 			return 1;
 			}
@@ -299,14 +306,14 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		p += strspn(p, " \t");
 		if(machine_readable)
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			printf("pjl-status: %d ", important ? 1 : 0);
 			puts_detabbed(p);
 			return 1;
 			}
 		else if(verbose || important)
 			{
-			PUTS(sep);
+			gu_puts(sep);
 			printf(_("Raw PJL Status: %s"), p);
 			return 1;
 			}
@@ -323,7 +330,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 			{
 			char *f1, *f2, *fx;
 
-			PUTS(sep);
+			gu_puts(sep);
 
 			if(machine_readable)
 				printf("snmp-status: %d ", important ? 1 : 0);
@@ -360,28 +367,28 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		{
 		int seconds, asof;
 
-		PUTS(sep);
+		gu_puts(sep);
 
 		if(machine_readable)
-			PUTS("page: ");
+			gu_puts("page: ");
 		else
-			PUTS(_("Page Clock: "));
+			gu_puts(_("Page Clock: "));
 
 		switch(gu_sscanf(p, "%d %d", &seconds, &asof))
 			{
 			case 1:
-				printf(_("%d seconds (clock stopt)"), seconds);
+				printf(ngettext("%d second (clock stopt)", "%d seconds (clock stopt)", seconds), seconds);
 				break;
 			case 2:
 				{
 				int computed = time(NULL);
 				computed -= asof;
 				computed += seconds;
-				printf(_("%d seconds"), computed);
+				printf(ngettext("%d second", "%d seconds", computed), computed);
 				}
 				break;
 			default:
-				PUTS(line);
+				gu_puts(line);
 				break;
 			}
 		return 1;
@@ -390,10 +397,10 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	/* The name of the job the printer is printing, if it isn't our's. */
 	if((p = lmatchp(line, "job:")))
 		{
-		PUTS(sep);
+		gu_puts(sep);
 		if(machine_readable)
 			{
-			PUTS("job: ");
+			gu_puts("job: ");
 			puts_detabbed(p);
 			}
 		else
@@ -404,7 +411,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		}
 
 	/* new and unknown kind of aux status line */
-	PUTS(sep);
+	gu_puts(sep);
 	puts_detabbed(line);
 	return 1;
 	} /* end of print_aux_status() */
@@ -446,7 +453,7 @@ int ppop_status(char *argv[])
 	if( ! machine_readable )
 		{
 		printf("%s          %s\n", _("Printer"), _("Status"));
-		PUTS("------------------------------------------------------------\n");
+		gu_puts("------------------------------------------------------------\n");
 		}
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -469,17 +476,17 @@ int ppop_status(char *argv[])
 			continue;
 			}
 
-		PUTS(printer_name);						/* print printer name */
+		gu_puts(printer_name);						/* print printer name */
 
 		if(! machine_readable)					/* possibly pad out */
 			{
 			len = strlen(printer_name);
 			while(len++ <= MAX_DESTNAME)
-				PUTC(' ');
+				putchar(' ');
 			}
 		else									/* in machine readable mode, */
 			{									/* we use a single tab */
-			PUTC('\t');
+			putchar('\t');
 			}
 
 		if(!machine_readable)					/* If to be human readable, */
@@ -487,7 +494,7 @@ int ppop_status(char *argv[])
 			switch(status)
 				{
 				case PRNSTATUS_IDLE:
-					PUTS(_("idle"));
+					gu_puts(_("idle"));
 					break;
 				case PRNSTATUS_PRINTING:
 					if(next_retry)
@@ -508,22 +515,28 @@ int ppop_status(char *argv[])
 					printf(_("halting (printing %s)"), jobid(job_destname, job_id, job_subid));
 					break;
 				case PRNSTATUS_STOPT:
-					PUTS(_("stopt"));
+					gu_puts(_("stopt"));
 					break;
 				case PRNSTATUS_FAULT:
 					if(next_retry)
-						printf(_("fault, retry %d in %d seconds"), next_retry, countdown);
+						printf(ngettext(
+							"fault, retry %d in %d second",
+							"fault, retry %d in %d seconds",
+							countdown), next_retry, countdown);
 					else
-						PUTS(_("fault, no auto retry"));
+						gu_puts(_("fault, no auto retry"));
 					break;
 				case PRNSTATUS_ENGAGED:
-					printf(_("otherwise engaged or off-line, retry %d in %d seconds"), next_retry, countdown);
+					printf(ngettext(
+						"otherwise engaged or off-line, retry %d in %d second",
+						"otherwise engaged or off-line, retry %d in %d seconds",
+						countdown), next_retry, countdown);
 					break;
 				case PRNSTATUS_STARVED:
-					PUTS(_("waiting for resource ration"));
+					gu_puts(_("waiting for resource ration"));
 					break;
 				default:
-					PUTS(X_("unknown status"));
+					gu_puts(X_("unknown status"));
 					break;
 				}
 			}
@@ -532,7 +545,7 @@ int ppop_status(char *argv[])
 			switch(status)
 				{
 				case PRNSTATUS_IDLE:
-					PUTS("idle");
+					gu_puts("idle");
 					break;
 				case PRNSTATUS_PRINTING:
 					printf("printing %s %d", jobid(job_destname,job_id,job_subid), next_retry);
@@ -547,7 +560,7 @@ int ppop_status(char *argv[])
 					printf("stopping %s %d", jobid(job_destname,job_id,job_subid), next_retry);
 					break;
 				case PRNSTATUS_STOPT:
-					PUTS("stopt");
+					gu_puts("stopt");
 					break;
 				case PRNSTATUS_HALTING:
 					printf("halting %s %d", jobid(job_destname,job_id,job_subid), next_retry);
@@ -559,10 +572,10 @@ int ppop_status(char *argv[])
 					printf("engaged %d %d", next_retry, countdown);
 					break;
 				case PRNSTATUS_STARVED:
-					PUTS("starved");
+					gu_puts("starved");
 					break;
 				default:
-					PUTS("unknown");
+					gu_puts("unknown");
 					break;
 				}
 			}
@@ -578,7 +591,7 @@ int ppop_status(char *argv[])
 				machine_readable ? "\t" : "\n                 ");
 			}
 
-		PUTC('\n');
+		putchar('\n');
 
 		gu_free(printer_name);
 		gu_free(job_destname);
@@ -614,7 +627,7 @@ int ppop_message(char *argv[])
 		while((line = gu_getline(line, &line_len, statfile)))
 			{
 			if(print_aux_status(line, PRNSTATUS_PRINTING, ""))
-				PUTC('\n');
+				putchar('\n');
 			}
 		if(line)
 			gu_free(line);
@@ -671,26 +684,26 @@ int ppop_media(char *argv[])
 		if(f1.nbins==0 && ! machine_readable)	/* If no bins, */
 			{									/* display a message to that effect. */
 			while(len++ < 25)
-				PUTC(' ');
+				putchar(' ');
 			printf("(no bins defined)\n");
 			}
 
 		while(f1.nbins--)						/* for each bin */
 			{
 			while(len++<25)						/* "tab" out */
-				PUTC(' ');
+				putchar(' ');
 
 			fread(&f2, sizeof(struct fcommand2), 1, reply_file);
 			len=printf(f2.bin);					/* print the bin name */
 
 			while(len++<16)						/* "tab" out */
-				PUTC(' ');
+				putchar(' ');
 
 			printf("%s\n",f2.media);			/* print the media name */
 
 			len = 0;
 			}
-		PUTC('\n');
+		putchar('\n');
 		}
 
 	else
@@ -1192,20 +1205,16 @@ int ppop_cancel_active(char *argv[], int my, int inform)
 	if((ret = custom_list(argv, ppop_cancel_active_help, ppop_cancel_active_banner, ppop_cancel_active_item, FALSE, -1)))
 		return ret;
 
-	switch(ppop_cancel_active_total)
+	if(ppop_cancel_active_total == 0)
 		{
-		case 0:
-			if(my)
-				PUTS(_("You have no active jobs to cancel.\n"));
-			else
-				PUTS(_("There are no active jobs to cancel.\n"));
-			break;
-		case 1:
-			PUTS(_("1 active job was canceled.\n"));
-			break;
-		default:
-			printf(_("%d active jobs were canceled.\n"), ppop_cancel_active_total);
-			break;
+		if(my)
+			gu_puts(_("You have no active jobs to cancel.\n"));
+		else
+			gu_puts(_("There are no active jobs to cancel.\n"));
+		}
+	else
+		{
+		printf(ngettext("%d active jobs were canceled.\n", "%d active jobs were canceled.\n", ppop_cancel_active_total), ppop_cancel_active_total);
 		}
 
 	return EXIT_OK;
@@ -1503,8 +1512,8 @@ int ppop_destination(char *argv[], int info_level)
 
 		printf(format, _("Destination"), _("Type"), _("Status"), _("Charge"), _("Comment"), _("Address"), "");
 		while(rule_width--)
-			PUTC('-');
-		PUTC('\n');
+			putchar('-');
+		putchar('\n');
 		}
 
 	/* Wait for a reply from pprd. */
@@ -1658,7 +1667,7 @@ int ppop_alerts(char *argv[])
 
 	/* copy the alerts to stdout */
 	while((c = fgetc(f)) != EOF)
-		PUTC(c);
+		putchar(c);
 
 	fclose(f);
 	return EXIT_OK;
@@ -1732,7 +1741,7 @@ int ppop_log(char *argv[])
 
 	/* Copy the log file to stdout. */
 	while((c = fgetc(f)) != EOF)
-		PUTC(c);
+		putchar(c);
 
 	fclose(f);
 	return EXIT_OK;

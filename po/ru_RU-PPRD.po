@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-01 20:55-0500\n"
+"POT-Creation-Date: 2005-04-07 12:15-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -59,6 +59,11 @@ msgstr ""
 
 #: ../pprd/pprd_ipp.c:296
 msgid "waiting for resource ration"
+msgstr ""
+
+#: ../pprd/pprd_load.c:197 ../pprd/pprd_load.c:200
+#, c-format
+msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
 
 #: ../pprd/pprd_mainsup.c:171
@@ -342,10 +347,8 @@ msgstr ""
 
 #: ../pprd/pprd_pprdrv.c:448
 msgid ""
-"Printing aborted because pprdrv died.  The stated reason for its death "
-"(killed\n"
-"by signal 0) is nonsense but may indicate that dynamic linking failed due to "
-"a\n"
+"Printing aborted because pprdrv died.  The stated reason for its death (killed\n"
+"by signal 0) is nonsense but may indicate that dynamic linking failed due to a\n"
 "problem with the shared library search path."
 msgstr ""
 
@@ -357,9 +360,7 @@ msgid ""
 msgstr ""
 
 #: ../pprd/pprd_pprdrv.c:462
-msgid ""
-"Unexpected pprdrv shutdown.  It claims to have received a signal to "
-"terminate."
+msgid "Unexpected pprdrv shutdown.  It claims to have received a signal to terminate."
 msgstr ""
 
 #: ../pprd/pprd_pprdrv.c:482
@@ -393,6 +394,5 @@ msgstr ""
 
 #: ../pprd/pprd_remind.c:144
 #, c-format
-msgid ""
-"The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
+msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr ""

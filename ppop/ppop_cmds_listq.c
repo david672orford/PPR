@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2005.
+** Last modified 6 April 2005.
 */
 
 /*
@@ -154,10 +154,10 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 			if(qentry->never)					/* If one or more counted out, */
 				{								/* assume it is a group */
 				for(x=0; x < indent; x++)		/* and explain. */
-					PUTC(' ');
+					putchar(' ');
 				printf("(Not all \"%s\"\n", qentryfile->destname);
 				for(x=0; x < indent; x++)
-					PUTC(' ');
+					putchar(' ');
 				printf("members are suitable.)\n");
 				}
 			}
@@ -177,10 +177,10 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 						{
 						int x;
 						for(x=0; x < indent; x++)		/* indent */
-							PUTC(' ');
+							putchar(' ');
 						for(x=7; line[x] != '\0' && line[x] != ' '; x++)
-							PUTC(line[x]);
-						PUTC('\n');
+							putchar(line[x]);
+						putchar('\n');
 						}
 					}
 
@@ -222,9 +222,9 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 					for(ptr = &line[8]; *ptr; )
 						{
 						for(x=0; x < reason_indent; x++) /* indent */
-							PUTC(' ');
+							putchar(' ');
 
-						PUTC('(');
+						putchar('(');
 
 						do	{
 							if(*ptr == '|')				/* break at | but */
@@ -232,10 +232,10 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 								ptr++;
 								break;
 								}
-							PUTC(*ptr);
+							putchar(*ptr);
 							} while( *(ptr++) != ',' && *ptr );
 
-						PUTS(")\n");
+						gu_puts(")\n");
 						}
 					break;		/* print only the first reason */
 					} /* end of if this is a "Reason:" line */
@@ -606,11 +606,11 @@ static int ppop_short_item(const struct QEntry *qentry,
 	len = printf("%s", jobid(qentryfile->destname, qentryfile->id, qentryfile->subid));
 
 	while(len++ < 24)					/* print padded job id */
-		PUTC(' ');
+		putchar(' ');
 
 	len = printf("%s",qentryfile->For); /* print it */
 	while(len++ < 21)					/* pad to 21 characters */
-		PUTC(' ');
+		putchar(' ');
 
 	/* now print the status */
 	job_status(qentry, qentryfile, onprinter, (FILE*)NULL, 45, 45);
@@ -927,7 +927,7 @@ static void ppop_lpq_banner(void)
 			print_aux_status(line, printer_status, "\n\t");
 			}
 
-		PUTC('\n');
+		putchar('\n');
 
 		gu_free(printer_name);
 		gu_free(printer_job_destname);
@@ -1258,9 +1258,9 @@ static int ppop_details_item(const struct QEntry *qentry,
 	else
 		printf("Pages: ?\n");
 	printf("Page Order: %s\n", describe_pageorder(qentryfile->attr.pageorder));
-	PUTS("Page List: ");
+	gu_puts("Page List: ");
 	pagemask_print(qentryfile);
-	PUTC('\n');
+	putchar('\n');
 	printf("Prolog Present: %s\n", qentryfile->attr.prolog ? "True" : "False");
 	printf("DocSetup Present: %s\n", qentryfile->attr.docsetup ? "True" : "False");
 	printf("Script Present: %s\n", qentryfile->attr.script ? "True" : "False");
@@ -1332,7 +1332,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 	}
 
 	/* Put a blank line after this entry. */
-	PUTC('\n');
+	putchar('\n');
 
 	return FALSE;				/* don't stop */
 	} /* end of ppop_details_item() */
@@ -1523,7 +1523,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		switch(qquery_query[x])
 			{
 			case 0:						/* jobname */
-				PUTS(jobid(qentryfile->destname,qentryfile->id,qentryfile->subid));
+				gu_puts(jobid(qentryfile->destname,qentryfile->id,qentryfile->subid));
 				break;
 			case 1:						/* for */
 				puts_detabbed(qentryfile->For ? qentryfile->For : "?");
@@ -1532,7 +1532,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				puts_detabbed(qentryfile->Title ? qentryfile->Title : "");
 				break;
 			case 3:						/* status */
-				PUTS(status);
+				gu_puts(status);
 				break;
 			case 4:						/* explain */
 				puts_detabbed(explain);
@@ -1543,9 +1543,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 6:						/* copiescollate */
 				if(qentryfile->opts.collate)
-					PUTS("true");
+					gu_puts("true");
 				else
-					PUTS("false");
+					gu_puts("false");
 				break;
 			case 7:						/* pagefactor */
 				printf("%d", qentryfile->attr.pagefactor);
@@ -1676,7 +1676,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				if(total >= 0)
 					printf("%d", total);
 				else
-					PUTS("?");
+					gu_puts("?");
 				}
 				break;
 			case 37:					/* fulljobname */
@@ -1684,34 +1684,34 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 38:					/* intype */
 				if(qentryfile->Filters)
-					PUTS(qentryfile->Filters);
+					gu_puts(qentryfile->Filters);
 				break;
 			case 39:					/* commentary */
 				printf("%d", qentryfile->commentary);
 				break;
 
 			case 43:					/* destname */
-				PUTS(qentryfile->destname);
+				gu_puts(qentryfile->destname);
 				break;
 			case 44:					/* responder */
 				if(qentryfile->responder.name)
-					PUTS(qentryfile->responder.name);
+					gu_puts(qentryfile->responder.name);
 				break;
 			case 45:					/* responder-address */
 				if(qentryfile->responder.address);
-					PUTS(qentryfile->responder.address);
+					gu_puts(qentryfile->responder.address);
 				break;
 			case 46:					/* responder-options */
 				if(qentryfile->responder.options)
-					PUTS(qentryfile->responder.options);
+					gu_puts(qentryfile->responder.options);
 				break;
 			case 47:					/* status/explain */
-				PUTS(status);
+				gu_puts(status);
 				if(explain[0])
 					{
-					PUTS(" (");
+					gu_puts(" (");
 					puts_detabbed(explain);
-					PUTS(")");
+					gu_puts(")");
 					}
 				break;
 			case 48:					/* pagesxcopies */
@@ -1751,7 +1751,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		}
 	}
 
-	PUTC('\n');
+	putchar('\n');
 
 	return FALSE;		/* don't stop */
 	} /* end of ppop_qquery_item() */

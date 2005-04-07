@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 March 2005.
+** Last modified 7 April 2005.
 */
 
 /*
@@ -929,7 +929,7 @@ HELP(_(
 "\t-O <string>                overlay `Draft' notice\n"));
 
 HELP(_(
-"\t--routing <string>         set DSC routing instructions\n"));
+"\t--routing <string>         provide routing (delivery) instructions\n"));
 
 HELP(_(
 "\t-m <method>                response method\n"
@@ -2319,17 +2319,11 @@ int main(int argc, char *argv[])
 	** like PJL code, so we only express anoyance.  If there are
 	** more than that, it looks serious so it merits a severe warning.
 	*/
-	for(x = 0; in_getc() != EOF; x++);
+	for(x = 0; in_getc() != EOF; x++)
+		;
 
 	if(x > 0)
-		{
-		if(x==1)
-			warning(WARNING_PEEVE, _("1 character follows EOF mark"));
-		else if(x < 50)
-			warning(WARNING_PEEVE, _("%d characters follow EOF mark"), x);
-		else if(x)
-			warning(WARNING_SEVERE, _("%d characters follow EOF mark"), x);
-		}
+		warning(x >= 50 ? WARNING_SEVERE : WARNING_PEEVE, ngettext("%d character follows EOF mark", "%d characters follow EOF mark", x), x);
 
 	/*
 	** We are now done with the input file.

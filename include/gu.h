@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 6 April 2005.
 */
 
 /*! \file
@@ -97,6 +97,12 @@ typedef int gu_boolean;
 
 /** If b matches the name in name=value pair a, return pointer to value */
 #define gu_name_matchp(a, b) (!strncmp(a, b, sizeof(b) - 1) && a[sizeof(b) - 1] == '=' ? a + sizeof(b) : NULL)
+
+/** send a string to stdout */
+#define gu_puts(s) fputs(s,stdout)
+
+/** send a line to stdout and add a newline */
+#define gu_putline(l) puts(l)
 
 /*===================================================================
 ** Memory allocation routines

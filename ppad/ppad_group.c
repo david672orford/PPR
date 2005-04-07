@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 6 April 2005.
 */
 
 /*
@@ -171,7 +171,7 @@ int group_show(const char *argv[])
 
 		printf(_("Comment: %s\n"), comment ? comment : "");
 
-		PUTS(_("Members:"));
+		gu_puts(_("Members:"));
 		for(x=0;x<member_count;x++)		/* Show what printers are members. */
 			{
 			if(x==0)
@@ -185,13 +185,13 @@ int group_show(const char *argv[])
 
 		{
 		const char *s = _("Default Filter Options: ");
-		PUTS(s);
+		gu_puts(s);
 		if(deffiltopts)
 			print_wrapped(deffiltopts, strlen(s));
 		putchar('\n');
 		}
 
-		PUTS(_("Switchset: "));
+		gu_puts(_("Switchset: "));
 		if(switchset)
 			print_switchset(switchset);
 		putchar('\n');
@@ -208,7 +208,7 @@ int group_show(const char *argv[])
 		if(addon_count > 0)
 			{
 			int x;
-			PUTS(_("Addon:"));
+			gu_puts(_("Addon:"));
 			for(x = 0; x < addon_count; x++)
 				{
 				printf("\t%s\n", addon[x]);
@@ -221,13 +221,13 @@ int group_show(const char *argv[])
 		{
 		printf("name\t%s\n", group);
 		printf("comment\t%s\n", comment ? comment : "");
-		PUTS("members\t");
+		gu_puts("members\t");
 		for(x=0; x < member_count; x++)
 			printf("%s%s", x > 0 ? " " : "", members[x]);
-		PUTS("\n");
+		gu_puts("\n");
 		printf("rotate\t%s\n", rotate ? "yes" : "no");
 		printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
-		PUTS("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
 		printf("passthru\t%s\n", passthru ? passthru : "");
 		printf("acls\t%s\n", acls ? acls : "");
 

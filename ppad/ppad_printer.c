@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 6 April 2005.
 */
 
 /*==============================================================
@@ -742,21 +742,21 @@ int printer_show(const char *argv[])
 	if( ! machine_readable )
 		{
 		printf(_("Printer name: %s\n"), printer);
-		PUTS("  ");
+		gu_puts("  ");
 			printf(_("Comment: %s\n"), comment ? comment : "");
 		if(location)
 			{
-			PUTS("  ");
+			gu_puts("  ");
 			printf(_("Location: %s\n"), location);
 			}
 		if(department)
 			{
-			PUTS("  ");
+			gu_puts("  ");
 			printf(_("Department: %s\n"), department);
 			}
 		if(contact)
 			{
-			PUTS("  ");
+			gu_puts("  ");
 			printf(_("Contact: %s\n"), contact);
 			}
 
@@ -765,34 +765,34 @@ int printer_show(const char *argv[])
 		-------------------------------------*/
 		printf(_("Interface: %s\n"), interface ? interface : _("<undefined>"));
 
-		PUTS("  ");
+		gu_puts("  ");
 			printf(_("Address: \"%s\"\n"), address ? address : _("<undefined>"));
 
-		PUTS("  ");
+		gu_puts("  ");
 			printf(_("Options: %s\n"), options ? options : "");
 
-		PUTS("  ");
-			PUTS(_("JobBreak: "));
+		gu_puts("  ");
+			gu_puts(_("JobBreak: "));
 			if(jobbreak == JOBBREAK_DEFAULT)
 				printf(_("%s (by default)"), jobbreak_description(jobbreak_default));
 			else
-				PUTS(jobbreak_description(jobbreak));
+				gu_puts(jobbreak_description(jobbreak));
 		putchar('\n');
 
-		PUTS("  ");
-			PUTS(_("Feedback: "));
+		gu_puts("  ");
+			gu_puts(_("Feedback: "));
 			if(feedback == FEEDBACK_DEFAULT)
 				printf(_("%s (by default)"), feedback_description(feedback_default));
 			else
-				PUTS(feedback_description(feedback));
+				gu_puts(feedback_description(feedback));
 			putchar('\n');
 
-		PUTS("  ");
-			PUTS(_("Codes: "));
+		gu_puts("  ");
+			gu_puts(_("Codes: "));
 			if(codes == CODES_DEFAULT)
 				printf(_("%s (by default)"), codes_description(codes_default));
 			else
-				PUTS(codes_description(codes));
+				gu_puts(codes_description(codes));
 			putchar('\n');
 
 		/*-------------------------------------
@@ -800,10 +800,10 @@ int printer_show(const char *argv[])
 		-------------------------------------*/
 		printf(_("PPDFile: %s\n"), PPDFile ? PPDFile : _("<undefined>"));
 
-		PUTS("  ");
+		gu_puts("  ");
 		{
 		const char *s = _("Default Filter Options: ");
-		PUTS(s);
+		gu_puts(s);
 		if(deffiltopts)
 			print_wrapped(deffiltopts, strlen(s));
 		putchar('\n');
@@ -812,7 +812,7 @@ int printer_show(const char *argv[])
 		/* RIP */
 		if(rip_name)
 			{
-			PUTS("  ");
+			gu_puts("  ");
 			printf(rip_name==rip_ppd_name ? _("RIP: %s %s \"%s\" (from PPD)\n") : _("RIP: %s %s \"%s\"\n"),
 				rip_name,
 				rip_output_language ? rip_output_language : "?",
@@ -824,14 +824,14 @@ int printer_show(const char *argv[])
 		int x;
 		for(x=0; x < ppdopts_count; x++)
 			{
-			PUTS("  ");
+			gu_puts("  ");
 			printf(_("PPDOpts: %s\n"), ppdopts[x]);
 			gu_free(ppdopts[x]);
 			}
 		}
 
-		PUTS("  ");
-		PUTS(_("Bins: "));				/* print a list of all */
+		gu_puts("  ");
+		gu_puts(_("Bins: "));				/* print a list of all */
 		{
 		int x;
 		for(x=0; x < bincount; x++)		/* the bins we found */
@@ -846,7 +846,7 @@ int printer_show(const char *argv[])
 		putchar('\n');
 		}
 
-		PUTS("  ");
+		gu_puts("  ");
 		printf(_("OutputOrder: %s\n"), outputorder_description(outputorder));
 
 		/*---------------------------------
@@ -872,8 +872,8 @@ int printer_show(const char *argv[])
 				break;
 			}
 		putchar('\n');
-		PUTS("  "); printf(_("Alert method: %s\n"), alerts_method ? alerts_method : _("none"));
-		PUTS("  "); printf(_("Alert address: %s\n"), alerts_address ? alerts_address : _("none"));
+		gu_puts("  "); printf(_("Alert method: %s\n"), alerts_method ? alerts_method : _("none"));
+		gu_puts("  "); printf(_("Alert address: %s\n"), alerts_address ? alerts_address : _("none"));
 
 		/*---------------------------------
 		** Accounting things
@@ -899,7 +899,7 @@ int printer_show(const char *argv[])
 		---------------------------------------------*/
 
 		/* Uncompress and print the switchset. */
-		PUTS(_("Switchset: "));
+		gu_puts(_("Switchset: "));
 		if(switchset)
 			print_switchset(switchset);
 		putchar('\n');
@@ -936,7 +936,7 @@ int printer_show(const char *argv[])
 		if(addon_count > 0)
 			{
 			int x;
-			PUTS(_("Addon:"));
+			gu_puts(_("Addon:"));
 			for(x = 0; x < addon_count; x++)
 				{
 				printf("\t%s\n", addon[x]);
@@ -982,12 +982,12 @@ int printer_show(const char *argv[])
 
 		/* Accounting related things */
 		printf("flags\t%s %s\n", flag_description(banner), flag_description(trailer));
-		PUTS("charge\t");
+		gu_puts("charge\t");
 		if(charge_duplex_sheet != -1)
 			{			/* money() returns pointer to static array! */
-			PUTS(money(charge_duplex_sheet));
+			gu_puts(money(charge_duplex_sheet));
 			putchar(' ');
-			PUTS(money(charge_simplex_sheet));
+			gu_puts(money(charge_simplex_sheet));
 			}
 		else
 			{
@@ -998,7 +998,7 @@ int printer_show(const char *argv[])
 		/* PPD file related things */
 		printf("ppd\t%s\n", PPDFile ? PPDFile : "");
 
-		PUTS("ppdopts\t");
+		gu_puts("ppdopts\t");
 		{
 		int x;
 		for(x=0; x < ppdopts_count; x++)
@@ -1019,7 +1019,7 @@ int printer_show(const char *argv[])
 		}
 		putchar('\n');
 
-		PUTS("bins\t");
+		gu_puts("bins\t");
 		{
 		int x;
 		for(x=0; x < bincount; x++)
@@ -1038,7 +1038,7 @@ int printer_show(const char *argv[])
 		printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
 
 		/* Other things */
-		PUTS("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
 		printf("passthru\t%s\n", passthru ? passthru : "");
 		printf("limitpages\t%d %d\n", limitpages_lower, limitpages_upper);
 		printf("limitkilobytes\t%d %d\n", limitkilobytes_lower, limitkilobytes_upper);

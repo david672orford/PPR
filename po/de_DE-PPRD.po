@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-03-29 21:23-0500\n"
+"POT-Creation-Date: 2005-04-07 12:15-0400\n"
 "PO-Revision-Date: 2004-10-21 18:17+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -57,13 +57,16 @@ msgstr ""
 #: ../pprd/pprd_ipp.c:284
 #, fuzzy, c-format
 msgid "otherwise engaged or off-line, retry %d in %d seconds"
-msgstr ""
-"Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht "
-"erreichbar.\n"
+msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
 
 #: ../pprd/pprd_ipp.c:296
 msgid "waiting for resource ration"
 msgstr ""
+
+#: ../pprd/pprd_load.c:197 ../pprd/pprd_load.c:200
+#, fuzzy, c-format
+msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
+msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
 #: ../pprd/pprd_mainsup.c:171
 #, c-format
@@ -78,8 +81,7 @@ msgstr "%s: Die Gruppe \"%s\" existiert nicht.\n"
 #: ../pprd/pprd_mainsup.c:182
 #, c-format
 msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-msgstr ""
-"%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
+msgstr "%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
 
 #: ../pprd/pprd_mainsup.c:208
 #, c-format
@@ -203,9 +205,7 @@ msgstr "Es gibt einen noch ausstehenden Stopbefehl für den Drucker \"%s\".\n"
 #: ../pprd/pprd_ppop.c:406 ../pprd/pprd_ppop.c:464
 #, c-format
 msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
-msgstr ""
-"Interner pprd Fehler: Der Drucker \"%s\" befindet sich in einem "
-"undefinierten Status.\n"
+msgstr "Interner pprd Fehler: Der Drucker \"%s\" befindet sich in einem undefinierten Status.\n"
 
 #: ../pprd/pprd_ppop.c:425
 #, c-format
@@ -361,16 +361,12 @@ msgstr "Unheil im Gange, pprdrv wurde durch %d (%s) Signal beendet."
 
 #: ../pprd/pprd_pprdrv.c:448
 msgid ""
-"Printing aborted because pprdrv died.  The stated reason for its death "
-"(killed\n"
-"by signal 0) is nonsense but may indicate that dynamic linking failed due to "
-"a\n"
+"Printing aborted because pprdrv died.  The stated reason for its death (killed\n"
+"by signal 0) is nonsense but may indicate that dynamic linking failed due to a\n"
 "problem with the shared library search path."
 msgstr ""
-"Druck wurde abgebrochen, da pprdrv beendet wurde. Der angegebene Grund "
-"(beendet\n"
-"durch Signal 0) ist Unsinn, kann aber darauf hindeuten, daß das dynamische "
-"Linken wegen\n"
+"Druck wurde abgebrochen, da pprdrv beendet wurde. Der angegebene Grund (beendet\n"
+"durch Signal 0) ist Unsinn, kann aber darauf hindeuten, daß das dynamische Linken wegen\n"
 "eines Problems mit dem shared library Suchpfad fehlgeschlagen ist."
 
 #: ../pprd/pprd_pprdrv.c:456
@@ -383,12 +379,8 @@ msgstr ""
 "Dies war nicht erwartet und der Grund hierfür ist unbekannt."
 
 #: ../pprd/pprd_pprdrv.c:462
-msgid ""
-"Unexpected pprdrv shutdown.  It claims to have received a signal to "
-"terminate."
-msgstr ""
-"Unerwartetes Beenden von pprdrv. Es meldet den Empfang eines Signalszum "
-"beenden."
+msgid "Unexpected pprdrv shutdown.  It claims to have received a signal to terminate."
+msgstr "Unerwartetes Beenden von pprdrv. Es meldet den Empfang eines Signalszum beenden."
 
 #: ../pprd/pprd_pprdrv.c:482
 #, c-format
@@ -423,8 +415,5 @@ msgstr ""
 
 #: ../pprd/pprd_remind.c:144
 #, c-format
-msgid ""
-"The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
-msgstr ""
-"Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht "
-"erreichbar.\n"
+msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
+msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
