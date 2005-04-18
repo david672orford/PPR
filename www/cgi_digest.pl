@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_digest.pl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2004.
+# Last modified 15 April 2005.
 #
 
 require "paths.ph";
@@ -55,6 +55,9 @@ sub md5hex
 	}
 
 # This function generates the hashed part of the server nonce.
+# The server nonce consists of the time of issue (which should match
+# the time specified elsewhere) and the secret (so that others
+# can't fake it).
 sub digest_nonce_hash
 	{
 	my $nonce_time = shift;
@@ -62,7 +65,9 @@ sub digest_nonce_hash
 	return md5hex("$nonce_time:$domain:$SECRET");
 	}
 
-# Create a nonce.
+# Create the server nonce.  The server nonce consists of the current time
+# (as returned by time()), a colon, and the hashed part (which contains
+# the time too).
 sub digest_nonce_create
 	{
 	my $domain = shift;
@@ -72,7 +77,8 @@ sub digest_nonce_create
 	return "$nonce_time:$nonce_hash";
 	}
 
-# Make sure a nonce is valid.
+# Make sure a nonce is valid.  This is done by regenerating it
+# correctly and seeing if they match.  
 sub digest_nonce_validate
 	{
 	my $domain = shift;

@@ -1486,12 +1486,21 @@ sub auth_verify
 		#print STDERR "HA2 is \"$HA2\"\n";
 
 		# Compute the response that the client should have sent.
+		# The response consists of:
+		# 1) the hash from the password file ($HA1)
+		# 2) the nonce from our challenge
+		# 3) the nonce count
+		# 4) the client-supplied nonce
+		# 5) the qop ("auth")
+		# 6) a hash of request method and URI ($HA2)
 		my $correct_response = md5hex("$HA1:$parm{nonce}:$parm{nc}:$parm{cnonce}:$parm{qop}:$HA2");
 		#print STDERR "Correct response is: \"$correct_response\"\n";
 
 		# The clients computation of the digest must match ours.
 		($parm{response} eq $correct_response) || die "Response is incorrect\n";
 
+		# Determine whether the server nonce which the client says we 
+		# sent it is authentic and reasonably fresh.
 		if(!digest_nonce_validate($domain, $parm{nonce}))
 			{
 			print STDERR "Nonce is too stale.\n";
@@ -1562,7 +1571,8 @@ sub uri_compare
 
 	($uri1_hash->{path} eq $uri2_hash->{path}) || return 0;
 
-	# Don't enable this or it won't work with IE 5.0.
+	# Don't enable this or it won't work with IE 5.0.  This is 
+	# known bug in IE.
 	#($uri1_hash->{query} eq $uri2_hash->{query}) || return 0;
 
 	return 1;

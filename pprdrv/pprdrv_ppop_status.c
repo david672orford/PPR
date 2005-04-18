@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 13 April 2005.
 */
 
 #include "config.h"
@@ -483,7 +483,6 @@ static void dispatch_commentary(void)
 			const char *description, *raw1;
 			int severity;
 			translate_snmp_error(x, &description, &raw1, &severity);
-			debug("bit: %d, severity: %d", x, severity);
 			if(severity > greatest_severity)
 				greatest_severity = severity;
 			if(snmp_bits[x].last_commentary == 0 || (time_now - snmp_bits[x].last_commentary) >= 300)
@@ -516,7 +515,6 @@ static void dispatch_commentary(void)
 		{
 		const char *message, *raw1; int severity;
 		translate_snmp_status(status.hrDeviceStatus, status.hrPrinterStatus, &message, &raw1, &severity);
-		debug("greatest_severity: %d, severity: %d", greatest_severity, severity);
 		if(severity > greatest_severity)
 			{
 			commentary(COM_PRINTER_STATUS, message, raw1, status.details, time(NULL) - status.start, severity);

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 13 April 2005.
 */
 
 /*
@@ -61,6 +61,7 @@
 #include "ipp_utils.h"
 #include "pprd.h"
 #include "pprd.auto_h"
+#include "respond.h"
 
 struct OPERATION {
 	void *requested_attributes;
@@ -69,6 +70,7 @@ struct OPERATION {
 	struct URI *printer_uri_obj;
 	char *printer_name;
 	char *job_uri;
+	struct URI *job_uri_obj;
 	int job_id;
 	};
 
@@ -88,6 +90,7 @@ static struct OPERATION *request_new(struct IPP *ipp, int supported)
 	this->printer_uri_obj = NULL;
 	this->printer_name = NULL;
 	this->job_uri = NULL;
+	this->job_uri_obj = NULL;
 	this->job_id = -1;
 
 	/* Traverse the request's operation attributes. */
@@ -117,8 +120,11 @@ static struct OPERATION *request_new(struct IPP *ipp, int supported)
 	if(gu_pch_size(this->requested_attributes) == 0 || gu_pch_get(this->requested_attributes, "all"))
 		this->requested_attributes_all = TRUE;
 
+	/* Parse the URLs and store the results in objects. */
 	if(this->printer_uri)
 		this->printer_uri_obj = gu_uri_new(this->printer_uri);
+	if(this->job_uri)
+		this->job_uri_obj = gu_uri_new(this->job_uri);
 
 	return this;
 	}
@@ -165,6 +171,20 @@ static char *request_destname(struct OPERATION *this)
 	if(this->printer_uri)
 		return this->printer_uri_obj->basename;		/* possibly null */
 	return NULL;
+	}
+
+/** Return the requested job ID or -1 if none was requested. */
+static int request_jobid(struct OPERATION *this)
+	{
+	if(this->job_id != -1)
+		return this->job_id;
+	if(this->job_uri_obj && this->job_uri_obj->basename)
+		{
+		int id = atoi(this->job_uri_obj->basename);
+		if(id > 0)
+			return id;
+		}
+	return -1;
 	}
 
 /** Convert PPR printer status to IPP status */
@@ -555,9 +575,105 @@ static void ipp_get_jobs(struct IPP *ipp)
 /** Handler for IPP_CANCEL_JOB */
 static void ipp_cancel_job(struct IPP *ipp)
 	{
+	const char function[] = "ipp_cancel_job";
 	struct OPERATION *req;
-	req = request_new(ipp, OP_SUPPORTS_JOB);
+	int jobid;
+	int i;
 
+	req = request_new(ipp, OP_SUPPORTS_JOB);
+	
+	if((jobid = request_jobid(req)) == -1)
+		{
+		request_free(req);
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+
+	lock();
+
+	/* Loop over the queue entries.
+	 * This code is copied from pprd_ppop.c.  We haven't tried to generalize 
+	 * it because we plan to remove to command from pprd_ppop.c and have
+	 * ppop use the IPP command.
+	 */ 
+	for(i=0; i < queue_entries; i++)
+		{
+		if(queue[i].id == jobid)
+			{
+			int prnid = queue[i].status;
+			if(prnid >= 0)		/* if pprdrv is active */
+				{
+				/* If it is printing we can say it is now canceling, but
+				   if it is halting or stopping we don't want to mess with
+				   that.
+				   */
+				if(printers[prnid].status == PRNSTATUS_PRINTING)
+					printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
+
+				/* Set flag so that job will be deleted when pprdrv dies. */
+				printers[prnid].cancel_job = TRUE;
+
+				/* Change the job status to "being canceled". */
+				queue_p_job_new_status(&queue[i], STATUS_CANCEL);
+
+				/* Kill pprdrv. */
+				pprdrv_kill(prnid);
+				}
+
+			/* If a cancel is in progress, */
+			else if(prnid == STATUS_CANCEL)
+				{
+				/* nothing to do */
+				}
+
+			/* If a hold is in progress, do what we woudld do if the job were being
+			   printed, but without the need to kill() pprdrv again.  This
+			   is tough because the queue doesn't contain the printer
+			   id anymore. */
+			else if(prnid == STATUS_SEIZING)
+				{
+				for(prnid = 0; prnid < printer_count; prnid++)
+					{
+					if(printers[prnid].jobdestid == queue[i].destid
+							&& printers[prnid].id == queue[i].id
+							&& printers[prnid].subid == queue[i].subid
+							)
+						{
+						if(printers[prnid].status == PRNSTATUS_SEIZING)
+							printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
+						printers[prnid].hold_job = FALSE;
+						printers[prnid].cancel_job = TRUE;
+						queue_p_job_new_status(&queue[i], STATUS_CANCEL);
+						break;
+						}
+					}
+				if(prnid == printer_count)
+					error("%s(): couldn't find printer that job is printing on", function);
+				}
+
+			/* If the job is not being printed, we can delete it right now. */
+			else
+				{
+				/*
+				** If job status is not arrested,
+				** use the responder to inform the user that we are canceling it.
+				*/
+				if(queue[i].status != STATUS_ARRESTED)
+					{
+					respond(queue[i].destid, queue[i].id, queue[i].subid,
+							-1,	  /* impossible printer */
+							RESP_CANCELED);
+					}
+
+				/* Remove the job from the queue array and its files form the spool directories. */
+				queue_dequeue_job(queue[i].destid, queue[i].id, queue[i].subid);
+
+				i--;		/* compensate for deletion */
+				}
+			}
+		}
+	
+	unlock();
 
 	request_free(req);
 	} /* ipp_cancel_job() */
@@ -643,7 +759,7 @@ static void cups_get_printers(struct IPP *ipp)
 	unlock();
 
 	request_free(req);
-	}
+	} /* cups_get_printers() */
 	
 /* CUPS_GET_CLASSES */
 static void cups_get_classes(struct IPP *ipp)
@@ -763,11 +879,11 @@ void ipp_dispatch(const char command[])
 			debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
 			switch(ipp->operation_id)
 				{
-				case IPP_GET_PRINTER_ATTRIBUTES:
-					ipp_get_printer_attributes(ipp);
-					break;
 				case IPP_GET_JOBS:
 					ipp_get_jobs(ipp);
+					break;
+				case IPP_GET_PRINTER_ATTRIBUTES:
+					ipp_get_printer_attributes(ipp);
 					break;
 				case IPP_CANCEL_JOB:
 					ipp_cancel_job(ipp);

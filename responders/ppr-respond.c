@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 March 2005.
+** Last modified 12 April 2005.
 */
 
 /*
@@ -84,6 +84,7 @@ struct RESPONSE_INFO
 	char *reason;
 	int commentary_duration_threshold;
 	int commentary_severity_threshold;
+	int job_age_threshold;
 	} ;
 
 /*
@@ -575,7 +576,7 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 	if(long_format && rinfo->qentry.time != 0)
 		{
 		long elapsed_time = (time(NULL) - rinfo->qentry.time);
-		if(elapsed_time > rinfo->commentary_duration_threshold)
+		if(elapsed_time > 300)
 			{
 			char *temp = elapsed_time_description(elapsed_time / 60);
 			gu_pcs_append_sprintf(&message, _("This print job was submitted %s ago."), temp);
@@ -670,8 +671,7 @@ int main(int argc, char *argv[])
 	rinfo.commentary_cooked = NULL;
 	rinfo.commentary_raw1 = NULL;
 	rinfo.commentary_raw2 = NULL;
-	rinfo.commentary_duration = 0;
-	rinfo.commentary_severity = -1;
+	rinfo.commentary_duration = -1;
 	rinfo.commentary_severity = -1;
 	rinfo.pages = -1;
 	rinfo.charge_per_duplex = 0;
@@ -679,6 +679,7 @@ int main(int argc, char *argv[])
 	rinfo.reason = NULL;
 	rinfo.commentary_duration_threshold = 0;
 	rinfo.commentary_severity_threshold = 5;
+	rinfo.job_age_threshold = 300;
 
 	for(iii=1; iii < argc; iii++)
 		{
@@ -827,22 +828,22 @@ int main(int argc, char *argv[])
 			else if((value = gu_name_matchp(item, "commentary_severity_threshold")))
 				{
 				rinfo.commentary_severity_threshold = atoi(p);
-				if(rinfo.commentary_severity >= 0)		/* if defined */
-					{
-					int temp = atoi(p);
-					if(temp < rinfo.commentary_severity)
-						return 0;
-					}
 				}
 			else if((value = gu_name_matchp(item, "commentary_duration_threshold")))
 				{
 				rinfo.commentary_duration_threshold = atoi(p);
 				}
+			else if((value = gu_name_matchp(item, "job_age_threshold")))
+				{
+				rinfo.job_age_threshold = atoi(p);
+				}
 			}
 		gu_free(temp);
 		}
 
-	if(rinfo.response_code & RESP_TYPE_COMMENTARY && rinfo.commentary_severity < rinfo.commentary_severity_threshold)
+	if(rinfo.commentary_severity >= 0 && rinfo.commentary_severity < rinfo.commentary_severity_threshold)
+		return 0;
+	if(rinfo.commentary_duration >= 0 && rinfo.commentary_duration < rinfo.commentary_duration_threshold)
 		return 0;
 	
 	/* Initialize international messages library. */

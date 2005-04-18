@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 April 2005.
+# Last modified 18 April 2005.
 #
 
 #=============================================================================
@@ -121,9 +121,10 @@ directory $LIBDIR/editps 755
 
 # Architecture indendent stuff
 directory $PPDDIR 755
-directory $SHAREDIR/fonts 755
+directory $FONTSDIR 755
 directory $MANDIR 755
 directory $SHAREDIR/locale 755
+directory $MISCDIR 755
 
 # Make the directories in the spool area.
 directory $VAR_SPOOL_PPR/queue 700

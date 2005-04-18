@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 March 2005.
+# Last modified 18 April 2005.
 #
 
 include ../Makefile.conf
@@ -79,7 +79,7 @@ ppr-gs$(DOTEXE): ppr-gs.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 
 install: $(LIB_PROGS) $(LIB_DATA)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIB_PROGS)
-	$(INSTALLDATA) $(SHAREDIR)/lib $(LIB_DATA)
+	$(INSTALLDATA) $(SHAREDIR)/misc $(LIB_DATA)
 
 #=== Housekeeping ===========================================================
 

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 14 Decemer 2004 for PPR version 2.00a1
+ Last revised 18 April 2005 for PPR version 2.00a1
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -85,6 +85,12 @@ won't work.
 
 It is possible to compile and use PPR without TDB, but automatic Microsoft
 Windows driver download for Samba won't work.
+
+Compiling from CVS requires the following additional packages:
+
+* Transfig
+
+* Doxygen
 
 =============================================================================
  Programs for PostScript Filters

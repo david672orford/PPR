@@ -25,14 +25,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 March 2005.
+# Last modified 18 April 2005.
 #
 
 include ../Makefile.conf
 
-PPD_DESTDIR=$(SHAREDIR)/PPDFiles
 PROCSET_DESTDIR=$(RESOURCEDIR)/procset
-FONT_DESTDIR=$(SHAREDIR)/fonts
 
 #=== Inventory ==============================================================
 
@@ -43,7 +41,7 @@ all:
 #=== Install ================================================================
 
 install:
-	$(INSTALLDATA) $(PPD_DESTDIR) \
+	$(INSTALLDATA) $(PPDDIR) \
 			ppd_adobe/*[!~] \
 			ppd_apple/*[!~] \
 			ppd_hp/*[!~] \
@@ -52,7 +50,7 @@ install:
 			ppd_ricoh/*[!~]
 	$(INSTALLDATA) $(PROCSET_DESTDIR) \
 			procset_apple/*[!~]
-	$(INSTALLDATA) $(FONT_DESTDIR) \
+	$(INSTALLDATA) $(FONTSDIR) \
 			font_ibm/*.afm font_ibm/*.pf[ab] \
 			font_paragraph/*.afm font_paragraph/*.pf[ab]
 

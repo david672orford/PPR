@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 18 April 2005.
 #
 
 include ../Makefile.conf
@@ -51,9 +51,9 @@ install: $(PROGS)
 	#$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(LIB_PROGS)
 	( cd ghostscript; $(MAKE) install )
-	$(INSTALLDATA) $(SHAREDIR)/PPDFiles other/*
+	$(INSTALLDATA) $(PPDDIR) other/*
 	( cd generic; $(MAKE) install )
-	$(INSTALLDATA) $(SHAREDIR)/lib pagesizes.conf
+	$(INSTALLDATA) $(MISCDIR) pagesizes.conf
 
 #=== Housekeeping ===========================================================
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/generic/Makefile
-# Copyright 1995--2001, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 August 2001.
+# Last modified 18 April 2005.
 #
 
 include ../../Makefile.conf
@@ -50,9 +50,7 @@ pprgene3.ppd: generic_master
 #=== Install ================================================================
 
 install: all
-	../$(INSTALLCP) pprgener.ppd $(SHAREDIR)/PPDFiles/'PPR Generic'
-	../$(INSTALLCP) pprgene2.ppd $(SHAREDIR)/PPDFiles/'PPR Generic Level 2'
-	../$(INSTALLCP) pprgene3.ppd $(SHAREDIR)/PPDFiles/'PPR Generic Level 2 TTF'
+	../$(INSTALLDATA) $(PPDDIR) $(PPDS)
 
 #=== Housekeeping ===========================================================
 

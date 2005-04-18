@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 18 April 2005.
 #
 
 #======================================================================
@@ -41,7 +41,7 @@ if [ ! -d $RPM_BUILD_ROOT$SYSBINDIR ]
 for i in ppr ppop ppad ppuser ppdoc \
 		ppr-testpage \
 		ppr-config ppr-index \
-		ppr-followme ppr-xgrant ppr-popup \
+		ppr-followme ppr-xgrant \
 		ppr-panel ppr-web ppr-passwd
 	do
 	../makeprogs/installln.sh $BINDIR/$i $SYSBINDIR/$i || exit 1

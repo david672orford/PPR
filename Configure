@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 April 2005.
+# Last modified 18 April 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -949,6 +949,7 @@ export ACLDIR=$(CONFDIR)/acl
 export BINDIR=$(LIBDIR)/bin
 export PRINTERS_CACHEDIR=$(CACHEDIR)/printers
 export PRINTERS_STATEDIR=$(STATEDIR)/printers
+export MISCDIR=$(SHAREDIR)/misc
 
 #----------------------------------------
 # Various configuration files
@@ -971,23 +972,23 @@ export UPRINTREMOTECONF=$(CONFDIR)/uprint-remote.conf
 # to be changed:
 #----------------------------------------
 # MetaFont modes for various printers
-export MFMODES=$(SHAREDIR)/lib/mfmodes.conf
+export MFMODES=$(MISCDIR)/mfmodes.conf
 # font substitution database
-export FONTSUB=$(SHAREDIR)/lib/fontsub.conf
+export FONTSUB=$(MISCDIR)/fontsub.conf
 # LaserWriter errors file
-export LW_MESSAGES_CONF=$(SHAREDIR)/lib/lw-messages.conf
+export LW_MESSAGES_CONF=$(MISCDIR)/lw-messages.conf
 # PJL USTATUS DEVICE errors file
-export PJL_MESSAGES_CONF=$(SHAREDIR)/lib/pjl-messages.conf
+export PJL_MESSAGES_CONF=$(MISCDIR)/pjl-messages.conf
 # for ppr -H editps
 export EDITPSCONF=$(LIBDIR)/editps/editps.conf
 # map characters set to PostScript encodings
-export CHARSETSCONF=$(SHAREDIR)/lib/charsets.conf
+export CHARSETSCONF=$(MISCDIR)/charsets.conf
 # list of fonts and the PostScript encodings they support
-export FONTSCONF=$(SHAREDIR)/lib/fonts.conf
+export FONTSCONF=$(MISCDIR)/fonts.conf
 # additional PostScript *PageSize names
-export PAGESIZES_CONF=$(SHAREDIR)/lib/pagesizes.conf
+export PAGESIZES_CONF=$(MISCDIR)/pagesizes.conf
 # additional PostScript error explainations
-export PSERRORS_CONF=$(SHAREDIR)/lib/pserrors.conf
+export PSERRORS_CONF=$(MISCDIR)/pserrors.conf
 
 #----------------------------------------
 # Special files used by the spooler:
@@ -1009,9 +1010,11 @@ export INTDIR=$(LIBDIR)/interfaces
 # responder programs
 export RESPONDERDIR=$(LIBDIR)/responders
 # our PPD file library (must be absolute)
-export PPDDIR=$(SHAREDIR)/PPDFiles
+export PPDDIR=$(SHAREDIR)/ppd
 # pre-loaded cache files
 export RESOURCEDIR=$(SHAREDIR)/resources
+# special fonts in PostScript or TTF formats
+export FONTSDIR=$(SHAREDIR)/fonts
 
 #----------------------------------------
 # Directories where the spooler writes

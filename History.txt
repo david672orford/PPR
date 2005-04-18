@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--2 April 2005
+2.00a1, 11 December 2004--18 April 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9699,4 +9699,6 @@ no final tarball was released.
   moved /var/spool/ppr/dvips/config.$MODE to /var/cache/ppr/printers/$PRINTER/config.$MODE
 
 * po/: revamped everything moving most of the scripts into the Makefile.
+
+* Renamed /usr/share/ppr/PPDFiles/ to /usr/share/ppr/ppd/.
 

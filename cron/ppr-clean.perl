@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 April 2005.
+# Last modified 13 April 2005.
 #
 
 #
@@ -40,6 +40,7 @@ $LIBDIR="@LIBDIR@";
 $VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
 $CONFDIR="@CONFDIR@";
 $TEMPDIR="@TEMPDIR@";
+$PRINTERS_CACHEDIR="@PRINTERS_CACHEDIR@";
 
 $opt_debug = 1;
 $opt_all_removable = 0;
@@ -151,12 +152,15 @@ sweepdir("$CONFDIR/printers", '^\.ppad\d+$', 0.5);
 sweepdir("$CONFDIR/groups", '^\.ppad\d+$', 0.5);
 sweepdir("$VAR_SPOOL_PPR/sambaspool", undef, 0.5);
 sweepdir("$VAR_SPOOL_PPR/pprclipr", undef, 0.5);
-sweepdir("$VAR_SPOOL_PPR/printers/alerts", undef, 7.0);
-sweepdir("$VAR_SPOOL_PPR/printers/status", undef, 7.0);
-sweepdir("$VAR_SPOOL_PPR/printers/addr_cache", undef, 1.0);
-sweepdir("$VAR_SPOOL_PPR/pprpopup.db", undef, 0.5);
 sweepdir("$VAR_SPOOL_PPR/followme.db", undef, 90.0);
-sweepdir("$VAR_SPOOL_PPR/dvips", undef, 90.0);
+
+opendir(DIR, $PRINTERS_CACHEDIR) || die $!;
+while(my $dir = readdir(DIR))
+	{
+	next if($dir =~ /^\./);
+	sweepdir("$PRINTERS_CACHEDIR/$dir", undef, 7.0);
+	}
+closedir(DIR) || die $!;
 
 # This program is invoked with the --all-removable when we are
 # uninstalling PPR.

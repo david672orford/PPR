@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppd/ghostscript/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 December 2004.
+# Last modified 18 April 2005.
 #
 
 include ../../Makefile.conf
@@ -56,11 +56,7 @@ epsc62gs.ppd: ghostscript_master Makefile
 #=== Install ================================================================
 
 install: all
-	../$(INSTALLCP) hpiiigs.ppd $(SHAREDIR)/PPDFiles/'HP LaserJet III Ghostscript'
-	../$(INSTALLCP) hpdj5gs.ppd $(SHAREDIR)/PPDFiles/'HP DeskJet 500 Ghostscript'
-	../$(INSTALLCP) dm24gs.ppd $(SHAREDIR)/PPDFiles/'NEC Pinwriter 6 Ghostscript'
-	../$(INSTALLCP) hpdj550c.ppd $(SHAREDIR)/PPDFiles/'HP DeskJet 550C Ghostscript'
-	../$(INSTALLCP) epsc62gs.ppd $(SHAREDIR)/PPDFiles/'Epson Stylus C62 Ghostscript'
+	../$(INSTALLDATA) $(PPDDIR) $(PPDS)
 
 #=== Housekeeping ===========================================================
 

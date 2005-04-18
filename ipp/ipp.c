@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2005.
+** Last modified 8 April 2005.
 */
 
 #include "config.h"
@@ -115,7 +115,7 @@ static void do_print_job(struct IPP *ipp)
 	args[iii++] = for_whom;
 	args[iii++] = "--responder";
 	args[iii++] = "followme";
-	args[iii++] = "--reponder-address";
+	args[iii++] = "--responder-address";
 	args[iii++] = ipp->remote_user ? ipp->remote_user : username;
 
 	{
