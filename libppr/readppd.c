@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/readppd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 October 2004.
+** Last modified 18 April 2005.
 */
 
 /*+ \file
@@ -52,6 +52,8 @@ files.  Includes are handled automatically.
 
 
 /** given a PPD filename or product string, find the file and returns its full path
+ *
+ * If the return value is not NULL, it points to allocated memory.
 */
 char *ppd_find_file(const char ppdname[])
 	{
@@ -92,7 +94,7 @@ char *ppd_find_file(const char ppdname[])
 		return filename;
 
 	/* If we reach here, fall back to the assumption that the name is the name
-	 * of a file in /usr/share/ppr/PPDFiles.
+	 * of a file in /usr/share/ppr/ppd/.
 	 */
 	gu_asprintf(&filename, "%s/%s", PPDDIR, ppdname);
 	return filename;
@@ -188,7 +190,7 @@ int ppd_decode_QuotedValue(char *p)
 
 static int nest;						/* current PPD nesting level */
 static char *fname[MAX_PPD_NEST];		/* list of names of open PPD files */
-static char *line = (char*)NULL;		/* storate for the current line */
+static char *line = (char*)NULL;		/* storage for the current line */
 static FILE *saved_errors = NULL;		/* STDIO file to send error messages to */
 #ifdef HAVE_ZLIB
 static gzFile f[MAX_PPD_NEST];
@@ -277,7 +279,7 @@ static int _ppd_open(const char name[])
 		}
 
 	return EXIT_OK;
-	} /* end of ppd_open() */
+	} /* end of _ppd_open() */
 
 /** Open the indicated PPD file.
 
@@ -321,18 +323,18 @@ int ppd_open(const char ppdname[], FILE *errors)
 
 /** Read the next line from the PPD file
 
-Returns a pointer to the next line from the PPD file.  If you want to save anything in the line,
-make a copy of it since it will be overwritten on the next call.
-If we have reached the end
-of the file, return (char*)NULL.
+Returns a pointer to the next line from the PPD file.  If you want to save 
+anything in the line, make a copy of it since it will be overwritten on the 
+next call.  If we have reached the end of the file, return (char*)NULL.
 Comment lines are skipt and include files are transparently followed.
 
 */
 char *ppd_readline(void)
 	{
 	int len;
+	char *ptr;
 
-	if(!line)							/* guard against usage error */
+	if(!line)					/* guard against usage error */
 		return (char*)NULL;
 
 	while(nest >= 0)
@@ -371,16 +373,15 @@ char *ppd_readline(void)
 			continue;
 
 		/* If this is an "*Include:" line, open a new file. */
-		if(strncmp(line, "*Include:", 9) == 0)
+		if((ptr = lmatchp(line, "*Include:")))
 			{
-			char *ptr;
 			int ret;
 
-			ptr = &line[9];
-			ptr += strspn(ptr, " \t\"");				/* find name start */
-			ptr[strcspn(ptr,"\"")] = '\0';				/* terminate name */
+			if(*ptr == '"')
+				ptr++;
+			ptr[strcspn(ptr,"\"")] = '\0';	/* terminate name */
 
-			if((ret = _ppd_open(ptr)))
+			if((ret = _ppd_open(ptr)) != EXIT_OK)
 				{
 				gu_free(line);
 				line = (char*)NULL;
@@ -388,7 +389,7 @@ char *ppd_readline(void)
 				}
 
 			continue;
-			}
+			} /* "*Include:" */
 
 		return line;
 		}
@@ -421,11 +422,11 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 		self->nest = -1;		/* <-- we are paranoid */
 		self->fname[self->nest + 1] = ppd_find_file(ppdname);
 		}
-	else if(ppdname[0] == '/')
+	else if(ppdname[0] == '/')	/* include absolute path */
 		{
-		self->fname[self->nest +1] = gu_strdup(ppdname);
+		self->fname[self->nest + 1] = gu_strdup(ppdname);
 		}
-	else					/* if an include file, */
+	else						/* include relative path */
 		{
 		char *ptr;
 
@@ -446,9 +447,12 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 	if(!(self->f[self->nest] = fopen(self->fname[self->nest], "r")))
 	#endif
 		{
-		gu_Throw(_("can't open PPD file \"%s\", errno=%d (%s)"), self->fname[self->nest], errno, gu_strerror(errno));
+		if(self->nest > 0)
+			gu_Throw(_("can't open PPD file \"%s\" (included from \"%s\"), errno=%d (%s)"), self->fname[self->nest], self->fname[self->nest - 1], errno, gu_strerror(errno));
+		else
+			gu_Throw(_("can't open PPD file \"%s\", errno=%d (%s)"), self->fname[self->nest], errno, gu_strerror(errno));
 		}
-	}
+	} /* ppdobj_open() */
 
 void *ppdobj_new(const char ppdname[])
 	{
@@ -528,8 +532,7 @@ char *ppdobj_readline(void *p)
 		if((ptr = lmatchp(self->line, "*Include:")))
 			{
 			ptr += strspn(ptr, "\"");				/* find name start */
-			ptr[strcspn(ptr,"\"")] = '\0';			/* terminate name */
-
+			ptr[strcspn(ptr, "\"")] = '\0';			/* terminate name */
 			ppdobj_open(self, ptr);
 			continue;
 			}

@@ -41,6 +41,9 @@
 /* We have already included our config.h */
 #define NO_CONFIG_H
 
+/* C99 requires va_copy() */
+#define HAVE_VA_COPY 1
+
 /* Include the prototypes in order to verify consistancy. */
 #include "gu.h"
 
@@ -62,13 +65,9 @@
 #undef HAVE_VASPRINTF
 
 /* Rename these functions so as not to clash with libc. */
-#undef snprintf
-#define snprintf gu_snprintf
-#undef vsnprintf
-#define vsnprintf gu_vsnprintf
-#undef asprintf
+#define smb_snprintf gu_snprintf
+#define smb_vsnprintf gu_vsnprintf
 #define asprintf gu_asprintf
-#undef vasprintf
 #define vasprintf gu_vasprintf
 
 /* Hook memory allocation. */

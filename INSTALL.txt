@@ -92,6 +92,8 @@ Compiling from CVS requires the following additional packages:
 
 * Doxygen
 
+* HTMLDOC 
+
 =============================================================================
  Programs for PostScript Filters
 =============================================================================

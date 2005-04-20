@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 February 2005.
+** Last modified 18 April 2005.
 */
 
 #include "config.h"
@@ -45,7 +45,7 @@
 #include "util_exits.h"
 #include "version.h"
 
-const char myname[] = "lib/indexppds";
+const char *myname = NULL;
 const char ppr_conf[] = PPR_CONF;
 const char section_name[] = "ppds";
 const char ppdindex_db[] = PPD_INDEX;
@@ -351,6 +351,8 @@ int main(int argc, char *argv[])
 	const char *dirname;
 	int retval = EXIT_OK;
 
+	myname = argv[0];
+	
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
 	setlocale(LC_ALL, "");
@@ -373,9 +375,9 @@ int main(int argc, char *argv[])
 			}
 		}
 
-	/* This is the start of a retry loop in which we attempt to retrive the [PPDs] section
-	 * from ppr.conf.  We look for the section and if we don't find it 
-	 * we create one and look for it again. 
+	/* This is the start of a retry loop in which we attempt to retrieve 
+	 * the [PPDs] section from ppr.conf.  We look for the section and if
+	 * we don't find it, we create one and look for it again. 
 	 */
 	while(TRUE)
 		{

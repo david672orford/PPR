@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 19 September 2003
+Last Modified: 18 April 2005
 Last Proofread: 14 February 2003
 -->
 
@@ -338,7 +338,7 @@ interfaces described above.</para>
 <para>Once the printer has been added, you should choose a PPD file that
 accurately describes and inform <application>PPR</application> of your
 choice.  Likely you will choose one of the files in <filename
-class="Directory">/usr/share/ppr/PPDFiles/</filename>.  The files in this
+class="Directory">/usr/share/ppr/ppd/</filename>.  The files in this
 directory have descriptive names.  A print queue's PPD filename is set with the
 <command>ppad ppd</command> command:
 
@@ -492,16 +492,13 @@ information you need to write your own PPD file or to modify an existing one
 to work with your printer.</para>
 
 <para>Any new PPD files should be converted to Unix line termination (FTP
-will do this for you if you transfer them in ASCII mode).  The files already
-in <filename class="Directory">/usr/share/ppr/PPDFiles/</filename> have
-names that are take from their <literal>*ModelName:</literal> lines.  You
-might want to adopt this practice.  You may put new PPD files in a directory
-other than <filename class="Directory">/usr/share/ppr/PPDFiles/</filename>,
+will do this for you if you transfer them in ASCII mode). 
+You may put new PPD files in a directory
+other than <filename class="Directory">/usr/share/ppr/ppd/</filename>,
 as long as you specify the path in the <command>ppad ppd</command> command. 
 When <application>PPR</application> opens the PPD file, PPD file names
-starting with <filename>/</filename> are used as is, others have <filename
-class="Directory">/usr/share/ppr/PPDFiles/</filename> prepended to
-them.</para>
+starting with <filename>/</filename> are used as is, others are looked up
+in the PPD file index created by <command>ppr-index ppds</command>.
 
 </sect3>
 

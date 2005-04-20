@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad.8.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 December 2004.
+# Last modified 18 April 2005.
 #
 
 =head1 NAME
@@ -405,7 +405,8 @@ be removed in a future version of PPR.
 =item B<ppad ppd> I<printer> I<filename>
 
 specifies the PPD file name for the printer.  If I<filename> does not begin
-with a slash, then it is relative to the directory F</usr/share/ppr/PPDFiles>.  If
+with a slash, then it is looked up in the index created by B<ppr-index ppds>.  
+As a last resort it is assumed to be relative to F</usr/share/ppr/ppd/>.  If
 you create a printer queue with the B<ppad interface> command but do not set
 the PPD file, PPR will will use a default PPD file, however, it probably
 will not deal with bins properly, may print the pages in the wrong order,

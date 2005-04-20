@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_conf.sgml
-Last Modified: 23 March 2005
+Last Modified: 18 April 2005
 Last Proofread: 
 -->
 
@@ -97,9 +97,11 @@ interface as its third parameter.
 <term><literal>PPDFile:</literal> <replaceable>filename</replaceable></term>
 <listitem>
 <para>
-This line specifies the path and name of an Adobe Post Script Printer
-Description file which describes the printer.  If the name does not begin with
-a slash, it referes to a file in the directory <filename class="Directory">/usr/lib/ppr/PPDFiles</filename>.
+This line specifies the name, filename, or complete path of an Adobe Post 
+Script Printer Description file which describes the printer.  If the name does 
+not begin with a slash it is looked up in the PPD file index created by 
+<command>ppr-index ppds</command>, if it is not found in the index, then
+it is presumbed to be the name of a file in the directory <filename class="Directory">/usr/lib/ppr/ppd/</filename>.
 This line may not be required but it really ought to be present.
 </para>
 </listitem>

@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_files.sgml
-Last Modified: 23 March 2005
+Last Modified: 18 April 2005
 Last Proofread: 
 -->
 
@@ -310,7 +310,7 @@ to view them or add this directories to one's <envar>MANPATH</envar>.</para>
 </sect3>
 
 <sect3>
-<title>The <filename class="Directory">/usr/share/ppr/PPDFiles/</filename> Directory</title>
+<title>The <filename class="Directory">/usr/share/ppr/ppd/</filename> Directory</title>
 
 <para>This is the default location for PPD files.  It contains a collection
 of PPD files for common printers.  Most of these were provided by the

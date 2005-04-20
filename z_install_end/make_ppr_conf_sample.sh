@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/create_ppr_conf.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 June 2004.
+# Last modified 18 April 2005.
 #
 
 #
@@ -202,10 +202,9 @@ cat - >&5 <<===EndHere90===
 # Where are the PPD files?
 #
 # List all directories which contain PPD files which you wish to make readily
-# available for use by PPR.  The listed directories will _not_ be searched
-# recursively, so if there are subdirectories with additional PPD files, you
-# will have to list them separately.  You needn't list PPR's own PPD file 
-# directory since it will be automatically included.
+# available for use by PPR.  The listed directories will be searched
+# recursively.  You needn't list PPR's own PPD file directory since it will be
+# automatically included.
 #
 # After changing this section, you must run this command in order for your
 # changes to take effect:
@@ -226,6 +225,7 @@ if_dir_print "/usr/share/ppr-gs/ppd"
 
 # Debian
 if_dir_print "/usr/share/postscript/ppd"
+if_dir_print "/usr/share/ppd"
 
 echo >&5
 

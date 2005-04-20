@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2005.
+# Last modified 19 April 2005.
 #
 
 #
@@ -359,7 +359,7 @@ if man inetd 2>&1 | grep 'wait\[\.max\]' >/dev/null
 
 add_inetd printer ".400" $USER_PPR $LIBDIR/lprsrv "Uncomment this (after disabling lpd) to enable the PPR lpd server."
 add_inetd ppradmin ".400" $USER_PPRWWW $LIBDIR/ppr-httpd "PPR's web managment server"
-add_inetd ipp ".400" $USER_PPRWWW $LIBDIR/ppr-httpd "PPR's IPP server"
+add_inetd ipp ".400" $USER_PPRWWW "$LIBDIR/ppr-httpd -ipp" "PPR's IPP server"
 
 send_hup inetd
 

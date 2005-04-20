@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_exceptions.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 19 April 2005.
 */
 
 /*! \file
@@ -89,7 +89,7 @@ it prints the message on stderr and calls exit(255).
 void gu_Throw(const char message[], ...)
 	{
 	va_list va;
-	char temp[100];
+	char temp[256];
 	gu_exception_code = -1;
 	va_start(va, message);
 	gu_vsnprintf(temp, sizeof(temp), message, va);

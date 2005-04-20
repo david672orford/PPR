@@ -539,7 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--29 March 2005.
+2.00a1, 11 December 2004--18 April 2005.
 
 * refman/: removed references to papsrv.
 
@@ -567,4 +567,4 @@ more information about RIPs and *pprRIP:.
 
 * pprhack/pprhack_responders.sgml: first pass at updating for new responders
 
-
+* Changed references to /usr/share/ppr/PPDFiles/ to /usr/share/ppr/ppd/.

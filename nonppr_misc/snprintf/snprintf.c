@@ -1,4 +1,8 @@
 /*
+ * NOTE: If you change this file, please merge it into rsync, samba, etc.
+ */
+
+/*
  * Copyright Patrick Powell 1995
  * This code is based on code written by Patrick Powell (papowell@astart.com)
  * It may be used for any purpose as long as this notice remains intact
@@ -53,14 +57,57 @@
  *    got rid of fcvt code (twas buggy and made testing harder)
  *    added C99 semantics
  *
- *  David Chappell (David.Chappell@mail.trincoll.edu) 14 August 2002.
- *    fixed %p case to be valid C++, added stuff to top for PPR.
+ * date: 2002/12/19 19:56:31;  author: herb;  state: Exp;  lines: +2 -0
+ * actually print args for %g and %e
+ * 
+ * date: 2002/06/03 13:37:52;  author: jmcd;  state: Exp;  lines: +8 -0
+ * Since includes.h isn't included here, VA_COPY has to be defined here.  I don't
+ * see any include file that is guaranteed to be here, so I'm defining it
+ * locally.  Fixes AIX and Solaris builds.
+ * 
+ * date: 2002/06/03 03:07:24;  author: tridge;  state: Exp;  lines: +5 -13
+ * put the ifdef for HAVE_VA_COPY in one place rather than in lots of
+ * functions
+ * 
+ * date: 2002/05/17 14:51:22;  author: jmcd;  state: Exp;  lines: +21 -4
+ * Fix usage of va_list passed as an arg.  Use __va_copy before using it
+ * when it exists.
+ * 
+ * date: 2002/04/16 22:38:04;  author: idra;  state: Exp;  lines: +20 -14
+ * Fix incorrect zpadlen handling in fmtfp.
+ * Thanks to Ollie Oldham <ollie.oldham@metro-optix.com> for spotting it.
+ * few mods to make it easier to compile the tests.
+ * addedd the "Ollie" test to the floating point ones.
  *
+ * Martin Pool (mbp@samba.org) April 2003
+ *    Remove NO_CONFIG_H so that the test case can be built within a source
+ *    tree with less trouble.
+ *    Remove unnecessary SAFE_FREE() definition.
+ *
+ * Martin Pool (mbp@samba.org) May 2003
+ *    Put in a prototype for dummy_snprintf() to quiet compiler warnings.
+ *
+ *    Move #endif to make sure VA_COPY, LDOUBLE, etc are defined even
+ *    if the C library has some snprintf functions already.
  **************************************************************/
 
-#ifndef NO_CONFIG_H /* for some tests */
+#ifndef NO_CONFIG_H
 #include "config.h"
-#endif
+#else
+/* #define NULL 0 */
+#endif 
+
+#ifdef TEST_SNPRINTF /* need math library headers for testing */
+
+/* In test mode, we pretend that this system doesn't have any snprintf
+ * functions, regardless of what config.h says. */
+#  undef HAVE_SNPRINTF
+#  undef HAVE_VSNPRINTF
+#  undef HAVE_C99_VSNPRINTF
+#  undef HAVE_ASPRINTF
+#  undef HAVE_VASPRINTF
+#  include <math.h>
+#endif /* TEST_SNPRINTF */
 
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -82,8 +129,9 @@
 /* only include stdio.h if we are not re-defining snprintf or vsnprintf */
 #include <stdio.h>
  /* make the compiler happy with an empty file */
+ void dummy_snprintf(void);
  void dummy_snprintf(void) {} 
-#else
+#endif /* HAVE_SNPRINTF, etc */
 
 #ifdef HAVE_LONG_DOUBLE
 #define LDOUBLE long double
@@ -97,20 +145,16 @@
 #define LLONG long
 #endif
 
-/* free memory if the pointer is valid and zero the pointer */
-#ifndef SAFE_FREE
-#define SAFE_FREE(x) do { if ((x) != NULL) {free((x)); (x)=NULL;} } while(0)
+#ifndef VA_COPY
+#ifdef HAVE_VA_COPY
+#define VA_COPY(dest, src) va_copy(dest, src)
+#else
+#ifdef HAVE___VA_COPY
+#define VA_COPY(dest, src) __va_copy(dest, src)
+#else
+#define VA_COPY(dest, src) (dest) = (src)
 #endif
-
-static size_t dopr(char *buffer, size_t maxlen, const char *format, 
-		   va_list args);
-static void fmtstr(char *buffer, size_t *currlen, size_t maxlen,
-		    char *value, int flags, int min, int max);
-static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
-		    long value, int base, int min, int max, int flags);
-static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
-		   LDOUBLE fvalue, int min, int max, int flags);
-static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c);
+#endif
 
 /*
  * dopr(): poor man's version of doprintf
@@ -146,7 +190,20 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c);
 #define MAX(p,q) (((p) >= (q)) ? (p) : (q))
 #endif
 
-static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args)
+/* yes this really must be a ||. Don't muck with this (tridge) */
+#if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+
+static size_t dopr(char *buffer, size_t maxlen, const char *format, 
+		   va_list args_in);
+static void fmtstr(char *buffer, size_t *currlen, size_t maxlen,
+		    char *value, int flags, int min, int max);
+static void fmtint(char *buffer, size_t *currlen, size_t maxlen,
+		    long value, int base, int min, int max, int flags);
+static void fmtfp(char *buffer, size_t *currlen, size_t maxlen,
+		   LDOUBLE fvalue, int min, int max, int flags);
+static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c);
+
+static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args_in)
 {
 	char ch;
 	LLONG value;
@@ -158,6 +215,9 @@ static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args
 	int flags;
 	int cflags;
 	size_t currlen;
+	va_list args;
+
+	VA_COPY(args, args_in);
 	
 	state = DP_S_DEFAULT;
 	currlen = flags = cflags = min = 0;
@@ -327,6 +387,7 @@ static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args
 					fvalue = va_arg (args, LDOUBLE);
 				else
 					fvalue = va_arg (args, double);
+				fmtfp (buffer, &currlen, maxlen, fvalue, min, max, flags);
 				break;
 			case 'G':
 				flags |= DP_F_UP;
@@ -335,6 +396,7 @@ static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args
 					fvalue = va_arg (args, LDOUBLE);
 				else
 					fvalue = va_arg (args, double);
+				fmtfp (buffer, &currlen, maxlen, fvalue, min, max, flags);
 				break;
 			case 'c':
 				dopr_outch (buffer, &currlen, maxlen, va_arg (args, int));
@@ -349,14 +411,8 @@ static size_t dopr(char *buffer, size_t maxlen, const char *format, va_list args
 				fmtstr (buffer, &currlen, maxlen, strvalue, flags, min, max);
 				break;
 			case 'p':
-				/* DSC: This is what was: */
 				strvalue = va_arg (args, void *);
 				fmtint (buffer, &currlen, maxlen, (long) strvalue, 16, min, max, flags);
-				/* This is the fix: */
-				{
-				long longvalue = (long)va_arg (args, void *);
-				fmtint (buffer, &currlen, maxlen, longvalue, 16, min, max, flags);
-				}
 				break;
 			case 'n':
 				if (cflags == DP_C_SHORT) {
@@ -613,7 +669,7 @@ static void fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	int padlen = 0; /* amount to pad */
 	int zpadlen = 0; 
 	int caps = 0;
-	int index;
+	int idx;
 	double intpart;
 	double fracpart;
 	double temp;
@@ -670,14 +726,13 @@ static void fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 
 	/* Convert integer part */
 	do {
-		temp = intpart;
-		my_modf(intpart*0.1, &intpart);
-		temp = temp*0.1;
-		index = (int) ((temp -intpart +0.05)* 10.0);
-		/* index = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
-		/* printf ("%llf, %f, %x\n", temp, intpart, index); */
+		temp = intpart*0.1;
+		my_modf(temp, &intpart);
+		idx = (int) ((temp -intpart +0.05)* 10.0);
+		/* idx = (int) (((double)(temp*0.1) -intpart +0.05) *10.0); */
+		/* printf ("%llf, %f, %x\n", temp, intpart, idx); */
 		iconvert[iplace++] =
-			(caps? "0123456789ABCDEF":"0123456789abcdef")[index];
+			(caps? "0123456789ABCDEF":"0123456789abcdef")[idx];
 	} while (intpart && (iplace < 311));
 	if (iplace == 311) iplace--;
 	iconvert[iplace] = 0;
@@ -686,14 +741,13 @@ static void fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	if (fracpart)
 	{
 		do {
-			temp = fracpart;
-			my_modf(fracpart*0.1, &fracpart);
-			temp = temp*0.1;
-			index = (int) ((temp -fracpart +0.05)* 10.0);
-			/* index = (int) ((((temp/10) -fracpart) +0.05) *10); */
-			/* printf ("%lf, %lf, %ld\n", temp, fracpart, index); */
+			temp = fracpart*0.1;
+			my_modf(temp, &fracpart);
+			idx = (int) ((temp -fracpart +0.05)* 10.0);
+			/* idx = (int) ((((temp/10) -fracpart) +0.05) *10); */
+			/* printf ("%lf, %lf, %ld\n", temp, fracpart, idx ); */
 			fconvert[fplace++] =
-			(caps? "0123456789ABCDEF":"0123456789abcdef")[index];
+			(caps? "0123456789ABCDEF":"0123456789abcdef")[idx];
 		} while(fracpart && (fplace < 311));
 		if (fplace == 311) fplace--;
 	}
@@ -740,13 +794,13 @@ static void fmtfp (char *buffer, size_t *currlen, size_t maxlen,
 	if (max > 0) {
 		dopr_outch (buffer, currlen, maxlen, '.');
 		
+		while (zpadlen > 0) {
+			dopr_outch (buffer, currlen, maxlen, '0');
+			--zpadlen;
+		}
+
 		while (fplace > 0) 
 			dopr_outch (buffer, currlen, maxlen, fconvert[--fplace]);
-	}
-	
-	while (zpadlen > 0) {
-		dopr_outch (buffer, currlen, maxlen, '0');
-		--zpadlen;
 	}
 
 	while (padlen < 0) {
@@ -763,24 +817,21 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 	(*currlen)++;
 }
 
-/* yes this really must be a ||. Don't muck with this (tridge) */
-#if !defined(HAVE_VSNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
- int vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+ int smb_vsnprintf (char *str, size_t count, const char *fmt, va_list args)
 {
 	return dopr(str, count, fmt, args);
 }
+#define vsnprintf smb_vsnprintf
 #endif
 
-/* yes this really must be a ||. Don't muck wiith this (tridge)
+/* yes this really must be a ||. Don't muck with this (tridge)
  *
  * The logic for these two is that we need our own definition if the
  * OS *either* has no definition of *sprintf, or if it does have one
- * that doesn't work properly according to the autoconf test.  Perhaps
- * these should really be smb_snprintf to avoid conflicts with buggy
- * linkers? -- mbp
+ * that doesn't work properly according to the autoconf test.
  */
-#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_SNPRINTF)
- int snprintf(char *str,size_t count,const char *fmt,...)
+#if !defined(HAVE_SNPRINTF) || !defined(HAVE_C99_VSNPRINTF)
+int smb_snprintf(char *str,size_t count,const char *fmt,...)
 {
 	size_t ret;
 	va_list ap;
@@ -790,6 +841,7 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 	va_end(ap);
 	return ret;
 }
+#define snprintf smb_snprintf
 #endif
 
 #endif 
@@ -798,13 +850,19 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
  int vasprintf(char **ptr, const char *format, va_list ap)
 {
 	int ret;
+	va_list ap2;
+
+	VA_COPY(ap2, ap);
 	
-	ret = vsnprintf(NULL, 0, format, ap);
+	ret = vsnprintf(NULL, 0, format, ap2);
 	if (ret <= 0) return ret;
 
 	(*ptr) = (char *)malloc(ret+1);
 	if (!*ptr) return -1;
-	ret = vsnprintf(*ptr, ret+1, format, ap);
+
+	VA_COPY(ap2, ap);
+
+	ret = vsnprintf(*ptr, ret+1, format, ap2);
 
 	return ret;
 }
@@ -825,20 +883,6 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 	return ret;
 }
 #endif
-
-#ifndef HAVE_VSYSLOG
-#ifdef HAVE_SYSLOG
- void vsyslog (int facility_priority, char *format, va_list arglist)
-{
-	char *msg = NULL;
-	vasprintf(&msg, format, arglist);
-	if (!msg)
-		return;
-	syslog(facility_priority, "%s", msg);
-	SAFE_FREE(msg);
-}
-#endif /* HAVE_SYSLOG */
-#endif /* HAVE_VSYSLOG */
 
 #ifdef TEST_SNPRINTF
 
@@ -866,8 +910,9 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 		"-16.16f",
 		NULL
 	};
-	double fp_nums[] = { 6442452944.1234, -1.5, 134.21, 91340.2, 341.1234, 0203.9, 0.96, 0.996, 
-			     0.9996, 1.996, 4.136,  0};
+	double fp_nums[] = { 6442452944.1234, -1.5, 134.21, 91340.2, 341.1234, 203.9, 0.96, 0.996, 
+			     0.9996, 1.996, 4.136, 5.030201, 0.00205,
+			     /* END LIST */ 0};
 	char *int_fmt[] = {
 		"%-1.5d",
 		"%1.5d",
@@ -962,8 +1007,10 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 	{
 		double v0 = 0.12345678901234567890123456789012345678901;
 		for (x=0; x<100; x++) {
-			snprintf(buf1, sizeof(buf1), "%1.1f", v0*pow(10, x));
-			sprintf(buf2,                "%1.1f", v0*pow(10, x));
+			double p = pow(10, x); 
+			double r = v0*p;
+			snprintf(buf1, sizeof(buf1), "%1.1f", r);
+			sprintf(buf2,                "%1.1f", r);
 			if (strcmp(buf1, buf2)) {
 				printf("we seem to support %d digits\n", x-1);
 				break;
@@ -973,4 +1020,4 @@ static void dopr_outch(char *buffer, size_t *currlen, size_t maxlen, char c)
 
 	return 0;
 }
-#endif /* SNPRINTF_TEST */
+#endif /* TEST_SNPRINTF */

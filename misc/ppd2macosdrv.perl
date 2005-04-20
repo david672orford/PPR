@@ -26,14 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 18 April 2005.
 #
 
 $CONFDIR="@CONFDIR@";
 $SHAREDIR="@SHAREDIR@";
 $VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
-
-$PPDDIR = "$SHAREDIR/PPDFiles";
+$PPDDIR = "@PPDDIR@";
 $DRVDIR = "$VAR_SPOOL_PPR/drivers/macos";
 $PRINTERSDIR = "$CONFDIR/printers";
 $TEMPFILE = "$DRVDIR/Temporary File";
@@ -68,7 +67,7 @@ closedir(DIR) || die;
 
 # Now, include the files used by the printers.	Generally these
 # files will be some of the ones found in the step above, but
-# some printers may be using PPD files outside PPR's PPDFiles
+# some printers may be using PPD files outside PPR's ppd/
 # directory.
 opendir(DIR, $PRINTERSDIR) || die "Can't open directory \"$PRINTERSDIR\", $!\n";
 while(defined($file = readdir(DIR)))

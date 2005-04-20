@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr2samba.8.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 December 2004.
+# Last modified 18 April 2005.
 #
 
 =head1 NAME
@@ -66,12 +66,12 @@ If you add or remove printers from PPR, change their PPD files, or change
 their descriptive comment strings, it is necessary to rerun B<ppr2samba>
 so that Samba will perceive the change.
 
-If you add, remove, replace, or modify any of the files in
-F</usr/share/ppr/PPDFiles> or add or remove any of the Microsoft Windows
-PostScript driver files in F</var/spool/ppr/drivers>, or set a printer to use a
-PPD file which is not in one of the directories listed in the B<[PPDs]> section
-of F<ppr.conf>, you must rerun B<ppd2windrv> to reconfigure the MS-Windows
-drivers.
+If you add, remove, replace, or modify any of the files listed in the B<[PPDs]>
+section of F</etc/ppr/ppr.conf> or add or remove any of the Microsoft Windows
+PostScript driver files in F</var/spool/ppr/drivers/>, or set a printer to use
+a PPD file which is not in one of the directories listed in the B<[PPDs]>
+section of F<ppr.conf>, you must rerun B<ppd2windrv> to reconfigure the
+MS-Windows drivers.
 
 =head2 Versions of Samba
 

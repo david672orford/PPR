@@ -55,7 +55,7 @@ static gu_boolean debug = FALSE;
 #define SNMP_ATTEMPTS 3
 #define MAX_ITEMS 4
 #define NSTEPS 2
-#define PACKET_DELAY 5000	/* 100000 == 1/10 second */
+#define PACKET_DELAY 50000	/* 100000 == 1/10 second */
 
 struct NODE_SCAN_STATE {
 	unsigned char attempts_remaining;
