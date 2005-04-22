@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_fault_debug.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 22 April 2005.
 */
 
 #include "config.h"
@@ -159,12 +159,14 @@ void hooked_exit(int rval, const char *explain)
 void fatal(int rval, const char string[], ...)
 	{
 	va_list va;
-	va_start(va, string);
 
 	/* Because fatal() is not used for things that should happen
 	   during normal operation, log the problem in the pprdrv log. */
+	va_start(va, string);
 	pprdrv_log_vprintf("FATAL", string, va);
+	va_end(va);
 
+	va_start(va, string);
 	if(rval == EXIT_JOBERR)				/* problem with print job */
 		{
 		job_log_vprintf("FATAL", string, va);
@@ -174,7 +176,6 @@ void fatal(int rval, const char string[], ...)
 		if(!test_mode)
 			valert(printer.Name, TRUE, string, va);
 		}
-
 	va_end(va);
 
 	hooked_exit(rval, (char*)NULL);
@@ -188,17 +189,17 @@ void signal_fatal(int rval, const char format[], ...)
 	{
 	va_list va;
 	int fd;
-	va_start(va, format);
 	if((fd = open(PPRDRV_LOGFILE, O_WRONLY | O_APPEND | O_CREAT, UNIX_644)) >= 0)
 		{
 		char tempstr[256];
 		write(fd, "FATAL: ", 7);
+		va_start(va, format);
 		vsnprintf(tempstr, sizeof(tempstr), format, va);
+		va_end(va);
 		write(fd, tempstr, strlen(tempstr));
 		write(fd, "\n", 1);
 		close(fd);
 		}
-	va_end(va);
 	_exit(rval);
 	} /* end of signal_fatal() */
 

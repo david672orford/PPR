@@ -40,6 +40,7 @@ require 'cgi_intl.pl';
 require 'cgi_time.pl';
 require 'cgi_user_agent.pl';
 require 'cgi_widgets.pl';
+require 'cgi_menu.pl';
 use PPR::PPOP;
 
 # Spacing

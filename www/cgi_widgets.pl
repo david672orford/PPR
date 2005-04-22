@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_widgets.pl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,23 +25,40 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 May 2004.
+# Last modified 22 April 2005.
 #
 
-# This creates a checkbox followed by a label.  If the box is checked,
-# then $name will be set to $value and POSTed.  This widget should be
-# used for multiple checkboxes which share the same name.
-sub labeled_checkbox
-	{
-	my($name, $label, $value, $checked) = @_;
-	print "<label><input type=\"checkbox\" name=\"$name\" value=", html_value($value);
-	print " checked" if($checked);
-	print "> ", html($label), "</label>\n";
-	}
+=head1 cgi_widgets.pl
 
-# This creates a checkbox followed by a label.  If the box is checked,
-# then $name will be posted with a value which evaluates to true
-# in Perl.
+This library provides additional HTML widgets.
+
+=over 4
+
+=cut
+
+=item labeled_boolean()
+
+This creates a checkbox followed by a label.  If the box is checked,
+then $name will be posted with a value which evaluates to true
+in Perl.
+
+Example with default false:
+
+	labeled_boolean(
+		"fries",
+		_("Will you have fries with that?"),
+		cgi_data_move("fries", 0)
+		);
+
+Example with default true:
+
+	labeled_boolean(
+		"fries",
+		_("Will you have fries with that?"),
+		cgi_data_move("fries", 1)
+		);
+
+=cut
 sub labeled_boolean
 	{
 	my($name, $label, $value) = @_;
@@ -50,7 +67,30 @@ sub labeled_boolean
 	print "> ", html($label), "</label>\n";
 	}
 
-# This creates a radio button followed by a label.
+=item labeled_checkbox()
+
+This creates a checkbox followed by a label.  If the box is checked,
+then $name will be set to $value and POSTed.  This widget should be
+used for multiple checkboxes which share the same name.
+
+=cut
+sub labeled_checkbox
+	{
+	my($name, $label, $value, $checked) = @_;
+	print "<label><input type=\"checkbox\" name=\"$name\" value=", html_value($value);
+	print " checked" if($checked);
+	print "> ", html($label), "</label>\n";
+	}
+
+=item labeled_radio()
+
+This creates a radio button followed by a label.  Use it thus:
+
+	my $surname = cgi_data_move("surname", "");
+	labeled_radio("surname", _("Surname is Smith"), "smith", $surname);
+	labeled_radio("surname", _("Surname is Jones"), "jones", $surname);
+
+=cut
 sub labeled_radio
 	{
 	my($name, $label, $value, $current_value) = @_;
@@ -59,8 +99,32 @@ sub labeled_radio
 	print "> ", html($label), "</label>\n";
 	}
 
-# This creates an labeled entry widget.  If the entry widget is 50 or more
-# characters wide, then it is displayed on the line after the label.
+=item labeled_entry()
+
+This creates an labeled entry widget.  If the entry widget is 50 or more
+characters wide, then it is displayed on the line after the label.  Use 
+it like this:
+
+	labeled_entry(
+		"phone_number",
+		_("Phone Number:"),
+		cgi_data_move("phone_number", ""),
+		16
+		);
+
+If you want to add a tooltip:
+
+	labeled_entry(
+		"phone_number",
+		_("Phone Number:"),
+		cgi_data_move("phone_number", ""),
+		16,
+		_("Enter your phone number here.")
+		);
+
+You can add a final parameter if you want to add arbitrary attributes.
+
+=cut
 sub labeled_entry
 	{
 	my($name, $label, $value, $size, $tooltip, $extra) = @_;
@@ -78,8 +142,18 @@ sub labeled_entry
 	print "</label>\n";
 	}
 
-# This creates a labeled 'blank' with a filled-in value.  The value
-# is ordinary HTML text, so it isn't editable.
+=item labeled_blank()
+
+This creates a labeled 'blank' with a filled-in value.  The value
+is ordinary HTML text, so it isn't editable.
+
+	labeled_blank(
+		_("Your appointment date:"),
+		cgi_data_peek("appt_date", ""),
+		16
+		);
+
+=cut
 sub labeled_blank
 	{
 	my($label, $value, $size) = @_;
@@ -93,14 +167,30 @@ sub labeled_blank
 	print "</span>\n";
 	}
 
-# This creates a link which looks like a button.
+=item link_button()
+
+This creates a link which looks like a button.  When clicked on it opens
+the page in a new window.  This is good for help buttons.
+
+	link_button(
+		_("Help"),
+		"help/myhelp.html",
+		_("Click here to open a help window.")
+		);
+
+=cut
 sub link_button
 	{
 	my($label, $url, $tooltip) = @_;
 	print "<a class=\"buttons\" href=\"$url\" target=\"_blank\" onclick=\"return wopen(null,this.href)\" title=", html_value($tooltip), ">", html($label), "</a>\n";
 	}
 
-# Prune a language name down to size for a help file.
+=item help_language()
+
+Prune a language name down to size for a help file.  We do this by removing the
+dialect and encoding information leaving only the two-letter language code.
+
+=cut
 sub help_language 
 	{
 	my $lang = defined $ENV{LANG} ? $ENV{LANG} : "en";
@@ -111,9 +201,17 @@ sub help_language
 	return $lang;
 	}
 
-# This creates a button that pops up a help page.  The name of the help page is
-# based on the script name.	 The argument is used to make an HTML fragment
-# identifier.
+=item help_button()
+
+This creates a button that pops up a help page.  The name of the help page is
+based on the script name.  The first argument specifies the directory where 
+help files are found.  The second argument (if present) is used to make an
+HTML fragment identifier.
+
+	help_button("../help/");
+	help_button("../help/", "page2");
+
+=cut
 sub help_button
 	{
 	my $helpdir = shift;
@@ -141,7 +239,19 @@ sub help_button
 		"</a>\n";
 	}
 
-# This creates a labeled select box with the default value indicated.
+=item labeled_select()
+
+This creates a labeled select box with the default value indicated.
+
+	labeled_select(
+		"telephone_color",
+		_("Desired Telephone Color:"),
+		"black",
+		cgi_data_move("telephone_color", "black"),
+		qw(black red blue green yellow white)
+		);
+
+=cut
 sub labeled_select
 	{
 	my $name = shift;
@@ -166,9 +276,22 @@ sub labeled_select
 	print "</label>\n";
 	}
 
-# This differs from labeled_select() in that there is no provision for marking
-# the default value, there can be a tooltip, and extra parameters (such as
-# onchange=) can be inserted into the <select> tag.
+=item labeled_select2()
+
+This differs from labeled_select() in that there is no provision for marking
+the default value (in its label), there can be a tooltip, and extra parameters 
+(such as onchange=) can be inserted into the <select> tag.
+
+	labeled_select2(
+		"telephone_color",
+		_("Desired Telephone Color:"),
+		\qw(black red blue green yellow white),
+		cgi_data_move("telephone_color", "black"),
+		_("Select the desired color for your new telephone."),
+		"onchange='return color_change()'"
+		);
+
+=cut
 sub labeled_select2
     {
 	my($name, $label, $values, $current_value, $tooltip, $extra) = @_;
@@ -189,107 +312,8 @@ sub labeled_select2
 	print "</label>\n";
 	}
 
-#============================================================================
-# Menu bar widgets
-#============================================================================
+=back
 
-sub menu_tools
-	{
-	menu_start("m_tools", _("Tools"));
-		menu_link(_("Cookie Login"), "../html/login_cookie.html",
-			_("Use this if your browser doesn't support Digest authentication."));
-		menu_link(_("Spooler Logs"), "../html/show_logs.html",
-			_("Open a window with links to the spooler log files."));
-		menu_link(_("Disk Space"), "df_html.cgi",
-			_("Display information about free disk space on the print server."));
-		menu_link(_("Tests"), "../html/test.html",
-			_("Open a window with links to test scripts."));
-	menu_end();
-	}
-
-sub menu_window
-	{
-	my($qtype, $qname) = @_;
-	menu_start("m_window", _("Window"));
-		menu_link(_("Queues"), "show_queues.cgi",
-			_("Open a window with an icon for each queue."));
-		menu_link(_("All Jobs"), "show_jobs.cgi",
-			_("Open a window which lists all jobs."));
-		if(defined $qtype && $qtype ne "all" && defined $qname)	
-			{
-			if($qtype eq "printer")
-				{
-				menu_link(sprintf(_("Control %s"), $qname), "prn_control.cgi?" . form_urlencoded("name", $qname),
-					_("Monitor, start, stop, and mount forms on the printer."));
-				menu_link(sprintf(_("Properties of %s"), $qname), "prn_properties.cgi?" . form_urlencoded("name", $qname),
-					_("Examine and change the configuration of the printer."));
-				}
-			elsif($qtype eq "group")
-				{
-				menu_link(sprintf(_("Control %s members"), $qname), "grp_control.cgi?" . form_urlencoded("name", $qname),
-					_("Monitor, start, stop, and mount forms on the member printers."));
-				menu_link(sprintf(_("Properties of %s"), $qname), "grp_properties.cgi?" . form_urlencoded("name", $qname),
-					_("Examine and change the configuration of the group."));
-				}
-			}
-	menu_end();
-	}
-
-sub menu_help
-	{
-	$ENV{SCRIPT_NAME} =~ m#([^/]+)\.cgi$# || die;
-	my $basename = $1;
-	menu_start("m_help", _("Help"));
-		menu_link(_("For This Window"), "../help/$basename." . help_language() . ".html",
-			_("Display the help document for this program in a web browser window"));
-		menu_link(_("All PPR Documents"), "../docs/",
-			_("Open the PPR documentation index in a web browser window"));
-		menu_link(_("About PPR"), "about.cgi",
-			_("Display PPR version information"));
-	menu_end();
-	}
-
-sub menu_start
-    {
-	my($id, $name) = @_;
-	print "\t<a href=\"#\" onclick=\"return popup2(this,'$id')\">", html($name), '</a>';
-	print '<div class="popup"', " id=\"$id\"", ' onmouseover="offmenu(event)"><table cellspacing="0">', "\n";
-	}
-
-sub menu_end
-	{
-	print "\t</table></div>\n";
-	}
-
-# This creates a series of menu table rows each of which contains one of a set
-# of radio buttons.
-sub menu_radio_set
-	{
-	my($name, $values, $current_value, $extra) = @_;
-	foreach	my $value (@{$values})
-		{
-		print "\t\t", '<tr><td><label><input type="radio" name=', html_value($name), ' value=', html_value($value->[0]);
-		print ' checked' if($value->[0] eq $current_value);
-		print " ", $extra if(defined $extra);
-		print '>', html($value->[1]), "</label></td></tr>\n";
-		}
-	}
-
-# This creates a menu table row which contains a hyperlink.
-sub menu_link
-	{
-	my($label, $url, $tooltip) = @_;
-	print "\t\t<tr><td>";
-	print "\t\t<a href=\"$url\" target=\"_blank\" onclick=\"return wopen(event,this.href)\" title=", html_value($tooltip), ">", html($label), "</a>\n";
-	print "\t\t</td></tr>\n";
-	}
-
-# This creates a menu submit button.  Don't forget that $value must be untranslated.
-sub menu_submit
-	{
-	print "\t\t<tr><td>";
-	isubmit(@_);
-	print "\t\t</td></tr>\n";
-	}
+=cut
 
 1;

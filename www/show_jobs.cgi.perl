@@ -115,12 +115,13 @@ fields.
 
 use 5.005;
 use lib "@PERL_LIBDIR@";
-require 'paths.ph';
-require 'cgi_data.pl';
-require 'cgi_intl.pl';
+require "paths.ph";
+require "cgi_data.pl";
+require "cgi_intl.pl";
 require "cgi_widgets.pl";
-require 'qquery_xlate.pl';
-require 'cgi_user_agent.pl';
+require "cgi_menu.pl";
+require "qquery_xlate.pl";
+require "cgi_user_agent.pl";
 
 defined($CONFDIR) || die;
 defined(@qquery_available) || die;

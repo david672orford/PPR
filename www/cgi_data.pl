@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/misc/cgi_data.pl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,24 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 March 2004.
+# Last modified 22 April 2005.
 #
 
-#
-# Read the data QUERY_STRING data, and if the method is POST, the
-# data on stdin.  The data is decoded and stored in the associative
-# array %data.
-#
+=head1 cgi_data.pl
+
+This library handles CGI POST data and GET or POST query strings.
+
+=over 4
+
+=cut
+
+=item cgi_read_data()
+
+Read the data QUERY_STRING data, and if the method is POST, the
+data on stdin.  The data is decoded and stored in the associative
+array %data.
+
+=cut
 sub cgi_read_data
 	{
 	undef %data;
@@ -83,12 +93,14 @@ sub cgi_read_data
 		}
 	}
 
-#
-# Return an item from the CGI data and
-# clear it so that it will only be in
-# the submitted data if we have it in
-# the current form.
-#
+=item cgi_data_move()
+
+Return an item from the CGI data and clear it so that it will only be in the
+submitted data if we have it in the current form.  The first parameter is the
+item to be returned, the second is the default value to be returned if the
+item is not found.
+
+=cut
 sub cgi_data_move
 	{
 	my $name = shift;
@@ -98,10 +110,12 @@ sub cgi_data_move
 	return defined($value) ? $value : $default;
 	}
 
-#
-# This function is just like cgi_data_move(), except it doesn't
-# remove the value from %data.
-#
+=item cgi_data_peek()
+
+This function is just like cgi_data_move(), except it doesn't
+remove the value from %data.
+
+=cut
 sub cgi_data_peek
 	{
 	my $name = shift;
@@ -110,10 +124,11 @@ sub cgi_data_peek
 	return defined($value) ? $value : $default;
 	}
 
-#
-# Emmit the data gathered on other pages as hidden
-# form fields.
-#
+=item cgi_write_data()
+
+Emmit any items remaining in %data as hidden form fields.
+
+=cut
 sub cgi_write_data
 	{
 	my $datum;
@@ -126,9 +141,13 @@ sub cgi_write_data
 		}
 	}
 
-# Emit the form submission data again so that humans can read it
-# easily.  It will normally be off the bottom of the page so the
-# user won't see it unless he scrolls down.
+=item cgi_debug_data()
+
+Print the form submission %data has as HTML so that humans can read it
+easily.  It will normally be off the bottom of the page so the
+user won't see it unless he scrolls down.
+
+=cut
 sub cgi_debug_data()
 	{
 	my $x;
@@ -144,15 +163,17 @@ sub cgi_debug_data()
 	print "</pre>\n";
 	}
 
-#
-# This function takes a text string and encodes anything that would have
-# special meaning in HTML.
-#
-# We need to do this in a function, because a translation might
-# contain a character such as <, >, &, or something we haven't
-# dreamed of.  It would be a pain to go back and modify hundreds of
-# lines of code.
-#
+=item html()
+
+This function takes a text string and encodes anything that would have
+special meaning in HTML.
+
+We need to do this in a function, because a translation might
+contain a character such as <, >, &, or something we haven't
+dreamed of.  It would be a pain to go back and modify hundreds of
+lines of code.
+
+=cut
 sub html
 	{
 	my $text = shift;
@@ -162,10 +183,12 @@ sub html
 	return $text;
 	}
 
-#
-# This one goes a step furthur and converts spaces to non-breaking spaces. 
-# This is a good thing to use with table cells we don't want broken.
-#
+=item html_nb()
+
+This one goes a step furthur and converts spaces to non-breaking spaces. 
+This is a good thing to use with table cells we don't want broken.
+
+=cut
 sub html_nb
 	{
 	my $text = html(shift);
@@ -174,12 +197,14 @@ sub html_nb
 	return $text;
 	}
 
-#
-# Return the argument encoded as an HTML attribute value.
-# This differs from html() in that it also quotes ASCII
-# double quotes and it enclose the whole thing in ASCII
-# double quotes.
-#
+=item html_value()
+
+Return the argument encoded as an HTML attribute value.
+This differs from html() in that it also quotes ASCII
+double quotes and it enclose the whole thing in ASCII
+double quotes.
+
+=cut
 sub html_value
 	{
 	my $text = html(shift);
@@ -187,9 +212,11 @@ sub html_value
 	return "\"$text\"";
 	}
 
-#
-# This function applies form encoding to the name=value pair supplied.
-#
+=item form_urlencoded()
+
+This function applies form encoding to the name=value pair supplied.
+
+=cut
 sub form_urlencoded
 	{
 	my($name, $value) = @_;
@@ -200,10 +227,12 @@ sub form_urlencoded
 	return "$name=$value";
 	}
 
-#
-# Return the argument encoded as a Javascript string suitable for inclusion
-# in an HTML attribute value.
-#
+=item javascript_string()
+
+Return the argument encoded as a Javascript string suitable for inclusion
+in an HTML attribute value.
+
+=cut
 sub javascript_string
 	{
 	my $text = html(shift);
@@ -211,15 +240,22 @@ sub javascript_string
 	return "'$text'";
 	}
 
-#
-# If the value is undefined, convert it to an empty string.
-#
+=item undef_to_empty()
+
+If the argument is undefined, return it to an empty string,
+otherwise return the argument.
+
+=cut
 sub undef_to_empty
 	{
 	my $value = shift;
 	return $value if defined $value;
 	return "";
 	}
+
+=back
+
+=cut
 
 1;
 

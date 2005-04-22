@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--18 April 2005
+2.00a1, 11 December 2004--22 April 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9704,4 +9704,10 @@ no final tarball was released.
 
 * Upgraded nonppr_misc/snprintf/snprintf.c to latest from Samba.
 
+* pprdrv/pprdrv_fault_debug.c:fatal(): fixed code which makes two passes
+  over the variable arguments list.
+
+* Split menu_ functions out of www/cgi_widgets.pl into cgi_menu.pl.
+
+* Added POD documentation to www/cgi_data.pl, and cgi_widgets.pl.
 

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 22 April 2005.
 #
 
 include ../Makefile.conf
@@ -89,7 +89,7 @@ CGI_PROGS=show_queues.cgi \
 
 LIBS=cgi_data.pl qquery_xlate.pl cgi_wizard.pl cgi_run.pl cgi_tabbed.pl cgi_error.pl \
 	cgi_membership.pl cgi_time.pl cgi_auth.pl cgi_intl.pl cgi_back.pl cgi_redirect.pl \
-	cgi_widgets.pl cgi_digest.pl cgi_user_agent.pl \
+	cgi_widgets.pl cgi_menu.pl cgi_digest.pl cgi_user_agent.pl \
 	docs_util.pl ppd_select.pl
 
 JAVASCRIPT=show_queues.js show_jobs.js md5.js

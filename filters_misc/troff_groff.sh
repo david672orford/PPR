@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 22 April 2005.
 #
 
 #
@@ -48,7 +48,7 @@ GROG="?"
 # This new code, uses Groff's Grog to find the
 # correct options.
 COMMAND=`$GROG -Tps -msafer -`
-lib/rewind_stdin
+./rewind_stdin
 $COMMAND
 
 # Pass on its exit value.
