@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/misc/ppr-testpage.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 26 April 2005.
 */
 
 #include "config.h"
@@ -62,6 +62,7 @@ static void do_header(void)
 	gu_psprintf(
 		"%%!PS-Adobe-3.0\n"
 		"%%%%Title: PPR Test Page\n"
+		"%%%%Creator: ppr-testpage\n"
 		"%%%%Pages: 1\n"
 		"%%%%DocumentNeededResources: font Helvetica\n"
 		"%%%%EndComments\n"

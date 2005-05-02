@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 26 April 2005.
 #
 
 =pod
@@ -720,7 +720,7 @@ sub new
 		{
 		if($ENV{HTTP_USER_AGENT} =~ /Gecko\/(\d{8})/)
 			{
-			if($1 >= 20040413)
+			if($1 >= 20040413)	# 13 April 2004
 				{
 				$self->{on} = 1;
 				}
@@ -731,6 +731,8 @@ sub new
 	return $self;
 	}
 
+# If scrolling is enabled, start the table which encloses the 
+# queue listing table and the scrollbars.
 sub pre {
 my $self = shift;
 defined($self) || die;
@@ -738,14 +740,17 @@ if($self->{on})
 {
 print <<"End_pre";
 <!-- start of pre-table -->
-<table border=0 cellspacing=0 cellpadding=0>
+<div style="margin: 0pt 3pt 0pt 3pt">
+<table id="$self->{table_name}" style="width: 100%; min-width: 100%; max-width: 100%;" border=0 cellspacing=0 cellpadding=0>
 <tr><td style="border: 1px solid black" align="left" valign="top">
-	<div id="$self->{table_name}_div" style="max-width: $self->{width}px; overflow: hidden">
+	<div id="$self->{table_name}_div" style="width: 100%; overflow: hidden">
 <!-- end of pre-table -->
 End_pre
 }
 }
 
+# If scrolling is enabled, close the table which encloses the
+# queue listing table and the scrollbars.
 sub post {
 my $self = shift;
 defined($self) || die;
@@ -755,52 +760,75 @@ print <<"End_post";
 <!-- start of post-table -->
 		</div>
 		</td>
-	<td style="height: $self->{height}px; width: 30px;">
+	<!-- vertical scrollbar -->
+	<td valign="bottom">
 		<div id="$self->{table_name}_vert" style="max-height: $self->{height}px; overflow: auto;" onscroll="$self->{table_name}_vert_scroll()"> 
-		<img id="$self->{table_name}_v_img" src="../images/pixel-clear.png" height=800 width=1 border=0>
+		<img id="$self->{table_name}_v_img" src="../images/pixel-clear.png" height=800 width=10 border=0>
+		&nbsp; <!-- hack so scrollbar appears -->
 		</div>
 		</td>
 	</tr>
-<tr><td style="width: $self->{width}px">
-		<div id="$self->{table_name}_horiz" style="max-width: $self->{width}px; overflow: auto" onscroll="$self->{table_name}_horiz_scroll()">
+<!-- horizontal scrollbar -->
+<tr><td>
+		<div id="$self->{table_name}_horiz" style="max-width: $self->{width}px; overflow: auto; font-size: 1px;" onscroll="$self->{table_name}_horiz_scroll()">
 		<img id="$self->{table_name}_h_img" src="../images/pixel-clear.png" width=800 height=1 border=0>
 		</div>
 		</td>
 	<td></td>
 	</tr>
 </table>
+</div>
 <!-- end of post-table -->
 <script>
+/* Set the sizes of the images which the scrollbars scroll directly to match 
+   the dimensions of the table which they scroll thru the callback functions. */
+var table_body = document.getElementById("$self->{table_name}_body");
+document.getElementById("$self->{table_name}_h_img").width = table_body.scrollWidth;
+document.getElementById("$self->{table_name}_v_img").height = table_body.scrollHeight;
+
+/* vertical scrollbar callback function */
 function $self->{table_name}_vert_scroll()
 	{
 	var vertical_scroll = document.getElementById("$self->{table_name}_vert");
 	var table_body = document.getElementById("$self->{table_name}_body");
 	table_body.scrollTop = vertical_scroll.scrollTop;
 	}
+
+/* horizontal scrollbar callback function */
 function $self->{table_name}_horiz_scroll()
 	{
 	var horizontal_scroll = document.getElementById("$self->{table_name}_horiz");
 	var table_body = document.getElementById("$self->{table_name}_div");
 	table_body.scrollLeft = horizontal_scroll.scrollLeft;
 	}
-var table_body = document.getElementById("$self->{table_name}_body");
-var h_img = document.getElementById("$self->{table_name}_h_img");
-var v_img = document.getElementById("$self->{table_name}_v_img");
-h_img.width = table_body.scrollWidth + 50;
-v_img.height = table_body.scrollHeight + 50;
+
+function resize()
+	{
+	var queue_body = document.getElementById("queue_body");
+	
+	/* Set the height of the queue body on the basis of the window height. */
+	queue_body.style.maxHeight = window.innerHeight - 125 + "px";
+	   
+	/* Set the sizes of the scrollbars to match. */
+	document.getElementById("$self->{table_name}_vert").style.maxHeight = queue_body.offsetHeight + "px";
+	document.getElementById("$self->{table_name}_horiz").style.maxWidth = queue_body.offsetWidth + "px";
+	}
+
+resize();
+
 </script>
 End_post
 }
 }
 
+# If scrolling is enabled, return the style attribute for the 
+# queue listing table.
 sub tbody_style
 	{
 	my $self = shift;
-	my $max_height = $self->{height} - 20;
-	my $min_width = $self->{width};
 	if($self->{on})
 		{
-		return " style=\"max-height: ${max_height}px; overflow: hidden;\"";
+		return " style=\"width: 100%; overflow: hidden;\"";
 		}
 	else
 		{
