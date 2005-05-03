@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_conf.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 February 2004.
+** Last modified 3 May 2005.
 */
 
 /*
@@ -61,12 +61,12 @@ static char confout_name[MAX_PPR_PATH];
 char *confline = NULL;
 static int confline_len;
 
-/*
-** Open a configuration file.  This is called by prnopen()
-** and grpopen() below.
-*/
+/** Open a configuration file.
+ * This is called by prnopen() and grpopen() below.
+ */
 int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify, gu_boolean create)
 	{
+	const char function[] = "confopen";
 	const char *confdir;
 
 	switch(queue_type)
@@ -98,14 +98,21 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 	if(modify)
 		{
 		/* must open for update if we want an exclusive lock */
-		if((confin = fopen(confin_name, "r+")) == (FILE*)NULL)
+		if(!(confin = fopen(confin_name, "r+")))
 			{
-			if(!create)
-				return -1;
+			if(errno == EEXIST)		/* if open failed because doesn't exist, */
+				{
+				if(!create)			/* unless we are to create it, */
+					return -1;		/* report that destination doesn't exist */
+				}
+			else
+				{
+				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", confin_name, "r+", errno, gu_strerror(errno));
+				}
 			}
-		else
+		else	/* if open suceeded, lock file */
 			{
-			if(gu_lock_exclusive(fileno(confin), FALSE))
+			if(gu_lock_exclusive(fileno(confin), FALSE))	/* if lock failed, */
 				{
 				fclose(confin);
 				printf(_("Waiting for lock to clear.\n"));
@@ -128,9 +135,13 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 	*/
 	else
 		{
-		if((confin = fopen(confin_name, "r")) == (FILE*)NULL)
-			return -1;
-
+		if(!(confin = fopen(confin_name, "r")))
+			{
+			if(errno == EEXIST)
+				return -1;
+			else
+				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", confin_name, "r", errno, gu_strerror(errno));
+			}
 		state = STATE_NOMODIFY;
 		}
 
@@ -140,16 +151,22 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 	return 0;
 	} /* end of confopen() */
 
-/*
-** Open a printer configuration file.
+/** Open a printer configuration file
+ * Open the configuration file for printer prname[].  Return 0
+ * on success, -1 on failure.  If modify is TRUE, create a temporary
+ * file into which to write a new version of the printer configuration file.
 */
 int prnopen(const char prnname[], gu_boolean modify)
 	{
 	return confopen(QUEUE_TYPE_PRINTER, prnname, modify, FALSE);
 	} /* end of prnopen() */
 
-/*
-** Open a group configuration file.
+/** Open a group configuration file
+ * Open the configuration file for the group grname[].  Return 0
+ * on sucess, -1 on failure.  If modify is TRUE, create a temporary
+ * file into which to write a new version of the group configuration
+ * file.  If create is TRUE, create the temporary file even if the
+ * group configuration file doesn't exist yet.
 */
 int grpopen(const char *grpname, gu_boolean modify, gu_boolean create)
 	{
@@ -353,7 +370,7 @@ int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], const cha
 		return EXIT_DENIED;
 
 	/* Open the printer or group configuration file. */
-	if(confopen(queue_type, queue_name, TRUE, FALSE))
+	if(confopen(queue_type, queue_name, TRUE, FALSE) == -1)
 		{
 		switch(queue_type)
 			{

@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # mouse:~ppr/src/editps/Mozilla_1.0
-# Last modified 4 March 2004.
+# Last modified 3 May 2005.
 
 #
 # Allow Mozilla to print a wider range or characters.
@@ -26,48 +26,53 @@
 	"Symbol"
 	);
 
-# Courier from a2ps 
+# Modified versions of the URW Ghostscript fonts, name from
+# Debian's t1-cyrillic package.  It appears that recent versions
+# of the gsfonts package make t1-cyrillic obsolete.
 @fonts_2 = (
-	"Times-Roman",
-	"Times-Bold",
-	"Times-BoldItalic",
-	"Times-Italic",
-	"Helvetica",
-	"Helvetica-Bold",
-	"Helvetica-BoldOblique",
-	"Helvetica-Oblique",
-	"CourierISOC",
-	"CourierISOC-Bold",
-	"CourierISOC-BoldOblique",
-	"CourierISOC-Oblique",
-	"Symbol"
-	);
-
-# Modified versions of the URW Ghostscript fonts
-@fonts_3 = (
 	"NimbusRomanCYR-Regu",
 	"NimbusRomanCYR-Medi",
 	"NimbusRomanCYR-MediItal",
 	"NimbusRomanCYR-ReguItal",
 	"NimbusSansCYR-Regu",
-	"NimbusSansCYR-Medi",
-	"NimbusSansCYR-MediItal",
+	"NimbusSansCYR-Bold",
+	"NimbusSansCYR-BoldItal",
 	"NimbusSansCYR-ReguItal",
 	"NimbusMonCYR-Regu",
-	"NimbusMonCYR-Medi",
-	"NimbusMonCYR-MediItal",
+	"NimbusMonCYR-Bold",
+	"NimbusMonCYR-BoldItal",
 	"NimbusMonCYR-ReguItal",
 	"Symbol"
 	);
 
+# Modified versions of the URW Ghostscript fonts from gsfonts package
+@fonts_3 = (
+	"NimbusRomNo9L-Regu",
+	"NimbusRomNo9L-Medi",
+	"NimbusRomNo9L-MediItal",
+	"NimbusRomNo9L-ReguItal",
+	"NimbusSanL-Regu",
+	"NimbusSanL-Bold",
+	"NimbusSanL-BoldItal",
+	"NimbusSanL-ReguItal",
+	"NimbusMonL-Regu",
+	"NimbusMonL-Bold",
+	"NimbusMonL-BoldObli",
+	"NimbusMonL-ReguObli",
+	"Symbol"
+	);
+
+# Which set of fonts will we substitute?
 @fonts = @fonts_3;
 
+# Which fonts are mentioned in the job?
 %fonts_seen = ();
 
-# Make a first pass through the file in order to figure out which fonts are required.
+# Make a first pass through the file in order to figure out which fonts 
+# are required.
 while(<STDIN>)
 	{
-	if(m/^\d+ f(\d+)$/)
+	if(m/^\d+ f(\d+)$/)		# presumably pointsize * 20 and font by number 
 		{
 		$fonts_seen{$1} = 1;
 		}
@@ -106,7 +111,10 @@ while(<STDIN>)
 	last if(/^%%EndComments$/);
 	}
 
-# Remove the font loading code which Mozilla generated.
+# Remove the font loading code which Mozilla generated.  Note that Mozilla's 
+# font loading code loads a full set of serif, sans-serif, and fixed fonts
+# while the code that we insert will load only those fonts which are 
+# actually used.
 while(<STDIN>)
 	 {
 	 next if(m#^/F\d+ /\S+ Mfr$#);		# remove code which creates reencoded font

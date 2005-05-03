@@ -9714,3 +9714,12 @@ no final tarball was released.
 * www/show_jobs.cgi.perl: removed some of the extra space between the table
   and the scrollbars.  Attempted to make a working onresize handler, but it
   doesn't seem to function correctly, so we just call it once.
+
+* editps/Mozilla_1.0, Mozilla_1.6: changed font names to use those from 
+  the Debian gsfonts package instead of t1-cyrillic.  It appears that
+  gsfonts has contained the Cyrillic versions for some time (though
+  as of 3 May 2005 t1-cyrillic seems to contain more glyphs).
+
+* papd/papd.c: added missing error() function.
+
+

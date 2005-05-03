@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # mouse:~ppr/src/editps/Mozilla_1.0
-# Last modified 4 May 2004.
+# Last modified 3 May 2005.
 
 #
 # Allow Mozilla to print a wider range or characters.
@@ -10,18 +10,18 @@
 #
 
 %subs = (
-	"Times-Roman" => "NimbusRomanCYR-Regu",
-	"Times-Bold" => "NimbusRomanCYR-Medi",
-	"Times-BoldItalic" => "NimbusRomanCYR-MediItal",
-	"Times-Italic" => "NimbusRomanCYR-ReguItal",
-	"Helvetica" => "NimbusSansCYR-Regu",
-	"Helvetica-Bold" => "NimbusSansCYR-Medi",
-	"Helvetica-BoldOblique" => "NimbusSansCYR-MediItal",
-	"Helvetica-Oblique" => "NimbusSansCYR-ReguItal",
-	"Courier" => "NimbusMonCYR-Regu",
-	"Courier-Bold" => "NimbusMonCYR-Medi",
-	"Courier-BoldOblique" => "NimbusMonCYR-MediItal",
-	"Courier-Oblique" => "NimbusMonCYR-ReguItal"
+	"Times-Roman" =>			"NimbusRomNo9L-Regu",
+	"Times-Bold" =>				"NimbusRomNo9L-Medi",
+	"Times-BoldItalic" =>		"NimbusRomNo9L-MediItal",
+	"Times-Italic" =>			"NimbusRomNo9L-ReguItal",
+	"Helvetica" =>				"NimbusSanL-Regu",
+	"Helvetica-Bold" =>			"NimbusSanL-Bold",
+	"Helvetica-BoldOblique" =>	"NimbusSanL-BoldItal",
+	"Helvetica-Oblique" =>		"NimbusSanL-ReguItal",
+	"Courier" =>				"NimbusMonL-Regu",
+	"Courier-Bold" =>			"NimbusMonL-Bold",
+	"Courier-BoldOblique" =>	"NimbusMonL-BoldObli",
+	"Courier-Oblique" =>		"NimbusMonL-ReguObli"
 	);
 
 while(<STDIN>)

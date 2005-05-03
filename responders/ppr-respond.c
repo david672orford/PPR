@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2005.
+** Last modified 3 May 2005.
 */
 
 /*
@@ -573,12 +573,16 @@ static char *build_message(struct RESPONSE_INFO *rinfo, gu_boolean long_format)
 			);
 		}
 
+	/* If we are producing a long message and the amount of time that the
+	 * job spent in the queue is known, 
+	 */
 	if(long_format && rinfo->qentry.time != 0)
 		{
 		long elapsed_time = (time(NULL) - rinfo->qentry.time);
 		if(elapsed_time > 300)
 			{
 			char *temp = elapsed_time_description(elapsed_time / 60);
+			gu_pcs_append_char(&message, ' ');
 			gu_pcs_append_sprintf(&message, _("This print job was submitted %s ago."), temp);
 			gu_free(temp);
 			}

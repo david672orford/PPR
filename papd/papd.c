@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 3 May 2005.
 */
 
 /*
@@ -114,6 +114,17 @@ void debug(const char string[], ... )
 	va_end(va);
 	} /* end of debug() */
 
+/* This is needed by try_fontindex() */
+void error(const char string[], ... )
+	{
+	va_list va;
+	char temp[256];
+	va_start(va,string);
+	vsnprintf(temp, sizeof(temp), string, va);
+	write_logline("ERROR", temp);
+	va_end(va);
+	} /* end of debug() */
+
 /*
 ** Return a copy of a string with control characters
 ** (non-printable characters) replaced with dots.
@@ -149,9 +160,9 @@ char *debug_string(char *s)
 ** papd.  This routine is left in place for the children as it should
 ** do no harm.
 **
-** The first time such a signal is caught, this routine calls fatal(). If more 
-** signals are received before the server exits, they have no effect other
-** other than to provide a peevish message in the log.
+** The first time such a signal is caught, this routine sets keep_running to 
+** FALSE. If more signals are received before the server exits, they have no
+** effect other other than to provide a peevish message in the log.
 */
 static volatile gu_boolean keep_running = TRUE;
 static void termination_handler(int sig)
