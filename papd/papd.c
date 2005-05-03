@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 3 May 2005.
 */
 
 /*
@@ -113,6 +113,17 @@ void debug(const char string[], ... )
 	write_logline("DEBUG", temp);
 	va_end(va);
 	} /* end of debug() */
+
+/* This is needed by try_fontindex(). */
+void error(const char string[], ... )
+	{
+	va_list va;
+	char temp[256];
+	va_start(va,string);
+	vsnprintf(temp, sizeof(temp), string, va);
+	write_logline("ERROR", temp);
+	va_end(va);
+	} /* end of error() */
 
 /*
 ** Return a copy of a string with control characters

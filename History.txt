@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54, 11 December 2004--6 April 2005
+1.54, 11 December 2004--3 May 2005
 
 * samba/ppd2win95drv.perl: removed
 
@@ -9452,5 +9452,6 @@ no final tarball was released.
 
 * misc/ppr-sync.sh: changed papsrv_kill to papsrv --stop.
 
+* papd/papd.c: added missing error() function.
 
 
