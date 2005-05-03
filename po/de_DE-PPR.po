@@ -7,10 +7,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-21 18:11+0200\n"
-"PO-Revision-Date: 2004-10-21 18:33+0200\n"
-"Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
+"Report-Msgid-Bugs-To: Jan Kohnert <jan@jankoh.dyndns.org>\n"
+"POT-Creation-Date: 2005-05-03 02:04+0200\n"
+"PO-Revision-Date: 2005-05-03 02:30+0200\n"
+"Last-Translator: Jan Kohnert <jan@jankoh.dyndns.org>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
@@ -45,6 +45,7 @@ msgid "\t--commentary <n>           send commentary messages of types <n>\n"
 msgstr "\t--commentary <n>           Kommentarnachrichten vom Typ <n> senden\n"
 
 #: ../samba/ppr2samba.c:359
+#, c-format
 msgid "\t--debug      explain what is being done\n"
 msgstr "\t--debug      Erklärungen zu allen Schritten geben\n"
 
@@ -58,6 +59,7 @@ msgid "\t--file-type <option>       same as -T\n"
 msgstr "\t--file-type <Option>       wie -T\n"
 
 #: ../samba/ppr2samba.c:362
+#, c-format
 msgid "\t--help       print this message\n"
 msgstr "\t--help       diese Nachricht ausgeben\n"
 
@@ -174,6 +176,7 @@ msgstr ""
 "\t--help                     diese Hilfe ausgeben\n"
 
 #: ../samba/ppr2samba.c:361
+#, c-format
 msgid "\t--version    print the PPR version number\n"
 msgstr "\t--version    PPR Version augeben\n"
 
@@ -518,30 +521,29 @@ msgstr "  (Warnung: \"%s\" ist nicht ausführbar.)\n"
 msgid " argument"
 msgstr "Wert"
 
-#: ../ppr/ppr_simplify.c:143
+#: ../ppr/ppr_simplify.c:160
 #, c-format
 msgid "\"%%%%BeginData:\" block ran off end of file after %ld of %ld lines"
 msgstr ""
 "\"%%%%BeginData:\" Datenblock ging über EOF hinaus nach %ld of %ld Zeilen"
 
-#: ../ppr/ppr_simplify.c:186
+#: ../ppr/ppr_simplify.c:203
 #, c-format
 msgid "\"%%%%BeginData:\" block ran off end of file at byte %ld of %ld"
 msgstr ""
 "\"%%%%BeginData:\" Datenblock ging über EOF hinaus nach Byte %ld von %ld"
 
-#: ../ppr/ppr_simplify.c:196
+#: ../ppr/ppr_simplify.c:213
 #, c-format
 msgid "\"%%%%BeginData:\" said %ld bytes, but no \"%%%%EndData\" found there"
 msgstr ""
 "\"%%%%BeginData:\" meldete %ld Byte, dort aber kein \"%%%%EndData\" gefunden"
 
-#: ../ppr/ppr_simplify.c:149
+#: ../ppr/ppr_simplify.c:166
 #, c-format
 msgid "\"%%%%BeginData:\" said %ld lines, but no \"%%%%EndData\" found there"
 msgstr ""
-"\"%%%%BeginData:\" meltete %ld Zeilen, dort aber kein \"%%%%EndData\""
-"gefunden"
+"\"%%%%BeginData:\" meltete %ld Zeilen, dort aber kein \"%%%%EndData\"gefunden"
 
 #: ../ppr/ppr_dscdoc.c:348
 #, c-format
@@ -837,7 +839,7 @@ msgstr "%s(): seteuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)"
 msgid "%s(): setgroups() failed, errno=%d (%s)"
 msgstr "%s(): setgroups() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppr/ppr_infile.c:1734 ../ppr/ppr_respond.c:137
+#: ../ppr/ppr_infile.c:1738 ../ppr/ppr_respond.c:137
 #, c-format
 msgid "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr "%s(): setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
@@ -847,7 +849,7 @@ msgstr "%s(): setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 msgid "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)"
 msgstr "%s(): setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppr/ppr_infile.c:1729 ../ppr/ppr_respond.c:132
+#: ../ppr/ppr_infile.c:1733 ../ppr/ppr_respond.c:132
 #, c-format
 msgid "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr "%s(): setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
@@ -995,7 +997,7 @@ msgstr "%s: Ungültiger followme Registrierungscode\n"
 msgid "%s: lp -i and -H are not yet implemented\n"
 msgstr "%s: lp -i und -H sind noch nicht implementiert\n"
 
-#: ../ppad/ppad_ppd.c:816 ../ppad/ppad_printer.c:3116
+#: ../ppad/ppad_ppd.c:816 ../ppad/ppad_printer.c:3110
 #, c-format
 msgid "%s: query failed: %s\n"
 msgstr "%s: Abfrage fehlgeschlagen: %s\n"
@@ -1206,6 +1208,7 @@ msgid "1 character follows EOF mark"
 msgstr "1 Zeichen folgt auf EOF"
 
 #: ../ppop/ppop_cmds_other.c:73
+#, c-format
 msgid "1 job was canceled.\n"
 msgstr "1 Druckauftrage wurde abgebrochen\n"
 
@@ -1269,7 +1272,9 @@ msgstr "ACLs: %s\n"
 #: ../samba/ppr2samba.c:431
 #, c-format
 msgid "Absence of \"%s\" indicates that export to Samba is not desired.\n"
-msgstr "Das Nichvorhandensein von \"%s\" zeigt an, das ein Export zu Samba nicht gewünscht wird.\n"
+msgstr ""
+"Das Nichvorhandensein von \"%s\" zeigt an, das ein Export zu Samba nicht "
+"gewünscht wird.\n"
 
 #: ../interfaces/usb.c:447
 #, c-format
@@ -1288,10 +1293,12 @@ msgid "Account lifetime: %d\n"
 msgstr "Gültigkeit des Kontos: %d\n"
 
 #: ../ppad/ppad_media.c:210
+#, c-format
 msgid "Accurate height is required.\n"
 msgstr "Genaue Höhe ist erforderlich.\n"
 
 #: ../ppad/ppad_media.c:167
+#, c-format
 msgid "Accurate width is required.\n"
 msgstr "Genaue Breite ist erforderlich.\n"
 
@@ -1300,7 +1307,7 @@ msgid "Additional help topics:\n"
 msgstr "Weitere Hilfethemen:\n"
 
 #: ../ppad/ppad_alias.c:303 ../ppad/ppad_group.c:845
-#: ../ppad/ppad_printer.c:3082
+#: ../ppad/ppad_printer.c:3076
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr ""
 "Zusätzliche Parameternamen müssen mit einem kleine ASCII Buchstaben "
@@ -1374,7 +1381,7 @@ msgstr "Das Argument für %s muß zwischen 1 und 10 liegen."
 msgid "As Proxy For"
 msgstr "Als Proxy für"
 
-#: ../ppr/ppr_simplify.c:252
+#: ../ppr/ppr_simplify.c:269
 msgid "Attempt to continue non-existent DSC comment"
 msgstr "Versuche nicht existierenden DSC Kommentar fortzusetzen"
 
@@ -1507,7 +1514,7 @@ msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
 msgstr ""
 "Kann temoräre Datei \"%s\" nicht zum schreiben öffnen, Fehlernummer=%d (%s)"
 
-#: ../ppr/ppr_infile.c:2017
+#: ../ppr/ppr_infile.c:2021
 #, c-format
 msgid "Can't print %s.\n"
 msgstr "Kann %s nich drucken.\n"
@@ -1517,10 +1524,11 @@ msgid "Charge"
 msgstr "Kosten"
 
 #: ../ppad/ppad_printer.c:881
+#, c-format
 msgid "Charge: "
 msgstr "Kosten: "
 
-#: ../ppad/ppad_printer.c:2779
+#: ../ppad/ppad_printer.c:2773
 #, c-format
 msgid "Choose 1 thru %d or 0 if unknown> "
 msgstr "Wählen Sie 1 bis %d oder 0 wenn ubekannt>"
@@ -1548,10 +1556,12 @@ msgid "Codes: "
 msgstr "Codes: "
 
 #: ../ppad/ppad_media.c:274
+#, c-format
 msgid "Colour must be specified.\n"
 msgstr "Farbe muß festgelegt werden.\n"
 
 #: ../ppad/ppad_media.c:288
+#, c-format
 msgid "Colour: "
 msgstr "Farbe: "
 
@@ -1603,7 +1613,7 @@ msgstr "Zwänge binden die Spaltenanzahl von %d bis %d.\n"
 msgid "Contact: %s\n"
 msgstr "Kontakt: %s\n"
 
-#: ../ppr/ppr_simplify.c:258
+#: ../ppr/ppr_simplify.c:275
 #, c-format
 msgid "Continued DSC comment \"%s...\" overflows buffer"
 msgstr "Fortgesetzter DSC Kommentar \"%s...\" überfüllt den Buffer"
@@ -1655,10 +1665,12 @@ msgid "Cutoff point: %s\n"
 msgstr "Ablaufsumme: %s\n"
 
 #: ../ppuser/ppuser.c:366
+#, c-format
 msgid "Database error, transaction not processed.\n"
 msgstr "Datenbankfehler, Transaktion abgebrochen.\n"
 
 #: ../ppuser/ppuser.c:239 ../ppuser/ppuser.c:269 ../ppuser/ppuser.c:312
+#, c-format
 msgid "Database error.\n"
 msgstr "Datenbankfehler.\n"
 
@@ -1722,6 +1734,7 @@ msgid "Destination name \"%*s\" is too long.\n"
 msgstr "Name des Ziels \"%*s\" ist zu lang.\n"
 
 #: ../ppop/ppop.c:418
+#, c-format
 msgid "Destination name is empty.\n"
 msgstr "Name des Ziels ist nicht gesetzt.\n"
 
@@ -1731,6 +1744,7 @@ msgid "Destination node name \"%*s\" is too long.\n"
 msgstr "Name des Ziels \"%*s\" ist zu lang.\n"
 
 #: ../ppop/ppop.c:373
+#, c-format
 msgid "Destination node name (the part before the colon) is missing.\n"
 msgstr "Name des Ziels (der Teil vor dem Komma) fehlt.\n"
 
@@ -1753,6 +1767,7 @@ msgid "Document uses DSC version %.1f which is > 3.0"
 msgstr "Das Dokument nutzt DSC Version %.1f, die  > 3.0 ist"
 
 #: ../samba/ppr2samba.c:495
+#, c-format
 msgid "Done.\n"
 msgstr "Beendet.\n"
 
@@ -1774,6 +1789,7 @@ msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr "Fehler beim Lesen von \"%s\", Fehlernummer=%d (%s)"
 
 #: ../ppop/ppop.c:103
+#, c-format
 msgid "Error: "
 msgstr "Fehler:"
 
@@ -1824,6 +1840,7 @@ msgid "Failed to open \"%s\" for write, errno=%d, (%s)"
 msgstr "Konnte \"%s\" nicht zum Schreiben öffnen, Fehlernummer=%d, (%s)"
 
 #: ../ppr/ppr_main.c:313
+#, c-format
 msgid "Failed to open log file, using stderr.\n"
 msgstr "Konnt Logdatei nicht öffnen, nutze STDERR.\n"
 
@@ -1840,18 +1857,22 @@ msgid "Feedback: "
 msgstr "Bidirektional: "
 
 #: ../libuprint/uprint-newconf.c:325
+#, c-format
 msgid "Files for lp should be in their normal locations.\n"
 msgstr "Dateien für lp sollten an ihren normalen Orten sein.\n"
 
 #: ../libuprint/uprint-newconf.c:318
+#, c-format
 msgid "Files for lp should be in their sidelined locations.\n"
 msgstr "Dateien für lp sollten an ihren verschobenen Orten sein.\n"
 
 #: ../libuprint/uprint-newconf.c:342
+#, c-format
 msgid "Files for lpr should be in their normal locations.\n"
 msgstr "Dateien für lpr sollten an ihren normalen Orten sein.\n"
 
 #: ../libuprint/uprint-newconf.c:334
+#, c-format
 msgid "Files for lpr should be in their sidelined locations.\n"
 msgstr "Dateien für lpr sollten an ihren verschobenen Orten sein.\n"
 
@@ -1869,7 +1890,7 @@ msgstr "Für was: %s\n"
 msgid "Fortran files"
 msgstr "Fortrandateien"
 
-#: ../ppr/ppr_simplify.c:219
+#: ../ppr/ppr_simplify.c:236
 #, c-format
 msgid "Found \"%%%%End\" after copying %ld additional bytes"
 msgstr "Entdeckte \"%%%%End\" nach dem Kopieren von %ld weiteren Bytes"
@@ -1947,6 +1968,7 @@ msgid "Header comments section is unterminated"
 msgstr "Kopfzeilenabschnitt ist nicht beendet"
 
 #: ../ppad/ppad_media.c:237
+#, c-format
 msgid "Height: "
 msgstr "Höhe: "
 
@@ -1966,6 +1988,7 @@ msgid "IP address lookup for \"%s\" failed."
 msgstr "IP Adressaflösung für \"%s\" fehlgeschlagen."
 
 #: ../ppad/ppad_media.c:253
+#, c-format
 msgid "If weight is unknown, enter \"0\".\n"
 msgstr "Fall das Gewicht unbekann ist, geben Sie \"0\" ein.\n"
 
@@ -2008,7 +2031,7 @@ msgid "Input file's aspect ratio: %.2f (landscape_asptrigger=%.2f)\n"
 msgstr ""
 "Format der Eingabedatei: %.2f (Seitenverhältnis-Querformatumschalter=%.2f)\n"
 
-#: ../ppr/ppr_simplify.c:103
+#: ../ppr/ppr_simplify.c:120
 #, c-format
 msgid "Insufficent number of arguments on \"%%%%BeginData:\" line"
 msgstr "Ungenügende Zahl von Argumenten in Zeile: \"%%%%BeginData:\""
@@ -2107,8 +2130,9 @@ msgid "Invalid setting for %s"
 msgstr "Ungültiger Wert für %s"
 
 #: ../ppr/ppr_infile.c:241
-msgid "JPEG (JFIF) pictures"
-msgstr "JPEG (JFIF) Bilder"
+#, fuzzy
+msgid "JPEG pictures"
+msgstr "GIF Bilder"
 
 #: ../ppop/ppop_cmds_other.c:1800
 #, c-format
@@ -2254,6 +2278,7 @@ msgid "Media Management:\n"
 msgstr "Druckmedienverwaltung:\n"
 
 #: ../ppad/ppad_media.c:437
+#, c-format
 msgid "Media Name: "
 msgstr "Name der Medien: "
 
@@ -2272,6 +2297,7 @@ msgid "Medium \"%s\" not found.\n"
 msgstr "Druckmedium \"%s\" nicht gefunden.\n"
 
 #: ../ppad/ppad_media.c:146 ../ppad/ppad_media.c:373
+#, c-format
 msgid "Medium Name: "
 msgstr "Name des Mediums: "
 
@@ -2281,6 +2307,7 @@ msgid "Medium Name: %16.16s\n"
 msgstr "Name des Mediums: %16.16s\n"
 
 #: ../ppad/ppad_media.c:464
+#, c-format
 msgid "Medium deleted.\n"
 msgstr "Medium entfernt.\n"
 
@@ -2355,7 +2382,7 @@ msgid "No \"%s\" to move to \"%s\".\n"
 msgstr ""
 "\"%s\" existiert nicht; kann daher nicht nach \"%s\" verschoben werden.\n"
 
-#: ../ppr/ppr_res.c:443
+#: ../ppr/ppr_res.c:442
 #, c-format
 msgid "No %%%%IncludeFont for font \"%s\""
 msgstr "Fehlendes %%%%IncludeFont für Schrift \"%s\""
@@ -2391,6 +2418,7 @@ msgid "No alerts for printer \"%s\".\n"
 msgstr "Keine Warnungen für Drucker \"%s\".\n"
 
 #: ../ppr/ppr_editps.c:278
+#, c-format
 msgid "No matching filter found.\n"
 msgstr "Kein passender Filter gefunden.\n"
 
@@ -2597,6 +2625,7 @@ msgstr ""
 "Kommunikation am Parallelanschluß fehlgeschlagen, Fehlernummer=%d (%s)."
 
 #: ../interfaces/parallel.c:355
+#, c-format
 msgid "Parallel port probing not implemented on this OS.\n"
 msgstr "Test des Parallelanschlusses vom Betriebssystem nicht unterstützt.\n"
 
@@ -2652,6 +2681,7 @@ msgid "Portrait printable area: %.2fpsu x %.2fpsu\n"
 msgstr "Druckbarer Bereich im Hochformat: %.2fpsu x %.2fpsu\n"
 
 #: ../ppad/ppad_media.c:317
+#, c-format
 msgid "Pre-printed Form Type: "
 msgstr "Vorgedrucker Formulartyp: "
 
@@ -2767,6 +2797,7 @@ msgid "Printer turned off or disconnected while printing."
 msgstr "Drucker wurde beim Drucken ausgeschalten oder getrennt."
 
 #: ../interfaces/parallel.c:365 ../interfaces/usb.c:451
+#, c-format
 msgid "Probe failed.\n"
 msgstr "Test fehlgeschlagen.\n"
 
@@ -2780,14 +2811,15 @@ msgstr "Test fehlgeschlagen: %s\n"
 msgid "Probing not implemented for port \"%s\".\n"
 msgstr "Test für Anschluß \"%s\" nicht implementiert.\n"
 
-#: ../ppr/ppr_res.c:157
+#: ../ppr/ppr_res.c:156
 #, c-format
 msgid "Procset \"%s\" has no version and revision numbers"
 msgstr "Fehlende Versions- und Revisionsnummer in Procset \"%s\""
 
 #: ../ppop/ppop_cmds_listq.c:649
+#, c-format
 msgid "Queue ID        For                      Time      Pgs Status\n"
-msgstr "Warteschlange    Für                      Zeit      Seiten Status\n"
+msgstr "Warteschlange   Für                      Zeit      Stn Status\n"
 
 #: ../ppad/ppad_printer.c:811
 #, c-format
@@ -2799,12 +2831,13 @@ msgstr "RIP: %s %s \"%s\"\n"
 msgid "RIP: %s %s \"%s\" (from PPD)\n"
 msgstr "RIP: %s %s \"%s\" (from PPD)\n"
 
-#: ../ppr/ppr_simplify.c:207
+#: ../ppr/ppr_simplify.c:224
 #, c-format
 msgid "Ran off end of file after %ld bytes while searching for \"%%%%End\""
 msgstr "Bei der Suche nach \"%%%%End\" nach %ld Bytes EOF überschritten"
 
 #: ../ppad/ppad_media.c:324
+#, c-format
 msgid "Rank on a scale of 1 to 10, with 1 being entirely unsuitable.\n"
 msgstr "Skala von 1 bis 10, wobei 1 vollkommen ungeeignet bedeutet.\n"
 
@@ -2819,10 +2852,12 @@ msgid "Raw PJL Status: %s"
 msgstr "Raw PJL Status: %s"
 
 #: ../ppop/ppop_cmds_other.c:413
+#, c-format
 msgid "Raw SNMP Status: "
 msgstr "Raw SNMP Status: "
 
 #: ../ppad/ppad_media.c:296
+#, c-format
 msgid ""
 "Recomended types are:\t 19HoleCerlox, 3Hole, 2Hole,\n"
 "\tColorTransparency, CorpLetterHead, CorpLogo,\n"
@@ -2925,51 +2960,52 @@ msgstr "Angefordertes Druckmedium ist nicht in der Mediendatenbank aufgeführt"
 msgid "Resorting to backup server \"%s\"."
 msgstr "Umsortieren für Backupserver: \"%s\"."
 
-#: ../ppr/ppr_res.c:462
+#: ../ppr/ppr_res.c:461
 #, c-format
 msgid "Resource \"%s\" has an %%%%Include but isn't listed as needed"
 msgstr ""
 "Ressource \"%s\" hat einen %%%%Include Kopf, ist aber nicht als notwendig "
 "aufgeführt"
 
-#: ../ppr/ppr_res.c:367
+#: ../ppr/ppr_res.c:366
 #, c-format
 msgid "Resource \"%s\" has both %%%%Include and %%%%Begin"
 msgstr ""
 "Ressourece \"%s\" hat sowohl einen %%%%Include als auch einen %%%%Begin Kopf"
 
-#: ../ppr/ppr_res.c:448
+#: ../ppr/ppr_res.c:447
 #, c-format
 msgid "Resource \"%s\" has no %%%%Begin or %%%%Include"
 msgstr ""
 "Ressourece \"%s\" hat weder einen %%%%Include noch einen %%%%Begin Kopf"
 
-#: ../ppr/ppr_res.c:475
+#: ../ppr/ppr_res.c:474
 #, c-format
 msgid "Resource \"%s\" is supplied but isn't listed as supplied"
 msgstr ""
 "Ressource \"%s\" wird mitgeliefert, ist aber nicht als mitgeliefert vermerkt"
 
-#: ../ppr/ppr_res.c:381
+#: ../ppr/ppr_res.c:380
 #, c-format
 msgid "Resource \"%s\" listed as both supplied and needed"
 msgstr ""
 "Ressource \"%s\" ist als sowohl als mitgeliefert als auch als benötigt "
 "vermerkt"
 
-#: ../ppr/ppr_res.c:409
+#: ../ppr/ppr_res.c:408
 #, c-format
 msgid "Resource \"%s\" listed as needed but there is no %%%%Include"
 msgstr ""
 "Ressource \"%s\" ist als benötit vermerkt, hat aber keinen %%%%Include Kopf"
 
-#: ../ppr/ppr_res.c:393
+#: ../ppr/ppr_res.c:392
 #, c-format
 msgid "Resource \"%s\" listed as supplied but it isn't actually supplied"
 msgstr ""
 "Ressource \"%s\" ist als mitgeliefert vermerkt, wird aber nicht mitgeliefert"
 
 #: ../libuprint/uprint-newconf.c:308
+#, c-format
 msgid "Restoring original spooler program names:\n"
 msgstr "Stelle originale Spoolerprogrammnamen wieder her:\n"
 
@@ -3015,20 +3051,20 @@ msgstr ""
 
 #: ../samba/ppr2samba.c:294
 #, fuzzy, c-format
-msgid "Skipping alias \"%s\": %s"
+msgid "Skipping alias \"%s\": %s\n"
 msgstr "überspringe Alias \"%s\": %s"
 
 #: ../samba/ppr2samba.c:297
 #, fuzzy, c-format
-msgid "Skipping group \"%s\": %s"
+msgid "Skipping group \"%s\": %s\n"
 msgstr "überspringe Gruppe \"%s\": %s"
 
 #: ../samba/ppr2samba.c:300
 #, fuzzy, c-format
-msgid "Skipping printer \"%s\": %s"
+msgid "Skipping printer \"%s\": %s\n"
 msgstr "überspringe Drucker \"%s\": %s"
 
-#: ../ppr/ppr_simplify.c:375
+#: ../ppr/ppr_simplify.c:392
 #, c-format
 msgid "Space missing after keyword \"%.*s\""
 msgstr "Fehlendes Leerzeichen nach Schlüsselwort \"%.*s\""
@@ -3063,6 +3099,7 @@ msgid "Status"
 msgstr "Status"
 
 #: ../ppad/ppad_media.c:343
+#, c-format
 msgid "Suitability for banners and trailers: "
 msgstr "Eignung für Start- und Endseiten: "
 
@@ -3286,11 +3323,11 @@ msgstr ""
 "vereinbar\n"
 "mit dem PPR Interface \"%s\"."
 
-#: ../ppad/ppad_printer.c:3054
+#: ../ppad/ppad_printer.c:3048
 msgid "The limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das Limit muß 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
-#: ../ppad/ppad_printer.c:2906 ../ppad/ppad_printer.c:2942
+#: ../ppad/ppad_printer.c:2900 ../ppad/ppad_printer.c:2936
 msgid "The lower limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 "Das untere Limit muß 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
@@ -3368,7 +3405,7 @@ msgstr ""
 msgid "The queue id \"%s\" is too long."
 msgstr "Der Warteschlangenname \"%s\" ist zu lang."
 
-#: ../ppad/ppad_printer.c:2912 ../ppad/ppad_printer.c:2948
+#: ../ppad/ppad_printer.c:2906 ../ppad/ppad_printer.c:2942
 msgid "The upper limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das obere Limit muß 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
@@ -3423,6 +3460,7 @@ msgid "There is no printer called \"%s\""
 msgstr "Es gibt keinen Drucker \"%s\""
 
 #: ../ppop/ppop_cmds_other.c:70
+#, c-format
 msgid "There were no jobs to cancel.\n"
 msgstr "Es gibt keine Aufträge zu löschen.\n"
 
@@ -3449,6 +3487,7 @@ msgid "This program must be setuid and owned by \"%s\""
 msgstr "Dieses Programm muß setuid sein und von \"%s\" besessen werden"
 
 #: ../libuprint/uprint-newconf.c:301
+#, c-format
 msgid ""
 "This system uses /etc/alternatives.  Using uprint-newconf\n"
 "is not advised and it will not run without --force or --remove.\n"
@@ -3524,6 +3563,7 @@ msgid "USB port communication failed, errno=%d (%s)."
 msgstr "USB Port Kommunikation fehlgeschlagen, Fehlernummer=%d (%s)."
 
 #: ../interfaces/usb.c:438
+#, c-format
 msgid "USB port probing not implemented on this OS.\n"
 msgstr "USB Port testen wird von diesem Betriebssystem nicht unterstützt.\n"
 
@@ -3540,11 +3580,11 @@ msgstr "Nichtabgeschlossene Quotierung"
 msgid "Unclosed resource or resources"
 msgstr "Nichtabgeschlossene Ressoure(n)"
 
-#: ../ppr/ppr_simplify.c:298
+#: ../ppr/ppr_simplify.c:315
 msgid "Unenclosed EPS file, applying badeps hack"
 msgstr "Nichtabgeschlossene EPS-Datei, nutze badeps"
 
-#: ../ppr/ppr_simplify.c:308
+#: ../ppr/ppr_simplify.c:325
 msgid ""
 "Unenclosed EPS file, try -H badeps\n"
 "\t(Expect additional semi-spurious warnings due to this problem.)"
@@ -3604,7 +3644,7 @@ msgstr "Unrecognized %s option: %s"
 msgid "Unrecognized .ppr header line: %s %s"
 msgstr "Unbekannter .ppr Kopf: %s %s"
 
-#: ../ppr/ppr_simplify.c:232
+#: ../ppr/ppr_simplify.c:249
 #, c-format
 msgid "Unrecognized data type \"%s\" in \"%%%%BeginData:\""
 msgstr "Unbekannter Datentyp \"%s\" in \"%%%%BeginData:\""
@@ -3696,6 +3736,7 @@ msgstr ""
 "\tppuser correction <Nutzer> Betrag\n"
 
 #: ../ppuser/ppuser.c:256
+#, c-format
 msgid ""
 "Usage:\n"
 "\tppuser delete '<user name>'\n"
@@ -3704,6 +3745,7 @@ msgstr ""
 "\tppuser delete '<Nutzer>'\n"
 
 #: ../ppuser/ppuser.c:284
+#, c-format
 msgid ""
 "Usage:\n"
 "\tppuser show '<user name>'\n"
@@ -3904,6 +3946,7 @@ msgstr ""
 "Dieser Befehl setzt die Eigenschaften eines existierenden Auftrages.\n"
 
 #: ../ppop/ppop_cmds_other.c:807
+#, c-format
 msgid "Usage: ppop mount <printer> <bin> <medium>\n"
 msgstr "Benutzung: ppop mount <Drucker> <Einzug> <Medium>\n"
 
@@ -3994,6 +4037,7 @@ msgstr ""
 "Dieser Befehl startet einen zuvor angehaltenen Drucker.\n"
 
 #: ../ppop/ppop_cmds_other.c:515
+#, c-format
 msgid "Usage: ppop status {<printer>, <group>, all}\n"
 msgstr "Benutzung: ppop status {<Drucker>, <Gruppe>, all}\n"
 
@@ -4107,7 +4151,7 @@ msgstr "Der Wert für die Option \"%s=\" muß boolean (wahr/falsch) sein"
 msgid "Value is not among those allowed."
 msgstr "Der Wert ist nicht erlaubt."
 
-#: ../ppad/ppad_printer.c:2977
+#: ../ppad/ppad_printer.c:2971
 msgid "Value is not boolean.\n"
 msgstr "Der Wert ist nicht boolean (wahr/falsch)\n"
 
@@ -4141,12 +4185,13 @@ msgstr ""
 msgid "Value of option \"%s=\" contains illegal characters."
 msgstr "Der Wert für die Option \"%s=\" enthält nichterlaubte Zeichen."
 
-#: ../ppad/ppad_printer.c:2768
+#: ../ppad/ppad_printer.c:2762
 #, c-format
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr "Der Wert für \"%s\" ist nicht erlaubt.\n"
 
 #: ../lprsrv/lprsrv-test.c:76 ../ppr/ppr_main.c:323
+#, c-format
 msgid "WARNING: "
 msgstr "WARNUNG:"
 
@@ -4155,12 +4200,13 @@ msgstr "WARNUNG:"
 msgid "WARNING: Unclosed UI block \"%s\" in PPD file.\n"
 msgstr "WARNUNG: Nichtabgeschlossener UI Abschnitt \"%s\" in PPD Datei.\n"
 
-#: ../ppad/ppad_printer.c:2826
+#: ../ppad/ppad_printer.c:2820
 #, c-format
 msgid "WARNING: Unclosed UI block in PPD file: \"%s\".\n"
 msgstr "WARNUNG: Nichtabgeschlossener UI Abschnitt in PPD Datei: \"%s\".\n"
 
 #: ../ppad/ppad_printer.c:649
+#, c-format
 msgid "WARNING: can't parse RIP information in PPD file\n"
 msgstr "WARNUNG: Kann RIP Information in PPD Datei nicht finden\n"
 
@@ -4169,26 +4215,29 @@ msgstr "WARNUNG: Kann RIP Information in PPD Datei nicht finden\n"
 msgid "WARNING: invalid \"%s\" setting: %s\n"
 msgstr "WARNUNG: Ungültige \"%s\" Angabe %s\n"
 
-#: ../ppad/ppad_printer.c:2731
+#: ../ppad/ppad_printer.c:2725
 msgid "WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"
 msgstr "WARNUNG: Nichtpassendes \"*OpenUI\", \"*CloseUI\" in PPD Datei.\n"
 
 #: ../ppad/ppad_conf.c:111
+#, c-format
 msgid "Waiting for lock to clear.\n"
 msgstr "Warte auf Aufhebung der Sperre.\n"
 
-#: ../ppad/ppad_printer.c:2764
+#: ../ppad/ppad_printer.c:2758
 #, c-format
 msgid "Warning:\t No value provided for \"%s\".\n"
 msgstr "Warnung:\t Kein Wert für \"%s\" angegeben.\n"
 
 #: ../filter_lp/filter_lp.c:1798
+#, c-format
 msgid "Warning:\t maxlines equals minlines, therefore page length is fixed.\n"
 msgstr ""
 "Warnung:\t maxlines und minlines sind gleich, daher ist die Seitenlänge "
 "festgelegt.\n"
 
 #: ../filter_lp/filter_lp.c:1793
+#, c-format
 msgid ""
 "Warning:\t maxwidth is less than lanscape_lentrigger,\n"
 "\t\t files w/out FF will never be printed in landscape.\n"
@@ -4197,6 +4246,7 @@ msgstr ""
 "\t\t Dateien mit/ohne FF können nicht im Querformat gedruckt werden.\n"
 
 #: ../filter_lp/filter_lp.c:1788
+#, c-format
 msgid ""
 "Warning:\t mincolumns is greater than landscape_lentrigger,\n"
 "\t\t files w/out FF will always be printed in landscape.\n"
@@ -4253,6 +4303,7 @@ msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: zu wenige Felder\n"
 
 #: ../ppad/ppad_media.c:264
+#, c-format
 msgid "Weight (grams per square metre): "
 msgstr "Masse (Gramm je Quadratmeter): "
 
@@ -4267,6 +4318,7 @@ msgid "Weight: (%.1f grams per square metre) "
 msgstr "Masse: (%.1f Gramm je Quadratmeter) "
 
 #: ../ppad/ppad_media.c:194
+#, c-format
 msgid "Width: "
 msgstr "Breite: "
 
@@ -4328,6 +4380,7 @@ msgstr ""
 "da Sie kein PPR Nutzeraccount Administrator sind.\n"
 
 #: ../ppop/ppop.c:1286
+#, c-format
 msgid "You aren't allowed to use the --su option.\n"
 msgstr "Sie dürfen die Option --su nicht nutzen.\n"
 
@@ -4346,6 +4399,7 @@ msgstr ""
 "da Sie nicht root sind."
 
 #: ../ppop/ppop_cmds_other.c:68
+#, c-format
 msgid "You had no jobs to cancel.\n"
 msgstr "Sie haben keine Aufträge zum Löschen.\n"
 
@@ -4437,7 +4491,7 @@ msgstr ""
 "Sie müssen eine neue oder existierende Gruppe und null oder mehr\n"
 "Drucker zum Hinzufügen angeben.\n"
 
-#: ../ppad/ppad_printer.c:3001
+#: ../ppad/ppad_printer.c:2995
 msgid ""
 "You must specify a printer and a (possibly empty) list\n"
 "of PPR access control lists.\n"
@@ -4461,7 +4515,7 @@ msgstr ""
 "Sie müssen einen Drucker und ein oder mehrere Einzüge zum Entfernen "
 "angeben.\n"
 
-#: ../ppad/ppad_printer.c:2970
+#: ../ppad/ppad_printer.c:2964
 msgid "You must specify a printer and a boolean value.\n"
 msgstr ""
 "Sie müssen einen Drucker und einen boolean (wahr/falsch) Wert angeben.\n"
@@ -4519,7 +4573,7 @@ msgstr ""
 "Sie müssen eine Warnfrequenz, wie \"7\", eine Warnmethode,\n"
 "wie \"mail\", und eine Warnaddresse, wie \"alertreaders\" angeben.\n"
 
-#: ../ppad/ppad_printer.c:3100
+#: ../ppad/ppad_printer.c:3094
 msgid "You must supply only the name of an existing printer.\n"
 msgstr "Sie dürfen nur den Namen eines existierenden Druckers angeben.\n"
 
@@ -4581,7 +4635,7 @@ msgstr ""
 msgid "You must supply the name of a printer.\n"
 msgstr "Sie müssen den Namen eines Druckers angeben.\n"
 
-#: ../ppad/ppad_printer.c:3024
+#: ../ppad/ppad_printer.c:3018
 msgid ""
 "You must supply the name of a printer.  You may also supply a new\n"
 "quoted, space delimited list of name=value pairs.  If you don't\n"
@@ -4709,7 +4763,7 @@ msgstr ""
 "pjl\",\n"
 "\"save/restore\", \"newinterface\", und \"default\".\n"
 
-#: ../ppad/ppad_printer.c:3047
+#: ../ppad/ppad_printer.c:3041
 msgid ""
 "You must supply the name of an existing printer and the maximum number of\n"
 "seconds to allow per page.\n"
@@ -4717,7 +4771,7 @@ msgstr ""
 "Sie müssen den Namen eines existierenden Druckers und die maximale\n"
 "Zeit in Sekunden pro Seite angeben.\n"
 
-#: ../ppad/ppad_printer.c:2934
+#: ../ppad/ppad_printer.c:2928
 msgid ""
 "You must supply the name of an existing printer and the minimum and maximum "
 "number\n"
@@ -4730,7 +4784,7 @@ msgstr ""
 "Größe des zu druckenden Dokumentes angeben. Um die Limits zu löschen,\n"
 "geben Sie 0 ein.\n"
 
-#: ../ppad/ppad_printer.c:2898
+#: ../ppad/ppad_printer.c:2892
 msgid ""
 "You must supply the name of an existing printer and the minimum and maximum "
 "number\n"
@@ -4754,7 +4808,7 @@ msgstr ""
 "Start- und Endseitenoption angeben. Erlaubte Start- und Endseitenoptionen\n"
 "sind \"never\", \"no\", \"yes\" und \"always\".\n"
 
-#: ../ppad/ppad_printer.c:3074
+#: ../ppad/ppad_printer.c:3068
 msgid ""
 "You must supply the name of an existing printer, the name of an addon\n"
 "parameter.  A value for the parameter is optional.  If you do not\n"
@@ -4843,7 +4897,7 @@ msgstr "Kann PPD Datei \"%s\" nicht öffnen, Fehlernummer=%d (%s)\n"
 msgid "can't open config file"
 msgstr "Kann Konfigurationsdatei nicht öffnen."
 
-#: ../ppr/ppr_infile.c:2413
+#: ../ppr/ppr_infile.c:2417
 #, c-format
 msgid "can't open input file \"%s\", %s"
 msgstr "Kann Datei \"%s\" nicht öffnen, %s"
@@ -4937,6 +4991,11 @@ msgstr "Datei ist eine Troff Quelle"
 msgid "file is a GIF compressed picture"
 msgstr "Datei ist ein GIF komprimiertes Bild"
 
+#: ../ppr/ppr_infile.c:241
+#, fuzzy
+msgid "file is a JPEG compressed picture"
+msgstr "Datei ist ein GIF komprimiertes Bild"
+
 #: ../ppr/ppr_infile.c:220
 msgid "file is a Mentor Graphics Plot Metafile"
 msgstr "Datei ist eine Mentor Graphics Plot Metadatei"
@@ -4996,10 +5055,6 @@ msgstr "Datei ist im FIG Format"
 #: ../ppr/ppr_infile.c:236
 msgid "file is in HTML format"
 msgstr "Datei ist im HTML Format"
-
-#: ../ppr/ppr_infile.c:241
-msgid "file is in JPEG File Interchange Format"
-msgstr "Datei ist im JPEG Dateiaustausch Format"
 
 #: ../ppr/ppr_infile.c:252
 msgid "file is in Portable Network Graphics format"
@@ -5116,7 +5171,7 @@ msgstr "beschäftigt"
 msgid "input file is PostScript"
 msgstr "Eingabedatei ist PostScript"
 
-#: ../ppr/ppr_infile.c:2234 ../ppr/ppr_infile.c:2343
+#: ../ppr/ppr_infile.c:2238 ../ppr/ppr_infile.c:2347
 #, c-format
 msgid "input file read error, errno=%d (%s)"
 msgstr "Fehler beim Lesen der Eingabedatei, Fehlernummer=%d (%s)"
@@ -5215,6 +5270,7 @@ msgid "no"
 msgstr "nein"
 
 #: ../ppad/ppad_printer.c:884
+#, c-format
 msgid "no charge\n"
 msgstr "keine Kosten\n"
 
@@ -5816,7 +5872,7 @@ msgstr "auf \"=\" darf in Filteroptionen kein Leerzeichen folgen"
 msgid "spaces may not precede \"=\" in filter options"
 msgstr "\"=\" darf in Filteroptionen keinem Leerzeichen folgen"
 
-#: ../ppr/ppr_infile.c:2510
+#: ../ppr/ppr_infile.c:2514
 msgid "spurious leading ^D"
 msgstr "falsches anführendes ^D"
 
@@ -5972,6 +6028,12 @@ msgstr "aufwärmen"
 #: ../ppad/ppad_printer.c:916 ../ppop/ppop_cmds_other.c:1640
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "JPEG (JFIF) pictures"
+#~ msgstr "JPEG (JFIF) Bilder"
+
+#~ msgid "file is in JPEG File Interchange Format"
+#~ msgstr "Datei ist im JPEG Dateiaustausch Format"
 
 #~ msgid "From Type: %16.16s\n"
 #~ msgstr "Vom Typ: %16.16s\n"

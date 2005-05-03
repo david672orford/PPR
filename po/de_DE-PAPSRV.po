@@ -7,10 +7,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2004-10-21 18:11+0200\n"
-"PO-Revision-Date: 2004-10-21 18:15+0200\n"
-"Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
+"Report-Msgid-Bugs-To: Jan Kohnert <jan@jankoh.dyndns.org>\n"
+"POT-Creation-Date: 2005-05-03 02:04+0200\n"
+"PO-Revision-Date: 2005-05-03 02:30+0200\n"
+"Last-Translator: Jan Kohnert <jan@jankoh.dyndns.org>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
@@ -37,96 +37,97 @@ msgid "Waiting while %s shuts down..."
 msgstr "Warte auf Beenden von %s..."
 
 #: ../papsrv/papsrv.c:694
+#, c-format
 msgid "Shutdown complete.\n"
 msgstr "Beendet.\n"
 
-#: ../papsrv/papsrv_conf.c:184
+#: ../papsrv/papsrv_conf.c:201
 #, c-format
 msgid "Printer \"%s\" has no \"PPDFile\" line in its config file"
 msgstr ""
 "Der Drucker \"%s\" hat keine Zeile \"PPDFile\" in seiner Konfigurationsdatei"
 
-#: ../papsrv/papsrv_conf.c:232
+#: ../papsrv/papsrv_conf.c:249
 #, c-format
 msgid "group \"%s\" member \"%s\" does not exist (%s line %d)"
 msgstr "Gruppe \"%s\", Mitglied \"%s\" existiert nicht (%s, Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:288
+#: ../papsrv/papsrv_conf.c:305
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr "Kann \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
 
-#: ../papsrv/papsrv_conf.c:346
+#: ../papsrv/papsrv_conf.c:363
 #, c-format
 msgid "Can't open configuration file \"%s\", errno=%d (%s)"
 msgstr "Kann \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
 
-#: ../papsrv/papsrv_conf.c:393
+#: ../papsrv/papsrv_conf.c:410
 msgid "Too many advertised names in config file"
 msgstr "Zuviele inserierte Namen in Konfigurationsdatei"
 
-#: ../papsrv/papsrv_conf.c:441
+#: ../papsrv/papsrv_conf.c:458
 #, c-format
 msgid "AppleTalk name too long (line %d)"
 msgstr "AppleTalk Name zu lang (Zeile %s)"
 
-#: ../papsrv/papsrv_conf.c:452
+#: ../papsrv/papsrv_conf.c:469
 #, c-format
 msgid "AppleTalk name \"type\" element too long (line %d)"
 msgstr "Das Element \"type\" im AppleTalk Namen ist zu lang (Zeile %s)"
 
-#: ../papsrv/papsrv_conf.c:468
+#: ../papsrv/papsrv_conf.c:485
 #, c-format
 msgid "AppleTalk name \"zone\" element too long (line %d)"
 msgstr "Das Element \"zone\" im AppleTalk Namen ist zu lang (Zeile %s)"
 
-#: ../papsrv/papsrv_conf.c:492
+#: ../papsrv/papsrv_conf.c:509
 #, c-format
 msgid "Duplicate \"PPRname\" line (line %d)"
 msgstr "Doppelte Zeile \"PPRname\" (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:517
+#: ../papsrv/papsrv_conf.c:534
 #, c-format
 msgid "\"%s\" is not a printer or group (line %d)"
 msgstr "\"%s\" ist weder eine Gruppe noch ein Drucker (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:532
+#: ../papsrv/papsrv_conf.c:549
 #, c-format
 msgid "\"PPRname\" must be first line in record (line %d)"
 msgstr "\"PPRname\" muß in der ersten Zeile des Abschnitts stehen (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:538
+#: ../papsrv/papsrv_conf.c:555
 #, c-format
 msgid "Duplicate or unnecessary \"PPDFile\" line (line %d)"
 msgstr "Doppelte oder unnötige Zeile \"PPDFile\" (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:545
+#: ../papsrv/papsrv_conf.c:562
 #, c-format
 msgid "You must put a \"PPDFile\" line here (line %d)"
 msgstr "Sie müssen hier eine Zeile \"PPDFile\" einfügen (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:558
+#: ../papsrv/papsrv_conf.c:575
 #, c-format
 msgid "\"BinaryOK\" option must be \"true\" or \"false\" (line %d)"
 msgstr ""
 "Die Option \"BinaryOK\" darf nur \"true\" oder \"false\" sein (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:565
+#: ../papsrv/papsrv_conf.c:582
 #, c-format
 msgid "\"LanguageLevel\" must be a positive integer (line %d)"
 msgstr "\"LanguageLevel\" muß eine positive Ganzzahl sein (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:602
+#: ../papsrv/papsrv_conf.c:619
 #, c-format
 msgid "\"ForceAUFSSecurity\" must be \"true\" or \"false\" (line %d)"
 msgstr "\"ForceAUFSSecurity\" darf nur \"true\" oder \"false\" sein (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:604
+#: ../papsrv/papsrv_conf.c:621
 msgid "\"ForceAUFSSecurity\" option TRUE when no -X switch used"
 msgstr ""
 "Die Option \"ForceAUFSSecurity\"  ist TRUE wenn -X nicht verwendet wird"
 
-#: ../papsrv/papsrv_conf.c:617
+#: ../papsrv/papsrv_conf.c:634
 #, c-format
 msgid ""
 "\"AUFSSecurityFor\" must be \"DSC\", \"username\", or \"realname\" (line %d)"
@@ -134,7 +135,7 @@ msgstr ""
 "\"AUFSSecurityFor\" darf nur \"DSC\", \"username\", oder \"realname\" sein "
 "(Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:620
+#: ../papsrv/papsrv_conf.c:637
 #, c-format
 msgid ""
 "If the -X switch is not used then \"AUFSSecurityName\" must be \"DSC\" (line "
@@ -142,22 +143,22 @@ msgid ""
 msgstr ""
 "Wenn -X nicht genutzt wird, muß \"AUFSSecurityName\"  \"DSC\" sein (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:628
+#: ../papsrv/papsrv_conf.c:645
 #, c-format
 msgid "\"RAMSize\" option must be a positive integer (line %d)"
 msgstr "Die Option \"RAMSize\" nuß eine positive Ganzzahl sein (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:636
+#: ../papsrv/papsrv_conf.c:653
 #, c-format
 msgid "\"QueryFontCache\" option must be \"true\" or \"false\" (line %d)"
 msgstr "\"QueryFontCache\" darf nur \"true\" oder \"false\" sein (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:669
+#: ../papsrv/papsrv_conf.c:686
 #, c-format
 msgid "Unmatched double quote in \"PPRparms\" line (line %d)"
 msgstr "Nichtabgeschlossene Doppelquotierung in \"PPRparms\"  (Zeile %d)"
 
-#: ../papsrv/papsrv_conf.c:677
+#: ../papsrv/papsrv_conf.c:694
 #, c-format
 msgid "Unmatched single quote in \"PPRparms\" line (line %d)"
 msgstr "Nichtabgeschlossene Quotierung in \"PPRparms\"  (Zeile %d)"
