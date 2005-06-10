@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libscript/file_outdated.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 October 2003.
+** Last modified 26 May 2005.
 */
 
 /*
@@ -49,13 +49,13 @@ int main(int argc, char *argv[])
 	/* The depending name file is mandatory. */
 	if(argc < 2)
 		{
-		fprintf(stderr, "%s: Usage: file_outdated <file> <master> ...\n", myname);
+		fprintf(stderr, "%s: Usage: file_outdated <derived_file> <master_file> ...\n", myname);
 		return 1;
 		}
 
 	if(stat(argv[1], &statbuf_depending) == -1)
 		{
-		fprintf(stdout, "%s: Target file \"%s\" does not exist.\n", myname, argv[1]);
+		fprintf(stdout, "%s: Master file \"%s\" does not exist.\n", myname, argv[1]);
 		return 0;
 		}
 
@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
 		{
 		if(stat(argv[x], &statbuf_source) == -1)
 			{
-			fprintf(stderr, "%s: Source file \"%s\" does not exist.\n", myname, argv[x]);
+			fprintf(stderr, "%s: Master file \"%s\" does not exist.\n", myname, argv[x]);
 			return 0;
 			}
 
 		if(statbuf_source.st_mtime >= statbuf_depending.st_mtime)
 			{
-			fprintf(stdout, "%s: Source file \"%s\" is newer than \"%s\".\n", myname, argv[x], argv[1]);
+			/* fprintf(stdout, "%s: Master file \"%s\" is newer than dependent file \"%s\".\n", myname, argv[x], argv[1]); */
 			return 0;
 			}
 		}

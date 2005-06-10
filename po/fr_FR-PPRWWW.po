@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-07 17:25-0400\n"
+"POT-Creation-Date: 2005-06-10 15:53-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -14,19 +14,19 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../www/about.cgi.perl:56 ../www/cgi_widgets.pl:247
+#: ../www/about.cgi.perl:56 ../www/cgi_menu.pl:86
 msgid "About PPR"
 msgstr ""
 
 #: ../www/about.cgi.perl:96 ../www/login_cookie.cgi.perl:103
-#: ../www/login_cookie.cgi.perl:157 ../www/show_jobs.cgi.perl:417
+#: ../www/login_cookie.cgi.perl:157 ../www/show_jobs.cgi.perl:418
 msgid "Close"
 msgstr "Fermer"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
 #: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
-#: ../www/show_jobs.cgi.perl:386 ../www/show_jobs.cgi.perl:417
-#: ../www/show_queues.cgi.perl:188 ../www/show_queues.cgi.perl:218
+#: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
+#: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
 msgstr ""
 
@@ -77,14 +77,14 @@ msgid "The alias \"%s\" already exists!"
 msgstr "L'imprimante \"%s\" existe déjà !"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
-#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:337
+#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:118
 #: ../www/prn_addwiz.cgi.perl:819 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "_Annuler"
 
-#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:337
+#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:118
 msgid "_Next"
@@ -131,7 +131,7 @@ msgstr "Description :"
 msgid "You must supply a description!"
 msgstr "Vous devez fournir une description !"
 
-#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:337
+#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:344
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:819
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"
@@ -167,8 +167,8 @@ msgstr ""
 #: ../www/cliconf.cgi.perl:191 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:180 ../www/prn_addwiz.cgi.perl:866
 #: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
-#: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:386
-#: ../www/show_queues.cgi.perl:188 ../www/show_queues.cgi.perl:218
+#: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
+#: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
 msgstr "_Fermer"
 
@@ -268,6 +268,119 @@ msgstr "Sauvegarde des modifications :"
 msgid "PPR: Alias Properties: %s"
 msgstr "PPR : propriétés de l'imprimante : %s"
 
+#: ../www/cgi_menu.pl:37
+msgid "Tools"
+msgstr ""
+
+#: ../www/cgi_menu.pl:38 ../www/show_queues.cgi.perl:217
+msgid "Cookie Login"
+msgstr "Login par cookie"
+
+#: ../www/cgi_menu.pl:39 ../www/show_queues.cgi.perl:217
+msgid "Use this if your browser doesn't support Digest authentication."
+msgstr ""
+
+#: ../www/cgi_menu.pl:40
+msgid "Spooler Logs"
+msgstr ""
+
+#: ../www/cgi_menu.pl:41
+msgid "Open a window with links to the spooler log files."
+msgstr ""
+
+#: ../www/cgi_menu.pl:42
+#, fuzzy
+msgid "Disk Space"
+msgstr "Utilisation de l'espace disque sur %s"
+
+#: ../www/cgi_menu.pl:43
+msgid "Display information about free disk space on the print server."
+msgstr ""
+
+#: ../www/cgi_menu.pl:44
+msgid "Tests"
+msgstr ""
+
+#: ../www/cgi_menu.pl:45
+msgid "Open a window with links to test scripts."
+msgstr ""
+
+#: ../www/cgi_menu.pl:52
+msgid "Window"
+msgstr ""
+
+#: ../www/cgi_menu.pl:53
+#, fuzzy
+msgid "Queues"
+msgstr "Voir la file"
+
+#: ../www/cgi_menu.pl:54
+msgid "Open a window with an icon for each queue."
+msgstr ""
+
+#: ../www/cgi_menu.pl:55
+msgid "All Jobs"
+msgstr ""
+
+#: ../www/cgi_menu.pl:56
+msgid "Open a window which lists all jobs."
+msgstr ""
+
+#: ../www/cgi_menu.pl:61
+#, fuzzy, perl-format
+msgid "Control %s"
+msgstr "contrôle-d"
+
+#: ../www/cgi_menu.pl:62
+msgid "Monitor, start, stop, and mount forms on the printer."
+msgstr ""
+
+#: ../www/cgi_menu.pl:63 ../www/cgi_menu.pl:70
+#, fuzzy, perl-format
+msgid "Properties of %s"
+msgstr "PPR : propriétés du groupe : %s"
+
+#: ../www/cgi_menu.pl:64
+msgid "Examine and change the configuration of the printer."
+msgstr ""
+
+#: ../www/cgi_menu.pl:68
+#, perl-format
+msgid "Control %s members"
+msgstr ""
+
+#: ../www/cgi_menu.pl:69
+msgid "Monitor, start, stop, and mount forms on the member printers."
+msgstr ""
+
+#: ../www/cgi_menu.pl:71
+msgid "Examine and change the configuration of the group."
+msgstr ""
+
+#: ../www/cgi_menu.pl:81 ../www/cgi_widgets.pl:249
+msgid "Help"
+msgstr ""
+
+#: ../www/cgi_menu.pl:82
+msgid "For This Window"
+msgstr ""
+
+#: ../www/cgi_menu.pl:83
+msgid "Display the help document for this program in a web browser window"
+msgstr ""
+
+#: ../www/cgi_menu.pl:84
+msgid "All PPR Documents"
+msgstr ""
+
+#: ../www/cgi_menu.pl:85
+msgid "Open the PPR documentation index in a web browser window"
+msgstr ""
+
+#: ../www/cgi_menu.pl:87
+msgid "Display PPR version information"
+msgstr ""
+
 #: ../www/cgi_tabbed.pl:88
 msgid "The load function for this dialog failed with the following error message:"
 msgstr "La fonction de chargement de ce dialogue a échoué avec le message d'erreur suivant :"
@@ -300,119 +413,6 @@ msgstr "Sauvegarde des modifications :"
 #: ../www/cgi_tabbed.pl:381
 msgid "_Save"
 msgstr "_Sauvegarder"
-
-#: ../www/cgi_widgets.pl:135 ../www/cgi_widgets.pl:242
-msgid "Help"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:198
-msgid "Tools"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:199 ../www/show_queues.cgi.perl:216
-msgid "Cookie Login"
-msgstr "Login par cookie"
-
-#: ../www/cgi_widgets.pl:200 ../www/show_queues.cgi.perl:216
-msgid "Use this if your browser doesn't support Digest authentication."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:201
-msgid "Spooler Logs"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:202
-msgid "Open a window with links to the spooler log files."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:203
-#, fuzzy
-msgid "Disk Space"
-msgstr "Utilisation de l'espace disque sur %s"
-
-#: ../www/cgi_widgets.pl:204
-msgid "Display information about free disk space on the print server."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:205
-msgid "Tests"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:206
-msgid "Open a window with links to test scripts."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:213
-msgid "Window"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:214
-#, fuzzy
-msgid "Queues"
-msgstr "Voir la file"
-
-#: ../www/cgi_widgets.pl:215
-msgid "Open a window with an icon for each queue."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:216
-msgid "All Jobs"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:217
-msgid "Open a window which lists all jobs."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:222
-#, fuzzy, perl-format
-msgid "Control %s"
-msgstr "contrôle-d"
-
-#: ../www/cgi_widgets.pl:223
-msgid "Monitor, start, stop, and mount forms on the printer."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:224 ../www/cgi_widgets.pl:231
-#, fuzzy, perl-format
-msgid "Properties of %s"
-msgstr "PPR : propriétés du groupe : %s"
-
-#: ../www/cgi_widgets.pl:225
-msgid "Examine and change the configuration of the printer."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:229
-#, perl-format
-msgid "Control %s members"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:230
-msgid "Monitor, start, stop, and mount forms on the member printers."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:232
-msgid "Examine and change the configuration of the group."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:243
-msgid "For This Window"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:244
-msgid "Display the help document for this program in a web browser window"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:245
-msgid "All PPR Documents"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:246
-msgid "Open the PPR documentation index in a web browser window"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:248
-msgid "Display PPR version information"
-msgstr ""
 
 #: ../www/cliconf.cgi.perl:45
 msgid "Downloadable Client Configuation Files"
@@ -2224,150 +2224,150 @@ msgstr ""
 msgid "Page Order"
 msgstr "Pages démarrées"
 
-#: ../www/show_jobs.cgi.perl:134
+#: ../www/show_jobs.cgi.perl:135
 #, fuzzy
 msgid "Move"
 msgstr "Plus>>"
 
-#: ../www/show_jobs.cgi.perl:135
+#: ../www/show_jobs.cgi.perl:136
 #, fuzzy
 msgid "Delete"
 msgstr "Supression du groupe"
 
-#: ../www/show_jobs.cgi.perl:136
+#: ../www/show_jobs.cgi.perl:137
 #, fuzzy
 msgid "Rush"
 msgstr "R_ush"
 
-#: ../www/show_jobs.cgi.perl:137
+#: ../www/show_jobs.cgi.perl:138
 #, fuzzy
 msgid "Hold"
 msgstr "_Stopper"
 
-#: ../www/show_jobs.cgi.perl:138
+#: ../www/show_jobs.cgi.perl:139
 #, fuzzy
 msgid "Release"
 msgstr "_Relâcher"
 
-#: ../www/show_jobs.cgi.perl:139 ../www/show_jobs.cgi.perl:396
-#: ../www/show_jobs.cgi.perl:416 ../www/show_queues.cgi.perl:195
-#: ../www/show_queues.cgi.perl:215
+#: ../www/show_jobs.cgi.perl:140 ../www/show_jobs.cgi.perl:397
+#: ../www/show_jobs.cgi.perl:417 ../www/show_queues.cgi.perl:196
+#: ../www/show_queues.cgi.perl:216
 #, fuzzy
 msgid "Refresh"
 msgstr "_Rafraîchir"
 
-#: ../www/show_jobs.cgi.perl:140
+#: ../www/show_jobs.cgi.perl:141
 #, fuzzy
 msgid "Done"
 msgstr "aucun"
 
-#: ../www/show_jobs.cgi.perl:263
+#: ../www/show_jobs.cgi.perl:264
 msgid "Queue Display Settings"
 msgstr "Paramètres d'affichage de la file"
 
-#: ../www/show_jobs.cgi.perl:344
+#: ../www/show_jobs.cgi.perl:345
 #, perl-format
 msgid "Jobs Queued for \"%s\" on \"%s\""
 msgstr "Travaux en attente pour \"%s\" sur \"%s\""
 
-#: ../www/show_jobs.cgi.perl:382 ../www/show_queues.cgi.perl:181
+#: ../www/show_jobs.cgi.perl:383 ../www/show_queues.cgi.perl:182
 #, perl-format
 msgid "Every %d seconds"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:385 ../www/show_queues.cgi.perl:187
+#: ../www/show_jobs.cgi.perl:386 ../www/show_queues.cgi.perl:188
 #, fuzzy
 msgid "File"
 msgstr "inactif"
 
-#: ../www/show_jobs.cgi.perl:391 ../www/show_jobs.cgi.perl:411
-#: ../www/show_queues.cgi.perl:191
+#: ../www/show_jobs.cgi.perl:392 ../www/show_jobs.cgi.perl:412
+#: ../www/show_queues.cgi.perl:192
 #, fuzzy
 msgid "View"
 msgstr "Voir :"
 
-#: ../www/show_jobs.cgi.perl:392
+#: ../www/show_jobs.cgi.perl:393
 msgid "Preferences"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:397 ../www/show_queues.cgi.perl:196
+#: ../www/show_jobs.cgi.perl:398 ../www/show_queues.cgi.perl:197
 #, fuzzy
 msgid "Now"
 msgstr "Non"
 
-#: ../www/show_jobs.cgi.perl:412 ../www/show_queues.cgi.perl:211
+#: ../www/show_jobs.cgi.perl:413 ../www/show_queues.cgi.perl:212
 msgid "Refresh Interval:"
 msgstr "Intervalle de rafraîchissement :"
 
-#: ../www/show_jobs.cgi.perl:413 ../www/show_queues.cgi.perl:212
+#: ../www/show_jobs.cgi.perl:414 ../www/show_queues.cgi.perl:213
 msgid "This page will be reloaded at the indicated interval (in seconds)."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:480
+#: ../www/show_jobs.cgi.perl:481
 #, perl-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr "Vous devez choisir un ou plusieurs travaux avant de presser [%s]."
 
-#: ../www/show_jobs.cgi.perl:488
+#: ../www/show_jobs.cgi.perl:489
 msgid "You must select a destination queue before pressing [Move]."
 msgstr "Vous devez choisir une file de destination avant de presser [Déplacement]."
 
-#: ../www/show_jobs.cgi.perl:514
+#: ../www/show_jobs.cgi.perl:515
 #, perl-format
 msgid "[%s] Failed"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:598
+#: ../www/show_jobs.cgi.perl:599
 #, perl-format
 msgid "Job \"%s\""
 msgstr "Travail \"%s\""
 
-#: ../www/show_jobs.cgi.perl:674
+#: ../www/show_jobs.cgi.perl:675
 msgid "Cancel selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:674
+#: ../www/show_jobs.cgi.perl:675
 #, fuzzy
 msgid "_Delete"
 msgstr "_Relâcher"
 
-#: ../www/show_jobs.cgi.perl:675
+#: ../www/show_jobs.cgi.perl:676
 msgid "Move selected jobs to the front of the queue."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:675
+#: ../www/show_jobs.cgi.perl:676
 msgid "R_ush"
 msgstr "R_ush"
 
-#: ../www/show_jobs.cgi.perl:676
+#: ../www/show_jobs.cgi.perl:677
 msgid "Place selected jobs in the held state so that they won't print."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:676
+#: ../www/show_jobs.cgi.perl:677
 msgid "_Hold"
 msgstr "_Stopper"
 
-#: ../www/show_jobs.cgi.perl:677
+#: ../www/show_jobs.cgi.perl:678
 msgid "Release selected jobs which are held."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:677
+#: ../www/show_jobs.cgi.perl:678
 msgid "_Release"
 msgstr "_Relâcher"
 
-#: ../www/show_jobs.cgi.perl:678
+#: ../www/show_jobs.cgi.perl:679
 msgid "Open windows in which to modify selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:678
+#: ../www/show_jobs.cgi.perl:679
 msgid "_Modify"
 msgstr "_Modifier"
 
-#: ../www/show_jobs.cgi.perl:679
+#: ../www/show_jobs.cgi.perl:680
 msgid "Display log files of selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:679
+#: ../www/show_jobs.cgi.perl:680
 msgid "_Log"
 msgstr "Trace"
 
@@ -2446,82 +2446,135 @@ msgstr "Pages de démarrage"
 msgid "Title or Filename"
 msgstr "Titre ou nom de fichier"
 
-#: ../www/show_queues.cgi.perl:126
+#: ../www/show_queues.cgi.perl:127
 #, perl-format
 msgid "PPR Print Queues on \"%s\""
 msgstr "Files d'impression PPR sur \"%s\""
 
-#: ../www/show_queues.cgi.perl:169
+#: ../www/show_queues.cgi.perl:170
 msgid "Free Flow"
 msgstr "Débit libre"
 
-#: ../www/show_queues.cgi.perl:170
+#: ../www/show_queues.cgi.perl:171
 msgid "Details"
 msgstr "Détails"
 
-#: ../www/show_queues.cgi.perl:171
+#: ../www/show_queues.cgi.perl:172
 msgid "Many Details"
 msgstr "Beaucoup de détails"
 
-#: ../www/show_queues.cgi.perl:175
+#: ../www/show_queues.cgi.perl:176
 #, perl-format
 msgid "%d Columns"
 msgstr "%d Colonnes"
 
-#: ../www/show_queues.cgi.perl:210
+#: ../www/show_queues.cgi.perl:211
 msgid "Choose the display format."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:210
+#: ../www/show_queues.cgi.perl:211
 msgid "View:"
 msgstr "Voir :"
 
-#: ../www/show_queues.cgi.perl:215
+#: ../www/show_queues.cgi.perl:216
 msgid "Refresh the page right now."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:237
+#: ../www/show_queues.cgi.perl:238
 msgid "Show All Queues"
 msgstr "Montrer toutes les files"
 
-#: ../www/show_queues.cgi.perl:239
+#: ../www/show_queues.cgi.perl:240
 msgid "Click here to open a window which will show all queued jobs."
 msgstr ""
 
-#: ../www/show_queues.cgi.perl:242
+#: ../www/show_queues.cgi.perl:243
 msgid "Add New Printer"
 msgstr "Ajout d'une nouvelle imprimante"
 
-#: ../www/show_queues.cgi.perl:244
+#: ../www/show_queues.cgi.perl:245
 #, fuzzy
 msgid "Click here and you will be guided through the process of adding a new printer."
 msgstr "Ce programme vous guidera dans le processus de configuration d'une imprimante dans PPR."
 
-#: ../www/show_queues.cgi.perl:247
+#: ../www/show_queues.cgi.perl:248
 msgid "Add New Group"
 msgstr "Ajout d'un nouveau groupe"
 
-#: ../www/show_queues.cgi.perl:249
+#: ../www/show_queues.cgi.perl:250
 #, fuzzy
 msgid "Click here and you will be guided through the process of adding a new group of printers."
 msgstr ""
 "Ce programme vous guidera dans le processus de configuration\n"
 "d'un groupe d'imprimantes dans PPR."
 
-#: ../www/show_queues.cgi.perl:252
+#: ../www/show_queues.cgi.perl:253
 #, fuzzy
 msgid "Add New Alias"
 msgstr "Ajout d'une nouvelle imprimante"
 
-#: ../www/show_queues.cgi.perl:254
+#: ../www/show_queues.cgi.perl:255
 #, fuzzy
 msgid "Click here and you will be guided through the process of adding a new alias."
 msgstr "Ce programme vous guidera dans le processus de configuration d'une imprimante dans PPR."
 
-#: ../www/show_queues.cgi.perl:463
+#: ../www/show_queues.cgi.perl:464
 #, fuzzy
 msgid "-- No Description --"
 msgstr "Description :"
+
+#: ../www/show_queues.cgi.perl:540 ../www/show_queues.cgi.perl:580
+msgid "View Queue"
+msgstr "Voir la file"
+
+#: ../www/show_queues.cgi.perl:545
+msgid "Printer Control"
+msgstr "Contrôle de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:550
+msgid "Printer Properties"
+msgstr "Propriétés de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:555
+#, fuzzy
+msgid "Test Page"
+msgstr "Page de bannière"
+
+#: ../www/show_queues.cgi.perl:560 ../www/show_queues.cgi.perl:595
+#: ../www/show_queues.cgi.perl:620
+msgid "Client Configuration"
+msgstr ""
+
+#: ../www/show_queues.cgi.perl:565 ../www/show_queues.cgi.perl:600
+msgid "Printlog"
+msgstr "Trace d'impression"
+
+#: ../www/show_queues.cgi.perl:570
+msgid "Delete Printer"
+msgstr "Suppression de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:585
+#, fuzzy
+msgid "Member Printer Control"
+msgstr "Contrôle de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:590
+msgid "Group Properties"
+msgstr "Propriétés du groupe"
+
+#: ../www/show_queues.cgi.perl:605
+msgid "Delete Group"
+msgstr "Supression du groupe"
+
+#: ../www/show_queues.cgi.perl:615
+#, fuzzy
+msgid "Alias Properties"
+msgstr "Propriétés de l'imprimante"
+
+#: ../www/show_queues.cgi.perl:625
+#, fuzzy
+msgid "Delete Alias"
+msgstr "Supprime l'alias \"%s\""
 
 #: ../www/test_components.cgi.perl:47
 msgid "PPR sound files"
@@ -2672,43 +2725,6 @@ msgstr ""
 
 #~ msgid "Alert Messages:"
 #~ msgstr "Messages d'alerte :"
-
-#~ msgid "View Queue"
-#~ msgstr "Voir la file"
-
-#~ msgid "Printer Control"
-#~ msgstr "Contrôle de l'imprimante"
-
-#~ msgid "Printer Properties"
-#~ msgstr "Propriétés de l'imprimante"
-
-#, fuzzy
-#~ msgid "Test Page"
-#~ msgstr "Page de bannière"
-
-#~ msgid "Printlog"
-#~ msgstr "Trace d'impression"
-
-#~ msgid "Delete Printer"
-#~ msgstr "Suppression de l'imprimante"
-
-#, fuzzy
-#~ msgid "Member Printer Control"
-#~ msgstr "Contrôle de l'imprimante"
-
-#~ msgid "Group Properties"
-#~ msgstr "Propriétés du groupe"
-
-#~ msgid "Delete Group"
-#~ msgstr "Supression du groupe"
-
-#, fuzzy
-#~ msgid "Alias Properties"
-#~ msgstr "Propriétés de l'imprimante"
-
-#, fuzzy
-#~ msgid "Delete Alias"
-#~ msgstr "Supprime l'alias \"%s\""
 
 #~ msgid "AppleTalk Interface: Choose a Printer"
 #~ msgstr "Interface AppleTalk : choisissez une imprimante"

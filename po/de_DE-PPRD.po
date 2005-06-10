@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-07 12:15-0400\n"
+"POT-Creation-Date: 2005-06-10 12:04-0400\n"
 "PO-Revision-Date: 2004-10-21 18:17+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -16,50 +16,50 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../pprd/pprd_ipp.c:192
+#: ../pprd/pprd_ipp.c:212
 #, c-format
 msgid "printing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:204
+#: ../pprd/pprd_ipp.c:224
 #, c-format
 msgid "canceling %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:216
+#: ../pprd/pprd_ipp.c:236
 #, c-format
 msgid "seizing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:228
+#: ../pprd/pprd_ipp.c:248
 #, c-format
 msgid "stopping (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:240
+#: ../pprd/pprd_ipp.c:260
 #, c-format
 msgid "halting (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:252
+#: ../pprd/pprd_ipp.c:272
 msgid "stopt"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:266
+#: ../pprd/pprd_ipp.c:286
 #, c-format
 msgid "fault, retry %d in %d seconds"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:271
+#: ../pprd/pprd_ipp.c:291
 msgid "fault, no auto retry"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:284
+#: ../pprd/pprd_ipp.c:304
 #, fuzzy, c-format
 msgid "otherwise engaged or off-line, retry %d in %d seconds"
 msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
 
-#: ../pprd/pprd_ipp.c:296
+#: ../pprd/pprd_ipp.c:316
 msgid "waiting for resource ration"
 msgstr ""
 

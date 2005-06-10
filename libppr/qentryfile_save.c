@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 2 June 2005.
 */
 
 /*! \file */
@@ -125,13 +125,16 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 				qentry->opts.copies,
 				qentry->opts.collate,
 				qentry->opts.keep_badfeatures,
-				qentry->opts.hacks);
+				qentry->opts.hacks
+				);
 
-	fprintf(Qfile, "N-Up: %d %d %d %d\n",
+	fprintf(Qfile, "N-Up: %d %d %d %d %d\n",
 				qentry->N_Up.N,					/* virtual pages on each side of sheet */
 				qentry->N_Up.borders,			/* should we print borders? */
 				qentry->N_Up.sigsheets,			/* how many sheets per signature? (0=no signature printing) */
-				qentry->N_Up.sigpart);			/* Fronts, backs, both */
+				qentry->N_Up.sigpart,			/* Fronts, backs, both */
+				qentry->N_Up.job_does_n_up
+				);	   
 
 	if(qentry->Filters)
 		fprintf(Qfile, "Filters: %s\n", qentry->Filters);
@@ -170,7 +173,7 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	/* see RFC 2911 4.3.17.2 (we assume this means sides without copies) */
 	fprintf(Qfile, "job-impressions %d\n", 
 		(int)((qentry->attr.pages + qentry->N_Up.N - 1) / qentry->N_Up.N)
-		   );
+		);
 
 	/* see RFC 2911 4.3.17.3 (this means sheets without copies) */
 	fprintf(Qfile, "job-media-sheets %d\n",

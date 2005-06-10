@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2005.
+** Last modified 27 May 2005.
 */
 
 /*
@@ -45,6 +45,7 @@
 #include <errno.h>
 #include <ctype.h>
 #ifdef INTERNATIONAL
+#include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"
@@ -1683,7 +1684,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 	/* We will assemble the final option string in this Perl Compatible String. */
 	clean_options = gu_pcs_new();
 
-	/* Search the -F table and make an implied option for each
+	/* Search the -F table and generate the implied pagesize= option for each
 	   -F *PageSize or -F *PageRegion.
 	   */
 	{
@@ -1702,7 +1703,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 		}
 	}
 
-	/* If we have any kind of a duplex setting, add it. */
+	/* If we have any kind of a duplex setting, add a duplex= option. */
 	if(current_duplex_enforce)
 		{
 		const char *value;
@@ -1731,6 +1732,25 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 		gu_pcs_append_cstr(&clean_options, "duplex=");
 		gu_pcs_append_cstr(&clean_options, value);
 		}
+
+	#ifdef INTERNATIONAL
+	{
+	const char *locale, *p;
+	if((locale = setlocale(LC_MESSAGES, NULL)))
+		{
+		/*printf("locale=%s\n", locale);*/
+		if((p = strchr(locale, '.')))
+			{
+			p++;
+			/*printf("charset=%s\n", p);*/
+			if(gu_pcs_length(&clean_options) > 0)
+				gu_pcs_append_cstr(&clean_options, " ");
+			gu_pcs_append_cstr(&clean_options, "charset=");
+			gu_pcs_append_cstr(&clean_options, p);
+			}
+		}
+	}
+	#endif
 
 	/* If the -G switch requires it, describe what we are doing. */
 	if(option_gab_mask & GAB_INFILE_FILTER)

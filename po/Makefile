@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 April 2005.
+# Last modified 10 June 2005.
 #
 
 include ../Makefile.conf
@@ -43,12 +43,14 @@ all:
 
 merge: pot all
 
+# Extract the list of translatable strings.
 pot:
 	xgettext \
 		--default-domain=PPR \
 		--output=PPR.tmp \
 		--keyword=_ --keyword=N_ \
 		--sort-output \
+		--no-wrap \
 		../filter*/*.c \
 		../fontutils/*.c \
 		../interfaces/*.c \
@@ -69,17 +71,21 @@ pot:
 		--output=PPRD.tmp \
 		--keyword=_ --keyword=N_ \
 		--sort-output \
+		--no-wrap \
 		../pprd/pprd*.c
 	xgettext --default-domain=PAPD \
 		--output=PAPD.tmp \
 		--keyword=_ --keyword=N_ \
 		--sort-output \
+		--no-wrap \
 		../papd/papd*.c
 	xgettext \
+		--debug \
 		--default-domain=PPRWWW \
 		--output=PPRWWW.tmp \
-		--keyword=_ --keyword=N_ --keyword=H_ --keyword=H_NB_ \
+		--keyword=_ --keyword=N_ --keyword=H_ --keyword='\H_' --keyword=H_NB_ \
 		--sort-output \
+		--no-wrap \
 		--language=Perl \
 		../www/*.perl ../www/*.pl
 	@for division in $(DIVISIONS); \

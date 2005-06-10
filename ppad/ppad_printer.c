@@ -1266,7 +1266,7 @@ int printer_interface(const char *argv[])
 
 		if((defaults = fopen(NEWPRN_CONFIG,"r")) != (FILE*)NULL)
 			{
-			while( (c=fgetc(defaults)) != -1 )
+			while((c = fgetc(defaults)) != -1)
 				fputc(c,newconf);
 			fclose(defaults);
 			}

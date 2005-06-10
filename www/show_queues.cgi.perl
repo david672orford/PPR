@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 10 June 2005.
 #
 
 use 5.005;
@@ -530,76 +530,112 @@ print <<"POP";
 </noscript>
 POP
 
+my @menu_items;
 if($qtype eq "printer")
-{
-print <<"Printer";
-<tr><td><a href="show_jobs.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("View Queue")}</a></td></tr>
-<tr><td><a href="prn_control.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Printer Control")}</a></td></tr>
-<tr><td><a href="prn_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Printer Properties")}</a></td></tr>
-<tr><td><a href="prn_testpage.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Test Page")}</a></td></tr>
-<tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Client Configuration")}</a></td></tr>
-<tr><td><a href="show_printlog.cgi?${\form_urlencoded("printer", $qname)};$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Printlog")}</a></td></tr>
-<tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Delete Printer")}</a></td></tr>
-Printer
-}
-
+	{
+	@menu_items = (
+		[
+		"show_jobs.cgi?$encoded_type;$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("View Queue")
+		],
+		[
+		"prn_control.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)" ,
+		N_("Printer Control")
+		],
+		[
+		"prn_properties.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Printer Properties")
+		],
+		[
+		"prn_testpage.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Test Page")
+		],
+		[
+		"cliconf.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Client Configuration")
+		],
+		[
+		"show_printlog.cgi?" . form_urlencoded("printer", $qname) . ";$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Printlog")
+		],
+		[
+		"delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Delete Printer")
+		]
+		);
+	}
 elsif($qtype eq "group")
-{
-print <<"Group";
-<tr><td><a href="show_jobs.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("View Queue")}</a></td></tr>
-<tr><td><a href="grp_control.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Member Printer Control")}</a></td></tr>
-<tr><td><a href="grp_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Group Properties")}</a></td></tr>
-<tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Client Configuration")}</a></td></tr>
-<tr><td><a href="show_printlog.cgi?${\form_urlencoded("queue", $qname)};$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Printlog")}</a></td></tr>
-<tr><td><a href="delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Delete Group")}</a></td></tr>
-Group
-}
-
+	{
+	@menu_items = (
+		[
+		"show_jobs.cgi?$encoded_type;$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("View Queue")
+		],
+		[
+		"grp_control.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Member Printer Control")
+		],
+		[
+		"grp_properties.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Group Properties")
+		],
+		[
+		"cliconf.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Client Configuration")
+		],
+		[
+		"show_printlog.cgi?" . form_urlencoded("queue", $qname) . ";$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Printlog")
+		],
+		[
+		"delete_queue.cgi?$encoded_type&$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Delete Group")
+		]
+		);
+	}
 elsif($qtype eq "alias")
-{
-print <<"Alias";
-<tr><td><a href="alias_properties.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Alias Properties")}</a></td></tr>
-<tr><td><a href="cliconf.cgi?$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Client Configuration")}</a></td></tr>
-<tr><td><a href="delete_queue.cgi?$encoded_type;$encoded_name;$encoded_back_stack"
-	onclick="return wopen(event,this.href)" 
-	>${\H_("Delete Alias")}</a></td></tr>
-Alias
-}
-
+	{
+	@menu_items = (
+		[
+		"alias_properties.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Alias Properties")
+		],
+		[
+		"cliconf.cgi?$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Client Configuration")
+		],
+		[
+		"delete_queue.cgi?$encoded_type;$encoded_name;$encoded_back_stack",
+		"return wopen(event,this.href)",
+		N_("Delete Alias")
+		]
+		);
+	}
 else
-{
-die;
-}
+	{
+	die;
+	}
+
+foreach my $iii (@menu_items)
+	{
+	my($url, $onclick, $name) = @$iii;
+	print '<tr><td><a href="', $url, '" onclick="', $onclick, '">', H_($name), '</a></td></tr>', "\n";
+	}
 
 print "</table>\n";
 print "</div>\n";

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-filters.1.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 May 2004.
+# Last modified 27 May 2005.
 #
 
 =head1 NAME
@@ -76,8 +76,9 @@ executed.
 This filter supports many B<-o> options.  These are described in the section
 which describes the B<-o> switch.
 
-The default value for the B<charset=> option is B<ISOLatin1>.  The default for
-the B<fontfamily=> option is B<monospace>.
+The default value for the B<charset=> option is B<ISOLatin1> or the character
+set of the locale for LC_MESSAGES.  The default for the B<fontfamily=> option
+is B<monospace>.
 
 The default value for B<pmlm=>, B<pmrm=>, B<pmtm=>, and B<pmbm=> is 0.5in.  The
 default for B<lmlm=>, B<lmrm=>, B<lmtm=>, and B<lmbm=> is 0.375in.
@@ -287,8 +288,7 @@ uses Acroread or Xpdf.
 =item B<-T html>
 
 indicates that the input file is in HyperText Markup Format.  This filter
-uses HTMLDOC.  The B<-o charset=> option is supported by this filter.  The
-default will be the same as the default for HTMLDOC (probably Latin1).
+uses HTMLDOC.  The B<-o charset=> option is supported by this filter.
 
 =item B<-T jpeg>
 
@@ -591,6 +591,10 @@ the lines should be verticaly.
 sets the character set.  The options include "ASCII", "AdobeStandard",
 "ISOLatin1", "CP437", and "KOI8-R".  For a complete list see
 F</usr/share/ppr/lib/charsets.conf>.
+
+If PPR is compiled with locale support, then the default value of B<charset=>
+depends on the current locale.  To see the value which is passed to the
+filters, use the option B<-G infile:filter>.
 
 (Supported by:  dotmatrix, lp, lp_autolf, pr, fortran, html)
 

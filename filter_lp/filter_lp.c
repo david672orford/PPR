@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 2 June 2005.
 */
 
 /*
@@ -49,24 +49,25 @@
 #include "libppr_font.h"
 #include "filter_lp.h"
 
-/* Used in error messages: */
+/* The name of this program (for use in error messages) */
 const char myname[] = "filter_lp";
 
 /* Set to TRUE if the option "noisy=true" is used. */
 int noisy = FALSE;
 
 /* global input line buffer */
-unsigned char *line;					/* the line itself */
-unsigned char *line_attr;				/* bold and underline flags for each character */
-int formfeed = FALSE;					/* true if line ended with ff */
-int (*readline)(void);					/* pointer to function to read line */
+typedef unsigned int W_CHAR_T;
+W_CHAR_T *line;				/* the line itself */
+unsigned char *line_attr;	/* bold and underline flags for each character */
+int formfeed = FALSE;		/* true if line ended with ff */
+int (*readline)(void);		/* pointer to function to read line */
 
 /*
 ** These values, determined on pass 1, are the number of lines
 ** and spaces to clip from input text
 */
-int top_skip = 1000;	  /* minimum blank lines at top (1000=infinity) */
-int left_skip = 1000;	  /* minimum blanks at begining of line */
+int top_skip = 1000;		/* minimum blank lines at top (1000=infinity) */
+int left_skip = 1000;		/* minimum blanks at begining of line */
 
 /*
 ** Should we go to a new line if we read a CR?
@@ -277,18 +278,174 @@ static int readline_normal(void)
 		return 0;
 		}
 
-	memset(line, 0, MAX_WIDTH+TAB_WIDTH+1);		/* Use of these functions instead */
-	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);	/* of loops cuts run time in half! */
+	/* Clear the line buffer.  Using memset() instead of a loop
+	 * cuts the program run time in half!
+	 */
+	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(W_CHAR_T));
+	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);
 
-	maxcount = count = 0;				/* count is ptr into */
-	while(TRUE)							/* line array */
+	maxcount = count = 0;						/* count is ptr into */
+	while(TRUE)									/* line array */
 		{
 		if(count > maxcount) maxcount = count;
 
-		if(count >= MAX_WIDTH)			/* break very long lines */
+		if(count >= MAX_WIDTH)					/* break very long lines */
 			break;
 
 		switch(c = fgetc(stdin))				/* examine the character */
+			{
+			case EOF:							/* If physical end of file, */
+				if(maxcount == 0)				/* if buffer empty, */
+					return -1;					/* return -1 now. */
+				goto break_break;				/* otherwise defer to next call. */
+			case 0:								/* ignore NULLs in input */
+				continue;
+			case 8:								/* if backspace */
+				count--;
+				continue;
+			case 9:								/* if tab */
+				x=TAB_WIDTH-(count%TAB_WIDTH);	/* compute the number */
+				while(x--)						/* of spaces we must advance */
+					{
+					if(line[count] == '\0')
+						line[count] = ' ';
+					count++;
+					}
+				continue;
+			case 13:							/* If carriage return, */
+				if(!auto_lf)					/* If auto line feed, */
+					{							/* fall thru to lf. */
+					count = 0;					/* otherwise, return to */
+					continue;					/* far left column. */
+					}
+			case 10:						/* if line feed */
+				goto break_break;			/* end of line */
+			case 12:						/* if formfeed */
+				if(count)					/* if it at the end of a line, */
+					formfeed_pending=TRUE;	/* don't return flag until next call, */
+				else						/* otherwise, */
+					formfeed=TRUE;			/* set a flag now */
+				goto break_break;			/* any case, consider it end of line */
+			case '_':						/* if underscore */
+				line_attr[count] |= ATTR_UNDERLINE;
+				if(line[count] == '\0')			/* if underlined nothing, */
+					line[count] = ' ';			/* make it a space */
+				count++;
+				continue;
+			case ' ':							/* if space */
+				if(line[count] == '\0')			/* spaces are non-destructive */
+					line[count] = ' ';
+				count++;
+				continue;
+			default:
+				if(line[count] == c)					/* if already there, */
+					line_attr[count++] |= ATTR_BOLD;	/* make it bold */
+				else									/* otherwise, */
+					line[count++] = c;					/* store the character */
+				continue;
+			}
+		}
+	break_break:
+
+	/* Remove trailing spaces. */
+	count = maxcount;
+	while(count-- && line[count] == ' ' && line_attr[count] == 0)
+		{
+		line[count] = '\0';
+		maxcount = count;
+		}
+
+	return maxcount;
+	} /* end of readline_normal() */
+
+/*
+ * A UTF-8 version of readline_normal()
+ */
+static int fgetc_utf_8(FILE *f)
+	{
+	int c;
+	int additional_bytes;
+	if((c = fgetc(f)) == EOF)
+		return EOF;
+	if(c & 0x80)
+		{
+		if((c & 0xE0) == 0xC0)		/* mask: 1110 0000, value: 1100 0000 */
+			{
+			c &= 0x1f;				/* mask: 0001 1111 */
+			additional_bytes = 1;
+			}
+		else if((c & 0xF0) == 0xE0)	/* mask: 1111 0000, value: 1110 0000 */
+			{
+			c &= 0x0F;				/* mask: 0000 1111 */
+			additional_bytes = 2;
+			}
+		else if((c & 0xF8) == 0xF0)	/* mask: 1111 1000, value: 1111 0000 */
+			{
+			c &= 0x07;				/* mask: 0000 0111 */
+			additional_bytes = 3;
+			}
+		else if((c & 0xFC) == 0xF8)	/* mask: 1111 1100, value: 1111 1000 */
+			{
+			c &= 0x03;				/* mask: 0000 0011 */
+			additional_bytes = 4;
+			}
+		else if((c & 0xFE) == 0xFC)	/* mask: 1111 1110, value: 1111 1100 */
+			{
+			c &= 0x01;				/* mask: 0000 0001 */
+			additional_bytes = 5;
+			}
+		else
+			{
+			return '?';
+			}
+
+		while(additional_bytes--)
+			{
+			int ca;
+			if((ca = fgetc(f)) == EOF)
+				return EOF;
+			if((ca & 0xC0) != 0x80)		/* mask: 1100 0000, value: 1000 0000 */
+				return '?';
+			c <<= 6;					/* shift up 6 bits to make room */
+			c &= (ca & 0x3F);			/* take lower 6 bits */
+			}
+		}
+
+	return c;
+	} /* end of fgetc_utf_8() */
+
+static int readline_utf_8(void)
+	{
+	int count;							/* current possition in line */
+	int maxcount;
+	int c;
+	int x;
+	static int formfeed_pending = FALSE;
+
+	formfeed = FALSE;					/* clear the global ff flag */
+
+	if(formfeed_pending)
+		{
+		formfeed_pending = FALSE;
+		formfeed = TRUE;
+		return 0;
+		}
+
+	/* Clear the line buffer.  Using memset() instead of a loop
+	 * cuts the program run time in half!
+	 */
+	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(W_CHAR_T));
+	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);
+
+	maxcount = count = 0;						/* count is ptr into */
+	while(TRUE)									/* line array */
+		{
+		if(count > maxcount) maxcount = count;
+
+		if(count >= MAX_WIDTH)					/* break very long lines */
+			break;
+
+		switch(c = fgetc_utf_8(stdin))			/* examine the character */
 			{
 			case EOF:							/* If physical end of file, */
 				if(maxcount == 0)				/* if buffer empty, */
@@ -395,7 +552,7 @@ static int readline_fortran(void)
 			}
 		}
 
-	memset(line, 0, MAX_WIDTH+TAB_WIDTH+1);
+	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(W_CHAR_T));
 	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);
 
 	for(len=0; len < MAX_WIDTH && (c = fgetc(stdin)) != EOF && c != '\n'; column++)
@@ -1072,7 +1229,7 @@ static void endpage(void)
 */
 static int underline(int skip)
 	{
-	unsigned char *cptr = &line[skip];
+	W_CHAR_T *cptr = &line[skip];
 	unsigned char *aptr = &line_attr[skip];
 	int index;
 	int ulstart=-1;
@@ -1130,7 +1287,7 @@ static int underline(int skip)
 */
 static void outline(int skip)
 	{
-	unsigned char *cptr=&line[skip];
+	W_CHAR_T *cptr=&line[skip];
 	unsigned char *aptr=&line_attr[skip];
 	int len;
 	int started;
@@ -1341,15 +1498,6 @@ int main(int argc, char *argv[])
 	*/
 	if(strcmp(my_basename, "filter_lp_autolf") == 0)
 		auto_lf = TRUE;
-
-	/*
-	** For fortran carriage control we have a special
-	** readline function.
-	*/
-	if(strcmp(my_basename, "filter_fortran") == 0)
-		readline = readline_fortran;
-	else
-		readline = readline_normal;
 
 	/*
 	** Set to NULL so we will know of fontnormal= or
@@ -1662,8 +1810,21 @@ int main(int argc, char *argv[])
 		else
 			fputs("landscape_asptrigger = default_landscape_asptrigger\n", stderr);
 
+		fprintf(stderr, "Charset: %s\n", charset);
+
 		fputs("\n", stderr);
 		}
+
+	/*
+	 * Select the proper readline function according to the
+	 * format of the input file.
+	*/
+	if(strcmp(my_basename, "filter_fortran") == 0)
+		readline = readline_fortran;
+	else if(strcasecmp(charset, "UTF-8") == 0)
+		readline = readline_utf_8;
+	else
+		readline = readline_normal;
 
 	/*
 	** Compute the default landscape_lentrigger and
@@ -1761,23 +1922,23 @@ int main(int argc, char *argv[])
 	/*
 	** Check options for unworkable option combinations.
 	*/
-	if( MAX_LINES < MIN_LINES )
+	if(MAX_LINES < MIN_LINES)
 		fatal(1, _("maxlines is less than minlines"));
-	if( pdeflines < MIN_LINES )
+	if(pdeflines < MIN_LINES)
 		fatal(1, _("pdeflines is less than minlines"));
-	if( pdeflines > MAX_LINES )
+	if(pdeflines > MAX_LINES)
 		fatal(1, _("pdeflines is greater than maxlines"));
-	if( ldeflines < MIN_LINES )
+	if(ldeflines < MIN_LINES)
 		fatal(1, _("ldeflines is less than minlines"));
-	if( ldeflines > MAX_LINES )
+	if(ldeflines > MAX_LINES)
 		fatal(1, _("ldeflines is greater than maxlines"));
-	if( (PMLM + PMRM + gutter) >= phys_pu_width )
+	if((PMLM + PMRM + gutter) >= phys_pu_width)
 		fatal(1, _("pmlm, pmrm, gutter, and current pagesize leave no space for text"));
-	if( (PMTM + PMBM) >= phys_pu_height )
+	if((PMTM + PMBM) >= phys_pu_height)
 		fatal(1, _("pmtm, pmbm, and current pagesize leave no space for text"));
-	if( (LMLM + LMRM) >= phys_pu_height )
+	if((LMLM + LMRM) >= phys_pu_height)
 		fatal(1, _("lmlm, lmrm, and current pagesize leave no space for text"));
-	if( (LMTM + LMBM + gutter) >= phys_pu_width )
+	if((LMTM + LMBM + gutter) >= phys_pu_width)
 		fatal(1, _("lmtm, lmbm, gutter, and current pagesize leave no space for text"));
 
 	/* If in noisy mode, point out certain odd conditions. */
@@ -1800,8 +1961,8 @@ int main(int argc, char *argv[])
 		}
 
 	/* Create the line input buffer */
-	line = (unsigned char*)gu_alloc( (MAX_WIDTH+TAB_WIDTH+1), sizeof(unsigned char) );
-	line_attr = (unsigned char *)gu_alloc( (MAX_WIDTH+TAB_WIDTH), sizeof(unsigned char) );
+	line = gu_alloc((MAX_WIDTH+TAB_WIDTH+1), sizeof(W_CHAR_T));
+	line_attr = gu_alloc((MAX_WIDTH+TAB_WIDTH), sizeof(unsigned char));
 
 	/* Make the first pass over the input file, analyzing the input. */
 	pass1();

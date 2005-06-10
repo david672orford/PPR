@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 2 June 2005.
 */
 
 /* =================== for queue entries =====================*/
@@ -102,6 +102,7 @@ struct QEntryFile
 		gu_boolean borders;				/* TRUE or false, should we print borders */
 		int sigsheets;					/* Number of sheets to user per signiture */
 		int sigpart;					/* fronts, backs, both */
+		gu_boolean job_does_n_up;		/* if true, we won't insert our code */
 		} N_Up;
 	const char *draft_notice;			/* `Draft' string */
 	const char *PassThruPDL;			/* "pcl", "hpgl2", etc., NULL for PostScript */

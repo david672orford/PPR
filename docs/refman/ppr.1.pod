@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 March 2005.
+# Last modified 27 May 2005.
 #
 
 =head1 NAME
@@ -1243,10 +1243,11 @@ switch appears more than once on the command line, the options they specify
 are combined into a long list in the order of their appearance.
 
 Note that the filter options which you supply with the B<-o> switch are in
-addition to those that are supplied automatically.  The full list of options
-is formed by combining the options implied by the B<-F> and B<-R> switches,
-the queue's default filter options and the options which you supply with one
-or more B<-o> switches.
+addition to those that are supplied automatically.  The full list of options is
+formed by combining the options implied by the B<-F> and B<-R> switches, a
+B<charset=> option derived from the current locale (if PPR is compiled with
+locale support), the queue's default filter options and the options which you
+supply with one or more B<-o> switches.
 
 The default filter options are derived from the PPD file or files and may be
 seen by running B<ppad show>, B<ppad group show>, or B<ppad alias show>) for

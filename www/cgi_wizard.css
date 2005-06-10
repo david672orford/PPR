@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/cgi_wizard.css
-** Last modified 23 March 2004.
+** Last modified 8 June 2005.
 */
 
 BODY {
@@ -89,6 +89,15 @@ TABLE.lines TH, TABLE.lines TD {
 	}
 TABLE.lines TH {
 	white-space: nowrap;
+	}
+
+/* A watermark is a fixed-position division of large translucent text. */
+DIV.watermark {
+	position: absolute;
+	top: 2cm;
+	font-size: 48pt;
+	opacity: 0.25;
+	color: blue;
 	}
 
 /* end of file */

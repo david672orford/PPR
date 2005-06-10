@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 2 June 2005.
 */
 
 /*! \file */
@@ -200,11 +200,14 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'N':
-				MATCH("N-Up: ", _5("%d %d %d %d",
-						&job->N_Up.N,					/* virtual pages per sheet side */
-						&job->N_Up.borders,				/* TRUE or FALSE, should we have borders? */
-						&job->N_Up.sigsheets,			/* sheets per signiture */
-						&job->N_Up.sigpart), !=4, found_nup)	/* part of signiture */
+				MATCH("N-Up: ", _6("%d %d %d %d %d",
+						&job->N_Up.N,				/* virtual pages per sheet side */
+						&job->N_Up.borders,			/* TRUE or FALSE, should we have borders? */
+						&job->N_Up.sigsheets,		/* sheets per signiture */
+						&job->N_Up.sigpart,			/* part of signiture */
+						&job->N_Up.job_does_n_up
+						), !=5, found_nup)
+						/* part of signiture */
 				break;
 
 			case 'O':

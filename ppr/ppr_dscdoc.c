@@ -864,7 +864,7 @@ static void feature_spy(void)
 					}
 				break;
 
-			case 'N':
+			case 'p':
 				if(read_nup && strcmp(tokens[1], "*pprN-Up") == 0)
 					{
 					int temp = atoi(tokens[2]);
@@ -956,6 +956,15 @@ static void feature_spy_nonppd(void)
 							warning(WARNING_SEVERE, _("Ignoring NonPPDFeature NumCopies which requests \"%s\" copies"), tokens[2]);
 						else
 							qentry.opts.copies = x;
+						}
+					}
+				/* The N-Up feature is a PPR invention. */
+				else if(strcmp(tokens[1], "N-Up") == 0)
+					{
+					if(tokens[2])
+						{
+						qentry.N_Up.N = atoi(tokens[2]);
+						qentry.N_Up.job_does_n_up = TRUE;
 						}
 					}
 				break;

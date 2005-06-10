@@ -26,14 +26,18 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 26 May 2005.
 #
 
 BINDIR="@BINDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 
+# Rebuild all of the PPR indexes.  This is also done in cron_hourly but
+# only if there is evidence that packages have been installed, removed,
+# or upgraded.
 $BINDIR/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
 
+# Remove various temporary files that PPR may leave behind.
 $BINDIR/ppr-clean >$VAR_SPOOL_PPR/logs/ppr-clean 2>&1
 
 exit 0

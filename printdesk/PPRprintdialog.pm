@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/printdesk/PPRprintdialog.pm
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Writen by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 May 2003.
+# Last modified 27 May 2005.
 #
 
 package PrintDesk::PPRprintdialog;
@@ -390,15 +390,16 @@ sub dest_features_load
 	$groups{"Extra"} = 1;
 
 	open(PPR, "$PPR::PPR_PATH -d $self->{dest} --features |") || die $!;
-	while(<PPR>)
+	while(my $line = <PPR>)
 		{
-		#print;
-		if(m#^(\S+.*)$#)
+		#print $line;
+		chomp $line;
+		if($line =~ m#^(\S+.*)$#)
 			{
 			$feature_translation = $1;
 			$group = defined($generals{$feature_translation}) ? "General" : "Extra";
 			}
-		elsif(/^\s+(-->)?(.*\S+)\s+--feature (\S+)=(\S+)$/)
+		elsif($line =~ /^\s+(-->)?(.*\S+)\s+--feature (\S+)=(\S+)$/)
 			{
 			my($description, $feature, $option) = ($2, $3, $4);
 			if($feature eq "Duplex")
@@ -425,9 +426,9 @@ sub dest_features_load
 				push(@{$self->{features}->{$feature}}, [$option, $description]);
 				}
 			}
-		elsif(!/^$/)
+		elsif($line !~ /^$/)
 			{
-			die;
+			die "Can't parse \"$line\".";
 			}
 		}
 	close(PPR) || die $!;

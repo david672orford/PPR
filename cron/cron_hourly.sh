@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 26 May 2005.
 #
 
 LIBDIR="@LIBDIR@"
@@ -45,12 +45,12 @@ PACKAGE_LISTS="/var/lib/rpm/packages.rpm /var/sadm/install/contents /var/lib/dpk
 for i in $PACKAGE_LISTS
 	do
 	if [ -f $i ]
-	then
-	if $LIBDIR/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
 		then
-		$BINDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
+		if $LIBDIR/file_outdated $VAR_SPOOL_PPR/fontindex.db $i
+			then
+			$BINDIR/bin/ppr-index >$VAR_SPOOL_PPR/logs/ppr-index 2>&1
+			fi
 		fi
-	fi
 	done
 
 exit 0

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-07 17:25-0400\n"
+"POT-Creation-Date: 2005-06-10 15:53-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -35,17 +35,17 @@ msgstr "%s: Dateiende in Graphik\n"
 #: ../libuprint/uprint_rfc1179.c:278 ../libuprint/uprint_run.c:80
 #: ../libuprint/uprint_run.c:129 ../libuprint/uprint_run_rfc1179.c:71
 #: ../libuprint/uprint_run_rfc1179.c:78 ../libuprint/uprint_run_rfc1179.c:143
-#: ../lprsrv/lprsrv.c:242 ../ppad/ppad_conf.c:276 ../ppad/ppad_conf.c:278
-#: ../ppad/ppad_conf.c:280 ../ppad/ppad_conf.c:284 ../ppad/ppad_conf.c:288
-#: ../ppr/ppr_infile.c:1466 ../ppr/ppr_infile.c:1518 ../ppr/ppr_infile.c:1585
-#: ../ppr/ppr_infile.c:2223 ../ppr/ppr_main.c:430
+#: ../lprsrv/lprsrv.c:242 ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295
+#: ../ppad/ppad_conf.c:297 ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305
+#: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
+#: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:430
 #: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
 #: ../pprdrv/pprdrv_progress.c:221 ../pprdrv/pprdrv_progress.c:251
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1385
+#: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1533
 #: ../filters_misc/filter_hexdump.c:192 ../filters_misc/make_dvips_conf.c:94
 #: ../pprdrv/pprdrv_flag.c:331
 #, c-format
@@ -94,7 +94,7 @@ msgstr "Gültige Werte sin 9 und 24."
 msgid "Value must be a positive integer."
 msgstr "der Wert muß eine positive Ganzzahl sein"
 
-#: ../filter_dotmatrix/main.c:816 ../filter_lp/filter_lp.c:1615
+#: ../filter_dotmatrix/main.c:816 ../filter_lp/filter_lp.c:1763
 #, c-format
 msgid "Ignoring option \"%s=%s\".\n"
 msgstr "Ignoriere Optioen \"%s=%s\".\n"
@@ -109,169 +109,169 @@ msgstr "Zeichensatz \"%s\" ist unbekannt"
 msgid "no font available for charset %s, weight %s, slant %s"
 msgstr "Keine Schriftart für Zeichensatz %s verfügbar, nutze %s"
 
-#: ../filter_lp/filter_lp.c:549
+#: ../filter_lp/filter_lp.c:706
 #, c-format
 msgid "Longest line is %d columns wide, shortest leading whitespace is %d columns wide.\n"
 msgstr "Die längste Zeile enthält %d Zeichen, der kürzeste freie Bereich am Anfangeiner Zeile enthält %d Zeichen.\n"
 
-#: ../filter_lp/filter_lp.c:552
+#: ../filter_lp/filter_lp.c:709
 #, c-format
 msgid "Constraints force columns from %d to %d.\n"
 msgstr "Zwänge binden die Spaltenanzahl von %d bis %d.\n"
 
-#: ../filter_lp/filter_lp.c:556
+#: ../filter_lp/filter_lp.c:713
 #, c-format
 msgid "Longest page is %d lines long.\n"
 msgstr "Die Längste Seite enthält %d Zeilen.\n"
 
-#: ../filter_lp/filter_lp.c:557
+#: ../filter_lp/filter_lp.c:714
 #, c-format
 msgid "Input file's aspect ratio: %.2f (landscape_asptrigger=%.2f)\n"
 msgstr "Format der Eingabedatei: %.2f (Seitenverhältnis-Querformatumschalter=%.2f)\n"
 
-#: ../filter_lp/filter_lp.c:565
+#: ../filter_lp/filter_lp.c:722
 msgid "Not one FF found, page length and asp[ect ratio] unknown\n"
 msgstr "Kein FF gefunden, Seitenlänge und -verhältnis unbekannt\n"
 
-#: ../filter_lp/filter_lp.c:571
+#: ../filter_lp/filter_lp.c:728
 msgid "Input file is probably landscape.\n"
 msgstr "Eingabedatei ist wahrscheinlich im Querformat\n"
 
-#: ../filter_lp/filter_lp.c:573
+#: ../filter_lp/filter_lp.c:730
 msgid "Input file is probably portrait.\n"
 msgstr "Eingabedatei ist wahrscheinlich im Hochformat\n"
 
-#: ../filter_lp/filter_lp.c:576
+#: ../filter_lp/filter_lp.c:733
 msgid "User has forced landscape mode.\n"
 msgstr "Der Nutzer hat Querformat angefordert.\n"
 
-#: ../filter_lp/filter_lp.c:579
+#: ../filter_lp/filter_lp.c:736
 msgid "User has forced portrait mode.\n"
 msgstr "Der Nutzer hat Hochformat angefordert.\n"
 
-#: ../filter_lp/filter_lp.c:601
+#: ../filter_lp/filter_lp.c:758
 msgid "Landscape mode selected.\n"
 msgstr "Querformat ausgewählt.\n"
 
-#: ../filter_lp/filter_lp.c:617
+#: ../filter_lp/filter_lp.c:774
 msgid "Portrait mode selected.\n"
 msgstr "Hochformat ausgewählt.\n"
 
-#: ../filter_lp/filter_lp.c:1412
+#: ../filter_lp/filter_lp.c:1560
 #, c-format
 msgid "Value for option \"%s=\" must be boolean."
 msgstr "Der Wert für die Option \"%s=\" muß boolean (wahr/falsch) sein"
 
-#: ../filter_lp/filter_lp.c:1425
+#: ../filter_lp/filter_lp.c:1573
 #, c-format
 msgid "Value for option \"%s=\" is invalid."
 msgstr "Der Wert für die Option \"%s=\" ist nicht erlaubt."
 
-#: ../filter_lp/filter_lp.c:1432 ../filter_lp/filter_lp.c:1439
-#: ../filter_lp/filter_lp.c:1452 ../filter_lp/filter_lp.c:1489
-#: ../filter_lp/filter_lp.c:1496 ../filter_lp/filter_lp.c:1545
-#: ../filter_lp/filter_lp.c:1552 ../filter_lp/filter_lp.c:1557
-#: ../filter_lp/filter_lp.c:1564 ../filter_lp/filter_lp.c:1569
+#: ../filter_lp/filter_lp.c:1580 ../filter_lp/filter_lp.c:1587
+#: ../filter_lp/filter_lp.c:1600 ../filter_lp/filter_lp.c:1637
+#: ../filter_lp/filter_lp.c:1644 ../filter_lp/filter_lp.c:1693
+#: ../filter_lp/filter_lp.c:1700 ../filter_lp/filter_lp.c:1705
+#: ../filter_lp/filter_lp.c:1712 ../filter_lp/filter_lp.c:1717
 #, c-format
 msgid "Unreasonable value for option \"%s=\"."
 msgstr "Unmöglicher Wert für Option \"%s=\"."
 
-#: ../filter_lp/filter_lp.c:1471 ../filter_lp/filter_lp.c:1480
-#: ../filter_lp/filter_lp.c:1503 ../filter_lp/filter_lp.c:1513
+#: ../filter_lp/filter_lp.c:1619 ../filter_lp/filter_lp.c:1628
+#: ../filter_lp/filter_lp.c:1651 ../filter_lp/filter_lp.c:1661
 #, c-format
 msgid "Value of option \"%s=\" contains illegal characters."
 msgstr "Der Wert für die Option \"%s=\" enthält nichterlaubte Zeichen."
 
-#: ../filter_lp/filter_lp.c:1538
+#: ../filter_lp/filter_lp.c:1686
 msgid "Valid \"duplex=\" values are \"none\", \"undef\", \"tumble\", and \"notumble\"."
 msgstr "Erlaubte \"duplex=\" Werte sind \"none\", \"undef\", \"tumble\", und \"notumble\"."
 
-#: ../filter_lp/filter_lp.c:1590
+#: ../filter_lp/filter_lp.c:1738
 msgid "Valid values for orientation are \"portrait\", \"landscape\", and \"auto\"."
 msgstr "Erlaubte Werte für Format sind \"portrait\" (Hoch), \"landscape\" (Quer), und \"auto\"."
 
-#: ../filter_lp/filter_lp.c:1605
+#: ../filter_lp/filter_lp.c:1753
 #, c-format
 msgid "Value for dimension \"%s\" is invalid."
 msgstr "Der Wert für die Einheit \"%s\" ist nicht erlaubt."
 
-#: ../filter_lp/filter_lp.c:1740
+#: ../filter_lp/filter_lp.c:1901
 #, c-format
 msgid "Portrait printable area: %.2fpsu x %.2fpsu\n"
 msgstr "Druckbarer Bereich im Hochformat: %.2fpsu x %.2fpsu\n"
 
-#: ../filter_lp/filter_lp.c:1741
+#: ../filter_lp/filter_lp.c:1902
 #, c-format
 msgid "Landscape printable area: %.2fpsu x %.2fpsu\n"
 msgstr "Druckbarer Bereich im Querformat: %.2fpsu x %.2fpsu\n"
 
-#: ../filter_lp/filter_lp.c:1742
+#: ../filter_lp/filter_lp.c:1903
 #, c-format
 msgid "Portrait ideal asp (columns/lines): %.2f\n"
 msgstr "Ideales Spalten/Zeilen-Verhältnis für Hochformat: %.2f\n"
 
-#: ../filter_lp/filter_lp.c:1743
+#: ../filter_lp/filter_lp.c:1904
 #, c-format
 msgid "Landscape ideal asp (columns/lines): %.2f\n"
 msgstr "Bevorzugtes Spalten/Zeilen-Verhältnis für Querformat: %.2f\n"
 
-#: ../filter_lp/filter_lp.c:1744
+#: ../filter_lp/filter_lp.c:1905
 #, c-format
 msgid "Average: default_landscape_asptrigger=%.2f\n"
 msgstr "Durchschnitt: Standardseitenverhältnis für Querformatumschaltung=%.2f\n"
 
-#: ../filter_lp/filter_lp.c:1745
+#: ../filter_lp/filter_lp.c:1906
 #, c-format
 msgid "Portrait ideal len for pdeflines=%d: %.2f\n"
 msgstr "Bevorzugter Wert für Zeilenlänge=%d bei Hochformat: %0.2f\n"
 
-#: ../filter_lp/filter_lp.c:1746
+#: ../filter_lp/filter_lp.c:1907
 #, c-format
 msgid "Landscape ideal len for ldeflines=%d: %.2f\n"
 msgstr "Bevorzugter Wert für Zeilenlänge=%d bei Querformat: %0.2f\n"
 
-#: ../filter_lp/filter_lp.c:1747
+#: ../filter_lp/filter_lp.c:1908
 #, c-format
 msgid "Average: default_landscape_lentrigger=%d\n"
 msgstr "Durchschnitt: Standardzeilenlänge für Querformatumschaltung=%d\n"
 
-#: ../filter_lp/filter_lp.c:1765
+#: ../filter_lp/filter_lp.c:1926
 msgid "maxlines is less than minlines"
 msgstr "maxlines ist kleiner als minlines"
 
-#: ../filter_lp/filter_lp.c:1767
+#: ../filter_lp/filter_lp.c:1928
 msgid "pdeflines is less than minlines"
 msgstr "Standardquerformatzeilenzahl ist kleiner als minimale Zeilenzahl"
 
-#: ../filter_lp/filter_lp.c:1769
+#: ../filter_lp/filter_lp.c:1930
 msgid "pdeflines is greater than maxlines"
 msgstr "Standardquerformatzeilenzahl ist größer als maximale Zeilenzahl"
 
-#: ../filter_lp/filter_lp.c:1771
+#: ../filter_lp/filter_lp.c:1932
 msgid "ldeflines is less than minlines"
 msgstr "Standardhochformatzeilenzahl ist kleiner als minimale Zeilenzahl"
 
-#: ../filter_lp/filter_lp.c:1773
+#: ../filter_lp/filter_lp.c:1934
 msgid "ldeflines is greater than maxlines"
 msgstr "Standardhochformatzeilenzahl ist größer als maximale Zeilenzahl"
 
-#: ../filter_lp/filter_lp.c:1775
+#: ../filter_lp/filter_lp.c:1936
 msgid "pmlm, pmrm, gutter, and current pagesize leave no space for text"
 msgstr "pmlm, pmrm, gutter und die derzeitige Seitengröße lassen keine Platz für Text mehr"
 
-#: ../filter_lp/filter_lp.c:1777
+#: ../filter_lp/filter_lp.c:1938
 msgid "pmtm, pmbm, and current pagesize leave no space for text"
 msgstr "pmtm, pmbm und die derzeitige Seitengröße lassen keine Platz für Text mehr"
 
-#: ../filter_lp/filter_lp.c:1779
+#: ../filter_lp/filter_lp.c:1940
 msgid "lmlm, lmrm, and current pagesize leave no space for text"
 msgstr "lmlm, lmrm und die derzeitige Seitengröße lassen keine Platz für Text mehr"
 
-#: ../filter_lp/filter_lp.c:1781
+#: ../filter_lp/filter_lp.c:1942
 msgid "lmtm, lmbm, gutter, and current pagesize leave no space for text"
 msgstr "lmtm, lmbm, gutter und die derzeitige Seitengröße lassen keine Platz für Text mehr"
 
-#: ../filter_lp/filter_lp.c:1788
+#: ../filter_lp/filter_lp.c:1949
 #, c-format
 msgid ""
 "Warning:\t mincolumns is greater than landscape_lentrigger,\n"
@@ -280,7 +280,7 @@ msgstr ""
 "Warning:\t mincolumns ist größer als landscape_lentrigger,\n"
 "\t\t Dateien mit/ohne FF werden immer im Querformat gedruckt.\n"
 
-#: ../filter_lp/filter_lp.c:1793
+#: ../filter_lp/filter_lp.c:1954
 #, c-format
 msgid ""
 "Warning:\t maxwidth is less than lanscape_lentrigger,\n"
@@ -289,7 +289,7 @@ msgstr ""
 "Warnung:\t maxwidth ist kleiner als lanscape_lentrigger,\n"
 "\t\t Dateien mit/ohne FF können nicht im Querformat gedruckt werden.\n"
 
-#: ../filter_lp/filter_lp.c:1798
+#: ../filter_lp/filter_lp.c:1959
 #, c-format
 msgid "Warning:\t maxlines equals minlines, therefore page length is fixed.\n"
 msgstr "Warnung:\t maxlines und minlines sind gleich, daher ist die Seitenlänge festgelegt.\n"
@@ -878,7 +878,12 @@ msgstr "Warnung: kein MetaFont Modus für Drucker \"%s\" gefunden.\n"
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr "Warnung: nicht aller Mitglieder der Gruppe \"%s\" haben den sicheren MetaFont Modus.\n"
 
-#: ../libppr/readppd.c:449
+#: ../libppr/readppd.c:451
+#, fuzzy, c-format
+msgid "can't open PPD file \"%s\" (included from \"%s\"), errno=%d (%s)"
+msgstr "Kann PPD Datei \"%s\" nicht öffnen, Fehlernummer=%d (%s)\n"
+
+#: ../libppr/readppd.c:453
 #, fuzzy, c-format
 msgid "can't open PPD file \"%s\", errno=%d (%s)"
 msgstr "Kann PPD Datei \"%s\" nicht öffnen, Fehlernummer=%d (%s)\n"
@@ -1341,7 +1346,7 @@ msgstr ""
 msgid "lprsrv must run as root"
 msgstr "lprsrv muß als root laufen"
 
-#: ../lprsrv/lprsrv.c:239 ../ppr/ppr_infile.c:1499
+#: ../lprsrv/lprsrv.c:239 ../ppr/ppr_infile.c:1500
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
@@ -1777,7 +1782,7 @@ msgstr "%s: unbekanntes Unterkommando \"%s\", versuchen Sie \"ppad help\"\n"
 msgid "You must supply the name of an alias to show.\n"
 msgstr "Sie müssen den Namen eines Alias zum Zeigen angeben.\n"
 
-#: ../ppad/ppad_alias.c:59 ../ppad/ppad_alias.c:214 ../ppad/ppad_conf.c:367
+#: ../ppad/ppad_alias.c:59 ../ppad/ppad_alias.c:214 ../ppad/ppad_conf.c:384
 #, c-format
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "Der Aliasname \"%s\" existiert nicht.\n"
@@ -1880,17 +1885,22 @@ msgstr ""
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr "Zusätzliche Parameternamen müssen mit einem kleine ASCII Buchstaben beginnen.\n"
 
-#: ../ppad/ppad_conf.c:111
+#: ../ppad/ppad_conf.c:110 ../ppad/ppad_conf.c:143
+#, fuzzy, c-format
+msgid "%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"
+msgstr "%s(): fdopen(\"%d\", \"%s\") fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#: ../ppad/ppad_conf.c:118
 #, c-format
 msgid "Waiting for lock to clear.\n"
 msgstr "Warte auf Aufhebung der Sperre.\n"
 
-#: ../ppad/ppad_conf.c:120
+#: ../ppad/ppad_conf.c:127
 #, c-format
 msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
 msgstr "Kann temoräre Datei \"%s\" nicht zum schreiben öffnen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_conf.c:361 ../ppad/ppad_group.c:401 ../ppad/ppad_printer.c:392
+#: ../ppad/ppad_conf.c:378 ../ppad/ppad_group.c:401 ../ppad/ppad_printer.c:392
 #: ../ppad/ppad_printer.c:1347 ../ppad/ppad_printer.c:1438
 #: ../ppad/ppad_printer.c:1497 ../ppad/ppad_printer.c:1576
 #: ../ppad/ppad_printer.c:1681 ../ppad/ppad_printer.c:1793
@@ -1902,7 +1912,7 @@ msgstr "Kann temoräre Datei \"%s\" nicht zum schreiben öffnen, Fehlernummer=%d (
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:364 ../ppad/ppad_group.c:90 ../ppad/ppad_group.c:312
+#: ../ppad/ppad_conf.c:381 ../ppad/ppad_group.c:90 ../ppad/ppad_group.c:312
 #: ../ppad/ppad_group.c:597 ../ppad/ppad_group.c:646 ../ppad/ppad_group.c:681
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
@@ -3928,26 +3938,26 @@ msgstr "Veralteter Kopf \"%s\" ignoriert"
 msgid "Ignoring NonPPDFeature NumCopies which requests \"%s\" copies"
 msgstr "Ignoriere NichtPPDPunkt NumCopies, das \"%s\" Kopien fordert"
 
-#: ../ppr/ppr_dscdoc.c:995
+#: ../ppr/ppr_dscdoc.c:1004
 #, c-format
 msgid "Document uses DSC version %.1f which is > 3.0"
 msgstr "Das Dokument nutzt DSC Version %.1f, die  > 3.0 ist"
 
-#: ../ppr/ppr_dscdoc.c:1038
+#: ../ppr/ppr_dscdoc.c:1047
 msgid "Header comments section is unterminated"
 msgstr "Kopfzeilenabschnitt ist nicht beendet"
 
-#: ../ppr/ppr_dscdoc.c:1127
+#: ../ppr/ppr_dscdoc.c:1136
 #, c-format
 msgid "No \"%%%%EndProlog\" before first \"%%%%Page:\", inserting one"
 msgstr "Fehlendes \"%%%%EndProlog\" vor dem ersten \"%%%%Page:\"; wird eingefügt"
 
-#: ../ppr/ppr_dscdoc.c:1171
+#: ../ppr/ppr_dscdoc.c:1180
 #, c-format
 msgid "No \"%%%%EndProlog\" before \"%%%%BeginSetup\", inserting one"
 msgstr "Fehlendes \"%%%%EndProlog\" vor \"%%%%BeginSetup\"; wird eingefügt"
 
-#: ../ppr/ppr_dscdoc.c:1191
+#: ../ppr/ppr_dscdoc.c:1200
 #, c-format
 msgid "Extra \"%%%%EndProlog\""
 msgstr "Extra \"%%%%EndProlog\""
@@ -4032,371 +4042,376 @@ msgstr "%sBenötigtes Programm \"%s\" ist nicht verfügbar.\n"
 msgid "No matching filter found.\n"
 msgstr "Kein passender Filter gefunden.\n"
 
-#: ../ppr/ppr_infile.c:196
+#: ../ppr/ppr_features.c:59
+#, c-format
+msgid "%s: can't find destination %s or can't determine PPD file\n"
+msgstr ""
+
+#: ../ppr/ppr_infile.c:197
 msgid "input file is PostScript"
 msgstr "Eingabedatei ist PostScript"
 
-#: ../ppr/ppr_infile.c:202
+#: ../ppr/ppr_infile.c:203
 msgid "line printer files"
 msgstr "Zeilendruckerdateien"
 
-#: ../ppr/ppr_infile.c:202
+#: ../ppr/ppr_infile.c:203
 msgid "pass file thru line printer emulator"
 msgstr "Leite Datei durch Zeilendruckeremulator"
 
-#: ../ppr/ppr_infile.c:203
+#: ../ppr/ppr_infile.c:204
 msgid "Macintosh text"
 msgstr "Macintosh Text"
 
-#: ../ppr/ppr_infile.c:203
+#: ../ppr/ppr_infile.c:204
 msgid "file type is Macintosh text"
 msgstr "Dateityp ist Macintosh Text"
 
-#: ../ppr/ppr_infile.c:204
+#: ../ppr/ppr_infile.c:205
 msgid "Plain text"
 msgstr "Einfacher Text"
 
-#: ../ppr/ppr_infile.c:204
+#: ../ppr/ppr_infile.c:205
 msgid "file is plain text"
 msgstr "Datei ist einfacher Text"
 
-#: ../ppr/ppr_infile.c:205
+#: ../ppr/ppr_infile.c:206
 msgid "pass file thru pr"
 msgstr "Leite Datei durch pr"
 
-#: ../ppr/ppr_infile.c:205
+#: ../ppr/ppr_infile.c:206
 msgid "using pr"
 msgstr "benutze pr"
 
-#: ../ppr/ppr_infile.c:206
+#: ../ppr/ppr_infile.c:207
 msgid "Fortran files"
 msgstr "Fortrandateien"
 
-#: ../ppr/ppr_infile.c:206
+#: ../ppr/ppr_infile.c:207
 msgid "file employs Fortran carriage control"
 msgstr "Datei nutzt Fortran Transportkontrolle"
 
-#: ../ppr/ppr_infile.c:207
+#: ../ppr/ppr_infile.c:208
 msgid "email messages"
 msgstr "Email Nachrichten"
 
-#: ../ppr/ppr_infile.c:207
+#: ../ppr/ppr_infile.c:208
 msgid "file is an RFC-822 email message"
 msgstr "Datei ist eine RFC-822 Email Nachricht"
 
-#: ../ppr/ppr_infile.c:210
+#: ../ppr/ppr_infile.c:211
 msgid "CAT/4 (old Troff) files"
 msgstr "CAT/4-Dateien (altes Troff)"
 
-#: ../ppr/ppr_infile.c:210
+#: ../ppr/ppr_infile.c:211
 msgid "file is old troff output"
 msgstr "Datei ist alte Troffausgabe"
 
-#: ../ppr/ppr_infile.c:211
+#: ../ppr/ppr_infile.c:212
 msgid "Ditroff output"
 msgstr "Ditroffausgabe"
 
-#: ../ppr/ppr_infile.c:211
+#: ../ppr/ppr_infile.c:212
 msgid "file type is Ditroff (modern Troff) output"
 msgstr "Dateity ist Ditroffausgabe (modernes Troff)"
 
-#: ../ppr/ppr_infile.c:212
+#: ../ppr/ppr_infile.c:213
 msgid "TeX DVI files"
 msgstr "TeX DVI Dateien"
 
-#: ../ppr/ppr_infile.c:212
+#: ../ppr/ppr_infile.c:213
 msgid "file type is TeX DVI"
 msgstr "Dateityp ist TeX DVI"
 
-#: ../ppr/ppr_infile.c:213
+#: ../ppr/ppr_infile.c:214
 msgid "MS-Windows Metafiles"
 msgstr "MS-Windows Metadateien"
 
-#: ../ppr/ppr_infile.c:213
+#: ../ppr/ppr_infile.c:214
 msgid "file is an MS-Windows Metafile"
 msgstr "Datei ist eine MS-Windows Metadatei"
 
-#: ../ppr/ppr_infile.c:214
+#: ../ppr/ppr_infile.c:215
 msgid "MS-Windows Enhanced Metafiles"
 msgstr "MS-Windows Enhanced Metadateien"
 
-#: ../ppr/ppr_infile.c:214
+#: ../ppr/ppr_infile.c:215
 msgid "file is an MS-Windows Enhanced Metafile"
 msgstr "Datei ist eine MS-Windows Enhanced Metadatei"
 
-#: ../ppr/ppr_infile.c:215
+#: ../ppr/ppr_infile.c:216
 msgid "Mentor Graphics Plot Metafiles"
 msgstr "Mentor Graphics Plot Metadateien"
 
-#: ../ppr/ppr_infile.c:215
+#: ../ppr/ppr_infile.c:216
 msgid "file is a Mentor Graphics Plot Metafile"
 msgstr "Datei ist eine Mentor Graphics Plot Metadatei"
 
-#: ../ppr/ppr_infile.c:218
+#: ../ppr/ppr_infile.c:219
 msgid "HP PCL files"
 msgstr "HP PCL Dateien"
 
-#: ../ppr/ppr_infile.c:218
+#: ../ppr/ppr_infile.c:219
 msgid "file type is HP PCL"
 msgstr "Dateityp ist HP PCL"
 
-#: ../ppr/ppr_infile.c:219
+#: ../ppr/ppr_infile.c:220
 msgid "HP-GL/2 files"
 msgstr "HP-GL/2 Dateien"
 
-#: ../ppr/ppr_infile.c:219
+#: ../ppr/ppr_infile.c:220
 msgid "file type is HP-GL/2"
 msgstr "Dateityp ist HP-GL/2"
 
-#: ../ppr/ppr_infile.c:220
+#: ../ppr/ppr_infile.c:221
 msgid "dot matrix printer files"
 msgstr "Matrix Druckdateien"
 
-#: ../ppr/ppr_infile.c:220
+#: ../ppr/ppr_infile.c:221
 msgid "file type is generic dot matrix"
 msgstr "Dateityp ist einfache Punkt Matrix"
 
-#: ../ppr/ppr_infile.c:221
+#: ../ppr/ppr_infile.c:222
 msgid "HP PCL-XL files"
 msgstr "HP PCL_XL Dateien"
 
-#: ../ppr/ppr_infile.c:221
+#: ../ppr/ppr_infile.c:222
 msgid "file type is HP PCL-XL"
 msgstr "Dateityp ist HP PCL-XL"
 
-#: ../ppr/ppr_infile.c:223
+#: ../ppr/ppr_infile.c:224
 #, fuzzy
 msgid "HP PCL3GUI files"
 msgstr "HP PCL Dateien"
 
-#: ../ppr/ppr_infile.c:223
+#: ../ppr/ppr_infile.c:224
 #, fuzzy
 msgid "file type is HP PCL3GUI"
 msgstr "Dateityp ist HP PCL"
 
-#: ../ppr/ppr_infile.c:226
+#: ../ppr/ppr_infile.c:227
 msgid "Troff source files"
 msgstr "Troff Quellendatei"
 
-#: ../ppr/ppr_infile.c:226
+#: ../ppr/ppr_infile.c:227
 msgid "file is Troff source"
 msgstr "Datei ist eine Troff Quelle"
 
-#: ../ppr/ppr_infile.c:227
+#: ../ppr/ppr_infile.c:228
 msgid "TeX and LaTeX source"
 msgstr "TeX und LaTeX Quelle"
 
-#: ../ppr/ppr_infile.c:227
+#: ../ppr/ppr_infile.c:228
 msgid "file is TeX or LaTeX source"
 msgstr "Datei ist eine TeX oder LaTeX Quelle"
 
-#: ../ppr/ppr_infile.c:228
+#: ../ppr/ppr_infile.c:229
 msgid "WordPerfect documents"
 msgstr "WordPerfect Dokumente"
 
-#: ../ppr/ppr_infile.c:228
+#: ../ppr/ppr_infile.c:229
 msgid "file is a WordPerfect document"
 msgstr "Datei ist ein WordPerfect Dokument"
 
-#: ../ppr/ppr_infile.c:229
+#: ../ppr/ppr_infile.c:230
 msgid "Rich Text Format documents"
 msgstr "Rich Text Format Dokumente"
 
-#: ../ppr/ppr_infile.c:229
+#: ../ppr/ppr_infile.c:230
 msgid "file is in Rich Text Format"
 msgstr "Datei ist im Rich Text Format"
 
-#: ../ppr/ppr_infile.c:230
+#: ../ppr/ppr_infile.c:231
 msgid "TeXInfo documents"
 msgstr "TeXInfo Dokumente"
 
-#: ../ppr/ppr_infile.c:230
+#: ../ppr/ppr_infile.c:231
 msgid "file is in TeXInfo format"
 msgstr "Datei ist im TeXInfo Format"
 
-#: ../ppr/ppr_infile.c:231
+#: ../ppr/ppr_infile.c:232
 msgid "HTML documents"
 msgstr "HTML Dokumente"
 
-#: ../ppr/ppr_infile.c:231
+#: ../ppr/ppr_infile.c:232
 msgid "file is in HTML format"
 msgstr "Datei ist im HTML Format"
 
-#: ../ppr/ppr_infile.c:232
+#: ../ppr/ppr_infile.c:233
 msgid "SGML documents"
 msgstr "SGML Dokumente"
 
-#: ../ppr/ppr_infile.c:232
+#: ../ppr/ppr_infile.c:233
 msgid "file is in SGML format (other than HTML)"
 msgstr "Datei ist im SGML Format (anders als HTML)"
 
-#: ../ppr/ppr_infile.c:233
+#: ../ppr/ppr_infile.c:234
 msgid "file is in Adobe Portable Document Format"
 msgstr "Datei ist im Adobe Portable Document Format"
 
-#: ../ppr/ppr_infile.c:233
+#: ../ppr/ppr_infile.c:234
 msgid "the Adobe Portable Document Format"
 msgstr "das Adobe Portable Document Format"
 
-#: ../ppr/ppr_infile.c:236
+#: ../ppr/ppr_infile.c:237
 #, fuzzy
 msgid "JPEG pictures"
 msgstr "GIF Bilder"
 
-#: ../ppr/ppr_infile.c:236
+#: ../ppr/ppr_infile.c:237
 #, fuzzy
 msgid "file is a JPEG compressed picture"
 msgstr "Datei ist ein GIF komprimiertes Bild"
 
-#: ../ppr/ppr_infile.c:237
+#: ../ppr/ppr_infile.c:238
 msgid "GIF pictures"
 msgstr "GIF Bilder"
 
-#: ../ppr/ppr_infile.c:237
+#: ../ppr/ppr_infile.c:238
 msgid "file is a GIF compressed picture"
 msgstr "Datei ist ein GIF komprimiertes Bild"
 
-#: ../ppr/ppr_infile.c:238
+#: ../ppr/ppr_infile.c:239
 msgid "Sun raster files"
 msgstr "Sun Rasterdateien"
 
-#: ../ppr/ppr_infile.c:238
+#: ../ppr/ppr_infile.c:239
 msgid "file is in Sun raster format"
 msgstr "Datei ist im Sun raster Format"
 
-#: ../ppr/ppr_infile.c:239
+#: ../ppr/ppr_infile.c:240
 msgid "Berkeley Plot files"
 msgstr "Berkeley Druckdateien"
 
-#: ../ppr/ppr_infile.c:239
+#: ../ppr/ppr_infile.c:240
 msgid "file is in Berkeley plot library format"
 msgstr "Datei ist im Berkeley plot library format"
 
-#: ../ppr/ppr_infile.c:240
+#: ../ppr/ppr_infile.c:241
 msgid "CIF files"
 msgstr "CIF-Dateien"
 
-#: ../ppr/ppr_infile.c:240
+#: ../ppr/ppr_infile.c:241
 msgid "file is in CIF graphics language"
 msgstr "Datei ist in der CIF graphics Sprache"
 
-#: ../ppr/ppr_infile.c:241
+#: ../ppr/ppr_infile.c:242
 msgid "TIFF pictures"
 msgstr "TIF Bilder"
 
-#: ../ppr/ppr_infile.c:241
+#: ../ppr/ppr_infile.c:242
 msgid "file is in TIFF graphics format"
 msgstr "Datei ist im TIFF graphics Format"
 
-#: ../ppr/ppr_infile.c:242
+#: ../ppr/ppr_infile.c:243
 msgid "MS-Windows Bitmaps"
 msgstr "MS-Windows Bilder"
 
-#: ../ppr/ppr_infile.c:242
+#: ../ppr/ppr_infile.c:243
 msgid "file is an MS-Windows or OS/2 BMP"
 msgstr "Datei ist ein MS-Windows oder OS/2 BMP"
 
-#: ../ppr/ppr_infile.c:243
+#: ../ppr/ppr_infile.c:244
 msgid "X-Windows bitmaps"
 msgstr "X-Windows Bilder"
 
-#: ../ppr/ppr_infile.c:243
+#: ../ppr/ppr_infile.c:244
 msgid "file is an X-Windows bit map"
 msgstr "Datei ist ein X-Windows Bild"
 
-#: ../ppr/ppr_infile.c:244
+#: ../ppr/ppr_infile.c:245
 msgid "X-Windows pixel maps"
 msgstr "X-Windows Pixel Mappe"
 
-#: ../ppr/ppr_infile.c:244
+#: ../ppr/ppr_infile.c:245
 msgid "file is an X-Windows pixel map"
 msgstr "Datei ist eine X-Windows Pixel Mappe"
 
-#: ../ppr/ppr_infile.c:245
+#: ../ppr/ppr_infile.c:246
 msgid "X-Windows window dumps"
 msgstr "X-Windows Screenshots"
 
-#: ../ppr/ppr_infile.c:245
+#: ../ppr/ppr_infile.c:246
 msgid "file is an X-Windows window dump"
 msgstr "Datei ist ein X-Windows Screenshot"
 
-#: ../ppr/ppr_infile.c:246
+#: ../ppr/ppr_infile.c:247
 msgid "Portable aNy Maps"
 msgstr "Portable aNy Mappen"
 
-#: ../ppr/ppr_infile.c:246
+#: ../ppr/ppr_infile.c:247
 msgid "file is a Portable aNy Map"
 msgstr "Datei ist eine Portable aNy Mappe"
 
-#: ../ppr/ppr_infile.c:247
+#: ../ppr/ppr_infile.c:248
 msgid "Portable Network Graphics files"
 msgstr "Portable Network Graphics Dateien"
 
-#: ../ppr/ppr_infile.c:247
+#: ../ppr/ppr_infile.c:248
 msgid "file is in Portable Network Graphics format"
 msgstr "Datei ist im Portable Network Graphics Format"
 
-#: ../ppr/ppr_infile.c:248
+#: ../ppr/ppr_infile.c:249
 msgid "FIG files"
 msgstr "FIG-Dateien"
 
-#: ../ppr/ppr_infile.c:248
+#: ../ppr/ppr_infile.c:249
 msgid "file is in FIG format"
 msgstr "Datei ist im FIG Format"
 
-#: ../ppr/ppr_infile.c:251
+#: ../ppr/ppr_infile.c:252
 msgid "fragmentary PostScript files"
 msgstr "teilweise PostScript Dateien"
 
-#: ../ppr/ppr_infile.c:252
+#: ../ppr/ppr_infile.c:253
 msgid "files of unrecognized format"
 msgstr "Dateien unbekannten Typs"
 
-#: ../ppr/ppr_infile.c:253
+#: ../ppr/ppr_infile.c:254
 msgid "unrecognized binary files"
 msgstr "unbekannte Binärdatei"
 
-#: ../ppr/ppr_infile.c:667
+#: ../ppr/ppr_infile.c:668
 msgid "^D as EOF is spurious in a spooled environment"
 msgstr "^D als EOF ist in einer Spoolerumgebung nicht erlaubt"
 
-#: ../ppr/ppr_infile.c:791
+#: ../ppr/ppr_infile.c:792
 #, c-format
 msgid "Language \"%s\" in PJL header not recognized"
 msgstr "Sprache \"%s\" in PJL Kopfzeile nicht möglich"
 
-#: ../ppr/ppr_infile.c:1566
+#: ../ppr/ppr_infile.c:1567
 #, fuzzy, c-format
 msgid "%s(): stat(\"%s\", ?) failed, errno=%d (%s)"
 msgstr "%s(): fstat() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppr/ppr_infile.c:1620 ../ppr/ppr_infile.c:1625 ../ppr/ppr_respond.c:127
+#: ../ppr/ppr_infile.c:1621 ../ppr/ppr_infile.c:1626 ../ppr/ppr_respond.c:127
 #: ../ppr/ppr_respond.c:132
 #, fuzzy, c-format
 msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr "%s(): setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../ppr/ppr_infile.c:1908
+#: ../ppr/ppr_infile.c:1928
 #, c-format
 msgid "Can't print %s.\n"
 msgstr "Kann %s nich drucken.\n"
 
-#: ../ppr/ppr_infile.c:2125 ../ppr/ppr_infile.c:2234
+#: ../ppr/ppr_infile.c:2145 ../ppr/ppr_infile.c:2254
 #, c-format
 msgid "input file read error, errno=%d (%s)"
 msgstr "Fehler beim Lesen der Eingabedatei, Fehlernummer=%d (%s)"
 
-#: ../ppr/ppr_infile.c:2226
+#: ../ppr/ppr_infile.c:2246
 #, fuzzy, c-format
 msgid "%s(): disk full"
 msgstr "Festplatte ist voll"
 
-#: ../ppr/ppr_infile.c:2304
+#: ../ppr/ppr_infile.c:2324
 #, c-format
 msgid "can't open input file \"%s\", %s"
 msgstr "Kann Datei \"%s\" nicht öffnen, %s"
 
-#: ../ppr/ppr_infile.c:2389
+#: ../ppr/ppr_infile.c:2409
 msgid "spurious leading ^D"
 msgstr "falsches anführendes ^D"
 
@@ -5011,96 +5026,96 @@ msgstr "Dieses Programm muß setuid sein und von \"%s\" besessen werden"
 msgid "%s: warning: either account \"%s\" or this program has the wrong group ID.\n"
 msgstr "%s: Warnung: entweder Account \"%s\" oder dieses Programm hat die falsche Gruppen ID.\n"
 
-#: ../ppr/ppr_main.c:2136
+#: ../ppr/ppr_main.c:2137
 msgid "Destination (printer or group) name is empty"
 msgstr "Name des Ziels (Drucker oder Gruppe) ist nicht gesetzt"
 
-#: ../ppr/ppr_main.c:2138
+#: ../ppr/ppr_main.c:2139
 msgid "Destination (printer or group) name is too long"
 msgstr "Name des Ziels (Drucker oder Gruppe) ist zu lang"
 
-#: ../ppr/ppr_main.c:2140
+#: ../ppr/ppr_main.c:2141
 msgid "Destination (printer or group) name contains a disallowed character"
 msgstr "Name des Ziels (Drucker oder Gruppe) enthält ein nichterlaubtes Zeichen"
 
-#: ../ppr/ppr_main.c:2142
+#: ../ppr/ppr_main.c:2143
 msgid "Destination (printer or group) name starts with a disallowed character"
 msgstr "Name des Ziels (Drucker oder Gruppe) beginnt mit einem nichtelaubten Zeichen"
 
-#: ../ppr/ppr_main.c:2162
+#: ../ppr/ppr_main.c:2163
 msgid "spaces may not precede \"=\" in filter options"
 msgstr "\"=\" darf in Filteroptionen keinem Leerzeichen folgen"
 
-#: ../ppr/ppr_main.c:2165
+#: ../ppr/ppr_main.c:2166
 msgid "filter options must take form keyword=value"
 msgstr "Filteroptionen müssen in der Form Name=Wert sein"
 
-#: ../ppr/ppr_main.c:2170
+#: ../ppr/ppr_main.c:2171
 msgid "last -o keyword has no value"
 msgstr "Das letzte -o Schlüsselwort hat keinen Wert"
 
-#: ../ppr/ppr_main.c:2173
+#: ../ppr/ppr_main.c:2174
 msgid "spaces may not follow \"=\" in filter options"
 msgstr "auf \"=\" darf in Filteroptionen kein Leerzeichen folgen"
 
-#: ../ppr/ppr_main.c:2184
+#: ../ppr/ppr_main.c:2185
 msgid "unclosed quote in filter option value"
 msgstr "nichtabgeschlossene Quotierung in den Filteroptionswerten"
 
-#: ../ppr/ppr_main.c:2202
+#: ../ppr/ppr_main.c:2203
 msgid "only one file name allowed"
 msgstr "nur ein Dateiname ist erlaubt"
 
-#: ../ppr/ppr_main.c:2248
+#: ../ppr/ppr_main.c:2249
 msgid "Input file is empty, nothing to print"
 msgstr "Eingabedatei leer, nichts zu Drucken"
 
-#: ../ppr/ppr_main.c:2326
+#: ../ppr/ppr_main.c:2327
 #, fuzzy, c-format
 msgid "%d character follows EOF mark"
 msgid_plural "%d characters follow EOF mark"
 msgstr[0] "%d Zeichen folgen auf EOF"
 msgstr[1] "%d Zeichen folgen auf EOF"
 
-#: ../ppr/ppr_main.c:2344
+#: ../ppr/ppr_main.c:2345
 #, c-format
 msgid "input file was truncated (no %%%%EOF)"
 msgstr "Eingabedatei wurde gekürzt (kein %%%%EOF)"
 
-#: ../ppr/ppr_main.c:2353
+#: ../ppr/ppr_main.c:2354
 msgid "Unclosed resource or resources"
 msgstr "Nichtabgeschlossene Ressoure(n)"
 
-#: ../ppr/ppr_main.c:2363
+#: ../ppr/ppr_main.c:2364
 #, c-format
 msgid "No \"%%%%Trailer:\" comment"
 msgstr "Fehlender \"%%%%Trailer:\" Kopf"
 
-#: ../ppr/ppr_main.c:2365
+#: ../ppr/ppr_main.c:2366
 #, c-format
 msgid "Unexpected EOF in unclosed %s"
 msgstr "Unerwartetes EOF in nichtabgesclossenem %s"
 
-#: ../ppr/ppr_main.c:2479
+#: ../ppr/ppr_main.c:2480
 #, c-format
 msgid "No valid \"%%%%Pages:\" comment"
 msgstr "Kein gültiger \"%%%%Pages:\" Kopf"
 
-#: ../ppr/ppr_main.c:2502
+#: ../ppr/ppr_main.c:2503
 #, c-format
 msgid "\"%%%%Pages:\" comment is wrong, changing it from %d to %d"
 msgstr "\"%%%%Pages:\" ist falsch, Änderung von %d nach %d"
 
-#: ../ppr/ppr_main.c:2507
+#: ../ppr/ppr_main.c:2508
 #, c-format
 msgid "Missing \"%%%%Page:\" comments or incorrect \"%%%%Pages:\" comment"
 msgstr "Fehlende \"%%%%Page:\" Köpfe oder fehlerhafter \"%%%%Pages:\" Kopf"
 
-#: ../ppr/ppr_main.c:2609
+#: ../ppr/ppr_main.c:2610
 msgid "Disk full"
 msgstr "Festplatte ist voll"
 
-#: ../ppr/ppr_main.c:2651
+#: ../ppr/ppr_main.c:2652
 #, c-format
 msgid "%s: -U: can't unlink(\"%s\"), errno=%d (%s)\n"
 msgstr "%s: -U: kann nicht löschen(\"%s\") , Fehlernummer=%d (%s)\n"
@@ -5617,7 +5632,7 @@ msgstr "Kann Ressourcendatei \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
 msgid "Dual-Type font \"%s\" has no sfntdef section."
 msgstr "Gecachete Mac TT font \"%s\" hat keinen sfntdef Abschnitt."
 
-#: ../pprdrv/pprdrv_nup.c:62
+#: ../pprdrv/pprdrv_nup.c:79
 #, c-format
 msgid "The font \"%s\", which is required for the draft notice, is not available."
 msgstr "Die Schriftart \"%s\", die für die Entwurfsbenachrichtigung benötigt wird, ist nicht verfügbar."

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 April 2005.
+# Last modified 9 June 2005.
 #
 
 use 5.004;
@@ -255,6 +255,13 @@ print <<"EndOfText2c";
 <td align=$align valign=$valign colspan=3>
 <img src="$options->{wiz_imgdir}pixel-clear.png" alt="" width=1 height=$spacer_height align="right" border=0>
 EndOfText2c
+
+if(defined $options->{watermark})
+	{
+	print "<div class=\"watermark\">\n";
+	print html($options->{watermark}), "\n";
+	print "</div>\n";
+	}
 
 print "\n  <!-- start of dopage() output -->\n\n" if($options->{debug} > 0);
 

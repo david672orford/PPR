@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 May 2005.
+** Last modified 26 May 2005.
 */
 
 /*
@@ -100,7 +100,7 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 		/* must open for update if we want an exclusive lock */
 		if(!(confin = fopen(confin_name, "r+")))
 			{
-			if(errno == EEXIST)		/* if open failed because doesn't exist, */
+			if(errno == ENOENT)		/* if open failed because doesn't exist, */
 				{
 				if(!create)			/* unless we are to create it, */
 					return -1;		/* report that destination doesn't exist */

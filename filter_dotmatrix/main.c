@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 2 June 2005.
 */
 
 /*
@@ -347,22 +347,22 @@ void reset(int hard)
 	/* Return to 10CPI */
 	if(hard)
 		{
-		current_charmode=MODE_PICA;
-		one_line_expanded=FALSE;
-		simple_compressed=FALSE;
-		script_mode=SCRIPT_NONE;		/* no super/subscript */
-		international_char_set=0;		/* Set international character set to USA */
-		nlq_mode=FALSE;
-		charset=CHARSET_EXTENDED;
-		nlq_font=NLQ_ROMAN;
-		extra_dot_spacing=0;			/* No extra inter-character spacing */
-		print_colour=COLOUR_BLACK;
+		current_charmode = MODE_PICA;
+		one_line_expanded = FALSE;
+		simple_compressed = FALSE;
+		script_mode = SCRIPT_NONE;		/* no super/subscript */
+		international_char_set = 0;		/* Set international character set to USA */
+		nlq_mode = FALSE;
+		charset = CHARSET_EXTENDED;
+		nlq_font = NLQ_ROMAN;
+		extra_dot_spacing = 0;			/* No extra inter-character spacing */
+		print_colour = COLOUR_BLACK;
 		}
 
 	/* Set select font variables to default values. */
-	out_style=0;
-	out_hscale=1.0;
-	out_vscale=1.0;
+	out_style = 0;
+	out_hscale = 1.0;
+	out_vscale = 1.0;
 
 	/* Restore default vertical tab channel */
 	vertical_tab_channel = 0;
@@ -772,7 +772,7 @@ int main(int argc, char *argv[])
 			/*---------------------------------------------
 			** Select a LangaugeLevel for PostScript
 			---------------------------------------------*/
-			else if(strcmp(name, "level")==0)
+			else if(strcmp(name, "level") == 0)
 				{
 				int x = atoi(value);
 				if(x == 1)
@@ -802,7 +802,7 @@ int main(int argc, char *argv[])
 			/*----------------------------------------------
 			** Look for x or y shift
 			**--------------------------------------------*/
-			else if(strcmp(name,"xshift")==0)
+			else if(strcmp(name,"xshift") == 0)
 				xshift = atoi(value);
 			else if(strcmp(name,"yshift")==0)
 				yshift = atoi(value);
@@ -828,6 +828,13 @@ int main(int argc, char *argv[])
 
 		} /* end of if options exist */
 
+	/* Only 8-bit encodings are supported. */
+	if(strcasecmp(opt_charset, "UTF-8") == 0)
+		{
+		fprintf(stderr, "%s: UTF-8 not supported, assuming CP437\n", myname);
+		opt_charset = "CP437";
+		}
+	
 	/* Reset the "printer" for the dry run. */
 	reset(TRUE);						/* complete printer reset */
 	page_reset(0);						/* set variables for top of page */

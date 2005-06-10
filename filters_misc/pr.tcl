@@ -74,7 +74,7 @@ set result [catch {
     # Create a temporary file.
     set tempfile [exec $LIBDIR/mkstemp $TEMPDIR/ppr-pr-XXXXXX]
 
-    # Now, run pr. 
+    # Now, run pr and store the output in a temporary file.
     exec $PR $arglist -h $title >$tempfile 2>@stderr
 
     # Now, run filter_lp on the temporary file.
@@ -90,7 +90,7 @@ if {$tempfile != ""} {
 
 # Make non-zero exit if something failed.
 if {$result != 0} {
-    puts stderr "pr filter failed: $result $error"
+    puts stderr "filter_pr: $error"
     exit 2
     }
 

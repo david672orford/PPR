@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--26 April 2005
+2.00a1, 11 December 2004--10 June 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9722,4 +9722,16 @@ no final tarball was released.
 
 * papd/papd.c: added missing error() function.
 
+* ppr/ppr_infile.c: added automatic filter option charset= based on the value
+  returned by setlocale(LC_MESSAGES, NULL).  This will cause problems because
+  we don't have utf-8 support yet.
+
+* ppr/ppr_features.c: added code to ignore empty translation strings.
+
+* filter_dotmatrix/main.c: added code to ignore charset=utf-8 (with warning)
+
+* www/cgi_wizard.pl: added watermark option.
+
+* ppr/ppr_dscdoc.c: fixed parsing of feature "*pprN-Up" which was completely 
+  broken.
 

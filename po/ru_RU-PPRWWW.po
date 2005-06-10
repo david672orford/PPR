@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru_RU-PPRWWW\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-07 17:25-0400\n"
+"POT-Creation-Date: 2005-06-10 15:53-0400\n"
 "PO-Revision-Date: 2004-06-01 11:27-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -17,19 +17,19 @@ msgstr ""
 "X-Generator: KBabel 1.3.1\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../www/about.cgi.perl:56 ../www/cgi_widgets.pl:247
+#: ../www/about.cgi.perl:56 ../www/cgi_menu.pl:86
 msgid "About PPR"
 msgstr "О PPR"
 
 #: ../www/about.cgi.perl:96 ../www/login_cookie.cgi.perl:103
-#: ../www/login_cookie.cgi.perl:157 ../www/show_jobs.cgi.perl:417
+#: ../www/login_cookie.cgi.perl:157 ../www/show_jobs.cgi.perl:418
 msgid "Close"
 msgstr "Закрыть"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
 #: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
-#: ../www/show_jobs.cgi.perl:386 ../www/show_jobs.cgi.perl:417
-#: ../www/show_queues.cgi.perl:188 ../www/show_queues.cgi.perl:218
+#: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
+#: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
 msgstr "Закрыть это окно."
 
@@ -75,14 +75,14 @@ msgid "The alias \"%s\" already exists!"
 msgstr "Псевдоним \"%s\" уже существует!"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
-#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:337
+#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:118
 #: ../www/prn_addwiz.cgi.perl:819 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "Отмена"
 
-#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:337
+#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:118
 msgid "_Next"
@@ -127,7 +127,7 @@ msgstr "Описание:"
 msgid "You must supply a description!"
 msgstr "Надо вводить описиваное!"
 
-#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:337
+#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:344
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:819
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"
@@ -160,8 +160,8 @@ msgstr ""
 #: ../www/cliconf.cgi.perl:191 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:180 ../www/prn_addwiz.cgi.perl:866
 #: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
-#: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:386
-#: ../www/show_queues.cgi.perl:188 ../www/show_queues.cgi.perl:218
+#: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
+#: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
 msgstr "Закрыть"
 
@@ -261,6 +261,117 @@ msgstr "Изменения записываются:"
 msgid "PPR: Alias Properties: %s"
 msgstr "PPR: Свойства псевдонима: %s"
 
+#: ../www/cgi_menu.pl:37
+msgid "Tools"
+msgstr "Инстременты"
+
+#: ../www/cgi_menu.pl:38 ../www/show_queues.cgi.perl:217
+msgid "Cookie Login"
+msgstr "Вход печеньем"
+
+#: ../www/cgi_menu.pl:39 ../www/show_queues.cgi.perl:217
+msgid "Use this if your browser doesn't support Digest authentication."
+msgstr ""
+
+#: ../www/cgi_menu.pl:40
+msgid "Spooler Logs"
+msgstr "Журнал диспетчера"
+
+#: ../www/cgi_menu.pl:41
+msgid "Open a window with links to the spooler log files."
+msgstr "Открыть окно с ссылками журналам деспатчера."
+
+#: ../www/cgi_menu.pl:42
+msgid "Disk Space"
+msgstr "Свободное пространство на дисках"
+
+#: ../www/cgi_menu.pl:43
+msgid "Display information about free disk space on the print server."
+msgstr ""
+
+#: ../www/cgi_menu.pl:44
+msgid "Tests"
+msgstr "Повирки"
+
+#: ../www/cgi_menu.pl:45
+msgid "Open a window with links to test scripts."
+msgstr ""
+
+#: ../www/cgi_menu.pl:52
+msgid "Window"
+msgstr "Окно"
+
+#: ../www/cgi_menu.pl:53
+msgid "Queues"
+msgstr "Очереди"
+
+#: ../www/cgi_menu.pl:54
+msgid "Open a window with an icon for each queue."
+msgstr "Открыть окно на фоне которого пиктограм для каждой очереди."
+
+#: ../www/cgi_menu.pl:55
+msgid "All Jobs"
+msgstr "Все задач"
+
+#: ../www/cgi_menu.pl:56
+msgid "Open a window which lists all jobs."
+msgstr "Нажимайте здесь чтобы открыть окно показайющое всю очереди."
+
+#: ../www/cgi_menu.pl:61
+#, perl-format
+msgid "Control %s"
+msgstr "Руководиться принтером %s"
+
+#: ../www/cgi_menu.pl:62
+msgid "Monitor, start, stop, and mount forms on the printer."
+msgstr "Следить за принтером, остановить его, пускать его, или поставить на него носители."
+
+#: ../www/cgi_menu.pl:63 ../www/cgi_menu.pl:70
+#, perl-format
+msgid "Properties of %s"
+msgstr "PPR: Свойства %s"
+
+#: ../www/cgi_menu.pl:64
+msgid "Examine and change the configuration of the printer."
+msgstr "Посмотреть на и изменить настроение принтера."
+
+#: ../www/cgi_menu.pl:68
+#, perl-format
+msgid "Control %s members"
+msgstr "Руководиться челенами группы %s"
+
+#: ../www/cgi_menu.pl:69
+msgid "Monitor, start, stop, and mount forms on the member printers."
+msgstr "Следить за членом группы, остановить их, пускать их, или поставить на них носители."
+
+#: ../www/cgi_menu.pl:71
+msgid "Examine and change the configuration of the group."
+msgstr "Посмотреть на и изменить настроение группы."
+
+#: ../www/cgi_menu.pl:81 ../www/cgi_widgets.pl:249
+msgid "Help"
+msgstr "Справка"
+
+#: ../www/cgi_menu.pl:82
+msgid "For This Window"
+msgstr "Для этого окна"
+
+#: ../www/cgi_menu.pl:83
+msgid "Display the help document for this program in a web browser window"
+msgstr ""
+
+#: ../www/cgi_menu.pl:84
+msgid "All PPR Documents"
+msgstr "Все документов о PPR"
+
+#: ../www/cgi_menu.pl:85
+msgid "Open the PPR documentation index in a web browser window"
+msgstr ""
+
+#: ../www/cgi_menu.pl:87
+msgid "Display PPR version information"
+msgstr ""
+
 #: ../www/cgi_tabbed.pl:88
 msgid "The load function for this dialog failed with the following error message:"
 msgstr ""
@@ -292,117 +403,6 @@ msgstr "Сохранить изменения."
 #: ../www/cgi_tabbed.pl:381
 msgid "_Save"
 msgstr "Сохранить"
-
-#: ../www/cgi_widgets.pl:135 ../www/cgi_widgets.pl:242
-msgid "Help"
-msgstr "_Справка"
-
-#: ../www/cgi_widgets.pl:198
-msgid "Tools"
-msgstr "Инстременты"
-
-#: ../www/cgi_widgets.pl:199 ../www/show_queues.cgi.perl:216
-msgid "Cookie Login"
-msgstr "Вход печеньем"
-
-#: ../www/cgi_widgets.pl:200 ../www/show_queues.cgi.perl:216
-msgid "Use this if your browser doesn't support Digest authentication."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:201
-msgid "Spooler Logs"
-msgstr "Журнал диспетчера"
-
-#: ../www/cgi_widgets.pl:202
-msgid "Open a window with links to the spooler log files."
-msgstr "Открыть окно с ссылками журналам деспатчера."
-
-#: ../www/cgi_widgets.pl:203
-msgid "Disk Space"
-msgstr "Свободное пространство на дисках"
-
-#: ../www/cgi_widgets.pl:204
-msgid "Display information about free disk space on the print server."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:205
-msgid "Tests"
-msgstr "Попробки"
-
-#: ../www/cgi_widgets.pl:206
-msgid "Open a window with links to test scripts."
-msgstr ""
-
-#: ../www/cgi_widgets.pl:213
-msgid "Window"
-msgstr "Окно"
-
-#: ../www/cgi_widgets.pl:214
-msgid "Queues"
-msgstr "Очереди"
-
-#: ../www/cgi_widgets.pl:215
-msgid "Open a window with an icon for each queue."
-msgstr "Открыть окно на фоне которого пиктограм для каждой очереди."
-
-#: ../www/cgi_widgets.pl:216
-msgid "All Jobs"
-msgstr "Все задач"
-
-#: ../www/cgi_widgets.pl:217
-msgid "Open a window which lists all jobs."
-msgstr "Нажимайте здесь чтобы открыть окно показайющое всю очереди."
-
-#: ../www/cgi_widgets.pl:222
-#, perl-format
-msgid "Control %s"
-msgstr "Руководиться принтером %s"
-
-#: ../www/cgi_widgets.pl:223
-msgid "Monitor, start, stop, and mount forms on the printer."
-msgstr "Следить за принтером, остановить его, пускать его, или поставить на него носители."
-
-#: ../www/cgi_widgets.pl:224 ../www/cgi_widgets.pl:231
-#, perl-format
-msgid "Properties of %s"
-msgstr "PPR: Свойства %s"
-
-#: ../www/cgi_widgets.pl:225
-msgid "Examine and change the configuration of the printer."
-msgstr "Посмотреть на и изменить настроение принтера."
-
-#: ../www/cgi_widgets.pl:229
-#, perl-format
-msgid "Control %s members"
-msgstr "Руководиться челенами группы %s"
-
-#: ../www/cgi_widgets.pl:230
-msgid "Monitor, start, stop, and mount forms on the member printers."
-msgstr "Следить за членом группы, остановить их, пускать их, или поставить на них носители."
-
-#: ../www/cgi_widgets.pl:232
-msgid "Examine and change the configuration of the group."
-msgstr "Посмотреть на и изменить настроение группы."
-
-#: ../www/cgi_widgets.pl:243
-msgid "For This Window"
-msgstr "Для этого окна"
-
-#: ../www/cgi_widgets.pl:244
-msgid "Display the help document for this program in a web browser window"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:245
-msgid "All PPR Documents"
-msgstr "Все документов о PPR"
-
-#: ../www/cgi_widgets.pl:246
-msgid "Open the PPR documentation index in a web browser window"
-msgstr ""
-
-#: ../www/cgi_widgets.pl:248
-msgid "Display PPR version information"
-msgstr ""
 
 #: ../www/cliconf.cgi.perl:45
 msgid "Downloadable Client Configuation Files"
@@ -2126,139 +2126,139 @@ msgstr ""
 msgid "Page Order"
 msgstr "Размир Страницы:"
 
-#: ../www/show_jobs.cgi.perl:134
+#: ../www/show_jobs.cgi.perl:135
 msgid "Move"
 msgstr "Переместить"
 
-#: ../www/show_jobs.cgi.perl:135
+#: ../www/show_jobs.cgi.perl:136
 msgid "Delete"
 msgstr "Удалить"
 
-#: ../www/show_jobs.cgi.perl:136
+#: ../www/show_jobs.cgi.perl:137
 msgid "Rush"
 msgstr "Ускорить"
 
-#: ../www/show_jobs.cgi.perl:137
+#: ../www/show_jobs.cgi.perl:138
 msgid "Hold"
 msgstr "Держать"
 
-#: ../www/show_jobs.cgi.perl:138
+#: ../www/show_jobs.cgi.perl:139
 msgid "Release"
 msgstr "Освободить"
 
-#: ../www/show_jobs.cgi.perl:139 ../www/show_jobs.cgi.perl:396
-#: ../www/show_jobs.cgi.perl:416 ../www/show_queues.cgi.perl:195
-#: ../www/show_queues.cgi.perl:215
+#: ../www/show_jobs.cgi.perl:140 ../www/show_jobs.cgi.perl:397
+#: ../www/show_jobs.cgi.perl:417 ../www/show_queues.cgi.perl:196
+#: ../www/show_queues.cgi.perl:216
 msgid "Refresh"
 msgstr "Обновить"
 
-#: ../www/show_jobs.cgi.perl:140
+#: ../www/show_jobs.cgi.perl:141
 msgid "Done"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:263
+#: ../www/show_jobs.cgi.perl:264
 msgid "Queue Display Settings"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:344
+#: ../www/show_jobs.cgi.perl:345
 #, perl-format
 msgid "Jobs Queued for \"%s\" on \"%s\""
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:382 ../www/show_queues.cgi.perl:181
+#: ../www/show_jobs.cgi.perl:383 ../www/show_queues.cgi.perl:182
 #, perl-format
 msgid "Every %d seconds"
 msgstr "Каждый %d секунд"
 
-#: ../www/show_jobs.cgi.perl:385 ../www/show_queues.cgi.perl:187
+#: ../www/show_jobs.cgi.perl:386 ../www/show_queues.cgi.perl:188
 msgid "File"
 msgstr "Файл"
 
-#: ../www/show_jobs.cgi.perl:391 ../www/show_jobs.cgi.perl:411
-#: ../www/show_queues.cgi.perl:191
+#: ../www/show_jobs.cgi.perl:392 ../www/show_jobs.cgi.perl:412
+#: ../www/show_queues.cgi.perl:192
 msgid "View"
 msgstr "Вид"
 
-#: ../www/show_jobs.cgi.perl:392
+#: ../www/show_jobs.cgi.perl:393
 msgid "Preferences"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:397 ../www/show_queues.cgi.perl:196
+#: ../www/show_jobs.cgi.perl:398 ../www/show_queues.cgi.perl:197
 msgid "Now"
 msgstr "Сейчас"
 
-#: ../www/show_jobs.cgi.perl:412 ../www/show_queues.cgi.perl:211
+#: ../www/show_jobs.cgi.perl:413 ../www/show_queues.cgi.perl:212
 msgid "Refresh Interval:"
 msgstr "Частота Обновлении:"
 
-#: ../www/show_jobs.cgi.perl:413 ../www/show_queues.cgi.perl:212
+#: ../www/show_jobs.cgi.perl:414 ../www/show_queues.cgi.perl:213
 msgid "This page will be reloaded at the indicated interval (in seconds)."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:480
+#: ../www/show_jobs.cgi.perl:481
 #, perl-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr "Надо выбирать одну задачу или несколько до того как вы нажимаете [%s]."
 
-#: ../www/show_jobs.cgi.perl:488
+#: ../www/show_jobs.cgi.perl:489
 msgid "You must select a destination queue before pressing [Move]."
 msgstr "Надо выбирать очередь куда посылать до того как вы нажимаете [Переместить]."
 
-#: ../www/show_jobs.cgi.perl:514
+#: ../www/show_jobs.cgi.perl:515
 #, perl-format
 msgid "[%s] Failed"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:598
+#: ../www/show_jobs.cgi.perl:599
 #, perl-format
 msgid "Job \"%s\""
 msgstr "Задача \"%s\""
 
-#: ../www/show_jobs.cgi.perl:674
+#: ../www/show_jobs.cgi.perl:675
 msgid "Cancel selected jobs."
 msgstr "Удалить выбранные задачи."
 
-#: ../www/show_jobs.cgi.perl:674
+#: ../www/show_jobs.cgi.perl:675
 msgid "_Delete"
 msgstr "Удалить"
 
-#: ../www/show_jobs.cgi.perl:675
+#: ../www/show_jobs.cgi.perl:676
 msgid "Move selected jobs to the front of the queue."
 msgstr "Переместить выбранные задачи на начало очереди."
 
-#: ../www/show_jobs.cgi.perl:675
+#: ../www/show_jobs.cgi.perl:676
 msgid "R_ush"
 msgstr "Ускорить"
 
-#: ../www/show_jobs.cgi.perl:676
+#: ../www/show_jobs.cgi.perl:677
 msgid "Place selected jobs in the held state so that they won't print."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:676
+#: ../www/show_jobs.cgi.perl:677
 msgid "_Hold"
 msgstr "Держать"
 
-#: ../www/show_jobs.cgi.perl:677
+#: ../www/show_jobs.cgi.perl:678
 msgid "Release selected jobs which are held."
 msgstr "Освободить выбранные держание задачи."
 
-#: ../www/show_jobs.cgi.perl:677
+#: ../www/show_jobs.cgi.perl:678
 msgid "_Release"
 msgstr "Освободить"
 
-#: ../www/show_jobs.cgi.perl:678
+#: ../www/show_jobs.cgi.perl:679
 msgid "Open windows in which to modify selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:678
+#: ../www/show_jobs.cgi.perl:679
 msgid "_Modify"
 msgstr "Изменить"
 
-#: ../www/show_jobs.cgi.perl:679
+#: ../www/show_jobs.cgi.perl:680
 msgid "Display log files of selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:679
+#: ../www/show_jobs.cgi.perl:680
 msgid "_Log"
 msgstr "Журнал"
 
@@ -2337,75 +2337,124 @@ msgstr ""
 msgid "Title or Filename"
 msgstr "Название или файл"
 
-#: ../www/show_queues.cgi.perl:126
+#: ../www/show_queues.cgi.perl:127
 #, perl-format
 msgid "PPR Print Queues on \"%s\""
 msgstr "PPR: Очереди Принтеров на \"%s\""
 
-#: ../www/show_queues.cgi.perl:169
+#: ../www/show_queues.cgi.perl:170
 msgid "Free Flow"
 msgstr "Свободное разположение"
 
-#: ../www/show_queues.cgi.perl:170
+#: ../www/show_queues.cgi.perl:171
 msgid "Details"
 msgstr "Подробности"
 
-#: ../www/show_queues.cgi.perl:171
+#: ../www/show_queues.cgi.perl:172
 msgid "Many Details"
 msgstr "Много Подробностей"
 
-#: ../www/show_queues.cgi.perl:175
+#: ../www/show_queues.cgi.perl:176
 #, perl-format
 msgid "%d Columns"
 msgstr "%d Столбеца/ов"
 
-#: ../www/show_queues.cgi.perl:210
+#: ../www/show_queues.cgi.perl:211
 msgid "Choose the display format."
 msgstr "Выбрать разположение пиктограмм."
 
-#: ../www/show_queues.cgi.perl:210
+#: ../www/show_queues.cgi.perl:211
 msgid "View:"
 msgstr "Вид:"
 
-#: ../www/show_queues.cgi.perl:215
+#: ../www/show_queues.cgi.perl:216
 msgid "Refresh the page right now."
 msgstr "Обновить страницу сейчас."
 
-#: ../www/show_queues.cgi.perl:237
+#: ../www/show_queues.cgi.perl:238
 msgid "Show All Queues"
 msgstr "Показывать всем очередям"
 
-#: ../www/show_queues.cgi.perl:239
+#: ../www/show_queues.cgi.perl:240
 msgid "Click here to open a window which will show all queued jobs."
 msgstr "Снимите здесь открыть окно показайющое всю очереди."
 
-#: ../www/show_queues.cgi.perl:242
+#: ../www/show_queues.cgi.perl:243
 msgid "Add New Printer"
 msgstr "Добавлять новый принтер"
 
-#: ../www/show_queues.cgi.perl:244
+#: ../www/show_queues.cgi.perl:245
 msgid "Click here and you will be guided through the process of adding a new printer."
 msgstr "Нажимайте здесь чтобы мастер помог вам составлять очередь для нового принтера."
 
-#: ../www/show_queues.cgi.perl:247
+#: ../www/show_queues.cgi.perl:248
 msgid "Add New Group"
 msgstr "Добавлять новую группу"
 
-#: ../www/show_queues.cgi.perl:249
+#: ../www/show_queues.cgi.perl:250
 msgid "Click here and you will be guided through the process of adding a new group of printers."
 msgstr "Нажимайте здесь чтобы мастер помог вам составлять новую группу."
 
-#: ../www/show_queues.cgi.perl:252
+#: ../www/show_queues.cgi.perl:253
 msgid "Add New Alias"
 msgstr "Сделать новый псевдоним"
 
-#: ../www/show_queues.cgi.perl:254
+#: ../www/show_queues.cgi.perl:255
 msgid "Click here and you will be guided through the process of adding a new alias."
 msgstr "Нажимайте здесь чтобы мастер помог вам составлять новой псевдоним."
 
-#: ../www/show_queues.cgi.perl:463
+#: ../www/show_queues.cgi.perl:464
 msgid "-- No Description --"
 msgstr "-- Описания нет --"
+
+#: ../www/show_queues.cgi.perl:540 ../www/show_queues.cgi.perl:580
+msgid "View Queue"
+msgstr "Посмотреть на очередь"
+
+#: ../www/show_queues.cgi.perl:545
+msgid "Printer Control"
+msgstr "Управлять принтером"
+
+#: ../www/show_queues.cgi.perl:550
+msgid "Printer Properties"
+msgstr "Свойства принтера"
+
+#: ../www/show_queues.cgi.perl:555
+msgid "Test Page"
+msgstr "Печатать пробную страницу"
+
+#: ../www/show_queues.cgi.perl:560 ../www/show_queues.cgi.perl:595
+#: ../www/show_queues.cgi.perl:620
+msgid "Client Configuration"
+msgstr "Настраивать использующий компьютер"
+
+#: ../www/show_queues.cgi.perl:565 ../www/show_queues.cgi.perl:600
+msgid "Printlog"
+msgstr "Журнал задач"
+
+#: ../www/show_queues.cgi.perl:570
+msgid "Delete Printer"
+msgstr "Удалить принтер"
+
+#: ../www/show_queues.cgi.perl:585
+msgid "Member Printer Control"
+msgstr "Управлять члены принтеры"
+
+#: ../www/show_queues.cgi.perl:590
+msgid "Group Properties"
+msgstr "Свойства группы"
+
+#: ../www/show_queues.cgi.perl:605
+msgid "Delete Group"
+msgstr "Удалить группу"
+
+#: ../www/show_queues.cgi.perl:615
+msgid "Alias Properties"
+msgstr "Свойства псевдонима"
+
+#: ../www/show_queues.cgi.perl:625
+msgid "Delete Alias"
+msgstr "Удалить псевдоним"
 
 #: ../www/test_components.cgi.perl:47
 msgid "PPR sound files"
@@ -2518,39 +2567,6 @@ msgstr ""
 
 #~ msgid "Alert Messages:"
 #~ msgstr "Собщенния о проблемах:"
-
-#~ msgid "View Queue"
-#~ msgstr "Посмотреть на очередь"
-
-#~ msgid "Printer Control"
-#~ msgstr "Управлять принтером"
-
-#~ msgid "Printer Properties"
-#~ msgstr "Свойства принтера"
-
-#~ msgid "Client Configuration"
-#~ msgstr "Настраивать использующий компьютер"
-
-#~ msgid "Printlog"
-#~ msgstr "Журнал задач"
-
-#~ msgid "Delete Printer"
-#~ msgstr "Удалить принтер"
-
-#~ msgid "Member Printer Control"
-#~ msgstr "Управлять члены принтеры"
-
-#~ msgid "Group Properties"
-#~ msgstr "Свойства группы"
-
-#~ msgid "Delete Group"
-#~ msgstr "Удалить группу"
-
-#~ msgid "Alias Properties"
-#~ msgstr "Свойства псевдонима"
-
-#~ msgid "Delete Alias"
-#~ msgstr "Удалить псевдоним"
 
 #~ msgid "Critical?"
 #~ msgstr "Важно?"

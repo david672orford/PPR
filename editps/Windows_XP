@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/editps/Windows_XP
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,22 +26,30 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 November 2004.
+# Last modified 10 June 2005.
 #
 
 #
-# This filter is for Microsoft Windows XP's PostScript driveri  (PScript5.dll
-# version 5.2*).  For some reason, it omits the "%%Page:" comments.  We 
-# look for the proper context and insert them.
+# This filter is for Microsoft Windows XP's PostScript driver (PScript5.dll
+# version 5.2*).  For some reason, it (or at least some versions) omits the
+# "%%Page:" comments.  We look for the proper context and insert them.
 #
 
 my $page = 1;
+my $pages_seen = 0;
 while(my $line = <STDIN>)
 	{
-	if($line eq "%%EndPageComments\r\n")
+	if($line =~ /^%%Page:/)
 		{
-		print "%%Page: $page $page\n";
-		$page++;
+		$pages_seen++;
+		}
+	elsif($line eq "%%EndPageComments\r\n")
+		{
+		if($pages_seen < $pages)		# if %%Page comment is missing,
+			{
+			print "%%Page: $page $page\n";
+			$page++;
+			}
 		}
 
 	$line =~ s/^(%%IncludeResource:) ProcSet /$1 procset /;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 26 May 2005.
 */
 
 #include "config.h"
@@ -227,15 +227,15 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 						 */
 						setreuid(geteuid(), -1);
 
-						/* launch interface program */
+						/* Launch interface program (which is in cwd). */
 						if(probe)
 							{
-							execl("lib/query_wrapper", q->interface, "--probe", "-", q->address, NULL);
+							execl("query_wrapper", q->interface, "--probe", "-", q->address, NULL);
 							}
 						else
 							{
 							#define STR(a) #a
-							execl("lib/query_wrapper", q->interface,
+							execl("query_wrapper", q->interface,
 								"-",							/* printer name */
 								q->address,						/* printer address */
 								q->options ? q->options : "",	/* interface options */

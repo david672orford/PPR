@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 April 2005.
+# Last modified 10 June 2005.
 #
 
 =head1 cgi_widgets.pl
@@ -72,6 +72,22 @@ sub labeled_boolean
 This creates a checkbox followed by a label.  If the box is checked,
 then $name will be set to $value and POSTed.  This widget should be
 used for multiple checkboxes which share the same name.
+
+When multiple values are submitted, the cgi_read_data() function will
+join them with spaces in between.  The following sample code splits
+them up in order to determine which checkboxes were checked last time.
+
+	my @supplies = split(/ /, cgi_data_move("supplies", ""));
+	labeled_checkbox("supplies",
+		_("#2 Pencil"),
+		"pencil",
+		scalar grep($_ eq "pencil", @supplies)	
+		);
+	labeled_checkbox("supplies",
+		_("Pad of Paper"),
+		"pad",
+		scalar grep($_ eq "pad", @supplies)	
+		);
 
 =cut
 sub labeled_checkbox

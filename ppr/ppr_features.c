@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 27 May 2005.
 */
 
 #include "config.h"
@@ -56,7 +56,7 @@ int option_features(const char destname[])
 
 	if(!(ppdfile = dest_ppdfile(destname)))
 		{
-		fprintf(stderr, "%s: don't know which PPD file\n", myname);
+		fprintf(stderr, _("%s: can't find destination %s or can't determine PPD file\n"), myname, destname);
 		return PPREXIT_OTHERERR;
 		}
 
@@ -128,7 +128,7 @@ int option_features(const char destname[])
 		   */
 		if(ui && line[0] == '*' && strncmp(line+1, ui, strlen(ui)) == 0 && isspace(line[1+strlen(ui)]))
 			{
-			char *translation;
+			char *translation = NULL;
 			p = line + 1 + strlen(ui);			/* Set p to point after "*Feature". */
 			p += strspn(p, " \t");				/* eat up separator whitespace */
 
@@ -137,19 +137,16 @@ int option_features(const char destname[])
 				{
 				translation = p + len + 1;
 				translation += strspn(translation, " \t");		/* eat spurious whitespace */
-				translation[strcspn(translation, ":")] = '\0';
+				translation[strcspn(translation, ":")] = '\0';	/* terminate translation */
 				}
-			else
-				{
-				translation = p;
-				}
-			p[len] = '\0';
+			p[len] = '\0';			/* terminate machine-readable */
 
 			printf(" %s%-28s  --feature %s=%s\n",
-				(ui_default && strcmp(p, ui_default) == 0) ? "-->" : "   ",
-				translation,
-				ui,
-				p);
+				(ui_default && strcmp(p, ui_default) == 0) ? "-->" : "   ",		/* default mark */
+				translation && strlen(translation) > 0 ? translation : p,		/* human-readable name */
+				ui,																/* option */
+				p																/* value */
+				);										
 			continue;
 			}
 

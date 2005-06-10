@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-04-07 12:15-0400\n"
+"POT-Creation-Date: 2005-06-10 12:04-0400\n"
 "PO-Revision-Date: 2004-03-02 20:05-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -16,37 +16,37 @@ msgstr ""
 "Content-Transfer-Encoding: none\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../papd/papd.c:397
+#: ../papd/papd.c:408
 #, c-format
 msgid "%s: not running\n"
 msgstr "%s: програма не выпускаема\n"
 
-#: ../papd/papd.c:407
+#: ../papd/papd.c:418
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../papd/papd.c:411
+#: ../papd/papd.c:422
 #, c-format
 msgid "Sending %s to %s (PID=%ld).\n"
 msgstr "Посылаем %s програме %s (PID=%ld).\n"
 
-#: ../papd/papd.c:434
+#: ../papd/papd.c:445
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr "Здём пока %s не остановется..."
 
-#: ../papd/papd.c:443
+#: ../papd/papd.c:454
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr "Остановлен.\n"
 
-#: ../papd/papd.c:459
+#: ../papd/papd.c:470
 #, fuzzy, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr "%s(): opendir(\"%s\") не успаел, errno=%d (%s)"
 
-#: ../papd/papd.c:559
+#: ../papd/papd.c:570
 #, c-format
 msgid ""
 "Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"
