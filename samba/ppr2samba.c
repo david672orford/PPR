@@ -482,7 +482,8 @@ int main(int argc, char *argv[])
 	
 		/* Report on what we did. */
 		{
-		char *part2 = gu_asprintf(ngettext("of %d queue", "of %d queues", total), total);
+		char *part2;
+	   	gu_asprintf(&part2, ngettext("of %d queue", "of %d queues", total), total);
 		/* Translators: first %s is "of %d queues". */
 		gu_wrap_printf(ngettext(
 						"%d %s exported to \"%s\".\n",

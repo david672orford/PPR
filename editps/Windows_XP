@@ -35,8 +35,8 @@
 # "%%Page:" comments.  We look for the proper context and insert them.
 #
 
-my $page = 1;
-my $pages_seen = 0;
+my $page = 1;			# page we think we are working on
+my $pages_seen = 0;		# number of %%Page comments seen so far
 while(my $line = <STDIN>)
 	{
 	if($line =~ /^%%Page:/)
@@ -45,8 +45,8 @@ while(my $line = <STDIN>)
 		}
 	elsif($line eq "%%EndPageComments\r\n")
 		{
-		if($pages_seen < $pages)		# if %%Page comment is missing,
-			{
+		if($pages_seen < $pages)		# If %%Page comment is missing,
+			{							# insert one.
 			print "%%Page: $page $page\n";
 			$page++;
 			}

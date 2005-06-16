@@ -3,7 +3,7 @@
 ;
 ; Run "ppdoc ppr2samba" for an explanation of this file's purpose.
 ;
-; Last revised 17 January 2005.
+; Last revised 16 June 2005.
 ;
 
 ;
@@ -47,7 +47,7 @@
    public = yes
    writable = no
    create mode = 0700
-   path = %VAR_SPOOL_PPR%/sambaspool
+   path = @VAR_SPOOL_PPR@/sambaspool
 
    printer driver location = \\%L\PPRPRNT$\WIN40
    printer driver file = @VAR_SPOOL_PPR@/drivers/WIN40.def
@@ -83,17 +83,5 @@
    preserve case = yes
    short preserve case = yes
    read only = yes
-
-;
-; This section is for the audio responder and the
-; audio commentator to post audio files for download
-; and playing by computers that are running pprpopup.tcl.
-;
-[pprclipr]
-  comment = PPR Client Spooling Area
-  printable = no
-  path = @VAR_SPOOL_PPR@/pprclipr
-  writable = no
-  public = yes
 
 ; end of file

@@ -860,12 +860,12 @@ msgstr ""
 #: ../libppr/readppd.c:451
 #, fuzzy, c-format
 msgid "can't open PPD file \"%s\" (included from \"%s\"), errno=%d (%s)"
-msgstr "Не возмозно открыть PPD файл \"%s\", errno=%d (%s)"
+msgstr "не возмозно открыть PPD файл \"%s\", errno=%d (%s)"
 
 #: ../libppr/readppd.c:453
 #, c-format
 msgid "can't open PPD file \"%s\", errno=%d (%s)"
-msgstr "Не возмозно открыть PPD файл \"%s\", errno=%d (%s)"
+msgstr "не возмозно открыть PPD файл \"%s\", errno=%d (%s)"
 
 #: ../libppr/snmp_messages.c:69
 msgid "paper low"

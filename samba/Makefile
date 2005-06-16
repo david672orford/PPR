@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/samba/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 December 2004.
+# Last modified 16 June 2005.
 #
 
 include ../Makefile.conf
@@ -60,7 +60,7 @@ sambaprint$(DOTEXE): sambaprint.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 
 install: $(PROGS) smb-protos.conf $(INSTALL_TDB)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6711 $(BINDIR) ppr2samba$(DOTEXE)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(BINDIR) indexwindrivers
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(LIBDIR) indexwindrivers
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755  $(LIBDIR) samba_submitter
 	$(INSTALLCP) smb-protos.conf $(LIBDIR)/smb-protos.conf
 

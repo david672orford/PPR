@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 April 2005.
+# Last modified 16 June 2005.
 #
 
 =head1 NAME
@@ -90,7 +90,7 @@ source, it is likely to be found in the directory F</usr/local/samba/lib>.
 Otherwise, it is probably F</etc/smb.conf> or F</etc/samba/smb.conf>.  Here are
 the lines:
 
- include = /usr/lib/ppr/lib/smb-protos.conf
+ include = /usr/lib/ppr/smb-protos.conf
  include = /etc/ppr/smb-include.conf
 
 These lines can go at the end of the file or anywhere between sections but not
@@ -160,7 +160,7 @@ to run if certain filters are invoked.
 
 The section B<[pprproto_pprpopup]> is an alternative prototype for PPR shares.
 If jobs are submitted to a share which uses this prototype, then the wrapper
-script B</usr/lib/ppr/lib/samba_submitter> will be used instead of invoking
+script B</usr/lib/ppr/samba_submitter> will be used instead of invoking
 B<ppr> directly.  Before using B<ppr> to submit the job, this wrapper script
 will attempt to contact a program called B<pprpopup.tcl> which is hopefully
 running on the client.  The program B<pprpopup.tcl> is a Tcl/Tk script for
@@ -369,17 +369,10 @@ directory to F</var/spool/ppr/drivers/WIN40> on the PPR server:
 	PSMON.DLL
 	PSCRIPT.INI
 
-then rerun B<ppd2win95drv>.  Once this is done, dragg-and-drop installing
+then rerun B<ppd2win95drv>.  Once this is done, drag-and-drop installing
 a printer that supports level 2 PostScript will result in the installation of
 the 4.2x Adobe driver rather than the 4.1 Adobe driver or the driver that came
 with Windows 95.
-
-Now that I have lead you through this whole process, I should tell you that
-there is a batch file called F<WIN95CP.BAT> in the F<samba/> subdirectory of
-the PPR source which can be used to copy the files up to the share area
-if the client it is run on has write access to the F<pprprnt$> share (otherwise
-known as F</var/spool/ppr/drivers/>).  You will have to grant such access if you
-want to use F<win95cp.bat>.
 
 =head1 SEE ALSO
 
