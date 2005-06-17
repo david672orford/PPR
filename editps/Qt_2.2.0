@@ -28,7 +28,7 @@ sub translate_font
 while(<STDIN>)
     { 
     s/^%!PS-Adobe-1\.0( EPSF-3\.0)?$/%!PS-Adobe-3.0/;
-    s/^(%%Creator: Qt 2\.2\.0)$/$1, fixed by PPR editps/;
+    s/^(%%Creator: Qt 2\.2\.0)$/$1, fixed by PPR's Editps/;
     last if(m#^/F1 #);
     if(/^%%DocumentFonts:\s+(.*)$/)
 	{

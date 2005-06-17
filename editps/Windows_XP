@@ -26,35 +26,76 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 June 2005.
+# Last modified 17 June 2005.
 #
 
 #
 # This filter is for Microsoft Windows XP's PostScript driver (PScript5.dll
-# version 5.2*).  For some reason, it (or at least some versions) omits the
-# "%%Page:" comments.  We look for the proper context and insert them.
+# version 5.2*).
 #
 
-my $page = 1;			# page we think we are working on
-my $pages_seen = 0;		# number of %%Page comments seen so far
-while(my $line = <STDIN>)
+my $line;
+
+# Copy down to the end of the document setup section but don't print
+# the end tag because it is followed by some lines which should be inside
+# of it.
+while($line = <STDIN>)
+	{
+	$line =~ s/^(%%Creator: [^\r]+)\r?$/$1, fixed by PPR's Editps/;
+	$line =~ s/^(%%IncludeResource:) ProcSet /$1 procset /;
+	last if($line =~ /^%%EndSetup\r?$/);
+	print $line;
+	}
+
+# Move stuff between "%%EndSetup" and start of first page
+# into the document setup section.
+while($line = <STDIN>)
+	{
+	last if($line =~ /^%%/);
+	print $line;
+	}
+
+my $page = 0;
+while(defined $line)
 	{
 	if($line =~ /^%%Page:/)
 		{
-		$pages_seen++;
+		my $page_header = $line;
+		while($line = <STDIN>)
+			{
+			# -90 1 581 829 2 1 definenup
+			if($line =~ /^[-0-9]+ \d+ \d+ \d+ (\d+) (\d+) definenup\s*$/ && $page == 0)
+				{
+				my $n = $1 * $2;
+				print "%%BeginNonPPDFeature: N-Up $n\n";
+				print "%%EndNonPPDFeature\n";
+				}
+			$page_header .= $line;
+			last if($line =~ /^%%EndPageSetup\r?$/);
+			}
+		print "%%EndSetup\n\n" if($page eq 0);	
+		print $page_header;
+		$page++;
 		}
+
+	# There are reports that Windows XP sometimes omits the "%%Page:" comments
+	# and all other comments up to "%%EndPageComments".  So, if we see 
+	# "%%EndPageComments" but haven't seen a cooresponding "%%Page:" comment
+	# yet, we insert one.
 	elsif($line eq "%%EndPageComments\r\n")
 		{
-		if($pages_seen < $pages)		# If %%Page comment is missing,
-			{							# insert one.
-			print "%%Page: $page $page\n";
-			$page++;
-			}
+		print "%%EndSetup\n\n" if($page == 0);	
+		$page++;
+		print "%%Page: $page $page\n";
+		print $line;
 		}
 
-	$line =~ s/^(%%IncludeResource:) ProcSet /$1 procset /;
+	else
+		{
+		print $line;
+		}
 
-	print $line;
+	$line = <STDIN>;
 	}
 
 exit 0;

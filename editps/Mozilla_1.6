@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # mouse:~ppr/src/editps/Mozilla_1.0
-# Last modified 3 May 2005.
+# Last modified 17 June 2005.
 
 #
 # Allow Mozilla to print a wider range or characters.
@@ -106,7 +106,7 @@ while(<STDIN>)
 # Copy the rest of the header.
 while(<STDIN>)
 	{
-	s/(%%Creator: )/$1PPR editps and /;
+	s/(%%Creator: .+)$)/$1, fixed by PPR's Editps/;
 	print;
 	last if(/^%%EndComments$/);
 	}
