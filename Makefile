@@ -224,6 +224,7 @@ clean:
 
 # This deletes difficult-to-generate files too.
 veryclean: clean unconfigure
+	( cd po; make veryclean )
 	( cd docs; make veryclean )
 	( cd www; make veryclean )
 	@echo

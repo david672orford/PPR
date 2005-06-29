@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 April 2005.
+** Last modified 22 June 2005.
 */
 
 #include "config.h"
@@ -85,17 +85,24 @@ static void pprdrv_log_vprintf(const char msgclass[], const char format[], va_li
 		fclose(f);
 	} /* end of pprdrv_log_printf() */
 
+static void pprdrv_log_printf(const char msgclass[], const char format[], ...)
+	{
+	va_list va;
+	va_start(va, format);
+	pprdrv_log_vprintf(msgclass, format, va);
+	va_end(va);
+	}
 /*
 ** If possible, write a piece of text to the job's log file.
 */
 static void job_log_vprintf(const char msgclass[], const char format[], va_list va)
 	{
 	FILE *f;
-	if(test_mode)
+	if(test_mode)		/* In test mode, job log is stderr. */
 		{
 		f = stderr;
 		}
-	else
+	else				/* In normal mode it is the file read by "ppop log". */
 		{
 		char fname[MAX_PPR_PATH];
 		ppr_fnamef(fname, "%s/%s-log", DATADIR, QueueFile);
@@ -112,6 +119,14 @@ static void job_log_vprintf(const char msgclass[], const char format[], va_list 
 	if(!test_mode && f)
 		fclose(f);
 	} /* end of job_log_vprintf() */
+
+static void job_log_printf(const char msgclass[], const char format[], ...)
+	{
+	va_list va;
+	va_start(va, format);
+	job_log_vprintf(msgclass, format, va);
+	va_end(va);
+	}
 
 /*
 ** With the exception of the case where pprdrv is invoked with the wrong number
@@ -253,8 +268,8 @@ void signal_debug(const char format[], ...)
 	}
 #endif
 
-/* This wraps the main() function in order to install a special 
- * exception handler which writes the exception to the printer's alerts log.
+/* This wraps the main() function in order to install a special exception
+ * handler which writes the exception to the printer's alerts log.
  */
 int main(int argc, char *argv[])
 	{
@@ -262,8 +277,8 @@ int main(int argc, char *argv[])
 		return real_main(argc, argv);
 		}
 	gu_Catch {
-		pprdrv_log_vprintf("FATAL", "%s", gu_exception);
-		job_log_vprintf("FATAL", "%s", gu_exception);
+		pprdrv_log_printf("FATAL", "%s", gu_exception);
+		job_log_printf("FATAL", "%s", gu_exception);
 
 		if(strstr(gu_exception, "alloc()") || strstr(gu_exception, "fork()"))
 			hooked_exit(EXIT_STARVED, NULL);

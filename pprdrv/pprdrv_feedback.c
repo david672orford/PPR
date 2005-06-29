@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_feedback.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 22 June 2005.
 */
 
 /*===========================================================================
@@ -518,7 +518,7 @@ int feedback_reader(void)
 				int n1, n2;
 				unsigned int n3;
 				if(sscanf(ptr2, "%d %d %x", &n1, &n2, &n3) != 3)
-					error("%s(): can't parse SNMP: %*s", function, (strstr(ptr2, " ]%%") - ptr2), ptr2);
+					error("%s(): can't parse SNMP: %*s", function, (int)(strstr(ptr2, " ]%%") - ptr2), ptr2);
 				handle_snmp_status(n1, n2, n3);
 				continue;
 				}

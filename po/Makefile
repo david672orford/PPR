@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 June 2005.
+# Last modified 22 June 2005.
 #
 
 include ../Makefile.conf
@@ -39,12 +39,16 @@ DIVISIONS=PPR PPRD PPRWWW PAPD
 
 #=== Build ==================================================================
 
+# There are not depencies listed here.  They are all listed
+# in .depend.
 all:
 
-merge: pot all
-
-# Extract the list of translatable strings.
-pot:
+# Extract the lists of translatable strings.  The rules are a bit 
+# fudged.  If we try to extract one list, we get them all.
+PPRD.pot: PPR.pot
+PAPD.pot: PPR.pot
+PPRWWW.pot: PPR.pot
+PPR.pot:
 	xgettext \
 		--default-domain=PPR \
 		--output=PPR.tmp \
@@ -128,5 +132,8 @@ depend:
 
 clean:
 	$(RMF) $(BACKUPS) *.mo
+
+veryclean: clean
+	$(RMF) *.pot
 
 # end of file

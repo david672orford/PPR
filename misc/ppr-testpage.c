@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 April 2005.
+** Last modified 27 June 2005.
 */
 
 #include "config.h"
@@ -63,9 +63,11 @@ static void do_header(void)
 		"%%!PS-Adobe-3.0\n"
 		"%%%%Title: PPR Test Page\n"
 		"%%%%Creator: ppr-testpage\n"
+		"%%%%Copyright: %s\n"
 		"%%%%Pages: 1\n"
 		"%%%%DocumentNeededResources: font Helvetica\n"
-		"%%%%EndComments\n"
+		"%%%%EndComments\n",
+		COPYRIGHT
 		);
 	}
 

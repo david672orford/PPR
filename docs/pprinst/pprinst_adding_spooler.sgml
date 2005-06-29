@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 18 April 2005
+Last Modified: 22 June 2005
 Last Proofread: 14 February 2003
 -->
 
@@ -358,7 +358,7 @@ really exist on your printer and should have the correct code for selecting
 them.  Finally, it is best that the font list be correct.  A font list which
 leaves some fonts out is probably better than one which names fonts the
 printer does not have.  Here are some PPD files you might try if you don't
-have anything closer:
+have anything closer:</para>
 
 <variablelist>
 
@@ -469,8 +469,6 @@ A typical Level 1 printer with 35 fonts and two bins
 
 </variablelist>
 
-</para>
-
 <para>If you choose either the <filename>HP LaserJet 4M DSC</filename> or
 <filename>HP LaserJet 4M Plus DSC</filename> PPD file you must make sure
 your clients are using the vary same PPD file and not the one supplied by
@@ -498,7 +496,7 @@ other than <filename class="Directory">/usr/share/ppr/ppd/</filename>,
 as long as you specify the path in the <command>ppad ppd</command> command. 
 When <application>PPR</application> opens the PPD file, PPD file names
 starting with <filename>/</filename> are used as is, others are looked up
-in the PPD file index created by <command>ppr-index ppds</command>.
+in the PPD file index created by <command>ppr-index ppds</command>.</para>
 
 </sect3>
 

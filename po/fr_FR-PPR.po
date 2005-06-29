@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-10 15:53-0400\n"
+"POT-Creation-Date: 2005-06-22 11:07-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -5986,26 +5986,26 @@ msgstr ""
 msgid "Can't open directory \"%s\", errno=%d (%s)\n"
 msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s)\n"
 
-#: ../samba/ppr2samba.c:485
+#: ../samba/ppr2samba.c:486
 #, c-format
 msgid "of %d queue"
 msgid_plural "of %d queues"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../samba/ppr2samba.c:488
+#: ../samba/ppr2samba.c:489
 #, fuzzy, c-format
 msgid "%d %s exported to \"%s\".\n"
 msgid_plural "%d %s exported to \"%s\".\n"
 msgstr[0] "%d sur %d files exportées vers \"%s\".\n"
 msgstr[1] "%d sur %d files exportées vers \"%s\".\n"
 
-#: ../samba/ppr2samba.c:496
+#: ../samba/ppr2samba.c:497
 #, fuzzy, c-format
 msgid "%d of %d queue(s) skipt due to errors.\n"
 msgstr "%d sur %d files exportées vers \"%s\".\n"
 
-#: ../samba/ppr2samba.c:502
+#: ../samba/ppr2samba.c:503
 #, c-format
 msgid "Done.\n"
 msgstr "Terminé.\n"

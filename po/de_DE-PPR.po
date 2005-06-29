@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-10 15:53-0400\n"
+"POT-Creation-Date: 2005-06-22 11:07-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -5960,26 +5960,26 @@ msgstr "Das Nichvorhandensein von \"%s\" zeigt an, das ein Export zu Samba nicht
 msgid "Can't open directory \"%s\", errno=%d (%s)\n"
 msgstr "Kann Verzeichnis \"%s\" nicht öffnen, Fehlernummer=%d (%s)\n"
 
-#: ../samba/ppr2samba.c:485
+#: ../samba/ppr2samba.c:486
 #, c-format
 msgid "of %d queue"
 msgid_plural "of %d queues"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../samba/ppr2samba.c:488
+#: ../samba/ppr2samba.c:489
 #, fuzzy, c-format
 msgid "%d %s exported to \"%s\".\n"
 msgid_plural "%d %s exported to \"%s\".\n"
 msgstr[0] "%d von %d Warteschlagen nach \"%s\" exportiert.\n"
 msgstr[1] "%d von %d Warteschlagen nach \"%s\" exportiert.\n"
 
-#: ../samba/ppr2samba.c:496
+#: ../samba/ppr2samba.c:497
 #, c-format
 msgid "%d of %d queue(s) skipt due to errors.\n"
 msgstr "%d von %d Warteschlange(n) wegen Fehlern übergangen.\n"
 
-#: ../samba/ppr2samba.c:502
+#: ../samba/ppr2samba.c:503
 #, c-format
 msgid "Done.\n"
 msgstr "Beendet.\n"

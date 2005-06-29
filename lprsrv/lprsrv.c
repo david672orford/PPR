@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 22 June 2005.
 */
 
 /*
@@ -84,6 +84,14 @@ static void log(const char category[], const char atfunction[], const char forma
 		fclose(logfile);
 		}
 	} /* end of log() */
+
+static void log2(const char category[], const char atfunction[], const char format[], ...)
+	{
+	va_list va;
+	va_start(va, format);
+	log(category, atfunction, format, va);
+	va_end(va);
+	}
 
 /*
 ** Print an error message and abort.
@@ -245,7 +253,7 @@ static int real_main(int argc,char *argv[])
 		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "setegid", (long)user_ppr->pw_gid, errno, gu_strerror(errno));
 
 	if(seteuid(user_ppr->pw_uid) == -1)
-		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "seteuid"< (long)user_ppr->pw_uid, errno, gu_strerror(errno));
+		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "seteuid", (long)user_ppr->pw_uid, errno, gu_strerror(errno));
 	}
 
 	/*
@@ -408,7 +416,7 @@ int main(int argc, char *argv[])
 		return real_main(argc, argv);
 		}
 	gu_Catch {
-		log("exception", NULL, "%s", gu_exception);
+		log2("exception", NULL, "%s", gu_exception);
 		exit(1);
 		}
 	/* NOREACHED */

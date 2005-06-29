@@ -153,7 +153,7 @@ static void do_print_job(struct IPP *ipp)
 			args[iii++] = fd_str;
 			args[iii++] = NULL;
 
-			execv(PPR_PATH, args);
+			execv(PPR_PATH, (char**)args);
 	
 			_exit(242);
 			}
