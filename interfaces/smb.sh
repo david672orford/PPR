@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/interfaces/smb.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by Klaus Reimann.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 December 2004.
+# Last modified 15 July 2005.
 #
 
 #########################################################################
@@ -101,11 +101,11 @@ for opt in $OPTIONS
 
 set -x
 err_msg=""
-#$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" -z 600000'
-$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" | \
+#$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -N -U "$SMBUSER" -z 600000'
+$SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -N -U "$SMBUSER" | \
 	while read line
 		do
-		lib/alert "$PRINTER" TRUE "line: $line, err_msg: $err_msg"
+		#lib/alert "$PRINTER" TRUE "line: $line, err_msg: $err_msg"
 		case $line in
 			ERROR:* )
 				;;
@@ -126,7 +126,7 @@ $SMBCLIENT "$ADDRESS" "$SMBPASSWORD" -c "print -" -P -N -U "$SMBUSER" | \
 				lib/alert "$PRINTER" TRUE "hit: $err_msg"
 				;;
 			* )
-				lib/alert "$PRINTER" TRUE "debug $line, err_msg: $err_msg"
+				lib/alert "$PRINTER" TRUE "debug: $line, err_msg: $err_msg"
 				;;
 			esac
 		done
