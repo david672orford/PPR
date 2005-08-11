@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_list.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 February 2003.
+** Last modified 9 August 2005.
 */
 
 #include "config.h"
@@ -36,8 +36,77 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "rfc1179.h"
 #include "lprsrv.h"
-#include "uprint.h"
+
+#define ARGS_SIZE 100
+
+/*
+** Handle an lpq style queue request.  The file names
+** list is filled with a list of job numbers and
+** user names.  This function is used by uprint-lpq
+** to process local requests and from the new lprsrv in order
+** to process requests from across the network.
+**
+** The term "agent" is from RFC-1179 and should probably
+** be "remote_user".  Notice that it is not used.
+*/
+static int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too)
+	{
+	DODEBUG_UPRINT(("uprint_lpq(agent = \"%s\", queue = \"%s\", format = %d, arglist = ?)", agent, queue ? queue : "", format));
+
+	if(queue == (char*)NULL)
+		{
+		uprint_error_callback("uprint_lpq(): queue is NULL");
+		uprint_errno = UPE_NODEST;
+		return -1;
+		}
+
+	/*
+	** PPR spooler:
+	** Use ppop.
+	*/
+	if(uprint_claim_ppr(queue))
+		{
+		const char *args[ARGS_SIZE + 1];
+		int i, x;
+
+		i = 0;
+		args[i++] = "ppop";
+
+		if(uprint_arrest_interest_interval)
+			{
+			args[i++] = "--arrest-interest-interval";
+			args[i++] = uprint_arrest_interest_interval;
+			}
+
+		if(format == 0)
+			args[i++] = "lpq";
+		else
+			args[i++] = "nhlist";
+
+		args[i++] = queue;
+
+		if(arglist != (const char **)NULL)
+			{
+			for(x = 0; arglist[x] != (const char *)NULL && x < ARGS_SIZE; x++, i++)
+				{
+				args[i] = arglist[x];
+				}
+			}
+
+		args[i] = (const char *)NULL;
+
+		return uprint_run(uid, gid, PPOP_PATH, args);
+		}
+
+	/*
+	** We will only reach here if none of
+	** the spoolers claimed the queue.
+	*/
+	uprint_errno = UPE_UNDEST;
+	return -1;
+	} /* end of uprint_lpq() */
 
 /*=================================================================
 ** List the files in the queue

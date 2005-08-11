@@ -33,7 +33,6 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS=ppr-sync \
-	sgi_glp_hack \
 	ppd2macosdrv \
 	custom_hook_docutech \
 	xmessage \
@@ -54,10 +53,6 @@ ppr-testpage$(DOTEXE): ppr-testpage.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT
 
 install: $(PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) ppr-sync ppd2macosdrv ppr-testpage
-	if [ `uname -s` = "IRIX" ];\
-		then\
-		$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) sgi_glp_hack;\
-		fi
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) custom_hook_docutech xmessage
 
 #=== Housekeeping ===========================================================

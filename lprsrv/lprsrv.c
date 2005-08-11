@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 June 2005.
+** Last modified 9 August 2005.
 */
 
 /*
@@ -47,10 +47,10 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "rfc1179.h"
 #include "lprsrv.h"
 #include "util_exits.h"
 #include "version.h"
-#include "uprint.h"
 
 /*
 ** This function returns the name of this computer.  This is used in some

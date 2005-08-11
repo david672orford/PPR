@@ -61,7 +61,7 @@ LIBOBJS=\
 	destinfo.$(OBJ) \
 	ipp_utils.$(OBJ) \
 	get_device_id.$(OBJ) \
-	snmp_messages.$(OBJ) 
+	snmp_messages.$(OBJ)
 
 TARGETS=../libppr.$(LIBEXT) query_wrapper$(DOTEXE)
 

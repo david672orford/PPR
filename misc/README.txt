@@ -41,39 +41,6 @@ commentator will use it if xmessage is not found and wish is.
 
 
 ====================================
- printer_list.perl
-====================================
-
-This script prints a neat list of all the printers.  It is only intended as an
-example which you can adapt to your needs, so it is not installed by
-"make install".
-
-
-====================================
- manual_duplex.sh
-====================================
-
-A shell script to submit a job twice in order to print it on both sides on a
-simplex-only printer.  The user must removed the sheets after the first job
-and re-insert them in the manual feed tray.  This script is only an example
-and not a polished utility, so it is not installed by "make install".
-
-
-====================================
- sgi_glp_hack.perl
-====================================
-
-If you run this script (as root), it will create dummy files in
-/var/spool/lp, one for each PPR printer and each printer listed in
-/etc/ppr/uprint-remote.conf.  You might want to do this so that SGI
-programs such as glp (a graphical front-end for lp) will work correctly.
-If you don't do this, their browse lists of print queues will be empty.
-
-If the operating system is IRIX, then this script will be installed in
-$BINDIR.
-
-
-====================================
  custom_hook_docutech.perl
 ====================================
 

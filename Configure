@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 April 2005.
+# Last modified 29 June 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -994,7 +994,7 @@ export PSERRORS_CONF=$(MISCDIR)/pserrors.conf
 # Special files used by the spooler:
 #----------------------------------------
 # file with previous queue id number
-export NEXTIDFILE=$(RUNDIR)/lastid_ppr
+export NEXTIDFILE=$(STATEDIR)/lastid_ppr
 # name of pipe between ppr & pprd
 export FIFO_NAME=$(VAR_SPOOL_PPR)/PIPE
 # created and locked by pprd

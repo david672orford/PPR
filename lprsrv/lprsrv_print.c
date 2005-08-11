@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 9 August 2005.
 */
 
 /*
@@ -45,8 +45,8 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
+#include "rfc1179.h"
 #include "lprsrv.h"
-#include "uprint.h"
 
 struct DATA_FILE
 		{
@@ -216,19 +216,6 @@ static ssize_t receive_data_file(size_t size_of_file, int tempfile)
 		return size_of_file;
 		}
 	} /* end of receive_date_file() */
-
-/*
-** Interpret a PPR option from the control file.
-*/
-static void handle_ppr_option(void *upr, const char *option)
-	{
-	if(strncmp(option, "--responder ", 12) == 0)
-		uprint_set_ppr_responder(upr, option+12);
-	else if(strncmp(option, "--responder-address ", 20) == 0)
-		uprint_set_ppr_responder_address(upr, option+20);
-	else if(strncmp(option, "--responder-options ", 20) == 0)
-		uprint_set_ppr_responder_options(upr, option+20);
-	}
 
 /*
 ** Interpret a Solaris option from the control file.
@@ -403,11 +390,6 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 
 			case '5':
 				handle_solaris_option(upr, line+1);
-				break;
-
-			case '8':
-				if(strncmp(line, "8PPR ", 5) == 0)
-					handle_ppr_option(upr, line+5);
 				break;
 
 			case '<':							/* DEC OSF input tray */
@@ -667,7 +649,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 	DODEBUG_PRINT(("dispatch_files()"));
 
 	/* Choose local user to run as and possibly choose proxy mode. */
-	get_proxy_identity(&uid_to_use, &gid_to_use, &proxy_class, fromhost, uprint_get_user(upr), printdest_claim_ppr(printer), access_info);
+	get_proxy_identity(&uid_to_use, &gid_to_use, &proxy_class, fromhost, uprint_get_user(upr), uprint_claim_ppr(printer), access_info);
 	if(proxy_class)
 		uprint_set_proxy_class(upr, proxy_class);
 
@@ -735,7 +717,7 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 	const char *prog;					/* pathname of spooler program */
 
 	/* Build a command line appropriate for the spooler: */
-	if(printdest_claim_ppr(printer))
+	if(uprint_claim_ppr(printer))
 		{
 		spooler = 1;
 		prog = PPR_PATH;

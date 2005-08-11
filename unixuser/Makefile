@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/unixuser/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 9 August 2005.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 BIN_PROGS_SUID=ppr-xgrant$(DOTEXE) ppr-followme$(DOTEXE)
-BIN_PROGS=ppr-xfm ppr-hexdump$(DOTEXE)
+BIN_PROGS=ppr-hexdump$(DOTEXE)
 LIB_PROGS=
 PROGS=$(BIN_PROGS) $(BIN_PROGS_SUID) $(LIB_PROGS)
 

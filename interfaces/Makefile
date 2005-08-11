@@ -63,7 +63,7 @@ clispool$(DOTEXE): clispool.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o $@ $^ -lnsl $(INTLLIBS)
 
 # Berkely LPR/LPD protocol client:
-lpr$(DOTEXE): lpr.$(OBJ) ../libuprint.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+lpr$(DOTEXE): lpr.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 # Parallel port interface:

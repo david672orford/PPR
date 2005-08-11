@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/lprsrv/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 9 August 2005.
 #
 
 include ../Makefile.conf
@@ -36,7 +36,7 @@ LIB_PROGS=lprsrv$(DOTEXE)
 BIN_PROGS=lprsrv-test$(DOTEXE)
 PROGS=$(BIN_PROGS) $(LIB_PROGS)
 
-USELIBS=../libuprint.$(LIBEXT) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT) 
+USELIBS=../libgu.$(LIBEXT) ../libppr.$(LIBEXT) 
 
 #=== Build ==================================================================
 
@@ -45,7 +45,14 @@ all: $(PROGS)
 lprsrv$(DOTEXE): \
 		lprsrv.$(OBJ) lprsrv_client_info.$(OBJ) lprsrv_conf.$(OBJ) \
 		lprsrv_print.$(OBJ) lprsrv_list.$(OBJ) lprsrv_cancel.$(OBJ) \
-		lprsrv_standalone.$(OBJ) $(USELIBS)
+		lprsrv_standalone.$(OBJ) \
+		uprint_claim_ppr.$(OBJ) \
+		uprint_obj.$(OBJ) \
+		uprint_sysv.$(OBJ) \
+		uprint_xlate.$(OBJ) \
+		uprint_print_ppr.$(OBJ) \
+		uprint_run.$(OBJ) \
+		$(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 lprsrv-test$(DOTEXE): lprsrv-test.$(OBJ) lprsrv_conf.$(OBJ) $(USELIBS)

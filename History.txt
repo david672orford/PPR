@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--27 June 2005
+2.00a1, 11 December 2004--9 August 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9743,4 +9743,25 @@ no final tarball was released.
 
 * misc/ppr-testpage.c: added copyright notice to generated PostScript.
 
+* interfaces/smb.tcl: removed -P from smbclient command line
 
+* ppr-bsd/, ppr-sysv/: removed.  Decided to drop the UPRINT programs
+  because the emerging standard API for printing on free Unix systems
+  is IPP and particularly the CUPS client library.  I had planned to
+  make the UPRINT programs more capable and configurable than the CUPS
+  client programs, but if most big applications are using the CUPS 
+  library, then they won't be helped.  Better to contribute to the CUPS
+  client effort than attempt to compete with it.
+
+* misc/sgi_glp_hack.perl: removed
+
+* misc/manual_duplex.sh: removed
+
+* misc/printer_list.perl: removed
+
+* misc/ppr-xfm.sh: removed
+
+* libuprint/: moved contents into lprsrv/ and interfaces/lpr.c.
+
+* include/uprint.h: moved contents into new file include/rfc1179.h and
+  existing file lprsrv/lprsrv.h.

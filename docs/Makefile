@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 October 2004.
+# Last modified 8 August 2005.
 #
 
 # Pull in settings from Configure.
@@ -38,7 +38,7 @@ include ./rules.mk
 PROGS=ppdoc
 HTML=index.html
 
-SUBDIRS=refman pprdoc pprinst pprhack pprlibs misc pprpopup
+SUBDIRS=refman pprdoc pprinst pprhack pprlibs misc
 
 #=== Build ==================================================================
 
