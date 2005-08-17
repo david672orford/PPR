@@ -83,8 +83,6 @@ static void do_paths(char format[], char language[])
 
 	/* Configuration Files */
 	printf(format, "PPR_CONF", PPR_CONF);
-	printf(format, "UPRINTCONF", UPRINTCONF);
-	printf(format, "UPRINTREMOTECONF", UPRINTREMOTECONF);
 	printf(format, "MEDIAFILE", MEDIAFILE);
 
 	/* Search Path */

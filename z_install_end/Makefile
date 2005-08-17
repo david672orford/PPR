@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 March 2005.
+# Last modified 17 August 2005.
 #
 
 include ../Makefile.conf
@@ -54,21 +54,17 @@ install: $(ALL)
 	[ -z "$(RPM_BUILD_ROOT)" ] && $(MAKE) install-real || true
 
 # These are operations which are defered if we are building a package
-# rather than actually installing hte program.
+# rather than actually installing the program.
 install-real:
 	#
 	# Configure Inetd to launch our HTTP and LPR servers
 	./install_inetd_conf.sh
-	#
-	# Register in /etc/alternatives.
-	#./install_alternatives.tcl
 	#
 	# Create PPR's crontab.
 	./install_crontab.sh
 	#
 	# Initialize the media database.
 	$(PPAD_PATH) media import $(CONFDIR)/media.sample >/dev/null
-	$(PPAD_PATH) media import $(CONFDIR)/media.german >/dev/null
 	#
 	# Create indexes of fonts, PPD files, and filters.
 	$(BINDIR)/ppr-index

@@ -33,8 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 BIN_PROGS=ppad$(DOTEXE)
-CONF_DATA_1=media.sample
-CONF_DATA_2=media.german
+CONF_DATA=media.sample
 
 #=== Build ==================================================================
 
@@ -58,8 +57,7 @@ ppad$(DOTEXE): \
 
 install: $(BIN_PROGS)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) $(BIN_PROGS)
-	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA_1)
-	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA_2)
+	$(INSTALLDATA) $(CONFDIR) $(CONF_DATA)
 
 #=== Housekeeping ===========================================================
 

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/README.txt
  mouse:~ppr/src/docs/misc/README.txt (symbolic link)
- Last revised 9 March 2005.
+ Last revised 11 August 2005.
 ============================================================================
 
 This directory contains the source code for PPR.  PPR is a print spooler for
@@ -88,13 +88,6 @@ documents are also available.  You can either add PPR's man page directory
 		Source code of the ppad command.
     ppuser/
 		Source code to the ppuser utility.
-    libuprint/
-		A library for submitting jobs to various spooling systems,
-		including PPR, System V lp, and BSD lpr.
-    ppr-bsd/
-		Substitutes for programs such as lpr, lpq, lprm, and lpc
-    ppr-sysv/
-		Substitutes for programs such as lp, lpstat, and cancel
     papd/
 		Source code for PPR's new AppleTalk PAP server
     lprsrv/
@@ -164,7 +157,7 @@ documents are also available.  You can either add PPR's man page directory
     nonppr_misc/
 		Files, such as libraries taken from other projects. 
 		Many symbolic links point to this directory.
-    ppr-tcl/
+    ppr-tclsh/
 		A modified copy of Tcl 7.4.  It is intended to replace
 		/bin/sh as the language for PPR's simple scripts.
     z_install_start/

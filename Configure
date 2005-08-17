@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 June 2005.
+# Last modified 17 August 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -962,10 +962,6 @@ export DBNAME=$(CONFDIR)/charge_users.db
 export MEDIAFILE=$(CONFDIR)/media.db
 # new printer configuration lines
 export NEWPRN_CONFIG=$(CONFDIR)/newprn.conf
-# for libuprint.a
-export UPRINTCONF=$(CONFDIR)/uprint.conf
-# list of remote printers
-export UPRINTREMOTECONF=$(CONFDIR)/uprint-remote.conf
 
 #----------------------------------------
 # Configuration files that aren't meant
@@ -1800,22 +1796,22 @@ cat >&3 <<'===MakeRules==='
 
 .SUFFIXES: .in .sh .perl .tcl .c .$(OBJ)
 
-# Convert .in files to whatever they are
+# Do substitutions in .in files to create their targets.
 .in:
 	../subst_tool <$*.in >$*
 	chmod 755 $*
 
-# Convert .sh files to shell scripts.
+# Do substitutions in .sh files to create shell scripts.
 .sh:
 	../subst_tool <$*.sh >$*
 	chmod 755 $*
 
-# Convert .perl files to Perl scripts.
+# Do substitutions in .perl files to create Perl scripts.
 .perl:
 	../subst_tool <$*.perl >$*
 	chmod 755 $*
 
-# Convert .tcl files to Tcl scripts.
+# Do substitutions in .tcl files to create Tcl scripts.
 .tcl:
 	../subst_tool <$*.tcl >$*
 	chmod 755 $*

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--9 August 2005
+2.00a1, 11 December 2004--17 August 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9765,3 +9765,21 @@ no final tarball was released.
 
 * include/uprint.h: moved contents into new file include/rfc1179.h and
   existing file lprsrv/lprsrv.h.
+
+* www/: removed the following files:
+	docs_cat.cgi.perl
+	docs_info.cgi.perl
+	docs_man.cgi.perl
+	docs_plain.cgi.perl
+	docs_rpm.cgi.perl
+	docs_rpms_list.cgi.perl
+	docs_util.pl
+  While this documentation viewing system was promising, it was never 
+  perfected and has nothing to do with the core purpose of PPR.  It
+  should also be noted that Debian Linux provides a similiar system 
+  which is available thru commands such as install-doc, dwww, and dhelp.
+  The Debian package will integrate PPR with these facilities.
+
+* ppad/media.german: merged into media.sample.
+
+

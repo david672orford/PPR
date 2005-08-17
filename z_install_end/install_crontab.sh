@@ -60,12 +60,12 @@ echo "  Installing crontab for the user $USER_PPR..."
 #
 # We must use a temporary file because of limitations of some
 # versions of the crontab program.  Sadly, not all versions of crontab can 
-# read from stdin, at least not with the same command.
+# read from stdin, at least not all with the same command.
 #
 tempname=`$LIBDIR/mkstemp $TEMPDIR/ppr-fixup_cron-XXXXXX`
 awk '{ print $1,$2,$3,$4,$5,$7,$8 }' <cron.d >$tempname
 crontab $tempname
-#rm $tempname
+rm $tempname
 
 exit 0
 
