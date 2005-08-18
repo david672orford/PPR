@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru-PPR\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-22 11:07-0400\n"
+"POT-Creation-Date: 2005-08-17 20:38-0400\n"
 "PO-Revision-Date: 2005-04-06 16:28-0500\n"
 "Last-Translator:   <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <C@li.org>\n"
@@ -35,12 +35,13 @@ msgstr "%s: конец файла в изобразении\n"
 #: ../libuprint/uprint_rfc1179.c:278 ../libuprint/uprint_run.c:80
 #: ../libuprint/uprint_run.c:129 ../libuprint/uprint_run_rfc1179.c:71
 #: ../libuprint/uprint_run_rfc1179.c:78 ../libuprint/uprint_run_rfc1179.c:143
-#: ../lprsrv/lprsrv.c:242 ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295
-#: ../ppad/ppad_conf.c:297 ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305
-#: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
-#: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:430
-#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
-#: ../pprdrv/pprdrv_progress.c:221 ../pprdrv/pprdrv_progress.c:251
+#: ../lprsrv/lprsrv.c:250 ../lprsrv/uprint_run.c:80 ../lprsrv/uprint_run.c:129
+#: ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295 ../ppad/ppad_conf.c:297
+#: ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305 ../ppr/ppr_infile.c:1467
+#: ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586 ../ppr/ppr_infile.c:2243
+#: ../ppr/ppr_main.c:430 ../pprdrv/pprdrv_interface.c:318
+#: ../pprdrv/pprdrv_interface.c:322 ../pprdrv/pprdrv_progress.c:221
+#: ../pprdrv/pprdrv_progress.c:251
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
@@ -332,8 +333,8 @@ msgid "Printer address \"%s\" is too long."
 msgstr ""
 
 #: ../interfaces/atalk_ali.c:776 ../interfaces/atalk_ali.c:825
-#: ../interfaces/atalk_cap.c:509 ../interfaces/lpr.c:478
-#: ../interfaces/lpr.c:516
+#: ../interfaces/atalk_cap.c:509 ../interfaces/lpr.c:952
+#: ../interfaces/lpr.c:990
 msgid "value must be \"true\" or \"false\""
 msgstr "нада выбрать или \"true\" или \"false\""
 
@@ -343,7 +344,7 @@ msgstr "нада выбрать или положителное целое чесло или -1 (не ограничено)"
 
 #: ../interfaces/atalk_ali.c:796 ../interfaces/atalk_ali.c:806
 #: ../interfaces/atalk_cap.c:529 ../interfaces/atalk_cap.c:539
-#: ../interfaces/lpr.c:498 ../interfaces/lpr.c:507
+#: ../interfaces/lpr.c:972 ../interfaces/lpr.c:981
 #: ../libppr/int_tcp_connect.c:105 ../libppr/int_tcp_connect.c:117
 msgid "value must be a positive integer"
 msgstr "нада выбрать положительное целое число"
@@ -356,7 +357,7 @@ msgid "value must be a positive integer or zero"
 msgstr "нада выбрать или положительное целое число или нуль"
 
 #: ../interfaces/atalk_ali.c:832 ../interfaces/atalk_cap.c:555
-#: ../interfaces/lpr.c:529 ../interfaces/parallel.c:295
+#: ../interfaces/lpr.c:1003 ../interfaces/parallel.c:295
 #: ../interfaces/pros.c:511 ../interfaces/serial.c:438
 #: ../interfaces/tcpip.c:470 ../interfaces/usb.c:238
 msgid "unrecognized keyword"
@@ -368,66 +369,97 @@ msgid "Option parsing error: %s"
 msgstr ""
 
 #: ../interfaces/atalk_ali.c:843 ../interfaces/atalk_cap.c:566
-#: ../interfaces/lpr.c:541 ../interfaces/parallel.c:307
+#: ../interfaces/lpr.c:1015 ../interfaces/parallel.c:307
 #: ../interfaces/pros.c:525 ../interfaces/serial.c:449
 #: ../interfaces/tcpip.c:482 ../interfaces/usb.c:250
 msgid "right here"
 msgstr "здесь"
 
-#: ../interfaces/atalk_cap.c:564 ../interfaces/lpr.c:539
+#: ../interfaces/atalk_cap.c:564 ../interfaces/lpr.c:1013
 #: ../interfaces/pros.c:523 ../interfaces/serial.c:447
 #: ../interfaces/tcpip.c:480
 #, c-format
 msgid "Option parsing error:  %s"
 msgstr ""
 
-#: ../interfaces/lpr.c:160
+#: ../interfaces/lpr.c:131 ../libuprint/lpr_connect.c:76
+msgid "Spaces and tabs are not allowed in LPR hostnames."
+msgstr ""
+
+#: ../interfaces/lpr.c:151 ../libuprint/lpr_connect.c:97
+msgid "Bad port specification in printer address."
+msgstr "TCP порт в адресе принтера нинормалый."
+
+#: ../interfaces/lpr.c:184 ../libuprint/lpr_connect.c:131
+#, c-format
+msgid "IP address lookup for \"%s\" failed."
+msgstr ""
+
+#: ../interfaces/lpr.c:256 ../libuprint/lpr_connect.c:206
+msgid "No unused TCP ports available in reserved range."
+msgstr ""
+
+#: ../interfaces/lpr.c:299 ../libuprint/lpr_connect.c:250
+#, c-format
+msgid "Timeout while trying to connect to lpd server \"%s\"."
+msgstr ""
+
+#: ../interfaces/lpr.c:303 ../libuprint/lpr_connect.c:255
+#, c-format
+msgid "Remote system \"%s\" has refused the connection."
+msgstr ""
+
+#: ../interfaces/lpr.c:379 ../libuprint/lpr_connect.c:339
+msgid "Timeout while waiting for response from print server."
+msgstr ""
+
+#: ../interfaces/lpr.c:632
 msgid "(Communication failure while negotiating to send control file.)"
 msgstr ""
 
-#: ../interfaces/lpr.c:162 ../libuprint/uprint_rfc1179.c:214
+#: ../interfaces/lpr.c:634 ../libuprint/uprint_rfc1179.c:214
 msgid "Remote LPR/LPD system does not have room for control file."
 msgstr ""
 
-#: ../interfaces/lpr.c:174
+#: ../interfaces/lpr.c:646
 msgid "(Communication failure while sending control file.)"
 msgstr ""
 
-#: ../interfaces/lpr.c:176
+#: ../interfaces/lpr.c:648
 #, c-format
 msgid "Remote LPR/LPD queue \"%s\" denies correct receipt of control file."
 msgstr ""
 
-#: ../interfaces/lpr.c:198 ../interfaces/lpr.c:276 ../interfaces/lpr.c:347
+#: ../interfaces/lpr.c:670 ../interfaces/lpr.c:748 ../interfaces/lpr.c:819
 msgid "(Communication failure while negotiating to send data file.)"
 msgstr ""
 
-#: ../interfaces/lpr.c:200 ../interfaces/lpr.c:278 ../interfaces/lpr.c:349
+#: ../interfaces/lpr.c:672 ../interfaces/lpr.c:750 ../interfaces/lpr.c:821
 #, c-format
 msgid "Remote LPR/LPD queue \"%s\" does not have room for data file."
 msgstr ""
 
-#: ../interfaces/lpr.c:217 ../interfaces/lpr.c:308
+#: ../interfaces/lpr.c:689 ../interfaces/lpr.c:780
 msgid "(Communication failure while sending data file.)"
 msgstr ""
 
-#: ../interfaces/lpr.c:219 ../interfaces/lpr.c:310
+#: ../interfaces/lpr.c:691 ../interfaces/lpr.c:782
 #, c-format
 msgid "Remote LPR/LPD queue \"%s\" denies correct receipt of data file."
 msgstr ""
 
-#: ../interfaces/lpr.c:448
+#: ../interfaces/lpr.c:922
 #, c-format
 msgid ""
 "Printer address \"%s\" is invalid, the correct syntax\n"
 "is \"printer@host\"."
 msgstr ""
 
-#: ../interfaces/lpr.c:489
+#: ../interfaces/lpr.c:963
 msgid "value must be \"o\" or \"f\""
 msgstr "нада выбрать или \"o\" или \"f\""
 
-#: ../interfaces/lpr.c:559 ../interfaces/parallel.c:374
+#: ../interfaces/lpr.c:1033 ../interfaces/parallel.c:374
 #: ../interfaces/pros.c:473 ../interfaces/serial.c:550
 #: ../interfaces/tcpip.c:355 ../interfaces/usb.c:471
 #, c-format
@@ -436,21 +468,21 @@ msgid ""
 "the PPR interface program \"%s\"."
 msgstr ""
 
-#: ../interfaces/lpr.c:568
+#: ../interfaces/lpr.c:1042
 #, c-format
 msgid "The PPR interface program \"%s\" is incapable of sending feedback."
 msgstr ""
 
-#: ../interfaces/lpr.c:574
+#: ../interfaces/lpr.c:1048
 #, c-format
 msgid "Use the command \"ppad feedback %s false\" to correct this problem."
 msgstr ""
 
-#: ../interfaces/lpr.c:624
+#: ../interfaces/lpr.c:1090
 msgid "(Communication failure while negotiating to send job.)"
 msgstr ""
 
-#: ../interfaces/lpr.c:629
+#: ../interfaces/lpr.c:1095
 #, c-format
 msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."
 msgstr ""
@@ -655,17 +687,17 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:308
+#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:316
 #, c-format
 msgid "The %s option requires an argument.\n"
 msgstr ""
 
-#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:312
+#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:320
 #, c-format
 msgid "Switches, such as %s, which take an argument must stand alone.\n"
 msgstr ""
 
-#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:316
+#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:324
 #, c-format
 msgid "The %s switch does not take an argument.\n"
 msgstr ""
@@ -985,72 +1017,41 @@ msgstr ""
 msgid "Invalid section for queue \"%s\" in \"%s\"."
 msgstr ""
 
-#: ../libuprint/lpr_connect.c:76
-msgid "Spaces and tabs are not allowed in LPR hostnames."
-msgstr ""
-
-#: ../libuprint/lpr_connect.c:97
-msgid "Bad port specification in printer address."
-msgstr "TCP порт в адресе принтера нинормалый."
-
-#: ../libuprint/lpr_connect.c:131
-#, c-format
-msgid "IP address lookup for \"%s\" failed."
-msgstr ""
-
-#: ../libuprint/lpr_connect.c:206
-msgid "No unused TCP ports available in reserved range."
-msgstr ""
-
-#: ../libuprint/lpr_connect.c:250
-#, c-format
-msgid "Timeout while trying to connect to lpd server \"%s\"."
-msgstr ""
-
-#: ../libuprint/lpr_connect.c:255
-#, c-format
-msgid "Remote system \"%s\" has refused the connection."
-msgstr ""
-
-#: ../libuprint/lpr_connect.c:339
-msgid "Timeout while waiting for response from print server."
-msgstr ""
-
 #: ../libuprint/lpr_failover.c:57
 #, c-format
 msgid "Resorting to backup server \"%s\"."
 msgstr ""
 
-#: ../libuprint/uprint_lprm.c:56
+#: ../libuprint/uprint_lprm.c:56 ../lprsrv/lprsrv_cancel.c:57
 #, c-format
 msgid "The print queue name \"%s\" is too long for PPR."
 msgstr "Название очеред \"%s\" слишком длинние для PPR."
 
-#: ../libuprint/uprint_lprm.c:63
+#: ../libuprint/uprint_lprm.c:63 ../lprsrv/lprsrv_cancel.c:64
 #, c-format
 msgid "The agent name \"%s\" is too long."
 msgstr ""
 
-#: ../libuprint/uprint_lprm.c:70
+#: ../libuprint/uprint_lprm.c:70 ../lprsrv/lprsrv_cancel.c:71
 #, c-format
 msgid "The proxy class name \"%s\" is too long."
 msgstr ""
 
-#: ../libuprint/uprint_lprm.c:131
+#: ../libuprint/uprint_lprm.c:131 ../lprsrv/lprsrv_cancel.c:132
 #, c-format
 msgid ""
 "You may not delete jobs belonging to \"%s@%s\" because\n"
 "they are not your's and you are not \"root@%s\".\n"
 msgstr ""
 
-#: ../libuprint/uprint_lprm.c:136
+#: ../libuprint/uprint_lprm.c:136 ../lprsrv/lprsrv_cancel.c:137
 #, c-format
 msgid ""
 "You may not delete jobs belonging to \"%s\" because\n"
 "they are not your's and you are not \"root\".\n"
 msgstr ""
 
-#: ../libuprint/uprint_lprm.c:148
+#: ../libuprint/uprint_lprm.c:148 ../lprsrv/lprsrv_cancel.c:149
 #, c-format
 msgid "Username \"%s\" is too long."
 msgstr ""
@@ -1101,12 +1102,14 @@ msgid "Remote LPR/LPD system \"%s\" denies correct receipt of data file."
 msgstr ""
 
 #: ../libuprint/uprint_run.c:97 ../libuprint/uprint_run.c:106
-#: ../libuprint/uprint_run_rfc1179.c:98
+#: ../libuprint/uprint_run_rfc1179.c:98 ../lprsrv/uprint_run.c:97
+#: ../lprsrv/uprint_run.c:106
 #, c-format
 msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(%ld, %ld), errno=%d (%s)"
 
 #: ../libuprint/uprint_run.c:119 ../libuprint/uprint_run_rfc1179.c:105
+#: ../lprsrv/uprint_run.c:119
 #, c-format
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\", ...), errno=%d (%s)\n"
@@ -1200,37 +1203,37 @@ msgstr ""
 msgid "Unknown error code"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:63
+#: ../lprsrv/lprsrv-test.c:64
 msgid "FATAL: "
 msgstr "Неисправимая ошибка: "
 
-#: ../lprsrv/lprsrv-test.c:76 ../ppr/ppr_main.c:309
+#: ../lprsrv/lprsrv-test.c:77 ../ppr/ppr_main.c:309
 #, c-format
 msgid "WARNING: "
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:106
+#: ../lprsrv/lprsrv-test.c:107
 #, c-format
 msgid "Network node \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:120
+#: ../lprsrv/lprsrv-test.c:121
 #, c-format
 msgid "Reverse lookup failed for \"%s\" address \"%s\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:143
+#: ../lprsrv/lprsrv-test.c:144
 msgid ""
 "Usage:\n"
 "\tlprsrv-test hostname [user [user]]\n"
 "\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:144
+#: ../lprsrv/lprsrv-test.c:145
 msgid "This program is used to test an lprsrv.conf file.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:153
+#: ../lprsrv/lprsrv-test.c:154
 #, c-format
 msgid ""
 ";\n"
@@ -1240,12 +1243,12 @@ msgid ""
 ";\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:178
+#: ../lprsrv/lprsrv-test.c:179
 #, c-format
 msgid "No access allowed from node \"%s\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:192
+#: ../lprsrv/lprsrv-test.c:193
 #, c-format
 msgid ""
 "Based on the lprsrv.conf section shown above, the following table shows the\n"
@@ -1254,35 +1257,35 @@ msgid ""
 "which you have specified.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "As Proxy For"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "Local User"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "Remote User"
 msgstr ""
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "Spooler"
 msgstr "Спулер"
 
-#: ../lprsrv/lprsrv.c:166 ../ppad/ppad.c:337 ../ppop/ppop.c:1106
+#: ../lprsrv/lprsrv.c:174 ../ppad/ppad.c:337 ../ppop/ppop.c:1106
 #: ../unixuser/ppr-followme.c:213
 msgid "Valid switches:\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:169
+#: ../lprsrv/lprsrv.c:177
 msgid ""
 "\t-s <port>\n"
 "\t--standalone-port <port>\n"
 "\t\t(run standalone, bind to specified TCP port)\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:174
+#: ../lprsrv/lprsrv.c:182
 msgid ""
 "\t-A <seconds>\n"
 "\t--arrest-interest-interval <seconds>\n"
@@ -1293,50 +1296,50 @@ msgid ""
 "\t\t(print this message)\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:227
+#: ../lprsrv/lprsrv.c:235
 msgid "lprsrv must run as root"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:239 ../ppr/ppr_infile.c:1500
+#: ../lprsrv/lprsrv.c:247 ../ppr/ppr_infile.c:1500
 #, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\"), errno=%d (%s)"
 
-#: ../lprsrv/lprsrv.c:245 ../lprsrv/lprsrv.c:248
+#: ../lprsrv/lprsrv.c:253 ../lprsrv/lprsrv.c:256
 #, c-format
 msgid "%s(): %s(%ld) failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(%ld), errno=%d (%s)"
 
-#: ../lprsrv/lprsrv.c:277
+#: ../lprsrv/lprsrv.c:285
 #, c-format
 msgid "Unknown port name: %s"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:284
+#: ../lprsrv/lprsrv.c:292
 msgid "Standalone mode code not present.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:303
+#: ../lprsrv/lprsrv.c:311
 #, c-format
 msgid "Unrecognized switch: %s\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:358
+#: ../lprsrv/lprsrv.c:366
 #, c-format
 msgid "Node \"%s\" is not allowed to connect"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:360
+#: ../lprsrv/lprsrv.c:368
 #, c-format
 msgid "Node \"%s\" is not allowed to connect from insecure ports"
 msgstr ""
 
-#: ../lprsrv/lprsrv_cancel.c:98 ../lprsrv/lprsrv_list.c:92
+#: ../lprsrv/lprsrv_cancel.c:314 ../lprsrv/lprsrv_list.c:161
 #, c-format
 msgid "The queue \"%s\" does not exist on the print server \"%s\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv_cancel.c:106
+#: ../lprsrv/lprsrv_cancel.c:322
 #, c-format
 msgid ""
 "Could not delete the job or jobs due to a problem with the print server\n"
@@ -1349,7 +1352,7 @@ msgstr ""
 msgid "stdin is not a TCP socket (Run from Inetd or use -s option.)"
 msgstr ""
 
-#: ../lprsrv/lprsrv_list.c:96
+#: ../lprsrv/lprsrv_list.c:165
 #, c-format
 msgid ""
 "Could not get a queue listing due to a problem with the print server\n"
@@ -1358,17 +1361,17 @@ msgid ""
 "to learn the details.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv_standalone.c:88 ../ppr/ppr_outfile.c:121
+#: ../lprsrv/lprsrv_standalone.c:89 ../ppr/ppr_outfile.c:121
 #: ../ppr/ppr_outfile.c:126 ../ppr/ppr_outfile.c:131 ../samba/ppr2samba.c:201
 #, c-format
 msgid "can't open \"%s\", errno=%d (%s)"
 msgstr "не возможно открыть \"%s\", errno=%d (%s)"
 
-#: ../lprsrv/lprsrv_standalone.c:91
+#: ../lprsrv/lprsrv_standalone.c:92
 msgid "lprsrv is already running in standalone mode"
 msgstr ""
 
-#: ../lprsrv/lprsrv_standalone.c:132
+#: ../lprsrv/lprsrv_standalone.c:133
 #, c-format
 msgid "there is already a server listening on TCP port %d"
 msgstr "сервер слушающый у TCP порта %d уже ест"
@@ -5662,8 +5665,8 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелтат не будет.\n"
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "%d jobs were canceled.\n"
-#~ msgstr "%d задач удалили.\n"
-
 #~ msgid "1 active job was canceled.\n"
 #~ msgstr "1 текущое заданое удалено.\n"
+
+#~ msgid "%d jobs were canceled.\n"
+#~ msgstr "%d задач удалили.\n"

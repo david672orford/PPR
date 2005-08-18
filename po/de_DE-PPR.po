@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-22 11:07-0400\n"
+"POT-Creation-Date: 2005-08-17 20:38-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -35,12 +35,13 @@ msgstr "%s: Dateiende in Graphik\n"
 #: ../libuprint/uprint_rfc1179.c:278 ../libuprint/uprint_run.c:80
 #: ../libuprint/uprint_run.c:129 ../libuprint/uprint_run_rfc1179.c:71
 #: ../libuprint/uprint_run_rfc1179.c:78 ../libuprint/uprint_run_rfc1179.c:143
-#: ../lprsrv/lprsrv.c:242 ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295
-#: ../ppad/ppad_conf.c:297 ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305
-#: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
-#: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:430
-#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
-#: ../pprdrv/pprdrv_progress.c:221 ../pprdrv/pprdrv_progress.c:251
+#: ../lprsrv/lprsrv.c:250 ../lprsrv/uprint_run.c:80 ../lprsrv/uprint_run.c:129
+#: ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295 ../ppad/ppad_conf.c:297
+#: ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305 ../ppr/ppr_infile.c:1467
+#: ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586 ../ppr/ppr_infile.c:2243
+#: ../ppr/ppr_main.c:430 ../pprdrv/pprdrv_interface.c:318
+#: ../pprdrv/pprdrv_interface.c:322 ../pprdrv/pprdrv_progress.c:221
+#: ../pprdrv/pprdrv_progress.c:251
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
@@ -337,8 +338,8 @@ msgid "Printer address \"%s\" is too long."
 msgstr "Druckeradresse \"%s\" ist zu lang."
 
 #: ../interfaces/atalk_ali.c:776 ../interfaces/atalk_ali.c:825
-#: ../interfaces/atalk_cap.c:509 ../interfaces/lpr.c:478
-#: ../interfaces/lpr.c:516
+#: ../interfaces/atalk_cap.c:509 ../interfaces/lpr.c:952
+#: ../interfaces/lpr.c:990
 msgid "value must be \"true\" or \"false\""
 msgstr "der Wert muß \"true\" oder \"false\" sein"
 
@@ -348,7 +349,7 @@ msgstr "der Wert muß eine positive Ganzzahl oder -1 (unendlich) sein"
 
 #: ../interfaces/atalk_ali.c:796 ../interfaces/atalk_ali.c:806
 #: ../interfaces/atalk_cap.c:529 ../interfaces/atalk_cap.c:539
-#: ../interfaces/lpr.c:498 ../interfaces/lpr.c:507
+#: ../interfaces/lpr.c:972 ../interfaces/lpr.c:981
 #: ../libppr/int_tcp_connect.c:105 ../libppr/int_tcp_connect.c:117
 msgid "value must be a positive integer"
 msgstr "der Wert muß eine positive Ganzzahl sein"
@@ -361,7 +362,7 @@ msgid "value must be a positive integer or zero"
 msgstr "der Wert muß eine positive Ganzzahl oder Null sein"
 
 #: ../interfaces/atalk_ali.c:832 ../interfaces/atalk_cap.c:555
-#: ../interfaces/lpr.c:529 ../interfaces/parallel.c:295
+#: ../interfaces/lpr.c:1003 ../interfaces/parallel.c:295
 #: ../interfaces/pros.c:511 ../interfaces/serial.c:438
 #: ../interfaces/tcpip.c:470 ../interfaces/usb.c:238
 msgid "unrecognized keyword"
@@ -373,55 +374,86 @@ msgid "Option parsing error: %s"
 msgstr "Fehler beim Verarbeiten der Option: %s"
 
 #: ../interfaces/atalk_ali.c:843 ../interfaces/atalk_cap.c:566
-#: ../interfaces/lpr.c:541 ../interfaces/parallel.c:307
+#: ../interfaces/lpr.c:1015 ../interfaces/parallel.c:307
 #: ../interfaces/pros.c:525 ../interfaces/serial.c:449
 #: ../interfaces/tcpip.c:482 ../interfaces/usb.c:250
 msgid "right here"
 msgstr "hier"
 
-#: ../interfaces/atalk_cap.c:564 ../interfaces/lpr.c:539
+#: ../interfaces/atalk_cap.c:564 ../interfaces/lpr.c:1013
 #: ../interfaces/pros.c:523 ../interfaces/serial.c:447
 #: ../interfaces/tcpip.c:480
 #, c-format
 msgid "Option parsing error:  %s"
 msgstr "Fehler beim Verarbeiten der Option:  %s"
 
-#: ../interfaces/lpr.c:160
+#: ../interfaces/lpr.c:131 ../libuprint/lpr_connect.c:76
+msgid "Spaces and tabs are not allowed in LPR hostnames."
+msgstr "Leerzeichen und Tabulaturen sind in LPR Hostnamen nicht erlaubt."
+
+#: ../interfaces/lpr.c:151 ../libuprint/lpr_connect.c:97
+msgid "Bad port specification in printer address."
+msgstr "Unerlaubter Port in Druckeradresse."
+
+#: ../interfaces/lpr.c:184 ../libuprint/lpr_connect.c:131
+#, c-format
+msgid "IP address lookup for \"%s\" failed."
+msgstr "IP Adressaflösung für \"%s\" fehlgeschlagen."
+
+#: ../interfaces/lpr.c:256 ../libuprint/lpr_connect.c:206
+msgid "No unused TCP ports available in reserved range."
+msgstr "Keine freien TCP Ports im reservierten Bereich verfügbar."
+
+#: ../interfaces/lpr.c:299 ../libuprint/lpr_connect.c:250
+#, c-format
+msgid "Timeout while trying to connect to lpd server \"%s\"."
+msgstr "Beim Versuch, den lpd-Server \"%s\" zu kontaktieren, ist die Zeit abgelaufen."
+
+#: ../interfaces/lpr.c:303 ../libuprint/lpr_connect.c:255
+#, c-format
+msgid "Remote system \"%s\" has refused the connection."
+msgstr "Enferntes System \"%s\" hat die Verbindung verweigert."
+
+#: ../interfaces/lpr.c:379 ../libuprint/lpr_connect.c:339
+msgid "Timeout while waiting for response from print server."
+msgstr "Beim Warten auf Antwort vom Druckerserver ist die Zeit abgelaufen."
+
+#: ../interfaces/lpr.c:632
 msgid "(Communication failure while negotiating to send control file.)"
 msgstr "(Kommunikationsfehler beim Versuch Control-Datei zu senden)"
 
-#: ../interfaces/lpr.c:162 ../libuprint/uprint_rfc1179.c:214
+#: ../interfaces/lpr.c:634 ../libuprint/uprint_rfc1179.c:214
 msgid "Remote LPR/LPD system does not have room for control file."
 msgstr "Entferntes LPR/LPD System hat keine Kapazität für Kontrolldatei."
 
-#: ../interfaces/lpr.c:174
+#: ../interfaces/lpr.c:646
 msgid "(Communication failure while sending control file.)"
 msgstr "(Kommunikationsfehler beim Senden der Control-Datei)"
 
-#: ../interfaces/lpr.c:176
+#: ../interfaces/lpr.c:648
 #, c-format
 msgid "Remote LPR/LPD queue \"%s\" denies correct receipt of control file."
 msgstr "Entfernte LPR/LPD Warteschlange \"%s\" verweigert den Empfang der Kontrolldatei."
 
-#: ../interfaces/lpr.c:198 ../interfaces/lpr.c:276 ../interfaces/lpr.c:347
+#: ../interfaces/lpr.c:670 ../interfaces/lpr.c:748 ../interfaces/lpr.c:819
 msgid "(Communication failure while negotiating to send data file.)"
 msgstr "(Kommunikationsfehler beim Versuch Daten-Datei zu senden)"
 
-#: ../interfaces/lpr.c:200 ../interfaces/lpr.c:278 ../interfaces/lpr.c:349
+#: ../interfaces/lpr.c:672 ../interfaces/lpr.c:750 ../interfaces/lpr.c:821
 #, c-format
 msgid "Remote LPR/LPD queue \"%s\" does not have room for data file."
 msgstr "Entfernte LPR/LPD Warteschlange \"%s\" hat keine Kapazität für Datendatei."
 
-#: ../interfaces/lpr.c:217 ../interfaces/lpr.c:308
+#: ../interfaces/lpr.c:689 ../interfaces/lpr.c:780
 msgid "(Communication failure while sending data file.)"
 msgstr "(Kommunikationsfehler beim Senden der Datenl-Datei)"
 
-#: ../interfaces/lpr.c:219 ../interfaces/lpr.c:310
+#: ../interfaces/lpr.c:691 ../interfaces/lpr.c:782
 #, c-format
 msgid "Remote LPR/LPD queue \"%s\" denies correct receipt of data file."
 msgstr "Entfernte LPR/LPD Warteschlange \"%s\" verweigert den Empfang der Datendatei."
 
-#: ../interfaces/lpr.c:448
+#: ../interfaces/lpr.c:922
 #, c-format
 msgid ""
 "Printer address \"%s\" is invalid, the correct syntax\n"
@@ -430,11 +462,11 @@ msgstr ""
 "Druckeradresse \"%s\" is ungültig, die korrekte Syntax\n"
 "ist \"Drucker@Computer\"."
 
-#: ../interfaces/lpr.c:489
+#: ../interfaces/lpr.c:963
 msgid "value must be \"o\" or \"f\""
 msgstr "der Wert muß \"o\" oder \"f\" sein"
 
-#: ../interfaces/lpr.c:559 ../interfaces/parallel.c:374
+#: ../interfaces/lpr.c:1033 ../interfaces/parallel.c:374
 #: ../interfaces/pros.c:473 ../interfaces/serial.c:550
 #: ../interfaces/tcpip.c:355 ../interfaces/usb.c:471
 #, c-format
@@ -445,21 +477,21 @@ msgstr ""
 "Die Auftragsabbruchmethoden \"signal\" und \"signal/pjl\" sind nicht nicht vereinbar\n"
 "mit dem PPR Interface \"%s\"."
 
-#: ../interfaces/lpr.c:568
+#: ../interfaces/lpr.c:1042
 #, c-format
 msgid "The PPR interface program \"%s\" is incapable of sending feedback."
 msgstr "Das PPR Programm \"%s\" kann keine Informationen senden."
 
-#: ../interfaces/lpr.c:574
+#: ../interfaces/lpr.c:1048
 #, c-format
 msgid "Use the command \"ppad feedback %s false\" to correct this problem."
 msgstr "Nutzen Sie den Befehl \"ppad feedback %s false\", um dieses problem zu korrigieren."
 
-#: ../interfaces/lpr.c:624
+#: ../interfaces/lpr.c:1090
 msgid "(Communication failure while negotiating to send job.)"
 msgstr "(Kommunikationsfehler beim Versuch Druckauftrag zu senden)"
 
-#: ../interfaces/lpr.c:629
+#: ../interfaces/lpr.c:1095
 #, c-format
 msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."
 msgstr "Entferntes LPR/LPD System \"%s\" verweigert die Annahme eines Autrages für \"%s\"."
@@ -672,17 +704,17 @@ msgstr ""
 "Unbekannte Option: %s\n"
 "\n"
 
-#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:308
+#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:316
 #, c-format
 msgid "The %s option requires an argument.\n"
 msgstr "Die Option %s benötigt ein Argument.\n"
 
-#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:312
+#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:320
 #, c-format
 msgid "Switches, such as %s, which take an argument must stand alone.\n"
 msgstr "Optionen wie %s, die ein Argument benötigen, müssen einzeln angageben werden.\n"
 
-#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:316
+#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:324
 #, c-format
 msgid "The %s switch does not take an argument.\n"
 msgstr "Die Option %s übernimmt kein Argument.\n"
@@ -1008,58 +1040,27 @@ msgstr "Unbekanntes System \"%s\" %.2f in \"%s\", Abschnitt \"[%s]\", Zeile %d."
 msgid "Invalid section for queue \"%s\" in \"%s\"."
 msgstr "Ungültiger Abschnitt für Warteschlange \"%s\" in \"%s\"."
 
-#: ../libuprint/lpr_connect.c:76
-msgid "Spaces and tabs are not allowed in LPR hostnames."
-msgstr "Leerzeichen und Tabulaturen sind in LPR Hostnamen nicht erlaubt."
-
-#: ../libuprint/lpr_connect.c:97
-msgid "Bad port specification in printer address."
-msgstr "Unerlaubter Port in Druckeradresse."
-
-#: ../libuprint/lpr_connect.c:131
-#, c-format
-msgid "IP address lookup for \"%s\" failed."
-msgstr "IP Adressaflösung für \"%s\" fehlgeschlagen."
-
-#: ../libuprint/lpr_connect.c:206
-msgid "No unused TCP ports available in reserved range."
-msgstr "Keine freien TCP Ports im reservierten Bereich verfügbar."
-
-#: ../libuprint/lpr_connect.c:250
-#, c-format
-msgid "Timeout while trying to connect to lpd server \"%s\"."
-msgstr "Beim Versuch, den lpd-Server \"%s\" zu kontaktieren, ist die Zeit abgelaufen."
-
-#: ../libuprint/lpr_connect.c:255
-#, c-format
-msgid "Remote system \"%s\" has refused the connection."
-msgstr "Enferntes System \"%s\" hat die Verbindung verweigert."
-
-#: ../libuprint/lpr_connect.c:339
-msgid "Timeout while waiting for response from print server."
-msgstr "Beim Warten auf Antwort vom Druckerserver ist die Zeit abgelaufen."
-
 #: ../libuprint/lpr_failover.c:57
 #, c-format
 msgid "Resorting to backup server \"%s\"."
 msgstr "Umsortieren für Backupserver: \"%s\"."
 
-#: ../libuprint/uprint_lprm.c:56
+#: ../libuprint/uprint_lprm.c:56 ../lprsrv/lprsrv_cancel.c:57
 #, c-format
 msgid "The print queue name \"%s\" is too long for PPR."
 msgstr "Der Druckerwarteschlangenname \"%s\" ist zu lang für PPR."
 
-#: ../libuprint/uprint_lprm.c:63
+#: ../libuprint/uprint_lprm.c:63 ../lprsrv/lprsrv_cancel.c:64
 #, c-format
 msgid "The agent name \"%s\" is too long."
 msgstr "Der Agentenname \"%s\" ist zu lang."
 
-#: ../libuprint/uprint_lprm.c:70
+#: ../libuprint/uprint_lprm.c:70 ../lprsrv/lprsrv_cancel.c:71
 #, c-format
 msgid "The proxy class name \"%s\" is too long."
 msgstr "Die Proxyklasse \"%s\" ist zu lang."
 
-#: ../libuprint/uprint_lprm.c:131
+#: ../libuprint/uprint_lprm.c:131 ../lprsrv/lprsrv_cancel.c:132
 #, c-format
 msgid ""
 "You may not delete jobs belonging to \"%s@%s\" because\n"
@@ -1068,7 +1069,7 @@ msgstr ""
 "Sie dürfen keine Aufträge für \"%s@%s\" löschen\n"
 "weil sie nicht Ihnen gehöhren und Sie nicht \"root@%s\" sind.\n"
 
-#: ../libuprint/uprint_lprm.c:136
+#: ../libuprint/uprint_lprm.c:136 ../lprsrv/lprsrv_cancel.c:137
 #, c-format
 msgid ""
 "You may not delete jobs belonging to \"%s\" because\n"
@@ -1077,7 +1078,7 @@ msgstr ""
 "Sie dürfen keine Aufträge für \"%s\" löschen\n"
 "weil sie nicht Ihnen gehören und Sie nicht \"root\" sind.\n"
 
-#: ../libuprint/uprint_lprm.c:148
+#: ../libuprint/uprint_lprm.c:148 ../lprsrv/lprsrv_cancel.c:149
 #, c-format
 msgid "Username \"%s\" is too long."
 msgstr "Der Benutzername \"%s\" ist zu lang."
@@ -1128,12 +1129,14 @@ msgid "Remote LPR/LPD system \"%s\" denies correct receipt of data file."
 msgstr "Entferntes LPR/LPD System \"%s\" verweigert den Empfang der Datendatei."
 
 #: ../libuprint/uprint_run.c:97 ../libuprint/uprint_run.c:106
-#: ../libuprint/uprint_run_rfc1179.c:98
+#: ../libuprint/uprint_run_rfc1179.c:98 ../lprsrv/uprint_run.c:97
+#: ../lprsrv/uprint_run.c:106
 #, fuzzy, c-format
 msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)"
 msgstr "%s(): setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)"
 
 #: ../libuprint/uprint_run.c:119 ../libuprint/uprint_run_rfc1179.c:105
+#: ../lprsrv/uprint_run.c:119
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): execv(\"%s\", ...) fehlgeschlagen, Fehlernummer=%d (%s)\n"
@@ -1227,26 +1230,26 @@ msgstr "Fehler in Konfigurationsdatei"
 msgid "Unknown error code"
 msgstr "Unbekannter Fehler"
 
-#: ../lprsrv/lprsrv-test.c:63
+#: ../lprsrv/lprsrv-test.c:64
 msgid "FATAL: "
 msgstr "FATAL:"
 
-#: ../lprsrv/lprsrv-test.c:76 ../ppr/ppr_main.c:309
+#: ../lprsrv/lprsrv-test.c:77 ../ppr/ppr_main.c:309
 #, c-format
 msgid "WARNING: "
 msgstr "WARNUNG:"
 
-#: ../lprsrv/lprsrv-test.c:106
+#: ../lprsrv/lprsrv-test.c:107
 #, c-format
 msgid "Network node \"%s\" does not exist.\n"
 msgstr "Netzwerkadresse \"%s\" exisiert nicht.\n"
 
-#: ../lprsrv/lprsrv-test.c:120
+#: ../lprsrv/lprsrv-test.c:121
 #, c-format
 msgid "Reverse lookup failed for \"%s\" address \"%s\".\n"
 msgstr "IP-Adressenauflösung für \"%s\", Adresse \"%s\" fehlgeschlagen.\n"
 
-#: ../lprsrv/lprsrv-test.c:143
+#: ../lprsrv/lprsrv-test.c:144
 msgid ""
 "Usage:\n"
 "\tlprsrv-test hostname [user [user]]\n"
@@ -1256,11 +1259,11 @@ msgstr ""
 "\tlprsrv-test Rechnername [Nutzer [Nutzer]]\n"
 "\n"
 
-#: ../lprsrv/lprsrv-test.c:144
+#: ../lprsrv/lprsrv-test.c:145
 msgid "This program is used to test an lprsrv.conf file.\n"
 msgstr "Dieses Programm wirde zum testen der Datei \"lprsrv.conf\" genutzt.\n"
 
-#: ../lprsrv/lprsrv-test.c:153
+#: ../lprsrv/lprsrv-test.c:154
 #, c-format
 msgid ""
 ";\n"
@@ -1275,12 +1278,12 @@ msgstr ""
 "; einfachen Abschnitt.\n"
 ";\n"
 
-#: ../lprsrv/lprsrv-test.c:178
+#: ../lprsrv/lprsrv-test.c:179
 #, c-format
 msgid "No access allowed from node \"%s\".\n"
 msgstr "Kein Zuggriff gestattet von Adresse \"%s\".\n"
 
-#: ../lprsrv/lprsrv-test.c:192
+#: ../lprsrv/lprsrv-test.c:193
 #, c-format
 msgid ""
 "Based on the lprsrv.conf section shown above, the following table shows the\n"
@@ -1293,28 +1296,28 @@ msgstr ""
 "Druckaufträgen von \"%s\" für den/die entfernten Benutzer, die Sie\n"
 "angegeben haben, genutzt werden.\n"
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "As Proxy For"
 msgstr "Als Proxy für"
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "Local User"
 msgstr "Lokaler Benutzer"
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "Remote User"
 msgstr "Entfernter Benutzer"
 
-#: ../lprsrv/lprsrv-test.c:198
+#: ../lprsrv/lprsrv-test.c:199
 msgid "Spooler"
 msgstr "Spooler"
 
-#: ../lprsrv/lprsrv.c:166 ../ppad/ppad.c:337 ../ppop/ppop.c:1106
+#: ../lprsrv/lprsrv.c:174 ../ppad/ppad.c:337 ../ppop/ppop.c:1106
 #: ../unixuser/ppr-followme.c:213
 msgid "Valid switches:\n"
 msgstr "Erlaubte Optionen:\n"
 
-#: ../lprsrv/lprsrv.c:169
+#: ../lprsrv/lprsrv.c:177
 msgid ""
 "\t-s <port>\n"
 "\t--standalone-port <port>\n"
@@ -1324,7 +1327,7 @@ msgstr ""
 "\t--standalone-port <Port>\n"
 "\t\t(nicht über inetd starten, auf TCP Port <Port> lauschen)\n"
 
-#: ../lprsrv/lprsrv.c:174
+#: ../lprsrv/lprsrv.c:182
 msgid ""
 "\t-A <seconds>\n"
 "\t--arrest-interest-interval <seconds>\n"
@@ -1342,50 +1345,50 @@ msgstr ""
 "\t--help\n"
 "\t\t(diese Hilfe ausgeben)\n"
 
-#: ../lprsrv/lprsrv.c:227
+#: ../lprsrv/lprsrv.c:235
 msgid "lprsrv must run as root"
 msgstr "lprsrv muß als root laufen"
 
-#: ../lprsrv/lprsrv.c:239 ../ppr/ppr_infile.c:1500
+#: ../lprsrv/lprsrv.c:247 ../ppr/ppr_infile.c:1500
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../lprsrv/lprsrv.c:245 ../lprsrv/lprsrv.c:248
+#: ../lprsrv/lprsrv.c:253 ../lprsrv/lprsrv.c:256
 #, fuzzy, c-format
 msgid "%s(): %s(%ld) failed, errno=%d (%s)"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../lprsrv/lprsrv.c:277
+#: ../lprsrv/lprsrv.c:285
 #, c-format
 msgid "Unknown port name: %s"
 msgstr "Unbekannter Port: %s"
 
-#: ../lprsrv/lprsrv.c:284
+#: ../lprsrv/lprsrv.c:292
 msgid "Standalone mode code not present.\n"
 msgstr "Code für Standalonemodus nicht verfügbar.\n"
 
-#: ../lprsrv/lprsrv.c:303
+#: ../lprsrv/lprsrv.c:311
 #, c-format
 msgid "Unrecognized switch: %s\n"
 msgstr "Unbekannte Option: %s\n"
 
-#: ../lprsrv/lprsrv.c:358
+#: ../lprsrv/lprsrv.c:366
 #, c-format
 msgid "Node \"%s\" is not allowed to connect"
 msgstr "Keine Verbindung von Adresse \"%s\" erlaubt"
 
-#: ../lprsrv/lprsrv.c:360
+#: ../lprsrv/lprsrv.c:368
 #, c-format
 msgid "Node \"%s\" is not allowed to connect from insecure ports"
 msgstr "Keine Verbindung von Adresse \"%s\"  von unsicheren Ports erlaubt"
 
-#: ../lprsrv/lprsrv_cancel.c:98 ../lprsrv/lprsrv_list.c:92
+#: ../lprsrv/lprsrv_cancel.c:314 ../lprsrv/lprsrv_list.c:161
 #, c-format
 msgid "The queue \"%s\" does not exist on the print server \"%s\".\n"
 msgstr "Die Warteschlange \"%s\" existiert auf dem Druckerserver \"%s\" nicht.\n"
 
-#: ../lprsrv/lprsrv_cancel.c:106
+#: ../lprsrv/lprsrv_cancel.c:322
 #, c-format
 msgid ""
 "Could not delete the job or jobs due to a problem with the print server\n"
@@ -1402,7 +1405,7 @@ msgstr ""
 msgid "stdin is not a TCP socket (Run from Inetd or use -s option.)"
 msgstr "STDIN ist kein TCP Sockel (Starten Sie über inetd oder die Option -s)"
 
-#: ../lprsrv/lprsrv_list.c:96
+#: ../lprsrv/lprsrv_list.c:165
 #, c-format
 msgid ""
 "Could not get a queue listing due to a problem with the print server\n"
@@ -1415,17 +1418,17 @@ msgstr ""
 "des Druckservers, in der Logdatei\"%s\" nachzusehen\n"
 "um die Details zu sehen.\n"
 
-#: ../lprsrv/lprsrv_standalone.c:88 ../ppr/ppr_outfile.c:121
+#: ../lprsrv/lprsrv_standalone.c:89 ../ppr/ppr_outfile.c:121
 #: ../ppr/ppr_outfile.c:126 ../ppr/ppr_outfile.c:131 ../samba/ppr2samba.c:201
 #, c-format
 msgid "can't open \"%s\", errno=%d (%s)"
 msgstr "Kann \"%s\" nicht öffnen, Fehlernummer=%d (%s)"
 
-#: ../lprsrv/lprsrv_standalone.c:91
+#: ../lprsrv/lprsrv_standalone.c:92
 msgid "lprsrv is already running in standalone mode"
 msgstr "lprsrv läuft bereits im Standalone Modus"
 
-#: ../lprsrv/lprsrv_standalone.c:132
+#: ../lprsrv/lprsrv_standalone.c:133
 #, c-format
 msgid "there is already a server listening on TCP port %d"
 msgstr "es existiert bereits ein Server, der auf TCP Port %d lauscht"
@@ -6056,85 +6059,200 @@ msgstr "%s: The Druckauftrag \"%s\" ist nicht Ihrer, ich ignoriere den Befehl.\n
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr "Garantiere PPR die Erlaubnis, X clients zu kontaktieren, um \"%s\" anzuzeigen.\n"
 
-#~ msgid "\t--commentary <n>           send commentary messages of types <n>\n"
-#~ msgstr "\t--commentary <n>           Kommentarnachrichten vom Typ <n> senden\n"
+#~ msgid "1 active job was canceled.\n"
+#~ msgstr "1 aktiver Druckauftrag wurde abgebrochen\n"
+
+#~ msgid "%d jobs were canceled.\n"
+#~ msgstr "%d Druckaufträge wurden gelöscht.\n"
+
+#~ msgid "%d of 1 queue exported to \"%s\".\n"
+#~ msgstr "%d of 1 Warteschlange nach \"%s\" exportiert.\n"
+
+#~ msgid "1 character follows EOF mark"
+#~ msgstr "1 Zeichen folgt auf EOF"
+
+#~ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
+#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, %s."
+
+#~ msgid "The printer \"%s\" cannot start your job \"%s-%d\" (%s) because of the error condition \"%s\"."
+#~ msgstr "Der Drucker \"%s\" kann Ihren Auftrag \"%s-%d\" (%s) wegen des Fehlers \"%s\" nicht beginnen."
+
+#~ msgid "  This condition has persisted for %d minutes."
+#~ msgstr " Dieser Zustand hält seit %d Minuten an."
+
+#~ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the error \"%s%s%s%s\".  It may be to your benefit to correct this condition."
+#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, meldet den Fehler \"%s%s%s%s\".  Es kann zu Ihrem Vorteil sein, dies zu korrigieren."
 
 #, fuzzy
-#~ msgid "%s(): %s() of \"%s\" failed, errno=%d (%s)\n"
-#~ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
+#~ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the error \"%s%s%s%s\".  This condition must be corrected before your job can continue."
+#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, meldet den Fehler \"%s%s%s%s\".  Dies muß korrigiert werden, bevor Ihr Auftrag fortgesetzt werden kann."
 
-#~ msgid "%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"
-#~ msgstr "%s(): lseek(%d, 0, SEEK_END) fehlgeschlagen, Fehlernummer=%d (%s)"
+#~ msgid "The printer \"%s\", which could print your job \"%s-%d\" (%s), reports the error \"%s%s%s%s\".  This condition must be corrected before your job can start."
+#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) nicht drucken konnte, meldet den Fehler \"%s%s%s%s\".  Dies muß korrigiert werden, bevor Ihr Auftrag beginnen kann."
+
+#~ msgid "must be run by root"
+#~ msgstr "Darf nur von root ausgaführt werden"
+
+#~ msgid "file is in JPEG File Interchange Format"
+#~ msgstr "Datei ist im JPEG Dateiaustausch Format"
+
+#~ msgid "can't open FIFO, pprd is probably not running."
+#~ msgstr "Kann FIFO nicht öffnen, vielleicht läuft pprd nicht."
+
+#~ msgid ""
+#~ "You cannot delete jobs belonging to \"%s\" because\n"
+#~ "you are not root."
+#~ msgstr ""
+#~ "Sie dürfen keine Aufträge für \"%s\" löschen\n"
+#~ "da Sie nicht root sind."
+
+#~ msgid "Will not move \"%s\" back to \"%s\" because target isn't a symlink.\n"
+#~ msgstr "Werde \"%s\" nicht zurück nach \"%s\" schieben, da das Ziel kein Symlink ist.\n"
+
+#~ msgid "Unrecognized value for %s option: %s"
+#~ msgstr "Unbekannter Wert für %s Option: %s"
+
+#~ msgid "Unrecognized .ppr header line: %s %s"
+#~ msgstr "Unbekannter .ppr Kopf: %s %s"
+
+#~ msgid ""
+#~ "This system uses /etc/alternatives.  Using uprint-newconf\n"
+#~ "is not advised and it will not run without --force or --remove.\n"
+#~ msgstr ""
+#~ "Dieses System nutzt /etc/alternatives. Es wird nicht empfohlen, uprint-newconf\n"
+#~ "zu nutzten und es wird ohne --force oder --remove nicht laufen.\n"
+
+#~ msgid "The queue id \"%s\" is too long."
+#~ msgstr "Der Warteschlangenname \"%s\" ist zu lang."
+
+#~ msgid "The print queue name \"%s\" is too long."
+#~ msgstr "Der Druckerwarteschlangenname \"%s\" ist zu lang."
+
+#~ msgid "Restoring original spooler program names:\n"
+#~ msgstr "Stelle originale Spoolerprogrammnamen wieder her:\n"
+
+#~ msgid "Renaming \"%s\" -> \"%s\".\n"
+#~ msgstr "Umbenennen: \"%s\" -> \"%s\".\n"
+
+#~ msgid "Removing symbolic link \"%s\".\n"
+#~ msgstr "Entferne symbolische Verknüpfung \"%s\".\n"
+
+#~ msgid "Only privledged users may use the %s switch"
+#~ msgstr "Nur privilegierte Benutzer dürfen %s nutzen"
+
+#~ msgid "Non-privileged users may not use %s w/out -a"
+#~ msgstr "Nichtprivilegierte Benutzer dürfen %s mit/ohne -a nicht verwenden"
+
+#~ msgid "Node name \"%*s\" is too long.\n"
+#~ msgstr "Adresse \"%*s\" ist zu lang.\n"
+
+#~ msgid "No sfntdef section found while merging Mac TT font \"%s\", merger aborted"
+#~ msgstr "Keinen SFNTDEF Abschnitt beim Einfügen von Mac TT Schrift \"%s\" gefunden, Einfügen abgebrochen"
+
+#~ msgid "No sfnt section found while merging Mac font \"%s\", merger aborted"
+#~ msgstr "Keinen SFNT Abschnitt beim Einfügen von Mac TT Schrift \"%s\" gefunden, Einfügen abgebrochen"
+
+#~ msgid "No Type 1 section found while merging Mac TT font \"%s\", merge aborted"
+#~ msgstr "Keinen Typ 1 Abschnitt beim Einfügen von Mac TT Schrift \"%s\" gefunden, Einfügen abgebrochen"
+
+#~ msgid "No \"%s\" to move to \"%s\".\n"
+#~ msgstr "\"%s\" existiert nicht; kann daher nicht nach \"%s\" verschoben werden.\n"
+
+#~ msgid "Moving \"%s\" back to \"%s\".\n"
+#~ msgstr "Verschiebe \"%s\" zurück nach \"%s\".\n"
+
+#~ msgid "Merge into \"%s\" aborted because new font is not Mac TrueType"
+#~ msgstr "Einbindung in \"%s\" abgrbrochen, da neue Schrift keine Mac True Type Schrift ist"
+
+#~ msgid "JPEG (JFIF) pictures"
+#~ msgstr "JPEG (JFIF) Bilder"
+
+#~ msgid "Invalid argument on .ppr header \"%s\" line: %s"
+#~ msgstr "Ungültiges Argument im .ppd Kopf \"%s\", Zeile: %s"
+
+#~ msgid "Invalid Macintosh TrueType PostScript font discarded"
+#~ msgstr "Ungültige Macintosh TrueType PostScript Schiftart ignoriert"
+
+#~ msgid "Files for lpr should be in their sidelined locations.\n"
+#~ msgstr "Dateien für lpr sollten an ihren verschobenen Orten sein.\n"
+
+#~ msgid "Files for lpr should be in their normal locations.\n"
+#~ msgstr "Dateien für lpr sollten an ihren normalen Orten sein.\n"
+
+#~ msgid "Files for lp should be in their sidelined locations.\n"
+#~ msgstr "Dateien für lp sollten an ihren verschobenen Orten sein.\n"
+
+#~ msgid "Files for lp should be in their normal locations.\n"
+#~ msgstr "Dateien für lp sollten an ihren normalen Orten sein.\n"
+
+#~ msgid "Destination node name (the part before the colon) is missing.\n"
+#~ msgstr "Name des Ziels (der Teil vor dem Komma) fehlt.\n"
+
+#~ msgid "Destination node name \"%*s\" is too long.\n"
+#~ msgstr "Name des Ziels \"%*s\" ist zu lang.\n"
+
+#~ msgid "Creating symbolic link \"%s\" -> \"%s\".\n"
+#~ msgstr "Erstelle symbolische Verknüpfung \"%s\" -> \"%s\".\n"
+
+#~ msgid "Appearently, \"%s\" never was sidelined.\n"
+#~ msgstr "Es scheint, als wäre \"%s\" nicht umbennannt gewesen.\n"
+
+#~ msgid "Adjusting spooler program names to conform to %s:\n"
+#~ msgstr "Passe Programmnamen des Spooler an, um folgendem zu genügen: %s:\n"
+
+#~ msgid "-a and -A are mutually exclusive"
+#~ msgstr "-a und -A schließen sich gegenseitig aus"
+
+#~ msgid "%s: falling thru to real-lpstat due to unrecognized option: -%c\n"
+#~ msgstr "%s: Falle auf real-lpstat zurück wegen unbekannter Option: -%c\n"
+
+#~ msgid "%s(): wait() failed, errno=%d (%s)"
+#~ msgstr "%s(): wait() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): unlink(\"%s\") failed, errno=%d (%s)"
+#~ msgstr "%s(): unlink(\"%s\") fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): setgroups() failed, errno=%d (%s)"
+#~ msgstr "%s(): setgroups() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): seteuid(%ld) failed, errno=%d (%s)"
+#~ msgstr "%s(): seteuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): setegid(%ld) failed, errno=%d (%s)"
+#~ msgstr "%s(): setegid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): getpwnam(\"%s\") failed, errno=%d (%s)"
+#~ msgstr "%s(): getpwnam(\"%s\") fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): chmod(\"%s\", %o) failed, errno=%d (%s)"
+#~ msgstr "%s(): chmod(\"%s\", %o) fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "  (Warning: \"%s\" is not executable.)\n"
+#~ msgstr "  (Warnung: \"%s\" ist nicht ausführbar.)\n"
+
+#~ msgid "  (Note: \"%s\" does not exist.)\n"
+#~ msgstr "  (Achtung: \"%s\" existiert nicht.)\n"
+
+#~ msgid "\t-a                         turns on authcode mode\n"
+#~ msgstr "\t-a                         Authentifizierungscodemodus anschalten\n"
+
+#~ msgid "\t-A                         root or ppr has preauthorized\n"
+#~ msgstr "\t-A                         root oder ppr ist bereits authentifiziert\n"
 
 #, fuzzy
-#~ msgid "%s(): lseek() failed, errno=%d (%s)"
-#~ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"
-#~ msgstr "%s(): open(\"%s\", O_RDWR) fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): pipe() failed, errno=%d (%s)"
-#~ msgstr "%s(): pipe() fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): read() failed, errno=%d (%s)"
-#~ msgstr "%s(): read() fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s(): setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s(): setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s(): wait() failed, errno=%d (%s)\n"
-#~ msgstr "%s(): wait() fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s(): write() failed, errno=%d (%s)"
-#~ msgstr "%s(): write() fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s: fopen(\"%s\", \"w\") failed, errno=%d (%s)\n"
-#~ msgstr "%s: fopen(\"%s\", \"w\") fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "Destination name is empty.\n"
-#~ msgstr "Name des Ziels ist nicht gesetzt.\n"
+#~ msgid ""
+#~ "\t--strip-cache true         strip out cached resources\n"
+#~ "\t--strip-cache false        don't strip these resources (default)\n"
+#~ msgstr ""
+#~ "\t--strip-cache true         beziehe gecachte Resourcen im Druckauftrag\n"
+#~ "\t--strip-cache false        beziehe keine Resourcen (Standard)\n"
 
 #~ msgid ""
-#~ "Loop detected, %s called %s!\n"
-#~ "(Probably uprint.conf has been changed since uprint-newconf was run.)"
+#~ "\t--remove     back out changes\n"
+#~ "\t--force      change system against advice\n"
 #~ msgstr ""
-#~ "Schleife entdeckt, %s rief %s auf!\n"
-#~ "(Vielleicht wurde uprint.conf geändert, nachdem uprint-newconf aufgefufen wurde.)"
-
-#~ msgid "inoperative"
-#~ msgstr "beschäftigt"
-
-#~ msgid "operational"
-#~ msgstr "beschäftigt"
-
-#~ msgid "other"
-#~ msgstr "anderer"
-
-#~ msgid "printing"
-#~ msgstr "druckt"
-
-#~ msgid "problem exists"
-#~ msgstr "Problem aufgetreten"
-
-#~ msgid "testing"
-#~ msgstr "teste"
-
-#~ msgid "unknown"
-#~ msgstr "unbekannt"
-
-#~ msgid "waiting for commentators to finish"
-#~ msgstr "warte auf das Benenden der Kommentierer"
-
-#~ msgid ""
-#~ "\t--cache-priority {auto,low,high}\n"
-#~ "\t                           prefer to insert resources from cache?\n"
-#~ msgstr ""
-#~ "\t--cache-priority {auto,low,high}\n"
-#~ "\t                           Ensatz von Resourcen aus dem Cache\n"
-#~ "\t                           bevorzugen?\n"
+#~ "\t--remove     Änderungen verwerfen\n"
+#~ "\t--force      Änderungen trotz Warnung übernehmen\n"
 
 #~ msgid ""
 #~ "\t--cache-store none         don't store new resources (default)\n"
@@ -6147,196 +6265,81 @@ msgstr "Garantiere PPR die Erlaubnis, X clients zu kontaktieren, um \"%s\" anzuz
 #~ "\t--cache-store uncached     speichern, wenn noch nicht im Cache\n"
 
 #~ msgid ""
-#~ "\t--remove     back out changes\n"
-#~ "\t--force      change system against advice\n"
+#~ "\t--cache-priority {auto,low,high}\n"
+#~ "\t                           prefer to insert resources from cache?\n"
 #~ msgstr ""
-#~ "\t--remove     Änderungen verwerfen\n"
-#~ "\t--force      Änderungen trotz Warnung übernehmen\n"
+#~ "\t--cache-priority {auto,low,high}\n"
+#~ "\t                           Ensatz von Resourcen aus dem Cache\n"
+#~ "\t                           bevorzugen?\n"
+
+#~ msgid "waiting for commentators to finish"
+#~ msgstr "warte auf das Benenden der Kommentierer"
+
+#~ msgid "unknown"
+#~ msgstr "unbekannt"
+
+#~ msgid "testing"
+#~ msgstr "teste"
+
+#~ msgid "problem exists"
+#~ msgstr "Problem aufgetreten"
+
+#~ msgid "printing"
+#~ msgstr "druckt"
+
+#~ msgid "other"
+#~ msgstr "anderer"
+
+#~ msgid "operational"
+#~ msgstr "beschäftigt"
+
+#~ msgid "inoperative"
+#~ msgstr "beschäftigt"
+
+#~ msgid ""
+#~ "Loop detected, %s called %s!\n"
+#~ "(Probably uprint.conf has been changed since uprint-newconf was run.)"
+#~ msgstr ""
+#~ "Schleife entdeckt, %s rief %s auf!\n"
+#~ "(Vielleicht wurde uprint.conf geändert, nachdem uprint-newconf aufgefufen wurde.)"
+
+#~ msgid "Destination name is empty.\n"
+#~ msgstr "Name des Ziels ist nicht gesetzt.\n"
+
+#~ msgid "%s: fopen(\"%s\", \"w\") failed, errno=%d (%s)\n"
+#~ msgstr "%s: fopen(\"%s\", \"w\") fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s(): write() failed, errno=%d (%s)"
+#~ msgstr "%s(): write() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): wait() failed, errno=%d (%s)\n"
+#~ msgstr "%s(): wait() fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s(): setreuid(%ld, %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s(): setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s(): setregid(%ld, %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s(): setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s(): read() failed, errno=%d (%s)"
+#~ msgstr "%s(): read() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): pipe() failed, errno=%d (%s)"
+#~ msgstr "%s(): pipe() fehlgeschlagen, Fehlernummer=%d (%s)"
+
+#~ msgid "%s(): open(\"%s\", O_RDWR) failed, errno=%d (%s)"
+#~ msgstr "%s(): open(\"%s\", O_RDWR) fehlgeschlagen, Fehlernummer=%d (%s)"
 
 #, fuzzy
-#~ msgid ""
-#~ "\t--strip-cache true         strip out cached resources\n"
-#~ "\t--strip-cache false        don't strip these resources (default)\n"
-#~ msgstr ""
-#~ "\t--strip-cache true         beziehe gecachte Resourcen im Druckauftrag\n"
-#~ "\t--strip-cache false        beziehe keine Resourcen (Standard)\n"
+#~ msgid "%s(): lseek() failed, errno=%d (%s)"
+#~ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#~ msgid "\t-A                         root or ppr has preauthorized\n"
-#~ msgstr "\t-A                         root oder ppr ist bereits authentifiziert\n"
-
-#~ msgid "\t-a                         turns on authcode mode\n"
-#~ msgstr "\t-a                         Authentifizierungscodemodus anschalten\n"
-
-#~ msgid "  (Note: \"%s\" does not exist.)\n"
-#~ msgstr "  (Achtung: \"%s\" existiert nicht.)\n"
-
-#~ msgid "  (Warning: \"%s\" is not executable.)\n"
-#~ msgstr "  (Warnung: \"%s\" ist nicht ausführbar.)\n"
-
-#~ msgid "%s(): chmod(\"%s\", %o) failed, errno=%d (%s)"
-#~ msgstr "%s(): chmod(\"%s\", %o) fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): getpwnam(\"%s\") failed, errno=%d (%s)"
-#~ msgstr "%s(): getpwnam(\"%s\") fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): setegid(%ld) failed, errno=%d (%s)"
-#~ msgstr "%s(): setegid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): seteuid(%ld) failed, errno=%d (%s)"
-#~ msgstr "%s(): seteuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): setgroups() failed, errno=%d (%s)"
-#~ msgstr "%s(): setgroups() fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): unlink(\"%s\") failed, errno=%d (%s)"
-#~ msgstr "%s(): unlink(\"%s\") fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s(): wait() failed, errno=%d (%s)"
-#~ msgstr "%s(): wait() fehlgeschlagen, Fehlernummer=%d (%s)"
-
-#~ msgid "%s: falling thru to real-lpstat due to unrecognized option: -%c\n"
-#~ msgstr "%s: Falle auf real-lpstat zurück wegen unbekannter Option: -%c\n"
-
-#~ msgid "-a and -A are mutually exclusive"
-#~ msgstr "-a und -A schließen sich gegenseitig aus"
-
-#~ msgid "Adjusting spooler program names to conform to %s:\n"
-#~ msgstr "Passe Programmnamen des Spooler an, um folgendem zu genügen: %s:\n"
-
-#~ msgid "Appearently, \"%s\" never was sidelined.\n"
-#~ msgstr "Es scheint, als wäre \"%s\" nicht umbennannt gewesen.\n"
-
-#~ msgid "Creating symbolic link \"%s\" -> \"%s\".\n"
-#~ msgstr "Erstelle symbolische Verknüpfung \"%s\" -> \"%s\".\n"
-
-#~ msgid "Destination node name \"%*s\" is too long.\n"
-#~ msgstr "Name des Ziels \"%*s\" ist zu lang.\n"
-
-#~ msgid "Destination node name (the part before the colon) is missing.\n"
-#~ msgstr "Name des Ziels (der Teil vor dem Komma) fehlt.\n"
-
-#~ msgid "Files for lp should be in their normal locations.\n"
-#~ msgstr "Dateien für lp sollten an ihren normalen Orten sein.\n"
-
-#~ msgid "Files for lp should be in their sidelined locations.\n"
-#~ msgstr "Dateien für lp sollten an ihren verschobenen Orten sein.\n"
-
-#~ msgid "Files for lpr should be in their normal locations.\n"
-#~ msgstr "Dateien für lpr sollten an ihren normalen Orten sein.\n"
-
-#~ msgid "Files for lpr should be in their sidelined locations.\n"
-#~ msgstr "Dateien für lpr sollten an ihren verschobenen Orten sein.\n"
-
-#~ msgid "Invalid Macintosh TrueType PostScript font discarded"
-#~ msgstr "Ungültige Macintosh TrueType PostScript Schiftart ignoriert"
-
-#~ msgid "Invalid argument on .ppr header \"%s\" line: %s"
-#~ msgstr "Ungültiges Argument im .ppd Kopf \"%s\", Zeile: %s"
-
-#~ msgid "JPEG (JFIF) pictures"
-#~ msgstr "JPEG (JFIF) Bilder"
-
-#~ msgid "Merge into \"%s\" aborted because new font is not Mac TrueType"
-#~ msgstr "Einbindung in \"%s\" abgrbrochen, da neue Schrift keine Mac True Type Schrift ist"
-
-#~ msgid "Moving \"%s\" back to \"%s\".\n"
-#~ msgstr "Verschiebe \"%s\" zurück nach \"%s\".\n"
-
-#~ msgid "No \"%s\" to move to \"%s\".\n"
-#~ msgstr "\"%s\" existiert nicht; kann daher nicht nach \"%s\" verschoben werden.\n"
-
-#~ msgid "No Type 1 section found while merging Mac TT font \"%s\", merge aborted"
-#~ msgstr "Keinen Typ 1 Abschnitt beim Einfügen von Mac TT Schrift \"%s\" gefunden, Einfügen abgebrochen"
-
-#~ msgid "No sfnt section found while merging Mac font \"%s\", merger aborted"
-#~ msgstr "Keinen SFNT Abschnitt beim Einfügen von Mac TT Schrift \"%s\" gefunden, Einfügen abgebrochen"
-
-#~ msgid "No sfntdef section found while merging Mac TT font \"%s\", merger aborted"
-#~ msgstr "Keinen SFNTDEF Abschnitt beim Einfügen von Mac TT Schrift \"%s\" gefunden, Einfügen abgebrochen"
-
-#~ msgid "Node name \"%*s\" is too long.\n"
-#~ msgstr "Adresse \"%*s\" ist zu lang.\n"
-
-#~ msgid "Non-privileged users may not use %s w/out -a"
-#~ msgstr "Nichtprivilegierte Benutzer dürfen %s mit/ohne -a nicht verwenden"
-
-#~ msgid "Only privledged users may use the %s switch"
-#~ msgstr "Nur privilegierte Benutzer dürfen %s nutzen"
-
-#~ msgid "Removing symbolic link \"%s\".\n"
-#~ msgstr "Entferne symbolische Verknüpfung \"%s\".\n"
-
-#~ msgid "Renaming \"%s\" -> \"%s\".\n"
-#~ msgstr "Umbenennen: \"%s\" -> \"%s\".\n"
-
-#~ msgid "Restoring original spooler program names:\n"
-#~ msgstr "Stelle originale Spoolerprogrammnamen wieder her:\n"
-
-#~ msgid "The print queue name \"%s\" is too long."
-#~ msgstr "Der Druckerwarteschlangenname \"%s\" ist zu lang."
-
-#~ msgid "The queue id \"%s\" is too long."
-#~ msgstr "Der Warteschlangenname \"%s\" ist zu lang."
-
-#~ msgid ""
-#~ "This system uses /etc/alternatives.  Using uprint-newconf\n"
-#~ "is not advised and it will not run without --force or --remove.\n"
-#~ msgstr ""
-#~ "Dieses System nutzt /etc/alternatives. Es wird nicht empfohlen, uprint-newconf\n"
-#~ "zu nutzten und es wird ohne --force oder --remove nicht laufen.\n"
-
-#~ msgid "Unrecognized .ppr header line: %s %s"
-#~ msgstr "Unbekannter .ppr Kopf: %s %s"
-
-#~ msgid "Unrecognized value for %s option: %s"
-#~ msgstr "Unbekannter Wert für %s Option: %s"
-
-#~ msgid "Will not move \"%s\" back to \"%s\" because target isn't a symlink.\n"
-#~ msgstr "Werde \"%s\" nicht zurück nach \"%s\" schieben, da das Ziel kein Symlink ist.\n"
-
-#~ msgid ""
-#~ "You cannot delete jobs belonging to \"%s\" because\n"
-#~ "you are not root."
-#~ msgstr ""
-#~ "Sie dürfen keine Aufträge für \"%s\" löschen\n"
-#~ "da Sie nicht root sind."
-
-#~ msgid "can't open FIFO, pprd is probably not running."
-#~ msgstr "Kann FIFO nicht öffnen, vielleicht läuft pprd nicht."
-
-#~ msgid "file is in JPEG File Interchange Format"
-#~ msgstr "Datei ist im JPEG Dateiaustausch Format"
-
-#~ msgid "must be run by root"
-#~ msgstr "Darf nur von root ausgaführt werden"
-
-#~ msgid "The printer \"%s\", which could print your job \"%s-%d\" (%s), reports the error \"%s%s%s%s\".  This condition must be corrected before your job can start."
-#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) nicht drucken konnte, meldet den Fehler \"%s%s%s%s\".  Dies muß korrigiert werden, bevor Ihr Auftrag beginnen kann."
+#~ msgid "%s(): lseek(%d, 0, SEEK_END) failed, errno=%d (%s)"
+#~ msgstr "%s(): lseek(%d, 0, SEEK_END) fehlgeschlagen, Fehlernummer=%d (%s)"
 
 #, fuzzy
-#~ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the error \"%s%s%s%s\".  This condition must be corrected before your job can continue."
-#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, meldet den Fehler \"%s%s%s%s\".  Dies muß korrigiert werden, bevor Ihr Auftrag fortgesetzt werden kann."
+#~ msgid "%s(): %s() of \"%s\" failed, errno=%d (%s)\n"
+#~ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#~ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), reports the error \"%s%s%s%s\".  It may be to your benefit to correct this condition."
-#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, meldet den Fehler \"%s%s%s%s\".  Es kann zu Ihrem Vorteil sein, dies zu korrigieren."
-
-#~ msgid "  This condition has persisted for %d minutes."
-#~ msgstr " Dieser Zustand hält seit %d Minuten an."
-
-#~ msgid "The printer \"%s\" cannot start your job \"%s-%d\" (%s) because of the error condition \"%s\"."
-#~ msgstr "Der Drucker \"%s\" kann Ihren Auftrag \"%s-%d\" (%s) wegen des Fehlers \"%s\" nicht beginnen."
-
-#~ msgid "The printer \"%s\", which is printing your job \"%s-%d\" (%s), %s."
-#~ msgstr "Der Drucker \"%s\", der Ihren Auftrag \"%s-%d\" (%s) druckt, %s."
-
-#~ msgid "1 character follows EOF mark"
-#~ msgstr "1 Zeichen folgt auf EOF"
-
-#~ msgid "%d of 1 queue exported to \"%s\".\n"
-#~ msgstr "%d of 1 Warteschlange nach \"%s\" exportiert.\n"
-
-#~ msgid "%d jobs were canceled.\n"
-#~ msgstr "%d Druckaufträge wurden gelöscht.\n"
-
-#~ msgid "1 active job was canceled.\n"
-#~ msgstr "1 aktiver Druckauftrag wurde abgebrochen\n"
+#~ msgid "\t--commentary <n>           send commentary messages of types <n>\n"
+#~ msgstr "\t--commentary <n>           Kommentarnachrichten vom Typ <n> senden\n"

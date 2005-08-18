@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru_RU-PPRWWW\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-22 11:07-0400\n"
+"POT-Creation-Date: 2005-08-17 20:38-0400\n"
 "PO-Revision-Date: 2004-06-01 11:27-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -593,51 +593,6 @@ msgstr ""
 #: ../www/df_html.cgi.perl:151
 #, perl-format
 msgid "Error while closing pipe from df (%s)"
-msgstr ""
-
-#: ../www/docs_cat.cgi.perl:70 ../www/docs_plain.cgi.perl:68
-msgid "Can't Display File"
-msgstr "Не возможно показать файл"
-
-#: ../www/docs_info.cgi.perl:554 ../www/docs_info.cgi.perl:561
-msgid "Error: "
-msgstr "Неудача: "
-
-#: ../www/docs_info.cgi.perl:561
-msgid "Can't Display Info Document"
-msgstr ""
-
-#: ../www/docs_man.cgi.perl:168
-msgid "Available Manpages"
-msgstr ""
-
-#: ../www/docs_man.cgi.perl:178
-msgid "Can't Display Manpage"
-msgstr ""
-
-#: ../www/docs_man.cgi.perl:216 ../www/docs_plain.cgi.perl:111
-msgid "Error:"
-msgstr "Неудача:"
-
-#: ../www/docs_man.cgi.perl:264
-#, perl-format
-msgid "Section %s"
-msgstr ""
-
-#: ../www/docs_rpm.cgi.perl:48
-#, perl-format
-msgid "Documentation for RPM Package %s"
-msgstr ""
-
-#: ../www/docs_util.pl:48
-msgid ""
-"This script was invoked without any trailing path.  In other words,\n"
-"it should have been treated as if it were a subdirectory.\n"
-msgstr ""
-
-#: ../www/docs_util.pl:73
-#, perl-format
-msgid "The file \"%s\" is not within a recognized document directory.\n"
 msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:54
@@ -2532,41 +2487,50 @@ msgstr ""
 msgid "Source Download"
 msgstr ""
 
-#~ msgid "Authentication Required"
-#~ msgstr "Удостоверение личности требуется"
-
-#~ msgid "Printer Status"
-#~ msgstr "Положение принтера"
-
-#~ msgid "Player:"
-#~ msgstr "Игрок:"
-
-#~ msgid "Printers to Monitor"
-#~ msgstr "Принтеры наблудать"
-
-#~ msgid "PPR Login"
-#~ msgstr "Вход в систему PPR"
-
-#~ msgid "Name:"
-#~ msgstr "Название:"
-
-#~ msgid "Retry:"
-#~ msgstr "Попытка:"
-
-#~ msgid "Countdown:"
-#~ msgstr "Через:"
-
-#~ msgid "Printer status:"
-#~ msgstr "Положение принтера:"
-
-#~ msgid "Current job:"
-#~ msgstr "Текущая задача:"
-
-#~ msgid "For:"
-#~ msgstr "Для Кого:"
+#~ msgid "Critical?"
+#~ msgstr "Важно?"
 
 #~ msgid "Alert Messages:"
 #~ msgstr "Собщенния о проблемах:"
 
-#~ msgid "Critical?"
-#~ msgstr "Важно?"
+#~ msgid "For:"
+#~ msgstr "Для Кого:"
+
+#~ msgid "Current job:"
+#~ msgstr "Текущая задача:"
+
+#~ msgid "Printer status:"
+#~ msgstr "Положение принтера:"
+
+#~ msgid "Countdown:"
+#~ msgstr "Через:"
+
+#~ msgid "Retry:"
+#~ msgstr "Попытка:"
+
+#~ msgid "Name:"
+#~ msgstr "Название:"
+
+#~ msgid "PPR Login"
+#~ msgstr "Вход в систему PPR"
+
+#~ msgid "Printers to Monitor"
+#~ msgstr "Принтеры наблудать"
+
+#~ msgid "Player:"
+#~ msgstr "Игрок:"
+
+#~ msgid "Printer Status"
+#~ msgstr "Положение принтера"
+
+#~ msgid "Authentication Required"
+#~ msgstr "Удостоверение личности требуется"
+
+#~ msgid "Can't Display File"
+#~ msgstr "Не возможно показать файл"
+
+#~ msgid "Error: "
+#~ msgstr "Неудача: "
+
+#~ msgid "Error:"
+#~ msgstr "Неудача:"
