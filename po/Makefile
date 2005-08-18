@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 June 2005.
+# Last modified 17 August 2005.
 #
 
 include ../Makefile.conf
@@ -45,10 +45,7 @@ all:
 
 # Extract the lists of translatable strings.  The rules are a bit 
 # fudged.  If we try to extract one list, we get them all.
-PPRD.pot: PPR.pot
-PAPD.pot: PPR.pot
-PPRWWW.pot: PPR.pot
-PPR.pot:
+pot:
 	xgettext \
 		--default-domain=PPR \
 		--output=PPR.tmp \
@@ -127,6 +124,7 @@ depend:
 			echo "$$language-$$division.po: $$division.pot"; \
 			echo '	msgmerge --update --no-wrap --sort-by-file --backup=numbered $$@ $$^ && touch $$@'; \
 			echo "all: $$language-$$division.po"; \
+			echo; \
 			done \
 		done >.depend
 

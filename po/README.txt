@@ -1,7 +1,7 @@
 =============================================================================
  mouse:~ppr/src/po/README.txt
  mouse:~ppr/docs/misc/internationalization.txt (symbolic link)
- Last revised 7 April 2005.
+ Last revised 17 August 2005.
 =============================================================================
 
 The po/ directory in the PPR distribution contains language translation files
@@ -9,7 +9,7 @@ for PPR.  PPR uses GNU Gettext to display program messages in languages other
 than English.
 
 If you are planing to start a new translation, please write to 
-"David.Chappell@trincoll.edu" and tell him what language in order to make sure
+<David.Chappell@trincoll.edu> and tell him what language in order to make sure
 nobody is working on it yet.  We would be happy to include more contributed 
 translation files in future versions of PPR.
 
@@ -64,8 +64,8 @@ for PPR will start the daemon with LANG= set if it finds a setting for
  Updating Translations for an Existing Language
 =============================================================================
 
-If you later want to update your translation, run "make merge" to create the
-lastest .pot files and merge them with the pre-existing .po files.
+If you later want to update your translation, run "make pot"  and "make" to
+create the lastest .pot files and merge them with the pre-existing .po files.
 Translations that are no longer needed will be removed and template entries for
 new translations which you must write will be added.  The merge program may
 attempt to guess at the correct translation using fuzzy matching with other

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 April 2005.
+** Last modified 17 August 2005.
 */
 
 /*
@@ -162,7 +162,7 @@ static void interface_exit_screen(void)
 	*/
 	if(WIFEXITED(interface_wait_status) && WEXITSTATUS(interface_wait_status) == EXIT_SIGNAL)
 		{
-		alert(printer.Name, TRUE, _("The interface performed a controlled shutdown because a non-spooler"
+		alert(printer.Name, TRUE, _("The interface performed a controlled shutdown because a non-spooler\n"
 								"process (possibly the OS kernel) sent it a signal."));
 		hooked_exit(EXIT_SIGNAL, "interface program killed");
 		} /* end of if interface caught a signal */

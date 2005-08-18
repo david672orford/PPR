@@ -1,6 +1,0 @@
-ppr-cancel.$(OBJ): ppr-cancel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
-ppr-lp.$(OBJ): ppr-lp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
-ppr-lpstat.$(OBJ): ppr-lpstat.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-

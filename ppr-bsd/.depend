@@ -1,8 +1,0 @@
-ppr-lprm.$(OBJ): ppr-lprm.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
-ppr-lpr.$(OBJ): ppr-lpr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
-ppr-lpq.$(OBJ): ppr-lpq.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
-ppr-lpc.$(OBJ): ppr-lpc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/uprint.h
-
