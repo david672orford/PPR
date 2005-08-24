@@ -9463,3 +9463,5 @@ no final tarball was released.
 * ppr/ppr_dscdoc.c: quick hack to let EPS files print on printers with
   a charge even if they don't have a "%%Pages:" or "%%Page:" comment.
 
+* ppr/ppr-chooser.perl: removed (it was supposedly removed in 1.53a2)
+
