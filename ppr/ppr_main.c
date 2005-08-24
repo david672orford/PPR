@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 18 July 2005.
 */
 
 /*
@@ -2112,6 +2112,7 @@ int main(int argc, char *argv[])
 	qentry.N_Up.borders = TRUE;							/* print borders when doing N-Up */
 	qentry.N_Up.sigsheets = 0;							/* don't print signatures */
 	qentry.N_Up.sigpart = SIG_BOTH;						/* print both sides of signature */
+	qentry.N_Up.job_does_n_up = FALSE;
 	qentry.draft_notice = (char*)NULL;					/* message to print diagonally */
 	qentry.PassThruPDL = (const char *)NULL;			/* default (means PostScript) */
 	qentry.Filters = (const char *)NULL;				/* default (means none) */

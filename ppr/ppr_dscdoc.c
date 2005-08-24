@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_dscdoc.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 November 2002.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -958,6 +958,15 @@ static void feature_spy_nonppd(void)
 							qentry.opts.copies = x;
 						}
 					}
+				/* The N-Up feature is a PPR invention. */
+				else if(strcmp(tokens[1], "N-Up") == 0)
+					{
+					if(tokens[2])
+						{
+						qentry.N_Up.N = atoi(tokens[2]);
+						qentry.N_Up.job_does_n_up = TRUE;
+						}
+					}
 				break;
 			}
 		}
@@ -995,6 +1004,11 @@ void read_header_comments(void)
 			warning(WARNING_SEVERE, _("Document uses DSC version %.1f which is > 3.0"), qentry.attr.DSClevel);
 			}
 
+		/* Quick hack to let EPS files print on printers with a charge 
+		 * even if they don't have a "%%Pages:" or "%%Page:" comment. */
+		if(strstr(line, " EPSF-"))
+			qentry.attr.pages = 1;
+		
 		getline_simplify_cache();						/* and refill buffer */
 		}
 	else								/* If not flagged with */

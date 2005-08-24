@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54, 11 December 2004--15 July 2005
+1.54, 11 December 2004--24 August 2005
 
 * samba/ppd2win95drv.perl: removed
 
@@ -9454,6 +9454,12 @@ no final tarball was released.
 
 * papd/papd.c: added missing error() function.
 
+* Fixes for proper accounting of documents with Windows XP N-Up turned on.
+  This includes a change in the queue file format, ppr, pprdrv, and 
+  editps/Windows_XP.
+
 * interfaces/smb.sh: removed -P from smbclient command line.
 
+* ppr/ppr_dscdoc.c: quick hack to let EPS files print on printers with
+  a charge even if they don't have a "%%Pages:" or "%%Page:" comment.
 

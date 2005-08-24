@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_structs.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 September 2004.
+** Last modified 18 July 2005.
 */
 
 /* =================== destined for libppr_queueentry.h =====================*/
@@ -119,6 +119,7 @@ struct QFileEntry
 		gu_boolean borders;				/* TRUE or false, should we print borders */
 		int sigsheets;					/* Number of sheets to user per signiture */
 		int sigpart;					/* fronts, backs, both */
+		gu_boolean job_does_n_up;		/* if true, we won't insert our code */
 		} N_Up;
 	const char *draft_notice;			/* `Draft' string */
 	const char *PassThruPDL;			/* "pcl", "hpgl2", etc., NULL for PostScript */

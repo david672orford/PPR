@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/writeqfile.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 February 2004.
+** Last modified 18 July 2005.
 */
 
 #include "before_system.h"
@@ -124,7 +124,10 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 				qentry->N_Up.N,					/* virtual pages on each side of sheet */
 				qentry->N_Up.borders,			/* should we print borders? */
 				qentry->N_Up.sigsheets,			/* how many sheets per signature? (0=no signature printing) */
-				qentry->N_Up.sigpart);			/* Fronts, backs, both */
+				qentry->N_Up.sigpart,			/* Fronts, backs, both */
+				qentry->N_Up.job_does_n_up
+				);
+				
 
 	if(qentry->Filters)
 		fprintf(Qfile, "Filters: %s\n", qentry->Filters);
