@@ -120,7 +120,7 @@ int write_struct_QFileEntry(FILE *Qfile, const struct QFileEntry *qentry)
 				qentry->opts.keep_badfeatures,
 				qentry->opts.hacks);
 
-	fprintf(Qfile, "N-Up: %d %d %d %d\n",
+	fprintf(Qfile, "N-Up: %d %d %d %d %d\n",
 				qentry->N_Up.N,					/* virtual pages on each side of sheet */
 				qentry->N_Up.borders,			/* should we print borders? */
 				qentry->N_Up.sigsheets,			/* how many sheets per signature? (0=no signature printing) */

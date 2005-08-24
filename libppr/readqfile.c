@@ -241,7 +241,7 @@ int read_struct_QFileEntry(FILE *qfile, struct QFileEntry *job)
 				break;
 
 			case 'N':
-				MATCH("N-Up: ", _6("%d %d %d %d",
+				MATCH("N-Up: ", _6("%d %d %d %d %d",
 						&job->N_Up.N,					/* virtual pages per sheet side */
 						&job->N_Up.borders,				/* TRUE or FALSE, should we have borders? */
 						&job->N_Up.sigsheets,			/* sheets per signiture */
