@@ -50,6 +50,7 @@
 LIBDIR="?"
 TEMPDIR="?"
 PRINTERS_CACHEDIR="?"
+FILTDIR="?"
 
 # Path of dvips.  Setup_filters modifies this line.
 DVIPS="?"
@@ -58,7 +59,6 @@ DVIPS="?"
 OPTIONS="$1"
 PRINTER="$2"
 TITLE="$3"
-INVOKEDIR="$4"
 
 # Expand the path to include the place where MakeTeXPK
 # is likely to be:
@@ -125,7 +125,6 @@ if [ -n "$DVIPS_CONFIG" ]
 	fi
 
 # Run dvips, catching the error output in a file
-cd $INVOKEDIR			# <-- for included files
 if [ -z "$NOISY" ]		# if not noisy
 	then
 	$DVIPS $DVIPS_CONFIG -f -R 2>$TEMPFILE	 | grep -v '^Got a new papersize$'
@@ -139,7 +138,7 @@ cd $LIBDIR
 # DVIPS error messages instead of the DVIPS output.
 if [ $? -ne 0 -a -z "$NOISY" ]
 	then
-	filters/filter_lp <$TEMPFILE
+	$FILTDIR/filter_lp <$TEMPFILE
 	fi
 
 # Remove the error output file.

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 June 2005.
+** Last modified 22 August 2005.
 */
 
 /*! \file */
@@ -93,15 +93,21 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 			case 'A':
 				if((p = lmatchp(line, "Attr-DSC:")))
 					{
-					if(gu_sscanf(p, "%f %d %d %d",
+					if(gu_sscanf(p, "%f %S %d %d %d",
 							&job->attr.DSClevel,
+							&job->attr.DSC_job_type,
 							&job->attr.orientation,
 							&job->attr.proofmode,
 							&job->attr.docdata
-							) != 4)
+							) != 5)
 						{
 						error("%s: bad \"%s\" line", function, "Attr-DSC:");
 						return -1;
+						}
+					if(strcmp(job->attr.DSC_job_type, "NULL") == 0)
+						{
+						gu_free(job->attr.DSC_job_type);
+						job->attr.DSC_job_type = NULL;
 						}
 					continue;
 					}
@@ -257,7 +263,7 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'U':
-				MATCH("User: ", _4("%ld %S %Z", &job->user, &job->username, &job->proxy_for), <2, found_user)
+				MATCH("User: ", _2("%S", &job->user), <1, found_user)
 				break;
 			}
 

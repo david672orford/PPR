@@ -48,8 +48,7 @@ NOTBUILT=\
 	docs_history.txt \
 	misc_dir_contents.txt \
 	internationalization.txt \
-	release_steps.html \
-	tcl_cross_platform.html
+	release_steps.html 
 
 #=== Build ==================================================================
 

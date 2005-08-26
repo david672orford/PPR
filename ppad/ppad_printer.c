@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 23 August 2005.
 */
 
 /*==============================================================
@@ -2358,9 +2358,9 @@ int printer_delete(const char *argv[])
 	 * and every group.  Rather laborious, don't 
 	 * you think?
 	 */
-	if((dir = opendir(GRCONF)))
+	if(!(dir = opendir(GRCONF)))
 		{
-		fprintf(errors, "%s(): opendir() failed\n", function);
+		fprintf(errors, _("%s(): %s(\"%s\") failed, errno=%d (%s)\n"), function, "opendir", GRCONF, errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 

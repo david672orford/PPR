@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -139,9 +139,6 @@ struct Thing
 ** global variables
 ===============================================*/
 
-/* What getcwd() returned before chdir() */
-extern char *starting_directory;
-
 /* output files */
 extern FILE *comments;			/* file for header & trailer comments */
 extern FILE *page_comments;		/* file for page level comments */
@@ -189,7 +186,6 @@ extern gu_boolean line_overflow;		/* true or false */
 extern char *tokens[];			/* array of tokens broken out of line[] */
 extern int cont;				/* is this comment a continuation? */
 
-extern char *AuthCode;
 extern struct Media guess_media;
 
 /*===============================================================

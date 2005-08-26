@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 26 August 2005.
 */
 
 #include "config.h"
@@ -131,39 +131,12 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	ppr_argv[i++] = "-d";
 	ppr_argv[i++] = upr->dest;
 
-	/* Use the switchset macro.  We use this early on
-	   so that explicit options can override options
-	   set in the switchset. */
-	/* ppr_argv[i++] = "-I"; */			/* -I is obsolete */
-
-	/* Identify users by username.	(This will make the queue listings
-	   look more like lpr's.  The -u switch requires no special
-	   privledge.  The -f below will do the job only if the invoking
-	   user has the necessary privledge.) */
-	ppr_argv[i++] = "-u";
-	ppr_argv[i++] = "yes";
-
 	/* Whom is the job for? */
 	if(upr->user)
 		{
-		const char *p = upr->user;		/* default is just the username */
-
-		if(upr->from_format)
-			{
-			if(strcmp(upr->from_format, "$user@$host") == 0)
-				{
-				snprintf(upr->str_for, sizeof(upr->str_for), "%s@%s", upr->user, upr->fromhost ? upr->fromhost : "<missing>");
-				p = upr->str_for;
-				}
-			else if(strcmp(upr->from_format, "$user@$proxyclass") == 0)
-				{
-				snprintf(upr->str_for, sizeof(upr->str_for), "%s@%s", upr->user, upr->proxy_class ? upr->proxy_class : "<missing>");
-				p = upr->str_for;
-				}
-			}
-
-		ppr_argv[i++] = "-f";
-		ppr_argv[i++] = p;
+		snprintf(upr->str_for, sizeof(upr->str_for), "%s@%s", upr->user, upr->user_domain ? upr->user_domain : "<missing>");
+		ppr_argv[i++] = "-u";
+		ppr_argv[i++] = upr->str_for;
 		}
 
 	/* Whom should we notify?  Build an email address.  The field upr->lpr_mailto
@@ -215,14 +188,9 @@ int uprint_print_argv_ppr(void *p, const char **ppr_argv, int argv_size)
 	ppr_argv[i++] = "-e";
 	ppr_argv[i++] = "responder";
 
-	/* Is this a proxy job?  If so, use the -X switch to
-	   identify the party we are acting for. */
-	if(upr->proxy_class)
-		{
-		snprintf(upr->str_principal, sizeof(upr->str_principal), "%s@%s", upr->user, upr->proxy_class);
-		ppr_argv[i++] = "-X";
-		ppr_argv[i++] = upr->str_principal;
-		}
+	snprintf(upr->str_user, sizeof(upr->str_user), "%s@%s", upr->user, upr->user_domain);
+	ppr_argv[i++] = "--user";
+	ppr_argv[i++] = upr->str_user;
 
 	/* Job name?  (Such as specified by the lpr -J switch.) */
 	if(upr->jobname)

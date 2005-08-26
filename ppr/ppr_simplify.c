@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 23 August 2005.
 */
 
 /*
@@ -267,47 +267,6 @@ static gu_boolean simplify_continuation(void)
 	} /* end of simplify_continuation() */
 
 /*
-** This function is called by getline_simplify().
-** It is broken out to make the logic easier to follow.
-** It is called whenever an %! comment is encountered.
-*/
-static void do_bang(void)
-	{
-	int len = line_len;
-	while(len-- > 0 && isspace(line[len])) line_len = len;
-	line[line_len] = '\0';
-	tokenize();
-
-	if(strncmp(line, "%!PS-Adobe-", 11) == 0)
-		{
-		/* Is this an EPS header in the middle of the document, */
-		if(tokens[1] != (char*)NULL && strncmp(tokens[1], "EPSF-", 5) == 0
-						&& nest_level() == 0
-						&& outermost_current() != OUTERMOST_HEADER_COMMENTS)
-			{
-			/* Is the hack to handle this turned on? */
-			if(qentry.opts.hacks & HACK_BADEPS)
-				{
-				char temp[80];
-
-				warning(WARNING_PEEVE, _("Unenclosed EPS file, applying badeps hack"));
-				line[79] = '\0';		/* guard against temp[] overflow */
-				strcpy(temp, line);
-				strcpy(line, "%%BeginDocument:\n");
-				strcat(line, temp);
-				line_len = strlen(line);
-				nest_push(NEST_BADEPS, tokens[1]);
-				}
-			else
-				{
-				warning(WARNING_SEVERE, _("Unenclosed EPS file, try -H badeps\n"
-						"\t(Expect additional semi-spurious warnings due to this problem.)"));
-				}
-			}
-		}
-	} /* end of do_bang() */
-
-/*
 ** Get a line, handling included documents and marked
 ** data sections indicated by %%Begin(End)Data.
 **
@@ -330,33 +289,58 @@ void getline_simplify(void)
 		return;
 		}
 
+	/* Remove trailing spaces. */	
+	while(line_len > 0 && isspace(line[line_len - 1]))
+		line_len--;
+	line[line_len] = '\0';
+	
 	/* If this line is too long to be a valid DSC comment,
 	   don't attempt to do anything with it. */
 	if(line_len > MAX_TOKENIZED)
 		return;
 
-	/* If it is a %! (such as "%!PS-Adobe-3.0),
-	   there is a subroutine to handle it. */
+	/* Break the line into words. */
+	tokenize();
+
+	/* If it is a %! line (such as "%!PS-Adobe-3.0), */
 	if(line[1] == '!')
 		{
 		lastDSC[0] = '\0';
-		do_bang();
+
+		/* Is this an EPS header in the middle of the document, */
+		if(tokens[1] && lmatch(tokens[1], "EPSF-")
+				&& nest_level() == 0
+				&& outermost_current() != OUTERMOST_HEADER_COMMENTS)
+			{
+			/* Is the hack to handle this turned on? */
+			if(qentry.opts.hacks & HACK_BADEPS)
+				{
+				char *temp;
+				warning(WARNING_PEEVE, _("Unenclosed EPS file, applying badeps hack"));
+				temp = gu_strdup(line);
+				gu_snprintf(line, sizeof(line), "%%%%BeginDocument:\n%s", temp);
+				gu_free(temp);
+				line_len = strlen(line);
+				nest_push(NEST_BADEPS, tokens[1]);
+				}
+			else
+				{
+				warning(WARNING_SEVERE, _("Unenclosed EPS file, try -H badeps\n"
+						"\t(Expect additional semi-spurious warnings due to this problem.)"));
+				}
+			}
 		return;
 		}
 
 	/* If this is a %% comment, it is probably DSC, prepare to handle it. */
 	if(line[1] == '%')			/* line[0] provent to be '%' */
 		{
-		int len = line_len;
-		while(len-- > 0 && isspace(line[len])) line_len = len;
-		line[line_len] = '\0';
-
 		/* It is a DSC comment if the 3rd character is a capital letter. */
 		if(isalpha(line[2]) && isupper(line[2]))
 			{
 			int len, colonpos;
 
-			/* Is not a %%+ line. */
+			/* Note that this is not a "%%+" comment. */
 			is_continued_line = FALSE;
 			dsc_comment_number++;
 
@@ -381,29 +365,27 @@ void getline_simplify(void)
 			lastDSC[len] = '\0';
 			} /* end of if comment begins with uppercase letter */
 
-		/* Or is it a dsc comment continuation? */
+		/* Or is it a DSC comment continuation? */
 		else if(line[2] == '+')
 			{
 			/* Replace the + with the saved keyword. */
 			is_continued_line = simplify_continuation();
+			tokenize();		/* have to re-do this */
 			}
 
 		/* Must be some other kind of %% comment. */
 		else
 			{
 			lastDSC[0] = '\0';
-			tokenize();
 			return;
 			}
 
-		/* Break line into words: */
-		tokenize();
-
-		/* Upgrade certain old DSC comments to DSC version 3.0 comments. */
+		/* Upgrade certain old DSC comments to DSC version 3.0 comments. 
+		 * This function calls tokenize() if it make a change. */
 		old_DSC_to_new();
 
 		/*
-		** This switch statment will act on certain comments which
+		** This switch statement will act on certain comments which
 		** have global significance.
 		**
 		** If an embedded document is marked by comments, simple

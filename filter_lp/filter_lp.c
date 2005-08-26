@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 June 2005.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -39,6 +39,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <wchar.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -56,8 +57,7 @@ const char myname[] = "filter_lp";
 int noisy = FALSE;
 
 /* global input line buffer */
-typedef unsigned int W_CHAR_T;
-W_CHAR_T *line;				/* the line itself */
+wchar_t *line;				/* the line itself */
 unsigned char *line_attr;	/* bold and underline flags for each character */
 int formfeed = FALSE;		/* true if line ended with ff */
 int (*readline)(void);		/* pointer to function to read line */
@@ -281,7 +281,7 @@ static int readline_normal(void)
 	/* Clear the line buffer.  Using memset() instead of a loop
 	 * cuts the program run time in half!
 	 */
-	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(W_CHAR_T));
+	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(wchar_t));
 	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);
 
 	maxcount = count = 0;						/* count is ptr into */
@@ -434,7 +434,7 @@ static int readline_utf_8(void)
 	/* Clear the line buffer.  Using memset() instead of a loop
 	 * cuts the program run time in half!
 	 */
-	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(W_CHAR_T));
+	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(wchar_t));
 	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);
 
 	maxcount = count = 0;						/* count is ptr into */
@@ -552,7 +552,7 @@ static int readline_fortran(void)
 			}
 		}
 
-	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(W_CHAR_T));
+	memset(line, 0, (MAX_WIDTH+TAB_WIDTH+1) * sizeof(wchar_t));
 	memset(line_attr, 0, MAX_WIDTH+TAB_WIDTH);
 
 	for(len=0; len < MAX_WIDTH && (c = fgetc(stdin)) != EOF && c != '\n'; column++)
@@ -590,7 +590,7 @@ static int readline_fortran(void)
 
 /*=======================================================================
 ** Make the first pass through the input file.
-** On this pass we will determine what is the longest line and
+** On this pass we will determine the length of the longest line and
 ** the longest page and how big the built in left and top margins
 ** are if they exist.
 =======================================================================*/
@@ -621,7 +621,7 @@ static void pass1(void)
 
 		if(len > 0)								/* if non-blank line */
 			{									/* and has less */
-			leadlen = strspn((char*)line, " "); /* leading space than previous, */
+			leadlen = wcsspn(line, L" ");		/* leading space than previous, */
 			if(leadlen < left_skip)				/* then record this small leading */
 				left_skip = leadlen;			/* space value */
 
@@ -1229,7 +1229,7 @@ static void endpage(void)
 */
 static int underline(int skip)
 	{
-	W_CHAR_T *cptr = &line[skip];
+	wchar_t *cptr = &line[skip];
 	unsigned char *aptr = &line_attr[skip];
 	int index;
 	int ulstart=-1;
@@ -1287,14 +1287,14 @@ static int underline(int skip)
 */
 static void outline(int skip)
 	{
-	W_CHAR_T *cptr=&line[skip];
-	unsigned char *aptr=&line_attr[skip];
+	wchar_t *cptr=&line[skip];
+	unsigned char *aptr = &line_attr[skip];
 	int len;
 	int started;
 	int newindent=0;
 	int c;
 
-	if((len = strspn((char*)cptr," ")) != indent)  /* if number of leading spaces */
+	if((len = wcsspn(cptr, L" ")) != indent)	/* if number of leading spaces */
 		{									/* is not equal to the current */
 		gu_psprintf("%d i", len);			/* indent, then change current */
 		indent=len;							/* indent */
@@ -1304,9 +1304,9 @@ static void outline(int skip)
 	aptr+=len;								/* eat up the indent spaces */
 
 	started=0;
-	while( (c=*cptr) )
+	while((c = *cptr))
 		{
-		if((len = strspn((char*)cptr," ")) > 3)
+		if((len = wcsspn(cptr, L" ")) > 3)
 			{
 			if(len>29)							/* if too long to abreviate, */
 				gu_psprintf(")%d t(", len);		/* then writ it out long */
@@ -1471,7 +1471,9 @@ static void pass2(void)
 	} /* end of pass2() */
 
 /*
-** Main Function
+** Usage: filter_lp 'option1...optionN' _printer_ _title_
+**        filter_lp_autolf 'option1...optionN' _printer_ _title_
+** The _printer_ and _title_ options are ignored.
 */
 int main(int argc, char *argv[])
 	{
@@ -1961,7 +1963,7 @@ int main(int argc, char *argv[])
 		}
 
 	/* Create the line input buffer */
-	line = gu_alloc((MAX_WIDTH+TAB_WIDTH+1), sizeof(W_CHAR_T));
+	line = gu_alloc((MAX_WIDTH+TAB_WIDTH+1), sizeof(wchar_t));
 	line_attr = gu_alloc((MAX_WIDTH+TAB_WIDTH), sizeof(unsigned char));
 
 	/* Make the first pass over the input file, analyzing the input. */

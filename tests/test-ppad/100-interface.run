@@ -85,7 +85,7 @@ echo
 $TESTBIN/dump_printer regression-test1
 
 echo "Putting things back the way they were..."
-$PPAD_PATH interface regression-test1 atalk "Imaginary Printer:LaserWriter@Imaginary Zone"
+$PPAD_PATH interface regression-test1 dummy "/dev/lp0"
 echo "ppad: $?"
 echo
 

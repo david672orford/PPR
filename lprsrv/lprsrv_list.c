@@ -25,12 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 19 August 2005.
 */
 
 #include "config.h"
 #include <string.h>
-#include <unistd.h>		/* for getuid() */
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -51,7 +50,7 @@
 ** The term "agent" is from RFC-1179 and should probably
 ** be "remote_user".  Notice that it is not used.
 */
-static int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too)
+static int uprint_lpq(const char agent[], const char queue[], int format, const char *arglist[], gu_boolean remote_too)
 	{
 	DODEBUG_UPRINT(("uprint_lpq(agent = \"%s\", queue = \"%s\", format = %d, arglist = ?)", agent, queue ? queue : "", format));
 
@@ -97,7 +96,7 @@ static int uprint_lpq(uid_t uid, gid_t gid, const char agent[], const char queue
 
 		args[i] = (const char *)NULL;
 
-		return uprint_run(uid, gid, PPOP_PATH, args);
+		return uprint_run(PPOP_PATH, args);
 		}
 
 	/*
@@ -154,7 +153,7 @@ void do_request_lpq(char *command)
 	** fails, it will return the (positive) exit code of that
 	** command.
 	*/
-	if(uprint_lpq(geteuid(), getegid(), "???", queue, format, list, FALSE) == -1)
+	if(uprint_lpq("???", queue, format, list, FALSE) == -1)
 		{
 		if(uprint_errno == UPE_UNDEST)
 			{

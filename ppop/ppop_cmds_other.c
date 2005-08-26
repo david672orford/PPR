@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2005.
+** Last modified 25 August 2005.
 */
 
 /*
@@ -111,7 +111,7 @@ static const char *fault_translate(int code)
 /*===========================================================================
 ** Take a "ppop status" auxiliary status line and convert it to human-
 ** readable form.  Depending on the settings of --machine-readable and
-** --verbose, this function may choose not to print certain information.
+** --opt_verbose, this function may choose not to print certain information.
 ** It will return non-zero if it prints something.
 ===========================================================================*/
 int print_aux_status(char *line, int printer_status, const char sep[])
@@ -125,7 +125,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		if((cp = fault_translate(atoi(p))))
 			{
 			gu_puts(sep);
-			if(machine_readable)
+			if(opt_machine_readable)
 				printf("fault: %s", cp);
 			else
 				printf(_("(%s)"), cp);
@@ -143,13 +143,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		gu_sscanf(p, "%d %d", &device_status_code, &printer_status_code);
 		translate_snmp_status(device_status_code, printer_status_code, &description, NULL, NULL);
 
-		if(machine_readable)
+		if(opt_machine_readable)
 			{
 			gu_puts(sep);
 			printf("status: %s", description);
 			return 1;
 			}
-		else if(verbose || printer_status != PRNSTATUS_IDLE)
+		else if(opt_verbose || printer_status != PRNSTATUS_IDLE)
 			{
 			gu_puts(sep);
 			printf(_("Printer Status: %s"), gettext(description));
@@ -178,8 +178,8 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		print_ago = last_minutes_ago > 15;
 		print_howlong = !print_ago && start_minutes_ago > 5;
 
-		/* Skip things unconfirmed for more than 4 hours unless --verbose is used. */
-		if(last_minutes_ago > (4 * 60) && !verbose)
+		/* Skip things unconfirmed for more than 4 hours unless --opt_verbose is used. */
+		if(last_minutes_ago > (4 * 60) && !opt_verbose)
 			return 0;
 
 		gu_puts(sep);
@@ -187,7 +187,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		{
 		const char *description;
 		translate_snmp_error(bit, &description, NULL, NULL);
-		if(machine_readable)
+		if(opt_machine_readable)
 			printf("errorstate: %s", description);
 		else
 			printf(_("Printer Problem: \"%s\""), gettext(description));
@@ -201,7 +201,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 			}
 
 		/* If the condition didn't arise within the last few minutes, say how long it has persisted. */
-		if(print_howlong || verbose)
+		if(print_howlong || opt_verbose)
 			{
 			if(start_minutes_ago < 120)
 				{
@@ -215,7 +215,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 			}
 
 		/* If the last notification was more than 15 minutes ago, say so. */
-		if(print_ago || verbose)
+		if(print_ago || opt_verbose)
 			{
 			if(last_minutes_ago < 120)
 				{
@@ -263,7 +263,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 		gu_puts(sep);
 
-		if(machine_readable)
+		if(opt_machine_readable)
 			gu_puts("operation: ");
 		else
 			gu_puts(_("Operation: "));
@@ -282,14 +282,14 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		int important = atoi(p);
 		p += strspn(p, "0123456789");
 		p += strspn(p, " \t");
-		if(machine_readable)
+		if(opt_machine_readable)
 			{
 			gu_puts(sep);
 			printf("lw-status: %d ", important ? 1 : 0);
 			puts_detabbed(p);
 			return 1;
 			}
-		else if(verbose || important)
+		else if(opt_verbose || important)
 			{
 			gu_puts(sep);
 			printf(_("Raw LW Status: \"%s\""), p);
@@ -304,14 +304,14 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		int important = atoi(p);
 		p += strspn(p, "0123456789");
 		p += strspn(p, " \t");
-		if(machine_readable)
+		if(opt_machine_readable)
 			{
 			gu_puts(sep);
 			printf("pjl-status: %d ", important ? 1 : 0);
 			puts_detabbed(p);
 			return 1;
 			}
-		else if(verbose || important)
+		else if(opt_verbose || important)
 			{
 			gu_puts(sep);
 			printf(_("Raw PJL Status: %s"), p);
@@ -326,13 +326,13 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		int important = atoi(p);
 		p += strspn(p, "0123456789");
 		p += strspn(p, " \t");
-		if(machine_readable || verbose || important)
+		if(opt_machine_readable || opt_verbose || important)
 			{
 			char *f1, *f2, *fx;
 
 			gu_puts(sep);
 
-			if(machine_readable)
+			if(opt_machine_readable)
 				printf("snmp-status: %d ", important ? 1 : 0);
 			else
 				printf(_("Raw SNMP Status: "));
@@ -369,7 +369,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 
 		gu_puts(sep);
 
-		if(machine_readable)
+		if(opt_machine_readable)
 			gu_puts("page: ");
 		else
 			gu_puts(_("Page Clock: "));
@@ -398,7 +398,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	if((p = lmatchp(line, "job:")))
 		{
 		gu_puts(sep);
-		if(machine_readable)
+		if(opt_machine_readable)
 			{
 			gu_puts("job: ");
 			puts_detabbed(p);
@@ -450,7 +450,7 @@ int ppop_status(char *argv[])
 	fprintf(FIFO, "s %s\n", destname.destname);
 	fflush(FIFO);
 
-	if( ! machine_readable )
+	if( ! opt_machine_readable )
 		{
 		printf("%s          %s\n", _("Printer"), _("Status"));
 		gu_puts("------------------------------------------------------------\n");
@@ -478,7 +478,7 @@ int ppop_status(char *argv[])
 
 		gu_puts(printer_name);						/* print printer name */
 
-		if(! machine_readable)					/* possibly pad out */
+		if(! opt_machine_readable)					/* possibly pad out */
 			{
 			len = strlen(printer_name);
 			while(len++ <= MAX_DESTNAME)
@@ -489,7 +489,7 @@ int ppop_status(char *argv[])
 			putchar('\t');
 			}
 
-		if(!machine_readable)					/* If to be human readable, */
+		if(!opt_machine_readable)					/* If to be human readable, */
 			{
 			switch(status)
 				{
@@ -588,7 +588,7 @@ int ppop_status(char *argv[])
 		while((line = gu_getline(line, &line_len, reply_file)) && strcmp(line, "."))
 			{
 			print_aux_status(line, status,
-				machine_readable ? "\t" : "\n                 ");
+				opt_machine_readable ? "\t" : "\n                 ");
 			}
 
 		putchar('\n');
@@ -666,7 +666,7 @@ int ppop_media(char *argv[])
 	fprintf(FIFO, "f %s\n", argv[0]);
 	fflush(FIFO);
 
-	if( ! machine_readable )
+	if( ! opt_machine_readable )
 		{
 		printf("Printer                  Bin             Media\n");
 		printf("---------------------------------------------------------------\n");
@@ -676,12 +676,12 @@ int ppop_media(char *argv[])
 		return print_reply();
 
 	/* Read each fcommand return structure, one for each printer. */
-	if( ! machine_readable )
+	if( ! opt_machine_readable )
 	while(fread(&f1, sizeof(struct fcommand1), 1, reply_file))
 		{
 		len = printf(f1.prnname);				/* display the printer name */
 
-		if(f1.nbins==0 && ! machine_readable)	/* If no bins, */
+		if(f1.nbins==0 && ! opt_machine_readable)	/* If no bins, */
 			{									/* display a message to that effect. */
 			while(len++ < 25)
 				putchar(' ');
@@ -740,7 +740,7 @@ int ppop_mount(char *argv[])
 
 	mediumname = argv[2] ? argv[2] : "";
 
-	if(assert_am_operator())
+	if(!assert_am_operator())
 		return EXIT_DENIED;
 
 	if(parse_dest_name(&destination,argv[0]))
@@ -842,7 +842,7 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 		return EXIT_SYNTAX;
 		}
 
-	if(assert_am_operator())			/* only allow operator to do this */
+	if(!assert_am_operator())			/* only allow operator to do this */
 		return EXIT_DENIED;
 
 	for(x=0; argv[x]; x++)
@@ -981,7 +981,7 @@ int ppop_cancel(char *argv[], int inform)
 			}
 
 		/* Make sure the user has permission to cancel this job. */
-		if(job_permission_check(&job))
+		if(!job_permission_check(&job))
 			return EXIT_DENIED;
 
 		/* Ask pprd to cancel it. */
@@ -1028,7 +1028,7 @@ int ppop_purge(char *argv[], int inform)
 		return EXIT_SYNTAX;
 		}
 
-	if(assert_am_operator())
+	if(!assert_am_operator())
 		return EXIT_DENIED;
 
 	for(x=0; argv[x]; x++)
@@ -1115,7 +1115,7 @@ int ppop_clean(char *argv[])
 		exit(EXIT_SYNTAX);
 		}
 
-	if(assert_am_operator())
+	if(!assert_am_operator())
 		return EXIT_DENIED;
 
 	ppop_clean_total = 0;
@@ -1194,7 +1194,7 @@ int ppop_cancel_active(char *argv[], int my, int inform)
 		exit(EXIT_SYNTAX);
 		}
 
-	if( ! my && assert_am_operator() )
+	if(!my && !assert_am_operator())
 		return EXIT_DENIED;
 
 	ppop_cancel_active_my = my;
@@ -1246,10 +1246,10 @@ int ppop_move(char *argv[])
 
 	if(job.id == -1)							/* all jobs */
 		{
-		if( assert_am_operator() )
+		if(!assert_am_operator())
 			return EXIT_DENIED;
 		}
-	else if( job_permission_check(&job) )		/* one job */
+	else if(!job_permission_check(&job))		/* one job */
 		return EXIT_DENIED;
 
 	if( parse_dest_name(&destination, argv[1]) )
@@ -1300,7 +1300,7 @@ int ppop_rush(char *argv[], int newpos)
 		return EXIT_SYNTAX;
 		}
 
-	if( assert_am_operator() )			/* only operator may rush jobs */
+	if(!assert_am_operator())			/* only operator may rush jobs */
 		return EXIT_DENIED;
 
 	for(x=0; argv[x]; x++)
@@ -1365,7 +1365,7 @@ int ppop_hold_release(char *argv[], int release)
 			return EXIT_SYNTAX;
 			}
 
-		if( job_permission_check(&job) )
+		if(!job_permission_check(&job))
 			return EXIT_DENIED;
 
 		FIFO = get_ready();
@@ -1406,7 +1406,7 @@ int ppop_accept_reject(char *argv[], int reject)
 		return EXIT_SYNTAX;
 		}
 
-	if(assert_am_operator())
+	if(!assert_am_operator())
 		return EXIT_DENIED;
 
 	if(parse_dest_name(&destination, argv[0]))
@@ -1469,7 +1469,7 @@ int ppop_destination(char *argv[], int info_level)
 	fflush(FIFO);
 
 	/* If a human is reading our output, give column names. */
-	if(machine_readable)
+	if(opt_machine_readable)
 		{
 		switch(info_level)
 			{
@@ -1561,9 +1561,9 @@ int ppop_destination(char *argv[], int info_level)
 
 		printf(format,
 				destname,
-				machine_readable ? (is_group ? "group" : "printer") : (is_group ? _("group") : _("printer")),
-				machine_readable ? (is_accepting ? "accepting" : "rejecting") : (is_accepting ? _("accepting") : _("rejecting")),
-				machine_readable ? (is_charge ? "yes" : "no") : (is_charge ? _("yes") : _("no")),
+				opt_machine_readable ? (is_group ? "group" : "printer") : (is_group ? _("group") : _("printer")),
+				opt_machine_readable ? (is_accepting ? "accepting" : "rejecting") : (is_accepting ? _("accepting") : _("rejecting")),
+				opt_machine_readable ? (is_charge ? "yes" : "no") : (is_charge ? _("yes") : _("no")),
 				(comment ? comment : ""),
 				(interface ? interface : ""),
 				(address ? address : "")
@@ -1603,7 +1603,7 @@ int ppop_destination(char *argv[], int info_level)
 			{
 			printf(format,
 				direntp->d_name,
-				machine_readable ? "alias" : _("alias"),
+				opt_machine_readable ? "alias" : _("alias"),
 				"?",			/* accepting */
 				"?",			/* charge */
 				"comment",
@@ -1731,7 +1731,7 @@ int ppop_log(char *argv[])
 		}
 
 	/* In machine readable mode we say when the log file was last modified. */
-	if(machine_readable)
+	if(opt_machine_readable)
 		{
 		struct stat statbuf;
 		if(fstat(fileno(f), &statbuf) == -1)

@@ -2,7 +2,7 @@
 
 $TESTBIN/clear_output
 
-$PPR_PATH -d regression-test1 -m none -u yes --routing 'My Routing Message' <<EndOfSample
+$PPR_PATH -d regression-test1 -m none -f ppr --routing 'My Routing Message' <<EndOfSample
 %!PS-Adobe-3.0
 %%Pages: 0
 

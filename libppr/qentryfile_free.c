@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 22 August 2005.
 */
 
 /*! \file */
@@ -52,8 +52,8 @@ void qentryfile_free(struct QEntryFile *job)
 	{
 	free_and_zero((void**)&job->destname);
 
-	free_and_zero((void**)&job->username);
-	free_and_zero((void**)&job->proxy_for);
+	free_and_zero((void**)&job->attr.DSC_job_type);
+	free_and_zero((void**)&job->user);
 	free_and_zero((void**)&job->For);
 	free_and_zero((void**)&job->charge_to);
 	free_and_zero((void**)&job->magic_cookie);

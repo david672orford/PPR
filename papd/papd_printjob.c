@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 19 August 2005.
 */
 
 #include "config.h"
@@ -142,7 +142,7 @@ void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const str
 			}
 
 		/* Indicate for whom the user "ppr" is acting as proxy. */
-		argv[x++] = "-X";
+		argv[x++] = "--user";
 		argv[x++] = proxy_for;
 
 		/* Answer for TTRasterizer query */

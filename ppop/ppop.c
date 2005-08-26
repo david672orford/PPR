@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 25 August 2005.
 */
 
 /*
@@ -57,16 +57,19 @@
 #include "util_exits.h"
 #include "version.h"
 
-/* Misc globals */
 const char myname[] = "ppop";
-pid_t pid;												/* this process id */
-static char *su_user = (char*)NULL;						/* --su switch value */
-static const char *proxy_for = (const char*)NULL;		/* -X switch value */
-static const char *magic_cookie = (const char*)NULL;	/* --magic-cookie value */
-int arrest_interest_interval = -1;
-int machine_readable = FALSE;							/* machine readable mode */
-FILE *errors;											/* file we should send stderr type messages to */
-gu_boolean verbose = FALSE;								/* --verbose switch */
+
+/* Command line options */
+gu_boolean			opt_verbose = FALSE;
+int 				opt_machine_readable = FALSE;
+static char			*opt_user = NULL;	
+static const char	*opt_magic_cookie = NULL;
+int					opt_arrest_interest_interval = -1;
+
+/* File to which to send errors, generally equal to stderr,
+ * but set to stdout when -M is used.
+ */ 
+FILE *errors;
 
 /*
 ** Handle fatal errors.
@@ -76,7 +79,7 @@ void fatal(int exitval, const char message[], ... )
 	{
 	va_list va;
 
-	if(machine_readable)
+	if(opt_machine_readable)
 		fputs("*FATAL\t", errors);
 	else
 		fputs(_("Fatal: "), errors);
@@ -170,7 +173,7 @@ FILE *get_ready(void)
 	#define FIFO_OPEN_FLAGS (O_WRONLY | O_APPEND)
 	#endif
 
-	if(FIFO == (FILE*)NULL)
+	if(!FIFO)
 		{
 		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)
 			fatal(EXIT_NOSPOOLER, _("can't open FIFO, pprd is probably not running"));
@@ -186,7 +189,7 @@ FILE *get_ready(void)
 
 	/* Before the command we must give the "address"
 	   to reply to.  This address is our PID. */
-	fprintf(FIFO, "%ld ", (long int)pid);
+	fprintf(FIFO, "%ld ", (long int)getpid());
 
 	return FIFO;
 	} /* end of get_ready() */
@@ -497,12 +500,12 @@ static gu_boolean privileged(void)
 	static gu_boolean answer = FALSE;
 	static char *answer_username = NULL;
 
-	if(!answer_username || strcmp(su_user, answer_username))
+	if(!answer_username || strcmp(opt_user, answer_username) != 0)
 		{
 		if(answer_username)
 			gu_free(answer_username);
-		answer_username = gu_strdup(su_user);
-		answer = user_acl_allows(su_user, "ppop");
+		answer_username = gu_strdup(opt_user);
+		answer = user_acl_allows(opt_user, "ppop");
 		}
 
 	return answer;
@@ -519,12 +522,12 @@ static gu_boolean privileged(void)
 ** user identities.  They will use this so as not to exceed the privledge
 ** of the user for whom they are acting.
 */
-static int su(const char username[])
+static int do_u_option(const char username[])
 	{
 	if(privileged())
 		{
-		gu_free(su_user);
-		su_user = gu_strdup(username);
+		gu_free(opt_user);
+		opt_user = gu_strdup(username);
 		return 0;
 		}
 	else
@@ -542,264 +545,179 @@ static int su(const char username[])
 **
 ** Note that this function is affected by the --su switch.
 */
-int assert_am_operator(void)
+gu_boolean assert_am_operator(void)
 	{
 	if(privileged())
 		{
-		return 0;
+		return TRUE;
 		}
 	else
 		{
 		fputs(_("You are not allowed to perform the requested\n"
 			"operation because you are not a PPR operator.\n"), errors);
-		return -1;
+		return FALSE;
 		}
 	} /* end of assert_am_operator() */
 
 /*
-** This function compares a job's proxy for identification string to a pattern
+** This function compares a job's username to a username pattern
 ** which can include basic wildcards.  If they match, it returns TRUE.
 */
-static gu_boolean proxy_for_match(const char job_proxy_for[], const char proxy_for_pattern[])
+static gu_boolean username_match(const char username[], const char pattern[])
 	{
-	char *job_at_host, *pattern_at_host;
+	char *username_at_host, *pattern_at_host;
 	size_t len;
 
 	/* If they match exactly, */
-	if(strcmp(job_proxy_for, proxy_for_pattern) == 0)
+	if(strcmp(username, pattern) == 0)
 		return TRUE;
 
-	/* If the job was submitted with a --proxy-for in username@hostname
-	   format and the proxy pattern is in the same format, */
-	if((job_at_host = strchr(job_proxy_for, '@')) && (pattern_at_host = strchr(proxy_for_pattern, '@')))
+	/* If the username is in username@hostname format 
+	 * and pattern is in the same format,
+	 */
+	if((username_at_host = strchr(username, '@')) && (pattern_at_host = strchr(pattern, '@')))
 		{
 		/* If both username and hostname are wildcards, */
-		if(strcmp(proxy_for_pattern, "*@*") == 0)
+		if(strcmp(pattern, "*@*") == 0)
 			return TRUE;
 
 		/* If username is a wildcard and the host names match, */
-		if(strncmp(proxy_for_pattern, "*@", 2) == 0
-				&& strcmp(job_at_host, pattern_at_host) == 0)
+		if(lmatch(pattern, "*@")
+				&& strcmp(username_at_host, pattern_at_host) == 0)
 			return TRUE;
 
 		/* If hostname is a wildcard and the usernames match, */
 		if(strcmp(pattern_at_host, "@*") == 0
-				&& (len = (pattern_at_host - proxy_for_pattern)) == (job_at_host - job_proxy_for)
-				&& strncmp(job_proxy_for, proxy_for_pattern, len) == 0)
+				&& (len = (pattern_at_host - pattern)) == (username_at_host - username)
+				&& strncmp(username, pattern, len) == 0)
 			return TRUE;
 		}
 
 	return FALSE;
-	}
+	} /* username_match() */
 
 /*
-** This function return -1 (to indicate failure) if the indicated job
-** does not belong to the user and the user is not an operator.  If -1
-** is returned, also prints an error message.
-**
-** If the user is a proxy (the -X switch has been used) then the proxy id's
-** must also match or the user part of the proxy id must be "*" on the same
-** machine as the job's proxy id.  When the -X switch is used, even
-** operators cannot delete jobs that were not submitted under their Unix
-** uid.
+** This function returns TRUE if the current user has permission to touch
+** the specified job.  If he does not, an error message is printed and
+** FALSE is returned.
 */
-int job_permission_check(struct Jobname *job)
+gu_boolean job_permission_check(struct Jobname *job)
 	{
-	char job_username[17];
-	char job_proxy_for[127];
-	char job_magic_cookie[33];
+	char *job_username = NULL;
+	char *job_magic_cookie = NULL;
+	int retval = FALSE;
 
-	/*
-	** If the user is an operator (as modified by the --su switch) and
-	** is not limiting his authority with the --proxy-for switch, then
-	** we can bail out right now because operators can manipulate any
-	** job.  This will save us the time and trouble of opening the
-	** queue file to figure out whose job it is.
-	*/
-	if(privileged() && !proxy_for && !magic_cookie)
-		return 0;
-
-	/*
-	** In this block, we open the queue file and extract the information
-	** from the "User:" line.
-	**
-	** If we can't open it, just say it is ok to manipulate the job.  This is
-	** because, for non-existent jobs we want to user to be told it does not
-	** exist, not that he can't touch it!
-	**
-	** Yes, this is a race condition.  Any practical way to exploit it?
-	**
-	** !!! This code must be fixed for distributed printing !!!
-	*/
-	{
-	char fname[MAX_PPR_PATH];
-	FILE *f;
-	char *line = NULL;
-	int line_space = 80;
-	long int job_uid;			/* no longer used */
-
-	/*
-	** Open queue file.
-	*/
-	ppr_fnamef(fname, "%s/%s-%d.%d",
-		QUEUEDIR,
-		job->destname,
-		job->id,
-		job->subid != WILDCARD_SUBID ? job->subid : 0
-		);
-	if((f = fopen(fname, "r")) == (FILE*)NULL)
+	/* start of exception-handling block */
+	do {
+		/*
+		** If the user (possibily the user specified by the -u switch) and
+		** is not limiting his authority with the --magic-cookie switch, then
+		** we can bail out right now because operators can manipulate any
+		** job.  This will save us the time and trouble of opening the
+		** queue file to figure out whose job it is.
+		*/
+		if(privileged() && !opt_magic_cookie)
+			{
+			retval = TRUE;
+			break;
+			}
+	
+		/*
+		** In this block, we open the queue file and extract the information
+		** from the "User:" line.
+		**
+		** If we can't open it, just say it is ok to manipulate the job.  This is
+		** because, for non-existent jobs we want to user to be told it does not
+		** exist, not that he can't touch it!
+		**
+		** Yes, this is a race condition.  Any practical way to exploit it?
+		*/
 		{
-		/* This is where we need code for remote printing!!! */
-
-		/* See note above. */
-		if(errno == ENOENT)
-			return 0;
-
-		fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
-		return -1;
+		char fname[MAX_PPR_PATH];
+		FILE *f;
+		char *line = NULL;
+		int line_space = 80;
+	
+		ppr_fnamef(fname, "%s/%s-%d.%d",
+			QUEUEDIR,
+			job->destname,
+			job->id,
+			job->subid != WILDCARD_SUBID ? job->subid : 0
+			);
+		if((f = fopen(fname, "r")) == (FILE*)NULL)
+			{
+			if(errno == ENOENT)		 /* See note above. */
+				{
+				break;
+				}
+			fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
+			break;
+			}
+	
+		/* Read the queue file and find the "User:" line. */
+		while((line = gu_getline(line, &line_space, f)))
+			{
+			if(gu_sscanf(line, "User: %S", &job_username) == 1)
+				continue;
+			if(gu_sscanf(line, "MagicCookie: %S", &job_magic_cookie) == 1)
+				continue;
+			}
+	
+		/* Close the queue file. */
+		if(line)
+			gu_free(line);
+		fclose(f);
 		}
-
-	/* Read the queue file and find the "User:" line. */
-	job_username[0] = '\0';
-	job_proxy_for[0] = '\0';
-	job_magic_cookie[0] = '\0';
-	while((line = gu_getline(line, &line_space, f)))
-		{
-		if(gu_sscanf(line, "User: %ld %#s %#s",
-				&job_uid,
-				sizeof(job_username), job_username,
-				sizeof(job_proxy_for), job_proxy_for) >= 2)
-			continue;
-		if(gu_sscanf(line, "MagicCookie: %#s", sizeof(job_magic_cookie), &job_magic_cookie) == 1)
-			continue;
-		}
-
-	/* Close the queue file. */
-	if(line) gu_free(line);
-	fclose(f);
-
-	/* Check to see that we got a "User:" line: */
-	if(!job_username[0])
-		{
-		fprintf(errors, "Queue file error, no \"User:\" line.\n");
-		return -1;
-		}
-	}
-
-	/*
-	** In order to delete a job, you must either have operator privledge or
-	** you must be the user who submitted it.
-	**
-	** (In all this we obey the --su switch.)
-	*/
-	if(!privileged() && strcmp(job_username, su_user))
-		{
-		fprintf(errors,
+	
+		/* Check to see that we got a "User:" line: */
+		if(!job_username)
+			{
+			fprintf(errors, "Queue file error, no \"User:\" line.\n");
+			break;
+			}
+	
+		if(!privileged() && !username_match(job_username, opt_user))
+			{
+			fprintf(errors,
 				_("You may not manipulate the job \"%s\" because it\n"
 				"does not belong to the user \"%s\".\n"),
-						jobid(job->destname, job->id, job->subid),
-						su_user);
-
-		/* If the command is a request by proxy, remote LPR users might be
-		   confused by the message above because they probably don't know
-		   anything about the proxy system.  We will try to make things a
-		   little clearer with this message.
-		   */
-		if(proxy_for)
-			{
-			putchar('\n');
-			fprintf(errors, _("(The user \"%s\" is acting as your proxy.)\n"), su_user);
+					jobid(job->destname, job->id, job->subid),
+					opt_user
+				);
+			break;
 			}
-
-		return -1;
-		}
-
-	/*
-	** If the user who invoked ppop provided an -X switch
-	** and it does not match the one which was provided when
-	** submitting the job, then refuse to do it.
-	*/
-	if(proxy_for)								/* if -X (--proxy-for) switch used, */
-		{
-		/* If --proxy-for wasn't used when the job was submitted or it doesn't match, */
-		if(job_proxy_for[0] == '\0' || !proxy_for_match(job_proxy_for, proxy_for))
-			{
-			char *job_at_host, *pattern_at_host;
-			gu_boolean show_hostnames;
-
-			/* If both proxy-for strings contain a hostname and they are the same or the
-			   hostname from our command line is a *, then suppress both of them
-			   since they aren't what is at issue and will only serve to confuse 
-			   the user. */
-			if((job_at_host = strchr(job_proxy_for, '@')) && (pattern_at_host = strchr(proxy_for, '@'))
-				&& (strcmp(pattern_at_host, "@*") == 0 || strcmp(pattern_at_host, job_at_host) == 0)
-				)
-				{
-				show_hostnames = FALSE;
-				}
-			else
-				{			
-				show_hostnames = TRUE;
-				}
-
-			/* Print the error message with or without hostnames. */
-			fprintf(errors,
-				_("You may not manipulate the job \"%s\" because it belongs to\n"
-				  "\"%.*s\", while you are \"%.*s\".\n"),
-				jobid(job->destname, job->id, job->subid),
-				(int)(show_hostnames ? strlen(job_proxy_for) : strcspn(job_proxy_for, "@")), job_proxy_for,
-				(int)(show_hostnames ? strlen(proxy_for) : strcspn(proxy_for, "@")), proxy_for);
-
-			return -1;
-			}
-		}
-
-	/*
-	** If there was an --magic-cookie option,
-	*/
-	if(magic_cookie)
-		{
-		if(strcmp(magic_cookie, job_magic_cookie) != 0)
+		if(opt_magic_cookie && strcmp(opt_magic_cookie, job_magic_cookie) != 0)
 			{
 			fprintf(errors, "Magic cookie doesn't match.\n");
-			return -1;
+			break;
 			}
-		}
+		else
+			{
+			retval = TRUE;
+			}
 
-	/*
-	** All tests passed.  You may do what you want with this job.
-	*/
-	return 0;
+		/* end of exception-handling block */
+		} while(FALSE);
+
+	if(job_username)
+		gu_free(job_username);
+	if(job_magic_cookie)
+		gu_free(job_magic_cookie);
+
+	return retval;
 	} /* end of job_permission_check() */
 
 /*
-** Return 0 if the job matches the current user id and proxy_for.
-** Return non-zero if it does not.  Notice that operator
-** privledge plays no part in this.  Other than that, the
+** Return TRUE if the job matches the current user id
+** Return FALSE if it does not.  Notice that operator
+** privilege plays no part in this.  Other than that, the
 ** criteria should be the same as for job_permission_check().
-**
-** The global variables uid and proxy_for are used by
-** this function.
 */
 int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile)
 	{
-	/* If the user names don't match, it isn't. */
-	if(strcmp(su_user, qentryfile->username))
-		return FALSE;
-
-	/* If the user says he is acting as a proxy, the party he is
-	   acting as proxy for must be the same as the party he acted for
-	   when he submitted the job. */
-	if(proxy_for)
-		{
-		if(!qentryfile->proxy_for)						/* if not a proxy job, */
-			return FALSE;
-
-		if(!proxy_for_match(qentryfile->proxy_for, proxy_for))
-			return FALSE;
-		}
-
-	return TRUE;
+	if(!username_match(qentryfile->user, opt_user))
+		return TRUE;
+	return FALSE;
 	} /* end of is_my_job() */
 
 /*=========================================================================
@@ -810,47 +728,47 @@ static int main_help(FILE *out)
 	{
 	int i;
 	const char *help_lines[] =
-			{
-			N_("Destination commands:"),
-				N_("ppop destination {<destination>, all}"),
-				N_("    Abbreviation: ppop dest {<destination>, all}"),
-				N_("ppop destination-comment {<destination>, all}"),
-				N_("    Abbreviation: ppop ldest {<destination>, all}"),
-				N_("ppop destination-comment-address {<destination>, all}"),
-				N_("ppop accept <destination>"),
-				N_("ppop reject <destination>"),
-			N_("Print job commands:"),
-				N_("ppop list {<destination>, <job>, all} ..."),
-				N_("ppop short {<destination>, <job>, all} ..."),
-				N_("ppop details {<destination>, <job>, all} ..."),
-				N_("ppop lpq {<destination>, <job>, all} [<user>] [<id>] ..."),
-				N_("ppop qquery {<destination>, <job>, all} <field name 1> ..."),
-				N_("ppop move {<job>, <old_destination>} <new_destination>"),
-				N_("ppop hold <job> ..."),
-				N_("ppop release <job> ..."),
-				N_("ppop [s]cancel {<job>, <destination>, all} ..."),
-				N_("ppop [s]purge {<destination>, all} ..."),
-				N_("ppop [s]cancel-active {<destination>, all} ..."),
-				N_("ppop [s]cancel-my-active {<destination>, all} ..."),
-				N_("ppop clean <destination> ..."),
-				N_("ppop rush <job> ..."),
-				N_("ppop last <job> ..."),
-				N_("ppop log <job>"),
-				N_("ppop progress <job>"),
-				N_("ppop modify <job> <name>=<value> ..."),
-			N_("Printer commands:"),
-				N_("ppop status {<destination>, all} ..."),
-				N_("ppop start <printer> ..."),
-				N_("ppop halt <printer> ..."),
-				N_("ppop stop <printer> ..."),
-				N_("ppop wstop <printer>"),
-				N_("ppop message <printer>"),
-				N_("ppop alerts <printer>"),
-			N_("Media commands:"),
-				N_("ppop media {<destination>, all}"),
-				N_("ppop mount <printer> <bin> <medium>"),
-			NULL
-			};
+		{
+		N_("Destination commands:"),
+			N_("ppop destination {<destination>, all}"),
+			N_("    Abbreviation: ppop dest {<destination>, all}"),
+			N_("ppop destination-comment {<destination>, all}"),
+			N_("    Abbreviation: ppop ldest {<destination>, all}"),
+			N_("ppop destination-comment-address {<destination>, all}"),
+			N_("ppop accept <destination>"),
+			N_("ppop reject <destination>"),
+		N_("Print job commands:"),
+			N_("ppop list {<destination>, <job>, all} ..."),
+			N_("ppop short {<destination>, <job>, all} ..."),
+			N_("ppop details {<destination>, <job>, all} ..."),
+			N_("ppop lpq {<destination>, <job>, all} [<user>] [<id>] ..."),
+			N_("ppop qquery {<destination>, <job>, all} <field name 1> ..."),
+			N_("ppop move {<job>, <old_destination>} <new_destination>"),
+			N_("ppop hold <job> ..."),
+			N_("ppop release <job> ..."),
+			N_("ppop [s]cancel {<job>, <destination>, all} ..."),
+			N_("ppop [s]purge {<destination>, all} ..."),
+			N_("ppop [s]cancel-active {<destination>, all} ..."),
+			N_("ppop [s]cancel-my-active {<destination>, all} ..."),
+			N_("ppop clean <destination> ..."),
+			N_("ppop rush <job> ..."),
+			N_("ppop last <job> ..."),
+			N_("ppop log <job>"),
+			N_("ppop progress <job>"),
+			N_("ppop modify <job> <name>=<value> ..."),
+		N_("Printer commands:"),
+			N_("ppop status {<destination>, all} ..."),
+			N_("ppop start <printer> ..."),
+			N_("ppop halt <printer> ..."),
+			N_("ppop stop <printer> ..."),
+			N_("ppop wstop <printer>"),
+			N_("ppop message <printer>"),
+			N_("ppop alerts <printer>"),
+		N_("Media commands:"),
+			N_("ppop media {<destination>, all}"),
+			N_("ppop mount <printer> <bin> <medium>"),
+		NULL
+		};
 			
 	for(i = 0; help_lines[i]; i++)
 		{
@@ -978,7 +896,7 @@ static int interactive_mode(void)
 	unsigned int x;				/* used to parse arguments */
 	int errorlevel=0;			/* return value from last command */
 
-	if( ! machine_readable )	/* If a human will be reading our output, */
+	if( ! opt_machine_readable )	/* If a human will be reading our output, */
 		{
 		puts(_("PPOP, Page Printer Operator's utility"));
 		puts(VERSION);
@@ -1002,7 +920,7 @@ static int interactive_mode(void)
 	** flush stdout and yet the prompt is printed even though
 	** it does not end with a line feed.  This is mysterious.
 	*/
-	while((ptr = ppr_get_command("ppop>", machine_readable)))
+	while((ptr = ppr_get_command("ppop>", opt_machine_readable)))
 		{
 		/*
 		** Break the string into white-space separated "words".  A quoted string
@@ -1050,19 +968,19 @@ static int interactive_mode(void)
 		*/
 		if((errorlevel = dispatch(&ar[x])) == -1)
 			{
-			if( ! machine_readable )					/* A human gets english */
+			if( ! opt_machine_readable )					/* A human gets english */
 				puts(_("Try \"help\" or \"exit\"."));
 			else										/* A program gets a code */
 				puts("*UNKNOWN");
 
 			errorlevel = EXIT_SYNTAX;
 			}
-		else if(machine_readable)				/* If a program is reading our output, */
+		else if(opt_machine_readable)				/* If a program is reading our output, */
 			{									/* say the command is done */
 			printf("*DONE\t%d\n", errorlevel);	/* and tell the exit code. */
 			}
 
-		if(machine_readable)					/* If stdout is a pipe as seems likely */
+		if(opt_machine_readable)					/* If stdout is a pipe as seems likely */
 			fflush(stdout);						/* when -M is used, we must flush it. */
 		} /* While not end of file */
 
@@ -1076,7 +994,7 @@ static void pipe_sighandler(int sig)
 	{
 	fputs(_("Spooler has shut down.\n"), errors);
 
-	if(machine_readable)
+	if(opt_machine_readable)
 		fprintf(errors, "*DONE %d\n", EXIT_NOSPOOLER);
 
 	exit(EXIT_NOSPOOLER);
@@ -1090,13 +1008,13 @@ static void help_switches(FILE *out)
 	int i;
 	const char *switch_list[] =
 		{
-		N_("-X <principal_string>\tact as proxy for principal described"),
-		N_("--proxy-for=<principal_string>\tsame as -X"),
 		N_("-M\tselect machine-readable output"),
 		N_("--machine-readable\tsame as -M"),
-		N_("--su <user>\tcheck access as if run as indicated user"),
 		N_("-A <seconds>\tdon't show jobs arrested more than <seconds> ago"),
 		N_("--arrest-interest-time=<seconds>\tsame as -A"),
+		N_("-u <user>\tcheck access as if run as indicated user"),
+		N_("--user <user>\tsame as -u"),
+		N_("--magic-cookie <string>\tpresent job access token"),
 		N_("--verbose\tprint more information"),
 		N_("--version\tprint the PPR version information"),
 		N_("--help\tprint this help message"),
@@ -1122,15 +1040,14 @@ static void help_switches(FILE *out)
 /*
 ** Command line options:
 */
-static const char *option_chars = "X:MA:";
+static const char *option_chars = "MA:u:";
 static const struct gu_getopt_opt option_words[] =
 		{
-		{"proxy-for", 'X', TRUE},
 		{"machine-readable", 'M', FALSE},
 		{"arrest-interest-interval", 'A', TRUE},
+		{"user", 'u', TRUE},
 		{"help", 1000, FALSE},
 		{"version", 1001, FALSE},
-		{"su", 1002, TRUE},
 		{"verbose", 1003, FALSE},
 		{"magic-cookie", 1004, TRUE},
 		{(char*)NULL, 0, FALSE}
@@ -1162,7 +1079,7 @@ int main(int argc, char *argv[])
 	/* paranoia */
 	umask(PPR_UMASK);
 
-	/* Figure out the user's name and make it the initial value for su_user. */
+	/* Figure out the user's name and make it the initial value for opt_user. */
 	{
 	struct passwd *pw;
 	uid_t uid = getuid();
@@ -1171,7 +1088,7 @@ int main(int argc, char *argv[])
 		fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		exit(EXIT_INTERNAL);
 		}
-	su_user = gu_strdup(pw->pw_name);
+	opt_user = gu_strdup(pw->pw_name);
 	}
 
 	/* Parse the options. */
@@ -1180,17 +1097,21 @@ int main(int argc, char *argv[])
 		{
 		switch(optchar)
 			{
-			case 'X':					/* -X or --proxy-for */
-				proxy_for = getopt_state.optarg;
-				break;
-
 			case 'M':					/* -M or --machine-readable */
-				machine_readable = TRUE;
+				opt_machine_readable = TRUE;
 				errors = stdout;
 				break;
 
 			case 'A':					/* -A or --arrest-interest-interval */
-				arrest_interest_interval = atoi(getopt_state.optarg);
+				opt_arrest_interest_interval = atoi(getopt_state.optarg);
+				break;
+
+			case 'u':
+				if(do_u_option(getopt_state.optarg) == -1)
+					{
+					fprintf(errors, _("You aren't allowed to use the %s option.\n"), "-u");
+					exit(EXIT_DENIED);
+					}
 				break;
 
 			case 1000:					/* --help */
@@ -1198,7 +1119,7 @@ int main(int argc, char *argv[])
 				exit(EXIT_OK);
 
 			case 1001:					/* --version */
-				if(machine_readable)
+				if(opt_machine_readable)
 					{
 					puts(SHORT_VERSION);
 					}
@@ -1210,20 +1131,12 @@ int main(int argc, char *argv[])
 					}
 				exit(EXIT_OK);
 
-			case 1002:					/* --su */
-				if(su(getopt_state.optarg) == -1)
-					{
-					fprintf(errors, _("You aren't allowed to use the --su option.\n"));
-					exit(EXIT_DENIED);
-					}
-				break;
-
 			case 1003:					/* --verbose */
-				verbose = TRUE;
+				opt_verbose = TRUE;
 				break;
 
 			case 1004:					/* --magic-cookie */
-				magic_cookie = getopt_state.optarg;
+				opt_magic_cookie = getopt_state.optarg;
 				break;
 
 			default:
@@ -1239,12 +1152,6 @@ int main(int argc, char *argv[])
 
 	/* Change to the home directory of PPR. */
 	chdir(LIBDIR);
-
-	/*
-	** Determine and store our process id.
-	** It is part of the temporary file name.
-	*/
-	pid = getpid();
 
 	/*
 	** Install a SIGPIPE handler so we can produce an
@@ -1268,7 +1175,7 @@ int main(int argc, char *argv[])
 	** Construct the name of the temporary file.  We will
 	** use the same temporary file over and over again.
 	*/
-	ppr_fnamef(temp_file_name, "%s/ppr-ppop-%ld", TEMPDIR, (long)pid);
+	ppr_fnamef(temp_file_name, "%s/ppr-ppop-%ld", TEMPDIR, (long)getpid());
 
 	/*
 	** Clear the signal mask.  There are reports of certain

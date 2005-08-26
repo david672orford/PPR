@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 June 2005.
+# Last modified 24 August 2005.
 #
 
 =head1 NAME
@@ -86,30 +86,29 @@ will appear in the print log if the print log is enabled.
 
 =over 4
 
+=item B<-u> I<string>
+
+A privileged user may specify the name of the user for whom the job is to be
+printed.  This overrides the default which is the name of the user who runs
+B<ppr>.
+
+For the purposes of this option, as well as the B<-f>, B<-R for>, and
+B<--charge-to> options, a privileged user is defined as the user "ppr", a the
+user with the id 0 ("root"), or a user who is listed in
+"F</etc/ppr/acl/pprprox.allow>". 
+
 =item B<-f> I<string>
 
-specifies the name of the user for whom the job is to be printed.  This name
-will appear on banner pages and in queue listings.
+A privileged user <as defined for the B<-f> switch) may specify the display
+version of name of the user for whom the job is to be printed.  This name will
+appear on banner pages and in queue listings.
 
-This switch only has an effect if the user who invokes B<ppr> is a
-privileged user or the B<-a> switch is used.  For this purpose a privileged
-user is defined as the user "ppr", a the user with the id 0 ("root"), or a
-user who is listed in "F</etc/ppr/acl/pprprox.allow>".  (For compatibility
-older versions of PPR, members of the group "pprprox" are also privileged users.)
+The default for this option depends on whether or not the B<-u> option was used.
+If it was not, then the default will be the user's GECOS field from F</etc/passwd>.
+If B<-u> was used to specify that the job is being submitted for a different user,
+then its argument will serve as the default for B<-f>.
 
-(If B<ppr> is invoked by a non-priviledged user without the B<-a> switch,
-then the B<-f> switch is silently ignored and the name which will appear in
-queue listings and banner pages will be either the user name from
-F</etc/passwd> or the comment field from F</etc/passwd>.  See the B<-u>
-switch.)
-
-If the B<-R for> switch or the B<-a> switch is used then the first "%%For:"
-line in the document will override the B<-f> switch.
-
-Prior to version 1.30 of PPR, if the first character of the B<-f> switch
-argument was "-" then the B<-f> switch could be overridden by a "%%For:"
-line within the document.  This feature has been removed.  Use the B<-R for>
-or B<-a> switch to achieve a similiar result.
+Note that the B<-R for> (described below) may cause this option to be overridden.
 
 =item B<-R for>
 
@@ -120,96 +119,23 @@ instruct PPR to use the information in "%%For:" lines in the document to
 determine who the job is being printed for.  The information in the "%%For:"
 line will override any information specified by a B<-f> switch.
 
-=item B<-u> [I<yes>, I<no>]
-
-controls whether the username or the real name is used to identify jobs in
-the queue listings and on banner pages.  The default is B<-u no>, thus the
-real name is used.  The B<-u yes> option causes the Unix user name to be
-used instead.
-
-If this option is true (the default) when B<-a> is used, then the real name
-field from the B<ppuser> database will be used in queue listings.  For
-example, if the command is:
-
-	$ ppr -d aardvark -a
-
-and the document header contains the line "%%For: chappell" and the real
-name for the B<ppuser> account "chappell" is "David Chappell", then the cost
-of printing the job will be charged to "chappell" but "David Chappell" will
-appear in the queue listing and on the banner page.  On the other hand, if
-the command is:
-
-	$ ppr -d aardvark -a -u yes
-
-then the cost will be charged to "chappell" and "chappell" will appear in
-the queue listing and on the banner page.
-
 =item B<--charge-to> I<string>
 
-indicates the account to which the cost of printing the job should be
-charged.  The charge accounts are managed with the utility B<ppuser>.  If
-there is no charge for printing on the selected printer, then this switch
-will have no effect.
+A privileged user (as defined for the B<-f> switch) may use B<--charge-to> to
+indicate the account to which the cost of printing the job should be charged.
+The charge accounts are managed with the utility B<ppuser>.  If there is no
+charge for printing on the selected printer, then this switch will have no
+effect.
 
 If there is a charge and this switch is ommited, then the name of the
-account to charge to is taken from one of the following sources: the name of
-the Unix user who invoked B<ppr>, the value from a B<-f> switch, or the
-value from a "%%For:" line if the B<-R for> or B<-a> switch has caused it to
-be read.  Possibilities later in this list will override those earlier in
-the list.
+account to charge is the value passed to B<-u> (if present), or 
+the name of the user who invoked B<ppr>.
 
-This switch is provided so that a full user name such as "David Chappell"
-may appear in the queue listing while the cost is charged to a terse user
-name such as "chappell".  If a terse user name will be appearing in the
-queue listing then this switch is unnecessary.  Below are two example
-command lines.  In the first the B<--charge-to> switch is used, in the
-second it is unnecessary because we have using the terse name in the queue
-listing.
-
-	$ ppr -d aardvark -f "David Chappell" --charge-to chappell
-
-	$ ppr -d aardvark -f chappell
+This switch is provided because the the value passed to B<-u> may contain extra
+information, such as a domain, which will have to be stripped off in order to
+arrive at the charge account name.
 
 =item B<-X> I<string>
-
-=item B<--proxy-for> I<string>
-
-With this switch, you can provide a string which identifies a user
-(possibly on a remote machine) for which the submitting user is acting as
-proxy.  This string will be stored with the job.  You can later use the
-B<--proxy-for> switch with the same identifier string with B<ppop> when
-deleting or performing subsequent operations on the job.  If you supply a
-different string to  B<ppop>, it will refuse to carry out the operation.  This
-feature is mainly used by servers such as Samba and B<lprsrv> which accept jobs
-over the network.
-
-The I<string> usually takes the form I<user>@I<host>.
-
-It might be useful to explain that the English word "proxy" means a person
-who acts as the authorized representative of another.  The Unix user who
-runs B<ppr> in order to submit a job for another is acting as that one's proxy.
-The B<--proxy-for> option is used to record the identity of the user for whom
-the proxy is acting.
-
-=item B<-a>
-
-This switch turns on authcode mode.  In authcode mode, document "C<%%For:>"
-comments override the B<ppr> B<-f> switch.  Only in authcode mode can an
-ordinary user use the B<-f> switch or a "C<%%For:>" line in the document to
-specify a user name other than the one in F</etc/passwd> which cooresponds
-to his UID.  In authcode mode PPR uses the authcode (password) provided in a
-"%TCHCTAuthCode:" comment line to verify the identity of the user.
-
-This switch will be removed in a future version of PPR.
-
-=item B<-A>
-
-indicates that a priviledged user (as defined for the B<-f> switch) has
-pre-authorized the job.  This switch should be used in conjunction with the
-B<-f> switch or the B<--charge-to> switch.  The switches B<-a> and B<-A> are
-mutually exclusive.
-
-This switch is obsolete and will be removed in a future version of PPR.
 
 =back
 
@@ -230,9 +156,8 @@ to the submitting user.
 =item B<--responder> I<method>
 
 Specifies the method which should be used to send responses to the user who
-submitted the job.  Available methods include, B<write>, B<samba>, and
-B<xwin>.  The default is read from the environment variable PPR_RESPONDER if
-it is defined, otherwise the default is B<followme>.
+submitted the job.  Available methods include, B<followme>, B<write>, B<samba>,
+and B<xwin>.  The default is B<followme>.
 
 Of course, sucessfully sending a method to a user requires more than
 selecting an appropriate response method.  One must also have the user's
@@ -306,22 +231,20 @@ document "The PPR Hacker's Guide".
 =item B<--responder-address> I<address>
 
 Specifies the address which is to be passed to the responder program.  The
-default value is read from the environment variable PPR_RESPONDER_ADDRESS if
-it is defined, otherwise the default is the name of the user who invoked
-B<ppr>, which is appropriate for the default responder which is B<followme>.
+default value is read from the LOGNAME or USER environment variables.  If
+Neither is defined, then the username cooresponding to the real user ID will be
+used.  A username is appropriate as an address for the B<followme> responder.
 The exact correct format for this parameter depends, of course, on the
 responder that is being used.
 
 =item B<--responder-options> I<list>
 
 This switch specifies the list of options to be passed to the responder.
-The default value is read from the environment variable PPR_RESPONDER_OPTIONS
-if it defined, otherwise the default is an empty option list.
 
-These options are name=value pairs.  Not all options will be supported by
-all responders.  Responders will ignore options they do not understand.
-The reference section for the the B<-m> switch describes the options understood by each
-responder.
+These options are name=value pairs.  Not all options will be supported by all
+responders.  Responders will ignore options they do not understand.  The
+reference section for the the B<-m> switch describes the options understood by
+each responder.
 
 If more than one B<--responder-options> switch is used, all of their
 arguments will be combined to form the final set of responder options.
@@ -1369,19 +1292,6 @@ PPRDEST to determine the printer to print on.  If PPRDEST is not defined,
 then B<ppr> will look for the environement variable PRINTER.  If PRINTER
 is not defined either, B<ppr> will attempt to send the job to the
 destination "default".
-
-If the B<-m> switch is not used to choose a responder then the responder
-name will be read from the environment variable PPR_RESPONDER.  If
-PPR_RESPONDER is not defined, then "write" will be used.
-
-If the B<-r> switch is not used to specify a responder address then the
-responder address will be read from the variable PPR_RESPONDER_ADDRESS.  If
-PPR_RESPONDER_ADDRESS is undefined then the name of the user who invoked
-B<ppr> will be used.
-
-If the B<--responder-options> switch is not used then the responder options
-will be read from PPR_RESPONDER_OPTIONS.  If PPR_RESPONDER_OPTIONS is not
-defined then the option list will be empty.
 
 =head1 DIAGNOSTICS
 

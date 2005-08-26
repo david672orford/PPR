@@ -1,6 +1,5 @@
-This is mouse.trincoll.edu:~ppr/src/libpprdb/README.txt.
-
-Last updated 6 February 1998.
+mouse:~ppr/src/libpprdb/README.txt.
+24 August 2005
 
 This directory contains the code for the PPR user database.  The user
 database stores user account information including a balance
@@ -19,7 +18,7 @@ which are currently provided:
 gdbm	Implements the PPR user database using the GNU database library.
 
 none	A dummy implementation which contains functions which produce
-	an error message and report failure.
+		an error message and report failure.
 
 The Makefile in this directory compiles one of these systems and gathers
 it into libpprdb.a.  The one to be compiled is chosen with the make

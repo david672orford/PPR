@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 April 2005.
+# Last modified 18 August 2005.
 #
 
 #
@@ -215,18 +215,6 @@ if($opt_all_removable)
 
 	exit 0;
 	}
-
-#
-# Remove temporary files in each resource cache directory.
-#
-opendir(CACHE, "$VAR_SPOOL_PPR/cache") || die "Can't open directory \"$VAR_SPOOL_PPR/cache\", $!";
-while(defined(<CACHE>))
-	{
-	next if(/^\./);
-	next if(! -d);
-	sweepdir("$VAR_SPOOL_PPR/$_", '^\.temp\d+$', 0.5);
-	}
-closedir(CACHE) || die $!;
 
 #
 # This is a harder case.  We scan the jobs directory looking for job files

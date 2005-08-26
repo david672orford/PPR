@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 June 2005.
+** Last modified 22 August 2005.
 */
 
 /* =================== for queue entries =====================*/
@@ -45,6 +45,7 @@ struct RESPONDER {
 struct QEntryFile
 	{
 	float PPRVersion;					/* version number of PPR that created queue entry */
+	const char *lc_messages;			/* language setting for messages */
 
 	const char *destname;				/* destination (group or printer) */
 	short int id;						/* queue id number */
@@ -56,10 +57,7 @@ struct QEntryFile
 
 	int priority;						/* priority number (0-39) */
 	long time;							/* time job was submitted (don't use time_t) */
-	long user;							/* id of user who submitted it (don't use uid_t) */
-	const char *username;				/* text version of "user" */
-	const char *proxy_for;				/* -X switch string */
-	const char *lc_messages;			/* language setting for messages */
+	const char *user;					/* username or username@host */
 	const char *For;					/* %%For: line for PostScript header */
 	const char *charge_to;				/* charge account to debit */
 	const char *Routing;				/* %%Routing: line for PostScript header */
@@ -76,6 +74,7 @@ struct QEntryFile
 		int langlevel;					/* PostScript language level */
 		int extensions;					/* bit fields of extension to level 1 */
 		float DSClevel;					/* DSC comments version */
+		char *DSC_job_type;				/* NULL for normal jobs, EPSF-* for EPS jobs */
 		int pages;						/* number of pages, -1 means unknown */
 		int pageorder;					/* -1 (reverse), 0 (special), or 1 (normal) */
 		int pagefactor;					/* virtual pages per physical sheet */

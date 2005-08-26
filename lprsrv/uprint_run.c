@@ -52,7 +52,7 @@
 ** If uid is not -1, then the child sets its user id to the
 ** indicated value.  The same goes for gid.
 */
-int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv[])
+int uprint_run(const char *exepath, const char *const argv[])
 	{
 	const char function[] = "uprint_run";
 	pid_t pid;
@@ -82,38 +82,6 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 		}
 	else if(pid == 0)			/* child */
 		{
-		if(gid != -1)
-			{
-			/* lprsrv calls this with gid != -1.  Setting euid to root 
-			   will allow us to select the chosen group (and later a 
-			   user) ID even if it is not root or USER_PPR.  The 
-			   uprint-* programs call this function with gid == -1,
-			   so they don't execute this alarming looking call.
-			   */
-			seteuid(0);
-
-			if(setregid(gid, gid) == -1)
-				{
-				fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)"), function, "setregid", (long)gid, (long)gid, errno, gu_strerror(errno));
-				fputc('\n',stderr);
-				exit(242);
-				}
-			}
-		if(uid != -1)
-			{
-			if(setreuid(uid, uid) == -1)
-				{
-				fprintf(stderr, _("%s(): %s(%ld, %ld) failed, errno=%d (%s)"), function, "setreuid", (long)uid, (long)uid, errno, gu_strerror(errno));
-				fputc('\n',stderr);
-				exit(242);
-				}
-			if(uid != 0 && seteuid(0) != -1)	/* paranoid */
-				{
-				fprintf(stderr, "%s(): seteuid(0) didn't fail!", function);
-				exit(242);
-				}
-			}
-
 		execv(exepath, (char *const *)argv); /* it's OK, execv() won't modify it */
 
 		fprintf(stderr, _("%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"), function, "execv", exepath, errno, gu_strerror(errno));
@@ -148,22 +116,11 @@ int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv
 		/* If it exited deliberately, */
 		else
 			{
-			/* If the special code used above, */
-			if(WEXITSTATUS(wstatus) == 242)
-				{
-				uprint_errno = UPE_EXEC;
-				uprint_error_callback("%s(): failed to run \"%s\" under uid %ld", function, argv[0], (long)uid);
-				return -1;
-				}
-			/* Any other exit code, */
-			else
-				{
-				uprint_errno = UPE_CHILD;
-				/* The program has presumably already explained its failure.  We needn't, so this
-				   is commented out. */
-				/* uprint_error_callback("%s exited with code %d", argv[0], WEXITSTATUS(wstatus)); */
-				return WEXITSTATUS(wstatus);
-				}
+			uprint_errno = UPE_CHILD;
+			/* The program has presumably already explained its failure.  We needn't, so this
+			   is commented out. */
+			/* uprint_error_callback("%s exited with code %d", argv[0], WEXITSTATUS(wstatus)); */
+			return WEXITSTATUS(wstatus);
 			}
 		} /* parent */
 

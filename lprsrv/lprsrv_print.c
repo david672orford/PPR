@@ -465,7 +465,7 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 **
 ** The run_uid and run_gid are the user ID and group ID which the child should switch to.
 */
-static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, const char *args[], int tempfile, off_t start, size_t length)
+static void dispatch_files_run(const char *prog, const char *args[], int tempfile, off_t start, size_t length)
 	{
 	const char function[] = "dispatch_files_run";
 	pid_t pid;							/* process id of PPR or LP */
@@ -558,24 +558,6 @@ static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, c
 				case 240:
 					debug("%s(): Child can't open log file", function);
 					break;
-				case 241:
-					debug("%s(): setuid(0) failed in child", function);
-					break;
-				case 242:
-					debug("%s(): setgid(%ld) failed in child", function, (long int)run_gid);
-					break;
-				case 243:
-					debug("%s(): setuid(%ld) failed in child", function, (long int)run_uid);
-					break;
-				case 244:
-					debug("%s(): setregid(%ld, %ld) failed in child", function, (long int)run_gid, (long int)run_gid);
-					break;
-				case 245:
-					debug("%s(): setreuid(%ld, %ld) failed in child", function, (long int)run_uid, (long int)run_uid);
-					break;
-				case 246:
-					debug("%s(): setuid(0) did not fail in child", function, (long int)run_uid, (long int)run_uid);
-					break;
 				case 247:
 					debug("%s(): Exec() of %s failed", function, prog);
 					break;
@@ -611,19 +593,6 @@ static void dispatch_files_run(uid_t run_uid, gid_t run_gid, const char *prog, c
 		dup2(log, 2);
 		close(log);				/* We don't need this descriptor any more. */
 
-		/* Fully relinquish root authority and become designated user. */
-		if(setuid(0) == -1)
-			_exit(241);
-		if(setgid(run_gid) == -1)
-			_exit(242);
-		if(setuid(run_uid) == -1)
-			_exit(243);
-		if(setregid(run_gid, run_gid) == -1)
-			_exit(244);
-		if(setreuid(run_uid, run_uid) == -1)
-			_exit(245);
-		if(run_uid != 0 && setuid(0) != -1)
-			_exit(246);
 		execv(prog, (char **)args);
 
 		_exit(247);				/* exit here if exec failed */
@@ -638,20 +607,12 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 	{
 	#define MAX_PRINT_ARGV 100
 	const char *args[MAX_PRINT_ARGV+3];			/* space to build command line */
-	uid_t uid_to_use;							/* uid to run spooler program as */
-	gid_t gid_to_use;
-	const char *proxy_class = (const char *)NULL;
 	int args_used = 0;							/* arguments filled in already */
 	int findex;									/* index of file we are working on */
 	int last_set;								/* last findex which had copies and type set */
 
 	/* DODEBUG_PRINT(("dispatch_files(tempfile=%d, data_files=%p, file_count=%d, upr=%p, fromhost=\"%s\", access_info=%p)", tempfile, data_files, file_count, upr, fromhost, access_info)); */
 	DODEBUG_PRINT(("dispatch_files()"));
-
-	/* Choose local user to run as and possibly choose proxy mode. */
-	get_proxy_identity(&uid_to_use, &gid_to_use, &proxy_class, fromhost, uprint_get_user(upr), uprint_claim_ppr(printer), access_info);
-	if(proxy_class)
-		uprint_set_proxy_class(upr, proxy_class);
 
 	for(findex=last_set=0; findex < file_count; findex++)
 		{
@@ -694,7 +655,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 			}
 
 		args[i] = (const char *)NULL;
-		dispatch_files_run(uid_to_use, gid_to_use, prog, args, tempfile, data->start, data->length);
+		dispatch_files_run(prog, args, tempfile, data->start, data->length);
 		} /* end of for() loop */
 
 	DODEBUG_PRINT(("dispatch_files(): done"));
@@ -766,8 +727,8 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 				/* Set the printer: */
 				uprint_set_dest(upr, printer);
 
-				/* Set the from format: */
-				uprint_set_from_format(upr, access_info->ppr_from_format);
+				/* Set the user domain: */
+				uprint_set_user_domain(upr, access_info->user_domain);
 
 				/* Override email host. */
 				uprint_set_lpr_mailto_host(upr, fromhost);

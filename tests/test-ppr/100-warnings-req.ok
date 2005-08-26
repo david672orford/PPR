@@ -20,6 +20,7 @@ ppr: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup

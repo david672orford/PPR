@@ -25,12 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 26 August 2005.
 */
 
 #include "config.h"
 #include <string.h>
-#include <unistd.h>		/* for getuid() */
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -39,17 +38,20 @@
 #include "rfc1179.h"
 #include "lprsrv.h"
 
-static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char *queue, const char **arglist)
+/* This file needs a thorough review!!!  Due to changes in PPR, it probably
+ * no longer does the right thing. */
+
+static int uprint_lprm_ppr(const char agent[], const char user_domain[], const char queue[], const char **arglist)
 	{
 	int result_code = 0;
-	char proxy_for[MAX_PRINCIPAL + 1];
+	char user[MAX_PRINCIPAL + 1];
 	const char *item_ptr;
 	int x;
 	char job_name[MAX_DESTNAME + 4 + 1];
 	const char *args[6];
 	int i;
 
-	DODEBUG_UPRINT(("uprint_lprm_ppr(agent = \"%s\", proxy_class = \"%s\", queue = \"%s\", arglist = %p", agent, proxy_class != (const char *)NULL ? proxy_class : "", queue, arglist));
+	DODEBUG_UPRINT(("uprint_lprm_ppr(agent = \"%s\", user_domain = \"%s\", queue = \"%s\", arglist = %p", agent, user_domain ? user_domain : "", queue, arglist));
 
 	if(strlen(queue) > MAX_DESTNAME)
 		{
@@ -65,25 +67,14 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 		return -1;
 		}
 
-	if(proxy_class && strlen(proxy_class) > LPR_MAX_H)
+	if(strlen(user_domain) > LPR_MAX_H)
 		{
 		uprint_errno = UPE_BADARG;
-		uprint_error_callback(_("The proxy class name \"%s\" is too long."), proxy_class);
+		uprint_error_callback(_("The domain name \"%s\" is too long."), user_domain);
 		return -1;
 		}
 
-	/*
-	** If this is a proxy job, build a string which represents ]
-	** the user on whose behalf the proxy is requesting the deletions.
-	**
-	** This string is composed of 2 parts separated by a "@" sign.
-	** the first part is the user name.  It will be "*" if the
-	** user name is "root".  The second part is the proxy class
-	** which is generally either the client's canonical host name
-	** or the clients domain.
-	*/
-	if(proxy_class)
-		snprintf(proxy_for, sizeof(proxy_for), "%s@%s", strcmp(agent, "root") == 0 ? "*": agent, proxy_class);
+	snprintf(user, sizeof(user), "%s@%s", strcmp(agent, "root") == 0 ? "*": agent, user_domain);
 
 	/* Start to build a command line: */
 	args[0] = "ppop";
@@ -98,14 +89,8 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 			{
 			snprintf(job_name, sizeof(job_name), "%s-%s", queue, item_ptr);
 
-			/* If this is a proxy job, indicate whom the
-			   proxy is acting for. */
-			if(proxy_class)
-				{
-				DODEBUG_UPRINT(("uprint_lprm_ppr(): proxy for \"%s\", removing \"%s\"", proxy_for, job_name));
-				args[i++] = "-X";
-				args[i++] = proxy_for;
-				}
+			args[i++] = "--user";
+			args[i++] = user;
 
 			/* Notice will only be sent to the job's owner
 			   if the job is canceled by root. */
@@ -119,24 +104,13 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 			{
 			char special_proxy_for[MAX_PRINCIPAL + 1];
 
-			/* If not deleting own jobs and not root, then deny the request.
-			   The error message is worded slightly differently depending
-			   on whether or not this is a proxy job. */
+			/* If not deleting own jobs and not root, then deny the request. */
 			if(strcmp(agent, item_ptr) && strcmp(agent, "root"))
 				{
 				uprint_errno = UPE_DENIED;
 
-				/* We write the stdout here because lpr would.  Thus, we do it for consistency. */
-				if(proxy_class)
-					{
-					printf(_("You may not delete jobs belonging to \"%s@%s\" because\n"
-								"they are not your's and you are not \"root@%s\".\n"), item_ptr, proxy_class, proxy_class);
-					}
-				else
-					{
-					printf(_("You may not delete jobs belonging to \"%s\" because\n"
-								"they are not your's and you are not \"root\".\n"), item_ptr);
-					}
+				printf(_("You may not delete jobs belonging to \"%s@%s\" because\n"
+						"they are not your's and you are not \"root\".\n"), item_ptr, user_domain);
 				fflush(stdout);
 
 				result_code = -1;
@@ -151,16 +125,17 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 				continue;
 				}
 
-			if(proxy_class)
+			if(strcmp(user_domain, "localhost") != 0)
 				{
-				snprintf(special_proxy_for, sizeof(special_proxy_for), "%s@%s", item_ptr, proxy_class == (const char *)NULL ? "*" : proxy_class);
+				snprintf(special_proxy_for, sizeof(special_proxy_for), "%s@%s", item_ptr, user_domain ? user_domain : "*");
 				DODEBUG_UPRINT(("uprint_lprm_ppr(): removing all \"%s\" jobs from \"%s\"", special_proxy_for, queue));
-				args[i++] = "-X";
+				args[i++] = "--user";
 				args[i++] = special_proxy_for;
 				}
 			else
 				{
 				DODEBUG_UPRINT(("uprint_lprm_ppr(): removing all \"%s\" jobs from \"%s\""));
+				/* nothing to do */
 				}
 
 			/* User is informed of cancelation if job canceled by root. */
@@ -171,7 +146,7 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 
 		args[i] = (const char *)NULL;
 
-		if(uprint_run(uid, gid, PPOP_PATH, args) == -1)
+		if(uprint_run(PPOP_PATH, args) == -1)
 			result_code = -1;
 		} /* end of jobs/users list loop */
 
@@ -186,11 +161,11 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 		if(strcmp(agent, "-all") == 0)
 			{
 			/* A proxy request, delete all with that proxy class, */
-			if(proxy_class)
+			if(strcmp(user_domain, "localhost") != 0)
 				{
 				char all_mynode[2 + LPR_MAX_H + 1];
-				snprintf(all_mynode, sizeof(all_mynode), "*@%s", proxy_class);
-				args[i++] = "-X";
+				snprintf(all_mynode, sizeof(all_mynode), "*@%s", user_domain);
+				args[i++] = "--user";
 				args[i++] = all_mynode;
 				args[i++] = "cancel";
 				args[i++] = queue;
@@ -207,17 +182,16 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 		   delete active job, */
 		else
 			{
-			/* If by proxy, delete only job with same
-			   proxy class. */
-			if(proxy_class)
+			/* If from a remote host, delete only jobs from that hosts user class. */
+			if(strcmp(user_domain, "localhost") != 0)
 				{
 				DODEBUG_UPRINT(("Removing active job for \"%s\" on %s", proxy_for, queue));
-				args[i++] = "-X";
-				args[i++] = proxy_for;
+				args[i++] = "--user";
+				args[i++] = user;
 				args[i++] = strcmp(agent, "root") ? "scancel-my-active" : "cancel-my-active";
 				args[i++] = queue;
 				}
-			/* If not by proxy, delete any active job. */
+			/* Otherwise, delete any active job. */
 			else
 				{
 				DODEBUG_UPRINT(("Removing active job on %s", queue));
@@ -228,7 +202,7 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 
 		args[i] = (const char*)NULL;
 
-		if(uprint_run(uid, gid, PPOP_PATH, args) == -1)
+		if(uprint_run(PPOP_PATH, args) == -1)
 			result_code = 1;
 		}
 
@@ -241,15 +215,15 @@ static int uprint_lprm_ppr(uid_t uid, gid_t gid, const char agent[], const char 
 ** user names.
 **
 ** The 1st argument "agent" is the user requesting the deletion
-** (The term "agent" is from RFC-1179).  The second (proxy_class) is
+** (The term "agent" is from RFC-1179).  The second (user_domain) is
 ** the host from which the request comes.  This should be NULL
 ** if it is the local host whose users are allowed to submit jobs
 ** directly as the corresponding local users.
 */
-static int uprint_lprm(uid_t uid, gid_t gid, const char agent[], const char proxy_class[], const char queue[], const char **arglist, gu_boolean remote_too)
+static int uprint_lprm(const char agent[], const char user_domain[], const char queue[], const char **arglist, gu_boolean remote_too)
 	{
 	if(uprint_claim_ppr(queue))
-		return uprint_lprm_ppr(uid, gid, agent, proxy_class, queue, arglist);
+		return uprint_lprm_ppr(agent, user_domain, queue, arglist);
 
 	/* Unknown queue: */
 	uprint_errno = UPE_UNDEST;
@@ -265,9 +239,7 @@ void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_I
 	{
 	const char *queue;			/* queue to delete the jobs from */
 	const char *remote_user;	/* user requesting the deletion */
-	uid_t uid_to_use;
-	gid_t gid_to_use;
-	const char *proxy_class = (const char *)NULL;
+	const char *remote_user_domain = (const char *)NULL;
 	#define MAX 100
 	const char *list[MAX + 1];
 
@@ -297,8 +269,6 @@ void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_I
 
 	list[i] = (char*)NULL;
 
-	get_proxy_identity(&uid_to_use, &gid_to_use, &proxy_class, fromhost, remote_user, uprint_claim_ppr(queue), access_info);
-
 	/*
 	** Use the UPRINT routine to run an appropriate command.
 	** If uprint_lprm() returns -1 then the reason is in uprint_errno.
@@ -307,7 +277,7 @@ void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_I
 	** fails, it will return the (positive) exit code of that
 	** command.
 	*/
-	if(uprint_lprm(uid_to_use, gid_to_use, remote_user, proxy_class, queue, list, FALSE) == -1)
+	if(uprint_lprm(remote_user, remote_user_domain, queue, list, FALSE) == -1)
 		{
 		if(uprint_errno == UPE_UNDEST)
 			{

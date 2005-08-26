@@ -1,6 +1,6 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/misc_filters/texinfo.sh
+# mouse:~ppr/src/filters_misc/texinfo.sh
 # Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 24 August 2005.
 #
 
 # These will be filled in when this filter is installed.
@@ -38,7 +38,6 @@ TEXI2DVI=""
 OPTIONS="$1"
 PRINTER="$2"
 TITLE="$3"
-INVOKEDIR="$4"
 
 # Look for parameters we should pay attention to
 NOISY=0
@@ -50,14 +49,6 @@ for pair in $OPTIONS
 		;;
 	esac
 	done
-
-# If INVOKEDIR is defined, add it to TEXINPUTS.	 The trailing
-# colon means to search the system directories after.
-if [ -n "$INVOKEDIR" ]
-	then
-	TEXINPUTS="$INVOKEDIR:"
-	export TEXINPUTS
-	fi
 
 # It seems that the shell may cause the euid to revert to the real uid
 # in that case, the user who invoked ppr must be able to read and
@@ -97,7 +88,7 @@ if [ $exval = 0 ]
 	if [ $NOISY -ne 0 ]; then echo "$TEXI2DVI did not generate any output" >&2; fi
 	else
 	if [ $NOISY -ne 0 ]; then echo "Running DVI filter" >&2; fi
-	$FILTDIR/filter_dvi "$OPTIONS" "$PRINTER" "$TITLE" "$INVOKEDIR" <tempfile.dvi
+	$FILTDIR/filter_dvi "$OPTIONS" "$PRINTER" "$TITLE" <tempfile.dvi
 	exval2=$?
 	if [ $NOISY -ne 0 ]; then echo "filter_dvi returned $exval2" >&2; fi
 	fi

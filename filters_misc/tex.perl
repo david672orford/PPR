@@ -1,17 +1,32 @@
 #! /usr/bin/perl
 #
 # mouse:~ppr/src/filters_misc/tex.perl
-# Copyright 1995--1999, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Permission to use, copy, modify, and distribute this software and its
-# documentation for any purpose and without fee is hereby granted, provided
-# that the above copyright notice appear in all copies and that both that
-# copyright notice and this permission notice appear in supporting
-# documentation.  This software is provided "as is" without express or
-# implied warranty.
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# * Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# * Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+# POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 August 1999.
+# Last modified 24 August 2005.
 #
 
 #
@@ -21,9 +36,10 @@
 # The program indexfilters passes this program thru a sed script before 
 # installing it.
 #
-$TEMPDIR="?";
-$TEX="?";
-$LATEX="?";
+$TEMPDIR="@TEMPDIR@";
+$FILTDIR="@FILTDIR@";
+$TEX="@TEX@";
+$LATEX="@LATEX@";
 
 # Fool Perl so it will not complain about
 # our already secure PATH and IFS.
@@ -72,7 +88,7 @@ umask(0);
 mkdir($TEXTEMPDIR,0755) || die "Failed to make directory $TEXTEMPDIR\n";
 
 # name the parameters
-($options, $printer, $title, $invokedir) = @ARGV;
+($options, $printer, $title) = @ARGV;
 
 # Things to count
 $count_begin=0;
@@ -89,12 +105,6 @@ foreach $pair (split(/[ \t]+/,$options))
 		$noisy=1;
 		}
 	}
-
-# If we are told what the invokedir is, set it in TEXINPUTS
-# with a trailing colon which means to search the system
-# default directories after.
-if( defined($invokedir) )
-	{ $ENV{"TEXINPUTS"}="$invokedir:"; }
 
 # Read in the TeX source, analyzing it as we go
 print STDERR "Reading and analyzing document\n" if $noisy;
@@ -124,7 +134,7 @@ if( $count_begin && $count_begin != $count_end)
 
 	close(E);
 
-	&run_with_stdin("$TEXTEMPDIR/error", "filters/filter_lp");
+	&run_with_stdin("$TEXTEMPDIR/error", "$FILTDIR/filter_lp");
 	unlink("$TEXTEMPDIR/error");
 	unlink("$TEXTEMPDIR/document.tex");
 	rmdir($TEXTEMPDIR);
@@ -204,7 +214,7 @@ for($times_run=0,$run_needed=1; $run_needed && $times_run < 3; $times_run++)
 		print ERR $texoutput;
 		close(ERR);
 
-		&run_with_stdin("$TEXTEMPDIR/error", "filters/filter_lp");
+		&run_with_stdin("$TEXTEMPDIR/error", "$FILTDIR/filter_lp");
 
 		last;
 		}
@@ -221,7 +231,7 @@ if($retval == 0 && $texerror == 0)
 	if($pid==0)			# child
 		{
 		open(STDIN,"< $TEXTEMPDIR/document.dvi") || die "failed to open $TEXTEMPDIR/document.dvi\n";
-		exec("filters/filter_dvi", $options, $printer, $title, $invokedir);
+		exec("$FILTDIR/filter_dvi", $options, $printer, $title);
 		die "exec(\"$FILTER_DVI\") failed, $!\n";
 		}
 	else				# parent

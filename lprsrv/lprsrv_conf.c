@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 19 August 2005.
 */
 
 #include "config.h"
@@ -228,51 +228,11 @@ static void get_access_settings_read_section(struct ACCESS_INFO *access, FILE *c
 			if(gu_torf_setBOOL(&access->insecure_ports, value) == -1)
 				warning("Invalid value for \"%s =\" at \"%s\" line %d", "insecure ports", LPRSRV_CONF, linenum);
 			}
-		else if(strcmp(name, "pprbecomeuser") == 0)
+		else if(strcmp(name, "userdomain") == 0)
 			{
-			if(gu_torf_setBOOL(&access->ppr_become_user, value) == -1)
-				warning("Invalid value for \"%s =\" at \"%s\" line %d", "ppr become user", LPRSRV_CONF, linenum);
-			}
-		else if(strcmp(name, "otherbecomeuser") == 0)
-			{
-			if(gu_torf_setBOOL(&access->other_become_user, value) == -1)
-				warning("Invalid value for \"%s =\" at \"%s\" line %d", "other become user", LPRSRV_CONF, linenum);
-			}
-		else if(strcmp(name, "pprrootas") == 0)
-			{
-			if(strlen(value) > MAX_USERNAME)
+			if(strlen(value) > MAX_USER_DOMAIN)
 				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			gu_strlcpy(access->ppr_root_as, value, MAX_USERNAME);
-			}
-		else if(strcmp(name, "otherrootas") == 0)
-			{
-			if(strlen(value) > MAX_USERNAME)
-				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			gu_strlcpy(access->other_root_as, value, MAX_USERNAME);
-			}
-		else if(strcmp(name, "pprproxyuser") == 0)
-			{
-			if(strlen(value) > MAX_USERNAME)
-				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			gu_strlcpy(access->ppr_proxy_user, value, MAX_USERNAME);
-			}
-		else if(strcmp(name, "otherproxyuser") == 0)
-			{
-			if(strlen(value) > MAX_USERNAME)
-				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			gu_strlcpy(access->other_proxy_user, value, MAX_USERNAME);
-			}
-		else if(strcmp(name, "pprproxyclass") == 0)
-			{
-			if(strlen(value) > MAX_PROXY_CLASS)
-				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			gu_strlcpy(access->ppr_proxy_class, value, MAX_PROXY_CLASS);
-			}
-		else if(strcmp(name, "ppruserformat") == 0)
-			{
-			if(strlen(value) > MAX_FROM_FORMAT)
-				warning("Value in \"%s\" line %d is too long", LPRSRV_CONF, linenum);
-			gu_strlcpy(access->ppr_from_format, value, MAX_FROM_FORMAT);
+			gu_strlcpy(access->user_domain, value, MAX_USER_DOMAIN);
 			}
 		else if(strcmp(name, "forcemail") == 0)
 			{
@@ -301,14 +261,7 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 
 	access->allow = FALSE;
 	access->insecure_ports = FALSE;
-	access->ppr_become_user = FALSE;
-	access->other_become_user = FALSE;
-	access->ppr_root_as[0] = '\0';
-	access->other_root_as[0] = '\0';
-	access->ppr_proxy_user[0] = '\0';
-	access->other_proxy_user[0] = '\0';
-	access->ppr_proxy_class[0] = '\0';
-	access->ppr_from_format[0] = '\0';
+	access->user_domain[0] = '\0';
 	access->force_mail = FALSE;
 
 	/*
@@ -406,18 +359,8 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 	get_access_settings_read_section(access, f, offset_global, linenum_global);
 
 	/* Make sure the [global] section has set everything. */
-	if(access->ppr_root_as[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "ppr root as", LPRSRV_CONF);
-	if(access->other_root_as[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "other root as", LPRSRV_CONF);
-	if(access->ppr_proxy_user[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "ppr proxy user", LPRSRV_CONF);
-	if(access->other_proxy_user[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "other proxy user", LPRSRV_CONF);
-	if(access->ppr_proxy_class[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "ppr proxy class", LPRSRV_CONF);
-	if(access->ppr_from_format[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "ppr user format", LPRSRV_CONF);
+	if(access->user_domain[0] == '\0')
+		fatal(1, "No \"%s =\" in \"%s\" [global]", "user domain", LPRSRV_CONF);
 
 	/* If no section matched, and the client is listed in hosts.lpd or hosts.equiv,
 	   choose the [traditional] section, otherwise choose the [other] section. */
@@ -443,75 +386,8 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 
 	DODEBUG_CONF(("allow = %s", access->allow ? "yes" : "no"));
 	DODEBUG_CONF(("insecureports = %s", access->insecure_ports ? "yes" : "no"));
-	DODEBUG_CONF(("ppr become user = %s", access->ppr_become_user ? "yes" : "no"));
-	DODEBUG_CONF(("other become user = %s", access->other_become_user ? "yes" : "no"));
-	DODEBUG_CONF(("ppr root as = \"%s\"", access->ppr_root_as));
-	DODEBUG_CONF(("other root as = \"%s\"", access->other_root_as));
-	DODEBUG_CONF(("ppr proxy user = \"%s\"", access->ppr_proxy_user));
-	DODEBUG_CONF(("other proxy user = \"%s\"", access->other_proxy_user));
-	DODEBUG_CONF(("ppr proxy class = \"%s\"", access->ppr_proxy_class));
-	DODEBUG_CONF(("ppr user format = \"%s\"", access->ppr_from_format));
+	DODEBUG_CONF(("user format = \"%s\"", access->user_format));
 	} /* end of get_access_settings() */
-
-/*
-** Convert a user name to a user id number.
-*/
-static int username_to_uid(const char username[], uid_t *uid, gid_t *gid)
-	{
-	struct passwd *pw;
-
-	if((pw = getpwnam(username)) == (struct passwd *)NULL)
-		return -1;
-
-	*uid = pw->pw_uid;
-	*gid = pw->pw_gid;
-	return 0;
-	}
-
-/*
-** Based on the ACCESS_INFO structure, hostname, and queuename
-** supplied, set uid_to_use and proxy_class to the correct values.
-**
-** Note that the values we set depend not only on the access
-** information but on whether the queue is a PPR queue or belongs
-** to some other spooling system.
-*/
-void get_proxy_identity(uid_t *uid_to_use, gid_t *gid_to_use, const char **proxy_class, const char fromhost[], const char *requested_user, gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info)
-	{
-	const char *proxy_user = is_ppr_queue ? access_info->ppr_proxy_user : access_info->other_proxy_user;
-
-	if(is_ppr_queue ? access_info->ppr_become_user : access_info->other_become_user)
-		{
-		const char *user = requested_user;
-
-		if(strcmp(user, "root") == 0)
-			{
-			if(is_ppr_queue)
-				user = access_info->ppr_root_as;
-			else
-				user = access_info->other_root_as;
-			}
-
-		if(username_to_uid(user, uid_to_use, gid_to_use) == -1)
-			{
-			if(user != requested_user)
-				fatal(1, "Root substitute user \"%s\" does not exist", user);
-			user = proxy_user;
-			}
-
-		/* If we used root substitute or non-proxy user,
-		   we are done. */
-		if(user != proxy_user) return;
-		}
-
-	if(username_to_uid(proxy_user, uid_to_use, gid_to_use) == -1)
-		fatal(1, "Proxy user \"%s\" does not exist", proxy_user);
-
-	if(strcmp(access_info->ppr_proxy_class, "$cname") == 0)
-		*proxy_class = fromhost;
-	else
-		*proxy_class = access_info->ppr_proxy_class;
-	} /* get_proxy_identity() */
 
 /* end of file */
 

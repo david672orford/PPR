@@ -1,33 +1,12 @@
 Document: ppr
-Title: PPR Getting Started Guide
+Title: PPR Print Spooler
 Author: David Chappell
-Abstract: A guide to setting up the PPR print spooler and to its basic features.
-Section: unknown
-
-Format: pdf
-Files: /usr/share/ppr/www/docs/pprinst/pprinst.pdf
-
-Format: pdf
-Files: /usr/share/ppr/www/docs/pprdoc/pprdoc.pdf
+Abstract: These documents describe the PPR print spooler.  PPR is a 
+ spooler for PostScript printers.  It supports multiple protocols
+ for communicating with printers and clients.
+Section: net
 
 Format: HTML
-Index: /usr/share/ppr/www/docs/pprinst/pprinst.html
-Files: /usr/share/ppr/www/docs/pprinst/*.html
+Index: /usr/share/ppr/www/docs/index.html
+Files: /usr/share/ppr/www/docs/*/*
 
-Format: HTML
-Index: /usr/share/ppr/www/docs/pprdoc/pprdoc.html
-Files: /usr/share/ppr/www/docs/pprdoc/*.html
-
-Format: HTML
-Index: /usr/share/ppr/www/hacks/refman/index.html
-Files: /usr/share/ppr/www/hacks/refman/*.html
-
-Format: HTML
-Index: /usr/share/ppr/www/hacks/pprhack/pprhack.html
-Files: /usr/share/ppr/www/hacks/pprhack/*.html
-
-Format: HTML
-Index: /usr/share/ppr/www/libss/pprlibs/index.html
-Files: /usr/share/ppr/www/libss/pprlibs/*.html
-
- 

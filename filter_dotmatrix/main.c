@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 June 2005.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -565,6 +565,7 @@ static void process_input(void)
 /*
 ** Read command line parameters, if any, and call process_input().
 ** Usage: filter_dotmatrix 'option1...optionN' _printer_ _title_
+** The _printer_ and _title_ options are ignored.
 */
 int main(int argc, char *argv[])
 	{
@@ -593,7 +594,6 @@ int main(int argc, char *argv[])
 		GU_INI_TYPE_STRING, &MediaType,
 		GU_INI_TYPE_END);
 
-
 	if(error_message)
 		{
 		fprintf(stderr, _("%s: %s\n"
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 	/* Set default emulation mode */
 	emulation = 0;						/* was once set to EMULATION_8IN_LINE */
 
-	/* Process the options. */
+	/* Process the filter options list. */
 	if(argc >= 2)
 		{
 		struct OPTIONS_STATE o;

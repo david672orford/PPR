@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/lprsrv.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2004.
+** Last modified 19 August 2005.
 */
 
 /*
@@ -75,20 +75,12 @@
 ** Structure to store information from lprsrv.conf.
 */
 #define MAX_USERNAME 16
-#define MAX_PROXY_CLASS 64
-#define MAX_FROM_FORMAT 16
+#define MAX_USER_DOMAIN 64
 struct ACCESS_INFO
 	{
 	gu_boolean allow;
 	gu_boolean insecure_ports;
-	gu_boolean ppr_become_user;
-	gu_boolean other_become_user;
-	char ppr_root_as[MAX_USERNAME+1];
-	char other_root_as[MAX_USERNAME+1];
-	char ppr_proxy_user[MAX_USERNAME+1];
-	char other_proxy_user[MAX_USERNAME+1];
-	char ppr_proxy_class[MAX_PROXY_CLASS+1];
-	char ppr_from_format[MAX_FROM_FORMAT+1];
+	char user_domain[MAX_USER_DOMAIN+1];
 	gu_boolean force_mail;
 	} ;
 
@@ -104,34 +96,34 @@ struct UPRINT
 	int signiture;
 
 	const char *fakername;		/* which fake program was used? */
-	const char **argv;		/* argv[] from origional command */
+	const char **argv;			/* argv[] from origional command */
 	int argc;
 
-	const char *dest;		/* the printer */
-	const char **files;		/* list of files to print */
+	const char *dest;			/* the printer */
+	const char **files;			/* list of files to print */
 
-	uid_t uid;			/* user id number */
+	uid_t uid;					/* user id number */
 	gid_t gid;
-	const char *user;		/* user name */
+	const char *user;			/* user name */
 	const char *from_format;	/* queue display from field format */
 	const char *lpr_mailto;		/* lpr style address to send email to */
 	const char *lpr_mailto_host;	/* @ host */
 	const char *fromhost;		/* lpr style host name */
-	const char *proxy_class;	/* string for after "@" sign in -X argument */
+	const char *user_domain;	/* string for after "@" sign in -X argument */
 	const char *lpr_class;		/* lpr -C switch */
 	const char *jobname;		/* lpr -J switch, lp -t switch */
 	const char *pr_title;		/* title for pr (lpr -T switch) */
 
 	const char *content_type_lp;	/* argument for lp -T or "raw" for -r */
 	char content_type_lpr;		/* lpr switch such as -f, -c, or -d */
-	int copies;			/* number of copies */
-	gu_boolean banner;		/* should we ask for a banner page? */
+	int copies;					/* number of copies */
+	gu_boolean banner;			/* should we ask for a banner page? */
 	gu_boolean nobanner;		/* should we ask for suppression? */
 	gu_boolean filebreak;
-	int priority;			/* queue priority */
+	int priority;				/* queue priority */
 	gu_boolean immediate_copy;	/* should we copy file before exiting? */
 
-	const char *form;		/* form name */
+	const char *form;			/* form name */
 	const char *charset;		/* job character set */
 	const char *width;
 	const char *length;
@@ -154,9 +146,9 @@ struct UPRINT
 	const char *osf_GT_outputtray;
 	const char *osf_O_orientation;	/* portrait or landscape */
 	const char *osf_K_duplex;
-	int nup;	 		/* N-Up setting */
+	int nup;	 				/* N-Up setting */
 
-	gu_boolean unlink;		/* should job files be unlinked? */
+	gu_boolean unlink;			/* should job files be unlinked? */
 	gu_boolean show_jobid;		/* should be announce the jobid? */
 	gu_boolean notify_email;	/* send mail when job complete? */
 	gu_boolean notify_write;	/* use write(1) when job complete? */
@@ -165,8 +157,8 @@ struct UPRINT
 	char str_numcopies[5];
 	char str_typeswitch[3];
 	char str_mailaddr[MAX_MAILADDR + 1];
-	char str_principal[MAX_PRINCIPAL + 1];		/* argument for ppr -X switch */
-	char str_for[MAX_FOR + 1];			/* argument for ppr -f switch */
+	char str_user[MAX_PRINCIPAL + 1];				/* argument for ppr --user switch */
+	char str_for[MAX_FOR + 1];						/* argument for ppr -f switch */
 	char str_pr_title[11 + (LPR_MAX_T * 2) + 1];	/* space for "pr-title=\"my title\"" */
 	char str_width[12];
 	char str_length[12];
@@ -216,7 +208,7 @@ void get_client_info(char *client_dns_name, char *client_ip, int *client_port);
 
 /* lprsrv_conf.c: */
 void get_access_settings(struct ACCESS_INFO *access_info, const char hostname[]);
-void get_proxy_identity(uid_t *uid_to_use, gid_t *gid_to_use, const char **proxy_class, const char fromhost[], const char requested_user[], gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info);
+void get_user_domain(const char **user_domain, const char fromhost[], const char requested_user[], gu_boolean is_ppr_queue, const struct ACCESS_INFO *access_info);
 
 /* lprsrv_print.c: */
 void do_request_take_job(const char printer[], const char fromhost[], const struct ACCESS_INFO *access_info);
@@ -249,7 +241,7 @@ const char *uprint_set_from_format(void *p, const char *from_format);
 const char *uprint_set_lpr_mailto(void *p, const char *lpr_mailto);
 const char *uprint_set_lpr_mailto_host(void *p, const char *lpr_mailto_host);
 const char *uprint_set_fromhost(void *p, const char *fromhost);
-const char *uprint_set_proxy_class(void *p, const char *proxy_class);
+const char *uprint_set_user_domain(void *p, const char *user_domain);
 const char *uprint_set_pr_title(void *p, const char *title);
 const char *uprint_set_lpr_class(void *p, const char *lpr_class);
 const char *uprint_set_jobname(void *p, const char *lpr_jobname);
@@ -287,7 +279,7 @@ gu_boolean uprint_set_notify_write(void *p, gu_boolean notify_write);
 gu_boolean uprint_set_show_jobid(void *p, gu_boolean say_jobid);
 
 /* uprint_run.c: */
-int uprint_run(uid_t uid, gid_t gid, const char *exepath, const char *const argv[]);
+int uprint_run(const char *exepath, const char *const argv[]);
 
 /* uprint_strerror.c: */
 const char *uprint_strerror(int errnum);

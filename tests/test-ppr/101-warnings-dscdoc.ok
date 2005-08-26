@@ -22,7 +22,7 @@ WARNING: Keyword "%%DocumentMedia:" can't take (atend)
 WARNING: "%%Orientation:" comment has no argument
 WARNING: Invalid "%%Orientation:" argument "Sideways"
 WARNING: Header comments section is unterminated
-WARNING: No "%%EndProlog" before first "%%Page:", inserting one
+WARNING: No "%%EndProlog" before first "%%Page:"
 WARNING: Keyword "%%Pages:" declared (atend) in trailer
 WARNING: Ignoring "%%Pages:" in trailer because no "%%Pages: (atend)" in header
 WARNING: Page level keyword "%%PageUnlikier: gravy" in trailer
@@ -54,7 +54,7 @@ WARNING: Keyword "%%DocumentMedia:" is not allowed in trailer, ignoring
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 %%BeginProlog
-% Notice that this prolog butts up against the 
+% Notice that this prolog butts up against the
 % header comments.  Notice that it is also not
 % terminated.
 
@@ -80,9 +80,10 @@ Printer          Status
 regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
-WARNING: No "%%EndProlog" before "%%BeginSetup", inserting one
+WARNING: No "%%EndProlog" before "%%BeginSetup"
+WARNING: No "%%EndSetup" before first "%%Page:"
 ppr: 0
-%!
+%!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Title: (sample 2)
 %%Pages: 1
@@ -116,7 +117,8 @@ clear_output: ppop: 0
 clear_output: rm: 0
 WARNING: Extra "%%EndProlog"
 WARNING: Extra "%%EndProlog"
-%!
+WARNING: No "%%EndSetup" before first "%%Page:"
+%!PS-Adobe-3.0
 %%For: (PPR Spooling System)
 %%Title: (Sample 3)
 %%Pages: 1
@@ -129,6 +131,7 @@ WARNING: Extra "%%EndProlog"
 % prolog
 %%EndProlog
 
+%%BeginSetup
 % jobname line removed
 %%EndProlog
 
@@ -176,6 +179,7 @@ WARNING: Obsolete "%%PaperColor: white" comment ignored
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup

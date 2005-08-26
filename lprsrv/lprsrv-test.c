@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 19 August 2005.
 */
 
 #include "config.h"
@@ -163,62 +163,12 @@ int main(int argc, char *argv[])
 
 	printf("allow = %s\n", access_info.allow ? "yes" : "no");
 	printf("insecure ports = %s\n", access_info.insecure_ports ? "yes" : "no");
-	printf("ppr become user = %s\n", access_info.ppr_become_user ? "yes" : "no");
-	printf("other become user = %s\n", access_info.other_become_user ? "yes" : "no");
-	printf("ppr root as = %s\n", access_info.ppr_root_as);
-	printf("other root as = %s\n", access_info.other_root_as);
-	printf("ppr proxy user = %s\n", access_info.ppr_proxy_user);
-	printf("other proxy user = %s\n", access_info.other_proxy_user);
-	printf("ppr proxy class = %s\n", access_info.ppr_proxy_class);
-	printf("ppr user format = %s\n", access_info.ppr_from_format);
+	printf("user domain = %s\n", access_info.user_domain);
 	printf("force mail = %s\n", access_info.force_mail ? "yes" : "no");
 	fputs("\n", stdout);
 
 	if(!access_info.allow)
-		{
 		printf(_("No access allowed from node \"%s\".\n"), hostname);
-		}
-
-	#define FORMAT "%-10.10s %-14.14s %-14.14s %-30.30s\n"
-	else if(argc > 2)
-		{
-		int x;
-		struct passwd *pw;
-		uid_t uid;
-		gid_t gid;
-		const char *proxy_class;
-		const char *username;
-		char proxy_for[82];
-
-		printf(_("Based on the lprsrv.conf section shown above, the following table shows the\n"
-				"local user IDs and proxy for strings that will be used when accepting remote\n"
-				"jobs from the node \"%s\" for the remote user or users\n"
-				"which you have specified.\n"), hostname);
-		printf("\n");
-
-		printf(FORMAT, _("Spooler"), _("Remote User"), _("Local User"), _("As Proxy For"));
-		printf("----------------------------------------------------------------\n");
-
-		for(x = 2; x < argc; x++)
-			{
-			proxy_class = (const char *)NULL;
-			get_proxy_identity(&uid, &gid, &proxy_class, hostname, argv[x], TRUE, &access_info);
-			pw = getpwuid(uid);
-			if(pw) username = pw->pw_name; else username = "???";
-			if(proxy_class) snprintf(proxy_for, sizeof(proxy_for), "%.20s@%.60s", strcmp(argv[x], "root") == 0 ? "*" : argv[x], proxy_class);
-			printf(FORMAT, x == 2 ? "PPR" : "", argv[x], username, proxy_class ? proxy_for : "");
-			}
-
-		for(x = 2; x < argc; x++)
-			{
-			get_proxy_identity(&uid, &gid, &proxy_class, hostname, argv[x], FALSE, &access_info);
-			pw = getpwuid(uid);
-			if(pw) username = pw->pw_name; else username = "???";
-			/* Leave "Other" untranslated because the word should
-			   match the "other" in the lprsrv.conf directives. */
-			printf(FORMAT, x == 2 ? "Other" : "", argv[x], username, "");
-			}
-		}
 
 	return EXIT_OK;
 	} /* end of main() */

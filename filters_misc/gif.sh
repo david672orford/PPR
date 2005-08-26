@@ -1,7 +1,8 @@
 #! /bin/sh
 #
-# mouse:~ppr/src/misc_filters/gif.sh
+# mouse:~ppr/src/filters_misc/gif.sh
 # Copyright 1995--2005, Trinity College Computing Center.
+# Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -25,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 24 August 2005.
 #
 
 #

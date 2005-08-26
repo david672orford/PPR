@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 August 2005.
 */
 
 #include "config.h"
@@ -317,7 +317,7 @@ int ppop_modify(char *argv[])
 		return EXIT_SYNTAX;
 
 	/* Do we have permission to modify this job? */
-	if(job_permission_check(&job.jobname))
+	if(!job_permission_check(&job.jobname))
 		return EXIT_DENIED;
 
 	/* Now use those components to build the path to the queue file, which

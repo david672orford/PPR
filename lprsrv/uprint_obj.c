@@ -78,7 +78,7 @@ void *uprint_new(const char *fakername, int argc, const char *argv[])
 	u->lpr_mailto = (const char *)NULL;
 	u->lpr_mailto_host = (const char *)NULL;
 	u->fromhost = (const char *)NULL;
-	u->proxy_class = (const char *)NULL;
+	u->user_domain = (const char *)NULL;
 	u->lpr_class = (const char *)NULL;
 	u->jobname = (const char *)NULL;
 	u->pr_title = (const char *)NULL;
@@ -258,11 +258,11 @@ const char *uprint_set_fromhost(void *p, const char *fromhost)
 	return fromhost;
 	}
 
-const char *uprint_set_proxy_class(void *p, const char *proxy_class)
+const char *uprint_set_user_domain(void *p, const char *user_domain)
 	{
-	DODEBUG_UPRINT(("uprint_set_proxy_class(p=%p, proxy_class=\"%s\")", p, proxy_class));
-	((struct UPRINT *)p)->proxy_class = proxy_class;
-	return proxy_class;
+	DODEBUG_UPRINT(("uprint_set_user_domain(p=%p, user_domain=\"%s\")", p, user_domain));
+	((struct UPRINT *)p)->user_domain = user_domain;
+	return user_domain;
 	}
 
 const char *uprint_set_lpr_class(void *p, const char *lpr_class)

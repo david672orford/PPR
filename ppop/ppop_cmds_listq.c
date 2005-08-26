@@ -470,7 +470,7 @@ int custom_list(char *argv[],
 
 	if(!suppress)						/* If we should always print header, */
 		{								/* print it now */
-		if( ! machine_readable )		/* unless a program is reading our output. */
+		if( ! opt_machine_readable )		/* unless a program is reading our output. */
 			(*banner)();
 		header_printed = TRUE;
 		}
@@ -550,7 +550,7 @@ int custom_list(char *argv[],
 				{
 				if(!header_printed)
 					{
-					if( ! machine_readable )
+					if( ! opt_machine_readable )
 						(*banner)();
 					header_printed = TRUE;
 					}
@@ -621,7 +621,7 @@ static int ppop_short_item(const struct QEntry *qentry,
 int ppop_short(char *argv[])
 	{
 	argv = allow_PPRDEST(argv);
-	return custom_list(argv, ppop_short_help, ppop_short_banner, ppop_short_item, FALSE, arrest_interest_interval);
+	return custom_list(argv, ppop_short_help, ppop_short_banner, ppop_short_item, FALSE, opt_arrest_interest_interval);
 	}
 
 /*================================================================
@@ -685,7 +685,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 int ppop_list(char *argv[], int suppress)
 	{
 	argv = allow_PPRDEST(argv);
-	return custom_list(argv, ppop_list_help, ppop_list_banner, ppop_list_item, suppress, arrest_interest_interval);
+	return custom_list(argv, ppop_list_help, ppop_list_banner, ppop_list_item, suppress, opt_arrest_interest_interval);
 	}
 
 /*================================================================
@@ -980,19 +980,14 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 		size_t user_len;
 		#endif
 
-		if(qentryfile->proxy_for)
-			{
-			user = qentryfile->proxy_for;
-			user_len = strcspn(user, "@");
-			}
-		else if(qentryfile->For)		/* probably never false */
+		if(qentryfile->For)				/* probably never false */
 			{
 			user = qentryfile->For;
 			user_len = strlen(qentryfile->For);
 			}
 		else							/* probably never invoked */
 			{
-			user = qentryfile->username;
+			user = qentryfile->user;
 			user_len = strlen(user);
 			}
 
@@ -1165,7 +1160,7 @@ int ppop_lpq(char *argv[])
 		}
 	new_argv[x] = (char*)NULL;
 
-	retval = custom_list(argv, ppop_lpq_help, ppop_lpq_banner, ppop_lpq_item, TRUE, arrest_interest_interval);
+	retval = custom_list(argv, ppop_lpq_help, ppop_lpq_banner, ppop_lpq_item, TRUE, opt_arrest_interest_interval);
 
 	if( !lpqlist_banner_called && retval != EXIT_SYNTAX )
 		puts("no entries");
@@ -1210,10 +1205,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 	printf("Filters: %s\n", qentryfile->Filters ? qentryfile->Filters : "");
 
 	/* Print submitting user id. */
-	printf("User: %s (%ld)\n", qentryfile->username,(long)qentryfile->user);
-
-	/* Proxy information */
-	printf("Proxy For: %s\n", qentryfile->proxy_for ? qentryfile->proxy_for : "");
+	printf("User: %s\n", qentryfile->user);
 
 	/* Who is it for? */
 	printf("For: %s\n",qentryfile->For ? qentryfile->For : "(unknown)" );
@@ -1339,7 +1331,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 
 int ppop_details(char *argv[])
 	{
-	return custom_list(argv, ppop_details_help, ppop_details_banner, ppop_details_item, FALSE, arrest_interest_interval);
+	return custom_list(argv, ppop_details_help, ppop_details_banner, ppop_details_item, FALSE, opt_arrest_interest_interval);
 	} /* end of ppop_details() */
 
 /*================================================================
@@ -1611,14 +1603,13 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 					puts_detabbed(qentryfile->draft_notice);
 				break;
 			case 27:					/* username */
-				fputs(qentryfile->username, stdout);
+				fputs(qentryfile->user, stdout);
 				break;
 			case 28:					/* userid */
-				printf("%ld", (long)qentryfile->user);
+				/* removed */
 				break;
 			case 29:					/* proxy-for */
-				if(qentryfile->proxy_for)
-					puts_detabbed(qentryfile->proxy_for);
+				/* removed */
 				break;
 			case 30:					/* longsubtime */
 				{
@@ -1848,10 +1839,8 @@ int ppop_qquery(char *argv[])
 			qquery_query[x] = 26;
 		else if(strcmp(ptr,"username")==0)
 			qquery_query[x] = 27;
-		else if(strcmp(ptr,"userid")==0)
-			qquery_query[x] = 28;
-		else if(strcmp(ptr,"proxy-for")==0)
-			qquery_query[x] = 29;
+		/* 28 was userid, can be reused */
+		/* 29 was proxy-for, can be reused */
 		else if(strcmp(ptr, "longsubtime") == 0)
 			qquery_query[x] = 30;
 		else if(strcmp(ptr, "subtime") == 0)
@@ -1897,7 +1886,7 @@ int ppop_qquery(char *argv[])
 
 	qquery_query_count = x;
 
-	retval = custom_list(argv, ppop_qquery_help, ppop_qquery_banner, ppop_qquery_item, FALSE, arrest_interest_interval);
+	retval = custom_list(argv, ppop_qquery_help, ppop_qquery_banner, ppop_qquery_item, FALSE, opt_arrest_interest_interval);
 
 	return retval;
 	} /* end of ppop_qquery() */
@@ -1981,7 +1970,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 		total_pages *= qentryfile->opts.copies;
 
 	/* Print our assembled results. */
-	if(machine_readable)
+	if(opt_machine_readable)
 		{
 		printf("%s\t%s\t%ld\t%ld\t%d\t%d\t%d\t%d\n",
 				jobname,

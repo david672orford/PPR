@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 19 August 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -109,7 +109,7 @@ else
 # Replace ourself with ppr:
 exec($PPR::PPR_PATH, '-d', $PRINTER, '-e', 'responder', '-w', 'log',
 		@responder, @for,
-		'-X', "$CLIENT_NBNAME\@samba",
+		'--user', "$CLIENT_NBNAME\@samba",
 		'-C', '', '-U', '-I', $FILE);
 
 die "Exec failed!";

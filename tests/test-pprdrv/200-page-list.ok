@@ -15,6 +15,7 @@ ppr: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup
@@ -49,6 +50,7 @@ ppr: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/query_wrapper.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,15 +25,21 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 24 August 2005.
 */
 
 /*
  * This program is invoked by the code in query.c.  It is setuid root.
- * It is a wrapper around the interface programs.  It provides a way
- * for utilities such as ppad to invoke the interfaces with all of 
+ * It is a wrapper around the interface programs.  The name of the
+ * interface to execute should be in argv[0].  It provides a way
+ * for utilities such as ppad(8) to invoke the interfaces with all of 
  * the suplementatal group membership that the user "ppr" has and which
  * may be required for access to printer ports.
+ *
+ * This is important on systems such as Debian where access to printer
+ * ports (such as /dev/lp0) requires membership in the group "lp".
+ *
+ * This could probably be replaced with something based on sudo.
  */
 
 #include "config.h"
@@ -54,7 +60,7 @@ int main(int argc, char *argv[])
 	struct passwd *pw;
 	char fname[MAX_PPR_PATH];
 
-	if(argc < 1 || strchr(argv[0], '/'))
+	if(argc < 1 || strchr(argv[0], '/'))	/* if no interface name or path specified, */
 		{
 		fprintf(stderr, "%s: incorrect invokation.\n", myname);
 		return 1;

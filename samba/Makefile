@@ -45,10 +45,10 @@ all: $(PROGS) $(ALL_TDB)
 
 all-tdb: $(PROGS_TDB)
 
-smb-protos.conf: smb-protos.conf.template
-	$(RMF) smb-protos.conf
-	../subst_tool <smb-protos.conf.template >smb-protos.conf
-	chmod 444 smb-protos.conf
+#smb-protos.conf: smb-protos.conf.template
+#	$(RMF) smb-protos.conf
+#	../subst_tool <smb-protos.conf.template >smb-protos.conf
+#	chmod 444 smb-protos.conf
 
 ppr2samba$(DOTEXE): ppr2samba.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 April 2005.
+# Last modified 25 August 2005.
 #
 
 =head1 NAME
@@ -47,22 +47,21 @@ The B<--version> switch prints the PPR version number.
 The B<--help> switch prints abreviated instructions for use and direction for
 obtaining additional help.
 
-The B<-d> option can be used to turn on messages which describe what B<ppad>
-is doing.  The default level is 0.  Using B<-d 1> will cause B<ppad> to tell
-what printer and group configuration files it is examining and editing.
+The B<-d> option can be used to turn on debugging messages which describe what
+B<ppad> is doing.  The default level is 0.  Using B<-d 1> will cause B<ppad> to
+tell what printer and group configuration files it is examining and editing.
 Higher levels display more information.  A level 2 and above B<ppad> will
 display information about what it learns from PPD files and
-F</usr/share/ppr/lib/mfmodes.conf>.  At level 3 and above it will display every mode
-line in F<mfmodes.conf> and every line read from or written to the
-printer or group configuration file.  Level 6 and above shows most of the
-lines in every PPD file that is read.
+F</usr/share/ppr/lib/mfmodes.conf>.  At level 3 and above it will display every
+mode line in F<mfmodes.conf> and every line read from or written to the printer
+or group configuration file.  Level 6 and above shows most of the lines in
+every PPD file that is read.
 
-Most operations performed by this command require PPR administrator
-privileges.  Only those operations which make no changes to the spooler
-configuration may be performed by non-privileged users.  This command
-defines a privileged user as the user "ppr", a user with a UID of 0 (root),
-a user listed in the file "F</etc/ppr/acl/ppad.allow>", or (for compatibility
-with previous versions of PPR) a user who is a member of the group "ppad".
+Most operations performed by this command require PPR administrator privileges.
+Only those operations which make no changes to the spooler configuration may be
+performed by non-privileged users.  This command defines a privileged user as
+the users "ppr" and "pprwww", a user with a UID of 0 (root), or a user listed
+in the file F</etc/ppr/acl/ppad.allow>.
 
 B<Ppad> has a number of subcommands.  Each subcommand has zero or more
 parameters.  The subcommands are described below.

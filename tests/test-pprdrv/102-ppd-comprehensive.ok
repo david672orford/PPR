@@ -7,7 +7,7 @@ Printer          Status
 regression-test1 idle
 clear_output: ppop: 0
 clear_output: rm: 0
-WARNING: No "%%EndProlog" before "%%BeginSetup", inserting one
+WARNING: No "%%EndProlog" before "%%BeginSetup"
 WARNING: No valid "%%Pages:" comment
 ppr: 0
 %!PS-Adobe-3.0
@@ -54,6 +54,7 @@ ppr: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 %%BeginSetup
 % jobname line removed

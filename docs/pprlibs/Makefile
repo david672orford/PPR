@@ -60,9 +60,9 @@ depend:
 
 clean:
 	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
-
-veryclean: clean
 	rm -rf $(DIRS)
+
+veryclean:
 
 # end of file
 

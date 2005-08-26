@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 22 August 2005.
 */
 
 /*! \file */
@@ -61,8 +61,8 @@ void qentryfile_clear(struct QEntryFile *job)
 	/* More pointer defaults which we set to NULL to show they haven't 
 	   been read (yet).  This order is the same as in readqfile.c so 
 	   as to make it easier to compare the lists. */
-	job->username = (char*)NULL;
-	job->proxy_for = (char*)NULL;				/* optional */
+	job->attr.DSC_job_type = (char*)NULL;
+	job->user = (char*)NULL;
 	job->For = (char*)NULL;
 	job->charge_to = (char*)NULL;				/* optional */
 	job->magic_cookie = (const char *)NULL;

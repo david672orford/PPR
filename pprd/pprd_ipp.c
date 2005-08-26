@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 April 2005.
+** Last modified 19 August 2005.
 */
 
 /*
@@ -545,14 +545,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 		/* Derived from "ppop lpq" */
 		if(request_attr_requested(req, "job-originating-user-name"))
 			{
-			const char *user;
-			if(qentryfile.proxy_for)
-				user = qentryfile.proxy_for;
-			else if(qentryfile.For)				/* probably never false */
-				user = qentryfile.For;
-			else								/* probably never invoked */
-				user = qentryfile.username;
-			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(user), TRUE);
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(qentryfile.user), TRUE);
 			}
 
 		/* Derived from "ppop lpq" */

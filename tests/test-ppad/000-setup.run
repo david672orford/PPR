@@ -4,7 +4,7 @@
 $PPAD_PATH delete regression-test1 >/dev/null 2>&1
 
 echo "Creating printer..."
-$PPAD_PATH interface regression-test1 atalk "Imaginary Printer:LaserWriter@Imaginary Zone"
+$PPAD_PATH interface regression-test1 parallel "/dev/lp0"
 echo "ppad: $?"
 echo
 

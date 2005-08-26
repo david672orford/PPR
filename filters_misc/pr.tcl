@@ -33,22 +33,21 @@
 # PR filter for the PPR spooling system.
 # Combine pr and filter_lp to make a PostScript pr.
 #
-# $1 is the space-separated list of name=value options
-# $2 is the name of the printer or group
-# $3 is the title
-#
-# and so on...
+# 1st is the space-separated list of name=value options
+# 2nd is the name of the printer or group
+# 3rd is the title
 #
 
 # These are filled in when the script is installed.
 set LIBDIR "@LIBDIR@"
 set TEMPDIR "@TEMPDIR@"
 set PR "@PR@"
+set FILTDIR "@FILTDIR@"
 
 # Process the options
-regsub "title=\"" [lindex $argv 0] "\"title=" options
-set title [lindex $argv 2]
-set arglist {-f}
+regsub "title=\"" [lindex $argv 0] "\"title=" options	# for proper parsing
+set title [lindex $argv 2]								# from ppr(1) -t
+set arglist {-f}										# arguments for pr(1)
 foreach option $options {
 	regexp {^([^=]+)=(.*)$} $option junk name value
 	#puts stderr "name=$name, value=$value"
@@ -78,7 +77,7 @@ set result [catch {
     exec $PR $arglist -h $title >$tempfile 2>@stderr
 
     # Now, run filter_lp on the temporary file.
-    exec filters/filter_lp [lindex $argv 0] <$tempfile >@stdout 2>@stderr
+    exec $FILTDIR/filter_lp [lindex $argv 0] <$tempfile >@stdout 2>@stderr
 
     } error ]
 

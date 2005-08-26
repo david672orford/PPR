@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/lprsrv.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 19 August 2005.
 #
 
 =head1 NAME
@@ -141,16 +141,16 @@ First, make sure a line like this is in F</etc/services>:
 Then look in F</etc/inetd.conf>.  For basic versions of B<inetd>, such as
 those distributed with Solaris, the line should read something like:
 
-    printer stream tcp nowait root /usr/lib/ppr/lib/lprsrv lprsrv
+    printer stream tcp nowait ppr /usr/lib/ppr/lprsrv lprsrv
 
-If Tcpwrappers was installed on your system when you ran B<fixup>, it will
+If Tcpwrappers was installed on your system when you installed PPR, it will
 read:
 
-    printer stream tcp nowait root /usr/local/sbin/tcpd lprsrv
+    printer stream tcp nowait ppr /usr/local/sbin/tcpd /usr/lib/ppr/lprsrv
 
 On Linux systems with TCP wrappers it will read something like:
 
-    printer stream tcp nowait.400 root /usr/sbin/tcpd /usr/lib/ppr/lib/lprsrv
+    printer stream tcp nowait.400 ppr /usr/sbin/tcpd /usr/lib/ppr/lib/lprsrv
 
 If the line is already present, make sure there is no "#" in front of it. 
 
@@ -202,8 +202,8 @@ will read in part:
     {
         socket_type     = stream
         wait            = no
-        user            = root
-        server          = /usr/lib/ppr/lib/lprsrv
+        user            = ppr
+        server          = /usr/lib/ppr/lprsrv
         cps             = 400 30
         instances       = 50
         disabled        = yes
@@ -237,9 +237,8 @@ The argument is the number or name of the port that B<lprsrv> should listen
 on.  The most common value is "printer" or its numberic equivelent "515".
 
 For you convienance, the PPR rc script (which gets installed as
-F</etc/init.d/ppr> or
-F</etc/rc.d/init.d/ppr> or something like that) has a commented out line
-to start B<lprsrv> in standalone mode.
+F</etc/init.d/ppr> or F</etc/rc.d/init.d/ppr> or something like that) has a
+commented out line to start B<lprsrv> in standalone mode.
 
 
 =head2 Queue Listing Options

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 June 2005.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -83,16 +83,16 @@ uid_t user_uid;							/* Unix user id of person submitting the job */
 gid_t user_gid;
 uid_t ppr_uid;							/* uid of spooler owner (ppr) */
 gid_t ppr_gid;
+char *user_pw_name, *user_pw_gecos;		/* result of looking up user_uid */
 
 /* Command line option settings, static */
 static int warning_level = WARNING_SEVERE;		/* these and more serious allowed */
 static int warning_log = FALSE;					/* set true if warnings should go to log */
 static int option_unlink_jobfile = FALSE;		/* Was the -U switch used? */
-static int use_username = FALSE;				/* User username instead of comment as default For: */
 static int ignore_truncated = FALSE;			/* TRUE if should discard without %%EOF */
 static gu_boolean option_show_jobid = FALSE;
 static int option_print_id_to_fd = -1;			/* -1 for don't, file descriptor number otherwise */
-static const char *option_page_list = (char*)NULL;
+static const char *option_page_list = NULL;
 
 /* Command line option settings */
 const char *features[MAX_FEATURES];				/* -F switch features to add */
@@ -100,7 +100,7 @@ int features_count = 0;							/* number asked for (number of -F switches?) */
 gu_boolean option_strip_fontindex = FALSE;				/* TRUE if should strip those in fontindex.db */
 int ppr_respond_by = PPR_RESPOND_BY_STDERR;
 int option_nofilter_hexdump = FALSE;			/* don't encourage use of hexdump when no filter */
-char *option_filter_options = (char*)NULL;		/* contents of -o switch */
+char *option_filter_options = NULL;				/* contents of -o switch */
 int option_TrueTypeQuery = TT_UNKNOWN;			/* for ppr_mactt.c */
 unsigned int option_gab_mask = 0;				/* Mask to tell what to gab about. */
 int option_editps_level = 1;					/* 1 thru 10 */
@@ -124,11 +124,6 @@ gu_boolean current_duplex_enforce = FALSE;
 static FILE *FIFO = (FILE*)NULL;		/* streams library thing for pipe to pprd */
 struct QEntryFile qentry;				/* structure in which we build our queue entry */
 int pagenumber = 0;						/* count of %%Page: comments */
-char *AuthCode = (char*)NULL;			/* clear text of authcode */
-static int auth_needed;					/* TRUE if dest protect */
-char *starting_directory = (char*)NULL; /* Not MAX_PPR_PATH!  (MAX_PPR_PATH might be just large enough for PPR file names) */
-static const char *charge_to_switch_value = (char*)NULL;
-static const char *default_For = (char*)NULL;
 
 /* default media */
 const char *default_medium = NULL;		/* medium to start with if no "%%DocumentMedia:" comment */
@@ -544,8 +539,8 @@ void submit_job(struct QEntryFile *qe, int subid)
 
 /*
 ** Code to check if there is a charge (money) for printing to the selected
-** destination and thus the user needs to be specially authorized to submit
-** jobs to this destination.  If so, check if he is authorized.  If
+** destination which would mean that the user needs to be specially authorized
+** to submit jobs to this destination.  If so, check if he is authorized.  If
 ** authorization is required but has not been obtained, it is a fatal error
 ** and this routine never returns.
 **
@@ -553,53 +548,27 @@ void submit_job(struct QEntryFile *qe, int subid)
 */
 static void authorization_charge(void)
 	{
-	if((auth_needed = destination_protected(qentry.destname)))
+	if(destination_protected(qentry.destname))
 		{
 		struct userdb user;
 		int ret;
 
-		/*
-		** Figure out which account we must charge this to.
-		** If the --charge-to switch was used that is the
-		** answer.  If not and the For was set by the -f switch
-		** or a "%%For:" line with -R for then use that.  If that
-		** doesn't work, use the Unix username.
-		*/
-		if(charge_to_switch_value)
-			qentry.charge_to = charge_to_switch_value;
-		else if(qentry.For != default_For)
-			qentry.charge_to = qentry.For;
-		else
-			qentry.charge_to = qentry.username;
-
 		ret = db_auth(&user, qentry.charge_to);		/* user lookup */
 
-		if(ret == USER_ISNT)				/* If user not found, */
-			{								/* then, turn away. */
+		if(ret == USER_ISNT)			/* If user not found, then, turn away. */
 			ppr_abort(PPREXIT_NOCHARGEACCT, qentry.charge_to);
-			}
-
-		else if(ret == USER_OVERDRAWN)		/* If account overdrawn, */
-			{								/* then, turn away. */
+		else if(ret == USER_OVERDRAWN)	/* If account overdrawn, then, turn away. */
 			ppr_abort(PPREXIT_OVERDRAWN, qentry.charge_to);
-			}
-
-		/* We check for database error. */
-		else if(ret == USER_ERROR)
-			{
+		else if(ret == USER_ERROR)		/* We check for database error. */
 			fatal(PPREXIT_OTHERERR, _("can't open printing charge database"));
-			}
 
 		/* Do not allow jobs w/out page counts on cost per page printers. */
 		if(qentry.attr.pages < 0)
-			{
 			ppr_abort(PPREXIT_NONCONFORMING, (char*)NULL);
-			}
 
 		if(qentry.opts.copies == -1)	/* If `secure' printer, force */
 			qentry.opts.copies = 1;		/* unspecified copies to 1. */
 		}
-
 	} /* end of authorization_charge() */
 
 /*
@@ -612,46 +581,28 @@ static void authorization_acl(void)
 	if((acl_list = extract_acls()))
 		{
 		char *acl_list_copy, *ptr, *substr;
-		gu_boolean real_passes, proxy_for_passes;
+		gu_boolean result = FALSE;
 
 		#ifdef DEBUG_ACL
 		printf("ACL list: %s\n", acl_list);
 		#endif
 
-		real_passes = FALSE;
-		proxy_for_passes = qentry.proxy_for ? FALSE : TRUE;
-
 		ptr = acl_list_copy = gu_strdup(acl_list);
 
-		while((!real_passes || !proxy_for_passes) && (substr = strtok(ptr, " ")))
+		while((substr = strtok(ptr, " ")))
 			{
-			ptr = NULL;
 			#ifdef DEBUG_ACL
 			printf("Trying ACL %s...\n", substr);
 			#endif
 
-			if(!real_passes && user_acl_allows(qentry.username, substr))
-				real_passes = TRUE;
-
-			if(!proxy_for_passes && user_acl_allows(qentry.proxy_for, substr))
-				proxy_for_passes = TRUE;
-
-			#ifdef DEBUG_ACL
-			printf("real_passes=%s, proxy_for_passes=%s\n", real_passes ? "TRUE" : "FALSE", proxy_for_passes ? "TRUE" : "FALSE");
-			#endif
+			if(user_acl_allows(qentry.user, substr))
+				result = TRUE;
 			}
 
 		gu_free(acl_list_copy);
 
-		if(!real_passes)
-			{
-			ppr_abort(PPREXIT_ACL, qentry.username);
-			}
-
-		if(!proxy_for_passes)
-			{
-			ppr_abort(PPREXIT_ACL, qentry.proxy_for);
-			}
+		if(!result)
+			ppr_abort(PPREXIT_ACL, qentry.user);
 		}
 	} /* end of authorization_acl() */
 
@@ -784,7 +735,7 @@ static int privileged(void)
 
 	if(answer == -1)			/* if undetermined */
 		{
-		if(user_acl_allows(qentry.username, "pprprox"))
+		if(user_acl_allows(user_pw_name, "pprprox"))
 			answer = 1;
 		else
 			answer = 0;
@@ -831,7 +782,7 @@ void unbecome_user(void)
 ** letters have been used:
 ** aAbBCdDefFGHIKmNnoOPqQrRsStTUvwYXZ
 */
-static const char *option_description_string = "ad:e:f:i:m:r:b:t:w:D:F:T:q:B:N:n:AC:H:R:Z:O:K:s:P:Io:UY:X:u:G:Q:";
+static const char *option_description_string = "d:e:f:i:m:r:b:t:w:D:F:T:q:B:N:n:C:H:R:Z:O:K:s:P:Io:UY:u:G:Q:";
 
 /*
 ** This table maps long option names to short options or to large integers.
@@ -841,7 +792,7 @@ static const struct gu_getopt_opt option_words[] =
 		/* These aliases are preliminary assignments and are not yet documented. */
 		{"queue", 'd', TRUE},
 		{"for", 'f', TRUE},
-		{"use-username", 'u', TRUE},
+		{"user", 'u', TRUE},
 		{"banner", 'b', TRUE},
 		{"trailer", 't', TRUE},
 		{"errors", 'e', TRUE},
@@ -873,7 +824,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"copies",				'n', TRUE},
 		{"responder-address",	'r', TRUE},
 		{"file-type",			'T', TRUE},
-		{"proxy-for",			'X', TRUE},
 		{"features",			1000, FALSE},
 		{"print-id-to-fd",		1001, TRUE},
 		{"lpq-filename",		1003, TRUE},
@@ -910,14 +860,8 @@ HELP(_(
 "\t-I                         insert destination's switchset macro here\n"));
 
 HELP(_(
-"\t-u yes                     use username to identify jobs in queue\n"
-"\t-u no                      use /etc/passwd comment instead (default)\n"
-"\t-f <string>                override user identication from -u\n"));
-
-HELP(_(
-"\t-X <string>                used by network servers to tell PPR the\n"
-"\t                           identity of alien users for whom they act\n"
-"\t--proxy-for <string>       same as -X\n"));
+"\t-u <username>              username of job submitter\n"
+"\t-f <realname>              real name of cooresponding to username\n"));
 
 HELP(_(
 "\t--charge-to <string>       PPR charge account to bill for job\n"));
@@ -1383,13 +1327,16 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'f':								/* for whom */
+			if(! privileged())
+				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s"), true_option);
 			assert_ok_value(optarg, FALSE, FALSE, FALSE, true_option, TRUE);
 			qentry.For = optarg;
 			break;
 
-		case 'u':								/* Use username in stead of comment */
-			if(gu_torf_setBOOL(&use_username, optarg) == -1)
-				fatal(PPREXIT_SYNTAX, _("The %s option must be followed by \"yes\" or \"no\""), true_option);
+		case 'u':								/* specify user */
+			if(! privileged())
+				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s"), true_option);
+			qentry.user = optarg;
 			break;
 
 		case 'm':								/* responder */
@@ -1401,12 +1348,12 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'b':								/* banner */
-			if( (qentry.do_banner=flag_option(optarg)) == -1 )
+			if((qentry.do_banner=flag_option(optarg)) == -1)
 				fatal(PPREXIT_SYNTAX, _("Invalid %s option"), true_option);
 			break;
 
 		case 't':								/* trailer */
-			if( (qentry.do_trailer=flag_option(optarg)) == -1 )
+			if((qentry.do_trailer=flag_option(optarg)) == -1)
 				fatal(PPREXIT_SYNTAX, _("Invalid %s option"), true_option);
 			break;
 
@@ -1651,10 +1598,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			Y_switch(optarg);
 			break;
 
-		case 'X':								/* Identify principal */
-			qentry.proxy_for = optarg;
-			break;
-
 		case 'G':								/* What to gab about */
 			{
 			const char *ptr = optarg;
@@ -1739,8 +1682,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 		case 1008:								/* --charge-to */
 			if(! privileged())
 				fatal(PPREXIT_SYNTAX, _("Non-privileged users may not use %s"), true_option);
-			/* This is not copied into the queue structure unless it is needed. */
-			charge_to_switch_value = optarg;
+			qentry.charge_to = optarg;
 			break;
 
 		case 1009:								/* --editps-level */
@@ -1838,8 +1780,6 @@ int main(int argc, char *argv[])
 	struct gu_getopt_state getopt_state;		/* defined here because used to find filename */
 	int x;										/* various very short term uses */
 	char *ptr;									/* general use */
-	char *user_username;
-	char *user_realname;
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
@@ -1868,20 +1808,6 @@ int main(int argc, char *argv[])
 	user_gid = getgid();
 
 	/*
-	** Use the real UID to look up the username and realname of the
-	** person who is running this command.
-	*/
-	{
-	struct passwd *pw;
-	if(!(pw = getpwuid(user_uid)))
-		fatal(PPREXIT_OTHERERR, _("getpwuid() fails to find your account"));
-	if(pw->pw_name == (char*)NULL || pw->pw_gecos == (char*)NULL)
-		fatal(PPREXIT_OTHERERR, "strange getpwuid() error, pw_name is NULL");
-	user_username = gu_strdup(pw->pw_name);
-	user_realname = gu_strdup(pw->pw_gecos);
-	}
-
-	/*
 	** Make sure we are running setuid to the right user.
 	** This check can be disabled for lame OSs such as Win95.
 	*/
@@ -1898,52 +1824,29 @@ int main(int argc, char *argv[])
 	#endif
 
 	/*
-	** Remember what directory we started in.  Some of the input filters
-	** need to know this.  This operation is complicated because of
-	** the poor design of the POSIX getcwd() function.  It can't even tell
-	** us how large a buffer it needs!
-	**
-	** Notice that we must adopt the user identity while doing this as
-	** the PPR user may not have permission to read the current directory.
-	*/
-	become_user();
-	{
-	int len=64;
-	starting_directory = (char*)gu_alloc(len, sizeof(char));
-	while(!getcwd(starting_directory, len))
-		{
-		if(errno != ERANGE)
-			fatal(PPREXIT_OTHERERR, "getcwd() failed, errno=%d (%s)", errno, gu_strerror(errno));
-		len *= 2;
-		starting_directory = (char*)gu_realloc(starting_directory, len, sizeof(char));
-		}
-	starting_directory = (char*)gu_realloc(starting_directory, strlen(starting_directory) + 1, sizeof(char));
-	}
-	unbecome_user();
-
-	/*
 	** Clear parts of the queue entry, fill in default values
 	** elsewhere.  It is important that we do this right away
 	** since one of the things we do is get our queue id.
 	*/
-	qentry.destname = (char*)NULL;						/* name of printer or group */
+	qentry.destname = NULL;								/* name of printer or group */
 	qentry.id = 0;										/* not assigned yet */
 	qentry.subid = 0;									/* job fragment number (unused) */
 	qentry.status = STATUS_WAITING;
 	qentry.flags = 0;
 	qentry.time = time((time_t*)NULL);					/* job submission time */
 	qentry.priority = 20;								/* default priority */
-	qentry.user = user_uid;								/* record real user id of submitter */
-	qentry.username = user_username;					/* fill in name associated with id */
-	qentry.For = (char*)NULL;							/* start with no %%For: line */
-	qentry.charge_to = (char*)NULL;						/* ppuser account to charge to */
-	qentry.Title = (char*)NULL;							/* start with no %%Title: line */
-	qentry.Creator = (char*)NULL;						/* "%%Creator:" */
-	qentry.Routing = (char*)NULL;						/* "%%Routing:" */
-	qentry.lpqFileName = (char*)NULL;					/* filename for lpq */
+	qentry.user = NULL;
+	qentry.For = NULL;
+	qentry.charge_to = NULL;
+	qentry.Title = NULL;								/* start with no %%Title: line */
+	qentry.Creator = NULL;								/* "%%Creator:" */
+	qentry.Routing = NULL;								/* "%%Routing:" */
+	qentry.lpqFileName = NULL;							/* filename for lpq */
 	qentry.nmedia = 0;									/* no forms */
 	qentry.do_banner = BANNER_DONTCARE;					/* don't care */
 	qentry.do_trailer = BANNER_DONTCARE;				/* don't care */
+	qentry.attr.DSClevel = 0.0;
+	qentry.attr.DSC_job_type = NULL;
 	qentry.attr.langlevel = 1;							/* default to PostScript level 1 */
 	qentry.attr.pages = -1;								/* number of pages undetermined */
 	qentry.attr.pageorder = PAGEORDER_ASCEND;			/* assume ascending order */
@@ -1964,10 +1867,10 @@ int main(int argc, char *argv[])
 	qentry.N_Up.sigsheets = 0;							/* don't print signatures */
 	qentry.N_Up.sigpart = SIG_BOTH;						/* print both sides of signature */
 	qentry.N_Up.job_does_n_up = FALSE;
-	qentry.draft_notice = (char*)NULL;					/* message to print diagonally */
-	qentry.PassThruPDL = (const char *)NULL;			/* default (means PostScript) */
-	qentry.Filters = (const char *)NULL;				/* default (means none) */
-	qentry.PJL = (const char *)NULL;
+	qentry.draft_notice = NULL;							/* message to print diagonally */
+	qentry.PassThruPDL = NULL;							/* default (means PostScript) */
+	qentry.Filters = NULL;								/* default (means none) */
+	qentry.PJL = NULL;
 	qentry.StripPrinter = FALSE;
 	qentry.page_list.mask = NULL;
 	qentry.ripopts = NULL;
@@ -1978,47 +1881,44 @@ int main(int argc, char *argv[])
 		qentry.lc_messages = getenv("LANG");
 
 	/*
-	** We would like to find a default response method in the variable
-	** PPR_RESPONDER.  If we don't we will use "followme".
+	** Use the real UID to look up the username and real name of the
+	** person who is running this command.  These values will become
+	** certain defaults.
 	*/
-	if(!(qentry.responder.name = getenv("PPR_RESPONDER")))
-		qentry.responder.name = "followme";
+	{
+	struct passwd *pw;
+	if(!(pw = getpwuid(user_uid)))
+		fatal(PPREXIT_OTHERERR, _("getpwuid() fails to find your account"));
+	if(!pw->pw_name || !pw->pw_gecos)
+		fatal(PPREXIT_OTHERERR, "strange getpwuid() error, pw_name is NULL");
+	user_pw_name = gu_strdup(pw->pw_name);
+	user_pw_gecos = gu_strdup(pw->pw_gecos);
+	}
 
 	/*
+	** Determine the default responder options.  The default responder is
+	** "followme" which is a meta-responder which by default ** delegates 
+	** to the responder called "write".
+	**
 	** Since a responder address may not be specified with the -r switch, we 
-	** will look for a default value in the environment variable
-	** PPR_RESPONDER_ADDRESS.  If no such variable exists, we must use the user
-	** name which the user logged in with.  The login user name is the proper
-	** address for the default responder "followme" (which is a meta-responder
-	** which by default delegates to the responder called "write").  Notice
-	** that if the user used su to become a different user after loging in, the
-	** current user id will differ from the current user id.  In order for the
-	** responder to use the "write" command sucessfully, we must determine the
-	** login name.  That is why we try the environment variables "USER" and 
-	** "LOGNAME" before resorting to the current user id.
+	** must supply a default value.  This is the name that the user logged in
+	** as.  The login user name is the proper address for the default 
+	** responder "followme" .  Notice that if the user used su to become a 
+	** different user after loging in, the current user id will differ from 
+	** the current user id.  In order for the responder to use the "write" 
+	** command sucessfully, we must determine the login name.  That is why we
+	** try the environment variables "LOGNAME" and "USER" before resorting to
+   	** the name which cooresponds to the current user id.
 	*/
-	if(!(qentry.responder.address = getenv("PPR_RESPONDER_ADDRESS")))
-		{
-		char *p;
-		if((p = getenv("LOGNAME")) || (p = getenv("USER")))
-			{
-			/* We make our own copy of the string because prune_env() may delete 
-			 * the copy in the environment.
-			 */ 
-			qentry.responder.address = gu_strdup(p);
-			}
-		else
-			{
-			qentry.responder.address = qentry.username;
-			}
-		}
-
-	/*
-	** The default responder options come from the environment.
-	** If the variable is undefined, getenv() will return NULL
-	** which is just what we want.
-	*/
-	qentry.responder.options = getenv("PPR_RESPONDER_OPTIONS");
+	qentry.responder.name = "followme";
+	{
+	char *p;
+	if((p = getenv("LOGNAME")) || (p = getenv("USER")))
+		qentry.responder.address = gu_strdup(p);	/* copy because prune_env() deletes */
+	else
+		qentry.responder.address = qentry.user;
+	}
+	qentry.responder.options = NULL;
 
 	/*
 	** Look for default commentatary option in the environment.
@@ -2213,26 +2113,19 @@ int main(int argc, char *argv[])
 		if(!(qentry.Title = qentry.lpqFileName))
 			qentry.Title = real_filename;
 
-	/*
-	** If we don't have at least a provisional For, then use either the Unix
-	** user name or the comment field from /etc/passwd.
-	**
-	** The variable default_For is used by authorization()
-	** to determine if the current value of qentry.For
-	** was set here.
-	**
-	** The setting controled by the the -u switch determines whether we try
-	** to use the users realname (from the password comment (gecos) field).
-	** If the gecos field is empty we use the username anyway.
-	*/
-	if(!qentry.For || !privileged())
+	/* Defaults for -u, -f, and --charge-to */
+	if(!qentry.user)
+		qentry.user = user_pw_name;
+	if(!qentry.For)
 		{
-		if(use_username || !user_realname[0])
-			default_For = qentry.For = qentry.username;
+		if(qentry.user == user_pw_name)
+			qentry.For = user_pw_gecos;
 		else
-			default_For = qentry.For = user_realname;
+			qentry.For = qentry.user;
 		}
-
+	if(!qentry.charge_to)
+		qentry.charge_to = qentry.For;
+	
 	/*===========================================================
 	** End of option parsing code
 	===========================================================*/
@@ -2471,34 +2364,22 @@ int main(int argc, char *argv[])
 	/* =================== Input PostScript Processing Ends ===================== */
 
 	/*
-	** Compare "qentry.attr.pages" to "pagenumber".
-	** If we have "%%Page: " comments but no "%%Pages: "
-	** comment, use the number of "%%Page: " comments.
-	*/
-	if(pagenumber > 0 && qentry.attr.pages == -1)
-		{
-		warning(WARNING_SEVERE, _("No valid \"%%%%Pages:\" comment"));
-		qentry.attr.pages = pagenumber;
-		}
-
-	/*
-	** The variable "pagenumber" now contains the number of "%%Page:"
-	** comments encountered.
-	**
-	** If we have "%%Page: " comments and there are more "%%Page: "
-	** comments than the number of pages stated in the "%%Pages: "
-	** comment, then use the count of "%%Page: " comments
-	** since it would seem harder to get that wrong.
-	**
-	** What to do when the "%%Pages:" comment indicates more pages than
-	** there are "%%Page:" comments is more troublesome.  The program
-	** pslpr will make this mistake when extracting selected pages from
-	** a document.  The current solution is to use the count of "%%Page:"
-	** comments.
+	** The variable "pagenumber" contains the number of "%%Page:"
+	** comments encountered.  The variable "qentry.attr.pages" contains
+	** the number of pages stated in the "%%Pages:" comment.  If there
+	** was no "%%Pages:" comment, then it will still be set to -1.
 	*/
 	if(pagenumber > 0)
 		{
-		if(pagenumber > qentry.attr.pages)
+		/* There is a "script" section. */
+		qentry.attr.script = TRUE;
+
+		if(qentry.attr.pages == -1)				/* If no "%%Pages:", */
+			{									/* infer from actual page count. */
+			warning(WARNING_SEVERE, _("No valid \"%%%%Pages:\" comment"));
+			qentry.attr.pages = pagenumber;
+			}
+		else if(pagenumber > qentry.attr.pages)
 			{
 			warning(WARNING_SEVERE, _("\"%%%%Pages:\" comment is wrong, changing it from %d to %d"), qentry.attr.pages, pagenumber);
 			qentry.attr.pages = pagenumber;
@@ -2509,20 +2390,18 @@ int main(int argc, char *argv[])
 			qentry.attr.pages = pagenumber;
 			}
 		}
+	else		/* No "%%Page:" comments */
+		{
+		qentry.attr.pageorder = PAGEORDER_SPECIAL;		/* re-ordering not possible */
+		qentry.attr.script = FALSE;						/* no "script" section */
+		}
 
-	/*
-	** If we found no "%%Page:" comments, then the pageorder is special.
-	** (Re-ordering pages which we can not locate is not possible.)
-	*/
-	if(pagenumber == 0)
-		qentry.attr.pageorder = PAGEORDER_SPECIAL;
-
-	/*
-	** If we found "%%Page:" comments, then qentry.attr.script
-	** should be set to TRUE.  This will indicate that this file
-	** has what the DSC specification calls a "script" section.
-	*/
-	qentry.attr.script = (pagenumber != 0) ? TRUE : FALSE;
+	/* If the number of pages is still unknown but this is an EPS file,
+	 * then assume it is one since EPS files are by definition one
+	 * page long.  (See RBII p. 712)
+	 */
+	if(qentry.attr.pages == -1 && qentry.attr.DSC_job_type && lmatch(qentry.attr.DSC_job_type, "EPSF-"))
+		qentry.attr.pages = 1;
 
 	/*
 	** Compute the final pagefactor.
@@ -2644,9 +2523,6 @@ int main(int argc, char *argv[])
 	if(option_unlink_jobfile && real_filename)
 		{
 		become_user();
-
-		if(chdir(starting_directory) == -1)
-			fprintf(stderr, "%s: -U: can't chdir(\"%s\")\n", myname, starting_directory);
 
 		if(unlink(real_filename) == -1)
 			fprintf(stderr, _("%s: -U: can't unlink(\"%s\"), errno=%d (%s)\n"), myname, real_filename, errno, gu_strerror(errno));

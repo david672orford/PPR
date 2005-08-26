@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -468,17 +468,6 @@ static int header_trailer(gu_boolean trailer)
 					found_Creator = TRUE;
 					}
 				return -1;
-				}
-			if(strcmp(tokens[0], "%"PPR_DSC_PREFIX"AuthCode:") == 0)
-				{
-				if(trap_noarg(tokens[0], tokens[1]) || trap_atend(tokens[0], tokens[1], tokens_count, trailer))
-					return -1;
-
-				/* If this is the first AuthCode line, then save the code. */
-				if(AuthCode == (char*)NULL)
-					AuthCode = gu_strdup(tokens[1]);
-
-				return -1;				/* swallow line */
 				}
 			break;
 		case 'E':
@@ -990,25 +979,16 @@ void read_header_comments(void)
 	getline_simplify();		 /* get 1st line, hopefully %!PS-... */
 
 	/*
-	** Process the %! line.
+	** Process the %! line, if there is one.
 	*/
-	if(strncmp(line, "%!PS-Adobe-", 11) == 0 && sscanf(line, "%%!PS-Adobe-%f", &qentry.attr.DSClevel) == 1)
+	if(lmatch(line, "%!"))
 		{
-		if(qentry.attr.DSClevel <= 3.0)					/* if below or at */
+		if(gu_sscanf(line, "%%!PS-Adobe-%f %S", &qentry.attr.DSClevel, &qentry.attr.DSC_job_type) >= 1)
 			{
-			fprintf(comments, "%%!PS-Adobe-3.0\n");		/* our version say ours */
+			if(qentry.attr.DSClevel > 3.0)
+				warning(WARNING_SEVERE, _("Document uses DSC version %.1f which is > 3.0"), qentry.attr.DSClevel);
 			}
-		else											/* if higher, */
-			{
-			fprintf(comments, "%s\n", line);			/* say that version */
-			warning(WARNING_SEVERE, _("Document uses DSC version %.1f which is > 3.0"), qentry.attr.DSClevel);
-			}
-
 		getline_simplify();				/* and refill buffer */
-		}
-	else								/* If not flagged with */
-		{								/* "%!PS-Adobe-x.xx", */
-		fprintf(comments, "%%!\n");		/* make no version claims. */
 		}
 
 	/*
@@ -1095,8 +1075,8 @@ static void read_defaults(void)
 ** into the "-pages" file.  When this funtion is called, there
 ** is already a line in the input buffer.
 **
-** We will stop when we hit the begining of the
-** first page, the begining of the trailer, or end of the file.
+** We will stop when we hit either the begining of the first page, the 
+** begining of the trailer, or end of the file.
 **
 ** If there will be no need to read any pages, then return non-zero.
 **
@@ -1122,96 +1102,85 @@ gu_boolean read_prolog(void)
 
 	while(! in_eof() )
 		{
-		if(line[0] == '%' && line[1] == '%')
-			{					/* if a DSC comment line, */
-			/*
-			** If start of 1st page, start document setup
-			** section if one does not exist.  Close document
-			** setup section if it is not closed already.
-			*/
-			if(nest_level() == 0 && strncmp(line, "%%Page:", 7) == 0)
+		if(lmatch(line, "%%"))			/* if a DSC comment line, */
+			{
+			if(nest_level() == 0)		/* if not in a sub-document, */
 				{
-				if(!qentry.attr.prolog)			/* XV will be scolded here */
+				/*
+				** If start of 1st page, start document setup
+				** section if one does not exist.  Close document
+				** setup section if it is not closed already.
+				*/
+				if(lmatch(line, "%%Page:"))
 					{
-					warning(WARNING_PEEVE, _("No \"%%%%EndProlog\" before first \"%%%%Page:\", inserting one"));
-					fputs("%%EndProlog\n", text);
-					qentry.attr.prolog = TRUE;
+					if(!qentry.attr.prolog)			/* this is set by %%EndProlog */
+						warning(WARNING_PEEVE, _("No \"%s\" before first \"%s\""), "%%EndProlog", "%%Page:");
+					if(qentry.attr.docsetup && !end_setup_seen)
+						warning(WARNING_PEEVE, _("No \"%s\" before first \"%s\""), "%%EndSetup", "%%Page:");
+					return TRUE;	/* pages should be read */
 					}
-
-				/* If no document setup, make one */
-				if(!qentry.attr.docsetup)
+	
+				/*
+				** If we have hit "%%Trailer" or "%%EOF", exit with a return
+				** value which instructs main() not to call read_pages().
+				*/
+				else if(strcmp(line, "%%Trailer") == 0 || strcmp(line, "%%EOF") == 0)
+					return FALSE;
+	
+				/*
+				** If we see a document defaults section,
+				** turn aside for a moment to copy it.
+				*/
+				else if(strcmp(line, "%%BeginDefaults") == 0)
 					{
-					fputs("%%BeginSetup\n", text);
+					read_defaults();
+					continue;
+					}
+	
+				/* Take note if we seen %%BeginSetup or %%EndSetup. */
+				else if(strcmp(line, "%%BeginSetup") == 0)
+					{
+					qentry.attr.docsetup = TRUE;	/* just set flag */
+	
+					if(!qentry.attr.prolog)			/* if no "%%EndProlog" seen, */
+						{
+						warning(WARNING_SEVERE, _("No \"%s\" before \"%s\""), "%%EndProlog", "%%BeginSetup");
+						outermost_end(OUTERMOST_PROLOG);
+						qentry.attr.prolog = TRUE;
+						}
+	
+					outermost_start(OUTERMOST_DOCSETUP);
+					}
+				else if(strcmp(line, "%%EndSetup") == 0)
+					{
 					qentry.attr.docsetup = TRUE;
+					end_setup_seen = TRUE;					/* just set flag */
+					outermost_end(OUTERMOST_DOCSETUP);
 					}
-
-				/* If there was no %%EndSetup line, insert one and
-				   leave a blank line after it. */
-				if(!end_setup_seen)
-					fputs("%%EndSetup\n\n", text);
-
-				return TRUE;	/* pages should be read */
-				}
-
-			/*
-			** If we have hit "%%Trailer" or "%%EOF", exit with a return
-			** value which instructs main() not to call read_pages().
-			*/
-			if(nest_level() == 0 && (strcmp(line, "%%Trailer") == 0 || strcmp(line, "%%EOF") == 0))
-				return FALSE;
-
-			/*
-			** If we see a document defaults section,
-			** turn aside for a moment to copy it.
-			*/
-			if(nest_level() == 0 && strncmp(line, "%%BeginDefaults", 15) == 0)
-				{
-				read_defaults();
-				continue;
-				}
-
-			/* Take note if we seen %%BeginSetup or %%EndSetup. */
-			if(nest_level() == 0 && strcmp(line, "%%BeginSetup") == 0)
-				{
-				qentry.attr.docsetup = TRUE;	/* just set flag */
-
-				if(!qentry.attr.prolog)			/* if no "%%EndProlog" seen, */
+	
+				/*
+				** If we see an explicit "%%BeginProlog", make a note of it:
+				** Notice though that we don't set qentry.attr.prolog = TRUE.
+				*/
+				else if(strcmp(line, "%%BeginProlog") == 0)
 					{
-					warning(WARNING_SEVERE, _("No \"%%%%EndProlog\" before \"%%%%BeginSetup\", inserting one"));
-					outermost_end(OUTERMOST_PROLOG);
-					fputs("%%EndProlog\n", text);
-					qentry.attr.prolog = TRUE;
+					outermost_start(OUTERMOST_PROLOG);
 					}
 
-				outermost_start(OUTERMOST_DOCSETUP);
-				}
-			else if(nest_level() == 0 && strcmp(line, "%%EndSetup") == 0)
-				{
-				qentry.attr.docsetup = TRUE;
-				end_setup_seen = TRUE;					/* just set flag */
-				outermost_end(OUTERMOST_DOCSETUP);
-				}
-
-			/* Look for "%%EndProlog", make note if we see it: */
-			if(nest_level() == 0 && strcmp(line, "%%EndProlog") == 0)
-				{
-				if(qentry.attr.prolog)	/* if already seen, */
+				/* Look for "%%EndProlog", make note if we see it: */
+				else if(strcmp(line, "%%EndProlog") == 0)
 					{
-					warning(WARNING_SEVERE, _("Extra \"%%%%EndProlog\""));
-					}
-				else
-					{
-					qentry.attr.prolog = TRUE;
-					outermost_end(OUTERMOST_PROLOG);
+					if(qentry.attr.prolog)	/* if already seen, */
+						{
+						warning(WARNING_SEVERE, _("Extra \"%%%%EndProlog\""));
+						}
+					else
+						{
+						qentry.attr.prolog = TRUE;
+						outermost_end(OUTERMOST_PROLOG);
+						}
 					}
 				}
-
-			/*
-			** If we see an explicit "%%BeginProlog", make a note of it:
-			** Notice that we don't set qentry.attr.prolog = TRUE.
-			*/
-			if(nest_level() == 0 && strcmp(line, "%%BeginProlog") == 0)
-				outermost_start(OUTERMOST_PROLOG);
 
 			/* Unrecognized comment, just copy it. */
 			copy_comment(text);

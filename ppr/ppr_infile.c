@@ -1851,7 +1851,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 	if(option_gab_mask & GAB_INFILE_FILTER)
 		printf("Final filter options: \"%s\"\n", gu_pcs_get_cstr(&clean_options));
 
-	exec_filter(filter_path, filter_name, gu_pcs_get_cstr(&clean_options), qentry.destname, title, starting_directory, (char*)NULL);
+	exec_filter(filter_path, filter_name, gu_pcs_get_cstr(&clean_options), qentry.destname, title, (char*)NULL);
 
 	gu_pcs_free(&clean_options);
 	} /* end of exec_tops_filter() */
@@ -2326,10 +2326,6 @@ int infile_open(const char filename[])
 		input_is_file = TRUE;
 		}
 
-	/* I hope this is ok to do now that we have
-	   opened the input file. */
-	chdir(LIBDIR);
-
 	/* Load the data buffer's worth of the file into memory: */
 	in_reset_buffering();
 	in_load_buffer();
@@ -2340,7 +2336,7 @@ int infile_open(const char filename[])
 	   input buffer and anything else it can read from the
 	   input file to a queue file ending in "-infile".  It then
 	   makes the new file the input file and calls in_load_buffer(). */
-	if( qentry.opts.hacks & (HACK_KEEPINFILE | HACK_TRANSPARENT) )
+	if(qentry.opts.hacks & (HACK_KEEPINFILE | HACK_TRANSPARENT))
 		save_infile();
 
 	/* We jump back here after pushing certain filters

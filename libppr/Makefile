@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 March 2005.
+# Last modified 24 August 2005.
 #
 
 include ../Makefile.conf
@@ -79,11 +79,12 @@ ali_str.$(OBJ): ali_str.c
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
 
+# This program tests the PostScript query class.
 query$(DOTEXE): query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
 	$(CC) $(CFLAGS) -o $@ -DTEST $^
 
 query_wrapper$(DOTEXE): query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-	$(CC) $(CFLAGS) -o $@ -DTEST $^
+	$(CC) $(CFLAGS) -o $@ $^
 
 #=== Install ================================================================
 

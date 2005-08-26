@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_filters.sgml
-Last Modified: 9 May 2004
+Last Modified: 24 August 2005
 Last Proofread: never
 -->
 
@@ -67,14 +67,6 @@ their input as pages with headers and footers.
 
 </para>
 </listitem>
-<listitem>
-
-<para>
-The directory which was current when <command>ppr</command> was invoked.  This is used
-by the TeX, TeXinfo, and DVI filters when searching for include files.
-
-</para>
-</listitem>
 
 </orderedlist>
 
@@ -109,14 +101,14 @@ $ ppr -d myprn -o noisy=no -o 'fortran-width=130 jpeg-noisy=yes' picture.jpg
 </para>
 
 <para>
-The filter will be invoked like this:
+The filter will be invoked like thus:
 </para>
 
 <para>
 
 <screen>
 filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX \
-	noisy=no noisy=yes' myprn 'picture.jpg' /home/me
+	noisy=no noisy=yes' myprn 'picture.jpg'
 </screen>
 
 </para>
@@ -135,19 +127,15 @@ A message may be informed by printing on stderr or invoking a responder, the
 exect behaviour being controled by the <option>-e</option> switch.
 </para>
 
-<para>
-When a filter is executed, the real user id is that of the user who executed
-<command>ppr</command>.  The effective user id and the saved user id's are
-<literal>ppr</literal>.  The real
-group id is the same as it was when <command>ppr</command> was executed.  The effective and
-saved group id's are <literal>ppop</literal>.
-</para>
+<para>When a filter is executed, the real user id is that of the user who
+executed <command>ppr</command>.  The effective user id and the saved user id's
+are <literal>ppr</literal>.  The real group id is the same as it was when
+<command>ppr</command> was executed.  The effective and saved group id's are
+<literal>ppop</literal>.</para>
 
-<para>
-It is possible to determine precisely what filter is being executed with what
-arguments by running <command>ppr</command> with the <option>-G infile:filter</option> option.
-
-</para>
+<para> It is possible to determine precisely what filter is being executed with
+what arguments by running <command>ppr</command> with the <option>-G
+infile:filter</option> option.  </para>
 
 <para>The filters supplied with PPR, together with their options are
 described in <ulink url="../refman/ppr.1.html">the ppr(1) man page</ulink>,

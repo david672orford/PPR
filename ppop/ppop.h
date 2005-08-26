@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 25 August 2005.
 */
 
 /*
@@ -49,11 +49,11 @@ struct Destname
 int parse_job_name(struct Jobname *job, const char *jobname);
 int parse_dest_name(struct Destname *dest, const char *destname);
 
-extern pid_t pid;
-extern int machine_readable;
+extern gu_boolean	opt_verbose;
+extern int 			opt_machine_readable;
+extern int			opt_arrest_interest_interval;
+
 extern FILE *errors;
-extern int arrest_interest_interval;
-extern gu_boolean verbose;
 
 void fatal(int exitval, const char *string, ...)
 #ifdef __GNUC__
@@ -73,8 +73,8 @@ FILE *get_ready(void);
 FILE *wait_for_pprd(int do_timeout);
 int print_reply(void);
 
-int assert_am_operator(void);
-int job_permission_check(struct Jobname *job);
+gu_boolean assert_am_operator(void);
+gu_boolean job_permission_check(struct Jobname *job);
 int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile);
 
 /* ============== Functions in ppop_cmds_listq.c =================== */

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--17 August 2005
+2.00a1, 11 December 2004--25 August 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9517,8 +9517,8 @@ no final tarball was released.
 
 * editps/OpenOffice.org: added
 
-* printdesk/ppr-chooser.perl: removed (it was supposed to have been removed
-  a long time ago).
+* printdesk/ppr-chooser.perl and ATchooser.pm: removed (they were supposed to
+  have been removed a long time ago).
 
 * makeprogs/scriptfixup.sh: removed (since all scripts have been converted to
   subst_tool).
@@ -9781,5 +9781,36 @@ no final tarball was released.
   The Debian package will integrate PPR with these facilities.
 
 * ppad/media.german: merged into media.sample.
+
+* ppr/ppr_main.c: removed support for PPR_RESPONDER, PPR_RESPONDER_ADDRESS,
+  and PPR_RESPONDER_OPTIONS since ppr-followme(1) makes it obsolete
+
+* ppr/ppr_main.c: removed -X, removed -u (--use-username) and added -u (--user)
+  in an effort to simply a very hard-to-understand part of PPR.  We are doing
+  away with the proxy-for system.
+
+* ppr/, pprdrv/, libppr/qfileentry_*.c: reworked handling of EPS, and the 
+  parsing of prolog and document setup.  The code for inserting prolog and
+  document setup code into documents without such marked sections is now
+  in the same code path as the normal code.  EPS files are assumed to have
+  one page even if they do not say so explicitly or have a "%%Page:" comment.
+
+* filter_dotmatrix/graphics.c: fixed strange error on amd64.  If c is a char
+  and tuple is an unsigned int, then the line:
+    tuple = c << 24;
+  fills the upper 32 bits of tuple with 1's!  The fix is to write:
+    tuple = (unsigned)c << 24;
+  Anyone know what obscure type conversion rule is involved here?
+
+* libppr/acl.c: removed old compatibility code which counted membership
+  in a group with the same name as the ACL as membership in the ACL.
+
+* ppr/, filters_misc/: ppr no longer changes directory to LIBDIR and no
+  longer passes the original directory as a parameter to input filters.
+
+
+
+  
+
 
 

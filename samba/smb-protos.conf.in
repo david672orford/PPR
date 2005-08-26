@@ -24,11 +24,11 @@
    ; The line below must go in [global] if Samba older than 1.9.18.
    printing = bsd
 
-   print command = @PPR_PATH@ -d %p -e responder -w log -m samba -r %m-%I --responder-options os=%a -X %U@%m.samba -f %U -U %s &
+   print command = @PPR_PATH@ -d %p -e responder -w log -m samba -r %m-%I --responder-options os=%a --user %U@%m.samba -f %U -U %s &
    lpq command = @PPOP_PATH@ lpq %p
-   lprm command = @PPOP_PATH@ -X %U@%m.samba cancel %p-%j
-   lppause command = @PPOP_PATH@ -X %U@%m.samba hold %p-%j
-   lpresume command = @PPOP_PATH@ -X %U@%m.samba release %p-%j
+   lprm command = @PPOP_PATH@ --user %U@%m.samba cancel %p-%j
+   lppause command = @PPOP_PATH@ --user %U@%m.samba hold %p-%j
+   lpresume command = @PPOP_PATH@ --user %U@%m.samba release %p-%j
 
    ; Samba 1.9.18.p10 and later allows us to pause queues.  There are two
    ; possible queuepause commands.  The first one pauses the queue once
@@ -68,7 +68,7 @@
 ;
 [pprproto_pprpopup2]
    copy = pprproto
-   print command = @PPR_PATH@ -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi -X %U@%m.samba -f %U -U %s &
+   print command = @PPR_PATH@ -d %p -e responder -w log -m pprpopup -r %m --hold --question cgi-bin/job_public.cgi --user %U@%m.samba -f %U -U %s &
 
 ;
 ; This section is for the automatic installation of

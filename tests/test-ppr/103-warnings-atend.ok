@@ -17,6 +17,7 @@ WARNING: No valid "%%Pages:" comment
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup
@@ -49,6 +50,7 @@ clear_output: rm: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup
@@ -87,6 +89,7 @@ clear_output: rm: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 /testfont {findfont 10 scalefont setfont} def
 %%EndProlog
 
@@ -125,6 +128,7 @@ clear_output: rm: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 /testfont {findfont 10 scalefont setfont} def
 %%EndProlog
 
@@ -167,6 +171,7 @@ WARNING: Resource "procset WontClear 0 0" listed as needed but there is no %%Inc
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%IncludeResource: procset WontClear 0 0
 %%IncludeResource: procset Smith 0 0
 %%IncludeResource: procset Jones 0 0
@@ -213,6 +218,7 @@ WARNING: Resource "procset WontClear 0 0" listed as needed but there is no %%Inc
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%IncludeResource: procset WontClear 0 0
 %%IncludeResource: procset Smith 0 0
 %%IncludeResource: procset Jones 0 0
@@ -259,6 +265,7 @@ WARNING: Resource "procset WontClearMe 0 0" listed as needed but there is no %%I
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%IncludeResource: procset WontClearMe 0 0
 %%IncludeResource: procset Smith 0 0
 %%IncludeResource: procset Jones 0 0
@@ -303,6 +310,7 @@ clear_output: rm: 0
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%IncludeResource: procset Smith 0 0
 %%IncludeResource: procset Jones 0 0
 
@@ -344,6 +352,7 @@ WARNING: Keyword "%%BoundingBox:" declared (atend) in trailer
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup

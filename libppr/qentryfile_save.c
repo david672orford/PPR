@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 June 2005.
+** Last modified 22 August 2005.
 */
 
 /*! \file */
@@ -45,6 +45,9 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	/* This line will be useful once distributed printing is implemented. */
 	fprintf(Qfile, "PPRVersion: %s\n", SHORT_VERSION);
 
+	if(qentry->lc_messages)
+		fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages);
+
 	/* This is at the begining of the file so that it will be easy to modify. */
 	fprintf(Qfile, "Status-and-Flags: %02d %04X\n", (qentry->status * -1), qentry->flags);
 
@@ -53,20 +56,13 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 
 	fprintf(Qfile, "MagicCookie: %s\n", qentry->magic_cookie);
 
-	fprintf(Qfile, "User: %ld %s %s\n",
-		qentry->user,									/* Unix user id */
-		qentry->username ? qentry->username : "?",		/* Unix user name */
-		qentry->proxy_for ? qentry->proxy_for : "");
-
-	if(qentry->lc_messages)
-		fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages);
-
-	fprintf(Qfile, "Priority: %d\n", qentry->priority);
-
+	/* submitter identity */
+	fprintf(Qfile, "User: %s\n", qentry->user);
 	fprintf(Qfile, "For: %s\n", qentry->For ? qentry->For : "???");
-
 	if(qentry->charge_to)
 		fprintf(Qfile, "Charge-To: %s\n", qentry->charge_to);
+
+	fprintf(Qfile, "Priority: %d\n", qentry->priority);
 
 	/* It is permissible to use --title "" to make the title an empty string 
 	   and thereby prevent a temporary file name from becoming the title by 
@@ -98,8 +94,9 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	/* If the --commentatary switch was used, emmit a "Commentary:" line. */
 	fprintf(Qfile, "Commentary: %d\n", qentry->commentary);
 
-	fprintf(Qfile, "Attr-DSC: %s %d %d %d\n",
+	fprintf(Qfile, "Attr-DSC: %s %s %d %d %d\n",
 				gu_dtostr(qentry->attr.DSClevel),
+				qentry->attr.DSC_job_type ? qentry->attr.DSC_job_type : "NULL",
 				qentry->attr.orientation,
 				qentry->attr.proofmode,
 		   (int)qentry->attr.docdata);
@@ -156,7 +153,7 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	fprintf(Qfile, "EndMisc\n");
 
 	/* see RFC 2911 4.3.6 */
-	fprintf(Qfile, "job-originating-user-name %s\n", qentry->username ? qentry->username : "?");
+	fprintf(Qfile, "job-originating-user-name %s\n", qentry->user ? qentry->user : "?");
 
 	/* see RFC 2911 4.3.5 */
 	if(qentry->Title && qentry->Title[0] != '\0')

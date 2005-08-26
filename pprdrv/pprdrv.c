@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2005.
+** Last modified 23 August 2005.
 */
 
 /*
@@ -336,6 +336,23 @@ char *dgetline(FILE *infile)
 */
 static void copy_header(void)
 	{
+	/* If the job doesn't even claim DSC 1.0 conformance and doesn't
+	 * have any "%%Page:" comments, then just identify it as PostScript. */
+	if(job.attr.DSClevel == 0.0 && job.attr.pages < 1)
+		{
+		printer_putline("%!");
+		}
+	/* Otherwise specify DSC version 3.0 (or higher if the job is higher). */
+	else
+		{
+		char temp[8];
+		snprintf(temp, sizeof(temp), "%.1f", job.attr.DSClevel < 3.0 ? 3.0 : job.attr.DSClevel);
+		if(job.attr.DSC_job_type)
+			printer_printf("%%!PS-Adobe-%s %s\n", temp, job.attr.DSC_job_type);
+		else
+			printer_printf("%%!PS-Adobe-%s\n", temp);
+		}
+		
 	/*
 	** Copy the "-comments" file to the printer.  The first
 	** that will be copied is the "%!" line.
@@ -497,6 +514,10 @@ static void copy_defaults(void)
 static gu_boolean copy_prolog(void)
 	{
 	gu_boolean retval = FALSE;
+
+	/* This will be true if we should use "%%BeginProlog/%%EndProlog" tags. */
+	gu_boolean write_prolog_tags = job.attr.prolog || job.attr.docsetup || job.attr.script;
+
 	doing_prolog = TRUE;
 
 	/*
@@ -510,13 +531,20 @@ static gu_boolean copy_prolog(void)
 		printer_putline(line);
 
 	/*
-	** If the 1st non-blank line was "%%BeginProlog",
-	** write it to the output file before inserting extra code.
-	*/
-	if(strcmp(line, "%%BeginProlog") == 0)
-		{						/* If it is "%%BeginProlog", */
-		printer_putline(line);		   /* write to output */
-		dgetline_read(text);		 /* and read the next line. */
+	 * If there will be an "%%EndProlog" or we will be able to figure out 
+	 * where to insert one, write a "%%BeginProlog" and swallow any that
+	 * may have been in the job already.  Otherwise, write just write
+	 * a comment which indicates the place where PPR inserted code.
+	 */
+	if(write_prolog_tags)
+		{
+		printer_putline("%%BeginProlog");
+		if(strcmp(line, "%%BeginProlog") == 0)
+			dgetline_read(text);
+		}
+	else
+		{
+		printer_puts("% No DSC prolog, PPR will add code here ---v\n");
 		}
 
 	/*
@@ -525,63 +553,64 @@ static gu_boolean copy_prolog(void)
 	*/
 	jobpatchfile();
 
-	/* Insert things in the prolog if we haven't already. */
-	if(job.attr.prolog)
+	/* If we will need the N-Up library or some other
+	   extra resource, insert it here. */
+	insert_extra_prolog_resources();
+
+	if(write_prolog_tags)
 		{
-		/* If we will need the N-Up library or some other
-		   extra resource, insert it here. */
-		insert_extra_prolog_resources();
-		}
-
-	/* The line in the buffer didn't get parsed above,
-	   do it now.  This may require us to get additional
-	   lines to satisfy things such as resource inclusion
-	   handling. */
-	while(dgetline_parse(text))
-		{
-		if(! dgetline_read(text))
-			break;
-		}
-
-	/*
-	** Now, start the main copy loop.  Some of these cases are probably unnecessary
-	** since ppr (the program that places jobs in the queue) probably ensures that
-	** there is a "%%EndProlog" before the first "%%Page:".
-	*/
-	do	{
-		if(level==0 && strcmp(line, "%%BeginSetup") == 0)
+		/* The line in the buffer didn't get parsed above,
+		   do it now.  This may require us to get additional
+		   lines to satisfy things such as resource inclusion
+		   handling. */
+		while(dgetline_parse(text))
 			{
-			retval = TRUE;
-			break;
+			if(! dgetline_read(text))
+				break;
 			}
-		if(level==0 && lmatch(line, "%%Page:"))
-			{
-			retval = TRUE;				/* was FALSE, an error hidden by copy_trailer() */
-			break;
-			}
-		if(level==0 && strcmp(line, "%%Trailer") == 0)
-			{
-			retval = FALSE;
-			break;
-			}
-		if(level==0 && strncmp(line, "%%EndProlog", 11) == 0)
-			{
-			dgetline(text);		/* <-- Leave first line of next section in line[]. */
-			retval = TRUE;
-			break;
-			}
-
-		/* copy the line through to the printer */
-		printer_write(line, line_len);
-		if(!line_overflow)
-			printer_putc('\n');
-
-		} while(dgetline(text));
-
-	if(retval)
-		{
+	
+		/*
+		** Now, start the main copy loop.  Some of these cases are probably unnecessary
+		** since ppr (the program that places jobs in the queue) probably ensures that
+		** there is a "%%EndProlog" before the first "%%Page:".
+		*/
+		do	{
+			if(level==0 && strcmp(line, "%%BeginSetup") == 0)
+				{
+				retval = TRUE;
+				break;
+				}
+			if(level==0 && lmatch(line, "%%Page:"))
+				{
+				retval = TRUE;				/* was FALSE, an error hidden by copy_trailer() */
+				break;
+				}
+			if(level==0 && strcmp(line, "%%Trailer") == 0)
+				{
+				retval = FALSE;
+				break;
+				}
+			if(level==0 && strncmp(line, "%%EndProlog", 11) == 0)
+				{
+				dgetline(text);		/* <-- Leave first line of next section in line[]. */
+				retval = TRUE;
+				break;
+				}
+	
+			/* If we get here, copy the line through to the printer. */
+			printer_write(line, line_len);
+			if(!line_overflow)
+				printer_putc('\n');
+	
+			} while(dgetline(text));
+	
 		custom_hook(CUSTOM_HOOK_PROLOG, 0);
 		printer_puts("%%EndProlog\n");
+		}
+	else
+		{
+		printer_puts("% ^--- End of non-DSC prolog\n");
+		retval = TRUE;
 		}
 
 	doing_prolog = FALSE;
@@ -589,27 +618,32 @@ static gu_boolean copy_prolog(void)
 	} /* end of copy_prolog() */
 
 /*
-** Copy the Document Setup section.  Return FALSE if we hit the %%Trailer
-** comment or end of file.  Return TRUE if we hit and copy "%%EndSetup".
+** Copy the Document Setup section.
 */
-static gu_boolean copy_setup(void)
+static void copy_setup(void)
 	{
 	doing_docsetup = TRUE;
 
 	/* Copy blank lines before inserting bin select code. */
-	while(*line == '\0')								/* while line is zero length */
-		{
-		printer_putline(line);							/* copy it to the output */
-		if(!dgetline_read(text))						/* and get the next one */
-			break;										/* defering parsing */
+	while(*line == '\0')			/* While line is zero length */
+		{	
+		printer_putline(line);		/* copy it to the output */
+		if(!dgetline_read(text))	/* and get the next one defering parsing. */
+			break;
 		}
 
-	/* Copy "%%BeginSetup" line before inserting bin select code. */
-	if(strcmp(line, "%%BeginSetup") == 0)
+	/* If there is a document setup section or we can add one, copy it before 
+	 * inserting bin select code. */
+	if(job.attr.docsetup || job.attr.script)
 		{
-		printer_putline(line);
-		dgetline_read(text);			/* and get the next one, */
-		}								/* defering parsing */
+		printer_putline("%%BeginSetup");
+		if(strcmp(line, "%%BeginSetup") == 0)	/* If there already was one, get the */
+			dgetline_read(text);				/* next line while defering parsing. */
+		}
+	else
+		{
+		printer_puts("% No DSC document setup, PPR will add code here ---v\n");
+		}
 
 	/*
 	** Set the job name so that others who want to use the printer will be
@@ -652,7 +686,7 @@ static gu_boolean copy_setup(void)
 	/*
 	** If we are using N-Up, insert the N-Up invokation.  This has been
 	** placed after the auto bin select because the N-Up package makes
-	** itself at home on the currently selected media.  This is after
+	** itself at home on the currently selected medium.  This is after
 	** insert_noinclude_fonts() so that the `Draft' notice font is
 	** downloaded before N-Up is invoked.
 	*/
@@ -669,63 +703,51 @@ static gu_boolean copy_setup(void)
 		}
 
 	/*
-	** Now, copy the origional document setup section.
-	**
-	** "%%EOF" should not occur since ppr should make sure all
-	** files have a "%%Trailer" comment.  We do not have to look
-	** for "%%Page:" comments because any file which has any
-	** pages will already have had "%%EndSetup" added.
-	*/
-	do	{
-		if(*line=='%' && level==0 && strcmp(line, "%%Trailer") == 0)
-			{
-			strip_binselects = FALSE;	/* stop stripping */
-			strip_signature = FALSE;
-			doing_docsetup = FALSE;
-			return FALSE;				/* then no pages. */
-			}							/* if we had hit %%EndSetup we would have returned 0.) */
+	 * If the document has at least one "%%Page:" comment, copy the
+	 * document-setup section now, whether or not it is labeled as such.
+	 */
+	if(job.attr.docsetup || job.attr.script)
+		{
+		do	{
+			if(strcmp(line, "%%EndSetup") == 0)
+				{
+				do  {
+					dgetline(text);				/* get line which follows */
+					} while(line[0] == '\0');	/* eat blank lines */
+				break;
+				}
+			if(lmatch(line, "%%Page:"))
+				{
+				break;
+				}
+			printer_write(line, line_len);
+			if(!line_overflow)
+				printer_putc('\n');
+			} while(dgetline(text));
+		}
 
-		if(*line=='%' && level==0 && strncmp(line, "%%EndSetup", 10) == 0)
-			{
-			insert_features(qstream,2); /* insert ppr -F *Duplex switch things */
+	insert_features(qstream,2); /* insert ppr -F *Duplex switch things */
 
-			if(copies_auto != -1)
-				set_numcopies(copies_auto);
+	if(copies_auto != -1)
+		set_numcopies(copies_auto);
 
-			if(copies_auto_collate != -1)
-				set_collate(copies_auto_collate ? TRUE : FALSE);
+	if(copies_auto_collate != -1)
+		set_collate(copies_auto_collate ? TRUE : FALSE);
 
-			insert_userparams();
+	insert_userparams();
 
-			custom_hook(CUSTOM_HOOK_DOCSETUP, 0);
+	custom_hook(CUSTOM_HOOK_DOCSETUP, 0);
 
-			printer_puts("%%EndSetup\n"); /* print the "%%EndSetup" */
+	if(job.attr.docsetup || job.attr.script)
+		printer_puts("%%EndSetup\n\n");
+	else
+		printer_puts("% ^--- end of non-DSC document setup\n\n");
 
-			dgetline(text);				/* get 1st line for page routine */
+	strip_binselects = FALSE;		/* stop stripping binselects */
+	strip_signature = FALSE;
 
-			strip_binselects = FALSE;	/* stop stripping binselects */
-			strip_signature = FALSE;
-			doing_docsetup = FALSE;
-			return TRUE;				/* Return 0 because we hit %%EndSetup, */
-			}							/* there will be pages. */
-
-		printer_write(line, line_len);
-		if(!line_overflow)
-			printer_putc('\n');
-		} while(dgetline(text));
-
-	/*
-	** This assertion looks ok, but it is not a good idea.  Some highly
-	** defective PostScript files contain unclosed resources in the setup
-	** section.  This will cause the code above to speed right past
-	** the "%%Trailer" line (as it should).  Since ppr doesn't always fix
-	** them (even with editps turned on) and they will still print, though
-	** without the benefit of features that are dependent on usable "%%Page:"
-	** comments, we shouldn't throw an assertion failure here.
-	*/
-	/* fatal(EXIT_JOBERR, "queue -text file lacks \"%%%%Trailer\" comment"); */
-
-	return FALSE;
+	doing_docsetup = FALSE;
+	return;
 	} /* end of copy_setup() */
 
 /*
@@ -1714,8 +1736,8 @@ static void printer_use_log(struct timeval *start_time, int pagecount_start, int
 				QueueFile,
 				printer.Name,
 				job.For ? job.For : "???",
-				job.username,
-				job.proxy_for ? job.proxy_for : "",
+				job.user,
+				"",		/* was proxy_for */
 				pages,
 				total_printed_sheets,
 				total_printed_sides,
@@ -2198,63 +2220,16 @@ int real_main(int argc, char *argv[])
 		copy_defaults();
 
 		/*
-		** If the job contains not marked prolog section,
-		** include a fake one at the top.
-		*/
-		if(!job.attr.prolog)
-			{
-			printer_puts("% No DSC prolog, PPR will add code here ---v\n");
-
-			/*
-			** Give the code in pprdrv_patch.c a change to include
-			** any *JobPatchFile sections from the PPD file.
-			*/
-			jobpatchfile();
-
-			/*
-			** Include any extra resources such as the N-Up
-			** dictionary or the TrueType dictionary.
-			*/
-			insert_extra_prolog_resources();
-
-			printer_puts("% ^--- End of non-DSC prolog\n");
-			}
-
-		/*
-		** If this document does not have a marked docsetup section,
-		** include a fake one at the top.
-		*/
-		if(!job.attr.docsetup)					/* if no conforming doc setup section, */
-			{									/* put non-conforming one at job start */
-			printer_puts("% No DSC document setup, PPR will add code here ---v\n");
-			set_jobname(QueueFile);
-			insert_noinclude_fonts();
-			if(media_count==1 && job.opts.binselect)
-				select_medium(media_xlate[0].pprname);
-			insert_features(qstream, 1);		/* insert most ppr -F switch things */
-			invoke_N_Up();
-			insert_features(qstream, 2);		/* insert ppr -F *Duplex switch thing */
-			if(copies_auto != -1)
-				set_numcopies(copies_auto);
-			if(copies_auto_collate != -1)
-				set_collate(copies_auto_collate ? TRUE : FALSE);
-			custom_hook(CUSTOM_HOOK_DOCSETUP, 0);
-			printer_puts("% ^--- end of non-DSC document setup\n");
-			}
-
-		/*
 		** Copy the main prolog, document setup, and script sections:
 		*/
 		DODEBUG_MAIN(("real_main(): copying various code sections"));
-		if(copy_prolog())				/* Copy prolog, and if it did not end */
+		if(copy_prolog())
 			{
-			if(copy_setup())			/* with "%%Trailer", copy Document Setup */
+			copy_setup();
+			if(! copy_nonpages())
 				{
-				if(! copy_nonpages() )	/* if it didn't end, copy non-page text */
-					{
-					custom_hook(CUSTOM_HOOK_PAGEZERO, 0);
-					copy_pages();		/* and then if still no end, copy pages. */
-					}
+				custom_hook(CUSTOM_HOOK_PAGEZERO, 0);
+				copy_pages();
 				}
 			}
 

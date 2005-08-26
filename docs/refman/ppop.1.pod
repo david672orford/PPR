@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 January 2005.
+# Last modified 25 August 2005.
 #
 
 =head1 NAME
@@ -54,30 +54,22 @@ the user type "ppop help" for further instructions.
 There are other switches which may be used when invoking B<ppop>, either
 with a subcommand on the command line or without one (for interactive mode).
 
-The B<-X> or B<--proxy-for> switch can be used to submit a proxy-for
-identification string.  Such a string is used when dealing with jobs which a
-Unix user has submited as proxy for other users.  This may be when a a network
-print server accepts jobs from remote clients.
+The B<-u> switch can be used by an operator to cause B<ppop> to behave as
+though it had been invoked by another user.  For example,
+C<ppop -u smith cancel chipmunk> will cancel all jobs belonging to user
+"smith" which are queued for "chipmunk".
 
-If an B<-X> switch was used when submitting the job and a subsequent
-B<ppop> command includes an B<-X> switch, the proxy-for strings must match.
-If they do not, permission to perform the operation will be denied.  A network
-print server such as Samba can use this to make sure a remote user can delete
-only the jobs he submitted.
+The B<ppop> command has some limited support for wildcards in the username.
+For usernames in the form "I<username>@I<hostname>", the I<username>, the
+I<hostname>, or both may be replaced with "*" which will match any user name or
+any host name.  For example, "C<ppop -u 'smith@*' cancel myprn>" will cancel
+all jobs queued for "myprn" which were submitted on behalf of the user "smith"
+from any host.  The command "C<ppop -u '*@*' cancel myprn>" will cancel jobs
+submitted on the behalf of any user from any host.
 
-The B<ppop> command has some limited support for wildcards in principal
-strings.  For principal strings in the form "I<username>@I<hostname>", the
-I<username>, the I<hostname>, or both may be replaced with "*" which will
-match any user name or any host name.  For example,
-"C<ppop -X 'smith@*' cancel myprn>" will cancel all proxy jobs queued for
-"myprn" which were submitted on behalf of the user "smith" from any
-host.  The command "C<ppop -X '*@*' cancel myprn>" will cancel proxy jobs
-submitted on the behalf of any user from any host, but it will not
-delete any non-proxy jobs, nor will it delete proxy jobs with principal
-strings that do not contain an "@".  These wildcards are employed by
-B<lprsrv>.  Careful reading of the above rules will reveal that a remote
-B<lprm> can generally only be used to remove jobs submitted with a remote
-B<lpr>.
+These wildcards are employed by B<lprsrv>.  Careful reading of the above rules
+will reveal that B<lprm> on any given node can generally only be used to remove
+jobs submitted from the same node.
 
 The B<-M> switch should be used when another program will be parsing ppop's
 output.  The B<-M> switch simplifies the output format as follows:  Banner
@@ -87,13 +79,6 @@ command is executed a line in the form "C<*DONE\t%d\n>" is printed where C<%d>
 is the return code of the command.  For some subcommand which output text
 in columns, columns which would ordinarily be separated by a varying number of
 spaces may be separated by lone tabs.
-
-The B<--su> switch can be used by an operator to cause B<ppop> to behave as
-though it had been invoked by another user.  For example,
-C<ppop --su smith cancel chipmunk> will cancel all jobs belonging to user
-"smith" which are queued for "chipmunk".  Note that `becoming' another user
-in this manner is quite different than serving as a proxy for another user.
-A user maintains its own identity while serving as a proxy.
 
 The B<-A> switch can cause arrested jobs to be ommited from queue listings on the
 theory that they are unimportant.  It takes an integer as its argument.
@@ -116,13 +101,12 @@ detailed information.  The B<ppop status> subcommand is one such.
 
 =head2 Access Control
 
-Most operations performed by the ppop command require PPR operator privileges.
-Only those operations which do not alter the spooler state (such as listing
-the queue) or only affect a user's own jobs may be performed by
-non-privileged users.  This command defines a privileged user as the
-user "ppr", a user with a UID of 0 (root), a user who is listed in
-the file "F</etc/ppr/acl/ppop.allow>", or (for compatibility with
-previous versions of PPR) a user who is a member of the group "ppop".
+Most operations performed by the B<ppop> command require PPR operator
+privileges.  Only those operations which do not alter the spooler state (such
+as listing the queue) or only affect a user's own jobs may be performed by
+non-privileged users.  This command defines a privileged user as the users
+"ppr" and "pprwww", a user with a UID of 0 (root), or a user who is listed in
+the file F</etc/ppr/acl/ppop.allow>.
 
 =head2 Destination Commands
 

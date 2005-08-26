@@ -21,6 +21,7 @@ WARNING: Space missing after keyword "%%Page:"
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%EndProlog
 
 %%BeginSetup

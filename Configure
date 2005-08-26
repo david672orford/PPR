@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 August 2005.
+# Last modified 19 August 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -1798,23 +1798,27 @@ cat >&3 <<'===MakeRules==='
 
 # Do substitutions in .in files to create their targets.
 .in:
+	rm -f $*
 	../subst_tool <$*.in >$*
-	chmod 755 $*
+	chmod 444 $*
 
 # Do substitutions in .sh files to create shell scripts.
 .sh:
+	rm -f $*
 	../subst_tool <$*.sh >$*
-	chmod 755 $*
+	chmod 555 $*
 
 # Do substitutions in .perl files to create Perl scripts.
 .perl:
+	rm -f $*
 	../subst_tool <$*.perl >$*
-	chmod 755 $*
+	chmod 555 $*
 
 # Do substitutions in .tcl files to create Tcl scripts.
 .tcl:
+	rm -f $*
 	../subst_tool <$*.tcl >$*
-	chmod 755 $*
+	chmod 555 $*
 
 # Build an object file from a single .c file.
 .c.$(OBJ):

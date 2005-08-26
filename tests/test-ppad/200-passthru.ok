@@ -2,8 +2,8 @@ Setting passthru...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -12,11 +12,11 @@ PassThru: pcl
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
+  JobBreak: none (by default)
+  Feedback: no (by default)
   Codes: Binary (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
@@ -38,11 +38,11 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	dummy
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
+jobbreak	default none
+feedback	default no
 codes	default Binary
 rip			
 rip_ppd			
@@ -69,8 +69,8 @@ Setting passthru...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -79,11 +79,11 @@ PassThru: pcl pdf
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
+  JobBreak: none (by default)
+  Feedback: no (by default)
   Codes: Binary (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
@@ -105,11 +105,11 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	dummy
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
+jobbreak	default none
+feedback	default no
 codes	default Binary
 rip			
 rip_ppd			
@@ -136,8 +136,8 @@ Setting passthru...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -146,11 +146,11 @@ PassThru: xyz abc def jhk lmn opq
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
+  JobBreak: none (by default)
+  Feedback: no (by default)
   Codes: Binary (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
@@ -172,11 +172,11 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	dummy
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
+jobbreak	default none
+feedback	default no
 codes	default Binary
 rip			
 rip_ppd			
@@ -203,8 +203,8 @@ Setting passthru...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -212,11 +212,11 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: dummy
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
+  JobBreak: none (by default)
+  Feedback: no (by default)
   Codes: Binary (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
@@ -237,11 +237,11 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	dummy
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
+jobbreak	default none
+feedback	default no
 codes	default Binary
 rip			
 rip_ppd			

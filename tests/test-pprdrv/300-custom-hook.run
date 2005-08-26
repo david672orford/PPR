@@ -11,7 +11,7 @@ echo "CustomHook: 63 $TESTBIN/test_custom_hook" >>$CONFDIR/printers/regression-t
 
 $TESTBIN/clear_output
 
-$PPR_PATH -d regression-test2 -b yes -t yes -m none -u yes <<TestText
+$PPR_PATH -d regression-test2 -b yes -t yes -m none -f ppr <<TestText
 Now is the time for all good men to come to the aid of the party.
 TestText
 echo "ppr: $?"

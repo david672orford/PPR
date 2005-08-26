@@ -40,6 +40,7 @@ WARNING: Resource "file my.ps" is supplied but isn't listed as supplied
 %TCHCTSpooler: PPR-x.xx
 %%EndComments
 
+%%BeginProlog
 %%BeginProcSet:
 /inch {72 mul} def
 %%EndProcSet

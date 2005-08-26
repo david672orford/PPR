@@ -539,7 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--27 May 2005.
+2.00a1, 11 December 2004--24 August 2005.
 
 * refman/: removed references to papsrv.
 
@@ -571,3 +571,22 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppr-filters.1.pod,ppr.1.pod: added references to the fact that
   a charset= option is now derived from the current locale.
+
+* refman/: removed documentation for removed commands such as ppr-lpr
+  and ppr-xfm.
+
+* misc/tcl_cross_platform.html: removed
+
+* Makefile: dropt pprlibs/ from list of directories which are built automatically.
+
+* refman/ppr.1.pod: removed references to -a, -A, and the old -u
+
+* refman/ppr.1.pod: changed to reflect the fact the an error will now be 
+  thrown if a non-priviliged user tries to use the -f option.
+
+* refman/ppr.1.pod: described the new semantics for -u, -f, and --charge-to
+
+* pprhack/pprhack_filters.sgml: removed parameter for the current directory
+  when ppr(1) was invoked since ppr no longer changes directory.
+
+

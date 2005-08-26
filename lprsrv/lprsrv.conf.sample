@@ -1,6 +1,6 @@
 ;
 ; lprsrv.conf.sample
-; Last modified 7 April 2004.
+; Last modified 19 August 2005.
 ;
 ; This is a sample security configuration file for the PPR LPR/LPD
 ; server.  The intent of this sample file is to duplicate as closely
@@ -36,45 +36,10 @@
 ;	nodes in question to honestly identify the user for whom the request
 ;	was generated since ordinary users can make their own requests from
 ;	insecure ports therby bypassing lpr.
-; ppr become user
-;	Specifies whether lprsrv should run the PPR spooler programs under
-;	the user ID specified by the remote node.  If that user doesn't
-;	exist then the "ppr proxy user" will be used instead.
-; other become user
-;	Specifies whether lprsrv should run non-PPR spooler programs under
-;	the user ID specified by the remote node.  If that user doesn't
-;	exist then the "other proxy user" will be used instead.
-; ppr root as
-;	The user ID to run PPR spooler programs as when the remote node
-;	suggests "root".
-; other root as
-;	The user ID to run non-PPR spooler programs as when the remote
-;	node suggests "root".
-; ppr proxy user
-;	Specifies the user to run the PPR spooler programs under if
-;	"ppr become user" is set to "no" or if the specified user does
-;	not exist on this node.
-; other proxy user
-;	Specifies the user to run non-PPR spooler programs (such as
-;	lpr, lp, and lprm) under if "other become user" is set to "no"
-;	or if the specified user does not exist on this node.
-; ppr proxy class
-;	When lprsrv runs ppr or ppop, it uses the -X switch.  The argument
-;	for the -X switch is the username supplied by the client, an "@",
-;	followed by the proxy class.  You may set the proxy class to any
-;	string, or to "$cname".  If you set it to "$cname", then
-;	the canonical DNS name of the sending node will appear after the "@".
-; ppr user format
-;	Format of user name in queue display.  The options are:
-;		$user
-;			The user name
-;		$user@$host
-;			User name and host name
-;		$user@$proxyclass
-;			The user name and proxy class string
-;	Note that since the "ppr user format" option uses the ppr -f
-;	switch it will only be effective when ppr is executed by a proxy
-;	user which is listed in /etc/ppr/acl/pprprox.allow.
+; domain
+;	Group of computers in which the username will be unique.  By 
+;   assigning a group of computers one domain name, you can allow
+;   a user to delete his jobs from any computer in that group.
 ; force mail
 ;   Always send e-mail on job completion as if the user had used lpr's
 ;   -m option.
@@ -82,30 +47,16 @@
 [global]
 allow = yes
 insecure ports = no
-ppr become user = no
-other become user = no
-ppr root as = ppr
-other root as = root
-ppr proxy user = ppr
-other proxy user = nobody
-ppr proxy class = $cname
-ppr user format = $user@$host
 force mail = no
+domain = $host
 
 ;
 ; This section applies to nodes which are granted access by /etc/hosts.lpd,
 ; /etc/hosts.lpd_deny, and /etc/hosts.equiv.  However, this section does not
 ; apply if some other section also matches the sending node name.
 ;
-; The "ppr become user = yes" and "other become user = yes" indicate that, if 
-; the user specified by the remote system exists on this system, the spooler
-; programs should be run under that user ID.
-;
 [traditional]
-ppr become user = yes
-other become user = yes
-ppr proxy class = equivalent
-ppr user format = $user
+domain = $host
 
 ;
 ; This section matches all nodes in a certain NIS netgroup.  Any section which
@@ -113,10 +64,7 @@ ppr user format = $user
 ; this section.
 ;
 ;[@mynetgroup]
-;ppr become user = yes
-;other become user = yes
-;ppr proxy class = mynetgroup
-;ppr user format = $user
+;domain = mynetgroup
 
 ;
 ; This section applies to all hosts which match any of the pattens listed in 
@@ -128,19 +76,15 @@ ppr user format = $user
 
 ;
 ; This section matches all nodes in a certain domain.  Notice that 
-; "proxy class =" is used to indicate that a user with a given name should be
+; "domain =" is used to indicate that a user with a given name should be
 ; considered to be the same no matter which of these nodes he is connecting
-; from.  For example, the principal identifier (-X switch argument) for 
-; "smith" connecting from "spock.cs.domain.org" will be 
-; "smith@cs.domain.org".  If he is connecting from "bashir.cs.domain.org"
-; it will still be "smith@cs.domain.org".  Thus he will be able, from Bashir,
-; to cancel a job he submitted from Spock.
+; from.  For example, the --user option for user "smith" connecting from 
+; "spock.cs.domain.org" will be "smith@cs.domain.org".  If he is connecting 
+; from "bashir.cs.domain.org" it will still be "smith@cs.domain.org".  Thus 
+; he will be able, from Bashir,to cancel a job he submitted from Spock.
 ;
 ;[.cs.domain.org]
-;ppr become user = yes
-;other become user = yes
-;ppr proxy class = cs.domain.org
-;ppr user format = $user
+;domain = cs.domain.org
 
 ;
 ; This section applies to a specific host.  Since this section
@@ -156,11 +100,6 @@ ppr user format = $user
 ;
 [other]
 allow = no
-insecure ports = yes
-ppr become user = no
-other become user = no
-ppr proxy user = nobody
-other proxy user = nobody
 
 ; end of file
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 April 2005.
+** Last modified 24 August 2005.
 */
 
 #include "config.h"
@@ -109,9 +109,7 @@ static void do_print_job(struct IPP *ipp)
 	args[iii++] = PPR_PATH;
 	args[iii++] = "-d";
 	args[iii++] = uri_basename(printer_uri);
-	args[iii++] = "-f";
-	args[iii++] = for_whom;
-	args[iii++] = "--proxy-for";
+	args[iii++] = "-u";
 	args[iii++] = for_whom;
 	args[iii++] = "--responder";
 	args[iii++] = "followme";

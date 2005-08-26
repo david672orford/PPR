@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/acl.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 24 August 2005.
 */
 
 /*! \file
@@ -88,29 +88,6 @@ gu_boolean user_acl_allows(const char user[], const char acl[])
 				}
 			}
 		fclose(f);
-		}
-	}
-
-	/* For compability with versions of PPR before 1.32,
-	   see if the user is a member of a group named
-	   for the ACL. */
-	{
-	struct group *gr;
-	int x;
-	char *ptr;
-
-	if((gr = getgrnam(acl)) != (struct group *)NULL)
-		{
-		x = 0;
-		while((ptr = gr->gr_mem[x++]) != (char*)NULL)
-			{
-			if(strcmp(ptr, user) == 0)
-				{
-				fputs(X_("Warning: your privledges are granted by membership in a Unix\n"
-						"group, which is deprecated.  Please use the new ACLs.\n"), stderr);
-				return TRUE;
-				}
-			}
 		}
 	}
 

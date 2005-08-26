@@ -2,9 +2,9 @@ Setting jobbreak to signal/pjl...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 JobBreak: 4
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -12,12 +12,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
   JobBreak: signal/pjl
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -37,12 +37,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	signal/pjl signal
-feedback	default yes
-codes	default Binary
+jobbreak	signal/pjl control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -68,8 +68,8 @@ Setting jobbreak to default...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -77,12 +77,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -102,12 +102,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -133,9 +133,9 @@ Setting feedback to true...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 Feedback: True
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -143,12 +143,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
+  JobBreak: control-d (by default)
   Feedback: yes
-  Codes: Binary (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -168,12 +168,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	yes yes
-codes	default Binary
+jobbreak	default control-d
+feedback	yes no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -199,9 +199,9 @@ Setting feedback to false...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 Feedback: False
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -209,12 +209,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
+  JobBreak: control-d (by default)
   Feedback: no
-  Codes: Binary (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -234,12 +234,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	no yes
-codes	default Binary
+jobbreak	default control-d
+feedback	no no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -265,8 +265,8 @@ Setting feedback to default...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -274,12 +274,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -299,12 +299,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -330,9 +330,9 @@ Setting codes to Clean7Bit...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 Codes: 1
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -340,11 +340,11 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
   Codes: Clean7Bit
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
@@ -365,12 +365,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
-codes	Clean7Bit Binary
+jobbreak	default control-d
+feedback	default no
+codes	Clean7Bit Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -396,8 +396,8 @@ Setting codes to default...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -405,12 +405,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -430,12 +430,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -461,9 +461,9 @@ Setting interface options...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 Options: sleep=10 retry=5
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -471,12 +471,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: sleep=10 retry=5
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -496,12 +496,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	sleep=10 retry=5
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -528,8 +528,8 @@ Warning: setting options to "none" is deprecated
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -537,12 +537,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -562,12 +562,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -593,9 +593,9 @@ Setting interface options...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 Options: sleep=10 retry=5
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -603,12 +603,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: sleep=10 retry=5
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -628,12 +628,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	sleep=10 retry=5
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -659,8 +659,8 @@ Clearing interface options...
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -668,12 +668,12 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: 
-  JobBreak: signal (by default)
-  Feedback: yes (by default)
-  Codes: Binary (by default)
+  JobBreak: control-d (by default)
+  Feedback: no (by default)
+  Codes: Clean8Bit (by default)
 PPDFile: Apple LaserWriter Plus
   Default Filter Options: level=1 colour=False resolution=300 freevm=172872
     mfmode=CanonCX
@@ -693,12 +693,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	
-jobbreak	default signal
-feedback	default yes
-codes	default Binary
+jobbreak	default control-d
+feedback	default no
+codes	default Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
@@ -727,12 +727,12 @@ ppad: 0
 ppad: 0
 
 Dumping configuration file...
-Interface: atalk
+Interface: parallel
 Codes: 1
 Options: sleep=10 retry=5
 Feedback: False
 JobBreak: 4
-Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
 DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
@@ -740,8 +740,8 @@ Alert: 7 mail nobody@localhost
 Use ppad to dump the configuration...
 Printer name: regression-test1
   Comment: 
-Interface: atalk
-  Address: "Imaginary Printer:LaserWriter@Imaginary Zone"
+Interface: parallel
+  Address: "/dev/lp0"
   Options: sleep=10 retry=5
   JobBreak: signal/pjl
   Feedback: no
@@ -765,12 +765,12 @@ comment
 location	
 department	
 contact	
-interface	atalk
-address	Imaginary Printer:LaserWriter@Imaginary Zone
+interface	parallel
+address	/dev/lp0
 options	sleep=10 retry=5
-jobbreak	signal/pjl signal
-feedback	no yes
-codes	Clean7Bit Binary
+jobbreak	signal/pjl control-d
+feedback	no no
+codes	Clean7Bit Clean8Bit
 rip			
 rip_ppd			
 rip_which	PPD
