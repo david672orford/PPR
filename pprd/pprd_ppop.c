@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ppop.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 31 August 2005.
 */
 
 /** \file
@@ -1271,7 +1271,13 @@ static void ppop_move(const char command[])
 			** In the job's log file, make a note of the fact
 			** that it was moved from one destination to another.
 			*/
-			if((logfile = fopen(newname,"a")))
+			ppr_fnamef(newname, "%s/%s:%s-%d.%d(%s)-log", DATADIR,
+				new_destnode,
+				new_destname,
+				q->id, q->subid,
+				nodeid_to_name(q->homenode_id)
+				);
+			if((logfile = fopen(newname, "a")))
 				{
 				fprintf(logfile,
 					"Job moved from destination \"%s\" to \"%s\".\n",
