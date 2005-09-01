@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-17 20:38-0400\n"
+"POT-Creation-Date: 2005-08-31 14:00-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -351,43 +351,43 @@ msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1081 ../pprd/pprd_ppop.c:1088 ../pprd/pprd_ppop.c:1278
-#: ../pprd/pprd_ppop.c:1360
+#: ../pprd/pprd_ppop.c:1081 ../pprd/pprd_ppop.c:1088 ../pprd/pprd_ppop.c:1282
+#: ../pprd/pprd_ppop.c:1364
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1217
+#: ../pprd/pprd_ppop.c:1221
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1226
+#: ../pprd/pprd_ppop.c:1230
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1231
+#: ../pprd/pprd_ppop.c:1235
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1235
+#: ../pprd/pprd_ppop.c:1239
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_ppop.c:1243
+#: ../pprd/pprd_ppop.c:1247
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1245
+#: ../pprd/pprd_ppop.c:1249
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1327 ../pprd/pprd_ppop.c:1384
+#: ../pprd/pprd_ppop.c:1331 ../pprd/pprd_ppop.c:1388
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"

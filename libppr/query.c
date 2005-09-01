@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 May 2005.
+** Last modified 31 August 2005.
 */
 
 #include "config.h"
@@ -294,7 +294,10 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 				{
 				if(is_stderr)
 					{
-					fprintf(stderr, "    %s\n", line);
+					if(lmatch(line, "query_wrapper:"))				/* save query wrapper errors for exception handler */
+						gu_strlcpy(temp, line, sizeof(temp));
+					else											/* just print chattiness */
+						fprintf(stderr, "    %s\n", line);
 					continue;
 					}
 				if(strcmp(line, "%%[ PPR address lookup ]%%") == 0)	/* so far, so good */
@@ -311,7 +314,7 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 					{
 					break;
 					}
-				if(strncmp(line, "%%[", 3) == 0)					/* something bad happened? */
+				if(lmatch(line, "%%["))								/* something bad happened? */
 					{												/* save it in case the interface exits */
 					gu_strlcpy(temp, line, sizeof(temp));
 					continue;
@@ -323,7 +326,7 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 				if(strlen(temp))
 					gu_Throw("%s", temp);
 				else
-					gu_Throw("interface program quit");
+					gu_Throw("interface program quit unexpectedly");
 				}
 			}
 		gu_Catch

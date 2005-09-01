@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 April 2005.
+# Last modified 31 August 2005.
 #
 
 =head1 cgi_data.pl
@@ -136,6 +136,11 @@ sub cgi_write_data
 	foreach $datum (sort(keys %data))
 		{
 		$value = $data{$datum};
+		if(!defined($value))
+			{
+			print STDERR "Warning: CGI datum \"$datum\" has a null value.\n";
+			$value = "";
+			}
 		$value =~ s/"/&quot;/g;
 		print "<INPUT TYPE=hidden NAME=\"$datum\" VALUE=\"$value\">\n";
 		}

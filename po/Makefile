@@ -63,9 +63,6 @@ pot:
 		../ppuser/*.c \
 		../samba/*.c \
 		../unixuser/*.c \
-		../libuprint/*.c \
-		../ppr-sysv/*.c \
-		../ppr-bsd/*.c \
 		../pprdrv/pprdrv*.c
 	xgettext \
 		--default-domain=PPRD \

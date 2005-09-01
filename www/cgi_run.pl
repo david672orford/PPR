@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_run.pl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 May 2004.
+# Last modified 31 August 2005.
 #
 
 require 'cgi_data.pl';
@@ -192,7 +192,7 @@ sub opencmd
 	# Perl 5.8.0 spews warnings if exec() arguments are tainted.
 	run_detaint(\@command_list);
 
-	{ local($| = 1); print; }			# Not needed in Perl 5.8.x
+	{ local($| = 1); print ""; }		# Not needed in Perl 5.8.x
 	my $pid = open($handle, "-|");
 
 	return 0 if(! defined($pid));		# fork failed

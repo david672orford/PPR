@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 February 2005.
+# Last modified 30 August 2005.
 #
 
 #
@@ -44,10 +44,18 @@ set TEMPDIR "@TEMPDIR@"
 set PR "@PR@"
 set FILTDIR "@FILTDIR@"
 
+#=================================
 # Process the options
-regsub "title=\"" [lindex $argv 0] "\"title=" options	# for proper parsing
-set title [lindex $argv 2]								# from ppr(1) -t
-set arglist {-f}										# arguments for pr(1)
+#=================================
+# for proper parsing
+regsub "title=\"" [lindex $argv 0] "\"title=" options
+
+# from ppr(1) -t
+set title [lindex $argv 2]
+
+# arguments for pr(1)
+set arglist {-f}
+
 foreach option $options {
 	regexp {^([^=]+)=(.*)$} $option junk name value
 	#puts stderr "name=$name, value=$value"

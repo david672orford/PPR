@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-17 20:38-0400\n"
+"POT-Creation-Date: 2005-08-31 14:00-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -152,20 +152,20 @@ msgstr "Sauver le groupe"
 msgid "Saving new alias:"
 msgstr "Sauvegarde de la nouvelle imprimante :"
 
-#: ../www/alias_addwiz.cgi.perl:171 ../www/prn_addwiz.cgi.perl:855
+#: ../www/alias_addwiz.cgi.perl:172 ../www/prn_addwiz.cgi.perl:856
 #, fuzzy
 msgid "The print queue has been created."
 msgstr "L'imprimante a été supprimée."
 
-#: ../www/alias_addwiz.cgi.perl:175 ../www/grp_addwiz.cgi.perl:173
-#: ../www/prn_addwiz.cgi.perl:859
+#: ../www/alias_addwiz.cgi.perl:176 ../www/grp_addwiz.cgi.perl:174
+#: ../www/prn_addwiz.cgi.perl:860
 msgid "Due to the problem indicated above, the queue was not created."
 msgstr ""
 
-#: ../www/alias_addwiz.cgi.perl:182 ../www/cgi_tabbed.pl:371
+#: ../www/alias_addwiz.cgi.perl:183 ../www/cgi_tabbed.pl:371
 #: ../www/cliconf.cgi.perl:92 ../www/cliconf.cgi.perl:108
 #: ../www/cliconf.cgi.perl:191 ../www/delete_queue.cgi.perl:152
-#: ../www/grp_addwiz.cgi.perl:180 ../www/prn_addwiz.cgi.perl:866
+#: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:867
 #: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
@@ -677,7 +677,7 @@ msgstr "Sauver le groupe"
 msgid "Saving new group:"
 msgstr "Sauvegarde du nouveau groupe :"
 
-#: ../www/grp_addwiz.cgi.perl:169
+#: ../www/grp_addwiz.cgi.perl:170
 #, fuzzy
 msgid "The queue has been created."
 msgstr "Le groupe a été supprimé."
@@ -997,6 +997,14 @@ msgstr "Création de file d'impression PPR"
 #: ../www/prn_addwiz.cgi.perl:103
 msgid "This program will guide you through the process of setting up a printer in PPR."
 msgstr "Ce programme vous guidera dans le processus de configuration d'une imprimante dans PPR."
+
+#: ../www/prn_addwiz.cgi.perl:106
+msgid "I already know the printer's exact address."
+msgstr ""
+
+#: ../www/prn_addwiz.cgi.perl:108
+msgid "I would like to select the printer from a list."
+msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:112 ../www/prn_addwiz.cgi.perl:169
 #, fuzzy

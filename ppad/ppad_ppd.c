@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 31 August 2005.
 */
 
 #include "config.h"
@@ -350,9 +350,6 @@ static int ppd_choices(struct THE_FACTS *facts, struct MATCH **matches, int matc
 
 	fclose(f);
 
-	if(count && !machine_readable)
-		printf("\n");
-
 	return count;
 	} /* end of ppd_choices() */
 
@@ -495,15 +492,113 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 	gu_Catch
 		{
 		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
-		fprintf(stderr, "\n");
-		return 0;
+		retval = 0;
 		}
 
-/*	if(!machine_readable)
-		gu_puts("\n"); */
-		
+	if(!machine_readable)
+		gu_puts("\n"); 
+
 	return retval;
 	} /* end of ppd_query_interface_probe() */
+
+/*
+** PostScript query
+*/
+static int ppd_query_postscript(const char printer[], struct QUERY *q, struct THE_FACTS *facts)
+	{
+	const char *result_labels[] = {"Revision", "Version", "Product"};
+	char *results[] = {NULL, NULL, NULL};
+	char *p;
+	int retval = 0;
+
+	gu_Try
+		{
+		if(!machine_readable)
+			printf("Connecting for PostScript query...\n");
+		query_connect(q, FALSE);
+
+		gu_Try
+			{
+			int i;
+			gu_boolean is_stderr;
+
+			if(!machine_readable)
+				printf("Sending PostScript query...\n");
+			query_sendquery(q,
+				"Printer",			/* DSC defined name (NULL if not defined in DSC) */
+				NULL,				/* Ad-hoc name if above is NULL */
+				"spooler",			/* default response */
+				"statusdict begin revision == version == product == flush end\n"
+				);
+
+			if(!machine_readable)
+				printf("Reading response...\n");
+			for(i=0; i < 3 && (p = query_getline(q, &is_stderr, 30)); )
+				{
+				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
+
+				if(is_stderr)
+					continue;
+
+				if(strcmp(p, "spooler") == 0)
+					gu_Throw("supposed printer is actually a spooler");
+
+				results[i] = gu_strdup(p);
+
+				i++;
+				}
+
+			if(i != 3)
+				gu_Throw("not enough response lines");
+
+			if(!machine_readable)
+				{
+				for(i=0; i < 3; i++)
+					printf("    %s: %s\n", result_labels[i], results[i]);
+				}
+
+			p = results[2];
+			if(p[0] == '(')
+				{
+				p++;
+				p[strcspn(p, ")")] = '\0';
+				}
+			facts->product = gu_strdup(p);
+			gu_free(results[2]);
+
+			gu_sscanf(results[1], "%f", &facts->version);
+			facts->revision = atoi(results[0]);
+
+			retval = 1;
+			}
+		gu_Final
+			{
+			if(!machine_readable)
+				printf("Disconnecting...\n");
+			query_disconnect(q);
+			}
+		gu_Catch
+			{
+			int i;						/* clean this up right way so as to avoid red herrings */
+			for(i=0; i < 3; i++)
+				{
+				if(results[i])
+					gu_free(results[i]);
+				}
+			gu_ReThrow();
+			}
+		}
+	gu_Catch
+		{
+		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		retval = 0;
+		}
+
+	if(!machine_readable)
+		gu_puts("\n");
+		
+	return retval;
+	} /* end of ppd_query_postscript() */
 
 /*
 ** PJL query
@@ -571,8 +666,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 	gu_Catch
 		{
 		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
-		fprintf(stderr, "\n");
-		return 0;
+		retval = 0;
 		}
 
 	if(!machine_readable)
@@ -582,103 +676,6 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 	} /* end of ppd_query_pjl() */
 
 /*
-** PostScript query
-*/
-static int ppd_query_postscript(const char printer[], struct QUERY *q, struct THE_FACTS *facts)
-	{
-	const char *result_labels[] = {"Revision", "Version", "Product"};
-	char *results[] = {NULL, NULL, NULL};
-	char *p;
-
-	gu_Try
-		{
-		if(!machine_readable)
-			printf("Connecting for PostScript query...\n");
-		query_connect(q, FALSE);
-
-		gu_Try
-			{
-			int i;
-			gu_boolean is_stderr;
-
-			if(!machine_readable)
-				printf("Sending PostScript query...\n");
-			query_sendquery(q,
-				"Printer",			/* DSC defined name (NULL if not defined in DSC) */
-				NULL,				/* Ad-hoc name if above is NULL */
-				"spooler",			/* default response */
-				"statusdict begin revision == version == product == flush end\n"
-				);
-
-			if(!machine_readable)
-				printf("Reading response...\n");
-			for(i=0; i < 3 && (p = query_getline(q, &is_stderr, 30)); )
-				{
-				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
-
-				if(is_stderr)
-					continue;
-
-				if(strcmp(p, "spooler") == 0)
-					gu_Throw("supposed printer is actually a spooler");
-
-				results[i] = gu_strdup(p);
-
-				i++;
-				}
-
-			if(i != 3)
-				gu_Throw("not enough response lines");
-
-			if(!machine_readable)
-				{
-				for(i=0; i < 3; i++)
-					printf("    %s: %s\n", result_labels[i], results[i]);
-				}
-
-			p = results[2];
-			if(p[0] == '(')
-				{
-				p++;
-				p[strcspn(p, ")")] = '\0';
-				}
-			facts->product = gu_strdup(p);
-			gu_free(results[2]);
-
-			gu_sscanf(results[1], "%f", &facts->version);
-			facts->revision = atoi(results[0]);
-			}
-		gu_Final
-			{
-			if(!machine_readable)
-				printf("Disconnecting...\n");
-			query_disconnect(q);
-			}
-		gu_Catch
-			{
-			int i;						/* clean this up right way so as to avoid red herrings */
-			for(i=0; i < 3; i++)
-				{
-				if(results[i])
-					gu_free(results[i]);
-				}
-			gu_ReThrow();
-			}
-		}
-	gu_Catch
-		{
-		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
-		fprintf(stderr, "\n");
-		return 0;
-		}
-
-	if(!machine_readable)
-		gu_puts("\n");
-		
-	return 1;
-	} /* end of ppd_query_postscript() */
-
-/*
 ** This is called from ppad_printer.c:printer_ppdq() and ppd_query().
 */
 int ppd_query_core(const char printer[], struct QUERY *q)
@@ -686,7 +683,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	struct THE_FACTS facts;
 	struct MATCH *matches = NULL;
 	int matches_count = 0;
-	gu_boolean testmode = FALSE;		/* will try all probe methods */
+	gu_boolean testmode = FALSE;		/* for debugging, will try all probe methods */
 
 	facts.product = NULL;
 	facts.version = 0.0;

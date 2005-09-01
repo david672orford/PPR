@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 26 August 2005.
 */
 
 #include "config.h"
@@ -274,7 +274,7 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 	   applies to this editps level, */
 	if(matched)
 		{
-		args[0] = gu_strdup(filter);			/* <--- memory leak !!! */
+		asprintf(&args[0], "%s/%s", EDITPSDIR, filter);		/* <--- memory leak !!! */
 		snprintf(level_str, sizeof(level_str), "%d", option_editps_level);
 		#if 0
 		args[1] = level_str;
@@ -290,10 +290,14 @@ const char **editps_identify(const unsigned char *in_ptr, int in_left)
 			printf(_("No matching filter found.\n"));
 		}
 
-	if(line) gu_free(line);
-	if(creator) gu_free(creator);
-	if(copyright) gu_free(copyright);
-	if(beginresource) gu_free(beginresource);
+	if(line)
+		gu_free(line);
+	if(creator)
+		gu_free(creator);
+	if(copyright)
+		gu_free(copyright);
+	if(beginresource)
+		gu_free(beginresource);
 
 	return result;
 	} /* end of editps_identify() */

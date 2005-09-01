@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 30 August 2005.
 */
 
 /*
@@ -359,12 +359,13 @@ static int readline_normal(void)
 	} /* end of readline_normal() */
 
 /*
- * A UTF-8 version of readline_normal()
+ * A UTF-8 version of fgetc().  It is used by readline_utf_8() below.
  */
+#define INVALID_CHAR '?'
 static int fgetc_utf_8(FILE *f)
 	{
 	int c;
-	int additional_bytes;
+	int additional_bytes = 0;
 	if((c = fgetc(f)) == EOF)
 		return EOF;
 	if(c & 0x80)
@@ -396,10 +397,12 @@ static int fgetc_utf_8(FILE *f)
 			}
 		else
 			{
-			return '?';
+			return INVALID_CHAR;
 			}
 
-		while(additional_bytes--)
+		{
+		int x;
+		for(x=0; x < additional_bytes; x++)
 			{
 			int ca;
 			if((ca = fgetc(f)) == EOF)
@@ -410,10 +413,52 @@ static int fgetc_utf_8(FILE *f)
 			c &= (ca & 0x3F);			/* take lower 6 bits */
 			}
 		}
+		}
+
+	/* Detect overlong sequences */
+	switch(1 + additional_bytes)		/* number of bytes */
+		{
+		case 1:							/* 0xxxxxxx */
+			break;
+		case 2:							/* 110xxxxx 10xxxxxx */
+			if(c <= 0x0000007F)			/* 01111111 */
+				return INVALID_CHAR;
+			break;
+		case 3:							/* 1110xxxx 10xxxxxx 10xxxxxx */
+			if(c <= 0x000007FF)			/* 00000111 11111111 */
+				return INVALID_CHAR;
+			break;
+		case 4:							/* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
+			if(c <= 0x0000FFFF)			/* 11111111 11111111 */
+				return INVALID_CHAR;
+			break;
+		case 5:							/* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+			if(c <= 0x001FFFFF)			/* 00011111 11111111 11111111 */
+				return INVALID_CHAR;
+			break;
+		case 6:							/* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
+			if(c <= 0x03FFFFFF)			/* 00000011 11111111 11111111 11111111 */
+				return INVALID_CHAR;
+			break;
+		}
+
+	/* UTF-16 surrogates are not allowed */
+	if(c >= 0xD8000 && c <= 0xDFFF)
+		return INVALID_CHAR;
+
+	/* These values are also forbidden */
+	if(c == 0xFFFE || c == 0xFFFF)
+		return INVALID_CHAR;
 
 	return c;
-	} /* end of fgetc_utf_8() */
+	} /* end of gu_fgetc_utf_8() */
 
+/*
+ * A UTF-* version of readline_normal().  Presently 
+ * it differs from readline_normal() only in that it
+ * calls fgetc_utf_8() instead of fgetc(), but that
+ * will change.
+ */
 static int readline_utf_8(void)
 	{
 	int count;							/* current possition in line */
@@ -509,7 +554,7 @@ static int readline_utf_8(void)
 		}
 
 	return maxcount;
-	} /* end of readline_normal() */
+	} /* end of readline_utf_8() */
 
 /*
 ** When in FORTRAN carriage control mode, this function

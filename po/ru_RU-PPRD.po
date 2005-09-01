@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.50\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-10 12:04-0400\n"
+"POT-Creation-Date: 2005-08-31 13:58-0400\n"
 "PO-Revision-Date: 2001-01-30 17:01-0500\n"
 "Last-Translator: David Chappell <David.Chappell@mail.trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@mail.trincoll.edu>\n"
@@ -295,43 +295,43 @@ msgstr ""
 msgid "\"%s\" is not a valid destination.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1081 ../pprd/pprd_ppop.c:1088 ../pprd/pprd_ppop.c:1278
-#: ../pprd/pprd_ppop.c:1360
+#: ../pprd/pprd_ppop.c:1081 ../pprd/pprd_ppop.c:1088 ../pprd/pprd_ppop.c:1282
+#: ../pprd/pprd_ppop.c:1364
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1217
+#: ../pprd/pprd_ppop.c:1221
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1226
+#: ../pprd/pprd_ppop.c:1230
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1231
+#: ../pprd/pprd_ppop.c:1235
 #, c-format
 msgid "1 file was moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1235
+#: ../pprd/pprd_ppop.c:1239
 #, c-format
 msgid "%d files where moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1243
+#: ../pprd/pprd_ppop.c:1247
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1245
+#: ../pprd/pprd_ppop.c:1249
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1327 ../pprd/pprd_ppop.c:1384
+#: ../pprd/pprd_ppop.c:1331 ../pprd/pprd_ppop.c:1388
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr ""

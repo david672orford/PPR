@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 31 August 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -161,7 +161,8 @@ my $addgrp_wizard_table = [
 				my $e = 0;
 				$e || ($e=run(@PPAD, 'group', 'members', $name, split(/ /, $data{members})));
 				$e || ($e=run(@PPAD, 'group', 'comment', $name, $data{comment}));
-				$e || ($e=run($PPR2SAMBA_PATH, '--nocreate'));
+				# This one can fail if it wants to.
+				run($PPR2SAMBA_PATH, '--nocreate');
 				print "</pre>\n";
 
 				if($e == 0)

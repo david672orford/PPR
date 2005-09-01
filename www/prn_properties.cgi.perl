@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 31 August 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -396,10 +396,10 @@ my $tabbed_table = [
 	# Bin management
 	#====================================================
 	{
-	'tabname' => N_("Bins"),
+	'tabname' => N_("Input Trays"),
 	'help' => "bins",
 	'dopage' => sub {
-		print "<span class=\"label\">", H_("Bins for forms management purposes:"), "</span><br>\n";
+		print "<span class=\"label\">", H_("Input trays for forms management purposes:"), "</span><br>\n";
 
 		my %current_bins = ();
 		foreach my $bin (split(/ /, cgi_data_move("bins", "")))

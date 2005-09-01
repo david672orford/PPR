@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 31 August 2005.
 */
 
 /** \file
@@ -1156,7 +1156,11 @@ static void ppop_move(const char command[])
 			** In the job's log file, make a note of the fact
 			** that it was moved from one destination to another.
 			*/
-			if((logfile = fopen(newname,"a")))
+			ppr_fnamef(newname,"%s/%s-%d.%d-log", DATADIR,
+				new_destname,
+				q->id, q->subid
+				);
+			if((logfile = fopen(newname, "a")))
 				{
 				fprintf(logfile,
 					"Job moved from destination \"%s\" to \"%s\".\n",

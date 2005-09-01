@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 31 August 2005.
 #
 
 #
@@ -103,9 +103,9 @@ $addprn_wizard_table = [
 		print "<p>", H_("This program will guide you through the process of setting up a printer in PPR."), "</p>\n";
 
 		my $method = cgi_data_move("method", "browse_printers");
-		labeled_radio("method", "Search for printers", "browse_printers", $method);
+		labeled_radio("method", _("I already know the printer's exact address."), "choose_int", $method);
 		print "<br>\n";
-		labeled_radio("method", "Manually configure printer", "choose_int", $method);
+		labeled_radio("method", _("I would like to select the printer from a list."), "browse_printers", $method);
 		},
 	'onnext' => sub {
 		if(! defined($data{method}))
@@ -688,7 +688,7 @@ $addprn_wizard_table = [
 				$lastgroup = $item_manufacturer;
 				}
 			print "<option value=", html_value($item_modelname);
-			print " selected" if($item_modelname eq $ppd);
+			print " selected" if(defined $ppd && $item_modelname eq $ppd);
 			print ">", html($item_modelname); 
 			print " (fuzzy match)" if(defined $item_fuzzy && $item_fuzzy);
 			print "\n";
@@ -700,7 +700,7 @@ $addprn_wizard_table = [
 		print "</td><td style=\"padding-top: 1cm;\">\n";
 
 		# Print a small table with a summary of what the PPD files says.
-		if($ppd ne "")
+		if(defined $ppd)
 			{
 			ppd_summary($ppd);
 			}
@@ -847,7 +847,8 @@ $addprn_wizard_table = [
 			{ $e || ($e=run(@PPAD, 'department', $name, $data{department})) }
 		if($data{contact} ne '')
 			{ $e || ($e=run(@PPAD, 'contact', $name, $data{contact})) }
-		$e || ($e=run($PPR2SAMBA_PATH, '--nocreate'));
+		# This one can fail if it wants to.
+		run($PPR2SAMBA_PATH, '--nocreate');
 		print "</pre>\n";
 
 		if($e == 0)
@@ -898,15 +899,18 @@ sub suggest_queue_name
 		$name =~ s/_[^_]+_((Direct)|(Print)|(Hold))$//;			# Hack for Canon
 		}
 
-	# SocketAPI/AppSocket/JetDirect are embedded, go with the hostname.
+	# SocketAPI/AppSocket/JetDirect is used for embedded print servers,
+	# so we go with the hostname.
 	elsif(defined($interface_pages{$interface}) 
-			&& $interface_pages{$interface} eq "int_tcpip"
+			&& ($interface_pages{$interface} eq "int_tcpip"
+				|| $interface_pages{$interface} eq "int_jetdirect"
+				)
 			&& $address =~ /^([^\.:]+)/)
 		{
 		$name = $1;
 		}
 
-	# If this looks like an embedded print server sharename, go with
+	# If this looks like an embedded print server SMB sharename, go with
 	# the server name, otherwise, go with the share name.
 	elsif($interface eq "smb" && $address =~ /^\\\\([^\\]+)\\([^\\]+)$/)
 		{

@@ -186,6 +186,8 @@ sub ppd_probe
 	{
 	my($interface, $address, $options) = @_;
 
+	print STDERR "ppd_probe(\"$interface\", \"$address\", \"$options\")\n";
+
 	opencmd(RESULTS, "2>&STDERR", $PPAD_PATH, "-M", "ppdlib", "query", $interface, $address, $options);
 
 	my @list = ();

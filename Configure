@@ -976,7 +976,8 @@ export LW_MESSAGES_CONF=$(MISCDIR)/lw-messages.conf
 # PJL USTATUS DEVICE errors file
 export PJL_MESSAGES_CONF=$(MISCDIR)/pjl-messages.conf
 # for ppr -H editps
-export EDITPSCONF=$(LIBDIR)/editps/editps.conf
+export EDITPSDIR=$(LIBDIR)/editps
+export EDITPSCONF=$(EDITPSDIR)/editps.conf
 # map characters set to PostScript encodings
 export CHARSETSCONF=$(MISCDIR)/charsets.conf
 # list of fonts and the PostScript encodings they support
