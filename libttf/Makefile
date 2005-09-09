@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libttf/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 9 September 2005.
 #
 
 include ../Makefile.conf
@@ -33,7 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 LIBOBJS=ttf_object.$(OBJ) endian.$(OBJ) fixed.$(OBJ) loadtable.$(OBJ) \
-	loadname.$(OBJ) alloc.$(OBJ) \
+	loadname.$(OBJ) \
 	head.$(OBJ) name.$(OBJ) ps_header.$(OBJ) ps_trailer.$(OBJ) \
 	charstrings.$(OBJ) ttf_get_psname.$(OBJ) \
 	ps_type3.$(OBJ) ttf_psout.$(OBJ) ps_sfnts.$(OBJ) \

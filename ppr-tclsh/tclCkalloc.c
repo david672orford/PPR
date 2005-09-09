@@ -13,15 +13,12 @@
  *
  * This code contributed by Karl Lehenbauer and Mark Diekhans
  *
- * Last modified 18 January 2002.
+ * Last modified 9 September 2005.
  *
  */
 
 #include "tclInt.h"
 #include "tcl.h"
-
-#define FALSE	0
-#define TRUE	1
 
 #ifdef TCL_MEM_DEBUG
 

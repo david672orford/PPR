@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -237,7 +237,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		char operation[16];
 		int minutes = 0;
 
-		if(gu_sscanf(p, "%#s %d", sizeof(operation), operation, &minutes) == 2)
+		if(gu_sscanf(p, "%@s %d", sizeof(operation), operation, &minutes) == 2)
 			{
 			if(strcmp(operation, "LOOKUP") == 0)
 				p = _("looking up address");
@@ -923,7 +923,7 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 		return TRUE;	/* stop */
 		}
 
-	gu_fscanf(reply_file, "%d", &count);
+	count = gu_fgetint(reply_file);
 	ppop_cancel_byuser_total += count;
 
 	fclose(reply_file);
@@ -992,7 +992,7 @@ int ppop_cancel(char *argv[], int inform)
 		if(!(reply_file = wait_for_pprd(TRUE)))
 			return print_reply();
 
-		gu_fscanf(reply_file, "%d", &count);
+		count = gu_fgetint(reply_file);
 
 		say_canceled(count, FALSE);
 
@@ -1043,7 +1043,7 @@ int ppop_purge(char *argv[], int inform)
 		if(!(reply_file = wait_for_pprd(TRUE)))
 			return print_reply();
 
-		gu_fscanf(reply_file, "%d", &count);
+		count = gu_fgetint(reply_file);
 
 		say_canceled(count, FALSE);		/* say how many were canceled */
 
@@ -1095,7 +1095,7 @@ static int ppop_clean_item(const struct QEntry *qentry,
 		return TRUE;	/* stop */
 		}
 
-	gu_fscanf(reply_file, "%d", &count);
+	count = gu_fgetint(reply_file);
 	ppop_clean_total += count;
 
 	fclose(reply_file);
@@ -1171,7 +1171,7 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 		return TRUE;
 		}
 
-	gu_fscanf(reply_file, "%d", &count);
+	count = gu_fgetint(reply_file);
 	ppop_cancel_active_total += count;
 
 	fclose(reply_file);

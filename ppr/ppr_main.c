@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -1099,19 +1099,22 @@ int parse_feature_option(const char option_text[])
 
 	/* Code from Steve Hsieh to accept Adobe pslpr format:
 	   -F Feature=Option
-	   The code converts this format to the origional -F format. */
+	   This code converts this format to the origional -F format.
+	   Later converted to use snprintf() instead of strcpy() and
+	   moving pointers.
+	 */
 	if(name[0] != '*')
 		{
-		char *p;
+		char *equals_sign;
+		int name_storage_len;
 
 		/* syntax error if no equals or any spaces */
-		if(!strchr(name, '=') || strchr(name, ' '))
+		if(!(equals_sign=strchr(name, '=')) || strchr(name, ' '))
 			return -1;
 
-		p = name_storage = (char*)gu_alloc(strlen(name) + 2, sizeof(char));
-		*p++ = '*';
-		strcpy(p, name);
-		*strchr(p, '=') = ' ';
+		name_storage_len = strlen(name) + 2;	/* two is for '*' and '\0' terminator */
+		name_storage = (char*)gu_alloc(name_storage_len, sizeof(char));
+		snprintf(name_storage, name_storage_len, "*%.*s %s", (int)(equals_sign-name), name, equals_sign+1);
 		name = name_storage;
 		}
 

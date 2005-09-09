@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 September 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -277,7 +277,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 					int line_available = 80;
 					while((line = gu_getline(line, &line_available, vfile)) && strcmp(line, CHOPT_QF_ENDTAG1))
 						{
-						if(sscanf(line, "Progress: %ld %d %d", &bytes_sent, &pages_started, &pages_printed) == 3)
+						if(gu_sscanf(line, "Progress: %ld %d %d", &bytes_sent, &pages_started, &pages_printed) == 3)
 							found = TRUE;
 						}
 					if(line) gu_free(line);
@@ -620,7 +620,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 
 	/* Convert the number of pages to ASCII. */
 	if(qentryfile->attr.pages < 0 || qentryfile->attr.pages > 999)
-		strcpy(pagesstr, "???");
+		strlcpy(pagesstr, "???", sizeof(pagesstr));
 	else
 		snprintf(pagesstr, sizeof(pagesstr), "%03d", qentryfile->attr.pages);
 
@@ -729,17 +729,17 @@ static void ppop_lpq_banner_progress(const char *printer_job_destname, int print
 			switch(*line)
 				{
 				case 'A':
-					if(sscanf(line, "Attr-ByteCounts: %ld %ld", &input_bytes, &postscript_bytes))
+					if(gu_sscanf(line, "Attr-ByteCounts: %ld %ld", &input_bytes, &postscript_bytes))
 						continue;
-					if(sscanf(line, "Attr-Pages: %d", &pages))
+					if(gu_sscanf(line, "Attr-Pages: %d", &pages))
 						continue;
 					break;
 				case 'N':
-					if(sscanf(line, "N_Up: %d", &N))
+					if(gu_sscanf(line, "N_Up: %d", &N))
 						continue;
 					break;
 				case 'O':
-					if(sscanf(line, "Opts: %*d %d", &copies))
+					if(gu_sscanf(line, "Opts: %*d %d", &copies))
 						continue;
 					break;
 				case 'P':
@@ -748,7 +748,7 @@ static void ppop_lpq_banner_progress(const char *printer_job_destname, int print
 						barbar = TRUE;
 						continue;
 						}
-					if(sscanf(line, "Progress: %ld %*d %d", &bytes_sent, &pages_printed))
+					if(gu_sscanf(line, "Progress: %ld %*d %d", &bytes_sent, &pages_printed))
 						continue;
 					break;
 				}
@@ -971,7 +971,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	long int bytes = qentryfile->PassThruPDL ? qentryfile->attr.input_bytes : qentryfile->attr.postscript_bytes;
 
 	if(bytes == 1)
-		strcpy(sizestr, "1 byte");
+		strlcpy(sizestr, "1 byte", sizeof(sizestr));
 	else
 		snprintf(sizestr, sizeof(sizestr), "%ld bytes", bytes);
 	}
@@ -982,7 +982,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	*/
 	if(qentry->status >= 0)				/* if printing */
 		{
-		strcpy(rankstr, "active");
+		strlcpy(rankstr, "active", sizeof(rankstr));
 		}
 	else								/* if not printing */
 		{
@@ -1010,7 +1010,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 		}
 	else
 		{
-		strcpy(fixed_for, "(unknown)");
+		strlcpy(fixed_for, "(unknown)", sizeof(fixed_for));
 		}
 
 	/*
@@ -1071,11 +1071,12 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 			break;
 		}
 
+	/* If there is a note, put it in the last columns of fixed_name[]. */
 	if(note)
 		{
 		int x;
 		int note_start = fixed_name_MAXLENGTH - strlen(note);
-		strcpy(fixed_name + note_start, note);
+		strcpy(fixed_name + note_start, note);	/* strlcpy() doesn't help here */
 
 		x = note_start - 2;
 		if(x > fixed_name_len) x = fixed_name_len;
@@ -1438,7 +1439,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 			break;
 		case STATUS_WAITING4MEDIA:		/* <--- waiting for media */
 			status = "waiting for media";
-			strcpy(explain, media);
+			strlcpy(explain, media, sizeof(explain));
 			break;
 		case STATUS_HELD:				/* <--- job is held */
 			status = "held";

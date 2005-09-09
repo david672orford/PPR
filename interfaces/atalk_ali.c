@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -363,7 +363,7 @@ static int open_printer(const char atalk_name[], at_nbptuple_t *addr, int *wlen,
 		newtype[(int)entity.type.len] = '\0';					/* <-- (int) is for GNU-C */
 
 		/* Change the type to "LaserWriter". */
-		strcpy(entity.type.str, "LaserWriter");
+		strlcpy(entity.type.str, "LaserWriter", sizeof(entity.type.str));
 		entity.type.len = 11;
 
 		/* Try again with the type of "LaserWriter". */
@@ -892,9 +892,9 @@ int int_main(int argc, char *argv[])
 			int net, node, socket;
 
 			/* Read the AppleTalk address */
-			if(sscanf(p, "%d %d %d", &net, &node, &socket) != 3)
+			if(gu_sscanf(p, "%d %d %d", &net, &node, &socket) != 3)
 				{
-				alert(int_cmdline.printer, TRUE, X_("atalk interface: sscanf() failed on cached address"));
+				alert(int_cmdline.printer, TRUE, X_("atalk interface: gu_sscanf() failed on cached address"));
 				}
 			else
 				{

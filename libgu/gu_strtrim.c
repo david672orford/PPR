@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -59,15 +59,15 @@ int main(int argc, char *argv[])
 	{
 	char test[40];
 
-	strcpy(test, "  my test string");
+	strlcpy(test, "  my test string", sizeof(test));
 	gu_strtrim(test);
 	printf("\"%s\"\n", test);
 
-	strcpy(test, "my test string  ");
+	strlcpy(test, "my test string  ", sizeof(test));
 	gu_strtrim(test);
 	printf("\"%s\"\n", test);
 
-	strcpy(test, "  my test string  ");
+	strlcpy(test, "  my test string  ", sizeof(test));
 	gu_strtrim(test);
 	printf("\"%s\"\n", test);
 

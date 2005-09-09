@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -318,7 +318,7 @@ static int header_trailer(gu_boolean trailer)
 				if(trailer || qentry.attr.pages == -1)
 					{
 					/* Read the page count and possible a 2.x PageOrder: */
-					int cnt = sscanf(line, "%%%%Pages: %d %d",
+					int cnt = gu_sscanf(line, "%%%%Pages: %d %d",
 									&qentry.attr.pages,
 									&qentry.attr.pageorder);
 
@@ -1063,7 +1063,7 @@ static void read_defaults(void)
 			}
 
 		/* Save this information for the benefit of ppr_split.c. */
-		gu_sscanf(line, "%%%%PageMedia: %#s", sizeof(default_pagemedia), default_pagemedia);
+		gu_sscanf(line, "%%%%PageMedia: %@s", sizeof(default_pagemedia), default_pagemedia);
 		}
 
 	outermost_end(OUTERMOST_DOCDEFAULTS);

@@ -66,7 +66,7 @@ static int ppr_conf_query(ClientData clientData, Tcl_Interp *interp, int argc, c
 
 	if(argc < 3)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (2 or more required, %d received)", argc-1);
+		snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (2 or more required, %d received)", argc-1);
 		return TCL_ERROR;
 		}
 
@@ -82,7 +82,7 @@ static int ppr_conf_query(ClientData clientData, Tcl_Interp *interp, int argc, c
 
 		if(!(cf = fopen(PPR_CONF, "r")))
 			{
-			gu_snprintf(interp->result, TCL_RESULT_SIZE, "can't open \"%s\", errno=%d (%s)", PPR_CONF, errno, gu_strerror(errno));
+			snprintf(interp->result, TCL_RESULT_SIZE, "can't open \"%s\", errno=%d (%s)", PPR_CONF, errno, gu_strerror(errno));
 			return TCL_ERROR;
 			}
 
@@ -107,13 +107,13 @@ static int ppr_alert(ClientData clientData, Tcl_Interp *interp, int argc, char *
 
 	if(argc != 4)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (3 required, %d received)", argc-1);
+		snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (3 required, %d received)", argc-1);
 		return TCL_ERROR;
 		}
 
 	if(gu_torf_setBOOL(&stamp, argv[2]) == -1)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "second parameter must be TRUE or FALSE");
+		snprintf(interp->result, TCL_RESULT_SIZE, "second parameter must be TRUE or FALSE");
 		return TCL_ERROR;
 		}
 
@@ -132,13 +132,13 @@ static int ppr_wordwrap(ClientData clientData, Tcl_Interp *interp, int argc, cha
 
 	if(argc != 3)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (2 required, %d received)", argc-1);
+		snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (2 required, %d received)", argc-1);
 		return TCL_ERROR;
 		}
 
 	if((width = atoi(argv[2])) < 0)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "width is less than zero");
+		snprintf(interp->result, TCL_RESULT_SIZE, "width is less than zero");
 		return TCL_ERROR;
 		}
 
@@ -161,7 +161,7 @@ static int ppr_popen_w(ClientData clientData, Tcl_Interp *interp, int argc, char
 
 	if(argc != 2)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (1 required, %d received)", argc-1);
+		snprintf(interp->result, TCL_RESULT_SIZE, "wrong number of parameters (1 required, %d received)", argc-1);
 		return TCL_ERROR;
 		}
 	if(Tcl_SplitList(interp, argv[1], &exec_argc, &exec_argv) != TCL_OK)
@@ -170,12 +170,12 @@ static int ppr_popen_w(ClientData clientData, Tcl_Interp *interp, int argc, char
 		}
 	if(pipe(fds) == -1)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "pipe() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		snprintf(interp->result, TCL_RESULT_SIZE, "pipe() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		return TCL_ERROR;
 		}
 	if((pid = fork()) == -1)
 		{
-		gu_snprintf(interp->result, TCL_RESULT_SIZE, "fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		snprintf(interp->result, TCL_RESULT_SIZE, "fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
 		return TCL_ERROR;
 		}
 	if(pid == 0)		/* if child, */

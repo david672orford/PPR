@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -186,7 +186,8 @@ static void copy_data(FILE *infile)
 	if(!tokens[1] || !tokens[2] || !tokens[3])
 		return;
 
-	sscanf(tokens[1], "%ld", &len);				/* read the number of items */
+	len = 0;
+	gu_sscanf(tokens[1], "%ld", &len);			/* read the number of items */
 
 	if(strcmp(tokens[3], "Lines") == 0)			/* find if lines or bytes */
 		{										/* lines */
@@ -500,7 +501,7 @@ static void copy_defaults(void)
 
 		printer_printf("%s\n", line);					/* sent the line to printer */
 
-		gu_sscanf(line,"%%%%PageMedia: %#s",sizeof(default_pagemedia),default_pagemedia);
+		gu_sscanf(line,"%%%%PageMedia: %@s",sizeof(default_pagemedia),default_pagemedia);
 
 		if(strncmp(line,"%%EndDefaults",13)==0)			/* If it was the last line, */
 			break;										/* then stop. */
@@ -845,7 +846,7 @@ static int make_pagetable(void)
 		if(!getpline())					/* read "Offset:" line */
 			fatal(EXIT_JOBERR, "%s(): bad job: EOF where \"Offset:\" expected", function);
 
-		if(sscanf(pline, "Offset: %ld", &temp_offset) != 1)
+		if(gu_sscanf(pline, "Offset: %ld", &temp_offset) != 1)
 			fatal(EXIT_JOBERR, "%s(): bad job: found \"%s\" where \"Offset:\" expected", function, pline);
 
 		/* If this one should be printed, */
@@ -909,7 +910,7 @@ static void copy_a_page(int newnumber)
 	while(getpline() && *pline)
 		{
 		printer_printf("%s\n", pline);
-		gu_sscanf(pline, "%%%%PageMedia: %#s", sizeof(pagemedia), pagemedia);
+		gu_sscanf(pline, "%%%%PageMedia: %@s", sizeof(pagemedia), pagemedia);
 		}
 
 	/* Copy blank lines before "%%BeginPageSetup". */
@@ -1148,7 +1149,7 @@ static void copy_trailer(void)
 		fatal(EXIT_JOBERR, "%s(): bad job: got \"%s\" when \"%%%%Trailer\" expected", function, pline);
 	if(!getpline())
 		fatal(EXIT_JOBERR, "%s(): bad job: got EOF when \"Offset:\" expected", function);
-	if(sscanf(pline, "Offset: %ld", &temp_offset) != 1)
+	if(gu_sscanf(pline, "Offset: %ld", &temp_offset) != 1)
 		fatal(EXIT_JOBERR, "%s(): bad job: got \"%s\" when \"Offset:\" expected", function, pline);
 	if(fseek(text, temp_offset, SEEK_SET))
 		fatal(EXIT_JOBERR, "%s(): can't seek to trailer in -text", function);
@@ -1335,7 +1336,7 @@ static void pprdrv_read_printer_conf(void)
 		** Remember that if there is no such line, the
 		** information is taken from the PPD file.
 		*/
-		else if(gu_sscanf(confline, "OutputOrder: %#s", sizeof(scratch), scratch) == 1)
+		else if(gu_sscanf(confline, "OutputOrder: %@s", sizeof(scratch), scratch) == 1)
 			{
 			if(strcmp(scratch, "Normal") == 0)
 				printer.OutputOrder = 1;

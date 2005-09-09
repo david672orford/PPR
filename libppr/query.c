@@ -100,17 +100,17 @@ struct QUERY *query_new_byprinter(const char printer[])
 		{
 		if(gu_sscanf(line, "Interface: %S", &tptr) == 1)
 			{
-			if(interface) gu_free(interface);
+			gu_free_if(interface);
 			interface = tptr;
 			}
 		else if(gu_sscanf(line, "Address: %A", &tptr) == 1)
 			{
-			if(address) gu_free(address);
+			gu_free_if(address);
 			address = tptr;
 			}
 		else if(gu_sscanf(line, "Options: %Z", &tptr) == 1)
 			{
-			if(options) gu_free(options);
+			gu_free_if(options);
 			options = tptr;
 			}
 		}

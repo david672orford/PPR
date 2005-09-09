@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libttf/ttf_psout.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 December 2004.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -85,7 +85,7 @@ int ttf_psout(void *p, void (*out_putc)(int c), void (*out_puts)(const char *str
 		BYTE *ptr;						/* We need only one value */
 		ptr = ttf_LoadTable(font, "hhea");
 		font->numberOfHMetrics = getUSHORT(ptr + 34);
-		ttf_free(font, ptr);
+		gu_free(ptr);
 
 		if(!font->loca_table) font->loca_table = ttf_LoadTable(font, "loca");
 		if(!font->glyf_table) font->glyf_table = ttf_LoadTable(font, "glyf");

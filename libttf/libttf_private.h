@@ -1,16 +1,31 @@
 /*
 ** mouse:~ppr/src/libttf/libttf_private.h
-** Copyright 1995--2000, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Permission to use, copy, modify, and distribute this software and its
-** documentation for any purpose and without fee is hereby granted, provided
-** that the above copyright notice appear in all copies and that both that
-** copyright notice and this permission notice appear in supporting
-** documentation.  This software is provided "as is" without express or
-** implied warranty.
+** Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are met:
+** 
+** * Redistributions of source code must retain the above copyright notice,
+** this list of conditions and the following disclaimer.
+** 
+** * Redistributions in binary form must reproduce the above copyright
+** notice, this list of conditions and the following disclaimer in the
+** documentation and/or other materials provided with the distribution.
+** 
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
+** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 November 2000.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -26,7 +41,7 @@
 /* We should know everything an external caller will: */
 #include "libttf.h"
 
-/* We use setjmp/longjmp heavily */
+/* We use longjmp for internal exception handing */
 #include <setjmp.h>
 
 /* Turns on debugging */
@@ -152,13 +167,6 @@ void ttf_PS_trailer(struct TTFONT *font, int target_type);
 void ttf_PS_CharStrings(struct TTFONT *font, int target_type);
 void ttf_PS_type3_charproc(struct TTFONT *font, int charindex);
 void ttf_PS_sfnts(struct TTFONT *font);
-
-/* Our memory allocators: */
-void *ttf_alloc(struct TTFONT *font, size_t number, size_t size);
-char *ttf_strdup(struct TTFONT *font, const char *string);
-char *ttf_strndup(struct TTFONT *font, const char *string, size_t len);
-void *ttf_realloc(struct TTFONT *font, void *ptr, size_t number, size_t size);
-void ttf_free(struct TTFONT *font, void *ptr);
 
 /* This routine converts a number in the font's character coordinate
    system to a number in a 1000 unit character system. */

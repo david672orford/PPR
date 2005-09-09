@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -35,6 +35,7 @@
 
 /*
 ** Quote a PostScript string if necessary.
+** This is generally used for inserting short resource names into DSC comments.
 */
 const char *quote(const char *string)
 	{
@@ -46,13 +47,9 @@ const char *quote(const char *string)
 	** The second clause accidentally causes empty strings
 	** to be quoted which is what we want anyway.
 	*/
-	if( (strpbrk(string," \t") != (char *)NULL)
-			|| (strspn(string,"0123456789")==strlen(string)) )
+	if(strpbrk(string," \t") || strspn(string,"0123456789") == strlen(string))
 		{
-		temp[0]='(';
-		strcpy(&temp[1],string);
-		strcat(temp,")");
-
+		snprintf(temp, sizeof(temp), "(%s)", string);
 		return temp;
 		}
 

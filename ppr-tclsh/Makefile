@@ -50,10 +50,10 @@ TCL_LIBRARY = $(LIBDIR)
 #
 # If you don't have them enabled, then you can't run the regression tests. 
 #
-#MATH_FLAGS =
-#MATH_LIBS = -lm
-MATH_FLAGS = -DTCL_NO_MATH
-MATH_LIBS =
+MATH_FLAGS =
+MATH_LIBS = -lm
+#MATH_FLAGS = -DTCL_NO_MATH
+#MATH_LIBS =
 
 #
 # To enable memory debugging reverse the comment characters on the following
@@ -118,7 +118,7 @@ test: tcltest$(DOTEXE)
 	( cd tests && ../tcltest all )
 
 tcltest$(DOTEXE): tclTest.$(OBJ) libtcl.$(LIBEXT)
-	$(CC) $(CC_SWITCHES) tclTest.$(OBJ) libtcl.$(LIBEXT) $(MATH_LIBS) -o tcltest$(DOTEXE)
+	$(CC) $(CC_SWITCHES) -o tcltest$(DOTEXE) tclTest.$(OBJ) libtcl.$(LIBEXT) ../libgu.$(LIBEXT) $(MATH_LIBS)
 
 #=== Install ================================================================
 

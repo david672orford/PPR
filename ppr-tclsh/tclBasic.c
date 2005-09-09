@@ -1167,9 +1167,9 @@ Tcl_Eval(interp, cmd)
 		}
 
 		if (!(iPtr->flags & ERR_IN_PROGRESS)) {
-			snprintf(copyStorage, sizeof(copyStorage), "\n	  while executing\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
+			snprintf(copyStorage, sizeof(copyStorage), "\n    while executing\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
 		} else {
-			snprintf(copyStorage, sizeof(copyStorage), "\n	  invoked from within\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
+			snprintf(copyStorage, sizeof(copyStorage), "\n    invoked from within\n\"%.*s%s\"", numChars, cmdStart, ellipsis);
 		}
 		Tcl_AddErrorInfo(interp, copyStorage);
 		iPtr->flags &= ~ERR_ALREADY_LOGGED;

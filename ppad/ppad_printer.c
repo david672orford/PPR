@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*==============================================================
@@ -178,13 +178,13 @@ int printer_new_alerts(const char *argv[])
 	method = argv[1];
 	address = argv[2];
 
-	if((newprn = fopen(NEWPRN_CONFIG,"w")) == (FILE*)NULL)
+	if(!(newprn = fopen(NEWPRN_CONFIG,"w")))
 		{
 		fprintf(errors, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
-	fprintf(newprn,"Alert: %d %s %s\n",frequency,method,address);
+	fprintf(newprn, "Alert: %d %s %s\n", frequency, method, address);
 
 	fclose(newprn);
 	return EXIT_OK;
@@ -484,32 +484,23 @@ int printer_show(const char *argv[])
 			}
 		else if(lmatch(confline, "FlagPages:"))
 			{
-			sscanf(confline, "FlagPages: %d %d", &banner, &trailer);
+			gu_sscanf(confline, "FlagPages: %d %d", &banner, &trailer);
 			}
 		else if(lmatch(confline, "Alert:"))
 			{
-			int x=6;
-			int len;
-
 			if(alerts_method)
+				{
 				gu_free(alerts_method);
+				alerts_method = NULL;
+				}
 			if(alerts_address)
+				{
 				gu_free(alerts_address);
-
-			x+=strspn(&confline[x]," \t");				/* eat up space */
-			alerts_frequency=atoi(&confline[x]);
-
-			x+=strspn(&confline[x]," \t-0123456789");	/* skip spaces and */
-														/* digits */
-			len=strcspn(&confline[x]," \t");			/* get word length */
-			alerts_method = gu_strndup(&confline[x],len);
-			x+=len;										/* move past word */
-			x+=strspn(&confline[x]," \t");				/* skip spaces */
-
-			len=strcspn(&confline[x]," \t\n");			/* get length */
-			alerts_address = gu_strndup(&confline[x],len);
+				alerts_address = NULL;
+				}
+			gu_sscanf(confline, "Alert: %d %S %S", &alerts_frequency, &alerts_method, &alerts_address);
 			}
-		else if(gu_sscanf(confline, "OutputOrder: %#s", sizeof(scratch), scratch) == 1)
+		else if(gu_sscanf(confline, "OutputOrder: %@s", sizeof(scratch), scratch) == 1)
 			{
 			if(strcmp(scratch, "Normal") == 0)
 				outputorder = 1;

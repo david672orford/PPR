@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -237,7 +237,7 @@ void include_resource(void)
 	if(strcmp(type, "procset") == 0 && tokens[3] && tokens[4])
 		{
 		version = gu_getdouble(tokens[3]);
-		sscanf(tokens[4], "%d", &revision);
+		revision = atoi(tokens[4]);
 		}
 	/* If not a procset or missing, use dummy values. */
 	else

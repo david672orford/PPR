@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -416,16 +416,16 @@ int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
 	x=0;
 	while((line = gu_getline(line, &line_available, qfile)))
 		{
-		if(sscanf(line, "Priority: %hd", &newentry->priority) == 1)
+		if(gu_sscanf(line, "Priority: %hd", &newentry->priority) == 1)
 			{
 			continue;
 			}
-		if(sscanf(line, "Status-and-Flags: %02hd %hx", &newentry->status, &newentry->flags) == 2)
+		if(gu_sscanf(line, "Status-and-Flags: %hd %hx", &newentry->status, &newentry->flags) == 2)
 			{
 			newentry->status *= -1;
 			continue;
 			}
-		if(x < MAX_DOCMEDIA && gu_sscanf(line, "Media: %#s", sizeof(tmedia), tmedia) == 1)
+		if(x < MAX_DOCMEDIA && gu_sscanf(line, "Media: %@s", sizeof(tmedia), tmedia) == 1)
 			{
 			newentry->media[x++] = get_media_id(tmedia);
 			continue;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -41,9 +41,11 @@
 static char *media[MAX_MEDIA];			/* up to twenty media */
 static int media_count = 0;				/* how many do we have now? */
 
+#if 0
 #define MAX_BINNAMES 50					/* bin name to id translate table */
 static char *binname[MAX_BINNAMES];
 static int binnames_count = 0;
+#endif
 
 /*=======================================================================================
 ** Routines for making the mounted media list survive a spooler shutdown and restart
@@ -69,7 +71,7 @@ void media_mounted_save(int prnid)
 	p = &printers[prnid];
 	for(x=0; x < p->nbins; x++)
 		{
-		ASCIIZ_to_padded(pbin, get_bin_name(p->bins[x]), sizeof(pbin));
+		ASCIIZ_to_padded(pbin, p->bins[x], sizeof(pbin));
 		ASCIIZ_to_padded(pmedia, get_media_name(p->media[x]), sizeof(pmedia));
 		fwrite(pbin, sizeof(pbin), 1, sf);
 		fwrite(pmedia, sizeof(pmedia), 1, sf);
@@ -110,7 +112,7 @@ void media_mounted_recover(int prnid)
 		#endif
 		for(x=0; x < p->nbins; x++)
 			{
-			if(strcmp(get_bin_name(p->bins[x]), abin) == 0)
+			if(strcmp(p->bins[x], abin) == 0)
 				{
 				p->media[x] = get_media_id(amedia);
 				break;
@@ -166,6 +168,7 @@ int get_media_id(char *medianame)
 	return x;
 	} /* end of get_media_id() */
 
+#if 0
 /*
 ** Convert a bin id to a name.
 */
@@ -197,6 +200,7 @@ int get_bin_id(char *nbinname)
 	binnames_count++;
 	return x;
 	} /* end of get_bin_id() */
+#endif
 
 /*=====================================================================
 ** These routines are hooks for spooler events such as new job,

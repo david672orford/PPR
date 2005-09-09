@@ -371,11 +371,11 @@ static void genmetrics(char *infile, int italic)
 			switch(*ptr)
 				{
 				case 'N':
-					sscanf(ptr,"N %s", name);
+					gu_sscanf(ptr, "N %@s", sizeof(name), name);
 					found_N = TRUE;
 					break;
 				case 'B':
-					sscanf(ptr,"B %d %d %d %d", &llx, &lly, &urx, &ury);
+					gu_sscanf(ptr, "B %d %d %d %d", &llx, &lly, &urx, &ury);
 					found_B = TRUE;
 					break;
 				default:

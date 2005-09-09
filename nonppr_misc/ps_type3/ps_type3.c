@@ -144,11 +144,11 @@ static void PSConvert(struct TTFONT *font)
 	int end_offpt;
 	#endif
 
-	area_ctr = (double*)ttf_alloc(font, num_ctr, sizeof(double));
+	area_ctr = (double*)gu_alloc(num_ctr, sizeof(double));
 	memset(area_ctr, 0, (num_ctr*sizeof(double)));
-	check_ctr = (char*)ttf_alloc(font, num_ctr, sizeof(char));
+	check_ctr = (char*)gu_alloc(num_ctr, sizeof(char));
 	memset(check_ctr, 0, (num_ctr*sizeof(char)));
-	ctrset = (int*)ttf_alloc(font, num_ctr*2, sizeof(int));
+	ctrset = (int*)gu_alloc(num_ctr*2, sizeof(int));
 	memset(ctrset, 0, (num_ctr*2*sizeof(int)));
 
 	check_ctr[0]=1;
@@ -234,9 +234,9 @@ static void PSConvert(struct TTFONT *font)
 	(*font->puts)("_cl");				/* "closepath eofill" */
 
 	/* Free our work arrays. */
-	ttf_free(font, area_ctr);
-	ttf_free(font, check_ctr);
-	ttf_free(font, ctrset);
+	gu_free(area_ctr);
+	gu_free(check_ctr);
+	gu_free(ctrset);
 	} /* end of PSConvert() */
 
 static int nextoutctr(int co)
@@ -363,10 +363,10 @@ static void PSCurveto(struct TTFONT *font, FWord x, FWord y, int s, int t)
 */
 static void clear_data(struct TTFONT *font)
 	 {
-	 ttf_free(font, tt_flags);			/* The flags array */
-	 ttf_free(font, xcoor);				/* The X coordinates */
-	 ttf_free(font, ycoor);				/* The Y coordinates */
-	 ttf_free(font, epts_ctr);			/* The array of contour endpoints */
+	 gu_free(tt_flags);			/* The flags array */
+	 gu_free(xcoor);				/* The X coordinates */
+	 gu_free(ycoor);				/* The Y coordinates */
+	 gu_free(epts_ctr);			/* The array of contour endpoints */
 	 } /* end of clear_data() */
 
 /*
@@ -380,7 +380,7 @@ static void load_char(struct TTFONT *font, BYTE *glyph)
 	BYTE c, ct;
 
 	/* Read the contour endpoints list. */
-	epts_ctr = (int *)ttf_alloc(font, num_ctr,sizeof(int));
+	epts_ctr = (int *)gu_alloc(num_ctr,sizeof(int));
 	for (x = 0; x < num_ctr; x++)
 		{
 		epts_ctr[x] = getUSHORT(glyph);
@@ -402,9 +402,9 @@ static void load_char(struct TTFONT *font, BYTE *glyph)
 	glyph += x;
 
 	/* Allocate space to hold the data. */
-	tt_flags = (BYTE *)ttf_alloc(font, num_pts, sizeof(BYTE));
-	xcoor = (FWord *)ttf_alloc(font, num_pts, sizeof(FWord));
-	ycoor = (FWord *)ttf_alloc(font, num_pts, sizeof(FWord));
+	tt_flags = (BYTE *)gu_alloc(num_pts, sizeof(BYTE));
+	xcoor = (FWord *)gu_alloc(num_pts, sizeof(FWord));
+	ycoor = (FWord *)gu_alloc(num_pts, sizeof(FWord));
 
 	/* Read the flags array, uncompressing it as we go.
 	   There is danger of overflow here. */

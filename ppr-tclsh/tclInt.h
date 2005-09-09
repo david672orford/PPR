@@ -26,6 +26,8 @@
  * needed by stdlib.h in some configurations.
  */
 
+#include "config.h"
+#include "gu.h"
 #include "tcl.h"
 #include "tclRegexp.h"
 

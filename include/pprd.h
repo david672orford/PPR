@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -128,7 +128,7 @@ struct Printer
 	int charge_per_simplex;				/* half-sheet charge */
 	gu_boolean accepting;				/* TRUE if is accepting as destination */
 	int nbins;							/* number of bins */
-	int bins[MAX_BINS];					/* binname id of each bin */
+	const char *bins[MAX_BINS];			/* binname of each bin */
 	gu_boolean AutoSelect_exists;		/* TRUE if any bin is named "AutoSelect" */
 	int media[MAX_BINS];				/* media id of media in each bin */
 	int previous_status;				/* saved previous status */

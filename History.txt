@@ -9821,4 +9821,24 @@ no final tarball was released.
 * libgu/gu_sscanf.c: removed %z since it is no longer used and %Z is 
   preferable.
 
+* pprd/, ppad/: simplified parsing of "Bin:" lines in printer configuration
+  files.
+
+* libgu/gu_sscanf.c: changed '#' to '@' in imitation of trio_sscanf().  Long ago it
+  was '*', but that could create confusion because in standard sscanf() '*' means
+  to suppress assignment.  It appears that '#' doesn't have a meaning in sscanf(),
+  but it does in printf(), so we will avoid it.
+
+* libgu/gu_sscanf.c: implemented '*' (don't assign), %x, %hx, and %lx so that remaining
+  usages of sscanf() can be replaced with gu_sscanf().
+
+* libgu/gu_fscanf.c:gu_fscanf() replaced with libgu/gu_fgetint.c:gu_fgetint() since
+  %d is the only thing implemented or likely to ever be implemented.
+
+* libttf/alloc.c: removed and changed other files to use gu_ routines instead and 
+  let the exceptions come.  There is not much point in catching an out-of-core
+  exception anyway.
+
+
+
 

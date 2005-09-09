@@ -25,13 +25,13 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 September 2005.
+** Last modified 9 September 2005.
 */
 
 /*! \file
 	\brief safe sscanf()
 	
-This module constains a limited version of sscanf() which allows the maximum
+This module contains a limited version of sscanf() which allows the maximum
 width of string arguments to be specified as an additional argument.  It also
 defines additional formats such as %Z which reads a string which extends to the end
 of the input string and allocaces storage for it, and %S which reads a word 
@@ -57,19 +57,23 @@ It implements the following formats:
 
 <dt>%d</dt>
 
-<dd>read an int.  The argument should be a pointer to an int.</dd>
+<dd>read a signed decimal int.  The argument should be a pointer to an int.</dd>
 
 <dt>%ld</dt>
 
-<dd>read a long int.  The argument should be a pointer to a long int.</dd>
-
-<dt>%hd</dt>
-
-<dd>read a short int.  The argument should be a pointer to a short int.</dd>
+<dd>read a signed long decimal int.  The argument should be a pointer to a long int.</dd>
 
 <dt>%u</dt>
 
-<dd>read an unsigned int</dd>
+<dd>read an unsigned decimal int</dd>
+
+<dt>%x</dt>
+
+<dd>read an unsigned hexadecimal int</dd>
+
+<dt>%hx</td>
+
+<dd>read an unsigned hexadecimal short int</dd>
 
 <dt>%f</dt>
 
@@ -79,34 +83,39 @@ It implements the following formats:
 
 <dd>Read characters up to the next whitespace.  The argument should be a
 pointer to a char array with enough space to hold the string and the
-terminating NULL.  To prevent overruns, the size of the array may be
+terminating NULL.
+
+To prevent overruns, the size of the array must be
 specified by a decimal number between the <tt>%</tt> and the <tt>s</tt> or
-by a <tt>#</tt>. If the length of the array is specified with a <tt>#</tt>
+by a <tt>@</tt>. If the length of the array is specified with a <tt>@</tt>
 then the actual length is read from gu_sscanf()'s next argument (the one
 before the pointer to the char array).</dd>
+
+Note that the size of the array defaults to zero which causes an exception
+to be thrown!
 
 <dt>%S</dt>
 
 <dd>Read characters up to the next whitespace, allocate memory, and store
 them in the allocated memory.  The argument should be a pointer to a char
-pointer which will be set to the address of the allocated memory.</dd>
+pointer which will be set to the address of the allocated memory.  The
+field-width is ignored</dd>
 
 <dt>%Z</dt>
 
 <dd>Read characters up to the end of the string, allocate storeage
 for them, and copy them into that storage.  The argument should be a pointer to
-a pointer to a char array.</dd>
+a char pointer to which will be set to the address of the allocated memory.</dd>
 
 <dt>%Q</dt>
 
-<dd>Read a quoted string and allocate storate for it.</dd>
+<dd>Read the next word (posibly quoted) and allocate storate for it.</dd>
 
 <dt>%A</dt>
 
-<dd>If there is a quoted string, read to the closing quote.  Otherwise,
-read to the end of the line.  This is used for reading values which 
-must be quoted if they have leading or trailing spaces but needn't if
-they just have internal spaces.</dd>
+<dd>If there is a quoted string, read as %Q does.  Otherwise, read as %Z does.
+This is used for reading values which must be quoted if they have leading or
+trailing spaces but needn't be if they have only internal spaces.</dd>
 
 <dt>%t</dt>
 
@@ -122,15 +131,14 @@ they just have internal spaces.</dd>
 int gu_sscanf(const char *input, const char *format, ...)
 	{
 	const char function[] = "gu_sscanf";
+	const char *pattern=format; /* Current position in the format. */
+	const char *string=input;
 	va_list va;
 	int count = 0;				/* number of things extracted so far. */
 	int maxextlen;				/* maximum characters to extract, including NULL */
-	int len;					/* actual length */
-	const char *pattern=format; /* Current position in the format. */
-	const char *string=input;
-	int islong;					/* TRUE if ell encountered. */
-	int isshort;				/* TRUE if aich encountered. */
-	char *extptr;				/* pointer to string we are extracting into */
+	gu_boolean islong;			/* TRUE if ell encountered. */
+	gu_boolean isshort;			/* TRUE if aich encountered. */
+	gu_boolean suppress;
 
 	va_start(va, format);
 
@@ -139,28 +147,43 @@ int gu_sscanf(const char *input, const char *format, ...)
 		if(*pattern == '%')						/* If special sequence begins, */
 			{
 			pattern++;
+			suppress = FALSE;
+			maxextlen = 0;
+			isshort = FALSE;
+			islong = FALSE;
 
-			maxextlen = 0;						/* Get "precision" */
-			while(gu_ascii_isdigit(*pattern))	/* from any digits in */
-				{								/* the format. */
-				maxextlen *= 10;
-				maxextlen += ( *(pattern++) - '0' );
+			if(*pattern == '*')					/* assignment suppression */
+				{
+				suppress = TRUE;
+				pattern++;
 				}
-			if(*pattern == '#')					/* Get "precision" from */
+			
+			if(*pattern == '@')					/* Get "field-width" from */
 				{
 				maxextlen = va_arg(va, int);	/* the next parameter. */
 				pattern++;
 				}
+			else								/* nope?  any digits? */
+				{
+				while(gu_ascii_isdigit(*pattern))
+					{
+					maxextlen *= 10;
+					maxextlen += gu_ascii_digit_value(*(pattern++));
+					}
+				}
 
-			if(*pattern == 'l')					/* Will this be a long? */
-				{ islong = TRUE; pattern++; }
-			else
-				{ islong = FALSE; }
-
-			if(*pattern=='h')					/* Will it be short? */
-				{ isshort = TRUE; pattern++; }
-			else
-				{ isshort = FALSE; }
+			for( ;strchr("lh", *pattern); pattern++)
+				{
+				switch(*pattern)
+					{
+					case 'l':
+						islong = TRUE;
+						break;
+					case 'h':
+						isshort = TRUE;
+						break;
+					}
+				}
 
 			switch(*(pattern++))				/* Act on the type id char. */
 				{
@@ -173,11 +196,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					pattern--;					/* oops! */
 					break;
 
-				/*
-				 * Signed decimal int
-				 */
 				case 'd':
-				case 'i':
 					{
 					int sign = 1;						/* 1 or -1 */
 					if(*string == '-')					/* if a minus sign is found, */
@@ -190,63 +209,102 @@ int gu_sscanf(const char *input, const char *format, ...)
 					if(islong)
 						{
 						long int templong = 0;
-						while(gu_ascii_isdigit(*string))			/* convert digits */
+						while(gu_ascii_isdigit(*string))
 							{
 							templong *= 10;
-							templong += (*(string++)-'0');
+							templong += gu_ascii_digit_value(*(string++));
 							}
-						*(va_arg(va, long int *)) = (templong * sign);
+						if(!suppress)
+							*(va_arg(va, long int *)) = (templong * sign);
 						}
 					else if(isshort)
 						{
 						short int tempshort = 0;
-						while(gu_ascii_isdigit(*string))			/* convert digits */
+						while(gu_ascii_isdigit(*string))
 							{
 							tempshort *= 10;
-							tempshort += (*(string++)-'0');
+							tempshort += gu_ascii_digit_value(*(string++));
 							}
-						*(va_arg(va, short int *)) = tempshort*sign; /* store it */
+						if(!suppress)
+							*(va_arg(va, short int *)) = tempshort*sign; /* store it */
 						}
 					else
 						{
 						int tempint = 0;
-						while(gu_ascii_isdigit(*string))			/* convert digits */
+						while(gu_ascii_isdigit(*string))
 							{
 							tempint *= 10;
-							tempint += (*(string++) - '0');
+							tempint += gu_ascii_digit_value(*(string++));
 							}
-						*(va_arg(va, int *)) = (tempint * sign);
+						if(!suppress)
+							*(va_arg(va, int *)) = (tempint * sign);
 						}
 					}
 					count++;						/* increment count of values extracted */
 					break;
 
-				/*
-				 * Unsigned decimal int
-				 */
 				case 'u':
-					{
-					unsigned int tempint = 0;
 					if(!gu_ascii_isdigit(*string))
 						goto break_break;
-					while(gu_ascii_isdigit(*string))		/* convert digits */
+					if(islong)
 						{
-						tempint *= 10;
-						tempint += (*(string++) - '0');
+						gu_Throw("%s(): %%lu not implemented", function);
 						}
-					*(va_arg(va, unsigned int *)) = tempint;
-					}
+					else if(isshort)
+						{
+						gu_Throw("%s(): %%hu not implemented", function);
+						}
+					else
+						{
+						unsigned int tempint = 0;
+						while(gu_ascii_isdigit(*string))		/* convert digits */
+							{
+							tempint *= 10;
+							tempint += gu_ascii_digit_value(*(string++));
+							}
+						if(!suppress)
+							*(va_arg(va, unsigned int *)) = tempint;
+						}
 					count++;
 					break;
 
-				/*
-				 * Decimal float, probably a version number.
-				 */
+
+				case 'x':
+					if(islong)
+						{
+						unsigned long int tempint = 0;
+						while(gu_ascii_isxdigit(*string))		/* convert digits */
+							{
+							tempint <<= 4;
+							tempint |= gu_ascii_xdigit_value(*(string++));
+							}
+						if(!suppress)
+							*(va_arg(va, unsigned long int *)) = tempint;
+						}
+					else
+						{
+						unsigned int tempint = 0;
+						while(gu_ascii_isxdigit(*string))		/* convert digits */
+							{
+							tempint <<= 4;
+							tempint |= gu_ascii_xdigit_value(*(string++));
+							}
+						if(!suppress)
+							{
+							if(isshort)
+								*(va_arg(va, unsigned short int *)) = tempint;
+							else
+								*(va_arg(va, unsigned int *)) = tempint;
+							}
+						}
+					count++;
+					break;
+
 				case 'f':
 					{
 					int sign = 1;
 					int whole = 0;
-					float fraction = 0.0;
+					double fraction = 0.0;
 					if(*string == '-')					/* if a minus sign is found, */
 						{
 						sign = -1;
@@ -269,54 +327,63 @@ int gu_sscanf(const char *input, const char *format, ...)
 							place /= 10.0;
 							}
 						}
-					*(va_arg(va, float *)) = (float)sign * ((float)whole + fraction);
+					if(!suppress)
+						{
+						if(isshort)
+							gu_Throw("%s(): no such thing as short float", function);
+						else if(islong)
+							*(va_arg(va, double *)) = (double)sign * ((double)whole + fraction);
+						else
+							*(va_arg(va, float *)) = (float)sign * ((float)whole + fraction);
+						}
 					}
 					count++;
 					break;
 
-				/*
-				 * Extract a string into the storage provided.
-				 */
 				case 's':
-					extptr = va_arg(va, char *);				/* get pointer string to extract to */
-					while( *string && !gu_ascii_isspace(*string) && --maxextlen )
-						*(extptr++) = *(string++);
-					*extptr = '\0';								/* terminate the string */
-					while( *string && !gu_ascii_isspace(*string) )		/* eat any extra */
+					if(!suppress)
+						{
+						char *extptr = va_arg(va, char *);
+
+						if(maxextlen < 1)
+							gu_Throw("%s(): field width for %%s is %d!", function, maxextlen);
+					
+						/* Copy what will fit */
+						while(*string && !gu_ascii_isspace(*string) && --maxextlen)
+							*(extptr++) = *(string++);
+						*extptr = '\0';
+						}
+
+					/* Eat the part that won't fit. */
+					while( *string && !gu_ascii_isspace(*string) )
 						string++;
-					count++;									/* one more item done */
+
+					count++;			/* one more item done */
 					break;
 
-				/*
-				 * Extract a string of any length
-				 * and allocate storage for it.
-				 */
 				case 'S':
-					len = strcspn(string, " \t\n");
+					{
+					int len = strcspn(string, " \t\n");
 					*(va_arg(va, char **)) = gu_strndup(string, len);
 					string += len;
 					count++;
+					}
 					break;
 
-				/*
-				 * Get the rest of the line as a string and
-				 * allocate storage for it.  Notice that
-				 * we pay no attention to maxextlen.
-				 */
 				case 'Z':
-				   len = strcspn(string, "\n");
-				   *(va_arg(va,char **)) = gu_strndup(string, len);
-				   string += len;
-				   while(*string)
+					{
+					int len = strcspn(string, "\n");
+					*(va_arg(va,char **)) = gu_strndup(string, len);
+					string += len;
+					while(*string)
 						string++;
-				   count++;
-				   break;
+					count++;
+					}
+					break;
 
-				/*
-				 * Extract a possibly quoted string of any length
-				 * and allocate storage for it.
-				 */
 				case 'Q':
+					{
+					int len;
 					switch(*string)
 						{
 						case 042:		/* ASCII double quote */
@@ -336,13 +403,12 @@ int gu_sscanf(const char *input, const char *format, ...)
 					if(*string == 042 || *string == 047)
 						string++;
 					count++;
+					}
 					break;
 
-				/*
-				 * Get the rest of the line or a quoted string.  If the
-				 * line ends with whitespace, omit the whitspace.
-				 */
 				case 'A':
+					{
+					int len;
 					switch(*string)
 						{
 						case 042:		/* ASCII double quote */
@@ -355,6 +421,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 							break;
 						default:
 							len = strlen(string);
+							/* don't copy trailing space */
 							while(len > 0 && gu_ascii_isspace(string[len - 1]))
 								len--;
 							break;
@@ -364,19 +431,14 @@ int gu_sscanf(const char *input, const char *format, ...)
 					if(*string == 042 || *string == 047)
 						string++;
 					count++;
+					}
 					break;
 
-				/*
-				 * Store the number of characters read so far.
-				 */
 				case 'n':
 					*(va_arg(va, int *)) = ((string - input) / sizeof(const char));
 					count++;
 					break;
 
-				/*
-				 * Read a time_t.
-				 */
 				case 't':
 					{
 					time_t temptime = 0;
@@ -386,8 +448,8 @@ int gu_sscanf(const char *input, const char *format, ...)
 						temptime += (*(string++) - '0');
 						}
 					*(va_arg(va, time_t *)) = temptime;
-					}
 					count++;
+					}
 					break;
 
 				/*
@@ -420,5 +482,82 @@ int gu_sscanf(const char *input, const char *format, ...)
 
 	return count;
 	} /* end of gu_sscanf() */
+
+/* gcc -Wall -DTEST -I../include -o gu_sscanf gu_sscanf.c ../libgu.a */
+#ifdef TEST
+#include <stdio.h>
+int main(int argc, char *argv[])
+	{
+	int t_d;
+	long int t_ld;
+	short int t_hd;
+	unsigned int t_u;
+	unsigned int t_x;
+	unsigned short int t_hx;
+	float t_f;
+	double t_lf;
+	char t_s[10];
+	char t_s2[5];
+	
+	printf("Read %d items, expected 9:\n",
+		gu_sscanf(
+			"101 -102 103	  201   1b2 1b3  4000.00042 4000.00043  smith",
+			"%d %ld %hd %u %x %hx %f %lf %10s",
+			&t_d,
+			&t_ld,
+			&t_hd,
+			&t_u,
+			&t_x,
+			&t_hx,
+			&t_f,
+			&t_lf,
+			t_s)
+		);
+	printf("\tt_d=%d\n", t_d);
+	printf("\tt_ld=%ld\n", t_ld);
+	printf("\tt_hd=%hd\n", t_hd);
+	printf("\tt_u=%u\n", t_u);
+	printf("\tt_x=%x\n", t_x);
+	printf("\tt_hx=%hx\n", t_hx);
+	printf("\tt_f=%f (c.f. %f)\n", t_f, (float)4000.00042);
+	printf("\tt_lf=%lf\n", t_lf);
+	printf("\tt_s=\"%s\"\n", t_s);
+
+	printf("Read %d items, expected 2:\n",
+		gu_sscanf(
+			"123456789012 123456789012",
+			"%@s %@s",
+			sizeof(t_s), t_s,
+			sizeof(t_s2), t_s2
+			)
+		);
+	printf("\tt_s=\"%s\"\n", t_s);
+	printf("\tt_s2=\"%s\"\n", t_s2);
+
+	printf("Read %d items, expected 3:\n",
+		gu_sscanf(
+			"one two three",
+			"%@s %*s %@s",
+			sizeof(t_s), t_s,
+			sizeof(t_s2), t_s2
+			)
+		);
+	printf("\tt_s=\"%s\"\n", t_s);
+	printf("\tt_s2=\"%s\"\n", t_s2);
+
+	printf("Read %d items, expected 4:\n",
+		gu_sscanf(
+			"one 2 3three",
+			"%@s %*d %*d%@s",
+			sizeof(t_s), t_s,
+			sizeof(t_s2), t_s2
+			)
+		);
+	printf("\tt_s=\"%s\"\n", t_s);
+	printf("\tt_s2=\"%s\"\n", t_s2);
+
+	return 0;
+	}
+#endif
 
 /* end of file */

@@ -1966,13 +1966,14 @@ Tcl_DStringEndSublist(dsPtr)
 void
 Tcl_PrintDouble(interp, value, dst)
     Tcl_Interp *interp;			/* Interpreter whose tcl_precision
-					 * variable controls printing. */
-    double value;			/* Value to print as string. */
-    char *dst;				/* Where to store converted value;
-					 * must have at least TCL_DOUBLE_SPACE
-					 * characters. */
+								 * variable controls printing. */
+    double value;				/* Value to print as string. */
+    char *dst;					/* Where to store converted value;
+								 * must have at least TCL_DOUBLE_SPACE
+								 * characters. */
 {
     register char *p;
+
     snprintf(dst, TCL_DOUBLE_SPACE, ((Interp *) interp)->pdFormat, value);
 
     /*

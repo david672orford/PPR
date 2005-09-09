@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -62,7 +62,6 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	const char function[] = "load_printer";
 	FILE *prncf;
 	char tempstr[256];					/* for reading lines */
-	char tempstr2[MAX_BINNAME+1];		/* for extracting bin names */
 	mode_t newmode;						/* new file mode */
 	struct stat pstat;
 	int count; float x1, x2;
@@ -74,7 +73,7 @@ static void load_printer(struct Printer *printer, const char prnname[])
 		fatal(0, "%s(): can't open printer config file \"%s\", errno=%d.", function, fname, errno);
 	}
 
-	strcpy(printer->name, prnname);			/* store the printer name */
+	strlcpy(printer->name, prnname, sizeof(printer->name));	
 
 	printer->alert_interval = 0;				/* no alerts */
 	printer->alert_method = (char*)NULL;		/* (At least not until we */
@@ -109,42 +108,35 @@ static void load_printer(struct Printer *printer, const char prnname[])
 			continue;
 
 		/* For "Alert:" lines, read the interval, method, and address. */
-		else if(strncmp(tempstr, "Alert: ", 7) == 0)
+		else if(lmatch(tempstr, "Alert:"))
 			{
-			int x = 7;									/* len of "Alert: " */
-			int len;
-
-			x+=strspn(&tempstr[x], " \t");				/* skip spaces */
-			sscanf(&tempstr[x],"%d",&printer->alert_interval);
-			x+=strspn(&tempstr[x]," \t-0123456789");	/* skip spaces and */
-														/* digits */
-			len=strcspn(&tempstr[x]," \t");				/* get word length */
-			printer->alert_method = (char*)gu_alloc(len+1,sizeof(char));
-			strncpy(printer->alert_method,&tempstr[x],len);	 /* copy */
-			printer->alert_method[len] = '\0';			/* terminate */
-			x+=len;										/* move past word */
-			x+=strspn(&tempstr[x]," \t");				/* skip spaces */
-
-			len=strcspn(&tempstr[x]," \t\n");					/* get length */
-			printer->alert_address = (char*)gu_alloc(len+1,sizeof(char));
-			strncpy(printer->alert_address,&tempstr[x],len); 	/* copy */
-			printer->alert_address[len] = '\0';					/* terminate */
+			if(printer->alert_method)
+				{
+				gu_free(printer->alert_method);
+				printer->alert_method = NULL;
+				}
+			if(printer->alert_address)
+				{
+				gu_free(printer->alert_address);
+				printer->alert_address = NULL;
+				}
+			gu_sscanf(tempstr, "Alert: %d %S %S", &printer->alert_interval, &printer->alert_method, &printer->alert_address);
 			}
 
 		/* For each "Bin:" line, add the bin to the list */
-		else if(strncmp(tempstr, "Bin: ", 5) == 0)
+		else if(lmatch(tempstr, "Bin:"))
 			{
 			if(printer->nbins < MAX_BINS)
 				{
-				int t = gu_sscanf(tempstr, "Bin: %#s", sizeof(tempstr2), tempstr2);
-
-				if(t)					/* if it has 1 or more arguments */
-					{					/* use the bin name */
-					printer->bins[printer->nbins] = get_bin_id(tempstr2);
-					if(strcmp(tempstr2,"AutoSelect")==0)		/* If this is an "AutoSelect" bin, */
-						printer->AutoSelect_exists = TRUE;		/* then set the flag. */
+				char *bin;
+				if(gu_sscanf(tempstr, "Bin: %S", &bin) == 1)
+					{
+					printer->bins[printer->nbins] = bin;
 					printer->media[printer->nbins] = -1;		/* nothing mounted yet */
 					printer->nbins++;
+
+					if(strcmp(bin,"AutoSelect")==0)				/* If this is an "AutoSelect" bin, */
+						printer->AutoSelect_exists = TRUE;		/* then set the flag. */
 					}
 				}
 			else
@@ -407,7 +399,7 @@ static void load_group(struct Group *cl, const char filename[])
 	if((clcf = fopen(fname, "r")) == (FILE*)NULL)
 		fatal(0, "%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 
-	strcpy(cl->name, filename);			/* store the group name */
+	strlcpy(cl->name, filename, sizeof(cl->name));			/* store the group name */
 	cl->last = -1;						/* initialize last value */
 
 	fstat(fileno(clcf), &cstat);
@@ -432,7 +424,7 @@ static void load_group(struct Group *cl, const char filename[])
 		line++;
 
 		/* Read the name of a group member */
-		if(gu_sscanf(tempstr, "Printer: %#s", sizeof(tempstr2), tempstr2) == 1)
+		if(gu_sscanf(tempstr, "Printer: %@s", sizeof(tempstr2), tempstr2) == 1)
 			{
 			if(y >= MAX_GROUPSIZE)		/* if group has overflowed, */
 				{						/* note error and ignore member */
@@ -448,7 +440,7 @@ static void load_group(struct Group *cl, const char filename[])
 				if(printers[cl->printers[y]].protect)
 										/* if this printer is protected, */
 					cl->protect = TRUE; /* protect the group */
-				y++;			/* increment members index */
+				y++;					/* increment members index */
 				}
 			continue;
 			}

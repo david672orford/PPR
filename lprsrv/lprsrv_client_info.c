@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -115,14 +115,14 @@ void get_client_info(char *client_dns_name, char *client_ip, int *client_port)
 		fatal(1, "%s(): stdin doesn't have an address of type AF_INET!", function);
 
 	/* Convert the IP address to a string and store it for use in logs. */
-	strcpy(client_ip, inet_ntoa(client_address.sin_addr));
+	strlcpy(client_ip, inet_ntoa(client_address.sin_addr), sizeof(client_ip));
 
 	/* Make a note of the port the request is coming from. */
 	*client_port = ntohs(client_address.sin_port);
 
 	/* Copy the IP address into the name field in case the
 	   DNS loopup fails. */
-	strcpy(client_dns_name, client_ip);
+	strlcpy(client_dns_name, client_ip, sizeof(client_dns_name));
 
 	/* Get the name of the one we are talking to. */
 	if((result = gethostbyaddr((char*)&client_address.sin_addr, sizeof(client_address.sin_addr), client_address.sin_family)) == (struct hostent*)NULL)

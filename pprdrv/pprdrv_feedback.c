@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 June 2005.
+** Last modified 9 September 2005.
 */
 
 /*===========================================================================
@@ -517,7 +517,7 @@ int feedback_reader(void)
 				{
 				int n1, n2;
 				unsigned int n3;
-				if(sscanf(ptr2, "%d %d %x", &n1, &n2, &n3) != 3)
+				if(gu_sscanf(ptr2, "%d %d %x", &n1, &n2, &n3) != 3)
 					error("%s(): can't parse SNMP: %*s", function, (int)(strstr(ptr2, " ]%%") - ptr2), ptr2);
 				handle_snmp_status(n1, n2, n3);
 				continue;
@@ -533,7 +533,7 @@ int feedback_reader(void)
 			if((ptr2 = lmatchp((char*)ptr, "%%[ PPR hrPrinterDetectedErrorState: ")) && strstr(ptr2, " ]%%"))
 				{
 				unsigned int temp;
-				if(sscanf(ptr2, "%x", &temp) != 1)
+				if(gu_sscanf(ptr2, "%x", &temp) != 1)
 					error("%s(): can't parse hex number: %*s", function, (int)strcspn(ptr2, " "), ptr2);
 				continue;
 				}

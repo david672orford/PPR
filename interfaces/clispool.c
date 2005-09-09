@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -282,8 +282,8 @@ int int_main(int argc, char *argv[])
 	#endif
 	if( (req=(struct t_bind*)t_alloc(endpoint,T_BIND,T_ALL)) == (struct t_bind*)NULL )
 		fatal(EXIT_PRNERR, "Interface internal error: t_alloc() failed, t_errno=%d.", t_errno);
-	strcpy(req->addr.buf,local_name);	/* copy the local */
-	req->addr.len=strlen(local_name);	/* name into a structure */
+	strlcpy(req->addr.buf,local_name,sizeof(req->addr.buf));	/* copy the local */
+	req->addr.len = strlen(local_name);	/* name into a structure */
 	req->qlen=0;
 	if( t_bind(endpoint,req,(struct t_bind*)NULL) == -1 )
 		fatal(EXIT_PRNERR, "Interface internal error: t_bind() failed, t_errno=%d.", t_errno);
@@ -296,7 +296,7 @@ int int_main(int argc, char *argv[])
 	#endif
 	if( (sndcall=(struct t_call*)t_alloc(endpoint,T_CALL,T_ADDR)) == (struct t_call*)NULL )
 		fatal(EXIT_PRNERR, "t_alloc() failed, t_errno=%d", t_errno);
-	strcpy(sndcall->addr.buf,remote_name);
+	strlcpy(sndcall->addr.buf,remote_name,sizeof(sndcall->addr.buf));
 	sndcall->addr.len=strlen(remote_name);
 	sndcall->opt.len=0;
 	sndcall->udata.len=0;

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_ini_section.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 May 2004.
+** Last modified 9 September 2005.
 */
 
 /*+ \file
@@ -197,7 +197,7 @@ struct GU_INI_ENTRY *gu_ini_section_load(FILE *file, const char section_name[])
 	} /* end of parse section */
 
 	/* Free the line buffer if gu_getline() didn't do it on end of file. */
-	if(line) gu_free(line);
+	gu_free_if(line);
 
 	/* Adjust the list to the proper size and terminate it. */
 	list_used++;

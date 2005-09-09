@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_ascii_isdigit.c
+** mouse:~ppr/src/libgu/gu_isdigit.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **

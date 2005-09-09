@@ -80,7 +80,7 @@ void get_next_id(struct QEntryFile *q)
 			/* Create a streams object for read and update. */
 			f = fdopen(fd, "r+");
 
-			gu_fscanf(f, "%d", &tid);			/* get last value used */
+			tid = gu_fgetint(f);				/* get last value used */
 			tid++;								/* add one to it */
 			if(tid < 1 || tid > 9999)			/* if resulting id unreasonable or too large */
 				tid = 1;						/* force it to one */

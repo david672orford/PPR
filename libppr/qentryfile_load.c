@@ -250,7 +250,7 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 					job->StripPrinter = tempint ? TRUE : FALSE;
 					continue;
 					}
-				if(sscanf(line, "Status-and-Flags: %02hd %hx", &job->status, &job->flags) == 2)
+				if(gu_sscanf(line, "Status-and-Flags: %hd %hx", &job->status, &job->flags) == 2)
 					{
 					job->status *= -1;
 					continue;

@@ -119,7 +119,8 @@ static void copy_data(void)
 		}
 
 	/* Read the number of items to be copied. */
-	sscanf(tokens[1], "%ld", &number);
+	number = 0;
+	gu_sscanf(tokens[1], "%ld", &number);
 	countdown = number;
 
 	/* Is the data measured in lines? */

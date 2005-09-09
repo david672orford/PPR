@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 September 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -119,9 +119,9 @@ void puts_detabbed(const char *string)
 	for( ; *string; string++)
 		{
 		if(*string != '\t')
-			fputc(*string, stdout);
+			putchar(*string);
 		else
-			fputc(' ', stdout);
+			putchar(' ');
 		}
 	}
 
@@ -239,15 +239,19 @@ FILE *wait_for_pprd(int do_timeout)
 	if(unlink(temp_file_name) < 0)
 		fprintf(errors, "%s(): unlink(\"%s\") failed, errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno));
 
-	if(gu_fscanf(reply_file, "%d\n", &pprd_retcode) != 1)
+	/* Read the code which summarizes the result of the operation. */
+	{
+	char reply[8];
+	if(!fgets(reply, sizeof(reply), reply_file) || gu_sscanf(reply, "%d", &pprd_retcode) != 1)
 		{
 		fprintf(errors, "%s(): return code missing in reply file.\n", function);
 		fclose(reply_file);
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
 		}
+	}
 
-	/* Other execute indicates data which the caller should
+	/* EXIT_OK_DATA indicates data which the caller should
 	   read using the returned file handle.  Otherwise,
 	   print_reply() should be used.  */
 	return pprd_retcode == EXIT_OK_DATA ? reply_file : (FILE*)NULL ;
@@ -264,12 +268,12 @@ int print_reply(void)
 
 	/* reply_file will probably only be NULL if we
 	   caught an error in wait_for_pprd(). */
-	if(reply_file == (FILE*)NULL)
+	if(!reply_file)
 		return EXIT_INTERNAL;
 
 	/* print the rest of the text */
 	while((c = fgetc(reply_file)) != EOF)
-		fputc(c,stdout);
+		fputc(c, stdout);
 
 	fclose(reply_file);
 

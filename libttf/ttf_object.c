@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libttf/ttf_object.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,11 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 December 2004.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
 #include <stdlib.h>
+#include <string.h>
 #include "libttf_private.h"
 
 TTF_RESULT ttf_new(void **pp, const char filename[])
@@ -38,8 +39,8 @@ TTF_RESULT ttf_new(void **pp, const char filename[])
 	struct TTFONT *font;
 
 	/* Allocate space for the object. */
-	if((font = (struct TTFONT *)calloc(1, sizeof(struct TTFONT))) == NULL)
-		return TTF_NOMEM;
+	font = (struct TTFONT *)gu_alloc(1, sizeof(struct TTFONT));
+	memset(font, sizeof(struct TTFONT), 0);
 
 	/* Set signiture in structure for later proof. */
 	font->signiture = TTF_SIGNITURE;
@@ -55,8 +56,9 @@ TTF_RESULT ttf_new(void **pp, const char filename[])
 	/* Install an exception handler. */
 	if((setjmp_retval = setjmp(font->exception)) != 0)
 		{
-		if(font->file) fclose(font->file);
-		if(font->offset_table) ttf_free(font, font->offset_table);
+		if(font->file)
+			fclose(font->file);
+		gu_free_if(font->offset_table);
 		free(font);
 		return (TTF_RESULT)setjmp_retval;
 		}
@@ -67,7 +69,7 @@ TTF_RESULT ttf_new(void **pp, const char filename[])
 		longjmp(font->exception, (int)TTF_CANTOPEN);
 
 	/* Allocate space for the unvarying part of the offset table. */
-	font->offset_table = (BYTE*)ttf_alloc(font, 12, sizeof(BYTE));
+	font->offset_table = (BYTE*)gu_alloc(12, sizeof(BYTE));
 
 	/* Read the first part of the offset table. */
 	if(fread(font->offset_table, sizeof(BYTE), 12, font->file) != 12)
@@ -78,7 +80,7 @@ TTF_RESULT ttf_new(void **pp, const char filename[])
 	DODEBUG(("numTables=%d", (int)font->numTables));
 
 	/* Expand the memory block to hold the whole thing. */
-	font->offset_table = (BYTE*)ttf_realloc(font, font->offset_table, (12 + font->numTables * 16), sizeof(BYTE) );
+	font->offset_table = (BYTE*)gu_realloc(font->offset_table, (12 + font->numTables * 16), sizeof(BYTE) );
 
 	/* Read the rest of the table directory. */
 	if(fread(font->offset_table + 12, sizeof(BYTE), (font->numTables*16), font->file ) != (font->numTables*16) )
@@ -100,24 +102,24 @@ int ttf_delete(void *p)
 
 	fclose(font->file);
 
-	ttf_free(font, font->offset_table);
+	gu_free(font->offset_table);
 
-	if(font->post_table) ttf_free(font, font->post_table);
-	if(font->loca_table) ttf_free(font, font->loca_table);
-	if(font->glyf_table) ttf_free(font, font->glyf_table);
-	if(font->hmtx_table) ttf_free(font, font->hmtx_table);
-	if(font->name_table) ttf_free(font, font->name_table);
+	gu_free_if(font->post_table);
+	gu_free_if(font->loca_table);
+	gu_free_if(font->glyf_table);
+	gu_free_if(font->hmtx_table);
+	gu_free_if(font->name_table);
 
-	if(font->PostName) ttf_free(font, font->PostName);
-	if(font->FullName) ttf_free(font, font->FullName);
-	if(font->FamilyName) ttf_free(font, font->FamilyName);
-	if(font->Style) ttf_free(font, font->Style);
-	if(font->Copyright) ttf_free(font, font->Copyright);
-	if(font->Trademark) ttf_free(font, font->Trademark);
-	if(font->Version) ttf_free(font, font->Version);
+	gu_free_if(font->PostName);
+	gu_free_if(font->FullName);
+	gu_free_if(font->FamilyName);
+	gu_free_if(font->Style);
+	gu_free_if(font->Copyright);
+	gu_free_if(font->Trademark);
+	gu_free_if(font->Version);
 
-	font->signiture = 0;
-	free(p);	/* not ttf_free() */
+	font->signiture = 0;		/* it is no longer a font object */
+	gu_free(p);
 
 	return 0;
 	} /* end of ttf_delete() */

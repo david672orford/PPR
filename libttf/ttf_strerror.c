@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libttf/ttf_strerror.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 December 2004.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -39,10 +39,6 @@ const char *ttf_strerror(TTF_RESULT result_code)
 			return "No error";
 		case TTF_NOTOBJ:
 			return "Not a TTF object";
-		case TTF_NOMEM:
-			return "Can't allocate memory for object";
-		case TTF_BADFREE:
-			return "Can't free memory";
 		case TTF_CANTOPEN:
 			return "Can't open font file";
 		case TTF_TBL_NOTFOUND:

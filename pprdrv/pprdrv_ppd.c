@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -437,7 +437,7 @@ void read_PPD_file(const char *ppd_file_name)
 							p += strspn(p, "\"");
 							p[strcspn(p, "\"")] = '\0';
 							DODEBUG_PPD_DETAILED(("%s(): %s \"%s\"", function, line, p));
-							sscanf(p, "%lf %lf %lf %lf",
+							gu_sscanf(p, "%lf %lf %lf %lf",
 								&papersize[papersizex].lm,
 								&papersize[papersizex].tm,
 								&papersize[papersizex].rm,
@@ -495,7 +495,7 @@ void read_PPD_file(const char *ppd_file_name)
 							p += strspn(p, "\"");
 							p[strcspn(p, "\"")] = '\0';
 							DODEBUG_PPD_DETAILED(("%s(): %s \"%s\"", function, line, p));
-							sscanf(p, "%lf %lf",
+							gu_sscanf(p, "%lf %lf",
 								&papersize[papersizex].width,
 								&papersize[papersizex].height
 								);

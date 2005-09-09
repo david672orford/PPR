@@ -375,10 +375,9 @@ void procset_query(int sesfd)
 	else										/* number; if none present, */
 		version = 0;							/* user zero */
 
-	if(tokens[3])								/* get revision number */
-		sscanf(tokens[3],"%d",&revision);		/* which is an integer */
-	else										/* if none present, */
-		revision = 0;							/* use zero */
+	revision = 0;
+	if(tokens[3])									/* get revision number */
+		gu_sscanf(tokens[3], "%d", &revision);		/* which is an integer */
 
 	if(noalloc_find_cached_resource("procset", name, version, revision, other_search_list, (int*)NULL, (int*)NULL))
 		{

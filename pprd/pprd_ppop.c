@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 August 2005.
+** Last modified 9 September 2005.
 */
 
 /** \file
@@ -841,8 +841,8 @@ static void ppop_media(const char command[])
 			for(y=0; y < printers[x].nbins; y++)
 				{
 				DODEBUG_MEDIA(("x=%d, y=%d, media=%d",x,y,printers[x].media[y]));
-				strcpy(f2.bin, get_bin_name(printers[x].bins[y]) );
-				strcpy(f2.media, get_media_name(printers[x].media[y]));
+				gu_strlcpy(f2.bin, printers[x].bins[y], sizeof(f2.bin));
+				gu_strlcpy(f2.media, get_media_name(printers[x].media[y]), sizeof(f2.media));
 				fwrite(&f2, sizeof(struct fcommand2), 1, reply_file);
 				}
 			}
@@ -860,14 +860,13 @@ static void ppop_mount(const char command[])
 	int printer_id;
 	char binname[MAX_BINNAME+1];
 	char medianame[MAX_MEDIANAME+1];
-	int binid;						/* bin id number of specified bin */
 	int x;
 
 	DODEBUG_PPOPINT(("%s(\"%s\")", function, command));
 
 	/* Parse the command we received over the pipe. */
 	medianame[0] = '\0';
-	if(gu_sscanf(command,"M %S %#s %#s",
+	if(gu_sscanf(command,"M %S %@s %@s",
 						&printer,
 						sizeof(binname), binname,
 						sizeof(medianame), medianame) < 2)
@@ -894,10 +893,8 @@ static void ppop_mount(const char command[])
 		return;
 		}
 
-	binid = get_bin_id(binname);
-
 	/* find the bin in question */
-	for(x=0; printers[printer_id].bins[x] != binid; x++)
+	for(x=0; strcmp(printers[printer_id].bins[x], binname) != 0; x++)
 		{
 		if(x == printers[printer_id].nbins)		/* if bin not found */
 			{

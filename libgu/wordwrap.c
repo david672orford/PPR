@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 March 2005.
+** Last modified 9 September 2005.
 */
 
 /*! \file
@@ -146,12 +146,12 @@ int main(int argc, char *argv[])
 		{
 		char old[512];
 
-		strcpy(old,"Now is the time for    all good men to come to the aid of the party.\n");
-		strcat(old,"The quick brown fox jumped over the lazy yellow dogs.");
+		strlcpy(old, "Now is the time for    all good men to come to the aid of the party.\n", sizeof(old));
+		strlcat(old, "The quick brown fox jumped over the lazy yellow dogs.", sizeof(old));
 
-		gu_wordwrap(old,20);
+		gu_wordwrap(old, 20);
 
-		printf("%s\n",old);
+		printf("%s\n", old);
 
 		return 0;
 		}

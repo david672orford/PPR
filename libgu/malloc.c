@@ -155,9 +155,12 @@ void *gu_malloc(size_t size)
 The function gu_strdup() takes a string pointer as its sole argument and
 returns a pointer to a new copy of the string.
 
+If string is NULL, this function returns NULL.
+
 */
 char *gu_strdup(const char *string)
 	{
+	int len;
 	char *rval;
 
 	DODEBUG(("gu_strdup(\"%s\")", string ? string : ""));
@@ -165,13 +168,15 @@ char *gu_strdup(const char *string)
 	if(!string)
 		return NULL;
 
-	if(!(rval = (char*)malloc(strlen(string)+1)))
+	len = strlen(string);
+	
+	if(!(rval = (char*)malloc(len+1)))
 		gu_CodeThrow(errno, "gu_strdup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 	gu_pool_register(rval);
 
-	strcpy(rval, string);
+	memcpy(rval, string, len+1);
 
 	return rval;
 	} /* end of gu_strdup() */
@@ -182,20 +187,29 @@ The function gu_strndup() takes a string pointer and a maximum length as its
 arguments.  It returns a pointer to a new string containing a copy of the
 string truncated to the maximum length.
 
+If string is NULL, this function returns NULL.
+
 */
-char *gu_strndup(const char *string, size_t len)
+char *gu_strndup(const char *string, size_t maxlen)
 	{
 	char *rval;
+	int len;
 
-	DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, len));
+	DODEBUG(("gu_strndup(string=\"%s\", len=%d)", string, maxlen));
 
+	if(!string)
+		return NULL;
+
+  	if((len = strlen(string)) > maxlen)
+		len = maxlen;
+	
 	if(!(rval = (char*)malloc(len+1)))
 		gu_CodeThrow(errno, "gu_strndup(): malloc() failed, errno=%d (%s)", errno, gu_strerror(errno));
 
 	gu_alloc_blocks++;
 	gu_pool_register(rval);
 
-	strncpy(rval, string, len);
+	memcpy(rval, string, len);
 	rval[len] = '\0';
 
 	return rval;
@@ -229,7 +243,8 @@ char *gu_restrdup(char *ptr, size_t *number, const char *string)
 			ptr = rval;
 			}
 		}
-	strcpy(ptr, string);
+
+	memcpy(ptr, string, len+1);
 	return ptr;
 	}
 
