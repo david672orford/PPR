@@ -48,17 +48,17 @@ double gu_getdouble(const char *s)
 		s++;
 		}
 
-	while( isdigit(*s) )				/* read whole part */
-		t=t*10.0 + (*(s++) - '0');
+	while(gu_ascii_isdigit(*s))			/* read whole part */
+		t = t*10.0 + gu_ascii_digit_value(*(s++));
 
 	if(*s == '.')						/* if decimal part */
 		{
 		s++;							/* skip decimal point */
 
-		while( isdigit(*s) )			/* read fractional part */
+		while(gu_ascii_isdigit(*s))		/* read fractional part */
 			{
-			t+=( place * (*(s++) - '0') );
-			place/=10;
+			t += (place * gu_ascii_digit_value(*(s++)));
+			place /= 10;
 			}
 		}
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_dtostr.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 May 2003.
+** Last modified 8 September 2005.
 */
 
 #include "config.h"
@@ -34,11 +34,12 @@
 /*
 ** Convert a double procision floating point number to a string.
 **
-** There will be between 1 and 4 digits after the decimal point.
+** There will be between 0 and 4 digits after the decimal point.
 ** This function is used primarily for generating PostScript
 ** code.
 **
-** There is probably a way to do this with snprintf().
+** There is probably a way to do this with snprintf().  Can anyone
+** suggest one?
 */
 const char *gu_dtostr(double n)
 	{

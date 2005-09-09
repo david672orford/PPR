@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_psprintf.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 March 2003.
+** Last modified 8 September 2005.
 */
 
 #include "config.h"
@@ -36,9 +36,15 @@
  *
  * This is a special printf()-like function based on printer_printf() in 
  * ../pprdrv/pprdrv_buf.c.  It can insert strings (%s), decimal numbers (%d),
- * floating point numbers (%f), 8-bit octal numbers (%o), and characters (%c).
- * The number of digits to print after the decimal point is chosen 
- * automatically.  Now width or precision can be specified.
+ * floating-point numbers (%f), 8-bit octal numbers (%o), and characters (%c).
+ * 
+ * No width or precision can be specified.  This is because only features
+ * helpful for generating PostScript code are included.  Locale support
+ * (with its locale-dependent decimal point) would actually hinder, so
+ * it must be omitted.
+ *
+ * For floating-point numbers, the number of digits to print after the decimal
+ * point is chosen automatically  See gu_dtostr().
 */
 void gu_psprintf(const char *format, ...)
 	{

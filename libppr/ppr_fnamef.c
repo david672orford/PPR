@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 February 2005.
+** Last modified 2 September 2005.
 */
 
 /*! \file
@@ -41,9 +41,10 @@
 
 /*! construct a filename using a printf()-style format string
 
-This is a special, simple version of sprintf().  It is intended for 
-constructing file names.  It will never write more than
-MAX_PPR_PATH characters.  It only understands %s and %d.
+This is a special, simple version of sprintf().  It is intended for
+constructing file names.  It will never write more than MAX_PPR_PATH
+characters.  It only understands %s, %d, and %ld.  There is no field-width
+control.
 
 */
 void ppr_fnamef(char target[], const char pattern[], ...)
@@ -94,7 +95,6 @@ void ppr_fnamef(char target[], const char pattern[], ...)
 							}
 
 						/* debug("y1 pattern=\"%s\", target=%p, di=%p, str=%p, str=\"%s\", space_left=%d", pattern, target, di, str, str, space_left); */
-						/* strcpy(di, str); */
 						memcpy(di, str, len + 1);
 						/* debug("y2"); */
 

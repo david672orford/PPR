@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2005.
+# Last modified 1 September 2005.
 #
 
 include ../Makefile.conf
@@ -41,6 +41,7 @@ LIBOBJS=malloc.$(OBJ) \
 	daemon.$(OBJ) \
 	gu_strcasecmp.$(OBJ) \
 	gu_isdigit.$(OBJ) \
+	gu_isspace.$(OBJ) \
 	gu_sscanf.$(OBJ) \
 	gu_fscanf.$(OBJ) \
 	signal1.$(OBJ) \
@@ -79,7 +80,9 @@ LIBOBJS=malloc.$(OBJ) \
 	gu_stresc.$(OBJ) \
 	pcre.$(OBJ) \
 	pcre_study.$(OBJ) \
-	gu_name_value.$(OBJ)
+	gu_name_value.$(OBJ) \
+	gu_utf8_decode.$(OBJ) \
+	gu_utf8_printf.$(OBJ)
 
 TARGETS=../libgu.$(LIBEXT)
 

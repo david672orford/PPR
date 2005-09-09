@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/dimens.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 ** Get a dimension and convert it to points.
 **
-** Last modified 3 May 2004.
+** Last modified 2 September 2005.
 */
 
 #include "config.h"
@@ -63,7 +63,7 @@ double convert_dimension(const char *string)
 	 * to try again with ASCII digits and '.' for a decimal
 	 * separator.
 	 */
-	if(gu_isdigit(*unitptr) || *unitptr == '.')
+	if(gu_ascii_isdigit(*unitptr) || *unitptr == '.')
 		{
 		float temp;
 		if(gu_sscanf(string, "%f", &temp) != 1)

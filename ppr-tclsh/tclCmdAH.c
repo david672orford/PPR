@@ -615,52 +615,52 @@ int Tcl_ForeachCmd(
 int Tcl_FormatCmd(
     ClientData dummy,			/* Not used. */
     Tcl_Interp *interp,			/* Current interpreter. */
-    int argc,				/* Number of arguments. */
-    char **argv				/* Argument strings. */
+    int argc,					/* Number of arguments. */
+    char **argv					/* Argument strings. */
     )
 {
-    register char *format;	/* Used to read characters from the format
-				 * string. */
-    char newFormat[40];		/* A new format specifier is generated here. */
-    int width;			/* Field width from field specifier, or 0 if
-				 * no width given. */
-    int precision;		/* Field precision from field specifier, or 0
-				 * if no precision given. */
-    int size;			/* Number of bytes needed for result of
-				 * conversion, based on type of conversion
-				 * ("e", "s", etc.), width, and precision. */
-    int intValue;		/* Used to hold value to pass to snprintf, if
-				 * it's a one-word integer or char value */
-    char *ptrValue = NULL;	/* Used to hold value to pass to snprintf, if
-				 * it's a one-word value. */
-    double doubleValue;		/* Used to hold value to pass to snprintf if
-				 * it's a double value. */
-    int whichValue;		/* Indicates which of intValue, ptrValue,
-				 * or doubleValue has the value to pass to
-				 * snprintf, according to the following
-				 * definitions: */
+    register char *format;		/* Used to read characters from the format
+								 * string. */
+    char newFormat[40];			/* A new format specifier is generated here. */
+    int width;					/* Field width from field specifier, or 0 if
+								 * no width given. */
+    int precision;				/* Field precision from field specifier, or 0
+								 * if no precision given. */
+    int size;					/* Number of bytes needed for result of
+								 * conversion, based on type of conversion
+								 * ("e", "s", etc.), width, and precision. */
+    int intValue;				/* Used to hold value to pass to snprintf, if
+								 * it's a one-word integer or char value */
+    char *ptrValue = NULL;		/* Used to hold value to pass to snprintf, if
+								 * it's a one-word value. */
+    double doubleValue;			/* Used to hold value to pass to snprintf if
+								 * it's a double value. */
+    int whichValue;				/* Indicates which of intValue, ptrValue,
+								 * or doubleValue has the value to pass to
+								 * snprintf, according to the following
+								 * definitions: */
     #define INT_VALUE 0
     #define PTR_VALUE 1
     #define DOUBLE_VALUE 2
 
     char *dst = interp->result;	/* Where result is stored.  Starts off at
-				 * interp->resultSpace, but may get dynamically
-				 * re-allocated if this isn't enough. */
-    int dstSize = 0;		/* Number of non-null characters currently
-				 * stored at dst. */
+								 * interp->resultSpace, but may get dynamically
+								 * re-allocated if this isn't enough. */
+    int dstSize = 0;			/* Number of non-null characters currently
+								 * stored at dst. */
     int dstSpace = TCL_RESULT_SIZE;
-				/* Total amount of storage space available
-				 * in dst (not including null terminator. */
-    int noPercent;		/* Special case for speed:  indicates there's
-				 * no field specifier, just a string to copy. */
-    int argIndex;		/* Index of argument to substitute next. */
-    int gotXpg = 0;		/* Non-zero means that an XPG3 %n$-style
-				 * specifier has been seen. */
-    int gotSequential = 0;	/* Non-zero means that a regular sequential
-				 * (non-XPG3) conversion specifier has been
-				 * seen. */
-    int useShort;		/* Value to be printed is short (half word). */
-    char *end;			/* Used to locate end of numerical fields. */
+								/* Total amount of storage space available
+								 * in dst (not including null terminator. */
+    int noPercent;				/* Special case for speed:  indicates there's
+								 * no field specifier, just a string to copy. */
+    int argIndex;				/* Index of argument to substitute next. */
+    int gotXpg = 0;				/* Non-zero means that an XPG3 %n$-style
+								 * specifier has been seen. */
+    int gotSequential = 0;		/* Non-zero means that a regular sequential
+								 * (non-XPG3) conversion specifier has been
+								 * seen. */
+    int useShort;				/* Value to be printed is short (half word). */
+    char *end;					/* Used to locate end of numerical fields. */
 
     /*
      * This procedure is a bit nasty.  The goal is to use snprintf to
@@ -868,7 +868,7 @@ int Tcl_FormatCmd(
 			"format string ended in middle of field specifier";
 		goto fmtError;
 	    default:
-		sprintf(interp->result, "bad field specifier \"%c\"", *format);
+		snprintf(interp->result, TCL_RESULT_SIZE+1, "bad field specifier \"%c\"", *format);
 		goto fmtError;
 	    }
 	argIndex++;
@@ -890,11 +890,11 @@ int Tcl_FormatCmd(
 	    newSpace = 2*(dstSize + size);
 	    newDst = (char *) ckalloc((unsigned) newSpace+1);
 	    if (dstSize != 0) {
-		memcpy((void *) newDst, (void *) dst, (size_t) dstSize);
-	    }
+			memcpy((void *) newDst, (void *) dst, (size_t) dstSize);
+			}
 	    if (dstSpace != TCL_RESULT_SIZE) {
-		ckfree(dst);
-	    }
+			ckfree(dst);
+			}
 	    dst = newDst;
 	    dstSpace = newSpace;
 	}
@@ -903,27 +903,27 @@ int Tcl_FormatCmd(
 	    dstSize += size;
 	    dst[dstSize] = 0;
 	} else {
-	    if (whichValue == DOUBLE_VALUE) {
-		snprintf(dst+dstSize, dstSpace-dstSize, newFormat, doubleValue);
-	    } else if (whichValue == INT_VALUE) {
+		if (whichValue == DOUBLE_VALUE) {
+			snprintf(dst+dstSize, dstSpace-dstSize, newFormat, doubleValue);
+			} else if (whichValue == INT_VALUE) {
 		if (useShort) {
 		    snprintf(dst+dstSize, dstSpace-dstSize, newFormat, (short) intValue);
-		} else {
+			} else {
 		    snprintf(dst+dstSize, dstSpace-dstSize, newFormat, intValue);
-		}
+			}
 	    } else {
-		snprintf(dst+dstSize, dstSpace-dstSize, newFormat, ptrValue);
-	    }
+			snprintf(dst+dstSize, dstSpace-dstSize, newFormat, ptrValue);
+			}
 	    dstSize += strlen(dst+dstSize);
-	}
+		}
     }
 
     interp->result = dst;
     if (dstSpace != TCL_RESULT_SIZE) {
-	interp->freeProc = (Tcl_FreeProc *) free;
-    } else {
-	interp->freeProc = 0;
-    }
+		interp->freeProc = (Tcl_FreeProc *) free;
+		} else {
+		interp->freeProc = 0;
+		}
     return TCL_OK;
 
     mixedXPG:
@@ -932,10 +932,10 @@ int Tcl_FormatCmd(
 
     badIndex:
     if (gotXpg) {
-	interp->result = "\"%n$\" argument index out of range";
-    } else {
-	interp->result = "not enough arguments for all format specifiers";
-    }
+		interp->result = "\"%n$\" argument index out of range";
+		} else {
+		interp->result = "not enough arguments for all format specifiers";
+		}
 
     fmtError:
     if (dstSpace != TCL_RESULT_SIZE) {

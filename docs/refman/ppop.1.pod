@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 August 2005.
+# Last modified 2 September 2005.
 #
 
 =head1 NAME
@@ -161,10 +161,6 @@ jobs which have already been accepted.
 Display a somewhat detailed list of those jobs queued for the indicated
 destination or for all destinations.  If a single job name is specified,
 information is displayed for only that job.
-
-=item B<ppop short> {I<destination-name>, B<all>}
-
-Display a terser queue listing than that displayed by B<ppop list>.
 
 =item B<ppop details> {I<destination-name>, I<job-id>, B<all>}
 

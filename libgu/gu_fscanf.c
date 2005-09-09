@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_fscanf.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,20 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 2 September 2005.
 */
 
-/*
-** This module constains a very limited version of gu_fscanf().  It can only scan
-** integers.
+/*! \file
+	\brief limited fscanf()
+
+	This module constains a very limited version of gu_fscanf().  So far it
+	it can only scan integers.  It deliberately ignores the current locale.
+	It is intended for IPC though it could also be used for reading configuration
+	files.
+
+	If this function is expanded very much it should be integrated with
+	gu_sscanf() so that they share a common 'engine'.
+
 */
 
 #include "config.h"
@@ -49,9 +57,9 @@ int gu_fscanf(FILE *input, const char *format, ...)
 
 	va_start(va, format);
 
-	while(*pattern && (c = fgetc(input)) != EOF)		/* Work until we run out of */
-		{												/* pattern or input file. */
-		if(*pattern == '%')								/* If special sequence begins, */
+	while(*pattern && (c = fgetc(input)) != EOF)/* Work until we run out of */
+		{										/* pattern or input file. */
+		if(*pattern == '%')						/* If special sequence begins, */
 			{
 			pattern++;
 
@@ -68,11 +76,11 @@ int gu_fscanf(FILE *input, const char *format, ...)
 				case 'd':
 				case 'i':
 					{
-					int sign = 1;						/* 1 or -1 */
+					int sign = 1;				/* 1 or -1 */
 					int n = 0;
-					if(c == '-')						/* if a minus sign is found, */
+					if(c == '-')				/* if a minus sign is found, */
 						{
-						sign = -1;						/* set a flag */
+						sign = -1;				/* set a flag */
 						c = fgetc(input);
 						}
 					for( ; c != EOF && isdigit(c); c = fgetc(input))
@@ -84,7 +92,7 @@ int gu_fscanf(FILE *input, const char *format, ...)
 						ungetc(c, input);
 					*(va_arg(va, int *)) = (n * sign);
 					}
-					count++;							/* increment count of values extracted */
+					count++;					/* increment count of values extracted */
 					break;
 
 				/*

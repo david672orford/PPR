@@ -917,7 +917,7 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->destname, qentry->id, qentry->subid, ppop_cancel_byuser_inform);
 	fflush(FIFO);
 
-	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
+	if(!(reply_file = wait_for_pprd(TRUE)))
 		{
 		print_reply();
 		return TRUE;	/* stop */
@@ -989,7 +989,7 @@ int ppop_cancel(char *argv[], int inform)
 		fprintf(FIFO, "c %s %d %d %d\n", job.destname, job.id, job.subid, inform);
 		fflush(FIFO);
 
-		if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
+		if(!(reply_file = wait_for_pprd(TRUE)))
 			return print_reply();
 
 		gu_fscanf(reply_file, "%d", &count);
@@ -1040,7 +1040,7 @@ int ppop_purge(char *argv[], int inform)
 		fprintf(FIFO, "c %s -1 -1 %d\n", dest.destname, inform);
 		fflush(FIFO);
 
-		if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
+		if(!(reply_file = wait_for_pprd(TRUE)))
 			return print_reply();
 
 		gu_fscanf(reply_file, "%d", &count);
@@ -1172,10 +1172,9 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 		}
 
 	gu_fscanf(reply_file, "%d", &count);
+	ppop_cancel_active_total += count;
 
 	fclose(reply_file);
-
-	ppop_cancel_active_total += count;
 
 	return FALSE;
 	} /* end of ppop_cancel_active_item() */

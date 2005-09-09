@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 9 September 2005.
 */
 
 /*! \file
@@ -42,6 +42,7 @@ likely to be useful many programs, not just in PPR.
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <stdarg.h>
 #include <setjmp.h>
 
@@ -188,7 +189,9 @@ void ASCIIZ_to_padded(char *padded, const char *asciiz, int len);
 void padded_to_ASCIIZ(char *asciiz, const char *padded, int len);
 gu_boolean padded_cmp(const char *padded1, const char *padded2, int len);
 gu_boolean padded_icmp(const char *padded1, const char *padded2, int len);
-int gu_isdigit(int c);
+int gu_ascii_isdigit(int c);
+int gu_ascii_digit_value(int c);
+int gu_ascii_isspace(int c);
 int gu_sscanf(const char *input, const char *pattern, ...);
 void gu_sscanf_checkpoint(void);
 void gu_sscanf_rollback(void);
@@ -226,6 +229,11 @@ char *gu_stresc_convert(char *string);
 char *gu_name_int_value(const char name[], int value);
 char *gu_name_str_value(const char name[], const char value[]);
 char *gu_name_long_value(const char name[], long int value);
+wchar_t gu_utf8_fgetwc(FILE *f);
+wchar_t gu_utf8_sgetwc(const char **pp);
+int gu_utf8_vfprintf(FILE *f, const char *format, va_list args);
+int gu_utf8_printf(const char *format, ...);
+int gu_utf8_fprintf(FILE *f, const char *format, ...);
 
 /*===================================================================
 ** Command line option parsing

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 August 2005.
+# Last modified 2 September 2005.
 #
 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
@@ -779,18 +779,24 @@ if [ -f /usr/include/zlib.h -o -f /usr/local/include/zlib.h ]
 echo
 
 #
-# Come up with a set of CFLAGS for the native compiler and for GCC.
+# Come up with a set of CFLAGS.
 #
-GCC_WARNINGS_CFLAGS="-Wall -Wpointer-arith -Wmissing-declarations -Wno-format-y2k"
-
 if [ -n "$CFLAGS" ]
     then
     echo "Using CFLAGS provided: $CFLAGS"
     else
     CFLAGS="-O2"
 
+	# If we will use GCC,
     if [ $NATIVE_CC = "no" ]
 		then
+		# Turn off support for c99 since we are aiming to write c89 code.
+		# We don't do this because we want snprintf().
+		#CFLAGS="$CFLAGS -std=c89"
+
+		# Select the warnings which we want to see.
+		CFLAGS="$CFLAGS -Wall -Wpointer-arith -Wmissing-declarations -Wno-format-y2k"
+
 		echo "Selecting appropriate processor options for GCC."
 	
 		PROCESSOR=`uname -m`
@@ -810,7 +816,7 @@ if [ -n "$CFLAGS" ]
 			    * )
 				echo "  Pre-2.7.2.1 GCC or unrecognized variant, turning off"
 				echo "    buggy strength-reduce optimization."
-				GCC_CFLAGS="$GCC_CFLAGS -fno-strength-reduce"
+				CFLAGS="$CFLAGS -fno-strength-reduce"
 				;;
 			    esac
 		    esac
@@ -823,17 +829,17 @@ if [ -n "$CFLAGS" ]
 				;;
 		    i486 )
 				echo "  Selecting i486 code generation."
-				GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
+				CFLAGS="$CFLAGS -mcpu=i486 -fomit-frame-pointer"
 				;;
 		    i[56]86 )
 				case $GCC_VERSION_SHORT in
 				    2.9* | [3456789].* )
 						echo "  Selecting $PROCESSOR code generation."
-						GCC_CFLAGS="$GCC_CFLAGS -mcpu=$PROCESSOR -fomit-frame-pointer"
+						CFLAGS="$CFLAGS -mcpu=$PROCESSOR -fomit-frame-pointer"
 				        ;;
 				    * )
 						echo "  Selecting i486 code generation because $PROCESSOR may not be available."
-						GCC_CFLAGS="$GCC_CFLAGS -mcpu=i486 -fomit-frame-pointer"
+						CFLAGS="$CFLAGS -mcpu=i486 -fomit-frame-pointer"
 						;;
 				    esac
 				;;
@@ -1257,7 +1263,7 @@ LIBEXT=a
 LIBCMD=ar -sq
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1291,7 +1297,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-L/usr/local/lib -R/usr/local/lib
 CPP=gcc -E -P -xc-header
@@ -1318,7 +1324,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-L/usr/local/lib -R/usr/local/lib
 CPP=gcc -E -P -xc-header
@@ -1345,7 +1351,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1372,7 +1378,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1406,19 +1412,19 @@ RANLIB=touch
 # GCC and Glibc
 CC=gcc
 #CC=g++ -fno-exceptions
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include 
+CFLAGS=$CFLAGS -I ../include 
 LD=gcc
 LDFLAGS=
 
 # GCC with Diet libc wrapper
 #CC=diet gcc
-#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+#CFLAGS=$CFLAGS -I ../include
 #LD=diet gcc
 #LDFLAGS=
 
 # GCC with UClibc wrapper
 #CC=i386-uclibc-cc
-#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include
+#CFLAGS=$CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include
 #LD=i386-uclibc-cc
 #LDFLAGS=
 
@@ -1460,7 +1466,7 @@ LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1502,7 +1508,7 @@ CPP=/lib/cpp
 else
 cat >&3 <<===EndOSF3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1553,7 +1559,7 @@ CPP=/usr/bin/cc -E
 else
 cat >&3 <<===EndIRIX3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-L/usr/freeware/lib32
 CPP=gcc -E -P -xc-header
@@ -1588,7 +1594,7 @@ LIBEXT=a
 LIBCMD=ar -crs
 RANLIB=touch
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include 
+CFLAGS=$CFLAGS -I ../include 
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1692,7 +1698,7 @@ CPP=/usr/bin/cc -E
 else
 cat >&3 <<===EndHPUX3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=-ldld
 CPP=gcc -E -P -xc-header
@@ -1739,7 +1745,7 @@ CPP=/lib/cpp
 else
 cat >&3 <<===EndULTRIX3===
 CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
 LDFLAGS=
 CPP=gcc -E -P -xc-header
@@ -1774,7 +1780,7 @@ LIBEXT=a
 LIBCMD=ar -cr
 RANLIB=ranlib
 CC=cc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -I /usr/local/include
+CFLAGS=$CFLAGS -I ../include -I /usr/local/include
 LD=cc
 LDFLAGS=
 CPP=cpp

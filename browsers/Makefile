@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 1 September 2005.
 #
 
 include ../Makefile.conf
@@ -51,7 +51,7 @@ usb$(DOTEXE): usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
 
 #=== Install ================================================================
 
-install: $(BROWSERS) $(INSTALL_ATALK)
+install: all $(INSTALL_ATALK)
 	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR)/browsers $(BROWSERS)
 
 install-atalk: $(ATALK_PROGS)

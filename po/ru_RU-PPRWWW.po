@@ -1,53 +1,52 @@
-# Translation of RU-PPRWWW.po to Russian
-# Copyright (C) 2004, Trinity College Computing Center.
+# PPR Message file for Russian
+# Copyright (C) 2005, Trinity College Computing Center.
 # This file is distributed under the same license as PPR.
-# David Chappell <David.Chappell@trincoll.edu>, 2004.
-#
+
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: ru_RU-PPRWWW\n"
+"Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-31 14:00-0400\n"
-"PO-Revision-Date: 2004-06-01 11:27-0500\n"
+"POT-Creation-Date: 2005-09-02 10:59-0400\n"
+"PO-Revision-Date: 2004-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
-"Language-Team: Russian <ru@li.org>\n"
+"Language-Team: Russian <David.Chappell@trincoll.edu>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=KOI8-R\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.3.1\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
 #: ../www/about.cgi.perl:56 ../www/cgi_menu.pl:86
 msgid "About PPR"
-msgstr "О PPR"
+msgstr "п· PPR"
 
 #: ../www/about.cgi.perl:96 ../www/login_cookie.cgi.perl:103
 #: ../www/login_cookie.cgi.perl:157 ../www/show_jobs.cgi.perl:418
 msgid "Close"
-msgstr "Закрыть"
+msgstr "п≈п╟п╨я─я▀я┌я▄"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
 #: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
 #: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
-msgstr "Закрыть это окно."
+msgstr "п≈п╟п╨я─я▀я┌я▄ я█я┌п╬ п╬п╨п╫п╬."
 
 #: ../www/alias_addwiz.cgi.perl:54
 msgid "Add an Alias"
-msgstr "Сделать новый псевдоним"
+msgstr "п║п╢п╣п╩п╟я┌я▄ п╫п╬п╡я▀п╧ п©я│п╣п╡п╢п╬п╫п╦п╪"
 
 #: ../www/alias_addwiz.cgi.perl:57
 msgid "PPR Alias Creation"
-msgstr "PPR: Создание Псевдонима"
+msgstr "PPR: п║п╬п╥п╢п╟п╫п╦п╣ п÷я│п╣п╡п╢п╬п╫п╦п╪п╟"
 
 #: ../www/alias_addwiz.cgi.perl:59
 msgid ""
 "This program will guide you through the process of\n"
 "creating an alias for a printer or a group of printers."
 msgstr ""
-"Это программа помогает создать alias для принтера\n"
-"или для группы принтеров."
+"п╜я┌п╬ п©я─п╬пЁя─п╟п╪п╪п╟ п©п╬п╪п╬пЁп╟п╣я┌ я│п╬п╥п╢п╟я┌я▄ alias п╢п╩я▐ п©я─п╦п╫я┌п╣я─п╟\n"
+"п╦п╩п╦ п╢п╩я▐ пЁя─я┐п©п©я▀ п©я─п╦п╫я┌п╣я─п╬п╡."
 
 #: ../www/alias_addwiz.cgi.perl:62
 msgid ""
@@ -56,23 +55,23 @@ msgid ""
 "are not allowed.  Also, the first character may not be\n"
 "a period or a hyphen."
 msgstr ""
-"Псевдоним должен имеет название.  Длиность название до\n"
-"16 букв (символов).  Не печайющие коды, тильда, и шпация\n"
-"запрещены.  Кроме этого, первый символ не может быть\n"
-"точка или дефис."
+"п÷я│п╣п╡п╢п╬п╫п╦п╪ п╢п╬п╩п╤п╣п╫ п╦п╪п╣п╣я┌ п╫п╟п╥п╡п╟п╫п╦п╣.  п■п╩п╦п╫п╬я│я┌я▄ п╫п╟п╥п╡п╟п╫п╦п╣ п╢п╬\n"
+"16 п╠я┐п╨п╡ (я│п╦п╪п╡п╬п╩п╬п╡).  п²п╣ п©п╣я┤п╟п╧я▌я┴п╦п╣ п╨п╬п╢я▀, я┌п╦п╩я▄п╢п╟, п╦ я┬п©п╟я├п╦я▐\n"
+"п╥п╟п©я─п╣я┴п╣п╫я▀.  п я─п╬п╪п╣ я█я┌п╬пЁп╬, п©п╣я─п╡я▀п╧ я│п╦п╪п╡п╬п╩ п╫п╣ п╪п╬п╤п╣я┌ п╠я▀я┌я▄\n"
+"я┌п╬я┤п╨п╟ п╦п╩п╦ п╢п╣я└п╦я│."
 
 #: ../www/alias_addwiz.cgi.perl:67 ../www/alias_properties.cgi.perl:51
 msgid "Alias Name:"
-msgstr "Название псевдонима:"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п©я│п╣п╡п╢п╬п╫п╦п╪п╟:"
 
 #: ../www/alias_addwiz.cgi.perl:73
 msgid "You must enter a name for the alias!"
-msgstr "Вам нужно ввести название для псевдонима!"
+msgstr "п▓п╟п╪ п╫я┐п╤п╫п╬ п╡п╡п╣я│я┌п╦ п╫п╟п╥п╡п╟п╫п╦п╣ п╢п╩я▐ п©я│п╣п╡п╢п╬п╫п╦п╪п╟!"
 
 #: ../www/alias_addwiz.cgi.perl:75
 #, perl-format
 msgid "The alias \"%s\" already exists!"
-msgstr "Псевдоним \"%s\" уже существует!"
+msgstr "п÷я│п╣п╡п╢п╬п╫п╦п╪ \"%s\" я┐п╤п╣ я│я┐я┴п╣я│я┌п╡я┐п╣я┌!"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
 #: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:344
@@ -80,30 +79,30 @@ msgstr "Псевдоним \"%s\" уже существует!"
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:118
 #: ../www/prn_addwiz.cgi.perl:819 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
-msgstr "Отмена"
+msgstr "п·я┌п╪п╣п╫п╟"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:118
 msgid "_Next"
-msgstr "_Далее"
+msgstr "_п■п╟п╩п╣п╣"
 
 #: ../www/alias_addwiz.cgi.perl:85
 msgid "For What an Alias"
-msgstr "Для чего псевдоним"
+msgstr "п■п╩я▐ я┤п╣пЁп╬ п©я│п╣п╡п╢п╬п╫п╦п╪"
 
 #: ../www/alias_addwiz.cgi.perl:105
 #, perl-format
 msgid "Please select the printer or group for which \"%s\" is to be an alias."
-msgstr "Выберите пожалосто принтер или группу которого(ой) \"%s\" будет псевдоним"
+msgstr "п▓я▀п╠п╣я─п╦я┌п╣ п©п╬п╤п╟п╩п╬я│я┌п╬ п©я─п╦п╫я┌п╣я─ п╦п╩п╦ пЁя─я┐п©п©я┐ п╨п╬я┌п╬я─п╬пЁп╬(п╬п╧) \"%s\" п╠я┐п╢п╣я┌ п©я│п╣п╡п╢п╬п╫п╦п╪"
 
 #: ../www/alias_addwiz.cgi.perl:119
 msgid "The alias must point to something!"
-msgstr "Псевдоним должен указать кое на что!"
+msgstr "п÷я│п╣п╡п╢п╬п╫п╦п╪ п╢п╬п╩п╤п╣п╫ я┐п╨п╟п╥п╟я┌я▄ п╨п╬п╣ п╫п╟ я┤я┌п╬!"
 
 #: ../www/alias_addwiz.cgi.perl:128
 msgid "Describe the Alias"
-msgstr "Описывайте Псевдоним"
+msgstr "п·п©п╦я│я▀п╡п╟п╧я┌п╣ п÷я│п╣п╡п╢п╬п╫п╦п╪"
 
 #: ../www/alias_addwiz.cgi.perl:131 ../www/grp_addwiz.cgi.perl:129
 #, perl-format
@@ -113,42 +112,42 @@ msgid ""
 "description.  Please supply a longer description for\n"
 "\"%s\" below."
 msgstr ""
-"Хотя короткие названия полезными в несколко контестах,\n"
-"длиннее описивание часто помогает.  Вводите, пожалосто\n"
-"длинные описиваное группы \"%s\"."
+"п╔п╬я┌я▐ п╨п╬я─п╬я┌п╨п╦п╣ п╫п╟п╥п╡п╟п╫п╦я▐ п©п╬п╩п╣п╥п╫я▀п╪п╦ п╡ п╫п╣я│п╨п╬п╩п╨п╬ п╨п╬п╫я┌п╣я│я┌п╟я┘,\n"
+"п╢п╩п╦п╫п╫п╣п╣ п╬п©п╦я│п╦п╡п╟п╫п╦п╣ я┤п╟я│я┌п╬ п©п╬п╪п╬пЁп╟п╣я┌.  п▓п╡п╬п╢п╦я┌п╣, п©п╬п╤п╟п╩п╬я│я┌п╬\n"
+"п╢п╩п╦п╫п╫я▀п╣ п╬п©п╦я│п╦п╡п╟п╫п╬п╣ пЁя─я┐п©п©я▀ \"%s\"."
 
 #: ../www/alias_addwiz.cgi.perl:137 ../www/grp_addwiz.cgi.perl:135
 #: ../www/prn_addwiz.cgi.perl:780
 msgid "Description:"
-msgstr "Описание:"
+msgstr "п·п©п╦я│п╟п╫п╦п╣:"
 
 #: ../www/alias_addwiz.cgi.perl:143 ../www/grp_addwiz.cgi.perl:141
 #: ../www/prn_addwiz.cgi.perl:786
 msgid "You must supply a description!"
-msgstr "Надо вводить описиваное!"
+msgstr "п²п╟п╢п╬ п╡п╡п╬п╢п╦я┌я▄ п╬п©п╦я│п╦п╡п╟п╫п╬п╣!"
 
 #: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:344
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:819
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"
-msgstr "_Назад"
+msgstr "_п²п╟п╥п╟п╢"
 
 #: ../www/alias_addwiz.cgi.perl:146 ../www/grp_addwiz.cgi.perl:144
 #: ../www/prn_addwiz.cgi.perl:819
 msgid "_Finish"
-msgstr "Завершить"
+msgstr "п≈п╟п╡п╣я─я┬п╦я┌я▄"
 
 #: ../www/alias_addwiz.cgi.perl:153
 msgid "Save the Alias"
-msgstr "Сохранние Псевдонима"
+msgstr "п║п╬я┘я─п╟п╫п╫п╦п╣ п÷я│п╣п╡п╢п╬п╫п╦п╪п╟"
 
 #: ../www/alias_addwiz.cgi.perl:158
 msgid "Saving new alias:"
-msgstr "Сохраняем новый псевдоним:"
+msgstr "п║п╬я┘я─п╟п╫я▐п╣п╪ п╫п╬п╡я▀п╧ п©я│п╣п╡п╢п╬п╫п╦п╪:"
 
 #: ../www/alias_addwiz.cgi.perl:172 ../www/prn_addwiz.cgi.perl:856
 msgid "The print queue has been created."
-msgstr "Очеред для принтера сделена."
+msgstr "п·я┤п╣я─п╣п╢ п╢п╩я▐ п©я─п╦п╫я┌п╣я─п╟ я│п╢п╣п╩п╣п╫п╟."
 
 #: ../www/alias_addwiz.cgi.perl:176 ../www/grp_addwiz.cgi.perl:174
 #: ../www/prn_addwiz.cgi.perl:860
@@ -163,36 +162,36 @@ msgstr ""
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
-msgstr "Закрыть"
+msgstr "п≈п╟п╨я─я▀я┌я▄"
 
 #: ../www/alias_properties.cgi.perl:47 ../www/grp_properties.cgi.perl:47
 #: ../www/prn_properties.cgi.perl:47
 msgid "Comment"
-msgstr "Описиваное"
+msgstr "п·п©п╦я│п╦п╡п╟п╫п╬п╣"
 
 #: ../www/alias_properties.cgi.perl:54 ../www/grp_properties.cgi.perl:54
 #: ../www/prn_properties.cgi.perl:55
 msgid "Comment:"
-msgstr "Описиваное:"
+msgstr "п·п©п╦я│п╦п╡п╟п╫п╬п╣:"
 
 #: ../www/alias_properties.cgi.perl:64
 msgid "For What"
-msgstr "Для Чего"
+msgstr "п■п╩я▐ п╖п╣пЁп╬"
 
 #: ../www/alias_properties.cgi.perl:83
 #, perl-format
 msgid "Printer or group for which \"%s\" is an alias:"
-msgstr "Принтер или группа которого(ой) \"%s\" является псевдонимом:"
+msgstr "п÷я─п╦п╫я┌п╣я─ п╦п╩п╦ пЁя─я┐п©п©п╟ п╨п╬я┌п╬я─п╬пЁп╬(п╬п╧) \"%s\" я▐п╡п╩я▐п╣я┌я│я▐ п©я│п╣п╡п╢п╬п╫п╦п╪п╬п╪:"
 
 #: ../www/alias_properties.cgi.perl:101 ../www/grp_properties.cgi.perl:103
 #: ../www/prn_properties.cgi.perl:457
 msgid "Switchset"
-msgstr "Запомненные выборы"
+msgstr "п≈п╟п©п╬п╪п╫п╣п╫п╫я▀п╣ п╡я▀п╠п╬я─я▀"
 
 #: ../www/alias_properties.cgi.perl:103 ../www/grp_properties.cgi.perl:105
 #: ../www/prn_properties.cgi.perl:460
 msgid "Switchset:"
-msgstr "Запомненные выборы:"
+msgstr "п≈п╟п©п╬п╪п╫п╣п╫п╫я▀п╣ п╡я▀п╠п╬я─я▀:"
 
 #: ../www/alias_properties.cgi.perl:115 ../www/grp_properties.cgi.perl:117
 #: ../www/prn_properties.cgi.perl:472
@@ -201,12 +200,12 @@ msgstr ""
 
 #: ../www/alias_properties.cgi.perl:119 ../www/grp_properties.cgi.perl:121
 msgid "Share with Samba (provided Samba is prepared)"
-msgstr "Делится при помочи Самбы (если Самба готова)"
+msgstr "п■п╣п╩п╦я┌я│я▐ п©я─п╦ п©п╬п╪п╬я┤п╦ п║п╟п╪п╠я▀ (п╣я│п╩п╦ п║п╟п╪п╠п╟ пЁп╬я┌п╬п╡п╟)"
 
 #: ../www/alias_properties.cgi.perl:123 ../www/grp_properties.cgi.perl:125
 #: ../www/prn_properties.cgi.perl:481
 msgid "Prototype Share:"
-msgstr "Образец (prototype share):"
+msgstr "п·п╠я─п╟п╥п╣я├ (prototype share):"
 
 #: ../www/alias_properties.cgi.perl:129 ../www/grp_properties.cgi.perl:131
 #: ../www/prn_properties.cgi.perl:487
@@ -224,9 +223,9 @@ msgid ""
 "Note that if the Samba configuration file smb.conf has not been edited as described in\n"
 "the ppr2samba(8) manpage, the settings on this screen will have no effect."
 msgstr ""
-"Следует вспомнить что если вы ещё не модифицировали файл smb.conf (в котором\n"
-"находится установка Samba) как определяется в документе ppr2samba(8),\n"
-"установки на этой странице не имеют значения."
+"п║п╩п╣п╢я┐п╣я┌ п╡я│п©п╬п╪п╫п╦я┌я▄ я┤я┌п╬ п╣я│п╩п╦ п╡я▀ п╣я┴я▒ п╫п╣ п╪п╬п╢п╦я└п╦я├п╦я─п╬п╡п╟п╩п╦ я└п╟п╧п╩ smb.conf (п╡ п╨п╬я┌п╬я─п╬п╪\n"
+"п╫п╟я┘п╬п╢п╦я┌я│я▐ я┐я│я┌п╟п╫п╬п╡п╨п╟ Samba) п╨п╟п╨ п╬п©я─п╣п╢п╣п╩я▐п╣я┌я│я▐ п╡ п╢п╬п╨я┐п╪п╣п╫я┌п╣ ppr2samba(8),\n"
+"я┐я│я┌п╟п╫п╬п╡п╨п╦ п╫п╟ я█я┌п╬п╧ я│я┌я─п╟п╫п╦я├п╣ п╫п╣ п╦п╪п╣я▌я┌ п╥п╫п╟я┤п╣п╫п╦я▐."
 
 #: ../www/alias_properties.cgi.perl:155 ../www/grp_properties.cgi.perl:157
 #: ../www/prn_properties.cgi.perl:513
@@ -236,38 +235,38 @@ msgstr ""
 #: ../www/alias_properties.cgi.perl:162 ../www/grp_properties.cgi.perl:164
 #: ../www/prn_properties.cgi.perl:520
 msgid "Share with AppleTalk PAP"
-msgstr "Делиться очередью протоколом AppleTalk PAP"
+msgstr "п■п╣п╩п╦я┌я▄я│я▐ п╬я┤п╣я─п╣п╢я▄я▌ п©я─п╬я┌п╬п╨п╬п╩п╬п╪ AppleTalk PAP"
 
 #: ../www/alias_properties.cgi.perl:166 ../www/grp_properties.cgi.perl:168
 #: ../www/prn_properties.cgi.perl:524
 msgid "Share As:"
-msgstr "Делиться очередью под названием:"
+msgstr "п■п╣п╩п╦я┌я▄я│я▐ п╬я┤п╣я─п╣п╢я▄я▌ п©п╬п╢ п╫п╟п╥п╡п╟п╫п╦п╣п╪:"
 
 #: ../www/alias_properties.cgi.perl:187 ../www/grp_properties.cgi.perl:189
 #: ../www/prn_properties.cgi.perl:684
 msgid "Other"
-msgstr "Другие"
+msgstr "п■я─я┐пЁп╦п╣"
 
 #: ../www/alias_properties.cgi.perl:189 ../www/grp_properties.cgi.perl:203
 msgid "Passthru Printer Languages:"
-msgstr "Языки Принтеров проходящие без изменения:"
+msgstr "п╞п╥я▀п╨п╦ п÷я─п╦п╫я┌п╣я─п╬п╡ п©я─п╬я┘п╬п╢я▐я┴п╦п╣ п╠п╣п╥ п╦п╥п╪п╣п╫п╣п╫п╦я▐:"
 
 #: ../www/alias_properties.cgi.perl:239 ../www/grp_properties.cgi.perl:253
 msgid "Saving changes:"
-msgstr "Изменения записываются:"
+msgstr "п≤п╥п╪п╣п╫п╣п╫п╦я▐ п╥п╟п©п╦я│я▀п╡п╟я▌я┌я│я▐:"
 
 #: ../www/alias_properties.cgi.perl:294
 #, perl-format
 msgid "PPR: Alias Properties: %s"
-msgstr "PPR: Свойства псевдонима: %s"
+msgstr "PPR: п║п╡п╬п╧я│я┌п╡п╟ п©я│п╣п╡п╢п╬п╫п╦п╪п╟: %s"
 
 #: ../www/cgi_menu.pl:37
 msgid "Tools"
-msgstr "Инстременты"
+msgstr "п≤п╫я│я┌я─п╣п╪п╣п╫я┌я▀"
 
 #: ../www/cgi_menu.pl:38 ../www/show_queues.cgi.perl:217
 msgid "Cookie Login"
-msgstr "Вход печеньем"
+msgstr "п▓я┘п╬п╢ п©п╣я┤п╣п╫я▄п╣п╪"
 
 #: ../www/cgi_menu.pl:39 ../www/show_queues.cgi.perl:217
 msgid "Use this if your browser doesn't support Digest authentication."
@@ -275,15 +274,15 @@ msgstr ""
 
 #: ../www/cgi_menu.pl:40
 msgid "Spooler Logs"
-msgstr "Журнал диспетчера"
+msgstr "п√я┐я─п╫п╟п╩ п╢п╦я│п©п╣я┌я┤п╣я─п╟"
 
 #: ../www/cgi_menu.pl:41
 msgid "Open a window with links to the spooler log files."
-msgstr "Открыть окно с ссылками журналам деспатчера."
+msgstr "п·я┌п╨я─я▀я┌я▄ п╬п╨п╫п╬ я│ я│я│я▀п╩п╨п╟п╪п╦ п╤я┐я─п╫п╟п╩п╟п╪ п╢п╣я│п©п╟я┌я┤п╣я─п╟."
 
 #: ../www/cgi_menu.pl:42
 msgid "Disk Space"
-msgstr "Свободное пространство на дисках"
+msgstr "п║п╡п╬п╠п╬п╢п╫п╬п╣ п©я─п╬я│я┌я─п╟п╫я│я┌п╡п╬ п╫п╟ п╢п╦я│п╨п╟я┘"
 
 #: ../www/cgi_menu.pl:43
 msgid "Display information about free disk space on the print server."
@@ -291,7 +290,7 @@ msgstr ""
 
 #: ../www/cgi_menu.pl:44
 msgid "Tests"
-msgstr "Повирки"
+msgstr "п÷п╬п╡п╦я─п╨п╦"
 
 #: ../www/cgi_menu.pl:45
 msgid "Open a window with links to test scripts."
@@ -299,62 +298,62 @@ msgstr ""
 
 #: ../www/cgi_menu.pl:52
 msgid "Window"
-msgstr "Окно"
+msgstr "п·п╨п╫п╬"
 
 #: ../www/cgi_menu.pl:53
 msgid "Queues"
-msgstr "Очереди"
+msgstr "п·я┤п╣я─п╣п╢п╦"
 
 #: ../www/cgi_menu.pl:54
 msgid "Open a window with an icon for each queue."
-msgstr "Открыть окно на фоне которого пиктограм для каждой очереди."
+msgstr "п·я┌п╨я─я▀я┌я▄ п╬п╨п╫п╬ п╫п╟ я└п╬п╫п╣ п╨п╬я┌п╬я─п╬пЁп╬ п©п╦п╨я┌п╬пЁя─п╟п╪ п╢п╩я▐ п╨п╟п╤п╢п╬п╧ п╬я┤п╣я─п╣п╢п╦."
 
 #: ../www/cgi_menu.pl:55
 msgid "All Jobs"
-msgstr "Все задач"
+msgstr "п▓я│п╣ п╥п╟п╢п╟я┤"
 
 #: ../www/cgi_menu.pl:56
 msgid "Open a window which lists all jobs."
-msgstr "Нажимайте здесь чтобы открыть окно показайющое всю очереди."
+msgstr "п²п╟п╤п╦п╪п╟п╧я┌п╣ п╥п╢п╣я│я▄ я┤я┌п╬п╠я▀ п╬я┌п╨я─я▀я┌я▄ п╬п╨п╫п╬ п©п╬п╨п╟п╥п╟п╧я▌я┴п╬п╣ п╡я│я▌ п╬я┤п╣я─п╣п╢п╦."
 
 #: ../www/cgi_menu.pl:61
 #, perl-format
 msgid "Control %s"
-msgstr "Руководиться принтером %s"
+msgstr "п═я┐п╨п╬п╡п╬п╢п╦я┌я▄я│я▐ п©я─п╦п╫я┌п╣я─п╬п╪ %s"
 
 #: ../www/cgi_menu.pl:62
 msgid "Monitor, start, stop, and mount forms on the printer."
-msgstr "Следить за принтером, остановить его, пускать его, или поставить на него носители."
+msgstr "п║п╩п╣п╢п╦я┌я▄ п╥п╟ п©я─п╦п╫я┌п╣я─п╬п╪, п╬я│я┌п╟п╫п╬п╡п╦я┌я▄ п╣пЁп╬, п©я┐я│п╨п╟я┌я▄ п╣пЁп╬, п╦п╩п╦ п©п╬я│я┌п╟п╡п╦я┌я▄ п╫п╟ п╫п╣пЁп╬ п╫п╬я│п╦я┌п╣п╩п╦."
 
 #: ../www/cgi_menu.pl:63 ../www/cgi_menu.pl:70
 #, perl-format
 msgid "Properties of %s"
-msgstr "PPR: Свойства %s"
+msgstr "PPR: п║п╡п╬п╧я│я┌п╡п╟ %s"
 
 #: ../www/cgi_menu.pl:64
 msgid "Examine and change the configuration of the printer."
-msgstr "Посмотреть на и изменить настроение принтера."
+msgstr "п÷п╬я│п╪п╬я┌я─п╣я┌я▄ п╫п╟ п╦ п╦п╥п╪п╣п╫п╦я┌я▄ п╫п╟я│я┌я─п╬п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟."
 
 #: ../www/cgi_menu.pl:68
 #, perl-format
 msgid "Control %s members"
-msgstr "Руководиться челенами группы %s"
+msgstr "п═я┐п╨п╬п╡п╬п╢п╦я┌я▄я│я▐ я┤п╣п╩п╣п╫п╟п╪п╦ пЁя─я┐п©п©я▀ %s"
 
 #: ../www/cgi_menu.pl:69
 msgid "Monitor, start, stop, and mount forms on the member printers."
-msgstr "Следить за членом группы, остановить их, пускать их, или поставить на них носители."
+msgstr "п║п╩п╣п╢п╦я┌я▄ п╥п╟ я┤п╩п╣п╫п╬п╪ пЁя─я┐п©п©я▀, п╬я│я┌п╟п╫п╬п╡п╦я┌я▄ п╦я┘, п©я┐я│п╨п╟я┌я▄ п╦я┘, п╦п╩п╦ п©п╬я│я┌п╟п╡п╦я┌я▄ п╫п╟ п╫п╦я┘ п╫п╬я│п╦я┌п╣п╩п╦."
 
 #: ../www/cgi_menu.pl:71
 msgid "Examine and change the configuration of the group."
-msgstr "Посмотреть на и изменить настроение группы."
+msgstr "п÷п╬я│п╪п╬я┌я─п╣я┌я▄ п╫п╟ п╦ п╦п╥п╪п╣п╫п╦я┌я▄ п╫п╟я│я┌я─п╬п╣п╫п╦п╣ пЁя─я┐п©п©я▀."
 
 #: ../www/cgi_menu.pl:81 ../www/cgi_widgets.pl:249
 msgid "Help"
-msgstr "Справка"
+msgstr "п║п©я─п╟п╡п╨п╟"
 
 #: ../www/cgi_menu.pl:82
 msgid "For This Window"
-msgstr "Для этого окна"
+msgstr "п■п╩я▐ я█я┌п╬пЁп╬ п╬п╨п╫п╟"
 
 #: ../www/cgi_menu.pl:83
 msgid "Display the help document for this program in a web browser window"
@@ -362,7 +361,7 @@ msgstr ""
 
 #: ../www/cgi_menu.pl:84
 msgid "All PPR Documents"
-msgstr "Все документов о PPR"
+msgstr "п▓я│п╣ п╢п╬п╨я┐п╪п╣п╫я┌п╬п╡ п╬ PPR"
 
 #: ../www/cgi_menu.pl:85
 msgid "Open the PPR documentation index in a web browser window"
@@ -378,7 +377,7 @@ msgstr ""
 
 #: ../www/cgi_tabbed.pl:263
 msgid "<<More"
-msgstr "<<Ещё"
+msgstr "<<п∙я┴я▒"
 
 #: ../www/cgi_tabbed.pl:263
 msgid "Bring tabs on the left into view."
@@ -390,19 +389,19 @@ msgstr ""
 
 #: ../www/cgi_tabbed.pl:289
 msgid "More>>"
-msgstr "Ещё>>"
+msgstr "п∙я┴я▒>>"
 
 #: ../www/cgi_tabbed.pl:380
 msgid "Close without saving changes."
-msgstr "Закрыть без сохранения изменения."
+msgstr "п≈п╟п╨я─я▀я┌я▄ п╠п╣п╥ я│п╬я┘я─п╟п╫п╣п╫п╦я▐ п╦п╥п╪п╣п╫п╣п╫п╦я▐."
 
 #: ../www/cgi_tabbed.pl:381 ../www/prn_media.cgi.perl:215
 msgid "Save changes."
-msgstr "Сохранить изменения."
+msgstr "п║п╬я┘я─п╟п╫п╦я┌я▄ п╦п╥п╪п╣п╫п╣п╫п╦я▐."
 
 #: ../www/cgi_tabbed.pl:381
 msgid "_Save"
-msgstr "Сохранить"
+msgstr "п║п╬я┘я─п╟п╫п╦я┌я▄"
 
 #: ../www/cliconf.cgi.perl:45
 msgid "Downloadable Client Configuation Files"
@@ -418,7 +417,7 @@ msgstr ""
 #: ../www/cliconf.cgi.perl:60
 #, perl-format
 msgid "What do you want to download for the queue \"%s\"?"
-msgstr "Что вы хотите загрузить относительно очереди \"%s\"?"
+msgstr "п╖я┌п╬ п╡я▀ я┘п╬я┌п╦я┌п╣ п╥п╟пЁя─я┐п╥п╦я┌я▄ п╬я┌п╫п╬я│п╦я┌п╣п╩я▄п╫п╬ п╬я┤п╣я─п╣п╢п╦ \"%s\"?"
 
 #: ../www/cliconf.cgi.perl:62
 msgid "Spooler Configuration Script"
@@ -434,11 +433,11 @@ msgstr ""
 
 #: ../www/cliconf.cgi.perl:72
 msgid "You must make a choice."
-msgstr "Надо принимать выбор."
+msgstr "п²п╟п╢п╬ п©я─п╦п╫п╦п╪п╟я┌я▄ п╡я▀п╠п╬я─."
 
 #: ../www/cliconf.cgi.perl:84 ../www/cliconf.cgi.perl:100
 msgid "Downloadable KDE Icon"
-msgstr "Загрузить пиктограм для KDE"
+msgstr "п≈п╟пЁя─я┐п╥п╦я┌я▄ п©п╦п╨я┌п╬пЁя─п╟п╪ п╢п╩я▐ KDE"
 
 #: ../www/cliconf.cgi.perl:87
 msgid ""
@@ -450,7 +449,7 @@ msgstr ""
 #: ../www/cliconf.cgi.perl:90 ../www/cliconf.cgi.perl:106
 #: ../www/cliconf.cgi.perl:185
 msgid "_Download"
-msgstr "Загрузить"
+msgstr "п≈п╟пЁя─я┐п╥п╦я┌я▄"
 
 #: ../www/cliconf.cgi.perl:103
 msgid ""
@@ -533,52 +532,52 @@ msgstr ""
 #: ../www/delete_queue.cgi.perl:69
 #, perl-format
 msgid "Delete Printer \"%s\""
-msgstr "Удалить Принтер \"%s\""
+msgstr "пёп╢п╟п╩п╦я┌я▄ п÷я─п╦п╫я┌п╣я─ \"%s\""
 
 #: ../www/delete_queue.cgi.perl:71
 #, perl-format
 msgid "Delete Group \"%s\""
-msgstr "Удалить Группу \"%s\""
+msgstr "пёп╢п╟п╩п╦я┌я▄ п⌠я─я┐п©п©я┐ \"%s\""
 
 #: ../www/delete_queue.cgi.perl:73
 #, perl-format
 msgid "Delete Alias \"%s\""
-msgstr "Удалить Псевдоним \"%s\""
+msgstr "пёп╢п╟п╩п╦я┌я▄ п÷я│п╣п╡п╢п╬п╫п╦п╪ \"%s\""
 
 #: ../www/delete_queue.cgi.perl:99
 #, perl-format
 msgid "Delete the printer \"%s\"?"
-msgstr "Вы хотите удалить принтер \"%s\"?"
+msgstr "п▓я▀ я┘п╬я┌п╦я┌п╣ я┐п╢п╟п╩п╦я┌я▄ п©я─п╦п╫я┌п╣я─ \"%s\"?"
 
 #: ../www/delete_queue.cgi.perl:101
 #, perl-format
 msgid "Delete the group \"%s\"?"
-msgstr "Вы хотите удалить группу \"%s\"?"
+msgstr "п▓я▀ я┘п╬я┌п╦я┌п╣ я┐п╢п╟п╩п╦я┌я▄ пЁя─я┐п©п©я┐ \"%s\"?"
 
 #: ../www/delete_queue.cgi.perl:103
 #, perl-format
 msgid "Delete the alias \"%s\"?"
-msgstr "Вы хотите удалить псевдоним \"%s\"?"
+msgstr "п▓я▀ я┘п╬я┌п╦я┌п╣ я┐п╢п╟п╩п╦я┌я▄ п©я│п╣п╡п╢п╬п╫п╦п╪ \"%s\"?"
 
 #: ../www/delete_queue.cgi.perl:109 ../www/test_components.cgi.perl:221
 msgid "Yes"
-msgstr "Да"
+msgstr "п■п╟"
 
 #: ../www/delete_queue.cgi.perl:110 ../www/test_components.cgi.perl:221
 msgid "No"
-msgstr "Нет"
+msgstr "п²п╣я┌"
 
 #: ../www/delete_queue.cgi.perl:140
 msgid "The printer has been deleted."
-msgstr "Принтер удален."
+msgstr "п÷я─п╦п╫я┌п╣я─ я┐п╢п╟п╩п╣п╫."
 
 #: ../www/delete_queue.cgi.perl:142
 msgid "The group has been deleted."
-msgstr "Группа удалена."
+msgstr "п⌠я─я┐п©п©п╟ я┐п╢п╟п╩п╣п╫п╟."
 
 #: ../www/delete_queue.cgi.perl:144
 msgid "The alias has been deleted."
-msgstr "Псевдоним удален."
+msgstr "п÷я│п╣п╡п╢п╬п╫п╦п╪ я┐п╢п╟п╩п╣п╫."
 
 #: ../www/df_html.cgi.perl:65
 #, perl-format
@@ -597,17 +596,17 @@ msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:54
 msgid "Add a Group"
-msgstr "Добавлять Группу"
+msgstr "п■п╬п╠п╟п╡п╩я▐я┌я▄ п⌠я─я┐п©п©я┐"
 
 #: ../www/grp_addwiz.cgi.perl:57
 msgid "PPR Group Queue Creation"
-msgstr "PPR сотворение новой группы"
+msgstr "PPR я│п╬я┌п╡п╬я─п╣п╫п╦п╣ п╫п╬п╡п╬п╧ пЁя─я┐п©п©я▀"
 
 #: ../www/grp_addwiz.cgi.perl:59
 msgid ""
 "This program will guide you through the process of\n"
 "setting up a group of printers in PPR."
-msgstr "Это программа помогает вам составлять группу принтеров под контролем PPR."
+msgstr "п╜я┌п╬ п©я─п╬пЁя─п╟п╪п╪п╟ п©п╬п╪п╬пЁп╟п╣я┌ п╡п╟п╪ я│п╬я│я┌п╟п╡п╩я▐я┌я▄ пЁя─я┐п©п©я┐ п©я─п╦п╫я┌п╣я─п╬п╡ п©п╬п╢ п╨п╬п╫я┌я─п╬п╩п╣п╪ PPR."
 
 #: ../www/grp_addwiz.cgi.perl:62
 msgid ""
@@ -616,43 +615,43 @@ msgid ""
 "are not allowed.  Also, the first character may not be\n"
 "a period or a hyphen."
 msgstr ""
-"Группа должна имеет название.  Название не может\n"
-"быть длинее чем 16 букв.  Не печайющие коды, тильда, и\n"
-"шпация запрещение.  Что ещё, первая буква не должна\n"
-"быть точка или дефис."
+"п⌠я─я┐п©п©п╟ п╢п╬п╩п╤п╫п╟ п╦п╪п╣п╣я┌ п╫п╟п╥п╡п╟п╫п╦п╣.  п²п╟п╥п╡п╟п╫п╦п╣ п╫п╣ п╪п╬п╤п╣я┌\n"
+"п╠я▀я┌я▄ п╢п╩п╦п╫п╣п╣ я┤п╣п╪ 16 п╠я┐п╨п╡.  п²п╣ п©п╣я┤п╟п╧я▌я┴п╦п╣ п╨п╬п╢я▀, я┌п╦п╩я▄п╢п╟, п╦\n"
+"я┬п©п╟я├п╦я▐ п╥п╟п©я─п╣я┴п╣п╫п╦п╣.  п╖я┌п╬ п╣я┴я▒, п©п╣я─п╡п╟я▐ п╠я┐п╨п╡п╟ п╫п╣ п╢п╬п╩п╤п╫п╟\n"
+"п╠я▀я┌я▄ я┌п╬я┤п╨п╟ п╦п╩п╦ п╢п╣я└п╦я│."
 
 #: ../www/grp_addwiz.cgi.perl:67 ../www/grp_properties.cgi.perl:51
 msgid "Group Name:"
-msgstr "Название Группы:"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п⌠я─я┐п©п©я▀:"
 
 #: ../www/grp_addwiz.cgi.perl:73
 msgid "You must enter a name for the group!"
-msgstr "Надо вводить название новой группы!"
+msgstr "п²п╟п╢п╬ п╡п╡п╬п╢п╦я┌я▄ п╫п╟п╥п╡п╟п╫п╦п╣ п╫п╬п╡п╬п╧ пЁя─я┐п©п©я▀!"
 
 #: ../www/grp_addwiz.cgi.perl:75
 #, perl-format
 msgid "The group \"%s\" already exists!"
-msgstr "Группа \"%s\" уже существует!"
+msgstr "п⌠я─я┐п©п©п╟ \"%s\" я┐п╤п╣ я│я┐я┴п╣я│я┌п╡я┐п╣я┌!"
 
 #: ../www/grp_addwiz.cgi.perl:85
 msgid "Assign Group Members"
-msgstr "Назначение членов группы"
+msgstr "п²п╟п╥п╫п╟я┤п╣п╫п╦п╣ я┤п╩п╣п╫п╬п╡ пЁя─я┐п©п©я▀"
 
 #: ../www/grp_addwiz.cgi.perl:113 ../www/grp_properties.cgi.perl:95
 msgid "Members:"
-msgstr "Члены:"
+msgstr "п╖п╩п╣п╫я▀:"
 
 #: ../www/grp_addwiz.cgi.perl:113 ../www/grp_properties.cgi.perl:95
 msgid "Non-Members:"
-msgstr "Не члены:"
+msgstr "п²п╣ я┤п╩п╣п╫я▀:"
 
 #: ../www/grp_addwiz.cgi.perl:117
 msgid "The group must have at least one member!"
-msgstr "У группы должен быть по меньше мере очень член!"
+msgstr "пё пЁя─я┐п©п©я▀ п╢п╬п╩п╤п╣п╫ п╠я▀я┌я▄ п©п╬ п╪п╣п╫я▄я┬п╣ п╪п╣я─п╣ п╬я┤п╣п╫я▄ я┤п╩п╣п╫!"
 
 #: ../www/grp_addwiz.cgi.perl:126
 msgid "Describe the Group"
-msgstr "Описывать группу "
+msgstr "п·п©п╦я│я▀п╡п╟я┌я▄ пЁя─я┐п©п©я┐ "
 
 #: ../www/grp_addwiz.cgi.perl:151
 msgid "Save the Group"
@@ -664,7 +663,7 @@ msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:170
 msgid "The queue has been created."
-msgstr "Очеред сделен."
+msgstr "п·я┤п╣я─п╣п╢ я│п╢п╣п╩п╣п╫."
 
 #: ../www/grp_control.cgi.perl:67
 #, perl-format
@@ -673,21 +672,21 @@ msgstr ""
 
 #: ../www/grp_properties.cgi.perl:64
 msgid "Members"
-msgstr "Члены"
+msgstr "п╖п╩п╣п╫я▀"
 
 #: ../www/grp_properties.cgi.perl:191
 msgid "Rotate Through Members:"
-msgstr "Исползовать члены попеременно:"
+msgstr "п≤я│п©п╬п╩п╥п╬п╡п╟я┌я▄ я┤п╩п╣п╫я▀ п©п╬п©п╣я─п╣п╪п╣п╫п╫п╬:"
 
 #: ../www/grp_properties.cgi.perl:194 ../www/prn_properties.cgi.perl:100
 #: ../www/prn_properties.cgi.perl:562 ../www/prn_properties.cgi.perl:688
 msgid "no"
-msgstr "нет"
+msgstr "п╫п╣я┌"
 
 #: ../www/grp_properties.cgi.perl:194 ../www/prn_properties.cgi.perl:100
 #: ../www/prn_properties.cgi.perl:562 ../www/prn_properties.cgi.perl:688
 msgid "yes"
-msgstr "да"
+msgstr "п╢п╟"
 
 #: ../www/grp_properties.cgi.perl:314
 #, perl-format
@@ -697,12 +696,12 @@ msgstr ""
 #: ../www/job_log.cgi.perl:56
 #, perl-format
 msgid "Log for Job \"%s\""
-msgstr "Журнал задачи \"%s\""
+msgstr "п√я┐я─п╫п╟п╩ п╥п╟п╢п╟я┤п╦ \"%s\""
 
 #: ../www/job_log.cgi.perl:102 ../www/show_log.cgi.perl:102
 #, perl-format
 msgid "Can't read log file: %s"
-msgstr "Не сумел читать журнальный файл: %s"
+msgstr "п²п╣ я│я┐п╪п╣п╩ я┤п╦я┌п╟я┌я▄ п╤я┐я─п╫п╟п╩я▄п╫я▀п╧ я└п╟п╧п╩: %s"
 
 #: ../www/job_modify.cgi.perl:94
 msgid "General"
@@ -741,11 +740,11 @@ msgstr ""
 
 #: ../www/job_modify.cgi.perl:117
 msgid "Your name:"
-msgstr "Ваше Имя"
+msgstr "п▓п╟я┬п╣ п≤п╪я▐"
 
 #: ../www/job_modify.cgi.perl:118
 msgid "Your department:"
-msgstr "Ваш Отдел"
+msgstr "п▓п╟я┬ п·я┌п╢п╣п╩"
 
 #: ../www/job_modify.cgi.perl:119
 msgid "Your telephone number:"
@@ -805,7 +804,7 @@ msgstr ""
 
 #: ../www/job_modify.cgi.perl:198
 msgid "Log"
-msgstr "Журнал"
+msgstr "п√я┐я─п╫п╟п╩"
 
 #: ../www/job_modify.cgi.perl:201
 msgid ""
@@ -821,7 +820,7 @@ msgstr ""
 #: ../www/job_modify.cgi.perl:322
 #, perl-format
 msgid "PPR: Modify Job: %s"
-msgstr "PPR: Изменить задачу: %s"
+msgstr "PPR: п≤п╥п╪п╣п╫п╦я┌я▄ п╥п╟п╢п╟я┤я┐: %s"
 
 #: ../www/job_public.cgi.perl:144
 #, perl-format
@@ -829,24 +828,24 @@ msgid ""
 "You have submitted a print job entitled \"%s\".  You may either enter your\n"
 "username and password to print it or you may cancel it."
 msgstr ""
-"Вы послали задачу которая называется \"%s\".  Вы можете вводить имя\n"
-"пользователя и пароль или удалить задачу."
+"п▓я▀ п©п╬я│п╩п╟п╩п╦ п╥п╟п╢п╟я┤я┐ п╨п╬я┌п╬я─п╟я▐ п╫п╟п╥я▀п╡п╟п╣я┌я│я▐ \"%s\".  п▓я▀ п╪п╬п╤п╣я┌п╣ п╡п╡п╬п╢п╦я┌я▄ п╦п╪я▐\n"
+"п©п╬п╩я▄п╥п╬п╡п╟я┌п╣п╩я▐ п╦ п©п╟я─п╬п╩я▄ п╦п╩п╦ я┐п╢п╟п╩п╦я┌я▄ п╥п╟п╢п╟я┤я┐."
 
 #: ../www/login_cookie.cgi.perl:98
 msgid "Username:"
-msgstr "Пользователь:"
+msgstr "п÷п╬п╩я▄п╥п╬п╡п╟я┌п╣п╩я▄:"
 
 #: ../www/login_cookie.cgi.perl:100
 msgid "Password:"
-msgstr "Пароль:"
+msgstr "п÷п╟я─п╬п╩я▄:"
 
 #: ../www/login_cookie.cgi.perl:102
 msgid "Login"
-msgstr "Вход в систему"
+msgstr "п▓я┘п╬п╢ п╡ я│п╦я│я┌п╣п╪я┐"
 
 #: ../www/login_cookie.cgi.perl:109
 msgid "Incorrect username or password."
-msgstr "Не правелный ползователь или порол."
+msgstr "п²п╣ п©я─п╟п╡п╣п╩п╫я▀п╧ п©п╬п╩п╥п╬п╡п╟я┌п╣п╩я▄ п╦п╩п╦ п©п╬я─п╬п╩."
 
 #: ../www/login_cookie.cgi.perl:132
 #, perl-format
@@ -855,17 +854,17 @@ msgid ""
 "If you close this window without logging out, you will be automatically logged\n"
 "out after %d seconds.\n"
 msgstr ""
-"Вы сделали вход в систему как \"%s\".  Оставьте это окно открытым, чтобы\n"
-"остаться в системе.  Если Вы закрываете это окно без выхода из системы, Вы\n"
-"будете автоматически выход из системы после %d секунды.\n"
+"п▓я▀ я│п╢п╣п╩п╟п╩п╦ п╡я┘п╬п╢ п╡ я│п╦я│я┌п╣п╪я┐ п╨п╟п╨ \"%s\".  п·я│я┌п╟п╡я▄я┌п╣ я█я┌п╬ п╬п╨п╫п╬ п╬я┌п╨я─я▀я┌я▀п╪, я┤я┌п╬п╠я▀\n"
+"п╬я│я┌п╟я┌я▄я│я▐ п╡ я│п╦я│я┌п╣п╪п╣.  п∙я│п╩п╦ п▓я▀ п╥п╟п╨я─я▀п╡п╟п╣я┌п╣ я█я┌п╬ п╬п╨п╫п╬ п╠п╣п╥ п╡я▀я┘п╬п╢п╟ п╦п╥ я│п╦я│я┌п╣п╪я▀, п▓я▀\n"
+"п╠я┐п╢п╣я┌п╣ п╟п╡я┌п╬п╪п╟я┌п╦я┤п╣я│п╨п╦ п╡я▀я┘п╬п╢ п╦п╥ я│п╦я│я┌п╣п╪я▀ п©п╬я│п╩п╣ %d я│п╣п╨я┐п╫п╢я▀.\n"
 
 #: ../www/login_cookie.cgi.perl:135
 msgid "Renew"
-msgstr "Обновить"
+msgstr "п·п╠п╫п╬п╡п╦я┌я▄"
 
 #: ../www/login_cookie.cgi.perl:136
 msgid "Logout"
-msgstr "Выйти из системы"
+msgstr "п▓я▀п╧я┌п╦ п╦п╥ я│п╦я│я┌п╣п╪я▀"
 
 #: ../www/login_cookie.cgi.perl:154
 #, perl-format
@@ -874,7 +873,7 @@ msgstr ""
 
 #: ../www/ppd_select.pl:161
 msgid "PPD File"
-msgstr "PPD файл"
+msgstr "PPD я└п╟п╧п╩"
 
 #: ../www/ppd_select.pl:162
 msgid "ModelName"
@@ -882,7 +881,7 @@ msgstr ""
 
 #: ../www/ppd_select.pl:163
 msgid "PPD File Version"
-msgstr "Версия PPD файла"
+msgstr "п▓п╣я─я│п╦я▐ PPD я└п╟п╧п╩п╟"
 
 #: ../www/ppd_select.pl:164
 msgid "LanguageLevel"
@@ -890,11 +889,11 @@ msgstr ""
 
 #: ../www/ppd_select.pl:165
 msgid "PostScript Version"
-msgstr "Версия PostScript"
+msgstr "п▓п╣я─я│п╦я▐ PostScript"
 
 #: ../www/ppd_select.pl:166
 msgid "Number of Fonts"
-msgstr "Сколько шрифтов"
+msgstr "п║п╨п╬п╩я▄п╨п╬ я┬я─п╦я└я┌п╬п╡"
 
 #: ../www/ppd_select.pl:167
 msgid "TrueType Rasterizer"
@@ -910,7 +909,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:58
 msgid "Server Serial Port"
-msgstr "Сириалный порт у сервера"
+msgstr "п║п╦я─п╦п╟п╩п╫я▀п╧ п©п╬я─я┌ я┐ я│п╣я─п╡п╣я─п╟"
 
 #: ../www/prn_addwiz.cgi.perl:59
 msgid "Server Parallel Port"
@@ -918,7 +917,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:60
 msgid "Server USB Port"
-msgstr "USB порт у сервера"
+msgstr "USB п©п╬я─я┌ я┐ я│п╣я─п╡п╣я─п╟"
 
 #: ../www/prn_addwiz.cgi.perl:61
 msgid "Network via AppleTalk PAP"
@@ -954,31 +953,31 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:99
 msgid "PPR: Add a Printer"
-msgstr "PPR: Добавлять принтер"
+msgstr "PPR: п■п╬п╠п╟п╡п╩я▐я┌я▄ п©я─п╦п╫я┌п╣я─"
 
 #: ../www/prn_addwiz.cgi.perl:102
 msgid "PPR Printer Queue Creation"
-msgstr "Создание очереди для принтера"
+msgstr "п║п╬п╥п╢п╟п╫п╦п╣ п╬я┤п╣я─п╣п╢п╦ п╢п╩я▐ п©я─п╦п╫я┌п╣я─п╟"
 
 #: ../www/prn_addwiz.cgi.perl:103
 msgid "This program will guide you through the process of setting up a printer in PPR."
-msgstr "Эта программа помогает вам поставеть новый принтер под контол PPR."
+msgstr "п╜я┌п╟ п©я─п╬пЁя─п╟п╪п╪п╟ п©п╬п╪п╬пЁп╟п╣я┌ п╡п╟п╪ п©п╬я│я┌п╟п╡п╣я┌я▄ п╫п╬п╡я▀п╧ п©я─п╦п╫я┌п╣я─ п©п╬п╢ п╨п╬п╫я┌п╬п╩ PPR."
 
 #: ../www/prn_addwiz.cgi.perl:106
 msgid "I already know the printer's exact address."
-msgstr "Я уже знаю точный адрес принтера."
+msgstr "п╞ я┐п╤п╣ п╥п╫п╟я▌ я┌п╬я┤п╫я▀п╧ п╟п╢я─п╣я│ п©я─п╦п╫я┌п╣я─п╟."
 
 #: ../www/prn_addwiz.cgi.perl:108
 msgid "I would like to select the printer from a list."
-msgstr "Я хочу выбрать принтер из списки."
+msgstr "п╞ я┘п╬я┤я┐ п╡я▀п╠я─п╟я┌я▄ п©я─п╦п╫я┌п╣я─ п╦п╥ я│п©п╦я│п╨п╦."
 
 #: ../www/prn_addwiz.cgi.perl:112 ../www/prn_addwiz.cgi.perl:169
 msgid "You must make a selection!"
-msgstr "Надо принимать выбор!"
+msgstr "п²п╟п╢п╬ п©я─п╦п╫п╦п╪п╟я┌я▄ п╡я▀п╠п╬я─!"
 
 #: ../www/prn_addwiz.cgi.perl:126
 msgid "PPR: Add a Printer: Select an Interface Program"
-msgstr "PPR: Дабавление принтера: Выбор программы для связи принтеру"
+msgstr "PPR: п■п╟п╠п╟п╡п╩п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟: п▓я▀п╠п╬я─ п©я─п╬пЁя─п╟п╪п╪я▀ п╢п╩я▐ я│п╡я▐п╥п╦ п©я─п╦п╫я┌п╣я─я┐"
 
 #: ../www/prn_addwiz.cgi.perl:139
 msgid ""
@@ -989,7 +988,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:143
 msgid "Interface Program:"
-msgstr "Программа для собщения:"
+msgstr "п÷я─п╬пЁя─п╟п╪п╪п╟ п╢п╩я▐ я│п╬п╠я┴п╣п╫п╦я▐:"
 
 #: ../www/prn_addwiz.cgi.perl:189
 msgid "PPR: Add a Printer: Raw TCP/IP Interface: Choose an Address"
@@ -1006,7 +1005,7 @@ msgstr ""
 #: ../www/prn_addwiz.cgi.perl:197 ../www/prn_addwiz.cgi.perl:254
 #: ../www/prn_addwiz.cgi.perl:312 ../www/prn_addwiz.cgi.perl:361
 msgid "DNS Name or IP Address:"
-msgstr "Название в системе DNS или адрес IP:"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п╡ я│п╦я│я┌п╣п╪п╣ DNS п╦п╩п╦ п╟п╢я─п╣я│ IP:"
 
 #: ../www/prn_addwiz.cgi.perl:201
 msgid ""
@@ -1017,7 +1016,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:205 ../www/prn_addwiz.cgi.perl:260
 msgid "TCP Port Number:"
-msgstr "Номер TCP порта:"
+msgstr "п²п╬п╪п╣я─ TCP п©п╬я─я┌п╟:"
 
 #: ../www/prn_addwiz.cgi.perl:210
 msgid ""
@@ -1036,11 +1035,11 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:229 ../www/prn_addwiz.cgi.perl:286
 msgid "You must fill in the TCP port number!"
-msgstr "Надо вводить номер TCP порта!"
+msgstr "п²п╟п╢п╬ п╡п╡п╬п╢п╦я┌я▄ п╫п╬п╪п╣я─ TCP п©п╬я─я┌п╟!"
 
 #: ../www/prn_addwiz.cgi.perl:246
 msgid "PPR: Add a Printer: JetDirect Interface: Choose an Address"
-msgstr "PPR: Дабавление принтера: JetDirect: выбор адреса"
+msgstr "PPR: п■п╟п╠п╟п╡п╩п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟: JetDirect: п╡я▀п╠п╬я─ п╟п╢я─п╣я│п╟"
 
 #: ../www/prn_addwiz.cgi.perl:258
 msgid "Most HP JetDirect cards accept jobs on TCP port 9100.\n"
@@ -1080,7 +1079,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:325
 msgid "Brand"
-msgstr "Знак"
+msgstr "п≈п╫п╟п╨"
 
 #: ../www/prn_addwiz.cgi.perl:325
 msgid "Product"
@@ -1118,7 +1117,7 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:400
 msgid "Enter Printer Address:"
-msgstr "Вводить адрес принтера:"
+msgstr "п▓п╡п╬п╢п╦я┌я▄ п╟п╢я─п╣я│ п©я─п╦п╫я┌п╣я─п╟:"
 
 #: ../www/prn_addwiz.cgi.perl:404
 msgid "Enter Interface Options:"
@@ -1134,88 +1133,88 @@ msgstr ""
 
 #: ../www/prn_addwiz.cgi.perl:432
 msgid "You must enter an address for the printer!"
-msgstr "Надо вводить адрес принтера!"
+msgstr "п²п╟п╢п╬ п╡п╡п╬п╢п╦я┌я▄ п╟п╢я─п╣я│ п©я─п╦п╫я┌п╣я─п╟!"
 
 #: ../www/prn_addwiz.cgi.perl:450 ../www/prn_addwiz.cgi.perl:499
 msgid "PPR: Add a Printer: Browse Printers"
-msgstr "PPR: Дабавление принтера: Посмотрить принтеры"
+msgstr "PPR: п■п╟п╠п╟п╡п╩п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟: п÷п╬я│п╪п╬я┌я─п╦я┌я▄ п©я─п╦п╫я┌п╣я─я▀"
 
 #: ../www/prn_addwiz.cgi.perl:457
 msgid "Zones Available for Browsing"
-msgstr "Зоны доступние посмотру"
+msgstr "п≈п╬п╫я▀ п╢п╬я│я┌я┐п©п╫п╦п╣ п©п╬я│п╪п╬я┌я─я┐"
 
 #: ../www/prn_addwiz.cgi.perl:486
 msgid "Up to a minute may be required to search some zones."
-msgstr "Посмотр некоторых зон требует до одной минуты."
+msgstr "п÷п╬я│п╪п╬я┌я─ п╫п╣п╨п╬я┌п╬я─я▀я┘ п╥п╬п╫ я┌я─п╣п╠я┐п╣я┌ п╢п╬ п╬п╢п╫п╬п╧ п╪п╦п╫я┐я┌я▀."
 
 #: ../www/prn_addwiz.cgi.perl:490
 #, fuzzy
 msgid "You must choose a zone!"
-msgstr "Вы PPD файла не выбрали!"
+msgstr "п▓я▀ PPD я└п╟п╧п╩п╟ п╫п╣ п╡я▀п╠я─п╟п╩п╦!"
 
 #: ../www/prn_addwiz.cgi.perl:575
 #, perl-format
 msgid "Printers Available in Zone %s %s"
-msgstr "Принтеры находащися в зоне %s %s"
+msgstr "п÷я─п╦п╫я┌п╣я─я▀ п╫п╟я┘п╬п╢п╟я┴п╦я│я▐ п╡ п╥п╬п╫п╣ %s %s"
 
 #: ../www/prn_addwiz.cgi.perl:583
 #, perl-format
 msgid ", Model: %s"
-msgstr ", Модель: %s"
+msgstr ", п°п╬п╢п╣п╩я▄: %s"
 
 #: ../www/prn_addwiz.cgi.perl:587
 #, fuzzy, perl-format
 msgid ", Location: %s"
-msgstr ", Место: %s"
+msgstr ", п°п╣я│я┌п╬: %s"
 
 #: ../www/prn_addwiz.cgi.perl:618
 msgid "You must choose a printer!"
-msgstr "Вы принтер не выбрали!"
+msgstr "п▓я▀ п©я─п╦п╫я┌п╣я─ п╫п╣ п╡я▀п╠я─п╟п╩п╦!"
 
 #: ../www/prn_addwiz.cgi.perl:637
 msgid "PPR: Add a Printer: Choose a PPD File"
-msgstr "PPR: Дабавление принтера: Вибор PPD файла"
+msgstr "PPR: п■п╟п╠п╟п╡п╩п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟: п▓п╦п╠п╬я─ PPD я└п╟п╧п╩п╟"
 
 #: ../www/prn_addwiz.cgi.perl:646
 msgid ""
 "Please select a appropriate PostScript Printer\n"
 "Description (PPD) file for this printer."
 msgstr ""
-"Выборайте пожалиста файл описывайющий принтер\n"
-"(PPD файл) который подходит к этому принтеру."
+"п▓я▀п╠п╬я─п╟п╧я┌п╣ п©п╬п╤п╟п╩п╦я│я┌п╟ я└п╟п╧п╩ п╬п©п╦я│я▀п╡п╟п╧я▌я┴п╦п╧ п©я─п╦п╫я┌п╣я─\n"
+"(PPD я└п╟п╧п╩) п╨п╬я┌п╬я─я▀п╧ п©п╬п╢я┘п╬п╢п╦я┌ п╨ я█я┌п╬п╪я┐ п©я─п╦п╫я┌п╣я─я┐."
 
 #: ../www/prn_addwiz.cgi.perl:660 ../www/prn_properties.cgi.perl:188
 #, fuzzy
 msgid "Auto detection failed."
-msgstr "Произошла ошибка при автоматичестой определении."
+msgstr "п÷я─п╬п╦п╥п╬я┬п╩п╟ п╬я┬п╦п╠п╨п╟ п©я─п╦ п╟п╡я┌п╬п╪п╟я┌п╦я┤п╣я│я┌п╬п╧ п╬п©я─п╣п╢п╣п╩п╣п╫п╦п╦."
 
 #: ../www/prn_addwiz.cgi.perl:672 ../www/prn_properties.cgi.perl:201
 msgid "Suitable PPD Files:"
-msgstr "Все подходащых PPD файлов:"
+msgstr "п▓я│п╣ п©п╬п╢я┘п╬п╢п╟я┴я▀я┘ PPD я└п╟п╧п╩п╬п╡:"
 
 #: ../www/prn_addwiz.cgi.perl:676 ../www/prn_properties.cgi.perl:205
 msgid "All Available PPD Files:"
-msgstr "Все доступных PPD файлов:"
+msgstr "п▓я│п╣ п╢п╬я│я┌я┐п©п╫я▀я┘ PPD я└п╟п╧п╩п╬п╡:"
 
 #: ../www/prn_addwiz.cgi.perl:712 ../www/prn_properties.cgi.perl:238
 msgid "Auto Detect"
-msgstr "Автоматически определить"
+msgstr "п░п╡я┌п╬п╪п╟я┌п╦я┤п╣я│п╨п╦ п╬п©я─п╣п╢п╣п╩п╦я┌я▄"
 
 #: ../www/prn_addwiz.cgi.perl:712 ../www/prn_properties.cgi.perl:238
 msgid "Automatically detect printer type and propose suitable PPD files."
-msgstr "Нажимайте здесь чтобы автоматически узнать тип принтера и показать подходящие описывающие файлы."
+msgstr "п²п╟п╤п╦п╪п╟п╧я┌п╣ п╥п╢п╣я│я▄ я┤я┌п╬п╠я▀ п╟п╡я┌п╬п╪п╟я┌п╦я┤п╣я│п╨п╦ я┐п╥п╫п╟я┌я▄ я┌п╦п© п©я─п╦п╫я┌п╣я─п╟ п╦ п©п╬п╨п╟п╥п╟я┌я▄ п©п╬п╢я┘п╬п╢я▐я┴п╦п╣ п╬п©п╦я│я▀п╡п╟я▌я┴п╦п╣ я└п╟п╧п╩я▀."
 
 #: ../www/prn_addwiz.cgi.perl:716
 msgid "Show all PPD Files"
-msgstr "Показывать все PPD файлов"
+msgstr "п÷п╬п╨п╟п╥я▀п╡п╟я┌я▄ п╡я│п╣ PPD я└п╟п╧п╩п╬п╡"
 
 #: ../www/prn_addwiz.cgi.perl:726
 msgid "You must choose a PPD file first!"
-msgstr "Вы PPD файл не выбрали!"
+msgstr "п▓я▀ PPD я└п╟п╧п╩ п╫п╣ п╡я▀п╠я─п╟п╩п╦!"
 
 #: ../www/prn_addwiz.cgi.perl:735
 msgid "PPR: Add a Printer: Name the Printer"
-msgstr "PPR: Дабавить принтер: Давать название принтеру"
+msgstr "PPR: п■п╟п╠п╟п╡п╦я┌я▄ п©я─п╦п╫я┌п╣я─: п■п╟п╡п╟я┌я▄ п╫п╟п╥п╡п╟п╫п╦п╣ п©я─п╦п╫я┌п╣я─я┐"
 
 #: ../www/prn_addwiz.cgi.perl:738
 msgid ""
@@ -1224,27 +1223,27 @@ msgid ""
 "are not allowed.  Also, the first character may not be\n"
 "a period or a hyphen."
 msgstr ""
-"Принтер должен имеет название.  Длиность название до\n"
-"16 букв (символов).  Не печайющие коды, тильда, и шпация\n"
-"запрещены.  Кроме этого, первый символ не может быть\n"
-"точка или дефис."
+"п÷я─п╦п╫я┌п╣я─ п╢п╬п╩п╤п╣п╫ п╦п╪п╣п╣я┌ п╫п╟п╥п╡п╟п╫п╦п╣.  п■п╩п╦п╫п╬я│я┌я▄ п╫п╟п╥п╡п╟п╫п╦п╣ п╢п╬\n"
+"16 п╠я┐п╨п╡ (я│п╦п╪п╡п╬п╩п╬п╡).  п²п╣ п©п╣я┤п╟п╧я▌я┴п╦п╣ п╨п╬п╢я▀, я┌п╦п╩я▄п╢п╟, п╦ я┬п©п╟я├п╦я▐\n"
+"п╥п╟п©я─п╣я┴п╣п╫я▀.  п я─п╬п╪п╣ я█я┌п╬пЁп╬, п©п╣я─п╡я▀п╧ я│п╦п╪п╡п╬п╩ п╫п╣ п╪п╬п╤п╣я┌ п╠я▀я┌я▄\n"
+"я┌п╬я┤п╨п╟ п╦п╩п╦ п╢п╣я└п╦я│."
 
 #: ../www/prn_addwiz.cgi.perl:749 ../www/prn_properties.cgi.perl:52
 msgid "Printer Name:"
-msgstr "Название принтера:"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟:"
 
 #: ../www/prn_addwiz.cgi.perl:755
 msgid "You must enter a name for the printer!"
-msgstr "Вам надо вводить названое принтера!"
+msgstr "п▓п╟п╪ п╫п╟п╢п╬ п╡п╡п╬п╢п╦я┌я▄ п╫п╟п╥п╡п╟п╫п╬п╣ п©я─п╦п╫я┌п╣я─п╟!"
 
 #: ../www/prn_addwiz.cgi.perl:757
 #, perl-format
 msgid "The printer \"%s\" already exists!"
-msgstr "Принтер с названием \"%s\" уже существует!"
+msgstr "п÷я─п╦п╫я┌п╣я─ я│ п╫п╟п╥п╡п╟п╫п╦п╣п╪ \"%s\" я┐п╤п╣ я│я┐я┴п╣я│я┌п╡я┐п╣я┌!"
 
 #: ../www/prn_addwiz.cgi.perl:766
 msgid "PPR: Add a Printer: Describe the Printer"
-msgstr "PPR: Дабавить принтер: описание принтера"
+msgstr "PPR: п■п╟п╠п╟п╡п╦я┌я▄ п©я─п╦п╫я┌п╣я─: п╬п©п╦я│п╟п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟"
 
 #: ../www/prn_addwiz.cgi.perl:769
 #, perl-format
@@ -1254,75 +1253,75 @@ msgid ""
 "description.  Please supply a longer description for\n"
 "\"%s\" below."
 msgstr ""
-"Хотя часто удобно назвывать принтер коротым названием, иногда\n"
-"полное описание тоже помогает.  Вводите пожаласто длиное\n"
-"описание принтера \"%s\"."
+"п╔п╬я┌я▐ я┤п╟я│я┌п╬ я┐п╢п╬п╠п╫п╬ п╫п╟п╥п╡я▀п╡п╟я┌я▄ п©я─п╦п╫я┌п╣я─ п╨п╬я─п╬я┌я▀п╪ п╫п╟п╥п╡п╟п╫п╦п╣п╪, п╦п╫п╬пЁп╢п╟\n"
+"п©п╬п╩п╫п╬п╣ п╬п©п╦я│п╟п╫п╦п╣ я┌п╬п╤п╣ п©п╬п╪п╬пЁп╟п╣я┌.  п▓п╡п╬п╢п╦я┌п╣ п©п╬п╤п╟п╩п╟я│я┌п╬ п╢п╩п╦п╫п╬п╣\n"
+"п╬п©п╦я│п╟п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟ \"%s\"."
 
 #: ../www/prn_addwiz.cgi.perl:795
 msgid "PPR: Add a Printer: Additional Information"
-msgstr "PPR: Дабавить принтер: Дополнителная информация"
+msgstr "PPR: п■п╟п╠п╟п╡п╦я┌я▄ п©я─п╦п╫я┌п╣я─: п■п╬п©п╬п╩п╫п╦я┌п╣п╩п╫п╟я▐ п╦п╫я└п╬я─п╪п╟я├п╦я▐"
 
 #: ../www/prn_addwiz.cgi.perl:798
 msgid ""
 "On this screen you may record additional information\n"
 "about the printer for future reference."
 msgstr ""
-"На этой странице вы можете вводить дополнителную информацию\n"
-"относительно принтера за будущую нужду."
+"п²п╟ я█я┌п╬п╧ я│я┌я─п╟п╫п╦я├п╣ п╡я▀ п╪п╬п╤п╣я┌п╣ п╡п╡п╬п╢п╦я┌я▄ п╢п╬п©п╬п╩п╫п╦я┌п╣п╩п╫я┐я▌ п╦п╫я└п╬я─п╪п╟я├п╦я▌\n"
+"п╬я┌п╫п╬я│п╦я┌п╣п╩я▄п╫п╬ п©я─п╦п╫я┌п╣я─п╟ п╥п╟ п╠я┐п╢я┐я┴я┐я▌ п╫я┐п╤п╢я┐."
 
 #: ../www/prn_addwiz.cgi.perl:801
 msgid "Where is the printer located?"
-msgstr "Где принтер находется?"
+msgstr "п⌠п╢п╣ п©я─п╦п╫я┌п╣я─ п╫п╟я┘п╬п╢п╣я┌я│я▐?"
 
 #: ../www/prn_addwiz.cgi.perl:803 ../www/prn_properties.cgi.perl:58
 msgid "Location:"
-msgstr "Место нахождения:"
+msgstr "п°п╣я│я┌п╬ п╫п╟я┘п╬п╤п╢п╣п╫п╦я▐:"
 
 #: ../www/prn_addwiz.cgi.perl:807
 msgid "Which department within your organization uses this printer?"
-msgstr "Этот принтер исползуется в каком отдели вашой организации?"
+msgstr "п╜я┌п╬я┌ п©я─п╦п╫я┌п╣я─ п╦я│п©п╬п╩п╥я┐п╣я┌я│я▐ п╡ п╨п╟п╨п╬п╪ п╬я┌п╢п╣п╩п╦ п╡п╟я┬п╬п╧ п╬я─пЁп╟п╫п╦п╥п╟я├п╦п╦?"
 
 #: ../www/prn_addwiz.cgi.perl:809 ../www/prn_properties.cgi.perl:61
 msgid "Department:"
-msgstr "Отдель:"
+msgstr "п·я┌п╢п╣п╩я▄:"
 
 #: ../www/prn_addwiz.cgi.perl:813
 msgid "What is the name of a user with whom system administrator should discuss problems with the printer?"
-msgstr "Как завут человек с которым системный администратор говорить в случае проблемы с этым принтером?"
+msgstr "п п╟п╨ п╥п╟п╡я┐я┌ я┤п╣п╩п╬п╡п╣п╨ я│ п╨п╬я┌п╬я─я▀п╪ я│п╦я│я┌п╣п╪п╫я▀п╧ п╟п╢п╪п╦п╫п╦я│я┌я─п╟я┌п╬я─ пЁп╬п╡п╬я─п╦я┌я▄ п╡ я│п╩я┐я┤п╟п╣ п©я─п╬п╠п╩п╣п╪я▀ я│ я█я┌я▀п╪ п©я─п╦п╫я┌п╣я─п╬п╪?"
 
 #: ../www/prn_addwiz.cgi.perl:815
 msgid "On Site Contact:"
-msgstr "Ответственое лицо в отделе принтера:"
+msgstr "п·я┌п╡п╣я┌я│я┌п╡п╣п╫п╬п╣ п╩п╦я├п╬ п╡ п╬я┌п╢п╣п╩п╣ п©я─п╦п╫я┌п╣я─п╟:"
 
 #: ../www/prn_addwiz.cgi.perl:826
 msgid "Save New Printer"
-msgstr "Сохранить новый принтер"
+msgstr "п║п╬я┘я─п╟п╫п╦я┌я▄ п╫п╬п╡я▀п╧ п©я─п╦п╫я┌п╣я─"
 
 #: ../www/prn_addwiz.cgi.perl:830
 msgid "Saving new printer:"
-msgstr "Новый принтер сохранается:"
+msgstr "п²п╬п╡я▀п╧ п©я─п╦п╫я┌п╣я─ я│п╬я┘я─п╟п╫п╟п╣я┌я│я▐:"
 
 #: ../www/prn_control.cgi.perl:85
 #, perl-format
 msgid "Status of Printer \"%s\""
-msgstr "Состояние принтера \"%s\""
+msgstr "п║п╬я│я┌п╬я▐п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟ \"%s\""
 
 #: ../www/prn_control.cgi.perl:143
 #, perl-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
-msgstr "Невозможно [%s] принтер \"%s\" по следующей причиной:"
+msgstr "п²п╣п╡п╬п╥п╪п╬п╤п╫п╬ [%s] п©я─п╦п╫я┌п╣я─ \"%s\" п©п╬ я│п╩п╣п╢я┐я▌я┴п╣п╧ п©я─п╦я┤п╦п╫п╬п╧:"
 
 #: ../www/prn_control.cgi.perl:308 ../www/show_printlog.cgi.perl:173
 msgid "Bytes Sent"
-msgstr "Посланых байтов"
+msgstr "п÷п╬я│п╩п╟п╫я▀я┘ п╠п╟п╧я┌п╬п╡"
 
 #: ../www/prn_control.cgi.perl:308
 msgid "Bytes Unsent"
-msgstr "Байтов ещё не посланых"
+msgstr "п▒п╟п╧я┌п╬п╡ п╣я┴я▒ п╫п╣ п©п╬я│п╩п╟п╫я▀я┘"
 
 #: ../www/prn_control.cgi.perl:339
 msgid "Pages Completed"
-msgstr "Стнаниц печатаных"
+msgstr "п║я┌п╫п╟п╫п╦я├ п©п╣я┤п╟я┌п╟п╫я▀я┘"
 
 #: ../www/prn_control.cgi.perl:340
 msgid "Pages Started"
@@ -1334,92 +1333,92 @@ msgstr ""
 
 #: ../www/prn_control.cgi.perl:371
 msgid "Start the printer."
-msgstr "Пускать принтер."
+msgstr "п÷я┐я│п╨п╟я┌я▄ п©я─п╦п╫я┌п╣я─."
 
 #: ../www/prn_control.cgi.perl:371
 msgid "_Start"
-msgstr "Пускать"
+msgstr "п÷я┐я│п╨п╟я┌я▄"
 
 #: ../www/prn_control.cgi.perl:373
 msgid "Sto_p"
-msgstr "Остановить"
+msgstr "п·я│я┌п╟п╫п╬п╡п╦я┌я▄"
 
 #: ../www/prn_control.cgi.perl:373
 msgid "Stop the printer after current job."
-msgstr "Остановить принтер после конца текущей задачи."
+msgstr "п·я│я┌п╟п╫п╬п╡п╦я┌я▄ п©я─п╦п╫я┌п╣я─ п©п╬я│п╩п╣ п╨п╬п╫я├п╟ я┌п╣п╨я┐я┴п╣п╧ п╥п╟п╢п╟я┤п╦."
 
 #: ../www/prn_control.cgi.perl:375
 msgid "Stop the printer imediately."
-msgstr "Остановить принтер немедленно."
+msgstr "п·я│я┌п╟п╫п╬п╡п╦я┌я▄ п©я─п╦п╫я┌п╣я─ п╫п╣п╪п╣п╢п╩п╣п╫п╫п╬."
 
 #: ../www/prn_control.cgi.perl:375
 msgid "_Halt"
-msgstr "Обрывать"
+msgstr "п·п╠я─я▀п╡п╟я┌я▄"
 
 #: ../www/prn_control.cgi.perl:377
 msgid "Media"
-msgstr "Носители"
+msgstr "п²п╬я│п╦я┌п╣п╩п╦"
 
 #: ../www/prn_control.cgi.perl:378
 msgid "Change the media mounted on the printer's input trays."
-msgstr "Заменить носитель поставлен на подающем потоке принтера."
+msgstr "п≈п╟п╪п╣п╫п╦я┌я▄ п╫п╬я│п╦я┌п╣п╩я▄ п©п╬я│я┌п╟п╡п╩п╣п╫ п╫п╟ п©п╬п╢п╟я▌я┴п╣п╪ п©п╬я┌п╬п╨п╣ п©я─п╦п╫я┌п╣я─п╟."
 
 #: ../www/prn_control.cgi.perl:380
 msgid "_Refresh"
-msgstr "Обновить"
+msgstr "п·п╠п╫п╬п╡п╦я┌я▄"
 
 #: ../www/prn_control.cgi.perl:466
 msgid "fault"
-msgstr "порок есть"
+msgstr "п©п╬я─п╬п╨ п╣я│я┌я▄"
 
 #: ../www/prn_control.cgi.perl:468
 msgid "fault, no auto retry"
-msgstr "порок есть, снова не попробуют"
+msgstr "п©п╬я─п╬п╨ п╣я│я┌я▄, я│п╫п╬п╡п╟ п╫п╣ п©п╬п©я─п╬п╠я┐я▌я┌"
 
 #: ../www/prn_control.cgi.perl:474
 msgid "offline"
-msgstr "разъединенный"
+msgstr "я─п╟п╥я┼п╣п╢п╦п╫п╣п╫п╫я▀п╧"
 
 #: ../www/prn_control.cgi.perl:476
 msgid "otherwise engaged or offline"
-msgstr "или занятый или разъединенный"
+msgstr "п╦п╩п╦ п╥п╟п╫я▐я┌я▀п╧ п╦п╩п╦ я─п╟п╥я┼п╣п╢п╦п╫п╣п╫п╫я▀п╧"
 
 #: ../www/prn_control.cgi.perl:481
 msgid "idle"
-msgstr "незанятый"
+msgstr "п╫п╣п╥п╟п╫я▐я┌я▀п╧"
 
 #: ../www/prn_control.cgi.perl:486
 msgid "stopt"
-msgstr "остановлен"
+msgstr "п╬я│я┌п╟п╫п╬п╡п╩п╣п╫"
 
 #: ../www/prn_media.cgi.perl:52
 #, perl-format
 msgid "Media Mounted on Printer \"%s\""
-msgstr "Носитель находащийся на притера \"%s\""
+msgstr "п²п╬я│п╦я┌п╣п╩я▄ п╫п╟я┘п╬п╢п╟я┴п╦п╧я│я▐ п╫п╟ п©я─п╦я┌п╣я─п╟ \"%s\""
 
 #: ../www/prn_media.cgi.perl:215
 msgid "_Apply"
-msgstr "Принимать"
+msgstr "п÷я─п╦п╫п╦п╪п╟я┌я▄"
 
 #: ../www/prn_properties.cgi.perl:64
 msgid "Contact:"
-msgstr "Ответственное лицо:"
+msgstr "п·я┌п╡п╣я┌я│я┌п╡п╣п╫п╫п╬п╣ п╩п╦я├п╬:"
 
 #: ../www/prn_properties.cgi.perl:72
 msgid "Interface"
-msgstr "Связь"
+msgstr "п║п╡я▐п╥я▄"
 
 #: ../www/prn_properties.cgi.perl:86
 msgid "Printer interface program:"
-msgstr "Программа для связи принтеру:"
+msgstr "п÷я─п╬пЁя─п╟п╪п╪п╟ п╢п╩я▐ я│п╡я▐п╥п╦ п©я─п╦п╫я┌п╣я─я┐:"
 
 #: ../www/prn_properties.cgi.perl:90
 msgid "Printer address:"
-msgstr "Адрес принтера:"
+msgstr "п░п╢я─п╣я│ п©я─п╦п╫я┌п╣я─п╟:"
 
 #: ../www/prn_properties.cgi.perl:94
 msgid "Interface options:"
-msgstr "Свойства связи:"
+msgstr "п║п╡п╬п╧я│я┌п╡п╟ я│п╡я▐п╥п╦:"
 
 #: ../www/prn_properties.cgi.perl:98
 msgid "Does feedback (2-way communication) work?"
@@ -1428,11 +1427,11 @@ msgstr ""
 #: ../www/prn_properties.cgi.perl:100 ../www/prn_properties.cgi.perl:116
 #: ../www/prn_properties.cgi.perl:129
 msgid "default"
-msgstr "как по молчанию"
+msgstr "п╨п╟п╨ п©п╬ п╪п╬п╩я┤п╟п╫п╦я▌"
 
 #: ../www/prn_properties.cgi.perl:114
 msgid "Jobbreak method:"
-msgstr "Метод демаркации задачей (jobbreak method):"
+msgstr "п°п╣я┌п╬п╢ п╢п╣п╪п╟я─п╨п╟я├п╦п╦ п╥п╟п╢п╟я┤п╣п╧ (jobbreak method):"
 
 #: ../www/prn_properties.cgi.perl:117
 msgid "control-d"
@@ -1464,7 +1463,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:127
 msgid "Character code compatibility:"
-msgstr "приемлемый коды (codes):"
+msgstr "п©я─п╦п╣п╪п╩п╣п╪я▀п╧ п╨п╬п╢я▀ (codes):"
 
 #: ../www/prn_properties.cgi.perl:130
 msgid "Clean7Bit"
@@ -1488,11 +1487,11 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:139
 msgid "No interface is selected!"
-msgstr "Не какая программа свази не выбранна!"
+msgstr "п²п╣ п╨п╟п╨п╟я▐ п©я─п╬пЁя─п╟п╪п╪п╟ я│п╡п╟п╥п╦ п╫п╣ п╡я▀п╠я─п╟п╫п╫п╟!"
 
 #: ../www/prn_properties.cgi.perl:141
 msgid "The Printer Address is blank!"
-msgstr "Место для адреса принтера пустое!"
+msgstr "п°п╣я│я┌п╬ п╢п╩я▐ п╟п╢я─п╣я│п╟ п©я─п╦п╫я┌п╣я─п╟ п©я┐я│я┌п╬п╣!"
 
 #: ../www/prn_properties.cgi.perl:150 ../www/prn_properties.cgi.perl:707
 msgid "PPD"
@@ -1500,27 +1499,27 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:174
 msgid "Current PPD File:"
-msgstr "Нынешний PPD файл:"
+msgstr "п²я▀п╫п╣я┬п╫п╦п╧ PPD я└п╟п╧п╩:"
 
 #: ../www/prn_properties.cgi.perl:242
 msgid "Show All PPD Files"
-msgstr "Показывать все PPD файлов"
+msgstr "п÷п╬п╨п╟п╥я▀п╡п╟я┌я▄ п╡я│п╣ PPD я└п╟п╧п╩п╬п╡"
 
 #: ../www/prn_properties.cgi.perl:252
 msgid "No PPD file is selected!"
-msgstr "Вы не выбрали файла описывающего принтер (PPD)!"
+msgstr "п▓я▀ п╫п╣ п╡я▀п╠я─п╟п╩п╦ я└п╟п╧п╩п╟ п╬п©п╦я│я▀п╡п╟я▌я┴п╣пЁп╬ п©я─п╦п╫я┌п╣я─ (PPD)!"
 
 #: ../www/prn_properties.cgi.perl:279
 msgid "From PPD File"
-msgstr "Из файла описывающего принтер (PPD)"
+msgstr "п≤п╥ я└п╟п╧п╩п╟ п╬п©п╦я│я▀п╡п╟я▌я┴п╣пЁп╬ п©я─п╦п╫я┌п╣я─ (PPD)"
 
 #: ../www/prn_properties.cgi.perl:285
 msgid "The PPD file does not call for a raster image processor."
-msgstr "PDD файл не требует растровый графический процессор."
+msgstr "PDD я└п╟п╧п╩ п╫п╣ я┌я─п╣п╠я┐п╣я┌ я─п╟я│я┌я─п╬п╡я▀п╧ пЁя─п╟я└п╦я┤п╣я│п╨п╦п╧ п©я─п╬я├п╣я│я│п╬я─."
 
 #: ../www/prn_properties.cgi.perl:290 ../www/prn_properties.cgi.perl:308
 msgid "Raster Image Processor:"
-msgstr "Растровый графический процессор (RIP):"
+msgstr "п═п╟я│я┌я─п╬п╡я▀п╧ пЁя─п╟я└п╦я┤п╣я│п╨п╦п╧ п©я─п╬я├п╣я│я│п╬я─ (RIP):"
 
 #: ../www/prn_properties.cgi.perl:292 ../www/prn_properties.cgi.perl:313
 msgid "Output Language:"
@@ -1536,7 +1535,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:350
 msgid "Features"
-msgstr "Особенности"
+msgstr "п·я│п╬п╠п╣п╫п╫п╬я│я┌п╦"
 
 #: ../www/prn_properties.cgi.perl:353
 msgid "Optional printer features:"
@@ -1544,10 +1543,10 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:399
 msgid "Input Trays"
-msgstr "Подающие лотоки"
+msgstr "п÷п╬п╢п╟я▌я┴п╦п╣ п╩п╬я┌п╬п╨п╦"
 
 #: ../www/prn_properties.cgi.perl:402
-msgid "Bins for forms management purposes:"
+msgid "Input trays for forms management purposes:"
 msgstr ""
 
 #: ../www/prn_properties.cgi.perl:414
@@ -1561,11 +1560,11 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:431
 msgid "Alerts"
-msgstr "Тревогы"
+msgstr "п╒я─п╣п╡п╬пЁя▀"
 
 #: ../www/prn_properties.cgi.perl:435
 msgid "Alert method:"
-msgstr "Метод собщения:"
+msgstr "п°п╣я┌п╬п╢ я│п╬п╠я┴п╣п╫п╦я▐:"
 
 #: ../www/prn_properties.cgi.perl:437
 msgid "mail"
@@ -1573,7 +1572,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:440
 msgid "Alert frequency:"
-msgstr "Частота собщения:"
+msgstr "п╖п╟я│я┌п╬я┌п╟ я│п╬п╠я┴п╣п╫п╦я▐:"
 
 #: ../www/prn_properties.cgi.perl:442 ../www/prn_properties.cgi.perl:688
 msgid "never"
@@ -1601,7 +1600,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:545
 msgid "Limits"
-msgstr "Ограничения"
+msgstr "п·пЁя─п╟п╫п╦я┤п╣п╫п╦я▐"
 
 #: ../www/prn_properties.cgi.perl:549
 msgid "Limits Enforced Before Printing"
@@ -1645,7 +1644,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:688
 msgid "always"
-msgstr "всегда"
+msgstr "п╡я│п╣пЁп╢п╟"
 
 #: ../www/prn_properties.cgi.perl:690
 msgid "Print banner page"
@@ -1701,33 +1700,33 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:1160
 msgid "The changes have been saved."
-msgstr "Изменения сахранение."
+msgstr "п≤п╥п╪п╣п╫п╣п╫п╦я▐ я│п╟я┘я─п╟п╫п╣п╫п╦п╣."
 
 #: ../www/prn_properties.cgi.perl:1185
 #, perl-format
 msgid "PPR: Printer Properties: %s"
-msgstr "PPR: Свойства принтера: %s"
+msgstr "PPR: п║п╡п╬п╧я│я┌п╡п╟ п©я─п╦п╫я┌п╣я─п╟: %s"
 
 #: ../www/prn_testpage.cgi.perl:73 ../www/prn_testpage.cgi.perl:119
 #: ../www/prn_testpage.cgi.perl:130
 msgid "PPR Print Test Page"
-msgstr "PPR: Печать Пробную Страницу"
+msgstr "PPR: п÷п╣я┤п╟я┌я▄ п÷я─п╬п╠п╫я┐я▌ п║я┌я─п╟п╫п╦я├я┐"
 
 #: ../www/prn_testpage.cgi.perl:76
 msgid ""
 "To print a PPR test page, select the desired options below\n"
 "and press [Print]."
 msgstr ""
-"Чтобы печать пробную страницу PPR, выберите из выборов внизу\n"
-"и снимите [Печать]."
+"п╖я┌п╬п╠я▀ п©п╣я┤п╟я┌я▄ п©я─п╬п╠п╫я┐я▌ я│я┌я─п╟п╫п╦я├я┐ PPR, п╡я▀п╠п╣я─п╦я┌п╣ п╦п╥ п╡я▀п╠п╬я─п╬п╡ п╡п╫п╦п╥я┐\n"
+"п╦ я│п╫п╦п╪п╦я┌п╣ [п÷п╣я┤п╟я┌я▄]."
 
 #: ../www/prn_testpage.cgi.perl:82
 msgid "Page Size:"
-msgstr "Размир Страницы:"
+msgstr "п═п╟п╥п╪п╦я─ п║я┌я─п╟п╫п╦я├я▀:"
 
 #: ../www/prn_testpage.cgi.perl:89
 msgid "Image:"
-msgstr "Картинка:"
+msgstr "п п╟я─я┌п╦п╫п╨п╟:"
 
 #: ../www/prn_testpage.cgi.perl:93
 msgid "Color Space Test Patterns"
@@ -1755,7 +1754,7 @@ msgstr ""
 
 #: ../www/prn_testpage.cgi.perl:112
 msgid "_Print"
-msgstr "Печать"
+msgstr "п÷п╣я┤п╟я┌я▄"
 
 #: ../www/qquery_xlate.pl:44
 msgid "Friendly Form of the Job ID"
@@ -1772,12 +1771,12 @@ msgstr ""
 #: ../www/qquery_xlate.pl:45
 #, fuzzy
 msgid "Full Job ID"
-msgstr "Все задач"
+msgstr "п▓я│п╣ п╥п╟п╢п╟я┤"
 
 #: ../www/qquery_xlate.pl:47
 #, fuzzy
 msgid "Status"
-msgstr "Состояние:"
+msgstr "п║п╬я│я┌п╬я▐п╫п╦п╣:"
 
 #: ../www/qquery_xlate.pl:47
 msgid "Status of the Job"
@@ -1794,7 +1793,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:49
 #, fuzzy
 msgid "Job Status"
-msgstr "Состояние:"
+msgstr "п║п╬я│я┌п╬я▐п╫п╦п╣:"
 
 #: ../www/qquery_xlate.pl:49
 msgid "Status of the Job with Elaboration"
@@ -1806,12 +1805,12 @@ msgstr ""
 
 #: ../www/qquery_xlate.pl:51 ../www/show_printlog.cgi.perl:171
 msgid "Time"
-msgstr "Время"
+msgstr "п▓я─п╣п╪я▐"
 
 #: ../www/qquery_xlate.pl:52
 #, fuzzy
 msgid "Full Time"
-msgstr "Время"
+msgstr "п▓я─п╣п╪я▐"
 
 #: ../www/qquery_xlate.pl:52
 msgid "Job Submission Time, Full"
@@ -1820,7 +1819,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:54
 #, fuzzy
 msgid "For Whom"
-msgstr "Для Чего"
+msgstr "п■п╩я▐ п╖п╣пЁп╬"
 
 #: ../www/qquery_xlate.pl:54
 msgid "Whose Job is This?"
@@ -1833,7 +1832,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:55
 #, fuzzy
 msgid "Username"
-msgstr "Пользователь:"
+msgstr "п÷п╬п╩я▄п╥п╬п╡п╟я┌п╣п╩я▄:"
 
 #: ../www/qquery_xlate.pl:56
 msgid "Numberic Unix Userid of Job Submitter"
@@ -1849,12 +1848,12 @@ msgstr ""
 
 #: ../www/qquery_xlate.pl:57 ../www/show_printlog.cgi.perl:171
 msgid "Proxy For"
-msgstr "Доверенный кого"
+msgstr "п■п╬п╡п╣я─п╣п╫п╫я▀п╧ п╨п╬пЁп╬"
 
 #: ../www/qquery_xlate.pl:59
 #, fuzzy
 msgid "File Name"
-msgstr "Название принтера:"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟:"
 
 #: ../www/qquery_xlate.pl:59
 msgid "What Was the Name of the Input File?"
@@ -1867,7 +1866,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:60
 #, fuzzy
 msgid "Title"
-msgstr "Время"
+msgstr "п▓я─п╣п╪я▐"
 
 #: ../www/qquery_xlate.pl:61
 msgid "Creator"
@@ -1892,7 +1891,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:64 ../www/qquery_xlate.pl:65
 #: ../www/show_printlog.cgi.perl:172
 msgid "Pages"
-msgstr "Сколько Страниц"
+msgstr "п║п╨п╬п╩я▄п╨п╬ п║я┌я─п╟п╫п╦я├"
 
 #: ../www/qquery_xlate.pl:65
 msgid "Pages x Copies"
@@ -1917,7 +1916,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:68
 #, fuzzy
 msgid "Page Factor"
-msgstr "Страничные часы:"
+msgstr "п║я┌я─п╟п╫п╦я┤п╫я▀п╣ я┤п╟я│я▀:"
 
 #: ../www/qquery_xlate.pl:68
 msgid "PostScript Page Descriptions Per Sheet"
@@ -1962,7 +1961,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:73
 #, fuzzy
 msgid "Total Pages"
-msgstr "Печатать пробную страницу"
+msgstr "п÷п╣я┤п╟я┌п╟я┌я▄ п©я─п╬п╠п╫я┐я▌ я│я┌я─п╟п╫п╦я├я┐"
 
 #: ../www/qquery_xlate.pl:74
 msgid "Total Medium Sides to be Marked (after N-Up)"
@@ -2035,12 +2034,12 @@ msgstr ""
 #: ../www/qquery_xlate.pl:86
 #, fuzzy
 msgid "Prolog Present?"
-msgstr "Есть?"
+msgstr "п∙я│я┌я▄?"
 
 #: ../www/qquery_xlate.pl:87
 #, fuzzy
 msgid "Docsetup Present?"
-msgstr "Есть?"
+msgstr "п∙я│я┌я▄?"
 
 #: ../www/qquery_xlate.pl:87
 msgid "Does this Document have a DSC Document Setup Section?"
@@ -2053,7 +2052,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:88
 #, fuzzy
 msgid "Script Present?"
-msgstr "Есть?"
+msgstr "п∙я│я┌я▄?"
 
 #: ../www/qquery_xlate.pl:90
 msgid "DSC Proofmode Setting"
@@ -2066,7 +2065,7 @@ msgstr ""
 #: ../www/qquery_xlate.pl:91
 #, fuzzy
 msgid "Orientation"
-msgstr "Операция:"
+msgstr "п·п©п╣я─п╟я├п╦я▐:"
 
 #: ../www/qquery_xlate.pl:91
 msgid "Portrait or Landscape"
@@ -2087,33 +2086,33 @@ msgstr ""
 #: ../www/qquery_xlate.pl:93
 #, fuzzy
 msgid "Page Order"
-msgstr "Размир Страницы:"
+msgstr "п═п╟п╥п╪п╦я─ п║я┌я─п╟п╫п╦я├я▀:"
 
 #: ../www/show_jobs.cgi.perl:135
 msgid "Move"
-msgstr "Переместить"
+msgstr "п÷п╣я─п╣п╪п╣я│я┌п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:136
 msgid "Delete"
-msgstr "Удалить"
+msgstr "пёп╢п╟п╩п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:137
 msgid "Rush"
-msgstr "Ускорить"
+msgstr "пёя│п╨п╬я─п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:138
 msgid "Hold"
-msgstr "Держать"
+msgstr "п■п╣я─п╤п╟я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:139
 msgid "Release"
-msgstr "Освободить"
+msgstr "п·я│п╡п╬п╠п╬п╢п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:140 ../www/show_jobs.cgi.perl:397
 #: ../www/show_jobs.cgi.perl:417 ../www/show_queues.cgi.perl:196
 #: ../www/show_queues.cgi.perl:216
 msgid "Refresh"
-msgstr "Обновить"
+msgstr "п·п╠п╫п╬п╡п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:141
 msgid "Done"
@@ -2131,16 +2130,16 @@ msgstr ""
 #: ../www/show_jobs.cgi.perl:383 ../www/show_queues.cgi.perl:182
 #, perl-format
 msgid "Every %d seconds"
-msgstr "Каждый %d секунд"
+msgstr "п п╟п╤п╢я▀п╧ %d я│п╣п╨я┐п╫п╢"
 
 #: ../www/show_jobs.cgi.perl:386 ../www/show_queues.cgi.perl:188
 msgid "File"
-msgstr "Файл"
+msgstr "п╓п╟п╧п╩"
 
 #: ../www/show_jobs.cgi.perl:392 ../www/show_jobs.cgi.perl:412
 #: ../www/show_queues.cgi.perl:192
 msgid "View"
-msgstr "Вид"
+msgstr "п▓п╦п╢"
 
 #: ../www/show_jobs.cgi.perl:393
 msgid "Preferences"
@@ -2148,11 +2147,11 @@ msgstr ""
 
 #: ../www/show_jobs.cgi.perl:398 ../www/show_queues.cgi.perl:197
 msgid "Now"
-msgstr "Сейчас"
+msgstr "п║п╣п╧я┤п╟я│"
 
 #: ../www/show_jobs.cgi.perl:413 ../www/show_queues.cgi.perl:212
 msgid "Refresh Interval:"
-msgstr "Частота Обновлении:"
+msgstr "п╖п╟я│я┌п╬я┌п╟ п·п╠п╫п╬п╡п╩п╣п╫п╦п╦:"
 
 #: ../www/show_jobs.cgi.perl:414 ../www/show_queues.cgi.perl:213
 msgid "This page will be reloaded at the indicated interval (in seconds)."
@@ -2161,11 +2160,11 @@ msgstr ""
 #: ../www/show_jobs.cgi.perl:481
 #, perl-format
 msgid "You must select one or more jobs before pressing [%s]."
-msgstr "Надо выбирать одну задачу или несколько до того как вы нажимаете [%s]."
+msgstr "п²п╟п╢п╬ п╡я▀п╠п╦я─п╟я┌я▄ п╬п╢п╫я┐ п╥п╟п╢п╟я┤я┐ п╦п╩п╦ п╫п╣я│п╨п╬п╩я▄п╨п╬ п╢п╬ я┌п╬пЁп╬ п╨п╟п╨ п╡я▀ п╫п╟п╤п╦п╪п╟п╣я┌п╣ [%s]."
 
 #: ../www/show_jobs.cgi.perl:489
 msgid "You must select a destination queue before pressing [Move]."
-msgstr "Надо выбирать очередь куда посылать до того как вы нажимаете [Переместить]."
+msgstr "п²п╟п╢п╬ п╡я▀п╠п╦я─п╟я┌я▄ п╬я┤п╣я─п╣п╢я▄ п╨я┐п╢п╟ п©п╬я│я▀п╩п╟я┌я▄ п╢п╬ я┌п╬пЁп╬ п╨п╟п╨ п╡я▀ п╫п╟п╤п╦п╪п╟п╣я┌п╣ [п÷п╣я─п╣п╪п╣я│я┌п╦я┌я▄]."
 
 #: ../www/show_jobs.cgi.perl:515
 #, perl-format
@@ -2175,23 +2174,23 @@ msgstr ""
 #: ../www/show_jobs.cgi.perl:599
 #, perl-format
 msgid "Job \"%s\""
-msgstr "Задача \"%s\""
+msgstr "п≈п╟п╢п╟я┤п╟ \"%s\""
 
 #: ../www/show_jobs.cgi.perl:675
 msgid "Cancel selected jobs."
-msgstr "Удалить выбранные задачи."
+msgstr "пёп╢п╟п╩п╦я┌я▄ п╡я▀п╠я─п╟п╫п╫я▀п╣ п╥п╟п╢п╟я┤п╦."
 
 #: ../www/show_jobs.cgi.perl:675
 msgid "_Delete"
-msgstr "Удалить"
+msgstr "пёп╢п╟п╩п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:676
 msgid "Move selected jobs to the front of the queue."
-msgstr "Переместить выбранные задачи на начало очереди."
+msgstr "п÷п╣я─п╣п╪п╣я│я┌п╦я┌я▄ п╡я▀п╠я─п╟п╫п╫я▀п╣ п╥п╟п╢п╟я┤п╦ п╫п╟ п╫п╟я┤п╟п╩п╬ п╬я┤п╣я─п╣п╢п╦."
 
 #: ../www/show_jobs.cgi.perl:676
 msgid "R_ush"
-msgstr "Ускорить"
+msgstr "пёя│п╨п╬я─п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:677
 msgid "Place selected jobs in the held state so that they won't print."
@@ -2199,15 +2198,15 @@ msgstr ""
 
 #: ../www/show_jobs.cgi.perl:677
 msgid "_Hold"
-msgstr "Держать"
+msgstr "п■п╣я─п╤п╟я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:678
 msgid "Release selected jobs which are held."
-msgstr "Освободить выбранные держание задачи."
+msgstr "п·я│п╡п╬п╠п╬п╢п╦я┌я▄ п╡я▀п╠я─п╟п╫п╫я▀п╣ п╢п╣я─п╤п╟п╫п╦п╣ п╥п╟п╢п╟я┤п╦."
 
 #: ../www/show_jobs.cgi.perl:678
 msgid "_Release"
-msgstr "Освободить"
+msgstr "п·я│п╡п╬п╠п╬п╢п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:679
 msgid "Open windows in which to modify selected jobs."
@@ -2215,7 +2214,7 @@ msgstr ""
 
 #: ../www/show_jobs.cgi.perl:679
 msgid "_Modify"
-msgstr "Изменить"
+msgstr "п≤п╥п╪п╣п╫п╦я┌я▄"
 
 #: ../www/show_jobs.cgi.perl:680
 msgid "Display log files of selected jobs."
@@ -2223,7 +2222,7 @@ msgstr ""
 
 #: ../www/show_jobs.cgi.perl:680
 msgid "_Log"
-msgstr "Журнал"
+msgstr "п√я┐я─п╫п╟п╩"
 
 #: ../www/show_log.cgi.perl:62
 #, perl-format
@@ -2258,11 +2257,11 @@ msgstr ""
 
 #: ../www/show_printlog.cgi.perl:171
 msgid "For"
-msgstr "Для"
+msgstr "п■п╩я▐"
 
 #: ../www/show_printlog.cgi.perl:171
 msgid "Printer"
-msgstr "Принтер"
+msgstr "п÷я─п╦п╫я┌п╣я─"
 
 #: ../www/show_printlog.cgi.perl:171
 msgid "Unix User"
@@ -2298,130 +2297,130 @@ msgstr ""
 
 #: ../www/show_printlog.cgi.perl:174
 msgid "Title or Filename"
-msgstr "Название или файл"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п╦п╩п╦ я└п╟п╧п╩"
 
 #: ../www/show_queues.cgi.perl:127
 #, perl-format
 msgid "PPR Print Queues on \"%s\""
-msgstr "PPR: Очереди Принтеров на \"%s\""
+msgstr "PPR: п·я┤п╣я─п╣п╢п╦ п÷я─п╦п╫я┌п╣я─п╬п╡ п╫п╟ \"%s\""
 
 #: ../www/show_queues.cgi.perl:170
 msgid "Free Flow"
-msgstr "Свободное разположение"
+msgstr "п║п╡п╬п╠п╬п╢п╫п╬п╣ я─п╟п╥п©п╬п╩п╬п╤п╣п╫п╦п╣"
 
 #: ../www/show_queues.cgi.perl:171
 msgid "Details"
-msgstr "Подробности"
+msgstr "п÷п╬п╢я─п╬п╠п╫п╬я│я┌п╦"
 
 #: ../www/show_queues.cgi.perl:172
 msgid "Many Details"
-msgstr "Много Подробностей"
+msgstr "п°п╫п╬пЁп╬ п÷п╬п╢я─п╬п╠п╫п╬я│я┌п╣п╧"
 
 #: ../www/show_queues.cgi.perl:176
 #, perl-format
 msgid "%d Columns"
-msgstr "%d Столбеца/ов"
+msgstr "%d п║я┌п╬п╩п╠п╣я├п╟/п╬п╡"
 
 #: ../www/show_queues.cgi.perl:211
 msgid "Choose the display format."
-msgstr "Выбрать разположение пиктограмм."
+msgstr "п▓я▀п╠я─п╟я┌я▄ я─п╟п╥п©п╬п╩п╬п╤п╣п╫п╦п╣ п©п╦п╨я┌п╬пЁя─п╟п╪п╪."
 
 #: ../www/show_queues.cgi.perl:211
 msgid "View:"
-msgstr "Вид:"
+msgstr "п▓п╦п╢:"
 
 #: ../www/show_queues.cgi.perl:216
 msgid "Refresh the page right now."
-msgstr "Обновить страницу сейчас."
+msgstr "п·п╠п╫п╬п╡п╦я┌я▄ я│я┌я─п╟п╫п╦я├я┐ я│п╣п╧я┤п╟я│."
 
 #: ../www/show_queues.cgi.perl:238
 msgid "Show All Queues"
-msgstr "Показывать всем очередям"
+msgstr "п÷п╬п╨п╟п╥я▀п╡п╟я┌я▄ п╡я│п╣п╪ п╬я┤п╣я─п╣п╢я▐п╪"
 
 #: ../www/show_queues.cgi.perl:240
 msgid "Click here to open a window which will show all queued jobs."
-msgstr "Снимите здесь открыть окно показайющое всю очереди."
+msgstr "п║п╫п╦п╪п╦я┌п╣ п╥п╢п╣я│я▄ п╬я┌п╨я─я▀я┌я▄ п╬п╨п╫п╬ п©п╬п╨п╟п╥п╟п╧я▌я┴п╬п╣ п╡я│я▌ п╬я┤п╣я─п╣п╢п╦."
 
 #: ../www/show_queues.cgi.perl:243
 msgid "Add New Printer"
-msgstr "Добавлять новый принтер"
+msgstr "п■п╬п╠п╟п╡п╩я▐я┌я▄ п╫п╬п╡я▀п╧ п©я─п╦п╫я┌п╣я─"
 
 #: ../www/show_queues.cgi.perl:245
 msgid "Click here and you will be guided through the process of adding a new printer."
-msgstr "Нажимайте здесь чтобы мастер помог вам составлять очередь для нового принтера."
+msgstr "п²п╟п╤п╦п╪п╟п╧я┌п╣ п╥п╢п╣я│я▄ я┤я┌п╬п╠я▀ п╪п╟я│я┌п╣я─ п©п╬п╪п╬пЁ п╡п╟п╪ я│п╬я│я┌п╟п╡п╩я▐я┌я▄ п╬я┤п╣я─п╣п╢я▄ п╢п╩я▐ п╫п╬п╡п╬пЁп╬ п©я─п╦п╫я┌п╣я─п╟."
 
 #: ../www/show_queues.cgi.perl:248
 msgid "Add New Group"
-msgstr "Добавлять новую группу"
+msgstr "п■п╬п╠п╟п╡п╩я▐я┌я▄ п╫п╬п╡я┐я▌ пЁя─я┐п©п©я┐"
 
 #: ../www/show_queues.cgi.perl:250
 msgid "Click here and you will be guided through the process of adding a new group of printers."
-msgstr "Нажимайте здесь чтобы мастер помог вам составлять новую группу."
+msgstr "п²п╟п╤п╦п╪п╟п╧я┌п╣ п╥п╢п╣я│я▄ я┤я┌п╬п╠я▀ п╪п╟я│я┌п╣я─ п©п╬п╪п╬пЁ п╡п╟п╪ я│п╬я│я┌п╟п╡п╩я▐я┌я▄ п╫п╬п╡я┐я▌ пЁя─я┐п©п©я┐."
 
 #: ../www/show_queues.cgi.perl:253
 msgid "Add New Alias"
-msgstr "Сделать новый псевдоним"
+msgstr "п║п╢п╣п╩п╟я┌я▄ п╫п╬п╡я▀п╧ п©я│п╣п╡п╢п╬п╫п╦п╪"
 
 #: ../www/show_queues.cgi.perl:255
 msgid "Click here and you will be guided through the process of adding a new alias."
-msgstr "Нажимайте здесь чтобы мастер помог вам составлять новой псевдоним."
+msgstr "п²п╟п╤п╦п╪п╟п╧я┌п╣ п╥п╢п╣я│я▄ я┤я┌п╬п╠я▀ п╪п╟я│я┌п╣я─ п©п╬п╪п╬пЁ п╡п╟п╪ я│п╬я│я┌п╟п╡п╩я▐я┌я▄ п╫п╬п╡п╬п╧ п©я│п╣п╡п╢п╬п╫п╦п╪."
 
 #: ../www/show_queues.cgi.perl:464
 msgid "-- No Description --"
-msgstr "-- Описания нет --"
+msgstr "-- п·п©п╦я│п╟п╫п╦я▐ п╫п╣я┌ --"
 
 #: ../www/show_queues.cgi.perl:540 ../www/show_queues.cgi.perl:580
 msgid "View Queue"
-msgstr "Посмотреть на очередь"
+msgstr "п÷п╬я│п╪п╬я┌я─п╣я┌я▄ п╫п╟ п╬я┤п╣я─п╣п╢я▄"
 
 #: ../www/show_queues.cgi.perl:545
 msgid "Printer Control"
-msgstr "Управлять принтером"
+msgstr "пёп©я─п╟п╡п╩я▐я┌я▄ п©я─п╦п╫я┌п╣я─п╬п╪"
 
 #: ../www/show_queues.cgi.perl:550
 msgid "Printer Properties"
-msgstr "Свойства принтера"
+msgstr "п║п╡п╬п╧я│я┌п╡п╟ п©я─п╦п╫я┌п╣я─п╟"
 
 #: ../www/show_queues.cgi.perl:555
 msgid "Test Page"
-msgstr "Печатать пробную страницу"
+msgstr "п÷п╣я┤п╟я┌п╟я┌я▄ п©я─п╬п╠п╫я┐я▌ я│я┌я─п╟п╫п╦я├я┐"
 
 #: ../www/show_queues.cgi.perl:560 ../www/show_queues.cgi.perl:595
 #: ../www/show_queues.cgi.perl:620
 msgid "Client Configuration"
-msgstr "Настраивать использующий компьютер"
+msgstr "п²п╟я│я┌я─п╟п╦п╡п╟я┌я▄ п╦я│п©п╬п╩я▄п╥я┐я▌я┴п╦п╧ п╨п╬п╪п©я▄я▌я┌п╣я─"
 
 #: ../www/show_queues.cgi.perl:565 ../www/show_queues.cgi.perl:600
 msgid "Printlog"
-msgstr "Журнал задач"
+msgstr "п√я┐я─п╫п╟п╩ п╥п╟п╢п╟я┤"
 
 #: ../www/show_queues.cgi.perl:570
 msgid "Delete Printer"
-msgstr "Удалить принтер"
+msgstr "пёп╢п╟п╩п╦я┌я▄ п©я─п╦п╫я┌п╣я─"
 
 #: ../www/show_queues.cgi.perl:585
 msgid "Member Printer Control"
-msgstr "Управлять члены принтеры"
+msgstr "пёп©я─п╟п╡п╩я▐я┌я▄ я┤п╩п╣п╫я▀ п©я─п╦п╫я┌п╣я─я▀"
 
 #: ../www/show_queues.cgi.perl:590
 msgid "Group Properties"
-msgstr "Свойства группы"
+msgstr "п║п╡п╬п╧я│я┌п╡п╟ пЁя─я┐п©п©я▀"
 
 #: ../www/show_queues.cgi.perl:605
 msgid "Delete Group"
-msgstr "Удалить группу"
+msgstr "пёп╢п╟п╩п╦я┌я▄ пЁя─я┐п©п©я┐"
 
 #: ../www/show_queues.cgi.perl:615
 msgid "Alias Properties"
-msgstr "Свойства псевдонима"
+msgstr "п║п╡п╬п╧я│я┌п╡п╟ п©я│п╣п╡п╢п╬п╫п╦п╪п╟"
 
 #: ../www/show_queues.cgi.perl:625
 msgid "Delete Alias"
-msgstr "Удалить псевдоним"
+msgstr "пёп╢п╟п╩п╦я┌я▄ п©я│п╣п╡п╢п╬п╫п╦п╪"
 
 #: ../www/test_components.cgi.perl:47
 msgid "PPR sound files"
-msgstr "Звучание файлы для PPR"
+msgstr "п≈п╡я┐я┤п╟п╫п╦п╣ я└п╟п╧п╩я▀ п╢п╩я▐ PPR"
 
 #: ../www/test_components.cgi.perl:54
 msgid "Perl 5.005 or later"
@@ -2441,7 +2440,7 @@ msgstr "PPR-GS Ghostscript"
 
 #: ../www/test_components.cgi.perl:83
 msgid "Other Ghostscript distribution"
-msgstr "Ghostscript от другого источника"
+msgstr "Ghostscript п╬я┌ п╢я─я┐пЁп╬пЁп╬ п╦я│я┌п╬я┤п╫п╦п╨п╟"
 
 #: ../www/test_components.cgi.perl:89 ../www/test_components.cgi.perl:96
 msgid "IJS Gimp Print drivers"
@@ -2469,23 +2468,23 @@ msgstr ""
 
 #: ../www/test_components.cgi.perl:175
 msgid "Inventory of Packages Which PPR can Use"
-msgstr "Инвенторизацие пакетов которые PPR умает использовать"
+msgstr "п≤п╫п╡п╣п╫я┌п╬я─п╦п╥п╟я├п╦п╣ п©п╟п╨п╣я┌п╬п╡ п╨п╬я┌п╬я─я▀п╣ PPR я┐п╪п╟п╣я┌ п╦я│п©п╬п╩я▄п╥п╬п╡п╟я┌я▄"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Component"
-msgstr "Пакет"
+msgstr "п÷п╟п╨п╣я┌"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Debian Package Name"
-msgstr "Название пакета в Debian"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п©п╟п╨п╣я┌п╟ п╡ Debian"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Present?"
-msgstr "Есть?"
+msgstr "п∙я│я┌я▄?"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Redhat Package Name"
-msgstr "Название пакета в Redhat"
+msgstr "п²п╟п╥п╡п╟п╫п╦п╣ п©п╟п╨п╣я┌п╟ п╡ Redhat"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Role"
@@ -2495,50 +2494,50 @@ msgstr ""
 msgid "Source Download"
 msgstr ""
 
-#~ msgid "Critical?"
-#~ msgstr "Важно?"
-
-#~ msgid "Alert Messages:"
-#~ msgstr "Собщенния о проблемах:"
-
-#~ msgid "For:"
-#~ msgstr "Для Кого:"
-
-#~ msgid "Current job:"
-#~ msgstr "Текущая задача:"
-
-#~ msgid "Printer status:"
-#~ msgstr "Положение принтера:"
-
-#~ msgid "Countdown:"
-#~ msgstr "Через:"
-
-#~ msgid "Retry:"
-#~ msgstr "Попытка:"
-
-#~ msgid "Name:"
-#~ msgstr "Название:"
-
-#~ msgid "PPR Login"
-#~ msgstr "Вход в систему PPR"
-
-#~ msgid "Printers to Monitor"
-#~ msgstr "Принтеры наблудать"
-
-#~ msgid "Player:"
-#~ msgstr "Игрок:"
-
-#~ msgid "Printer Status"
-#~ msgstr "Положение принтера"
-
-#~ msgid "Authentication Required"
-#~ msgstr "Удостоверение личности требуется"
-
-#~ msgid "Can't Display File"
-#~ msgstr "Не возможно показать файл"
+#~ msgid "Error:"
+#~ msgstr "п²п╣я┐п╢п╟я┤п╟:"
 
 #~ msgid "Error: "
-#~ msgstr "Неудача: "
+#~ msgstr "п²п╣я┐п╢п╟я┤п╟: "
 
-#~ msgid "Error:"
-#~ msgstr "Неудача:"
+#~ msgid "Can't Display File"
+#~ msgstr "п²п╣ п╡п╬п╥п╪п╬п╤п╫п╬ п©п╬п╨п╟п╥п╟я┌я▄ я└п╟п╧п╩"
+
+#~ msgid "Authentication Required"
+#~ msgstr "пёп╢п╬я│я┌п╬п╡п╣я─п╣п╫п╦п╣ п╩п╦я┤п╫п╬я│я┌п╦ я┌я─п╣п╠я┐п╣я┌я│я▐"
+
+#~ msgid "Printer Status"
+#~ msgstr "п÷п╬п╩п╬п╤п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟"
+
+#~ msgid "Player:"
+#~ msgstr "п≤пЁя─п╬п╨:"
+
+#~ msgid "Printers to Monitor"
+#~ msgstr "п÷я─п╦п╫я┌п╣я─я▀ п╫п╟п╠п╩я┐п╢п╟я┌я▄"
+
+#~ msgid "PPR Login"
+#~ msgstr "п▓я┘п╬п╢ п╡ я│п╦я│я┌п╣п╪я┐ PPR"
+
+#~ msgid "Name:"
+#~ msgstr "п²п╟п╥п╡п╟п╫п╦п╣:"
+
+#~ msgid "Retry:"
+#~ msgstr "п÷п╬п©я▀я┌п╨п╟:"
+
+#~ msgid "Countdown:"
+#~ msgstr "п╖п╣я─п╣п╥:"
+
+#~ msgid "Printer status:"
+#~ msgstr "п÷п╬п╩п╬п╤п╣п╫п╦п╣ п©я─п╦п╫я┌п╣я─п╟:"
+
+#~ msgid "Current job:"
+#~ msgstr "п╒п╣п╨я┐я┴п╟я▐ п╥п╟п╢п╟я┤п╟:"
+
+#~ msgid "For:"
+#~ msgstr "п■п╩я▐ п п╬пЁп╬:"
+
+#~ msgid "Alert Messages:"
+#~ msgstr "п║п╬п╠я┴п╣п╫п╫п╦я▐ п╬ п©я─п╬п╠п╩п╣п╪п╟я┘:"
+
+#~ msgid "Critical?"
+#~ msgstr "п▓п╟п╤п╫п╬?"

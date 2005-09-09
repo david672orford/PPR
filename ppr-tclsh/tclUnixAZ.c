@@ -129,13 +129,13 @@ Tcl_CloseCmd(dummy, interp, argc, argv)
     FILE *f;
 
     if (argc != 2) {
-	Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
-		" fileId\"", (char *) NULL);
-	return TCL_ERROR;
-    }
+		Tcl_AppendResult(interp, "wrong # args: should be \"", argv[0],
+								" fileId\"", (char *) NULL);
+		return TCL_ERROR;
+		}
     if (Tcl_GetOpenFile(interp, argv[1], 0, 0, &f) != TCL_OK) {
-	return TCL_ERROR;
-    }
+		return TCL_ERROR;
+		}
     oFilePtr = tclOpenFiles[fileno(f)];
     tclOpenFiles[fileno(f)] = NULL;
 
@@ -667,7 +667,7 @@ Tcl_FileCmd(dummy, interp, argc, argv)
 	if (stat(fileName, &statBuf) == -1) {
 	    goto badStat;
 	}
-	snprintf(interp->result, TCL_RESULT_SIZE, "%ld", statBuf.st_size);
+	snprintf(interp->result, TCL_RESULT_SIZE+1, "%ld", statBuf.st_size);
 	goto done;
     } else if ((c == 's') && (strncmp(argv[1], "stat", length) == 0)
 	    && (length >= 2)) {

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 8 September 2005.
 */
 
 /*! \file
@@ -33,8 +33,9 @@
 	
 This module constains a limited version of sscanf() which allows the maximum
 width of string arguments to be specified as an additional argument.  It also
-defines additional formats such as %z which reads a string which extends to the end
-of the input string, and %S which reads a word and allocates storage for it.
+defines additional formats such as %Z which reads a string which extends to the end
+of the input string and allocaces storage for it, and %S which reads a word 
+and allocates storage for it.
 
 */
 
@@ -45,9 +46,10 @@ of the input string, and %S which reads a word and allocates storage for it.
 
 /** a safe sscanf()
 
-This function is similiar to sscanf().  It has additional format specifiers which allocate
-memory and read quoted strings.  Since it is meant to read PPR configuration files and
-queue files, it does out of its way not to heed the current locale.
+This function is similiar to sscanf().  It has additional format specifiers
+which allocate memory and read quoted strings.  Since it is meant to read PPR
+configuration files and queue files, it goes out of its way not to heed the
+current locale.
 
 It implements the following formats:
 
@@ -80,7 +82,7 @@ pointer to a char array with enough space to hold the string and the
 terminating NULL.  To prevent overruns, the size of the array may be
 specified by a decimal number between the <tt>%</tt> and the <tt>s</tt> or
 by a <tt>#</tt>. If the length of the array is specified with a <tt>#</tt>
-then the actuall length is read from gu_sscanf()'s next argument (the one
+then the actual length is read from gu_sscanf()'s next argument (the one
 before the pointer to the char array).</dd>
 
 <dt>%S</dt>
@@ -88,12 +90,6 @@ before the pointer to the char array).</dd>
 <dd>Read characters up to the next whitespace, allocate memory, and store
 them in the allocated memory.  The argument should be a pointer to a char
 pointer which will be set to the address of the allocated memory.</dd>
-
-<dt>%z</dt>
-
-<dd>Read characters up to the end of the string.  The argument should be a
-char array.  To prevent overruns, the size of the char array may be
-specified in the same manner as for the %s format.</dd>
 
 <dt>%Z</dt>
 
@@ -145,7 +141,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 			pattern++;
 
 			maxextlen = 0;						/* Get "precision" */
-			while(gu_isdigit(*pattern))			/* from any digits in */
+			while(gu_ascii_isdigit(*pattern))	/* from any digits in */
 				{								/* the format. */
 				maxextlen *= 10;
 				maxextlen += ( *(pattern++) - '0' );
@@ -168,7 +164,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 
 			switch(*(pattern++))				/* Act on the type id char. */
 				{
-				case '%':						/* Litteral "%" */
+				case '%':						/* Literal "%" */
 					if( *(string++) != '%' )	/* Match it */
 						goto break_break;
 					break;
@@ -189,12 +185,12 @@ int gu_sscanf(const char *input, const char *format, ...)
 						sign = -1;
 						string++;
 						}
-					if(! gu_isdigit(*string))				/* if no number present, */
+					if(! gu_ascii_isdigit(*string))		/* if no number present, */
 						goto break_break;
 					if(islong)
 						{
 						long int templong = 0;
-						while(gu_isdigit(*string))			/* convert digits */
+						while(gu_ascii_isdigit(*string))			/* convert digits */
 							{
 							templong *= 10;
 							templong += (*(string++)-'0');
@@ -204,7 +200,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					else if(isshort)
 						{
 						short int tempshort = 0;
-						while(gu_isdigit(*string))			/* convert digits */
+						while(gu_ascii_isdigit(*string))			/* convert digits */
 							{
 							tempshort *= 10;
 							tempshort += (*(string++)-'0');
@@ -214,7 +210,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					else
 						{
 						int tempint = 0;
-						while(gu_isdigit(*string))			/* convert digits */
+						while(gu_ascii_isdigit(*string))			/* convert digits */
 							{
 							tempint *= 10;
 							tempint += (*(string++) - '0');
@@ -231,9 +227,9 @@ int gu_sscanf(const char *input, const char *format, ...)
 				case 'u':
 					{
 					unsigned int tempint = 0;
-					if(!gu_isdigit(*string))
+					if(!gu_ascii_isdigit(*string))
 						goto break_break;
-					while(gu_isdigit(*string))		/* convert digits */
+					while(gu_ascii_isdigit(*string))		/* convert digits */
 						{
 						tempint *= 10;
 						tempint += (*(string++) - '0');
@@ -256,9 +252,9 @@ int gu_sscanf(const char *input, const char *format, ...)
 						sign = -1;
 						string++;
 						}
-					if(! gu_isdigit(*string))			/* if no number present, */
+					if(! gu_ascii_isdigit(*string))		/* if no number present, */
 						goto break_break;
-					while(gu_isdigit(*string))			/* convert digits to left of decimal point */
+					while(gu_ascii_isdigit(*string))	/* convert digits to left of decimal point */
 						{
 						whole *= 10;
 						whole += (*(string++) - '0');
@@ -267,7 +263,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						{
 						float place = 0.1;
 						string++;
-						while(gu_isdigit(*string))
+						while(gu_ascii_isdigit(*string))
 							{
 							fraction += place * (*(string++) - '0');
 							place /= 10.0;
@@ -283,10 +279,10 @@ int gu_sscanf(const char *input, const char *format, ...)
 				 */
 				case 's':
 					extptr = va_arg(va, char *);				/* get pointer string to extract to */
-					while( *string && !isspace(*string) && --maxextlen )
+					while( *string && !gu_ascii_isspace(*string) && --maxextlen )
 						*(extptr++) = *(string++);
 					*extptr = '\0';								/* terminate the string */
-					while( *string && !isspace(*string) )		/* eat any extra */
+					while( *string && !gu_ascii_isspace(*string) )		/* eat any extra */
 						string++;
 					count++;									/* one more item done */
 					break;
@@ -299,18 +295,6 @@ int gu_sscanf(const char *input, const char *format, ...)
 					len = strcspn(string, " \t\n");
 					*(va_arg(va, char **)) = gu_strndup(string, len);
 					string += len;
-					count++;
-					break;
-
-				/*
-				 * Get rest of line as a string, extracting it
-				 * into the storage provided.
-				 */
-				case 'z':
-					extptr = va_arg(va, char *);
-					while(*string && --maxextlen)
-						*(extptr++) = *(string++);
-					*extptr = '\0';
 					count++;
 					break;
 
@@ -371,7 +355,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 							break;
 						default:
 							len = strlen(string);
-							while(len > 0 && isspace(string[len - 1]))
+							while(len > 0 && gu_ascii_isspace(string[len - 1]))
 								len--;
 							break;
 						}
@@ -396,7 +380,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 				case 't':
 					{
 					time_t temptime = 0;
-					while(gu_isdigit(*string))				/* convert digits */
+					while(gu_ascii_isdigit(*string))				/* convert digits */
 						{
 						temptime *= 10;
 						temptime += (*(string++) - '0');
@@ -417,10 +401,10 @@ int gu_sscanf(const char *input, const char *format, ...)
 		/* Not a format specifier. */
 		else
 			{
-			if(isspace(*pattern))				/* Whitespace matches any */
-				{								/* amount of whitespace. */
+			if(gu_ascii_isspace(*pattern))				/* Whitespace matches any */
+				{										/* amount of whitespace. */
 				pattern++;
-				while(isspace(*string))
+				while(gu_ascii_isspace(*string))
 					string++;
 				}
 			else										/* Everthing else */

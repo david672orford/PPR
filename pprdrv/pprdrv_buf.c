@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_buf.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 May 2004.
+** Last modified 8 September 2005.
 */
 
 /*
@@ -360,6 +360,8 @@ void printer_putline(const char *string)
 
 /*
 ** Print a formated string to the interface.
+**
+** A similiar function is in ../libgu/gu_psprintf.c.
 */
 void printer_printf(const char *string, ... )
 	{
@@ -396,7 +398,6 @@ void printer_printf(const char *string, ... )
 					printer_puts(nstr);							/* because PostScript needs 3.) */
 					break;
 				case 'f':				/* a double */
-				case 'g':
 					dn = va_arg(va, double);
 					sptr = gu_dtostr(dn);
 					printer_puts(sptr);

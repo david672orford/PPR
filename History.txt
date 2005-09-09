@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--31 August 2005
+2.00a1, 11 December 2004--9 September 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9810,4 +9810,15 @@ no final tarball was released.
 
 * pprd/pprd_ppop.c: ppop_move(): fixed bug which caused the message about
   the job being moved to go into the -barbar file instead of the -log file.
+
+* ppop/: removed "ppop short".
+
+* ppop/ppop.c: fixed "ppop help" to print to stdout rather than stderr.
+
+* libgu/gu_isdigit.c: renamed gu_isdigit() to gu_ascii_isdigit() in order
+  to bring the function name closer to that of glib.
+
+* libgu/gu_sscanf.c: removed %z since it is no longer used and %Z is 
+  preferable.
+
 

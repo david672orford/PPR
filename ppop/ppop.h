@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 August 2005.
+** Last modified 2 September 2005.
 */
 
 /*
@@ -80,7 +80,6 @@ int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile);
 /* ============== Functions in ppop_cmds_listq.c =================== */
 
 /* Subcommand routines */
-int ppop_short(char *argv[]);
 int ppop_details(char *argv[]);
 int ppop_list(char *argv[],int suppress);
 int ppop_lpq(char *argv[]);

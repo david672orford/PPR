@@ -348,7 +348,7 @@ static void PSCurveto(struct TTFONT *font, FWord x, FWord y, int s, int t)
 		cx[2] = (sx[2]+2*sx[1])/3;
 		cy[2] = (sy[2]+2*sy[1])/3;
 
-		/* (*font->printf)("%g %g %g %g %g %g _c\n",
+		/* (*font->printf)("%f %f %f %f %f %f _c\n",
 				cx[1],cy[1],cx[2],cy[2],cx[3],cy[3]); */
 
 		(*font->printf)("%d %d %d %d %d %d _c\n",				/* "curveto" */

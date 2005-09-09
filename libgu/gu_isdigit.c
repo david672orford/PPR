@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/templates/module.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** mouse:~ppr/src/libgu/gu_ascii_isdigit.c
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 2 September 2005.
 */
 
 #include "config.h"
@@ -41,12 +41,25 @@
 ** determines if c is a digit in the current locale.  We want to know if it is a
 ** digit in ASCII.
 */
-int gu_isdigit(int c)
+int gu_ascii_isdigit(int c)
 	{
 	if(c >= '0' && c <= '9')
 		return 1;
 	else
 		return 0;
+	}
+
+/** Returns the value of an ASCII digit
+ *
+ * This function returns the numberic value of an ASCII digit.  If the
+ * character is not an ASCII digit, it returns -1.
+ */
+int gu_ascii_digit_value(int c)
+	{
+	if(c >= '0' && c <= '9')
+		return c - '0';
+	else
+		return -1;
 	}
 
 /* end of file */

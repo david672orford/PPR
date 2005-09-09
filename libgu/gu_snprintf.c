@@ -41,8 +41,12 @@
 /* We have already included our config.h */
 #define NO_CONFIG_H
 
-/* C99 requires va_copy() */
+/* C99 provides va_copy() */
+#if __STDC_VERSION__ + 0 >= 199900L
 #define HAVE_VA_COPY 1
+#elif defined(__GNUC__)
+#define HAVE___VA_COPY 1
+#endif
 
 /* Include the prototypes in order to verify consistancy. */
 #include "gu.h"

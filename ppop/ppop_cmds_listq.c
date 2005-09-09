@@ -25,12 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 2 September 2005.
 */
 
 /*
 ** This module contains the code for the ppop queue
-** listing sub-commands such as "ppop list", "ppop short",
+** listing sub-commands such as "ppop list",
 ** "ppop lpq" and "ppop qquery".
 */
 
@@ -579,51 +579,6 @@ int custom_list(char *argv[],
 	return EXIT_OK;						/* no errors */
 	} /* end of custom_list() */
 
-/*=========================================================================
-** ppop short {destination}
-** List jobs in the print queue,
-=========================================================================*/
-static void ppop_short_help(void)
-	{
-	fputs(_("Usage: ppop short {<printer>, all}\n\n"
-		"This command shows all the print jobs queue for\n"
-		"a certain destination or for all destinations.\n"), errors);
-	}
-
-static void ppop_short_banner(void)
-	{
-	printf("Job ID                  For                  Status\n");
-	printf("--------------------------------------------------------------\n");
-	}
-
-static int ppop_short_item(const struct QEntry *qentry,
-		const struct QEntryFile *qentryfile,
-		const char *onprinter,
-		FILE *qstream)
-	{
-	int len;
-
-	len = printf("%s", jobid(qentryfile->destname, qentryfile->id, qentryfile->subid));
-
-	while(len++ < 24)					/* print padded job id */
-		putchar(' ');
-
-	len = printf("%s",qentryfile->For); /* print it */
-	while(len++ < 21)					/* pad to 21 characters */
-		putchar(' ');
-
-	/* now print the status */
-	job_status(qentry, qentryfile, onprinter, (FILE*)NULL, 45, 45);
-										/* media indent, reason indent */
-	return FALSE;
-	} /* end of ppop_short_item() */
-
-int ppop_short(char *argv[])
-	{
-	argv = allow_PPRDEST(argv);
-	return custom_list(argv, ppop_short_help, ppop_short_banner, ppop_short_item, FALSE, opt_arrest_interest_interval);
-	}
-
 /*================================================================
 ** ppop list {destination}
 **
@@ -665,20 +620,28 @@ static int ppop_list_item(const struct QEntry *qentry,
 
 	/* Convert the number of pages to ASCII. */
 	if(qentryfile->attr.pages < 0 || qentryfile->attr.pages > 999)
-		strcpy(pagesstr,"???");
+		strcpy(pagesstr, "???");
 	else
-		snprintf(pagesstr, sizeof(pagesstr), "%3.3d", qentryfile->attr.pages);
+		snprintf(pagesstr, sizeof(pagesstr), "%03d", qentryfile->attr.pages);
 
+	/* print the job name while letting it overflow */
 	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
 	if(strlen(jobname) > 15)
 		printf("%s\n               ", jobname);
 	else
 		printf("%-15.15s", jobname);
 
-	printf(" %-24.24s %-9.9s %s ", qentryfile->For ? qentryfile->For : "???", timestr, pagesstr);
+	printf(" %-24.24s %-9.9s %s ",
+		qentryfile->For ? qentryfile->For : "???",
+		timestr,
+		pagesstr
+		);
 
-	job_status(qentry, qentryfile, onprinter, qstream, 55, 55);
-												/* media indent, reason indent */
+	job_status(qentry, qentryfile, onprinter, qstream,
+		55,		/* media indent */
+		55		/* reason indent */
+		);
+
 	return FALSE;
 	} /* end of ppop_list_item() */
 

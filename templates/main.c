@@ -25,7 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2005.
+** Last modified 2 September 2005.
+*/
+
+/*! \file
+	\brief skeletal program
+
+	Long description of program
+
 */
 
 #include "config.h"
@@ -53,9 +60,8 @@ static const struct gu_getopt_opt option_words[] =
 		{(char*)NULL, 0, FALSE}
 		} ;
 
-/*
-** Print help.
-*/
+/** Print help
+ */
 static void help_usage(FILE *outfile)
 	{
 	fprintf(outfile, _("Usage: %s [switches]\n"), myname);
@@ -68,6 +74,8 @@ static void help_usage(FILE *outfile)
 				"\t--help\n"), outfile);
 	}
 
+/** main entry point
+ */
 int main(int argc, char *argv[])
 	{
 	/* Initialize international messages library. */

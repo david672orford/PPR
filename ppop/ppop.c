@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 August 2005.
+** Last modified 2 September 2005.
 */
 
 /*
@@ -739,7 +739,6 @@ static int main_help(FILE *out)
 			N_("ppop reject <destination>"),
 		N_("Print job commands:"),
 			N_("ppop list {<destination>, <job>, all} ..."),
-			N_("ppop short {<destination>, <job>, all} ..."),
 			N_("ppop details {<destination>, <job>, all} ..."),
 			N_("ppop lpq {<destination>, <job>, all} [<user>] [<id>] ..."),
 			N_("ppop qquery {<destination>, <job>, all} <field name 1> ..."),
@@ -807,78 +806,76 @@ static int dispatch(char *argv[])
 	if(strcmp(argv[0],"progress") == 0)
 		return ppop_progress(&argv[1]);
 
-	if(strcmp(argv[0],"short") == 0)
-		return ppop_short(&argv[1]);
-	else if(strcmp(argv[0],"list") == 0)
+	if(strcmp(argv[0],"list") == 0)
 		return ppop_list(&argv[1], 0);
-	else if(strcmp(argv[0],"nhlist") == 0)		/* For lprsrv, no-header-list */
+	if(strcmp(argv[0],"nhlist") == 0)		/* For lprsrv, no-header-list */
 		return ppop_list(&argv[1], 1);
-	else if(gu_strcasecmp(argv[0],"lpq") == 0)
+	if(gu_strcasecmp(argv[0],"lpq") == 0)
 		return ppop_lpq(&argv[1]);
-	else if(strcmp(argv[0],"mount") == 0)
+	if(strcmp(argv[0],"mount") == 0)
 		return ppop_mount(&argv[1]);
-	else if(strcmp(argv[0],"media") == 0)
+	if(strcmp(argv[0],"media") == 0)
 		return ppop_media(&argv[1]);
-	else if(strcmp(argv[0],"start") == 0)
+	if(strcmp(argv[0],"start") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 0);
-	else if(strcmp(argv[0],"stop") == 0)
+	if(strcmp(argv[0],"stop") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 1);
-	else if(strcmp(argv[0],"wstop") == 0)
+	if(strcmp(argv[0],"wstop") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 2);
-	else if(strcmp(argv[0], "halt") == 0)
+	if(strcmp(argv[0], "halt") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 3);
-	else if(strcmp(argv[0], "cancel") == 0)
+	if(strcmp(argv[0], "cancel") == 0)
 		return ppop_cancel(&argv[1], 1);
-	else if(strcmp(argv[0], "scancel") == 0)
+	if(strcmp(argv[0], "scancel") == 0)
 		return ppop_cancel(&argv[1], 0);
-	else if(strcmp(argv[0], "purge") == 0)
+	if(strcmp(argv[0], "purge") == 0)
 		return ppop_purge(&argv[1], 1);
-	else if(strcmp(argv[0], "spurge") == 0)
+	if(strcmp(argv[0], "spurge") == 0)
 		return ppop_purge(&argv[1], 0);
-	else if(strcmp(argv[0], "clean") == 0)
+	if(strcmp(argv[0], "clean") == 0)
 		return ppop_clean(&argv[1]);
-	else if(strcmp(argv[0], "cancel-active") == 0)
+	if(strcmp(argv[0], "cancel-active") == 0)
 		return ppop_cancel_active(&argv[1], FALSE, 1);
-	else if(strcmp(argv[0], "scancel-active") == 0)
+	if(strcmp(argv[0], "scancel-active") == 0)
 		return ppop_cancel_active(&argv[1], FALSE, 0);
-	else if(strcmp(argv[0], "cancel-my-active") == 0)
+	if(strcmp(argv[0], "cancel-my-active") == 0)
 		return ppop_cancel_active(&argv[1], TRUE, 1);
-	else if(strcmp(argv[0], "scancel-my-active") == 0)
+	if(strcmp(argv[0], "scancel-my-active") == 0)
 		return ppop_cancel_active(&argv[1], TRUE, 0);
-	else if(strcmp(argv[0], "move") == 0)
+	if(strcmp(argv[0], "move") == 0)
 		return ppop_move(&argv[1]);
-	else if(strcmp(argv[0], "rush") == 0)
+	if(strcmp(argv[0], "rush") == 0)
 		return ppop_rush(&argv[1], 0);
-	else if(strcmp(argv[0], "last") == 0)
+	if(strcmp(argv[0], "last") == 0)
 		return ppop_rush(&argv[1], 10000);
-	else if(strcmp(argv[0], "hold") == 0)
+	if(strcmp(argv[0], "hold") == 0)
 		return ppop_hold_release(&argv[1], FALSE);
-	else if(strcmp(argv[0], "release") == 0)
+	if(strcmp(argv[0], "release") == 0)
 		return ppop_hold_release(&argv[1], TRUE);
-	else if(strcmp(argv[0], "status") == 0)
+	if(strcmp(argv[0], "status") == 0)
 		return ppop_status(&argv[1]);
-	else if(strcmp(argv[0], "accept") == 0)
+	if(strcmp(argv[0], "accept") == 0)
 		return ppop_accept_reject(&argv[1], FALSE);
-	else if(strcmp(argv[0], "reject") == 0)
+	if(strcmp(argv[0], "reject") == 0)
 		return ppop_accept_reject(&argv[1], TRUE);
-	else if(strcmp(argv[0], "destination") == 0 || strcmp(argv[0],"dest") == 0)
+	if(strcmp(argv[0], "destination") == 0 || strcmp(argv[0],"dest") == 0)
 		return ppop_destination(&argv[1], 0);
-	else if(strcmp(argv[0], "destination-comment") == 0 || strcmp(argv[0],"ldest") == 0)
+	if(strcmp(argv[0], "destination-comment") == 0 || strcmp(argv[0],"ldest") == 0)
 		return ppop_destination(&argv[1], 1);
-	else if(strcmp(argv[0], "destination-comment-address") == 0)
+	if(strcmp(argv[0], "destination-comment-address") == 0)
 		return ppop_destination(&argv[1], 2);
-	else if(strcmp(argv[0], "details") == 0)
+	if(strcmp(argv[0], "details") == 0)
 		return ppop_details(&argv[1]);
-	else if(strcmp(argv[0], "alerts") == 0)
+	if(strcmp(argv[0], "alerts") == 0)
 		return ppop_alerts(&argv[1]);
-	else if(strcmp(argv[0], "log") == 0)
+	if(strcmp(argv[0], "log") == 0)
 		return ppop_log(&argv[1]);
-	else if(strcmp(argv[0], "modify") == 0)
+	if(strcmp(argv[0], "modify") == 0)
 		return ppop_modify(&argv[1]);
-	else if(strcmp(argv[0], "help") == 0)
-		return main_help(stderr);
-	else
-		return -1;						/* return `dispatcher failed' code */
+	if(strcmp(argv[0], "help") == 0)
+		return main_help(stdout);
+
+	return -1;		/* dispatcher failed */
 	} /* end of dispatch() */
 
 /*
@@ -1010,9 +1007,9 @@ static void help_switches(FILE *out)
 		{
 		N_("-M\tselect machine-readable output"),
 		N_("--machine-readable\tsame as -M"),
-		N_("-A <seconds>\tdon't show jobs arrested more than <seconds> ago"),
+		N_("-A <seconds>\thide arrested jobs older than <seconds>"),
 		N_("--arrest-interest-time=<seconds>\tsame as -A"),
-		N_("-u <user>\tcheck access as if run as indicated user"),
+		N_("-u <user>\tcheck access as if run by <user>"),
 		N_("--user <user>\tsame as -u"),
 		N_("--magic-cookie <string>\tpresent job access token"),
 		N_("--verbose\tprint more information"),
@@ -1026,15 +1023,23 @@ static void help_switches(FILE *out)
 		{
 		const char *p = gettext(switch_list[i]);
 		int to_tab = strcspn(p, "\t");
-		fprintf(out, "    %-35.*s %s\n", to_tab, p, p[to_tab] == '\t' ? &p[to_tab + 1] : "");
+		fprintf(out, "    %-35.*s %s\n",
+			to_tab, p,
+			p[to_tab] == '\t' ? &p[to_tab + 1] : ""
+			);
 		}
 
 	fputc('\n', out);
 
 	fputs(_("Try \"ppop help\" for help with subcommands.\n"), out);
 	fputs("\n", out);
-	fprintf(out, _("The %s manpage may be viewed by entering this command at a shell prompt:\n"
-		"    ppdoc %s\n"), "ppop(1)", "ppop");
+	fprintf(out,
+		_(	"The %s manpage may be viewed by entering this command at a shell prompt:\n"
+			"    ppdoc %s\n"
+			),
+		"ppop(1)",
+		"ppop"
+		);
 	} /* end of help() */
 
 /*
@@ -1066,7 +1071,8 @@ int main(int argc, char *argv[])
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
-	setlocale(LC_ALL, "");
+	if(!setlocale(LC_ALL, ""))
+		fprintf(stderr, "%s: can't set requested locale\n", argv[0] ? argv[0] : "?");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 August 2005.
+** Last modified 2 September 2005.
 */
 
 /*
@@ -359,101 +359,6 @@ static int readline_normal(void)
 	} /* end of readline_normal() */
 
 /*
- * A UTF-8 version of fgetc().  It is used by readline_utf_8() below.
- */
-#define INVALID_CHAR '?'
-static int fgetc_utf_8(FILE *f)
-	{
-	int c;
-	int additional_bytes = 0;
-	if((c = fgetc(f)) == EOF)
-		return EOF;
-	if(c & 0x80)
-		{
-		if((c & 0xE0) == 0xC0)		/* mask: 1110 0000, value: 1100 0000 */
-			{
-			c &= 0x1f;				/* mask: 0001 1111 */
-			additional_bytes = 1;
-			}
-		else if((c & 0xF0) == 0xE0)	/* mask: 1111 0000, value: 1110 0000 */
-			{
-			c &= 0x0F;				/* mask: 0000 1111 */
-			additional_bytes = 2;
-			}
-		else if((c & 0xF8) == 0xF0)	/* mask: 1111 1000, value: 1111 0000 */
-			{
-			c &= 0x07;				/* mask: 0000 0111 */
-			additional_bytes = 3;
-			}
-		else if((c & 0xFC) == 0xF8)	/* mask: 1111 1100, value: 1111 1000 */
-			{
-			c &= 0x03;				/* mask: 0000 0011 */
-			additional_bytes = 4;
-			}
-		else if((c & 0xFE) == 0xFC)	/* mask: 1111 1110, value: 1111 1100 */
-			{
-			c &= 0x01;				/* mask: 0000 0001 */
-			additional_bytes = 5;
-			}
-		else
-			{
-			return INVALID_CHAR;
-			}
-
-		{
-		int x;
-		for(x=0; x < additional_bytes; x++)
-			{
-			int ca;
-			if((ca = fgetc(f)) == EOF)
-				return EOF;
-			if((ca & 0xC0) != 0x80)		/* mask: 1100 0000, value: 1000 0000 */
-				return '?';
-			c <<= 6;					/* shift up 6 bits to make room */
-			c &= (ca & 0x3F);			/* take lower 6 bits */
-			}
-		}
-		}
-
-	/* Detect overlong sequences */
-	switch(1 + additional_bytes)		/* number of bytes */
-		{
-		case 1:							/* 0xxxxxxx */
-			break;
-		case 2:							/* 110xxxxx 10xxxxxx */
-			if(c <= 0x0000007F)			/* 01111111 */
-				return INVALID_CHAR;
-			break;
-		case 3:							/* 1110xxxx 10xxxxxx 10xxxxxx */
-			if(c <= 0x000007FF)			/* 00000111 11111111 */
-				return INVALID_CHAR;
-			break;
-		case 4:							/* 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx */
-			if(c <= 0x0000FFFF)			/* 11111111 11111111 */
-				return INVALID_CHAR;
-			break;
-		case 5:							/* 111110xx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
-			if(c <= 0x001FFFFF)			/* 00011111 11111111 11111111 */
-				return INVALID_CHAR;
-			break;
-		case 6:							/* 1111110x 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx 10xxxxxx */
-			if(c <= 0x03FFFFFF)			/* 00000011 11111111 11111111 11111111 */
-				return INVALID_CHAR;
-			break;
-		}
-
-	/* UTF-16 surrogates are not allowed */
-	if(c >= 0xD8000 && c <= 0xDFFF)
-		return INVALID_CHAR;
-
-	/* These values are also forbidden */
-	if(c == 0xFFFE || c == 0xFFFF)
-		return INVALID_CHAR;
-
-	return c;
-	} /* end of gu_fgetc_utf_8() */
-
-/*
  * A UTF-* version of readline_normal().  Presently 
  * it differs from readline_normal() only in that it
  * calls fgetc_utf_8() instead of fgetc(), but that
@@ -490,7 +395,7 @@ static int readline_utf_8(void)
 		if(count >= MAX_WIDTH)					/* break very long lines */
 			break;
 
-		switch(c = fgetc_utf_8(stdin))			/* examine the character */
+		switch(c = gu_utf8_fgetwc(stdin))		/* examine the character */
 			{
 			case EOF:							/* If physical end of file, */
 				if(maxcount == 0)				/* if buffer empty, */
@@ -657,6 +562,8 @@ static void pass1(void)
 
 	int x, c;
 
+	const wchar_t one_space[] = {' ', '\0'};
+
 	while((len = (*readline)()) >= 0)
 		{
 		line_count++;			/* count lines since start of doc or last formfeed */
@@ -666,7 +573,7 @@ static void pass1(void)
 
 		if(len > 0)								/* if non-blank line */
 			{									/* and has less */
-			leadlen = wcsspn(line, L" ");		/* leading space than previous, */
+			leadlen = wcsspn(line, one_space);	/* leading space than previous, */
 			if(leadlen < left_skip)				/* then record this small leading */
 				left_skip = leadlen;			/* space value */
 
