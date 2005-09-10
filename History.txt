@@ -9839,6 +9839,9 @@ no final tarball was released.
   let the exceptions come.  There is not much point in catching an out-of-core
   exception anyway.
 
+* libgu/gu_sscanf.c: renamed %Q to %W and %Z to %T, improved inline documentation,
+  made it clearer that gu_sscanf() is not a sscanf() clone.
+
 
 
 
