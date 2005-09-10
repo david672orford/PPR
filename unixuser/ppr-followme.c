@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -101,7 +101,8 @@ static int do_show(const char username[])
 	char *line = NULL;
 	int line_space_available = 80;
 
-	if(!(line = gu_getline(line, &line_space_available, f)) || gu_sscanf(line, "%S %S %Q", &responder, &responder_address, &responder_options) != 3)
+	if(!(line = gu_getline(line, &line_space_available, f)) 
+			|| gu_sscanf(line, "%S %S %W", &responder, &responder_address, &responder_options) != 3)
 		{
 		fprintf(stderr, _("%s: invalid followme registration record\n"), myname);
 		return EXIT_INTERNAL;

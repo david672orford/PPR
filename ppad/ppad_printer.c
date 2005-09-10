@@ -414,7 +414,7 @@ int printer_show(const char *argv[])
 			if(address) gu_free(address);		/* discard any preceding address lines */
 			address = ptr;
 			}
-		else if(gu_sscanf(confline, "Options: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "Options: %T", &ptr) == 1)
 			{
 			if(options) gu_free(options);
 			options = ptr;
@@ -445,7 +445,7 @@ int printer_show(const char *argv[])
 				gu_free(rip_output_language);
 			if(rip_options)
 				gu_free(rip_options);
-			gu_sscanf(ptr, "%S %S %Z", &rip_name, &rip_output_language, &rip_options);
+			gu_sscanf(ptr, "%S %S %T", &rip_name, &rip_output_language, &rip_options);
 			}
 		else if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
 			{
@@ -453,30 +453,30 @@ int printer_show(const char *argv[])
 				gu_free(PPDFile);
 			PPDFile = ptr;
 			}
-		else if(gu_sscanf(confline, "Bin: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "Bin: %A", &ptr) == 1)
 			{
 			if(bincount<MAX_BINS)
 				bins[bincount++] = ptr;
 			}
-		else if(gu_sscanf(confline, "Comment: %A", &ptr) == 1)
+		else if(gu_sscanf(confline, "Comment: %T", &ptr) == 1)
 			{
 			if(comment)
 				gu_free(comment);
 			comment = ptr;
 			}
-		else if(gu_sscanf(confline, "Location: %A", &ptr) == 1)
+		else if(gu_sscanf(confline, "Location: %T", &ptr) == 1)
 			{
 			if(location)
 				gu_free(location);
 			location = ptr;
 			}
-		else if(gu_sscanf(confline, "Department: %A", &ptr) == 1)
+		else if(gu_sscanf(confline, "Department: %T", &ptr) == 1)
 			{
 			if(department)
 				gu_free(department);
 			department = ptr;
 			}
-		else if(gu_sscanf(confline, "Contact: %A", &ptr) == 1)
+		else if(gu_sscanf(confline, "Contact: %T", &ptr) == 1)
 			{
 			if(contact)
 				gu_free(contact);
@@ -520,19 +520,19 @@ int printer_show(const char *argv[])
 			else
 				charge_duplex_sheet = charge_simplex_sheet;
 			}
-		else if(gu_sscanf(confline, "Switchset: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "Switchset: %T", &ptr) == 1)
 			{
 			if(switchset)
 				gu_free(switchset);
 			switchset = ptr;
 			}
-		else if(gu_sscanf(confline, "DefFiltOpts: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "DefFiltOpts: %T", &ptr) == 1)
 			{
 			if(deffiltopts)
 				gu_free(deffiltopts);
 			deffiltopts = ptr;
 			}
-		else if(gu_sscanf(confline, "PPDOpt: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "PPDOpt: %T", &ptr) == 1)
 			{
 			if(ppdopts_count >= (sizeof(ppdopts) / sizeof(ppdopts[0])))
 				{
@@ -543,7 +543,7 @@ int printer_show(const char *argv[])
 				ppdopts[ppdopts_count++] = ptr;
 				}
 			}
-		else if(gu_sscanf(confline, "PassThru: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "PassThru: %T", &ptr) == 1)
 			{
 			if(passthru)
 				gu_free(passthru);
@@ -562,7 +562,7 @@ int printer_show(const char *argv[])
 			if(gu_torf_setBOOL(&grayok,ptr) == -1)
 				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", ptr);
 			}
-		else if(gu_sscanf(confline, "ACLs: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "ACLs: %T", &ptr) == 1)
 			{
 			if(acls)
 				gu_free(acls);
@@ -572,7 +572,7 @@ int printer_show(const char *argv[])
 			{
 			/* nothing more to do */
 			}
-		else if(gu_sscanf(confline, "Userparams: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "Userparams: %T", &ptr) == 1)
 			{
 			if(userparams) gu_free(userparams);
 			userparams = ptr;
@@ -2073,7 +2073,7 @@ int printer_bins_ppd(const char *argv[])
 		{
 		if(lmatch(confline, "PPDFile:"))
 			{
-			gu_sscanf(confline,"PPDFile: %Z", &ppdname);
+			gu_sscanf(confline,"PPDFile: %A", &ppdname);
 			}
 
 		if(lmatch(confline, "Bin:"))			/* don't copy those */

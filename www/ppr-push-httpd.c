@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 March 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -83,7 +83,7 @@ static gu_boolean do_audio1_callback(char *line, void *extra)
 	/* This is not really a while() loop!  It is an if() with the
 	   oportunity to use break to drop out.  Look at the end. */
 	printer = cooked = raw1 = raw2 = NULL;
-	while(gu_sscanf(line, "COMMENTARY %S %d %Q %Q %Q %s", &printer, &category, &cooked, &raw1, &raw2, &severity) == 6)
+	while(gu_sscanf(line, "COMMENTARY %S %d %W %W %W %d", &printer, &category, &cooked, &raw1, &raw2, &severity) == 6)
 		{
 		/* If the user doesn't want to hear about events of this class,
 		   skip it. */

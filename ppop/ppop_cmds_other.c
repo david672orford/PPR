@@ -168,7 +168,7 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 		gu_boolean print_howlong, print_ago;
 		time_t time_now = time(NULL);
 
-		gu_sscanf(p, "%d %d %d %d %Z", &bit, &start, &last, &last_commentary, &details);
+		gu_sscanf(p, "%d %d %d %d %T", &bit, &start, &last, &last_commentary, &details);
 
 		/* Convert absolute times to times relative to the current time. */
 		start_minutes_ago = (int)((time_now - start + 30) / 60);
@@ -1543,13 +1543,13 @@ int ppop_destination(char *argv[], int info_level)
 				int pconf_line_len = 128;
 				while((pconf_line = gu_getline(pconf_line, &pconf_line_len, f)))
 					{
-					if(gu_sscanf(pconf_line, "Comment: %A", &comment) == 1)
+					if(gu_sscanf(pconf_line, "Comment: %T", &comment) == 1)
 						continue;
 					if(info_level > 1 && !is_group)
 						{
 						if(gu_sscanf(pconf_line, "Interface: %S", &interface) == 1)
 							continue;
-						if(gu_sscanf(pconf_line, "Address: %Z", &address) == 1)
+						if(gu_sscanf(pconf_line, "Address: %A", &address) == 1)
 							continue;
 						}
 					}

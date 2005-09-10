@@ -609,7 +609,7 @@ static struct RESPONDER *followme(struct RESPONDER *responder)
 			if((line = gu_getline(line, &line_available, f)))
 				{
 				char *responder_name, *responder_address, *responder_options;
-				if(gu_sscanf(line, "%S %S %Q", &responder_name, &responder_address, &responder_options) == 3)
+				if(gu_sscanf(line, "%S %S %W", &responder_name, &responder_address, &responder_options) == 3)
 					{
 					found = TRUE;
 

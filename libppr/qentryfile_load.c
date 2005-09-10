@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 August 2005.
+** Last modified 9 September 2005.
 */
 
 /*! \file */
@@ -179,18 +179,18 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'C':
-				MATCH("Charge-To: ", _2("%Z", &job->charge_to), !=1, found_other)
-				MATCH("Creator: ", _2("%Z", &job->Creator), !=1, found_other)
+				MATCH("Charge-To: ", _2("%W", &job->charge_to), !=1, found_other)
+				MATCH("Creator: ", _2("%T", &job->Creator), !=1, found_other)
 				MATCH("Commentary: ", _2("%d", &job->commentary), !=1, found_other)
 				break;
 
 			case 'D':
-				MATCH("DraftNotice: ", _2("%Z", &job->draft_notice), !=1, found_other)
+				MATCH("DraftNotice: ", _2("%T", &job->draft_notice), !=1, found_other)
 				break;
 
 			case 'F':
-				MATCH("For: ", _2("%Z", &job->For), !=1, found_for)
-				MATCH("Filters: ", _2("%Z", &job->Filters), !=1, found_other)
+				MATCH("For: ", _2("%T", &job->For), !=1, found_for)
+				MATCH("Filters: ", _2("%T", &job->Filters), !=1, found_other)
 				break;
 
 			case 'L':
@@ -198,11 +198,11 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'l':
-				MATCH("lpqFileName: ", _2("%Z", &job->lpqFileName), !=1, found_other)
+				MATCH("lpqFileName: ", _2("%A", &job->lpqFileName), !=1, found_other)
 				break;
 
 			case 'M':
-				MATCH("MagicCookie: ", _2("%Z", &job->magic_cookie), !=1, found_other)
+				MATCH("MagicCookie: ", _2("%S", &job->magic_cookie), !=1, found_other)
 				break;
 
 			case 'N':
@@ -229,19 +229,19 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				MATCH("Priority: ", _2("%d", &job->priority), !=1, found_priority)
 				if(gu_sscanf(line, "PPRVersion: %f", &job->PPRVersion) == 1)
 					continue;
-				MATCH("PassThruPDL: ", _2("%Z", &job->PassThruPDL), !=1, found_other)
-				if(gu_sscanf(line, "PageList: %d %Z", &job->page_list.count, &job->page_list.mask) == 2)
+				MATCH("PassThruPDL: ", _2("%T", &job->PassThruPDL), !=1, found_other)
+				if(gu_sscanf(line, "PageList: %d %T", &job->page_list.count, &job->page_list.mask) == 2)
 					continue;
 				break;
 
 			case 'Q':
-				MATCH("Question: ", _2("%Z", &job->question), !=1, found_other)
+				MATCH("Question: ", _2("%T", &job->question), !=1, found_other)
 				break;
 
 			case 'R':
-				MATCH("Routing: ", _2("%Z", &job->Routing), !=1, found_other)
-				MATCH("Response: ", _4("%S %S %Z", &job->responder.name, &job->responder.address, &job->responder.options), <2, found_response)
-				MATCH("RIPopts: ", _2("%Z", &job->ripopts), !=1, found_other)
+				MATCH("Routing: ", _2("%T", &job->Routing), !=1, found_other)
+				MATCH("Response: ", _4("%S %S %T", &job->responder.name, &job->responder.address, &job->responder.options), <2, found_response)
+				MATCH("RIPopts: ", _2("%T", &job->ripopts), !=1, found_other)
 				break;
 
 			case 'S':
@@ -259,7 +259,7 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 
 			case 'T':
 				MATCH("Time: ", _2("%ld", &job->time), !=1, found_time)
-				MATCH("Title: ", _2("%Z", &job->Title), !=1, found_other)
+				MATCH("Title: ", _2("%T", &job->Title), !=1, found_other)
 				break;
 
 			case 'U':

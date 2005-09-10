@@ -1284,7 +1284,7 @@ static void pprdrv_read_printer_conf(void)
 		/*
 		** Read options to use with interface.  Take the whole rest of the line.
 		*/
-		else if(gu_sscanf(confline, "Options: %Z", &tptr) == 1)
+		else if(gu_sscanf(confline, "Options: %T", &tptr) == 1)
 			{
 			if(printer.Options)
 				gu_free(printer.Options);
@@ -1303,7 +1303,7 @@ static void pprdrv_read_printer_conf(void)
 			if(printer.RIP.options_storage)
 				gu_free(printer.RIP.options_storage);
 			printer.RIP.options_storage = NULL;
-			if((count = gu_sscanf(tptr, "%S %S %Z", &printer.RIP.name, &printer.RIP.output_language, &printer.RIP.options_storage)) < 2)
+			if((count = gu_sscanf(tptr, "%S %S %T", &printer.RIP.name, &printer.RIP.output_language, &printer.RIP.options_storage)) < 2)
 				fatal(EXIT_PRNERR_NORETRY, "Invalid \"%s\" (%s line %d).", "RIP:", cfname, linenum);
 			}
 
@@ -1377,11 +1377,11 @@ static void pprdrv_read_printer_conf(void)
 			{
 			/* nothing more to do here */
 			}
-		else if((count = gu_sscanf(confline, "CustomHook: %d %Q", &printer.custom_hook.flags, &tptr)) > 0)
+		else if((count = gu_sscanf(confline, "CustomHook: %d %A", &printer.custom_hook.flags, &tptr)) > 0)
 			{
 			if(count != 2)
 				fatal(EXIT_PRNERR_NORETRY, _("Invalid \"%s\" (%s line %d)."), "CustomHook:", cfname, linenum);
-			if(printer.custom_hook.path) gu_free((char*)printer.custom_hook.path);
+			gu_free_if((char*)printer.custom_hook.path);
 			printer.custom_hook.path = tptr;
 			}
 		else if((tptr = lmatchp(confline, "Userparams:")))

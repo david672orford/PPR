@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 August 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -108,7 +108,7 @@ struct QUERY *query_new_byprinter(const char printer[])
 			gu_free_if(address);
 			address = tptr;
 			}
-		else if(gu_sscanf(line, "Options: %Z", &tptr) == 1)
+		else if(gu_sscanf(line, "Options: %T", &tptr) == 1)
 			{
 			gu_free_if(options);
 			options = tptr;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -64,22 +64,22 @@ int alias_show(const char *argv[])
 		{
 		if(gu_sscanf(confline, "ForWhat: %S", &ptr) == 1)
 			{
-			if(forwhat) gu_free(forwhat);
+			gu_free_if(forwhat);
 			forwhat = ptr;
 			}
-		else if(gu_sscanf(confline, "Comment: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "Comment: %T", &ptr) == 1)
 			{
-			if(comment) gu_free(comment);
+			gu_free_if(comment);
 			comment = ptr;
 			}
-		else if(gu_sscanf(confline, "Switchset: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "Switchset: %T", &ptr) == 1)
 			{
-			if(switchset) gu_free(switchset);
+			gu_free_if(switchset);
 			switchset = ptr;
 			}
-		else if(gu_sscanf(confline, "PassThru: %Z", &ptr) == 1)
+		else if(gu_sscanf(confline, "PassThru: %T", &ptr) == 1)
 			{
-			if(passthru) gu_free(passthru);
+			gu_free_if(passthru);
 			passthru = ptr;
 			}
 		}

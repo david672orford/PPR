@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 9 September 2005.
 */
 
 #include "config.h"
@@ -88,7 +88,7 @@ const char *dest_ppdfile(const char destname[])
 		{
 		while((line = gu_getline(line, &line_space, f)))
 			{
-			if(gu_sscanf(line, "PPDFile: %Z", &ppdfile) == 1)
+			if(gu_sscanf(line, "PPDFile: %A", &ppdfile) == 1)
 				break;
 			}	
 		}

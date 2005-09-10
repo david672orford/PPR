@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -99,7 +99,7 @@ int group_show(const char *argv[])
 				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
 			continue;
 			}
-		if(gu_sscanf(confline, "Comment: %A", &ptr) == 1)
+		if(gu_sscanf(confline, "Comment: %T", &ptr) == 1)
 			{
 			if(comment)
 				gu_free(comment);
@@ -119,28 +119,28 @@ int group_show(const char *argv[])
 				}
 			continue;
 			}
-		if(gu_sscanf(confline, "Switchset: %Z", &ptr) == 1)
+		if(gu_sscanf(confline, "Switchset: %T", &ptr) == 1)
 			{
 			if(switchset)
 				gu_free(switchset);
 			switchset = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "DefFiltOpts: %Z", &ptr) == 1)
+		if(gu_sscanf(confline, "DefFiltOpts: %T", &ptr) == 1)
 			{
 			if(deffiltopts)
 				gu_free(deffiltopts);
 			deffiltopts = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "PassThru: %Z", &ptr) == 1)
+		if(gu_sscanf(confline, "PassThru: %T", &ptr) == 1)
 			{
 			if(passthru)
 				gu_free(passthru);
 			passthru = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "ACLs: %Z", &ptr) == 1)
+		if(gu_sscanf(confline, "ACLs: %T", &ptr) == 1)
 			{
 			if(acls)
 				gu_free(acls);

@@ -29,14 +29,8 @@
 */
 
 /*! \file
-	\brief safe sscanf()
+	\brief formatted scanner inspired by sscanf()
 	
-This module contains a limited version of sscanf() which allows the maximum
-width of string arguments to be specified as an additional argument.  It also
-defines additional formats such as %Z which reads a string which extends to the end
-of the input string and allocaces storage for it, and %S which reads a word 
-and allocates storage for it.
-
 */
 
 #include "config.h"
@@ -44,11 +38,11 @@ and allocates storage for it.
 #include <string.h>
 #include "gu.h"
 
-/** a safe sscanf()
+/** formatted scanner inspired by sscanf()
 
 This function is similiar to sscanf().  It has additional format specifiers
-which allocate memory and read quoted strings.  Since it is meant to read PPR
-configuration files and queue files, it goes out of its way not to heed the
+which allocate memory and read quoted strings.  Since it is meant to read 
+configuration and data files, it goes out of its way not to heed the
 current locale.
 
 It implements the following formats:
@@ -57,23 +51,35 @@ It implements the following formats:
 
 <dt>%d</dt>
 
-<dd>read a signed decimal int.  The argument should be a pointer to an int.</dd>
+<dd>read a base ten, possibly negative number and store it in an int</dd>
 
 <dt>%ld</dt>
 
-<dd>read a signed long decimal int.  The argument should be a pointer to a long int.</dd>
+<dd>read a base ten, possibly negative number and store it in a long int</dd>
+
+<dt>%hd</dt>
+
+<dd>read a base ten, possibly negative number and store it in a short int</dd>
 
 <dt>%u</dt>
 
-<dd>read an unsigned decimal int</dd>
+<dd>read an unsigned base ten number and store it in an unsigned int</dd>
+
+<dt>%lu</dt>
+
+<dd>not implemented</dd>
+
+<dt>%hu</dt>
+
+<dd>not implemented</dd>
 
 <dt>%x</dt>
 
-<dd>read an unsigned hexadecimal int</dd>
+<dd>read an unsigned hexadecimal number and store it in an unsigned int</dd>
 
 <dt>%hx</td>
 
-<dd>read an unsigned hexadecimal short int</dd>
+<dd>read an unsigned hexadecimal number and store it in a short int</dd>
 
 <dt>%f</dt>
 
@@ -101,21 +107,23 @@ them in the allocated memory.  The argument should be a pointer to a char
 pointer which will be set to the address of the allocated memory.  The
 field-width is ignored</dd>
 
-<dt>%Z</dt>
+<dt>%W (formerly %Q)</dt>
 
-<dd>Read characters up to the end of the string, allocate storeage
+<dd>Read the next logical word (possibly quoted so as to embed spaces) and allocate storage
+for it.</dd>
+
+<dt>%T (formerly %Z)</dt>
+
+<dd>Read characters up to the end of the line or string string, allocate storage
 for them, and copy them into that storage.  The argument should be a pointer to
-a char pointer to which will be set to the address of the allocated memory.</dd>
-
-<dt>%Q</dt>
-
-<dd>Read the next word (posibly quoted) and allocate storate for it.</dd>
+a char pointer to which will be set to the address of the allocated memory.  This
+is used for reading free form text such as lists which will be passed through
+an additional parsing state or comment fields.</dd>
 
 <dt>%A</dt>
 
-<dd>If there is a quoted string, read as %Q does.  Otherwise, read as %Z does.
-This is used for reading values which must be quoted if they have leading or
-trailing spaces but needn't be if they have only internal spaces.</dd>
+<dd>Read an address or filename.  If there are leading or trailing spaces, the whole
+must be quoted.  It continues to end-of-line.
 
 <dt>%t</dt>
 
@@ -217,17 +225,6 @@ int gu_sscanf(const char *input, const char *format, ...)
 						if(!suppress)
 							*(va_arg(va, long int *)) = (templong * sign);
 						}
-					else if(isshort)
-						{
-						short int tempshort = 0;
-						while(gu_ascii_isdigit(*string))
-							{
-							tempshort *= 10;
-							tempshort += gu_ascii_digit_value(*(string++));
-							}
-						if(!suppress)
-							*(va_arg(va, short int *)) = tempshort*sign; /* store it */
-						}
 					else
 						{
 						int tempint = 0;
@@ -237,7 +234,12 @@ int gu_sscanf(const char *input, const char *format, ...)
 							tempint += gu_ascii_digit_value(*(string++));
 							}
 						if(!suppress)
-							*(va_arg(va, int *)) = (tempint * sign);
+							{
+							if(isshort)
+								*(va_arg(va, short int *)) = (tempint * sign);
+							else
+								*(va_arg(va, int *)) = (tempint * sign);
+							}
 						}
 					}
 					count++;						/* increment count of values extracted */
@@ -250,10 +252,6 @@ int gu_sscanf(const char *input, const char *format, ...)
 						{
 						gu_Throw("%s(): %%lu not implemented", function);
 						}
-					else if(isshort)
-						{
-						gu_Throw("%s(): %%hu not implemented", function);
-						}
 					else
 						{
 						unsigned int tempint = 0;
@@ -263,7 +261,12 @@ int gu_sscanf(const char *input, const char *format, ...)
 							tempint += gu_ascii_digit_value(*(string++));
 							}
 						if(!suppress)
-							*(va_arg(va, unsigned int *)) = tempint;
+							{
+							if(isshort)
+								*(va_arg(va, unsigned short int *)) = tempint;
+							else
+								*(va_arg(va, unsigned int *)) = tempint;
+							}
 						}
 					count++;
 					break;
@@ -329,9 +332,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 						}
 					if(!suppress)
 						{
-						if(isshort)
-							gu_Throw("%s(): no such thing as short float", function);
-						else if(islong)
+						if(islong)
 							*(va_arg(va, double *)) = (double)sign * ((double)whole + fraction);
 						else
 							*(va_arg(va, float *)) = (float)sign * ((float)whole + fraction);
@@ -361,7 +362,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 					count++;			/* one more item done */
 					break;
 
-				case 'S':
+				case 'S':				/* word with allocation */
 					{
 					int len = strcspn(string, " \t\n");
 					*(va_arg(va, char **)) = gu_strndup(string, len);
@@ -370,18 +371,8 @@ int gu_sscanf(const char *input, const char *format, ...)
 					}
 					break;
 
-				case 'Z':
-					{
-					int len = strcspn(string, "\n");
-					*(va_arg(va,char **)) = gu_strndup(string, len);
-					string += len;
-					while(*string)
-						string++;
-					count++;
-					}
-					break;
-
-				case 'Q':
+				case 'W':				/* quotable word */
+				case 'Q':				/* phase out */
 					{
 					int len;
 					switch(*string)
@@ -394,7 +385,7 @@ int gu_sscanf(const char *input, const char *format, ...)
 							string++;
 							len = strcspn(string, "'");
 							break;
-						default:
+						default:		/* bareword */
 							len = strcspn(string, " \t\n");
 							break;
 						}
@@ -406,7 +397,17 @@ int gu_sscanf(const char *input, const char *format, ...)
 					}
 					break;
 
-				case 'A':
+				case 'T':				/* free-form text to end-of-line */
+				case 'Z':
+					{
+					int len = strcspn(string, "\n");
+					*(va_arg(va,char **)) = gu_strndup(string, len);
+					string += len;
+					count++;
+					}
+					break;
+
+				case 'A':				/* an address or filename */
 					{
 					int len;
 					switch(*string)

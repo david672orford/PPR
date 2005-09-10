@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_conffile.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 9 September 2005.
 */
 
 /*
@@ -85,12 +85,12 @@ static void cache_info(void)
 		{
 		while((line = gu_getline(line, &len, f)))
 			{
-			if(gu_sscanf(line, "Switchset: %Z", &tempptr) == 1)
+			if(gu_sscanf(line, "Switchset: %T", &tempptr) == 1)
 				{
 				set_field(switchset, tempptr);
 				continue;
 				}
-			if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
+			if(gu_sscanf(line, "PassThru: %T", &tempptr) == 1)
 				{
 				set_field(passthru, tempptr);
 				continue;
@@ -144,18 +144,18 @@ static void cache_info(void)
 						}
 					continue;
 					}
-				if(gu_sscanf(line, "PassThru: %Z", &tempptr) == 1)
+				if(gu_sscanf(line, "PassThru: %T", &tempptr) == 1)
 					{
 					set_field(passthru, tempptr);
 					continue;
 					}
 				}
-			if(gu_sscanf(line, "DefFiltOpts: %Z", &tempptr) == 1)
+			if(gu_sscanf(line, "DefFiltOpts: %T", &tempptr) == 1)
 				{
 				set_field(deffiltopts, tempptr);
 				continue;
 				}
-			if(gu_sscanf(line, "ACLs: %Z", &tempptr) == 1)
+			if(gu_sscanf(line, "ACLs: %T", &tempptr) == 1)
 				{
 				set_field(acls, tempptr);
 				continue;
