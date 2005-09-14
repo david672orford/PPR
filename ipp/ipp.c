@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 14 September 2005.
 */
 
 #include "config.h"
@@ -168,12 +168,12 @@ static void do_print_job(struct IPP *ipp)
 		/* Copy the job data to ppr. */
 		while((read_len = ipp_get_block(ipp, &p)) > 0)
 			{
-			DEBUG(("Got %d bytes", read_len));
+			/*DEBUG(("Got %d bytes", read_len));*/
 			while(read_len > 0)
 				{
 				if((write_len = write(toppr_fds[1], p, read_len)) < 0)
 					gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-				DEBUG(("Wrote %d bytes", write_len));
+				/*DEBUG(("Wrote %d bytes", write_len));*/
 				read_len -= write_len;
 				p += write_len;
 				}

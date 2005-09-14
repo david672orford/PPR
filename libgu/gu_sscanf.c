@@ -372,7 +372,6 @@ int gu_sscanf(const char *input, const char *format, ...)
 					break;
 
 				case 'W':				/* quotable word */
-				case 'Q':				/* phase out */
 					{
 					int len;
 					switch(*string)
@@ -398,7 +397,6 @@ int gu_sscanf(const char *input, const char *format, ...)
 					break;
 
 				case 'T':				/* free-form text to end-of-line */
-				case 'Z':
 					{
 					int len = strcspn(string, "\n");
 					*(va_arg(va,char **)) = gu_strndup(string, len);
