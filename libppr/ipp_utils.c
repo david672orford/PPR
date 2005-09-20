@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 14 September 2005.
 */
 
 /*! \file */
@@ -246,7 +246,7 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 */
 static void ipp_readbuf_load(struct IPP *p)
 	{
-	DEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));
+	/*DEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));*/
 	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		gu_Throw("Read failed");
 	if(p->readbuf_remaining < 1)

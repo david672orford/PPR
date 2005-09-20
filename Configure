@@ -26,12 +26,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 September 2005.
+# Last modified 14 September 2005.
 #
 
+# If this script was not invoked by "make configure", do it now.
+# "make configure" loads prior settings, selects an appropriate
+# shell and runs this script again.
+# 
 if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
 	then
 	echo "Running make configure..."
+
+	# Don't combine these two lines, some borne shells don't like it.
+	SAVED_ARGV="$*"
+	export SAVED_ARGV
+
 	make configure
 	exit $?
 	fi
@@ -130,7 +139,7 @@ opt_with_tdb=1
 opt_prompt_tdb=1
 opt_with_gettext=1
 opt_prompt_gettext=1
-for opt in $*
+for opt in $SAVED_ARGV
     do
     case $opt in
 	--prefix=* )
@@ -1175,6 +1184,7 @@ export SAFE_PATH=/usr/local/bin:/bin:/usr/bin
 export HAVE_STRSIGNAL=1
 export HAVE_SNPRINTF=1
 export HAVE_VSNPRINTF=1
+export HAVE_ASPRINTF=
 export HAVE_STATVFS=
 export HAVE_STATFS=
 export HAVE_SYS_VFS_H=

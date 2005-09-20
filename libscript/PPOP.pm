@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/PPOP.pm
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2004.
+# Last modified 14 September 2005.
 #
 
 =head1 NAME
@@ -135,7 +135,7 @@ sub launch
   my $self = shift;
   defined($self) || croak;
 
-  # If ppop is already running but it was launched with a --su switch which
+  # If ppop is already running but it was launched with a --user switch which
   # isn't correct for this object instance, shut it down so we can launch a
   # new one.  This isn't efficent, but no existing code uses object instances
   # with different user IDs, so this never happens anyway.  We are just
@@ -161,13 +161,13 @@ sub launch
     # Build the basic command line.  The -M option turns on machine-readable mode.
     my @COMMAND = ($PPR::PPOP_PATH, "-M");
 
-    # If the su() method was used, add the --su option.  Notice that we detaint the value
+    # If the su() method was used, add the --user option.  Notice that we detaint the value
     # without examining it.  We do this because it isn't really user input, though it might
     # be derived from the environment variable REMOTE_USER.
 	if($self->{su_user} ne "")
 		{
 		$self->{su_user} =~ /^(.*)$/ || die;
-		push(@COMMAND, "--su", $1);
+		push(@COMMAND, "--user", $1);
 		}
 
     # If the proxy_for() method was used, add the --proxy-for option.  The above note about
@@ -317,8 +317,8 @@ sub do_it
 =head2 The su() Method
 
 The su() method can be called at any time.  It sets a value for use with
-the B<ppop --su> switch.  If B<ppop> has already been launched with a different
-value for with no B<--su> switch, it will be relaunched.  If an application
+the B<ppop --user> switch.  If B<ppop> has already been launched with a different
+value for with no B<--user> switch, it will be relaunched.  If an application
 has multiple PPR::PPOP objects with different usernames set with
 the su() method, then using one then another will result in the restarting
 of B<ppop> which will reduce efficiency somewhat.

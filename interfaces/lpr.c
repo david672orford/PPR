@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 14 September 2005.
 */
 
 /*
@@ -48,6 +48,9 @@
 #include <signal.h>
 #include <ctype.h>
 #include <sys/utsname.h>
+#ifndef INADDR_NONE
+#define INADDR_NONE -1
+#endif
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>

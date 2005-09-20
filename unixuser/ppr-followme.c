@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 19 September 2005.
 */
 
 #include "config.h"
@@ -160,17 +160,7 @@ static int do_set(char username[], int argc, char *argv[], int i)
 		}
 
 	if(!responder_options)
-		if(!(responder_options = getenv("PPR_RESPONDER_OPTIONS")))
-			responder_options = "";
-
-	/* Detect settings that could subvert the user's intentions. */
-	{
-	char *p;
-	if((p = getenv("PPR_RESPONDER")) && strcmp(p, "followme") != 0)
-		fprintf(stderr, _("Warning: PPR_RESPONDER is set to %s\n"), p);
-	if((p = getenv("PPR_RESPONDER_ADDRESS")) && strcmp(p, username) != 0)
-		fprintf(stderr, _("Warning: PPR_RESPONDER_ADDRESS is set to %s\n"), p);
-	}
+		responder_options = "";
 
 	/* Show the user what we have decided on. */
 	printf("%s %s \"%s\"\n", responder, responder_address, responder_options);

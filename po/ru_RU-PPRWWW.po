@@ -1,13 +1,12 @@
 # PPR Message file for Russian
 # Copyright (C) 2005, Trinity College Computing Center.
 # This file is distributed under the same license as PPR.
-
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-02 10:59-0400\n"
+"POT-Creation-Date: 2005-09-14 11:59-0400\n"
 "PO-Revision-Date: 2004-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -2494,50 +2493,50 @@ msgstr ""
 msgid "Source Download"
 msgstr ""
 
-#~ msgid "Error:"
-#~ msgstr "Неудача:"
-
-#~ msgid "Error: "
-#~ msgstr "Неудача: "
-
-#~ msgid "Can't Display File"
-#~ msgstr "Не возможно показать файл"
-
-#~ msgid "Authentication Required"
-#~ msgstr "Удостоверение личности требуется"
-
-#~ msgid "Printer Status"
-#~ msgstr "Положение принтера"
-
-#~ msgid "Player:"
-#~ msgstr "Игрок:"
-
-#~ msgid "Printers to Monitor"
-#~ msgstr "Принтеры наблудать"
-
-#~ msgid "PPR Login"
-#~ msgstr "Вход в систему PPR"
-
-#~ msgid "Name:"
-#~ msgstr "Название:"
-
-#~ msgid "Retry:"
-#~ msgstr "Попытка:"
-
-#~ msgid "Countdown:"
-#~ msgstr "Через:"
-
-#~ msgid "Printer status:"
-#~ msgstr "Положение принтера:"
-
-#~ msgid "Current job:"
-#~ msgstr "Текущая задача:"
-
-#~ msgid "For:"
-#~ msgstr "Для Кого:"
+#~ msgid "Critical?"
+#~ msgstr "Важно?"
 
 #~ msgid "Alert Messages:"
 #~ msgstr "Собщенния о проблемах:"
 
-#~ msgid "Critical?"
-#~ msgstr "Важно?"
+#~ msgid "For:"
+#~ msgstr "Для Кого:"
+
+#~ msgid "Current job:"
+#~ msgstr "Текущая задача:"
+
+#~ msgid "Printer status:"
+#~ msgstr "Положение принтера:"
+
+#~ msgid "Countdown:"
+#~ msgstr "Через:"
+
+#~ msgid "Retry:"
+#~ msgstr "Попытка:"
+
+#~ msgid "Name:"
+#~ msgstr "Название:"
+
+#~ msgid "PPR Login"
+#~ msgstr "Вход в систему PPR"
+
+#~ msgid "Printers to Monitor"
+#~ msgstr "Принтеры наблудать"
+
+#~ msgid "Player:"
+#~ msgstr "Игрок:"
+
+#~ msgid "Printer Status"
+#~ msgstr "Положение принтера"
+
+#~ msgid "Authentication Required"
+#~ msgstr "Удостоверение личности требуется"
+
+#~ msgid "Can't Display File"
+#~ msgstr "Не возможно показать файл"
+
+#~ msgid "Error: "
+#~ msgstr "Неудача: "
+
+#~ msgid "Error:"
+#~ msgstr "Неудача:"

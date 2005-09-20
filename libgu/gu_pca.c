@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 14 September 2005.
 */
 
 /*! \file
@@ -213,7 +213,7 @@ void print_array(void *a)
 		{
 		if(iii > 0)
 			printf(", ");
-		printf("\"%s\"", gu_pca_index(a, iii));
+		printf("\"%s\"", (char*)gu_pca_index(a, iii));
 		}
 	printf("\n");
 	}
@@ -230,7 +230,7 @@ int main(int argc, char *argv[])
 	gu_pca_shift(array);
 	print_array(array);
 	for(i=0; i < 20; i++)
-		printf("\"%s\"\n", gu_pca_shift(array));
+		printf("\"%s\"\n", (char*)gu_pca_shift(array));
 	for(i=0; i < 20; i++)
 		gu_pca_unshift(array, "x");
 	print_array(array);

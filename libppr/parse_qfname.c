@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 14 September 2005.
 */
 
 #include "config.h"
@@ -52,7 +52,7 @@ int parse_qfname(char *buffer, const char **destname, short int *id, short int *
 	ptr++;
 
 	/* Scan for id number, and subid number. */
-	if(gu_sscanf(ptr, "%d.%d", id, subid) != 2
+	if(gu_sscanf(ptr, "%hd.%hd", id, subid) != 2
 			|| *id < 0 || *subid < 0)
 		return -1;
 

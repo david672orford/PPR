@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2005.
+** Last modified 14 September 2005.
 */
 
 /*! \file
@@ -126,12 +126,17 @@ void gu_pcs_free(void **pcs)
 	*pcs = (void*)NULL;
 	} /* end of gu_pcs_free() */
 
-/** Destroy a PCS object but keep the C string
+/** Destroy a PCS object reference but keep the C string
+ *
+ * The caller should not edit the string and should not
+ * free it until all PCS references to it have been destroyed. 
 */
 char *gu_pcs_free_keep_cstr(void **pcs)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
-	char *strptr = p->storage;
+	char *strptr;
+	gu_pcs_grow(pcs, 0);		/* ensure there is storage allocated */
+    strptr = p->storage;
 	p->lurkers++;
 	if((p->refcount - p->lurkers) == 0)
 		gu_free(*pcs);
@@ -186,6 +191,7 @@ void gu_pcs_grow(void **pcs, int new_size)
 		{
 		p->storage = gu_realloc(p->storage, (new_size + 1), sizeof(char));
 		p->storage_size = (new_size + 1);
+		p->storage[new_size] = '\0';	/* in case 'growing' to zero size */
 		}
 	}
 
@@ -263,14 +269,15 @@ modified by using this pointer.
 const char *gu_pcs_get_cstr(void **pcs)
 	{
 	struct PCS *p = (struct PCS *)*pcs;
+	gu_pcs_grow(pcs, 0);		/* ensure there is storage allocated */
 	return p->storage;
 	}
 
 /** Get pointer to an editable char[] within PCS
 
-This function should be called if you intend to edit the string in place. 
-If anyone else has a reference to it, a new copy will be made just for you.
-If you will change the length of the string, call gu_pcs_length() to
+This function should be called if you intend to edit the string in place.  If
+there are any other references to this PCS, a new copy will be made just for
+you.  If you will change the length of the string, call gu_pcs_length() to
 determine the initial length.  If you are enlarging the string, you need to
 call gu_pcs_grow() first.  If you are making the string smaller, you should
 call gu_pcs_truncate() when you are done.
@@ -290,6 +297,7 @@ char *gu_pcs_get_editable_cstr(void **pcs)
 		p = (struct PCS *)*pcs;
 		}
 
+	gu_pcs_grow(pcs, 0);	/* ensure there is storage allocated */
 	return p->storage;
 	}
 
@@ -309,7 +317,11 @@ int gu_pcs_length(void **pcs)
 */
 int gu_pcs_truncate(void **pcs, size_t newlen)
 	{
+	const char function[] = "gu_pcs_truncate";
 	struct PCS *p = (struct PCS *)*pcs;
+
+	if(newlen < 0)
+		gu_Throw("%s(): newlen=%d", function, newlen);
 
 	if(newlen < p->length)
 		{

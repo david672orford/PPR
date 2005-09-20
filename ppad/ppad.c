@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 April 2005.
+** Last modified 14 September 2005.
 */
 
 /*
@@ -87,7 +87,7 @@ static gu_boolean privileged(void)
 
 	if(!answer_username || strcmp(su_user, answer_username))
 		{
-		if(answer_username) gu_free(answer_username);
+		gu_free_if(answer_username);
 		answer_username = gu_strdup(su_user);
 		answer = user_acl_allows(su_user, "ppad");
 

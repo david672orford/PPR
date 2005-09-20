@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 14 September 2005.
 */
 
 /*! \file
@@ -45,6 +45,7 @@ likely to be useful many programs, not just in PPR.
 #include <sys/time.h>
 #include <stdarg.h>
 #include <setjmp.h>
+#include <stdlib.h>
 
 /*===================================================================
 ** Useful macros
@@ -488,6 +489,9 @@ void gu_uri_free(struct URI *uri);
 #endif
 #ifndef HAVE_VSNPRINTF
 #define vsnprintf(s, n, format, ap) gu_vsnprintf(s, n, format, ap)
+#endif
+#ifndef HAVE_ASPRINTF
+#define asprintf gu_asprintf
 #endif
 #ifndef HAVE_MKSTEMP
 #define mkstemp(template) gu_mkstemp(template)

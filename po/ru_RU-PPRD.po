@@ -1,13 +1,12 @@
 # PPR Message file for Russian
 # Copyright (C) 2005, Trinity College Computing Center.
 # This file is distributed under the same license as PPR.
-
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-08-31 13:58-0400\n"
+"POT-Creation-Date: 2005-09-14 11:59-0400\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -63,7 +62,7 @@ msgstr ""
 msgid "waiting for resource ration"
 msgstr ""
 
-#: ../pprd/pprd_load.c:197 ../pprd/pprd_load.c:200
+#: ../pprd/pprd_load.c:189 ../pprd/pprd_load.c:192
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
@@ -276,63 +275,63 @@ msgstr ""
 msgid "The print job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:886
+#: ../pprd/pprd_ppop.c:885
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:893
+#: ../pprd/pprd_ppop.c:892
 #, c-format
 msgid "\"%s\" is not a printer.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:905
+#: ../pprd/pprd_ppop.c:902
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:960 ../pprd/pprd_ppop.c:1040
+#: ../pprd/pprd_ppop.c:957 ../pprd/pprd_ppop.c:1037
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1081 ../pprd/pprd_ppop.c:1088 ../pprd/pprd_ppop.c:1282
-#: ../pprd/pprd_ppop.c:1364
+#: ../pprd/pprd_ppop.c:1078 ../pprd/pprd_ppop.c:1085 ../pprd/pprd_ppop.c:1279
+#: ../pprd/pprd_ppop.c:1361
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1221
+#: ../pprd/pprd_ppop.c:1218
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1230
+#: ../pprd/pprd_ppop.c:1227
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1235
+#: ../pprd/pprd_ppop.c:1232
 #, c-format
 msgid "1 file was moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1239
+#: ../pprd/pprd_ppop.c:1236
 #, c-format
 msgid "%d files where moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1247
+#: ../pprd/pprd_ppop.c:1244
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1249
+#: ../pprd/pprd_ppop.c:1246
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1331 ../pprd/pprd_ppop.c:1388
+#: ../pprd/pprd_ppop.c:1328 ../pprd/pprd_ppop.c:1385
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr ""

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 August 2005.
+# Last modified 14 September 2005.
 #
 
 #
@@ -165,8 +165,8 @@ dist-docs:
 # Make sure the hard-to-build docs are built, remove the easy to build stuff,
 # and build the tar file.
 dist: dist-docs clean unconfigure
-	( cd po; ./extract_to_pot.sh )
-	( cd /usr/local/src; tar zcf $$HOME/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
+	( cd po; make pot )
+	( cd /home/ppr; tar zcf $$HOME/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
 	@echo
 	@echo "Distribution archive built."
 	@echo
