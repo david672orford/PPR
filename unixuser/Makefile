@@ -44,10 +44,10 @@ all: $(PROGS)
 gettargetfile:
 	@echo "ppr-followme"
 
-ppr-xgrant$(DOTEXE): ppr-xgrant.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-xgrant$(DOTEXE): ppr-xgrant.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
-ppr-followme$(DOTEXE): ppr-followme.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-followme$(DOTEXE): ppr-followme.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -65,7 +65,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.o $(PROGS)
 
 # end of file
 

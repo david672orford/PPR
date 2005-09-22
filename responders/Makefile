@@ -40,7 +40,7 @@ LIBPROGS=ppr-respond$(DOTEXE)
 
 all: $(RESPONDERS) $(LIBPROGS)
 
-ppr-respond$(DOTEXE): ppr-respond.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-respond$(DOTEXE): ppr-respond.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -54,6 +54,6 @@ install: $(RESPONDERS) $(LIBPROGS)
 depend:
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(RESPONDERS) $(LIBPROGS)
+	$(RMF) *.o $(BACKUPS) $(RESPONDERS) $(LIBPROGS)
 
 # end of file

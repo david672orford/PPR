@@ -36,16 +36,16 @@ BIN_PROGS=ppr-ttf2ps$(DOTEXE)
 LIB_PROGS=indexfonts$(DOTEXE)
 PROGS=$(BIN_PROGS) $(LIB_PROGS)
 
-USELIBS=../libttf.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+USELIBS=../libttf.a ../libppr.a ../libgu.a
 
 #=== Build ==================================================================
 
 all: $(PROGS)
 
-ppr-ttf2ps$(DOTEXE): ppr-ttf2ps.$(OBJ) $(USELIBS)
+ppr-ttf2ps$(DOTEXE): ppr-ttf2ps.o $(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
-indexfonts$(DOTEXE): indexfonts.$(OBJ) $(USELIBS)
+indexfonts$(DOTEXE): indexfonts.o $(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -62,6 +62,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.o $(PROGS)
 
 # end of file

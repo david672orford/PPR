@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 21 September 2005.
 */
 
 #include "config.h"
@@ -70,6 +70,9 @@ static const char *uri_basename(const char uri[])
 		gu_Throw("URI \"%s\" has no basename", uri);
 	}
 
+/*
+ * Handle IPP_PRINT_JOB 
+ */
 static void do_print_job(struct IPP *ipp)
 	{
 	const char *printer_uri = NULL;
@@ -229,6 +232,9 @@ static void alarm_sighandler(int sig)
 	timeout = TRUE;
 	}
 
+/*
+ * Pass a request to pprd
+ */
 static void do_passthru(struct IPP *ipp)
 	{
 	int fifo = -1;
@@ -323,6 +329,9 @@ static void do_passthru(struct IPP *ipp)
 		}
 	} /* end of do_passthru() */
 
+/*
+ * Handle CUPS_GET_DEFAULT
+ */
 static void do_get_default(struct IPP *ipp)
 	{
 	FILE *f;
@@ -349,6 +358,85 @@ static void do_get_default(struct IPP *ipp)
 
 	if(!found)
 		ipp->response_code = IPP_NOT_FOUND;
+	}
+
+/*
+ * Handle CUPS_GET_DEVICES
+ */
+static void do_get_devices(struct IPP *ipp)
+	{
+	int iii;
+	for(iii=0; iii < 10; iii++)
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "device-class", gu_strdup("file"), TRUE);
+		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-info", "Acme Port %d", iii);
+		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-make-and-model", "unknown", iii);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_strdup("file:///x"), TRUE);
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		}
+	}
+
+/*
+ * Handle CUPS_GET_PPDS
+ */
+static void do_get_ppds(struct IPP *ipp)
+	{
+	int iii;
+	for(iii=0; iii < 10; iii++)
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "natural-language", "en", FALSE);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make", gu_strdup("Acme"), TRUE);
+		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make-and-model", "Acme 101 %d PS", iii);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "ppd-name", gu_strdup("Acme 101"), TRUE);
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		}
+	}
+
+/*
+ * Handle CUPS_ADD_PRINTER
+ */
+static void do_add_printer(struct IPP *ipp)
+	{
+	const char *printer_uri = NULL;
+	const char *device_uri = NULL;
+	const char *ppd_name = NULL;
+		
+	{
+	ipp_attribute_t *attr;
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
+		{
+		if(attr->group_tag == IPP_TAG_OPERATION)
+			{
+			if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+				printer_uri = attr->values[0].string.text;
+			}
+		else if(attr->group_tag == IPP_TAG_PRINTER)
+			{
+			if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "device-uri") == 0)
+				device_uri = attr->values[0].string.text;
+			else if(attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "ppd-name") == 0)
+				ppd_name = attr->values[0].string.text;
+			}
+		DEBUG(("Unsupported: %s", attr->name));
+		ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
+		}
+	}
+
+	if(!printer_uri)
+		{
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+
+	if(device_uri)
+		{
+		DEBUG(("ppad interface %s %s", uri_basename(printer_uri), device_uri));
+		}
+
+	if(ppd_name)
+		{
+		DEBUG(("ppad ppad %s %s", uri_basename(printer_uri), ppd_name));
+		}
 	}
 
 int main(int argc, char *argv[])
@@ -426,6 +514,15 @@ int main(int argc, char *argv[])
 				break;
 			case CUPS_GET_DEFAULT:
 				p_handler = do_get_default;
+				break;
+			case CUPS_GET_DEVICES:
+				p_handler = do_get_devices;
+				break;
+			case CUPS_GET_PPDS:
+				p_handler = do_get_ppds;
+				break;
+			case CUPS_ADD_PRINTER:
+				p_handler = do_add_printer;
 				break;
 			default:
 				p_handler = NULL;

@@ -39,10 +39,10 @@ BIN_PROGS=ppuser$(DOTEXE)
 all: $(BIN_PROGS)
 
 ppuser$(DOTEXE): \
-		ppuser.$(OBJ) \
-		../libppr.$(LIBEXT) \
-		../libgu.$(LIBEXT) \
-		../libpprdb.$(LIBEXT)
+		ppuser.o \
+		../libppr.a \
+		../libgu.a \
+		../libpprdb.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(DBLIBS) $(INTLLIBS)
 	$(CHMOD) 4755 $@
 
@@ -59,7 +59,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
 
 # end of file
 

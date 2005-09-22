@@ -58,23 +58,23 @@ PPR_LIBS=PPOP.pm
 all: $(BUILT_BINS) $(BUILT_LIBS) $(UNBUILT_LIBS) $(PPR_LIBS)
 
 # A program which calls alert().
-alert$(DOTEXE): alert.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+alert$(DOTEXE): alert.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Program to get a value from ppr.conf.
-ppr_conf_query$(DOTEXE): ppr_conf_query.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr_conf_query$(DOTEXE): ppr_conf_query.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Program which prints PPR status message stream on stdout.
-tail_status$(DOTEXE): tail_status.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+tail_status$(DOTEXE): tail_status.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Wrapper for getsockbyname().
-getservbyname$(DOTEXE): getservbyname.$(OBJ)
+getservbyname$(DOTEXE): getservbyname.o
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS)
 
 # A wrapper for mkstemp().
-mkstemp$(DOTEXE): mkstemp.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+mkstemp$(DOTEXE): mkstemp.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 # Signal values in Borne shell script form.
@@ -121,7 +121,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(BUILT_BINS) $(BUILT_LIBS) $(BUILT_OTHER)
+	$(RMF) $(BACKUPS) *.o $(BUILT_BINS) $(BUILT_LIBS) $(BUILT_OTHER)
 
 # end of file
 

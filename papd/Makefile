@@ -46,22 +46,22 @@ all-atalk: $(BIN_PROGS)
 
 # This is the server.
 papd$(DOTEXE): \
-		papd.$(OBJ) \
-		papd_$(ATALKTYPE).$(OBJ) \
-		papd_conf.$(OBJ) \
-		papd_query.$(OBJ) \
-		papd_printjob.$(OBJ) \
-		papd_login_aufs.$(OBJ) \
-		papd_login_rbi.$(OBJ) \
-		../libppr.$(LIBEXT) \
-		../libgu.$(LIBEXT) \
-		../libpprdb.$(LIBEXT)
+		papd.o \
+		papd_$(ATALKTYPE).o \
+		papd_conf.o \
+		papd_query.o \
+		papd_printjob.o \
+		papd_login_aufs.o \
+		papd_login_rbi.o \
+		../libppr.a \
+		../libgu.a \
+		../libpprdb.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ATALKLIBS) $(INTLLIBS) $(ZLIBLIBS)
 	$(CHMOD) 6755 $@
 
 # This one module might need extra flags to find the AppleTalk library 
 # include files.
-papd_$(ATALKTYPE).$(OBJ): papd_$(ATALKTYPE).c
+papd_$(ATALKTYPE).o: papd_$(ATALKTYPE).c
 	$(CC) $(ATALKFLAGS) $(CFLAGS) -c $*.c
 
 #=== Install ================================================================
@@ -82,6 +82,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
 
 # end of file

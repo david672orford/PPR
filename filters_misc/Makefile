@@ -49,10 +49,10 @@ SCRIPTS_TCL=pr.tcl
 
 all: $(BUILT)
 
-filter_hexdump$(DOTEXE): filter_hexdump.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+filter_hexdump$(DOTEXE): filter_hexdump.o ../libgu.a ../libppr.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
-make_dvips_conf$(DOTEXE): make_dvips_conf.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+make_dvips_conf$(DOTEXE): make_dvips_conf.o ../libgu.a ../libppr.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -84,6 +84,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT)
+	$(RMF) *.o $(BACKUPS) $(BUILT)
 
 # end of file

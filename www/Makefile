@@ -114,7 +114,7 @@ STYLES=shared.css help.css show_queues.css show_jobs.css cgi_wizard.css cgi_tabb
 
 all: $(BIN_PROGS) $(BIN_PROGS_SETID) $(LIB_PROGS) $(CGI_PROGS) $(LIBS) $(JAVASCRIPT) $(STYLES) $(HTML_TOP) $(HTML_GUI) $(Q_ICONS_LAST) images_subdir
 
-ppr-push-httpd$(DOTEXE): ppr-push-httpd.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-push-httpd$(DOTEXE): ppr-push-httpd.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 $(Q_ICONS_LAST):
@@ -123,8 +123,8 @@ $(Q_ICONS_LAST):
 images_subdir:
 	( cd images && $(MAKE) )
 
-ppr-passwd$(DOTEXE): ppr-passwd.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
-	$(LD) $(LDFLAGS) -o $@ ppr-passwd.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-passwd$(DOTEXE): ppr-passwd.o ../libppr.a ../libgu.a
+	$(LD) $(LDFLAGS) -o $@ ppr-passwd.o ../libppr.a ../libgu.a
 
 #== Install ==================================================================
 
@@ -166,7 +166,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS) $(BIN_PROGS_SETID) $(LIB_PROGS) $(CGI_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS) $(BIN_PROGS_SETID) $(LIB_PROGS) $(CGI_PROGS)
 	( cd q_icons; $(RMF) $(BACKUPS) )
 	( cd images; $(MAKE) clean )
 

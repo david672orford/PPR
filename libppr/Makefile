@@ -33,37 +33,37 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 LIBOBJS=\
-	int_main.$(OBJ) \
-	int_prpapst.$(OBJ) int_cmdline.$(OBJ) \
-	int_acache.$(OBJ) int_debug.$(OBJ) \
-	int_copy_job.$(OBJ) int_tcp_connect.$(OBJ) \
-	int_tcp_probe.$(OBJ) \
-	datestamp.$(OBJ) \
-	tokenize.$(OBJ) \
-	qentryfile_clear.$(OBJ) qentryfile_load.$(OBJ) qentryfile_save.$(OBJ) qentryfile_free.$(OBJ) parse_qfname.$(OBJ) \
-	quote.$(OBJ) \
-	findres.$(OBJ) \
-	protected.$(OBJ) money.$(OBJ) \
-	charge.$(OBJ) jobid.$(OBJ) pagesize.$(OBJ) \
-	options.$(OBJ) \
-	dimens.$(OBJ) foptions.$(OBJ) ali_str.$(OBJ) \
-	ppr_gcmd.$(OBJ) readppd.$(OBJ) \
-	unsafe.$(OBJ) prune_env.$(OBJ) \
-	acl.$(OBJ) \
-	cs2enc.$(OBJ) enc2font.$(OBJ) font.$(OBJ) \
-	ppr_fnamef.$(OBJ) \
-	interfaces.$(OBJ) \
-	alert.$(OBJ) \
-	tail_status.$(OBJ) \
-	query.$(OBJ) \
-	queueinfo.$(OBJ) \
-	pagemask.$(OBJ) \
-	destinfo.$(OBJ) \
-	ipp_utils.$(OBJ) \
-	get_device_id.$(OBJ) \
-	snmp_messages.$(OBJ)
+	int_main.o \
+	int_prpapst.o int_cmdline.o \
+	int_acache.o int_debug.o \
+	int_copy_job.o int_tcp_connect.o \
+	int_tcp_probe.o \
+	datestamp.o \
+	tokenize.o \
+	qentryfile_clear.o qentryfile_load.o qentryfile_save.o qentryfile_free.o parse_qfname.o \
+	quote.o \
+	findres.o \
+	protected.o money.o \
+	charge.o jobid.o pagesize.o \
+	options.o \
+	dimens.o foptions.o ali_str.o \
+	ppr_gcmd.o readppd.o \
+	unsafe.o prune_env.o \
+	acl.o \
+	cs2enc.o enc2font.o font.o \
+	ppr_fnamef.o \
+	interfaces.o \
+	alert.o \
+	tail_status.o \
+	query.o \
+	queueinfo.o \
+	pagemask.o \
+	destinfo.o \
+	ipp_utils.o \
+	get_device_id.o \
+	snmp_messages.o
 
-TARGETS=../libppr.$(LIBEXT) query_wrapper$(DOTEXE)
+TARGETS=../libppr.a query_wrapper$(DOTEXE)
 
 #=== Build ==================================================================
 
@@ -71,19 +71,19 @@ all: $(TARGETS)
 
 # This build rule for this module is listed explicitly because of the
 # -D option on in the cc command.
-ali_str.$(OBJ): ali_str.c
+ali_str.o: ali_str.c
 	$(CC) $(CFLAGS) $(ATALKFLAGS) -DATALKTYPE_$(ATALKTYPE) -c ali_str.c
 
-../libppr.$(LIBEXT): $(LIBOBJS)
+../libppr.a: $(LIBOBJS)
 	$(RMF) $@
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
 
 # This program tests the PostScript query class.
-query$(DOTEXE): query.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+query$(DOTEXE): query.c ../libppr.a ../libgu.a
 	$(CC) $(CFLAGS) -o $@ -DTEST $^
 
-query_wrapper$(DOTEXE): query_wrapper.c ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+query_wrapper$(DOTEXE): query_wrapper.c ../libppr.a ../libgu.a
 	$(CC) $(CFLAGS) -o $@ $^
 
 #=== Install ================================================================
@@ -99,7 +99,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS) query$(DOTEXE)
+	$(RMF) $(BACKUPS) *.o $(TARGETS) query$(DOTEXE)
 
 # end of file
 

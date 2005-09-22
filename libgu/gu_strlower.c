@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 February 2005.
+** Last modified 22 September 2005.
 */
 
 /** \file */
@@ -40,13 +40,12 @@ This function modifies the string converting each upper-case character
 to its lower-case equivelent.
 
 */
-char *gu_strlower(char *string)
+char *gu_ascii_strlower(char *string)
 	{
 	char *p;
 	for(p=string; *p; p++)
 		{
 		*p = tolower(*p);
-		p++;
 		}
 	return string;
 	}

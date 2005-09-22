@@ -68,7 +68,7 @@ install:
 depend:
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
 
 veryclean: clean
 	$(RMF) $(GENERATED_IMAGES)

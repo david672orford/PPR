@@ -38,7 +38,7 @@ PROGS=filter_lp$(DOTEXE)
 
 all: $(PROGS)
 
-filter_lp$(DOTEXE): filter_lp.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+filter_lp$(DOTEXE): filter_lp.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -53,7 +53,7 @@ install: $(PROGS)
 include .depend
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.o $(BACKUPS) $(PROGS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

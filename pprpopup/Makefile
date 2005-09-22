@@ -69,6 +69,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BUILT_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BUILT_PROGS)
 
 # end of file

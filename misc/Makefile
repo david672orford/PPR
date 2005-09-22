@@ -46,7 +46,7 @@ xmessage: xmessage.tcl
 	cp xmessage.tcl xmessage
 	$(CHMOD) 755 xmessage
 
-ppr-testpage$(DOTEXE): ppr-testpage.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-testpage$(DOTEXE): ppr-testpage.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -63,6 +63,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.o $(BACKUPS) $(PROGS)
 
 # end of file

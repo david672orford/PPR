@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 22 September 2005.
 */
 
 /*! \file
@@ -224,7 +224,7 @@ void gu_psprintf(const char *format, ...)
 __attribute__ (( format (printf, 1, 2) ))
 #endif
 ;
-char *gu_strlower(char *string);
+char *gu_ascii_strlower(char *string);
 char *gu_strtrim(char *string);
 char *gu_stresc_convert(char *string);
 char *gu_name_int_value(const char name[], int value);

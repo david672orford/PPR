@@ -40,7 +40,7 @@ PROGS=$(CGI_PROGS)
 
 all: $(PROGS)
 
-ipp$(DOTEXE): ipp.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+ipp$(DOTEXE): ipp.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 #=== Install ================================================================
@@ -56,7 +56,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.o $(BACKUPS) $(PROGS)
 
 # end of file
 

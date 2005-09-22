@@ -59,7 +59,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
 	rm -rf $(DIRS)
 
 veryclean:

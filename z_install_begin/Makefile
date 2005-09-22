@@ -53,7 +53,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(ALL) installed_files_list conffiles
+	$(RMF) *.o $(BACKUPS) $(ALL) installed_files_list conffiles
 
 # end of file
 

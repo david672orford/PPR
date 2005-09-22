@@ -32,16 +32,16 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-LIBOBJS=$(USER_DBM)_dbauth.$(OBJ) $(USER_DBM)_dbtrans.$(OBJ) \
-	$(USER_DBM)_dbmod.$(OBJ) dbstrlower.$(OBJ)
+LIBOBJS=$(USER_DBM)_dbauth.o $(USER_DBM)_dbtrans.o \
+	$(USER_DBM)_dbmod.o dbstrlower.o
 
-TARGETS=../libpprdb.$(LIBEXT)
+TARGETS=../libpprdb.a
 
 #=== Build ==================================================================
 
 all: $(TARGETS)
 
-../libpprdb.$(LIBEXT): $(LIBOBJS)
+../libpprdb.a: $(LIBOBJS)
 	$(RMF) $@
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
@@ -55,7 +55,7 @@ install: all
 include .depend
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(TARGETS)
+	$(RMF) *.o $(BACKUPS) $(TARGETS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

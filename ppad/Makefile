@@ -40,16 +40,16 @@ CONF_DATA=media.sample
 all: $(BIN_PROGS)
 
 ppad$(DOTEXE): \
-		ppad.$(OBJ) \
-		ppad_printer.$(OBJ) \
-		ppad_media.$(OBJ) \
-		ppad_group.$(OBJ) \
-		ppad_conf.$(OBJ) \
-		ppad_util.$(OBJ) \
-		ppad_alias.$(OBJ) \
-		ppad_ppd.$(OBJ) \
-		../libppr.$(LIBEXT) \
-		../libgu.$(LIBEXT)
+		ppad.o \
+		ppad_printer.o \
+		ppad_media.o \
+		ppad_group.o \
+		ppad_conf.o \
+		ppad_util.o \
+		ppad_alias.o \
+		ppad_ppd.o \
+		../libppr.a \
+		../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 	chmod 4755 $@
 
@@ -67,6 +67,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
 
 # end of file

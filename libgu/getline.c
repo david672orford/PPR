@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 22 September 2005.
 */
 
 /*! \file
@@ -82,16 +82,20 @@ char *gu_getline(char *line, int *space_available, FILE *fstream)
 
 	len = strlen(line);
 
+	/* If fgets() filled the available space but the last character 
+	 * is not a newline,
+	 */
 	while(len == (*space_available - 1) && line[len - 1] != '\n')
 		{
-		*space_available *= 2;
+		*space_available *= 2;		/* double the space */
 		line = (char*)gu_realloc(line, *space_available, sizeof(char));
-		if(!fgets((line + len), (*space_available - len), fstream)) break;
+		if(!fgets((line + len), (*space_available - len), fstream))
+			break;
 		len = strlen(line);
 		}
 
 	/* Remove trailing newlines, carriage returns, spaces, and tabs. */
-	while((--len >= 0) && isspace(line[len]))
+	while((--len >= 0) && gu_ascii_isspace(line[len]))
 		line[len] = '\0';
 
 	return line;

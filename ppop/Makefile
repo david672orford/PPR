@@ -41,12 +41,12 @@ LIB_PROGS=
 all: $(BIN_PROGS) $(LIB_PROGS)
 
 ppop$(DOTEXE): \
-		ppop.$(OBJ) \
-		ppop_cmds_listq.$(OBJ) \
-		ppop_cmds_other.$(OBJ) \
-		ppop_modify.$(OBJ) \
-		../libppr.$(LIBEXT) \
-		../libgu.$(LIBEXT)
+		ppop.o \
+		ppop_cmds_listq.o \
+		ppop_cmds_other.o \
+		ppop_modify.o \
+		../libppr.a \
+		../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 	$(CHMOD) 4755 $@
 
@@ -64,7 +64,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(BIN_PROGS) $(LIB_PROGS)
+	$(RMF) $(BACKUPS) *.o $(BIN_PROGS) $(LIB_PROGS)
 
 # end of file
 

@@ -58,7 +58,7 @@ struct URI *gu_uri_new(const char uri_string[])
 	uri = gu_alloc(1, sizeof(struct URI));
 
 	uri->method = gu_pca_shift(uri_matches);
-	gu_strlower(uri->method);
+	gu_ascii_strlower(uri->method);
 
 	uri->node = gu_pca_shift(uri_matches);
 

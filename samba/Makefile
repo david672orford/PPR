@@ -50,10 +50,10 @@ all-tdb: $(PROGS_TDB)
 #	../subst_tool <smb-protos.conf.template >smb-protos.conf
 #	chmod 444 smb-protos.conf
 
-ppr2samba$(DOTEXE): ppr2samba.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr2samba$(DOTEXE): ppr2samba.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 
-sambaprint$(DOTEXE): sambaprint.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+sambaprint$(DOTEXE): sambaprint.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) -ltdb
 
 #=== Install ================================================================
@@ -75,7 +75,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS) $(PROGS_TDB)
+	$(RMF) *.o $(BACKUPS) $(PROGS) $(PROGS_TDB)
 
 # end of file
 

@@ -55,7 +55,7 @@ install: all
 #=== Housekeeping ===========================================================
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PPDS)
+	$(RMF) *.o $(BACKUPS) $(PPDS)
 
 # end of file
 

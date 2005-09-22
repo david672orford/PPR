@@ -71,7 +71,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(TARGETS)
+	$(RMF) *.o $(BACKUPS) $(TARGETS)
 	$(RMF) installed_files_list
 	# We need an empty file so make will run to build it.
 	touch paths.mk

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--19 September 2005
+2.00a1, 11 December 2004--22 September 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9847,6 +9847,10 @@ no final tarball was released.
   it empty and they extracts the C char array, the result will be an empty 
   string rather than a NULL pointer.
 
-
+* Configure and all Makefiles: removed OBJ and LIBEXT variables since it seems
+  that all POSIX compatible programming environments (including Cygwin) use
+  .o for OBJ and .a for LIBEXT.  Thus, these "cross platform feature" served
+  only to obfuscate the makefiles.  This change can be reversed fairly easily.
+  DOTEXE remains for now.
 
 

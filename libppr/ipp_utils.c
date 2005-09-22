@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 22 September 2005.
 */
 
 /*! \file */
@@ -199,7 +199,9 @@ static int tag_simplify(int value_tag)
 			return value_tag;
 		}
 	}
-	
+
+/* ======================================================================= */
+
 /*! create IPP request handling object
 
 This function creates an IPP service object.  The IPP request will be read
@@ -977,7 +979,7 @@ void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr)
 */
 void ipp_add_end(struct IPP *ipp, int group)
 	{
-	ipp_add_attribute(ipp, group, IPP_TAG_END, NULL, 1);
+	ipp_add_attribute(ipp, group, IPP_TAG_END, NULL, 1);	/* !!! is 1 correct? !!! */
 	}
 
 /** add an integer to the IPP response
@@ -1103,6 +1105,147 @@ ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const c
 		}
 		
 	return p;
+	}
+
+/* ======================================================================= */
+
+/** Create an object which can tell us if an attribute was requested.
+ *
+ * We pass the IPP object to the constructor and it reads the operation
+ * attributes from it and files away the values of those which we have
+ * told it are supported. 
+ */ 
+struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported)
+	{
+	struct REQUEST_ATTRS *this;
+	ipp_attribute_t *attr;
+
+	this = gu_alloc(1, sizeof(struct REQUEST_ATTRS));
+	this->requested_attributes = gu_pch_new(25);
+	this->requested_attributes_all = FALSE;
+	this->printer_uri = NULL;
+	this->printer_uri_obj = NULL;
+	this->printer_name = NULL;
+	this->job_uri = NULL;
+	this->job_uri_obj = NULL;
+	this->job_id = -1;
+	this->device_class = NULL;
+	this->ppd_make = NULL;
+	this->limit = -1;
+
+	/* Traverse the request's operation attributes. */
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
+		{
+		if(attr->group_tag != IPP_TAG_OPERATION)
+			continue;
+		if(attr->value_tag == IPP_TAG_KEYWORD && strcmp(attr->name, "requested-attributes") == 0)
+			{
+			int iii;
+			for(iii=0; iii<attr->num_values; iii++)
+				gu_pch_set(this->requested_attributes, attr->values[iii].string.text, "TRUE");
+			}
+		else if(supported & REQUEST_ATTRS_SUPPORTS_PRINTER && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+			this->printer_uri = attr->values[0].string.text;
+		else if(supported & (REQUEST_ATTRS_SUPPORTS_PRINTER|REQUEST_ATTRS_SUPPORTS_JOB) && attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "printer-name") == 0)
+			this->printer_name = attr->values[0].string.text;
+		else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "job-uri") == 0)
+			this->job_uri = attr->values[0].string.text;
+		else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_INTEGER && strcmp(attr->name, "job-id") == 0)
+			this->job_id = attr->values[0].integer;
+		else if(supported & REQUEST_ATTRS_SUPPORTS_DEVICE_CLASS && attr->value_tag == IPP_TAG_KEYWORD && strcmp(attr->name, "device-class") == 0)
+			this->device_class = attr->values[0].string.text;
+		else if(supported & REQUEST_ATTRS_SUPPORTS_PPD_MAKE && attr->value_tag == IPP_TAG_TEXT && strcmp(attr->name, "ppd-make") == 0)
+			this->ppd_make = attr->values[0].string.text;
+		else if(supported & REQUEST_ATTRS_SUPPORTS_LIMIT && attr->value_tag == IPP_TAG_INTEGER && strcmp(attr->name, "limit") == 0)
+			this->limit = attr->values[0].integer;
+		else
+			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
+		}
+
+	/* If no attributes were requested or "all" were requested, */
+	if(gu_pch_size(this->requested_attributes) == 0 || gu_pch_get(this->requested_attributes, "all"))
+		this->requested_attributes_all = TRUE;
+
+	/* Parse the URLs and store the results in objects. */
+	if(this->printer_uri)
+		this->printer_uri_obj = gu_uri_new(this->printer_uri);
+	if(this->job_uri)
+		this->job_uri_obj = gu_uri_new(this->job_uri);
+
+	return this;
+	}
+
+/** Destroy a requested attributes object.
+ *
+ * Remember that we mustn't try to free printer_uri or printer_name since
+ * they are simply pointers to the values allocated in the IPP object.
+ */ 
+void request_attrs_free(struct REQUEST_ATTRS *this)
+	{
+	char *name, *value;
+	for(gu_pch_rewind(this->requested_attributes); (name = gu_pch_nextkey(this->requested_attributes, (void*)&value)); )
+		{
+		if(strcmp(value, "TOUCHED") != 0)
+			{
+			debug("requested attribute \"%s\" not implemented", name);
+			}
+		}
+	gu_pch_free(this->requested_attributes);
+	if(this->printer_uri_obj)
+		gu_uri_free(this->printer_uri_obj);
+	gu_free(this);
+	}
+
+/** Return true if the indicate attributes was requested. */
+gu_boolean request_attrs_attr_requested(struct REQUEST_ATTRS *this, char name[])
+	{
+	if(this->requested_attributes_all)
+		return TRUE;
+	if(gu_pch_get(this->requested_attributes, name))
+		{
+		gu_pch_set(this->requested_attributes, name, "TOUCHED");
+		return TRUE;
+		}
+	return FALSE;
+	}
+
+/** Return the requested queue name or NULL if none requested. */
+char *request_attrs_destname(struct REQUEST_ATTRS *this)
+	{
+	if(this->printer_name)
+		return this->printer_name;
+	if(this->printer_uri)
+		return this->printer_uri_obj->basename;		/* possibly null */
+	return NULL;
+	}
+
+/** Return the requested job ID or -1 if none was requested. */
+int request_attrs_jobid(struct REQUEST_ATTRS *this)
+	{
+	if(this->job_id != -1)
+		return this->job_id;
+	if(this->job_uri_obj && this->job_uri_obj->basename)
+		{
+		int id = atoi(this->job_uri_obj->basename);
+		if(id > 0)
+			return id;
+		}
+	return -1;
+	}
+
+char *request_attrs_device_class(struct REQUEST_ATTRS *this)
+	{
+	return this->device_class;
+	}
+
+char *request_attrs_ppd_make(struct REQUEST_ATTRS *this)
+	{
+	return this->ppd_make;
+	}
+
+int requset_attrs_limit(struct REQUEST_ATTRS *this)
+	{
+	return this->limit;
 	}
 
 /* end of file */

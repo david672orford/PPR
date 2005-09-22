@@ -52,38 +52,38 @@ all-atalk: $(ATALK_PROGS)
 # Build the AppleTalk interface by linking the atalk.o created by the rule
 # below with the AppleTalk libraries for this system as defined in
 # Makefile.conf as ATALKLIBS.
-atalk$(DOTEXE): atalk_$(ATALKTYPE).$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+atalk$(DOTEXE): atalk_$(ATALKTYPE).o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ATALKLIBS)
 
-atalk_$(ATALKTYPE).$(OBJ): atalk_$(ATALKTYPE).c
+atalk_$(ATALKTYPE).o: atalk_$(ATALKTYPE).c
 	$(CC) $(ATALKFLAGS) $(CFLAGS) -c $*.c
 
 # This target will only be compiled on AT&T systems with STREAMS NetBIOS.
-clispool$(DOTEXE): clispool.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+clispool$(DOTEXE): clispool.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ -lnsl $(INTLLIBS)
 
 # Berkely LPR/LPD protocol client:
-lpr$(DOTEXE): lpr.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+lpr$(DOTEXE): lpr.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 # Parallel port interface:
-parallel$(DOTEXE): parallel.$(OBJ) parallel_$(PARALLEL).$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+parallel$(DOTEXE): parallel.o parallel_$(PARALLEL).o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Serial port interface
-serial$(DOTEXE): serial.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+serial$(DOTEXE): serial.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # HP JetDirect style TCP/IP interface
-tcpip$(DOTEXE): tcpip.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+tcpip$(DOTEXE): tcpip.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 # USB printer
-usb$(DOTEXE): usb.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+usb$(DOTEXE): usb.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # Axis PROS protocol
-pros$(DOTEXE): pros.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+pros$(DOTEXE): pros.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 #=== Install ================================================================
@@ -108,7 +108,7 @@ install-netbios: $(NETBIOS_PROGS)
 include .depend
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS) atalk$(DOTEXE) clispool$(DOTEXE)
+	$(RMF) *.o $(BACKUPS) $(PROGS) atalk$(DOTEXE) clispool$(DOTEXE)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

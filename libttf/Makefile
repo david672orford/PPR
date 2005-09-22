@@ -32,14 +32,14 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-LIBOBJS=ttf_object.$(OBJ) endian.$(OBJ) fixed.$(OBJ) loadtable.$(OBJ) \
-	loadname.$(OBJ) \
-	head.$(OBJ) name.$(OBJ) ps_header.$(OBJ) ps_trailer.$(OBJ) \
-	charstrings.$(OBJ) ttf_get_psname.$(OBJ) \
-	ps_type3.$(OBJ) ttf_psout.$(OBJ) ps_sfnts.$(OBJ) \
-	ttf_strerror.$(OBJ)
+LIBOBJS=ttf_object.o endian.o fixed.o loadtable.o \
+	loadname.o \
+	head.o name.o ps_header.o ps_trailer.o \
+	charstrings.o ttf_get_psname.o \
+	ps_type3.o ttf_psout.o ps_sfnts.o \
+	ttf_strerror.o
 
-TARGETS=../libttf.$(LIBEXT)
+TARGETS=../libttf.a
 
 #=== Build ==================================================================
 
@@ -48,7 +48,7 @@ all: $(TARGETS)
 libttf_private.h: ../include/libttf.h
 	touch libttf_private.h
 
-../libttf.$(LIBEXT): $(LIBOBJS)
+../libttf.a: $(LIBOBJS)
 	$(RMF) $@
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
@@ -65,7 +65,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS)
+	$(RMF) $(BACKUPS) *.o $(TARGETS)
 
 # end of file
 

@@ -39,13 +39,13 @@ PROGS=pprd$(DOTEXE) pprd-question
 all: $(PROGS)
 
 pprd$(DOTEXE): \
-		pprd.$(OBJ) pprd_log.$(OBJ) pprd_queue.$(OBJ) \
-		pprd_respond.$(OBJ) pprd_alert.$(OBJ) pprd_ppop.$(OBJ) \
-		pprd_remind.$(OBJ) pprd_destid.$(OBJ) \
-		pprd_mainsup.$(OBJ) pprd_load.$(OBJ) pprd_pprdrv.$(OBJ) \
-		pprd_media.$(OBJ) pprd_printer.$(OBJ) pprd_state.$(OBJ) \
-		pprd_question.$(OBJ) pprd_ipp.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 
+		pprd.o pprd_log.o pprd_queue.o \
+		pprd_respond.o pprd_alert.o pprd_ppop.o \
+		pprd_remind.o pprd_destid.o \
+		pprd_mainsup.o pprd_load.o pprd_pprdrv.o \
+		pprd_media.o pprd_printer.o pprd_state.o \
+		pprd_question.o pprd_ipp.o \
+		../libppr.a ../libgu.a 
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 	$(CHMOD) 6755 $@
 
@@ -75,7 +75,7 @@ install: $(PROGS)
 include .depend
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.o $(BACKUPS) $(PROGS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

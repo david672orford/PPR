@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 September 2005.
+# Last modified 22 September 2005.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -1267,9 +1267,7 @@ HAVE_STATVFS=1
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -sq
 RANLIB=touch
 CC=gcc
@@ -1301,9 +1299,7 @@ BIND_ACCESS_BUG=1
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
@@ -1328,9 +1324,7 @@ BIND_ACCESS_BUG=1
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
@@ -1355,9 +1349,7 @@ HAVE_SETSID=
 MAKE=gmake
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
@@ -1382,9 +1374,7 @@ HAVE_INITGROUPS=1
 MAKE=gmake
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
@@ -1413,9 +1403,7 @@ HAVE_INITGROUPS=1
 MAKE=make
 MAKEFLAGS=--no-print-directory
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -crs
 RANLIB=touch
 
@@ -1470,9 +1458,7 @@ HAVE_MEMMOVE=
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 CC=gcc
@@ -1499,9 +1485,7 @@ HAVE_STATVFS=1
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 ===EndOSF1===
@@ -1544,9 +1528,7 @@ HAVE_STATVFS=1
 MAKE=gmake
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 ===EndIRIX===
@@ -1598,9 +1580,7 @@ SAFE_PATH=/bin:/usr/bin:/winnt/system32:/winnt
 MAKE=make
 MAKEFLAGS=--no-print-directory
 STRIP=strip
-OBJ=o
 DOTEXE=.exe
-LIBEXT=a
 LIBCMD=ar -crs
 RANLIB=touch
 CC=gcc
@@ -1629,9 +1609,7 @@ HAVE_STRSIGNAL=
 MAKE=make
 MAKEFLAGS=
 STRIP=touch
-OBJ=o
 DOTEXE=.exe
-LIBEXT=a
 LIBCMD=ar -cr
 RANLIB=touch
 ===EndUWIN1===
@@ -1688,9 +1666,7 @@ HAVE_SETRESGID=1
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -q
 RANLIB=touch
 ===EndHPUX1===
@@ -1734,9 +1710,7 @@ HAVE_VSNPRINTF=
 MAKE=s5make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -crs
 RANLIB=touch
 ===EndULTRIX1===
@@ -1784,9 +1758,7 @@ SAFE_PATH=/sw/bin:/usr/bin:/bin
 MAKE=make
 MAKEFLAGS=
 STRIP=strip
-OBJ=o
 DOTEXE=
-LIBEXT=a
 LIBCMD=ar -cr
 RANLIB=ranlib
 CC=cc
@@ -1811,7 +1783,7 @@ cat >&3 <<'===MakeRules==='
 # have the same internal rules.
 #==============================================================
 
-.SUFFIXES: .in .sh .perl .tcl .c .$(OBJ)
+.SUFFIXES: .in .sh .perl .tcl .c .o
 
 # Do substitutions in .in files to create their targets.
 .in:
@@ -1838,7 +1810,7 @@ cat >&3 <<'===MakeRules==='
 	chmod 555 $*
 
 # Build an object file from a single .c file.
-.c.$(OBJ):
+.c.o:
 	$(CC) $(CFLAGS) -c $*.c
 
 ===MakeRules===

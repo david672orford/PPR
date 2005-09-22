@@ -76,7 +76,7 @@ install: all-docs
 #=== Housekeeping ===========================================================
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS)
+	$(RMF) *.o $(BACKUPS)
 	$(RMF) *.dvi *.aux *.log *.toc *.tex *.ps
 
 # Remove anything that can be reconstructed.

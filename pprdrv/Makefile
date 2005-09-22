@@ -41,38 +41,38 @@ LIB_DATA=lw-messages.conf pjl-messages.conf pserrors.conf
 all: $(LIB_PROGS)
 
 pprdrv$(DOTEXE): \
-		pprdrv.$(OBJ) \
-		pprdrv_interface.$(OBJ) \
-		pprdrv_feedback.$(OBJ) \
-		pprdrv_rip.$(OBJ) \
-		pprdrv_flag.$(OBJ) \
-		pprdrv_custom_hook.$(OBJ) \
-		pprdrv_buf.$(OBJ) \
-		pprdrv_ppd.$(OBJ) \
-		pprdrv_res.$(OBJ) \
-		pprdrv_capable.$(OBJ) \
-		pprdrv_media.$(OBJ) \
-		pprdrv_nup.$(OBJ) \
-		pprdrv_req.$(OBJ) \
-		pprdrv_signature.$(OBJ) \
-		pprdrv_reason.$(OBJ) \
-		pprdrv_patch.$(OBJ) \
-		pprdrv_pagecount.$(OBJ) \
-		pprdrv_commentary.$(OBJ) \
-		pprdrv_ppop_status.$(OBJ) \
-		pprdrv_progress.$(OBJ) \
-		pprdrv_writemon.$(OBJ) \
-		pprdrv_snmp.$(OBJ) \
-		pprdrv_lw_messages.$(OBJ) pprdrv_pjl_messages.$(OBJ) \
-		pprdrv_tt.$(OBJ) pprdrv_pfb.$(OBJ) pprdrv_mactt.$(OBJ) \
-		pprdrv_notppd.$(OBJ) \
-		pprdrv_persistent.$(OBJ) pprdrv_fault_debug.$(OBJ) \
-		pprdrv_userparams.$(OBJ) \
-		pprdrv_log.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libttf.$(LIBEXT) ../libpprdb.$(LIBEXT)
+		pprdrv.o \
+		pprdrv_interface.o \
+		pprdrv_feedback.o \
+		pprdrv_rip.o \
+		pprdrv_flag.o \
+		pprdrv_custom_hook.o \
+		pprdrv_buf.o \
+		pprdrv_ppd.o \
+		pprdrv_res.o \
+		pprdrv_capable.o \
+		pprdrv_media.o \
+		pprdrv_nup.o \
+		pprdrv_req.o \
+		pprdrv_signature.o \
+		pprdrv_reason.o \
+		pprdrv_patch.o \
+		pprdrv_pagecount.o \
+		pprdrv_commentary.o \
+		pprdrv_ppop_status.o \
+		pprdrv_progress.o \
+		pprdrv_writemon.o \
+		pprdrv_snmp.o \
+		pprdrv_lw_messages.o pprdrv_pjl_messages.o \
+		pprdrv_tt.o pprdrv_pfb.o pprdrv_mactt.o \
+		pprdrv_notppd.o \
+		pprdrv_persistent.o pprdrv_fault_debug.o \
+		pprdrv_userparams.o \
+		pprdrv_log.o \
+		../libppr.a ../libgu.a ../libttf.a ../libpprdb.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(DBLIBS) $(SOCKLIBS) $(INTLLIBS) $(ZLIBLIBS)
 
-ppr-gs$(DOTEXE): ppr-gs.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+ppr-gs$(DOTEXE): ppr-gs.o ../libgu.a ../libppr.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 #=== Install ================================================================
@@ -89,7 +89,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(LIB_PROGS)
+	$(RMF) $(BACKUPS) *.o $(LIB_PROGS)
 
 # end of file
 

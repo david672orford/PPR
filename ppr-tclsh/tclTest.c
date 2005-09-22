@@ -592,7 +592,7 @@ TestcmdtokenCmd(dummy, interp, argc, argv)
 		(ClientData) "original", (Tcl_CmdDeleteProc *) NULL);
 	sprintf(interp->result, "%lx", (long int) token);
     } else if (strcmp(argv[1], "name") == 0) {
-	if (gu_sscanf(argv[2], "%lx", &l) != 1) {
+	if (sscanf(argv[2], "%lx", &l) != 1) {
 	    Tcl_AppendResult(interp, "bad command token \"", argv[2],
 		    "\"", (char *) NULL);
 	    return TCL_ERROR;

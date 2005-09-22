@@ -833,10 +833,7 @@ int ppdlib_search(const char *argv[])
 
 	if(!(pattern = argv[0]) || argv[1])
 		{
-		fputs(
-			_("You must supply a search pattern.\n"),
-			errors
-			);
+		fputs(_("You must supply a search pattern.\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
@@ -846,8 +843,7 @@ int ppdlib_search(const char *argv[])
 		return EXIT_INTERNAL;
 		}
 
-	pattern_lowered = gu_strdup(pattern);
-	gu_strlower(pattern_lowered);
+	pattern_lowered = gu_ascii_strlower(gu_strdup(pattern));
 	wildcards = strchr(pattern, '*') || strchr(pattern, '?');
 
 	while((line = gu_getline(line, &line_len, f)))
@@ -863,8 +859,7 @@ int ppdlib_search(const char *argv[])
 			continue;
 			}
 
-		f_description_lowered = gu_strdup(f_description);
-		gu_strlower(f_description_lowered);
+		f_description_lowered = gu_ascii_strlower(gu_strdup(f_description));
 		
 		if((wildcards && gu_wildmat(f_description_lowered, pattern_lowered))
 				||

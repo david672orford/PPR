@@ -50,10 +50,10 @@ TCL_LIBRARY = $(LIBDIR)
 #
 # If you don't have them enabled, then you can't run the regression tests. 
 #
-MATH_FLAGS =
-MATH_LIBS = -lm
-#MATH_FLAGS = -DTCL_NO_MATH
-#MATH_LIBS =
+#MATH_FLAGS =
+#MATH_LIBS = -lm
+MATH_FLAGS = -DTCL_NO_MATH
+MATH_LIBS =
 
 #
 # To enable memory debugging reverse the comment characters on the following
@@ -69,29 +69,29 @@ MORE_CFLAGS = -I. $(MATH_FLAGS) $(MEM_DEBUG_FLAGS) -DTCL_LIBRARY=\"$(TCL_LIBRARY
 
 #=== Inventory ==============================================================
 
-GENERIC_OBJS=regexp.$(OBJ) \
-	tclAsync.$(OBJ) \
-	tclBasic.$(OBJ) \
-	tclCkalloc.$(OBJ) \
-	tclCmdAH.$(OBJ) \
-	tclCmdIL.$(OBJ) \
-	tclCmdMZ.$(OBJ) \
-	tclExpr.$(OBJ) \
-	tclGet.$(OBJ) \
-	tclHash.$(OBJ) \
-	tclLink.$(OBJ) \
-	tclParse.$(OBJ) \
-	tclProc.$(OBJ) \
-	tclUtil.$(OBJ) \
-	tclVar.$(OBJ) 
+GENERIC_OBJS=regexp.o \
+	tclAsync.o \
+	tclBasic.o \
+	tclCkalloc.o \
+	tclCmdAH.o \
+	tclCmdIL.o \
+	tclCmdMZ.o \
+	tclExpr.o \
+	tclGet.o \
+	tclHash.o \
+	tclLink.o \
+	tclParse.o \
+	tclProc.o \
+	tclUtil.o \
+	tclVar.o 
 
-UNIX_OBJS=panic.$(OBJ) \
-	tclEnv.$(OBJ) \
-	tclGlob.$(OBJ) \
-	tclMain.$(OBJ) \
-	tclUnixAZ.$(OBJ) \
-	tclUnixStr.$(OBJ) \
-	tclUnixUtil.$(OBJ)
+UNIX_OBJS=panic.o \
+	tclEnv.o \
+	tclGlob.o \
+	tclMain.o \
+	tclUnixAZ.o \
+	tclUnixStr.o \
+	tclUnixUtil.o
 
 OBJS = $(GENERIC_OBJS) $(UNIX_OBJS)
 
@@ -99,17 +99,17 @@ BIN_PROGS=ppr-tclsh$(DOTEXE)
 
 #=== Build ==================================================================
 
-all: libtcl.$(LIBEXT) $(BIN_PROGS)
+all: libtcl.a $(BIN_PROGS)
 
-.c.$(OBJ):
+.c.o:
 	$(CC) $(CFLAGS) $(MORE_CFLAGS) -c $*.c
 
-libtcl.$(LIBEXT): $(OBJS)
+libtcl.a: $(OBJS)
 	$(RMF) $@
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
 
-ppr-tclsh$(DOTEXE): ppr-tclsh.$(OBJ) libtcl.$(LIBEXT) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+ppr-tclsh$(DOTEXE): ppr-tclsh.o libtcl.a ../libppr.a ../libgu.a
 	$(CC) $(CC_SWITCHES) -o $@ $^ $(MATH_LIBS)
 
 #=== Test ===================================================================
@@ -117,8 +117,8 @@ ppr-tclsh$(DOTEXE): ppr-tclsh.$(OBJ) libtcl.$(LIBEXT) ../libppr.$(LIBEXT) ../lib
 test: tcltest$(DOTEXE)
 	( cd tests && ../tcltest all )
 
-tcltest$(DOTEXE): tclTest.$(OBJ) libtcl.$(LIBEXT)
-	$(CC) $(CC_SWITCHES) -o tcltest$(DOTEXE) tclTest.$(OBJ) libtcl.$(LIBEXT) ../libgu.$(LIBEXT) $(MATH_LIBS)
+tcltest$(DOTEXE): tclTest.o libtcl.a
+	$(CC) $(CC_SWITCHES) -o tcltest$(DOTEXE) tclTest.o libtcl.a ../libgu.a $(MATH_LIBS)
 
 #=== Install ================================================================
 
@@ -133,6 +133,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) libtcl.$(LIBEXT) $(BIN_PROGS) tcltest$(DOTEXE)
+	$(RMF) *.o $(BACKUPS) libtcl.a $(BIN_PROGS) tcltest$(DOTEXE)
 
 # end of file

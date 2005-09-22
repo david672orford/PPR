@@ -39,14 +39,14 @@ PROGS=ppr$(DOTEXE) tbcp2bin$(DOTEXE)
 all: $(PROGS)
 
 ppr$(DOTEXE): \
-		ppr_main.$(OBJ) ppr_infile.$(OBJ) ppr_outfile.$(OBJ) \
-		ppr_media.$(OBJ) ppr_rcache.$(OBJ) ppr_req.$(OBJ) \
-		ppr_res.$(OBJ) ppr_old2new.$(OBJ) ppr_dscdoc.$(OBJ) \
-		ppr_respond.$(OBJ) ppr_split.$(OBJ) ppr_conffile.$(OBJ) \
-		ppr_nest.$(OBJ) ppr_things.$(OBJ) \
-		ppr_simplify.$(OBJ) ppr_editps.$(OBJ) \
-		ppr_features.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT) ../libpprdb.$(LIBEXT)
+		ppr_main.o ppr_infile.o ppr_outfile.o \
+		ppr_media.o ppr_rcache.o ppr_req.o \
+		ppr_res.o ppr_old2new.o ppr_dscdoc.o \
+		ppr_respond.o ppr_split.o ppr_conffile.o \
+		ppr_nest.o ppr_things.o \
+		ppr_simplify.o ppr_editps.o \
+		ppr_features.o \
+		../libppr.a ../libgu.a ../libpprdb.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(DBLIBS) $(INTLLIBS) $(ZLIBLIBS)
 	$(CHMOD) 4755 $@
 
@@ -64,6 +64,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.o $(PROGS)
 
 # end of file

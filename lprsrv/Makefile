@@ -36,26 +36,26 @@ LIB_PROGS=lprsrv$(DOTEXE)
 BIN_PROGS=lprsrv-test$(DOTEXE)
 PROGS=$(BIN_PROGS) $(LIB_PROGS)
 
-USELIBS=../libgu.$(LIBEXT) ../libppr.$(LIBEXT) 
+USELIBS=../libgu.a ../libppr.a 
 
 #=== Build ==================================================================
 
 all: $(PROGS)
 
 lprsrv$(DOTEXE): \
-		lprsrv.$(OBJ) lprsrv_client_info.$(OBJ) lprsrv_conf.$(OBJ) \
-		lprsrv_print.$(OBJ) lprsrv_list.$(OBJ) lprsrv_cancel.$(OBJ) \
-		lprsrv_standalone.$(OBJ) \
-		uprint_claim_ppr.$(OBJ) \
-		uprint_obj.$(OBJ) \
-		uprint_sysv.$(OBJ) \
-		uprint_xlate.$(OBJ) \
-		uprint_print_ppr.$(OBJ) \
-		uprint_run.$(OBJ) \
+		lprsrv.o lprsrv_client_info.o lprsrv_conf.o \
+		lprsrv_print.o lprsrv_list.o lprsrv_cancel.o \
+		lprsrv_standalone.o \
+		uprint_claim_ppr.o \
+		uprint_obj.o \
+		uprint_sysv.o \
+		uprint_xlate.o \
+		uprint_print_ppr.o \
+		uprint_run.o \
 		$(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
-lprsrv-test$(DOTEXE): lprsrv-test.$(OBJ) lprsrv_conf.$(OBJ) $(USELIBS)
+lprsrv-test$(DOTEXE): lprsrv-test.o lprsrv_conf.o $(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS) $(INTLLIBS)
 
 #=== Install ================================================================
@@ -70,7 +70,7 @@ install: $(PROGS) lprsrv.conf.sample
 include .depend
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.o $(PROGS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

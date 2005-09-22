@@ -42,7 +42,7 @@ all: $(PROGS)
 	( cd ghostscript; $(MAKE) )
 	( cd generic; $(MAKE) )
 
-indexppds$(DOTEXE): indexppds.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+indexppds$(DOTEXE): indexppds.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 
 #=== Install ================================================================
@@ -60,7 +60,7 @@ install: $(PROGS)
 depend:
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.o $(PROGS)
 	( cd ghostscript; $(MAKE) clean )
 	( cd generic; $(MAKE) clean )
 	( cd other; $(RMF) $(BACKUPS) )

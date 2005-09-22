@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 22 September 2005.
 */
 
 /*! \file
@@ -183,5 +183,38 @@ __attribute__ (( format (printf, 1, 2) ))
 #endif
 ;
 const char *ipp_operation_to_str(int op);
+
+/* Operation attributes handling class */
+struct REQUEST_ATTRS {
+	void *requested_attributes;
+	gu_boolean requested_attributes_all;
+	char *printer_uri;
+	struct URI *printer_uri_obj;
+	char *printer_name;
+	char *job_uri;
+	struct URI *job_uri_obj;
+	int job_id;
+	char *device_class;
+	char *ppd_make;
+	int limit;
+	};
+
+/* Use enum to define bit constants */
+enum REQUEST_ATTR_SUPPORTS {
+   	REQUEST_ATTRS_SUPPORTS_PRINTER = 1,			/* printer-name, printer-uri */
+	REQUEST_ATTRS_SUPPORTS_JOB = 2,				/* job-uri, printer-name, job_id */
+	REQUEST_ATTRS_SUPPORTS_DEVICE_CLASS = 4,	/* device-class */
+	REQUEST_ATTRS_SUPPORTS_PPD_MAKE = 8,		/* ppd-make */
+	REQUEST_ATTRS_SUPPORTS_LIMIT = 16
+	};
+
+struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported);
+void request_attrs_free(struct REQUEST_ATTRS *this);
+gu_boolean request_attrs_attr_requested(struct REQUEST_ATTRS *this, char name[]);
+char *request_attrs_destname(struct REQUEST_ATTRS *this);
+int request_attrs_jobid(struct REQUEST_ATTRS *this);
+char *request_attrs_device_class(struct REQUEST_ATTRS *this);
+char *request_attrs_ppd_make(struct REQUEST_ATTRS *this);
+int request_attrs_limit(struct REQUEST_ATTRS *this);
 
 /* end of file */

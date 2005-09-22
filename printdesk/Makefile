@@ -57,7 +57,7 @@ install: $(PROGS) PrintDesk.pm $(PRINTDESK_SUB_SCRIPTS)
 include .depend
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(PROGS)
+	$(RMF) $(BACKUPS) *.o $(PROGS)
 
 depend:
 	$(PPR_MAKE_DEPEND) ../include

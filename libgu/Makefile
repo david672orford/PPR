@@ -32,65 +32,65 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-LIBOBJS=malloc.$(OBJ) \
-	ini_section.$(OBJ) \
-	getline.$(OBJ) \
-	gu_md5.$(OBJ) \
-	cloexec.$(OBJ) \
-	gu_nonblock.$(OBJ) \
-	daemon.$(OBJ) \
-	gu_strcasecmp.$(OBJ) \
-	gu_isdigit.$(OBJ) \
-	gu_isxdigit.$(OBJ) \
-	gu_isspace.$(OBJ) \
-	gu_sscanf.$(OBJ) \
-	gu_fgetint.$(OBJ) \
-	signal1.$(OBJ) \
-	signal2.$(OBJ) \
-	gu_snprintf.$(OBJ) \
-	gu_strlcpy.$(OBJ) \
-	gu_strlcat.$(OBJ) \
-	torf.$(OBJ) \
-	gu_strsignal.$(OBJ) \
-	gu_strerror.$(OBJ) \
-	getopt.$(OBJ) \
-	lock_exclusive.$(OBJ) \
-	padded.$(OBJ) \
-	gu_strsep.$(OBJ) gu_strsep2.$(OBJ) \
-	gu_wildmat.$(OBJ) \
-	disk_space.$(OBJ) \
-	gu_mkstemp.$(OBJ) \
-	wordwrap.$(OBJ) \
-	gu_getdouble.$(OBJ) \
-	gu_dtostr.$(OBJ) \
-	gu_psprintf.$(OBJ) \
-	gu_snprintfcat.$(OBJ) \
-	gu_snmp.$(OBJ) \
-	gu_timeval.$(OBJ) \
-	gu_pcs.$(OBJ) \
-	gu_pch.$(OBJ) \
-	gu_pca.$(OBJ) \
-	gu_pcre_match.$(OBJ) \
-	gu_pcre_split.$(OBJ) \
-	gu_pca_join.$(OBJ) \
-	gu_run.$(OBJ) \
-	gu_exceptions.$(OBJ) \
-	gu_uri.$(OBJ) \
-	gu_strlower.$(OBJ) \
-	gu_strtrim.$(OBJ) \
-	pcre.$(OBJ) \
-	pcre_study.$(OBJ) \
-	gu_name_value.$(OBJ) \
-	gu_utf8_decode.$(OBJ) \
-	gu_utf8_printf.$(OBJ)
+LIBOBJS=malloc.o \
+	ini_section.o \
+	getline.o \
+	gu_md5.o \
+	cloexec.o \
+	gu_nonblock.o \
+	daemon.o \
+	gu_strcasecmp.o \
+	gu_isdigit.o \
+	gu_isxdigit.o \
+	gu_isspace.o \
+	gu_sscanf.o \
+	gu_fgetint.o \
+	signal1.o \
+	signal2.o \
+	gu_snprintf.o \
+	gu_strlcpy.o \
+	gu_strlcat.o \
+	torf.o \
+	gu_strsignal.o \
+	gu_strerror.o \
+	getopt.o \
+	lock_exclusive.o \
+	padded.o \
+	gu_strsep.o gu_strsep2.o \
+	gu_wildmat.o \
+	disk_space.o \
+	gu_mkstemp.o \
+	wordwrap.o \
+	gu_getdouble.o \
+	gu_dtostr.o \
+	gu_psprintf.o \
+	gu_snprintfcat.o \
+	gu_snmp.o \
+	gu_timeval.o \
+	gu_pcs.o \
+	gu_pch.o \
+	gu_pca.o \
+	gu_pcre_match.o \
+	gu_pcre_split.o \
+	gu_pca_join.o \
+	gu_run.o \
+	gu_exceptions.o \
+	gu_uri.o \
+	gu_strlower.o \
+	gu_strtrim.o \
+	pcre.o \
+	pcre_study.o \
+	gu_name_value.o \
+	gu_utf8_decode.o \
+	gu_utf8_printf.o
 
-TARGETS=../libgu.$(LIBEXT)
+TARGETS=../libgu.a
 
 #=== Build ==================================================================
 
 all: $(TARGETS)
 
-../libgu.$(LIBEXT): $(LIBOBJS)
+../libgu.a: $(LIBOBJS)
 	$(RMF) $@
 	$(LIBCMD) $@ $^
 	$(RANLIB) $@
@@ -107,6 +107,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ) $(TARGETS)
+	$(RMF) $(BACKUPS) *.o $(TARGETS)
 
 # end of file

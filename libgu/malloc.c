@@ -176,7 +176,7 @@ char *gu_strdup(const char *string)
 	gu_alloc_blocks++;
 	gu_pool_register(rval);
 
-	memcpy(rval, string, len+1);
+	memcpy(rval, string, len+1);	/* copy string and terminating '\0' */
 
 	return rval;
 	} /* end of gu_strdup() */

@@ -40,13 +40,13 @@ all: $(BROWSERS) $(ALL_ATALK)
 
 all-atalk: atalk nbp_lookup$(DOTEXE)
 
-nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).$(OBJ) ../libgu.$(LIBEXT)
+nbp_lookup$(DOTEXE): nbp_lookup_$(ATALKTYPE).o ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ATALKLIBS)
 
-ip_scan_snmp$(DOTEXE): ip_scan_snmp.$(OBJ) ../libgu.$(LIBEXT)
+ip_scan_snmp$(DOTEXE): ip_scan_snmp.o ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS)
 
-usb$(DOTEXE): usb.$(OBJ) ../libgu.$(LIBEXT) ../libppr.$(LIBEXT)
+usb$(DOTEXE): usb.o ../libgu.a ../libppr.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 #=== Install ================================================================
@@ -66,7 +66,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BROWSERS) atalk
+	$(RMF) *.o $(BACKUPS) $(BROWSERS) atalk
 
 # end of file
 

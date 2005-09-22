@@ -44,33 +44,33 @@ TARGETS=filter_dotmatrix$(DOTEXE) \
 all: $(TARGETS)
 
 filter_dotmatrix$(DOTEXE): \
-		main.$(OBJ) linebuf.$(OBJ) postscript.$(OBJ) \
-		tabbing.$(OBJ) graphics.$(OBJ) \
-		pass1.$(OBJ) inbuf.$(OBJ) \
-		escape_pass1.$(OBJ) escape_pass2.$(OBJ) \
-		prop_tables.$(OBJ) \
-		../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+		main.o linebuf.o postscript.o \
+		tabbing.o graphics.o \
+		pass1.o inbuf.o \
+		escape_pass1.o escape_pass2.o \
+		prop_tables.o \
+		../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 # The file escape.c is compiled twice.  The general rules
 # work for one, but for this one we need to specify -DCOMPILING_PASS1.
-escape_pass1.$(OBJ): escape.c filter_dotmatrix.h
+escape_pass1.o: escape.c filter_dotmatrix.h
 	$(CC) $(CFLAGS) -DCOMPILING_PASS1 -o $@ -c escape.c
 
-escape_pass2.$(OBJ): escape.c filter_dotmatrix.h
+escape_pass2.o: escape.c filter_dotmatrix.h
 	$(CC) $(CFLAGS)                   -o $@ -c escape.c
 
 # Compile the metric module a first time to generate tables which we can
 # compile into the program.  We must list filter_dotmatrix.h separately
 # because prop_tables.o isn't listed in .depend.
-prop_tables.$(OBJ): prop.c filter_dotmatrix.h
+prop_tables.o: prop.c filter_dotmatrix.h
 	$(CC) $(CFLAGS) -o $@ -c prop.c
 
 # Compile the metric module again as a standalone program.
-prop_genmetrics.$(OBJ): prop.c filter_dotmatrix.h
+prop_genmetrics.o: prop.c filter_dotmatrix.h
 	$(CC) $(CFLAGS) -DGENMETRICS -o $@ -c prop.c
 
-prop_genmetrics$(DOTEXE): prop_genmetrics.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+prop_genmetrics$(DOTEXE): prop_genmetrics.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 # Use the prop_genmetrics program to generate metrics tables from the
@@ -105,7 +105,7 @@ install: $(TARGETS)
 include .depend
 
 clean:
-	$(RMF) $(BACKUPS) *.$(OBJ)
+	$(RMF) $(BACKUPS) *.o
 	$(RMF) $(TARGETS) prop_genmetrics$(DOTEXE)
 
 depend:

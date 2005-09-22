@@ -40,7 +40,7 @@ LIB_PROGS=
 
 all: $(BIN_PROGS) $(LIB_PROGS)
 
-xxx$(DOTEXE): xxx.$(OBJ) ../libppr.$(LIBEXT) ../libgu.$(LIBEXT)
+xxx$(DOTEXE): xxx.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^
 
 #=== Install ================================================================
@@ -57,7 +57,7 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(BIN_PROGS)
+	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
 
 # end of file
 

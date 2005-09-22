@@ -36,16 +36,16 @@ PROGS_LIB=cron_daily cron_hourly cron_run_daily$(DOTEXE)
 PROGS_BIN=ppr-clean
 PROGS_BIN_SETUID=ppr-index$(DOTEXE)
 PROGS=$(PROGS_LIB) $(PROGS_BIN) $(PROGS_BIN_SETUID)
-USELIBS=../libppr.$(LIBEXT) ../libgu.$(LIBEXT) 
+USELIBS=../libppr.a ../libgu.a 
 
 #=== Build ==================================================================
 
 all: $(PROGS)
 
-cron_run_daily$(DOTEXE): cron_run_daily.$(OBJ) $(USELIBS)
+cron_run_daily$(DOTEXE): cron_run_daily.o $(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
-ppr-index$(DOTEXE): ppr-index.$(OBJ) $(USELIBS)
+ppr-index$(DOTEXE): ppr-index.o $(USELIBS)
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 
 #=== Install ================================================================
@@ -60,6 +60,6 @@ install: $(PROGS)
 depend:
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(PROGS)
+	$(RMF) *.o $(BACKUPS) $(PROGS)
 
 # end of file

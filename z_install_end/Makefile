@@ -41,7 +41,7 @@ all: $(ALL)
 ppr.conf.sample: make_ppr_conf_sample.sh
 	./make_ppr_conf_sample.sh
 
-getservbyname$(DOTEXE): getservbyname.$(OBJ)
+getservbyname$(DOTEXE): getservbyname.o
 	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS)
 
 #=== Install ================================================================
@@ -77,6 +77,6 @@ depend:
 	$(PPR_MAKE_DEPEND) ../include
 
 clean:
-	$(RMF) *.$(OBJ) $(BACKUPS) $(ALL)
+	$(RMF) *.o $(BACKUPS) $(ALL)
 
 # end of file
