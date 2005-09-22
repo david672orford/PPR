@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 April 2005.
+** Last modified 22 September 2005.
 */
 
 #include "config.h"
@@ -247,7 +247,14 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		description = filename;
 
 	/*
-	** OK, here goes.
+	** OK, here goes.  We write an index line.
+	**
+	** Remember that if you change this you must check to see who
+	** reads PPD_INDEX and change them too.  This includes 
+	** ppad, some library functions, parts of the web interface,
+	** and the IPP server.  This sounds bad, but with the exception
+	** of ppad they seem to pay attention to only the first two or
+	** three fields.
 	*/
 	fprintf(indexfile, "%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s:%s\n",
 		description,

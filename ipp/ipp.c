@@ -370,7 +370,7 @@ static void do_get_devices(struct IPP *ipp)
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "device-class", gu_strdup("file"), TRUE);
 		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-info", "Acme Port %d", iii);
-		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-make-and-model", "unknown", iii);
+		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-make-and-model", "unknown");
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_strdup("file:///x"), TRUE);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
@@ -381,15 +381,40 @@ static void do_get_devices(struct IPP *ipp)
  */
 static void do_get_ppds(struct IPP *ipp)
 	{
-	int iii;
-	for(iii=0; iii < 10; iii++)
+	FILE *f;
+	char *line = NULL;
+	int line_space = 256;
+	char *p, *f_description, *f_manufacturer;
+
+	if(!(f = fopen(PPD_INDEX, "r")))
 		{
+		ipp->response_code = IPP_NOT_FOUND;		/* is this correct? */
+		return;
+		}
+
+	while((line = gu_getline(line, &line_space, f)))
+		{
+		if(*line == '#')
+			continue;
+		p = line;
+		if(!(f_description = gu_strsep(&p,":"))
+				|| !gu_strsep(&p,":")
+				|| !(f_manufacturer = gu_strsep(&p,":"))
+				)
+			{
+			DEBUG(("Bad line in PPD index"));
+			continue;
+			}
+		f_description = gu_strdup(f_description);
+		f_manufacturer = gu_strdup(f_manufacturer);
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "natural-language", "en", FALSE);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make", gu_strdup("Acme"), TRUE);
-		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make-and-model", "Acme 101 %d PS", iii);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "ppd-name", gu_strdup("Acme 101"), TRUE);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make", f_manufacturer, TRUE);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make-and-model", f_description, FALSE);	/* only free once */
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "ppd-name", f_description, TRUE);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
+
+	fclose(f);
 	}
 
 /*
