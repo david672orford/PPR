@@ -667,7 +667,7 @@ int ppop_media(char *argv[])
 		{
 		char *printer, *bin, *medium;
 		int nbins;
-		int pos;
+		int pos = 0;
 		if(gu_sscanf(line, "%S %d", &printer, &nbins) != 2)
 			{
 			retcode = EXIT_INTERNAL;
@@ -676,7 +676,7 @@ int ppop_media(char *argv[])
 		if(!opt_machine_readable)
 			{
 			printf("%-24s ", printer);
-			pos = 25;
+			pos += 25;
 			if(nbins == 0)
 				printf(_("(no bins defined)\n"));
 			}

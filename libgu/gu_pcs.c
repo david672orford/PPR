@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*! \file
@@ -321,7 +321,7 @@ int gu_pcs_truncate(void **pcs, size_t newlen)
 	struct PCS *p = (struct PCS *)*pcs;
 
 	if(newlen < 0)
-		gu_Throw("%s(): newlen=%d", function, newlen);
+		gu_Throw("%s(): newlen=%d", function, (int)newlen);
 
 	if(newlen < p->length)
 		{
@@ -455,11 +455,11 @@ int gu_pcs_cmp(void **pcs1, void **pcs2)
 	{
 	struct PCS *p1 = (struct PCS *)*pcs1;
 	struct PCS *p2 = (struct PCS *)*pcs2;
-	int remaining1 = p1->length + 1;
+	int remaining1 = p1->length + 1;			/* include the terminating nulls */
 	int remaining2 = p2->length + 1;
 	char *cp1 = p1->storage;
 	char *cp2 = p2->storage;
-	int cmp;
+	int cmp = -1;								/* initialized only to keep GCC happy */
 	while(remaining1-- && remaining2--)
 		{
 		if((cmp = (*cp1++ - *cp2++)) != 0)

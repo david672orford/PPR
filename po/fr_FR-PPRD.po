@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-14 11:59-0400\n"
+"POT-Creation-Date: 2005-09-23 23:57-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -14,74 +14,74 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../pprd/pprd_ipp.c:212
+#: ../pprd/pprd_ipp.c:88
 #, c-format
 msgid "printing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:224
+#: ../pprd/pprd_ipp.c:100
 #, c-format
 msgid "canceling %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:236
+#: ../pprd/pprd_ipp.c:112
 #, c-format
 msgid "seizing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:248
+#: ../pprd/pprd_ipp.c:124
 #, c-format
 msgid "stopping (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:260
+#: ../pprd/pprd_ipp.c:136
 #, c-format
 msgid "halting (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:272
+#: ../pprd/pprd_ipp.c:148
 msgid "stopt"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:286
+#: ../pprd/pprd_ipp.c:162
 #, c-format
 msgid "fault, retry %d in %d seconds"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:291
+#: ../pprd/pprd_ipp.c:167
 msgid "fault, no auto retry"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:304
+#: ../pprd/pprd_ipp.c:180
 #, fuzzy, c-format
 msgid "otherwise engaged or off-line, retry %d in %d seconds"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#: ../pprd/pprd_ipp.c:316
+#: ../pprd/pprd_ipp.c:192
 msgid "waiting for resource ration"
 msgstr ""
 
-#: ../pprd/pprd_load.c:189 ../pprd/pprd_load.c:192
+#: ../pprd/pprd_load.c:190 ../pprd/pprd_load.c:193
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:171
+#: ../pprd/pprd_mainsup.c:172
 #, c-format
 msgid "%s: The user \"%s\" doesn't exist.\n"
 msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_mainsup.c:177
+#: ../pprd/pprd_mainsup.c:178
 #, c-format
 msgid "%s: The group \"%s\" doesn't exist.\n"
 msgstr "%s : le groupe \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_mainsup.c:182
+#: ../pprd/pprd_mainsup.c:183
 #, c-format
 msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
 msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
 
-#: ../pprd/pprd_mainsup.c:208
+#: ../pprd/pprd_mainsup.c:209
 #, fuzzy, c-format
 msgid ""
 "%s: Security problem: euid = %ld\n"
@@ -90,7 +90,7 @@ msgstr ""
 "%s : problème de sécurité : euid = %u\n"
 "(Ce programme devrait être setuid \"%s\".)\n"
 
-#: ../pprd/pprd_mainsup.c:215
+#: ../pprd/pprd_mainsup.c:216
 #, fuzzy, c-format
 msgid ""
 "%s: Security problem: egid = %ld\n"
@@ -99,67 +99,67 @@ msgstr ""
 "%s : problème de sécurité : egid = %u\n"
 "(Ce programme devrait être setgid \"%s\".)\n"
 
-#: ../pprd/pprd_mainsup.c:225
+#: ../pprd/pprd_mainsup.c:226
 #, c-format
 msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
 msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
 
-#: ../pprd/pprd_mainsup.c:238
+#: ../pprd/pprd_mainsup.c:239
 #, c-format
 msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:258
+#: ../pprd/pprd_mainsup.c:259
 #, c-format
 msgid "%s: setgid(%ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:263
+#: ../pprd/pprd_mainsup.c:264
 #, c-format
 msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:270
+#: ../pprd/pprd_mainsup.c:271
 #, c-format
 msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:275
+#: ../pprd/pprd_mainsup.c:276
 #, c-format
 msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:282
+#: ../pprd/pprd_mainsup.c:283
 #, c-format
 msgid "%s: setuid(0) did not fail!\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:316
+#: ../pprd/pprd_mainsup.c:317
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:326
+#: ../pprd/pprd_mainsup.c:327
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:330
+#: ../pprd/pprd_mainsup.c:331
 #, c-format
 msgid "Sending SIGTERM to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:334
+#: ../pprd/pprd_mainsup.c:335
 #, c-format
 msgid "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:340
+#: ../pprd/pprd_mainsup.c:341
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:350
+#: ../pprd/pprd_mainsup.c:351
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr ""
@@ -170,7 +170,7 @@ msgid "Destination \"%s\" does not exist.\n"
 msgstr "La destination \"%s\" n'existe pas.\n"
 
 #: ../pprd/pprd_ppop.c:293 ../pprd/pprd_ppop.c:521 ../pprd/pprd_ppop.c:681
-#: ../pprd/pprd_ppop.c:825
+#: ../pprd/pprd_ppop.c:823
 #, c-format
 msgid "The destination \"%s\" does not exist.\n"
 msgstr "La destination \"%s\" n'existe pas.\n"
@@ -316,12 +316,12 @@ msgstr "Le travail d'impression \"%s\" n'est pas suspendu.\n"
 msgid "The print job \"%s\" does not exist.\n"
 msgstr "Le travail d'impression \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:885
+#: ../pprd/pprd_ppop.c:879
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:892
+#: ../pprd/pprd_ppop.c:886
 #, c-format
 msgid "\"%s\" is not a printer.\n"
 msgstr "\"%s\" n'est pas une imprimante.\n"
@@ -341,53 +341,53 @@ msgstr "\"%s\" n'est pas une imprimante.\n"
 # "Files: ../pprd/pprd.c ../pprd/pprd_alert.c ../pprd/pprd_load.c "
 # "../pprd/pprd_log.c ../pprd/pprd_mainsup.c ../pprd/pprd_nag.c "
 # "../pprd/pprd_ppopint.c ../pprd/pprd_queue.c ../pprd/pprd_respond.c\n"
-#: ../pprd/pprd_ppop.c:902
+#: ../pprd/pprd_ppop.c:896
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:957 ../pprd/pprd_ppop.c:1037
+#: ../pprd/pprd_ppop.c:951 ../pprd/pprd_ppop.c:1031
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1078 ../pprd/pprd_ppop.c:1085 ../pprd/pprd_ppop.c:1279
-#: ../pprd/pprd_ppop.c:1361
+#: ../pprd/pprd_ppop.c:1072 ../pprd/pprd_ppop.c:1079 ../pprd/pprd_ppop.c:1273
+#: ../pprd/pprd_ppop.c:1355
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1218
+#: ../pprd/pprd_ppop.c:1212
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1227
+#: ../pprd/pprd_ppop.c:1221
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1232
+#: ../pprd/pprd_ppop.c:1226
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1236
+#: ../pprd/pprd_ppop.c:1230
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_ppop.c:1244
+#: ../pprd/pprd_ppop.c:1238
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1246
+#: ../pprd/pprd_ppop.c:1240
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1328 ../pprd/pprd_ppop.c:1385
+#: ../pprd/pprd_ppop.c:1322 ../pprd/pprd_ppop.c:1379
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"
@@ -433,18 +433,18 @@ msgstr "Imprimante placée en mode de panne, pas de tentative automatique."
 msgid "Printer placed in auto-retry mode."
 msgstr "Imprimante placée en mode de tentative automatique."
 
-#: ../pprd/pprd_remind.c:107
+#: ../pprd/pprd_remind.c:122
 msgid "Remaining printer problems"
 msgstr "Problèmes subsistant sur l'imprimante"
 
 # msgid "\"%s\" is already halting.\n"
 # msgstr "\"%s\" est déjà en train de s'arrêter.\n"
-#: ../pprd/pprd_remind.c:125
+#: ../pprd/pprd_remind.c:140
 #, c-format
 msgid "The printer \"%s\" has suffered %d faults.\n"
 msgstr "L'imprimante \"%s\" a subi %d pannes.\n"
 
-#: ../pprd/pprd_remind.c:131
+#: ../pprd/pprd_remind.c:146
 #, c-format
 msgid ""
 "The printer \"%s\" has suffered a fault from\n"
@@ -453,34 +453,33 @@ msgstr ""
 "L'imprimante \"%s\" a subi une panne qu'elle\n"
 "ne peut résoudre toute seule.\n"
 
-#: ../pprd/pprd_remind.c:144
+#: ../pprd/pprd_remind.c:159
 #, c-format
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#~ msgid "Your print job \"%s\" was canceled while printing on \"%s\"."
-#~ msgstr "Votre travail d'impression \"%s\" a été annulé pendant l'impression sur \"%s\"."
+#~ msgid ""
+#~ "%s: User \"%s\" may only start %s if group is \"%s\".\n"
+#~ "(Change 4th field in /etc/passwd for user \"%s\" to \"%d\".)\n"
+#~ msgstr ""
+#~ "%s : l'utilisateur \"%s\" ne peut démarrer %s que si le groupe est \"%s\".\n"
+#~ "(Modifiez le 4ème champ de /etc/passwd pour l'utilisateur \"%s\" en \"%d\".)\n"
+
+#~ msgid "Undefined response code %d for your job \"%s\"."
+#~ msgstr "Code de réponse %d indéfini pour votre travail \"%s\"."
+
+#~ msgid "Your print job \"%s\" has been canceled."
+#~ msgstr "Votre travail d'impression \"%s\" a été annulé."
+
+#~ msgid "Your print job \"%s\" has been printed on \"%s\"."
+#~ msgstr "Votre travail d'impression \"%s\" a été imprimé sur \"%s\"."
 
 #~ msgid ""
-#~ "Your print job \"%s\" was canceled because\n"
-#~ "the destination \"%s\" is not acceping requests."
+#~ "Your print job \"%s\" is stranded because\n"
+#~ "the printer \"%s\" is incapable of printing it."
 #~ msgstr ""
-#~ "Votre travail d'impression \"%s\" a été annulé parce que\n"
-#~ "la destination \"%s\" n'accepte pas les requêtes."
-
-#~ msgid ""
-#~ "Your print job \"%s\" was canceled because\n"
-#~ "\"%s\" is not a known destination."
-#~ msgstr ""
-#~ "Votre travail d'impression \"%s\" a été annulé parce que\n"
-#~ "\"%s\" n'est pas une destination connue."
-
-#~ msgid ""
-#~ "Your print job \"%s\" was arrested after an attempt\n"
-#~ "to print it on \"%s\" resulted in a job error."
-#~ msgstr ""
-#~ "Votre travail d'impression \"%s\" a été arrêté après qu'une tentative\n"
-#~ "de l'imprimer sur \"%s\" ait donné une erreur."
+#~ "Votre travail d'impression \"%s\" a été arrêté parce que\n"
+#~ "l'imprimante \"%s\" est incapable de l'imprimer."
 
 #~ msgid ""
 #~ "Your print job \"%s\" is stranded because no\n"
@@ -490,24 +489,25 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "membre du groupe \"%s\" n'est capable de l'imprimer."
 
 #~ msgid ""
-#~ "Your print job \"%s\" is stranded because\n"
-#~ "the printer \"%s\" is incapable of printing it."
+#~ "Your print job \"%s\" was arrested after an attempt\n"
+#~ "to print it on \"%s\" resulted in a job error."
 #~ msgstr ""
-#~ "Votre travail d'impression \"%s\" a été arrêté parce que\n"
-#~ "l'imprimante \"%s\" est incapable de l'imprimer."
-
-#~ msgid "Your print job \"%s\" has been printed on \"%s\"."
-#~ msgstr "Votre travail d'impression \"%s\" a été imprimé sur \"%s\"."
-
-#~ msgid "Your print job \"%s\" has been canceled."
-#~ msgstr "Votre travail d'impression \"%s\" a été annulé."
-
-#~ msgid "Undefined response code %d for your job \"%s\"."
-#~ msgstr "Code de réponse %d indéfini pour votre travail \"%s\"."
+#~ "Votre travail d'impression \"%s\" a été arrêté après qu'une tentative\n"
+#~ "de l'imprimer sur \"%s\" ait donné une erreur."
 
 #~ msgid ""
-#~ "%s: User \"%s\" may only start %s if group is \"%s\".\n"
-#~ "(Change 4th field in /etc/passwd for user \"%s\" to \"%d\".)\n"
+#~ "Your print job \"%s\" was canceled because\n"
+#~ "\"%s\" is not a known destination."
 #~ msgstr ""
-#~ "%s : l'utilisateur \"%s\" ne peut démarrer %s que si le groupe est \"%s\".\n"
-#~ "(Modifiez le 4ème champ de /etc/passwd pour l'utilisateur \"%s\" en \"%d\".)\n"
+#~ "Votre travail d'impression \"%s\" a été annulé parce que\n"
+#~ "\"%s\" n'est pas une destination connue."
+
+#~ msgid ""
+#~ "Your print job \"%s\" was canceled because\n"
+#~ "the destination \"%s\" is not acceping requests."
+#~ msgstr ""
+#~ "Votre travail d'impression \"%s\" a été annulé parce que\n"
+#~ "la destination \"%s\" n'accepte pas les requêtes."
+
+#~ msgid "Your print job \"%s\" was canceled while printing on \"%s\"."
+#~ msgstr "Votre travail d'impression \"%s\" a été annulé pendant l'impression sur \"%s\"."

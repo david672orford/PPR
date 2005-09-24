@@ -43,8 +43,9 @@ DIVISIONS=PPR PPRD PPRWWW PAPD
 # in .depend.
 all:
 
-# Extract the lists of translatable strings.  The rules are a bit 
-# fudged.  If we try to extract one list, we get them all.
+PPR.pot: pot
+
+# Extract the lists of translatable strings.
 pot:
 	xgettext \
 		--default-domain=PPR \
