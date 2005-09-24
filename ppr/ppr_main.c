@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -2038,8 +2038,6 @@ int main(int argc, char *argv[])
 	*/
 	if(qentry.destname[0] == '\0')
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name is empty"));
-	if(strlen(qentry.destname) > MAX_DESTNAME)
-		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name is too long"));
 	if(strpbrk(qentry.destname, DEST_DISALLOWED))
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name contains a disallowed character"));
 	if(strchr(DEST_DISALLOWED_LEADING, (int)qentry.destname[0]))

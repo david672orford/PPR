@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -45,7 +45,6 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
-#include "pprd.h"
 #include "ppop.h"
 #include "util_exits.h"
 
@@ -439,7 +438,7 @@ int custom_list(char *argv[],
 	{
 	int arg_index;
 	FILE *FIFO, *reply_file;
-	struct Jobname job;					/* Split up job name */
+	const struct Jobname *job;			/* Split up job name */
 	struct QEntryFile qentryfile;		/* full queue entry */
 	struct QEntry qentry;
 	int header_printed = FALSE;
@@ -479,14 +478,14 @@ int custom_list(char *argv[],
 	for(arg_index=0; argv[arg_index]; arg_index++)
 		{
 		/* Separate the components of the job name. */
-		if(parse_job_name(&job, argv[arg_index]) == -1)
+		if(!(job = parse_jobname(argv[arg_index])))
 			return EXIT_SYNTAX;
 
 		/* Prepare to communicate with pprd. */
 		FIFO = get_ready();
 
 		/* Send command. */
-		fprintf(FIFO, "l %s %d %d\n", job.destname, job.id, job.subid);
+		fprintf(FIFO, "l %s %d %d\n", job->destname, job->id, job->subid);
 		fflush(FIFO);
 
 		/* Wait for pprd to reply. */
@@ -666,7 +665,7 @@ int ppop_list(char *argv[], int suppress)
 
 static int lpqlist_rank;
 static int lpqlist_banner_called;
-static char *lpqlist_destname;
+static const char *lpqlist_destname;
 static char **lpqlist_argv;
 
 static const char *count_suffix(int count)
@@ -1097,7 +1096,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 int ppop_lpq(char *argv[])
 	{
 	int retval;
-	struct Jobname job;
+	const struct Jobname *job;
 	#define new_argv_SIZE 21
 	char *new_argv[new_argv_SIZE];
 	int x;
@@ -1106,7 +1105,7 @@ int ppop_lpq(char *argv[])
 	argv = allow_PPRDEST(argv);
 
 	/* If first parameter is empty or it is a job id rather than a destination id, */
-	if(argv[0] == (char*)NULL || parse_job_name(&job, argv[0]) || job.id != WILDCARD_JOBID)
+	if(argv[0] == (char*)NULL || (job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
 		{
 		ppop_lpq_help();
 		exit(EXIT_SYNTAX);
@@ -1114,7 +1113,7 @@ int ppop_lpq(char *argv[])
 
 	lpqlist_rank = 0;					/* reset number for "Rank" column */
 	lpqlist_banner_called = FALSE;		/* not called yet! */
-	lpqlist_destname = job.destname;
+	lpqlist_destname = job->destname;
 	lpqlist_argv = new_argv;
 
 	for(x=0; x < (new_argv_SIZE - 1) && argv[x+1] != (char*)NULL; x++)
@@ -1332,7 +1331,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		FILE *qstream)
 	{
 	const char *status;							/* status string */
-	char status_scratch[MAX_DESTNAME+20];		/* printing in _____ */
+	char status_scratch[128];					/* printing on _____ */
 	char explain[256];							/* decoded "Reason:" line */
 	char media[256];							/* space separated list of required media */
 

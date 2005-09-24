@@ -2,7 +2,7 @@
 #
 # mouse:~ppr/makeprogs/ppr_make_depend.perl
 #
-# Last modified 7 March 2003.
+# Last modified 23 September 2005.
 #
 
 defined($INCDIR = $ARGV[0]) || die;
@@ -24,7 +24,7 @@ while($file = readdir(D))
 
 		open(F, "<${SEARCHDIR}${file}") || die;
 
-		print OUT "$1.\$(OBJ): ${SEARCHDIR}${file}";
+		print OUT "$1.o: ${SEARCHDIR}${file}";
 
 		while(<F>)
 				{

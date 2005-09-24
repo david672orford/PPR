@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 #include "config.h"
@@ -123,12 +123,6 @@ int alias_forwhat(const char *argv[])
 		{
 		fputs(_("You must supply the name of a new or existing alias and\n"
 				"the name of the queue it is to be an alias for.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	if(strlen(alias) > MAX_DESTNAME)
-		{
-		fputs(_("Alias name is too long.\n"), errors);
 		return EXIT_SYNTAX;
 		}
 

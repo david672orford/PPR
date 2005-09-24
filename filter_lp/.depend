@@ -1,2 +1,2 @@
-filter_lp.$(OBJ): filter_lp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/libppr_font.h filter_lp.h
+filter_lp.o: filter_lp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/libppr_font.h filter_lp.h
 

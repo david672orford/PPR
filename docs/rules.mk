@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 11 March 2005.
+# Last modified 23 September 2005.
 #
 
 # Where do we install the documentation?
@@ -43,6 +43,7 @@ FOP=fop
 # Where are the style sheets?
 XSL_SPEC_HTML=../../nonppr_misc/docbook-xsl/html/docbook.xsl
 XSL_SPEC_PRINT=../../nonppr_misc/docbook-xsl/fo/docbook.xsl
+XSL_SPEC_MAN=../../nonppr_misc/docbook-xsl/manpages/docbook.xsl
 SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 
 # Additional file extensions to be used in our rules.
@@ -66,11 +67,15 @@ SGML_CATALOG_FILES=../../nonppr_misc/docbook-xml/docbook.cat
 	rm $$NAME.pod
 
 #============================================================================
-# Rules to convert Docbook SGML to HTML using Xsltproc
+# Rules to convert Docbook SGML to HTML  and Nroff using Xsltproc
 #============================================================================
 
 .sgml.html:
 	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XSLTPROC) --catalogs --nonet --output $*.html $(XSL_SPEC_HTML) $*.sgml
+
+.sgml.man:
+	SGML_CATALOG_FILES=$(SGML_CATALOG_FILES) $(XSLTPROC) --catalogs --nonet --output $*.man $(XSL_SPEC_MAN) $*.sgml
+	mv $* $*.man
 
 #============================================================================
 # Rules to convert HTML to PostScript and PDF using HTMLDOC

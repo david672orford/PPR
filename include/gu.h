@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*! \file
@@ -126,6 +126,7 @@ void gu_pool_free(void *p);
 void *gu_pool_return(void *block);
 void *gu_pool_push(void *p);
 void *gu_pool_pop(void *p);
+void gu_pool_suspend(gu_boolean suspend);
 
 /* Debugging functions */
 int gu_alloc_checkpoint(void);

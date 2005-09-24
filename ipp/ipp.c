@@ -233,7 +233,8 @@ static void alarm_sighandler(int sig)
 	}
 
 /*
- * Pass a request to pprd
+ * Pass a request thru to pprd, wait for the reply, and convey
+ * the reply to the client.
  */
 static void do_passthru(struct IPP *ipp)
 	{
@@ -334,9 +335,16 @@ static void do_passthru(struct IPP *ipp)
  */
 static void do_get_default(struct IPP *ipp)
 	{
+	struct REQUEST_ATTRS *req;
 	FILE *f;
 	gu_boolean found = FALSE;
 
+	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PPD_MAKE | REQUEST_ATTRS_SUPPORTS_LIMIT);
+
+	/* In PPR the default destination is set by defining an alias "default".
+	 * Here we open its config file, read what it points to, and return that
+	 * as the default destination.
+	 */ 
 	if((f = fopen(ALIASCONF"/default", "r")))
 		{
 		char *line = NULL;
@@ -346,7 +354,8 @@ static void do_get_default(struct IPP *ipp)
 			{
 			if((p = lmatchp(line, "ForWhat:")))
 				{
-				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", gu_strdup(p), TRUE);
+				if(request_attrs_attr_requested(req, "printer-name"))
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", gu_strdup(p), TRUE);
 				found = TRUE;
 				break;
 				}
@@ -355,6 +364,8 @@ static void do_get_default(struct IPP *ipp)
 			gu_free(line);
 		fclose(f);
 		}
+
+	request_attrs_free(req);
 
 	if(!found)
 		ipp->response_code = IPP_NOT_FOUND;
@@ -381,10 +392,18 @@ static void do_get_devices(struct IPP *ipp)
  */
 static void do_get_ppds(struct IPP *ipp)
 	{
+	struct REQUEST_ATTRS *req;
+	char *ppd_make;
+	int limit;
 	FILE *f;
 	char *line = NULL;
 	int line_space = 256;
 	char *p, *f_description, *f_manufacturer;
+	int count = 0;
+
+	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PPD_MAKE | REQUEST_ATTRS_SUPPORTS_LIMIT);
+	ppd_make = request_attrs_ppd_make(req);
+	limit = request_attrs_limit(req);
 
 	if(!(f = fopen(PPD_INDEX, "r")))
 		{
@@ -394,8 +413,10 @@ static void do_get_ppds(struct IPP *ipp)
 
 	while((line = gu_getline(line, &line_space, f)))
 		{
-		if(*line == '#')
+		if(*line == '#')	/* skip comments */
 			continue;
+
+		/* Extract the 1st and 3rd colon-separated fields. */
 		p = line;
 		if(!(f_description = gu_strsep(&p,":"))
 				|| !gu_strsep(&p,":")
@@ -405,16 +426,34 @@ static void do_get_ppds(struct IPP *ipp)
 			DEBUG(("Bad line in PPD index"));
 			continue;
 			}
-		f_description = gu_strdup(f_description);
-		f_manufacturer = gu_strdup(f_manufacturer);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "natural-language", "en", FALSE);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make", f_manufacturer, TRUE);
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make-and-model", f_description, FALSE);	/* only free once */
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "ppd-name", f_description, TRUE);
+
+		/* If filtering my manufacturer, skip those that don't match. */
+		if(ppd_make && strcmp(ppd_make, f_manufacturer) != 0)
+			continue;
+
+		/* Do not exceed the number of items limit imposed by the client. */
+		if(limit != -1 && count >= limit)
+			break;
+
+		/* Include those attributes which were requested. */
+		if(request_attrs_attr_requested(req, "natural-language"))
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "natural-language", "en", FALSE);
+		if(request_attrs_attr_requested(req, "ppd-make"))
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make", gu_strdup(f_manufacturer), TRUE);
+		if(request_attrs_attr_requested(req, "ppd-make-and-model"))
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "ppd-make-and-model", gu_strdup(f_description), TRUE);
+		if(request_attrs_attr_requested(req, "ppd-name"))
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "ppd-name", gu_strdup(f_description), TRUE);
+		
+		/* Mark the end of this record. */
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
+
+		count++;
 		}
 
+	gu_free_if(line);		/* if we hit limit, line will still be allocated */
 	fclose(f);
+	request_attrs_free(req);
 	}
 
 /*

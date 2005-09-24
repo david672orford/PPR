@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 January 2005.
+** Last modified 23 September 2005.
 */
 
 /*! \file */
@@ -36,24 +36,36 @@
 #include "global_defines.h"
 
 /** Format the job id in standard format
+ *
+ * The job format is destname-id.  If the subid is not zero, then
+ * the format is destname-id.subid.  A pointer is returned to a buffer
+ * belonging to this function.
 */
 const char *jobid(const char *destname, int id, int subid)
 	{
-	static char return_str[MAX_DESTNAME + 17];
-	int len = 0;
+	static char *storage = NULL;
+	static int storage_size = 0;
+	int possibly_needed;
+
+	possibly_needed = strlen(destname);
+	possibly_needed += 10;		/* "-XXXX.XXX\0" */
+
+	if(possibly_needed > storage_size)
+		{
+		gu_pool_suspend(TRUE);
+		storage = gu_realloc(storage, possibly_needed, sizeof(char));
+		storage_size = possibly_needed;
+		gu_pool_suspend(FALSE);
+		}
 
 	/* Say the destination name and the id number. */
-	snprintf(return_str + len, sizeof(return_str) - len, "%s-%d", destname, id);
-	len += strlen(return_str + len);
+	snprintf(storage, storage_size, "%s-%d", destname, id);
 
 	/* If the subid is not zero, specify it. */
 	if(subid > 0)
-		{
-		snprintf(return_str + len, sizeof(return_str) - len, ".%d", subid);
-		len += strlen(return_str + len);
-		}
+		gu_snprintfcat(storage, storage_size, ".%d", subid);
 
-	return return_str;
+	return storage;
 	} /* end of jobid() */
 
 /* end of file */

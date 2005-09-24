@@ -1,90 +1,92 @@
-acl.$(OBJ): acl.c ../include/config.h ../include/gu.h ../include/global_defines.h
+acl.o: acl.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-alert.$(OBJ): alert.c ../include/config.h ../include/gu.h ../include/global_defines.h
+alert.o: alert.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-ali_str.$(OBJ): ali_str.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ali_str.o: ali_str.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-charge.$(OBJ): charge.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+charge.o: charge.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-cs2enc.$(OBJ): cs2enc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
+cs2enc.o: cs2enc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
-datestamp.$(OBJ): datestamp.c ../include/config.h ../include/gu.h ../include/global_defines.h
+datestamp.o: datestamp.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-findres.$(OBJ): findres.c ../include/config.h ../include/gu.h ../include/global_defines.h
+destinfo.o: destinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-dimens.$(OBJ): dimens.c ../include/config.h ../include/gu.h ../include/global_defines.h
+dimens.o: dimens.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-enc2font.$(OBJ): enc2font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
+enc2font.o: enc2font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
-font.$(OBJ): font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
+findres.o: findres.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-foptions.$(OBJ): foptions.c ../include/config.h ../include/gu.h ../include/global_defines.h
+font.o: font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
-int_acache.$(OBJ): int_acache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
+foptions.o: foptions.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-int_cmdline.$(OBJ): int_cmdline.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+get_device_id.o: get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-int_copy_job.$(OBJ): int_copy_job.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+int_acache.o: int_acache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
-int_debug.$(OBJ): int_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
+int_cmdline.o: int_cmdline.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_prpapst.$(OBJ): int_prpapst.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
+int_copy_job.o: int_copy_job.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-interfaces.$(OBJ): interfaces.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
+int_debug.o: int_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
-jobid.$(OBJ): jobid.c ../include/config.h ../include/gu.h ../include/global_defines.h
+int_main.o: int_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-money.$(OBJ): money.c ../include/config.h ../include/gu.h ../include/global_defines.h
+int_prpapst.o: int_prpapst.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
-options.$(OBJ): options.c ../include/config.h ../include/gu.h ../include/global_defines.h
+int_tcp_connect.o: int_tcp_connect.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-pagemask.$(OBJ): pagemask.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+int_tcp_probe.o: int_tcp_probe.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-pagesize.$(OBJ): pagesize.c ../include/config.h ../include/gu.h ../include/global_defines.h
+interfaces.o: interfaces.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
 
-parse_qfname.$(OBJ): parse_qfname.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+ipp_utils.o: ipp_utils.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
 
-ppr_fnamef.$(OBJ): ppr_fnamef.c ../include/config.h ../include/gu.h ../include/global_defines.h
+jobid.o: jobid.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-ppr_gcmd.$(OBJ): ppr_gcmd.c ../include/config.h ../include/gu.h ../include/global_defines.h
+money.o: money.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-protected.$(OBJ): protected.c ../include/config.h ../include/gu.h ../include/global_defines.h
+options.o: options.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-prune_env.$(OBJ): prune_env.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
+pagemask.o: pagemask.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-query.$(OBJ): query.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_query.h
+pagesize.o: pagesize.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-queueinfo.$(OBJ): queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h
+parse_qfname.o: parse_qfname.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-quote.$(OBJ): quote.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ppr_fnamef.o: ppr_fnamef.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-readppd.$(OBJ): readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
+ppr_gcmd.o: ppr_gcmd.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-tail_status.$(OBJ): tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h
+protected.o: protected.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-tokenize.$(OBJ): tokenize.c ../include/config.h ../include/gu.h ../include/global_defines.h
+prune_env.o: prune_env.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
 
-unsafe.$(OBJ): unsafe.c ../include/config.h ../include/gu.h ../include/global_defines.h
+qentryfile_clear.o: qentryfile_clear.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-destinfo.$(OBJ): destinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h
+qentryfile_free.o: qentryfile_free.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-int_tcp_connect.$(OBJ): int_tcp_connect.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+qentryfile_load.o: qentryfile_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-int_tcp_probe.$(OBJ): int_tcp_probe.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+qentryfile_save.o: qentryfile_save.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 
-ipp_utils.$(OBJ): ipp_utils.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+query.o: query.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_query.h
 
-query_wrapper.$(OBJ): query_wrapper.c ../include/config.h ../include/gu.h ../include/global_defines.h
+query_wrapper.o: query_wrapper.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-int_main.$(OBJ): int_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+queueinfo.o: queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h
 
-get_device_id.$(OBJ): get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h
+quote.o: quote.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-qentryfile_clear.$(OBJ): qentryfile_clear.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+readppd.o: readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
-qentryfile_free.$(OBJ): qentryfile_free.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+snmp_messages.o: snmp_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-qentryfile_load.$(OBJ): qentryfile_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+tail_status.o: tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-qentryfile_save.$(OBJ): qentryfile_save.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
+tokenize.o: tokenize.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+unsafe.o: unsafe.c ../include/config.h ../include/gu.h ../include/global_defines.h
 

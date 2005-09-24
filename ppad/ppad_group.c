@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -369,12 +369,6 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 				"to be its members.\n"), errors);
 			return EXIT_SYNTAX;
 			}
-		}
-
-	if(strlen(group) > MAX_DESTNAME)
-		{
-		fputs(_("Group name is too long.\n"), errors);
-		return EXIT_SYNTAX;
 		}
 
 	if(strpbrk(group, DEST_DISALLOWED))

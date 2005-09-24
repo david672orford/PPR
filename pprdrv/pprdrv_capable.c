@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 March 2005.
+** Last modified 23 September 2005.
 */
 
 /*===========================================================================
@@ -64,6 +64,7 @@ static struct INTERNAL_RESOURCES
 	{"encoding", "SymbolEncoding", 1},
 	{"encoding", "ISOLatin1Encoding", 2},
 	{"procset", "CIDInit", 3},				/* ??? do all level 3 printeres have this? ??? */
+	{"ProcSet", "CIDInit", 3},				/* broken programs incorrectly capitalize */
 	{NULL, NULL, 0}
 	};
 

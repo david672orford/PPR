@@ -1243,7 +1243,7 @@ char *request_attrs_ppd_make(struct REQUEST_ATTRS *this)
 	return this->ppd_make;
 	}
 
-int requset_attrs_limit(struct REQUEST_ATTRS *this)
+int request_attrs_limit(struct REQUEST_ATTRS *this)
 	{
 	return this->limit;
 	}

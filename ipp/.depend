@@ -1,2 +1,2 @@
-ipp.$(OBJ): ipp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+ipp.o: ipp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
 

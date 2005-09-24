@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--22 September 2005
+2.00a1, 11 December 2004--23 September 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9853,4 +9853,16 @@ no final tarball was released.
   only to obfuscate the makefiles.  This change can be reversed fairly easily.
   DOTEXE remains for now.
 
+* editps/OpenOffice.org: added code to detect OpenOffice.org's copies setting
+  code and surround it with %%Begin/EndNonPPDFeature: NumCopies.
+
+* pprdrv/pprdrv_capable.c: added "ProcSet CIDInit" to table since so many programs
+  generate incorrectly use "ProcSet" instead of "procset".
+
+* Completely eliminated MAX_DESTNAME.  This involved some changes to ppr and 
+  pprd and extensive changes to ppop.  Ppop now uses a memory pool to 
+  deallocate all of the memory used by a subcommand.
+
+* include/pprd.h: moved the parts needed by ppop into include/global_defines.h and the
+  remainder into pprd/pprd.h.
 

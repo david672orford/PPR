@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -43,7 +43,7 @@
 #include <signal.h>				/* so we can include pprd.auto_h */
 #include "gu.h"
 #include "global_defines.h"
-
+#include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"		/* for definition of debug() */
 

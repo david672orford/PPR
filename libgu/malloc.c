@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 23 September 2005.
 */
 
 /*! \file
@@ -82,6 +82,7 @@ struct POOL {
 #define POOLS_STACK_SIZE 10
 static struct POOL *pools_stack[POOLS_STACK_SIZE];
 static int pools_stack_pointer = -1;
+static gu_boolean pool_suspended = FALSE;
 
 /** Number of blocks currently allocated, used for debugging */
 static int gu_alloc_blocks = 0;
@@ -359,7 +360,7 @@ static void gu_pool_register(void *block)
 	{
 	const char function[] = "gu_pool_register";
 	DODEBUG(("gu_pool_register(%p)",block));
-	if(pools_stack_pointer >= 0)
+	if(pools_stack_pointer >= 0 && !pool_suspended)
 		{
 		struct POOL *pool = pools_stack[pools_stack_pointer];
 		if(pool->size_used == pool->size_allocated)
@@ -376,7 +377,7 @@ static void gu_pool_register(void *block)
 static void gu_pool_reregister(void *block, void *old_block)
 	{
 	DODEBUG(("gu_pool_reregister(block=%p, old_block=%p)",block,old_block));
-	if(pools_stack_pointer >= 0)
+	if(pools_stack_pointer >= 0 && !pool_suspended)
 		{
 		struct POOL *pool = pools_stack[pools_stack_pointer];
 		int iii;
@@ -393,7 +394,7 @@ static void gu_pool_reregister(void *block, void *old_block)
 		}
 	}
 
-/* Move memory block to parent pool
+/** Move memory block to parent pool
 
 The indicated block is found in the current pool.  It is removed
 from the current pool and registered in the parent pool (if there is one).
@@ -469,6 +470,17 @@ void *gu_pool_pop(void *p)
 	return pools_stack[pools_stack_pointer--];
 	}
 
+/** suspend pool tracking of memory blocks
+ *
+ * If the argument is TRUE, any blocks allocated are not placed in the 
+ * current pool.  If the argument is FALSE, then tracking of memory
+ * blocks is resumed.
+ */
+void gu_pool_suspend(gu_boolean suspend)
+	{
+	pool_suspended = suspend;
+	}
+ 
 /* gcc -I../include -Wall -DTEST -o malloc malloc.c ../libgu.a */
 #ifdef TEST
 #include <stdio.h>

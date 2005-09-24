@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*==============================================================
@@ -1185,12 +1185,6 @@ int printer_interface(const char *argv[])
 		fputs(_("You must specify a printer, either new or existing,\n"
 				"an interface, and an address for the interface\n"
 				"to send the job to.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	if(strlen(printer) > MAX_DESTNAME)
-		{
-		fputs(_("The printer name is too long.\n"), errors);
 		return EXIT_SYNTAX;
 		}
 

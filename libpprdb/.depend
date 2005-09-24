@@ -1,14 +1,14 @@
-dbstrlower.$(OBJ): dbstrlower.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+dbstrlower.o: dbstrlower.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-gdbm_dbauth.$(OBJ): gdbm_dbauth.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+gdbm_dbauth.o: gdbm_dbauth.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-gdbm_dbmod.$(OBJ): gdbm_dbmod.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+gdbm_dbmod.o: gdbm_dbmod.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-gdbm_dbtrans.$(OBJ): gdbm_dbtrans.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+gdbm_dbtrans.o: gdbm_dbtrans.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-none_dbauth.$(OBJ): none_dbauth.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+none_dbauth.o: none_dbauth.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-none_dbmod.$(OBJ): none_dbmod.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+none_dbmod.o: none_dbmod.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 
-none_dbtrans.$(OBJ): none_dbtrans.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
+none_dbtrans.o: none_dbtrans.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/userdb.h
 

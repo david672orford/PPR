@@ -1,0 +1,162 @@
+<?xml version='1.0'?>
+<!DOCTYPE Article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
+	"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd">
+
+<!--
+Filename: printlog.5.sgml
+Last Modified: 23 September 2005.
+Last Proofread: never
+-->
+
+<refentry id="printlog">
+
+<refmeta>
+<refentrytitle>printlog</refentrytitle>
+<manvolnum>5</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>printlog</refname>
+<refpurpose>Printer Use Logging</refpurpose>
+</refnamediv>
+
+<refsect1><title>DESCRIPTION</title>
+
+<para><application>PPR</application> can keep a running log of jobs printed.
+To enable this logging, create an empty file
+<filename>/var/log/ppr/printlog</filename>.  One line will be appended to this
+file for each job which is successfully printed.</para>
+
+<para>A typical print log entry looks like this:</para>
+
+<screen>
+19961115131401,rotate-1375.0(mouse),chipmunk,"David Chappell",chappell,
+	"",7,1,2,166,30.12,0.00,-1,80123,2
+</screen>
+
+<para>(In reality this would be a single long line.  We have split the example line
+so that it will fit on the page.)</para>
+
+<para>The meanings of the fields in the above log line is as follows:</para>
+
+<itemizedlist>
+
+<listitem><para>The 1st field is the date and time at which the job was
+submitted.  In this case the date is November 15th, 1996.  The time is
+1:14pm.</para></listitem>
+
+<listitem><para>The 2nd field is the job id.  This job was submitted to the
+group called <literal>rotate</literal>.</para></listitem>
+
+<listitem><para>The 3rd field is the printer it was printed on.  This job was
+printed on the printer named <literal>chipmunk</literal> which is presumably a
+member of the group <literal>rotate</literal>.</para></listitem>
+
+<listitem><para>The 4th field is the name of the person who printed it.  This
+is the name as it appeared in the queue listing and on banner pages.  This is a
+quoted field.</para></listitem>
+
+<listitem><para>The 5th field is the name of the Unix user who invoked <command>ppr</command> to
+submit the job.</para></listitem>
+
+<listitem><para>The 6th field is the argument to <command>ppr</command>'s
+<option>-X</option> switch, if it was used.  In this case it wasn't used, so
+the field contains a string of zero length.  This is a quoted
+field.</para></listitem>
+
+<listitem><para>The 7th field is the number of logical pages in the job.  This
+ought to be the number of <literal>%%Page:</literal> comments in the PostScript
+file.  If the number of pages is unknown this field will contain the value
+-1.</para></listitem>
+
+<listitem><para>The 8th field is the number of sheets of paper used.  This job
+was printed 4-Up in duplex mode so only one sheet was used.  If 5 copies had
+been printed, this number would have been 5.</para></listitem>
+
+<listitem><para>The 9th field is the number of actual pages (sides) printed.
+Since this job prints four reduced-size pages to an actual page, this field is
+2.  If 5 copies had been printed, this field would have contained a 10.</para>
+</listitem>
+
+<listitem><para>The 10th field is the number of seconds which elapsed between
+the time the job was queued and the time printing was completed.  (To be more
+precise, the interval between when the program <command>ppr</command> was
+invoked and the time <command>pprdrv</command> wrote the log entry.)  This job
+was finished two minutes and 46 seconds after it entered the
+queue.</para></listitem>
+
+<listitem><para>The 11th field is the number of seconds between the time
+<command>pprdrv</command> started up and the time if wrote the log entry.  It
+is expressed in seconds and hundredths of a second.</para></listitem>
+
+<listitem><para>The 12th field shows the amount of money charged.  This is a
+fixed point number with two digits after the decimal point.  No monetary unit
+is indicated.</para></listitem>
+
+<listitem><para>The 13th field shows the number of sides the printer says it
+printed.  This number will likely be obtained though HP PJL.  Note that at this
+time, the value in this field is not used to compute the charge in the 12th
+field.</para></listitem>
+
+<listitem><para>The 14th field reports the number of pages the printer claimed
+to have printed over its lifetime.  This field is -1 if the number was not
+retrieved.  An attempt to retrieve it will only be made if the printer's
+configuration file contains a <literal>PageCountQuery:</literal> line which
+enables this feature and the <option>feedback</option> setting is
+<literal>true</literal>.  When this feature is enabled, the page count is
+fetched just after printing the banner page and just before printing the job
+itself.  If printing is successful, the resulting value will ultimately be
+logged in the 14th field.</para></listitem>
+
+<listitem><para>The 15th field is meaningful only if the value in the 14th
+field is not -1.  Once the job has been printed, but before a trailer page is
+printed, the page count query is repeated.  If the query is successful, then
+the difference between the before and after page counts is logged in this
+field. If the query is not performed or is not successful, then a -1 is loggged
+in this field.  See the discussion of the <literal>PageCountQuery:</literal>
+line in the PPR Hackers Guide for a discussion of why the value
+logged in this field may not accurately reflect the number of pages
+printed.</para></listitem>
+
+<listitem><para>The 16th field is the size of the PostScript job in bytes.  If
+the input file was PostScript, then this is the size of the input file.  If the
+job had to be converted to PostScript, then this is the size of the PostScript
+output of the filter.</para></listitem>
+
+<listitem><para>The 17th field is the number of bytes that were sent to the
+printer in order to print this job.  This number may be significantly greater
+than the number in field 16.  For example, it may have been necessary to print
+multiple copies by sending the job several times or
+<application>PPR</application> may have inserted fonts into the
+job.</para></listitem>
+
+<listitem><para>The 18th field is the title of the job.  If the job had no
+title, then the name of the input file is used.  If there was no input file
+(such as if the job was read from stdin), then this field will be blank.  This
+is a quoted field.</para></listitem>
+
+</itemizedlist>
+
+<para>If left uncontrolled, the printlog file will grow indefinitely, so
+steps should be taken to truncate it regularly.</para>
+
+</refsect1>
+
+<refsect1><title>FILES</title>
+printlog - log of jobs printed by <application>PPR</application>
+</refsect1>
+
+<refsect1><title>SEE ALSO</title>
+<para></para>
+</refsect1>
+
+<refsect1><title>HISTORY</title>
+<para>PPR was written at Trinity College during 1993--2005.
+It was first released to the public on 26 April 1995.</para>
+</refsect1>
+
+<refsect1><title>AUTHOR</title>
+<para>David Chappell, Trinity College Computing Center, Hartford, Connecticut.</para>
+</refsect1>
+
+</refentry>

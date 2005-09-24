@@ -25,10 +25,49 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 August 2005.
+** Last modified 23 September 2005.
 */
 
-/* =================== for queue entries =====================*/
+/* =================== for pprd queue entries =====================*/
+
+/* A queue entry as stored by pprd and passed back to ppop.
+   Notice that this is shorter than struct QEntryFile. */
+struct QEntry
+	{
+	SHORT_INT destnode_id;				/* destination node by key number */
+	SHORT_INT destid;					/* destination key number */
+	SHORT_INT id;						/* queue id */
+	SHORT_INT subid;					/* fractional queue id */
+	SHORT_INT homenode_id;				/* id of node job come from */
+
+	SHORT_INT status;					/* printer id if printing, < 0 for other status */
+	unsigned short int flags;			/* --keep, responding, etc. */
+	time_t resend_message_at;			/* time at which to retry responder to questioner */
+
+	SHORT_INT priority;					/* priority number (0=highest, 39=lowest) */
+	unsigned char never;				/* bitmap of group member which can't print */
+	unsigned char notnow;				/* bitmap of group members without media mntd */
+	SHORT_INT media[MAX_DOCMEDIA];		/* list of id numbers of media types req. */
+	SHORT_INT pass;						/* number of current pass thru printers in group */
+	} ;
+
+/*
+** Printer status values
+*/
+#define PRNSTATUS_IDLE 0				/* idle but ready to print */
+#define PRNSTATUS_PRINTING 1			/* printing right now */
+#define PRNSTATUS_CANCELING 2			/* canceling a job */
+#define PRNSTATUS_SEIZING 3				/* stopping printing current job and holding it */
+#define PRNSTATUS_FAULT 4				/* waiting for auto retry */
+#define PRNSTATUS_ENGAGED 5				/* printer is printing for another computer */
+#define PRNSTATUS_STARVED 6				/* starved for system resources */
+#define PRNSTATUS_STOPT 7				/* stopt by user */
+#define PRNSTATUS_STOPPING 8			/* will go to PRNSTATUS_STOPT at job end */
+#define PRNSTATUS_HALTING 9				/* pprdrv being killed */
+#define PRNSTATUS_DELETED 10			/* printer has been deleted */
+#define PRNSTATUS_DELIBERATELY_DOWN 7	/* 1st non-printing value (stopt) */
+
+/* =================== for disk queue entries =====================*/
 
 struct RESPONDER {
 	const char *name;		/* program for sending messages to user */
@@ -165,9 +204,6 @@ struct QEntryFile
 #define CHOPT_QF_ENDTAG2 "."
 
 /* Values used in ppop -> pprd communication: */
-#define NODEID_WILDCARD -1
-#define NODEID_NOTFOUND -2
-#define NODEID_LOCALHOST 0
 #define QUEUEID_WILDCARD -1
 #define WILDCARD_JOBID -1
 #define WILDCARD_SUBID -1

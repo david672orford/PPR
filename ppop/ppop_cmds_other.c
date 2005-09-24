@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -48,7 +48,6 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
-#include "pprd.h"
 #include "ppop.h"
 #include "util_exits.h"
 #include "interface.h"
@@ -424,11 +423,10 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 ===================================================================*/
 int ppop_status(char *argv[])
 	{
-	struct Destname destname;
+	const char *destname;
 	FILE *FIFO, *reply_file;
 	char *line = NULL;
 	int line_len = 128;
-	int len;
 	char *printer_name;
 	char *job_destname;
 	int job_id,job_subid;
@@ -442,12 +440,11 @@ int ppop_status(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(parse_dest_name(&destname, argv[0]))
+	if(!(destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
-
-	fprintf(FIFO, "s %s\n", destname.destname);
+	fprintf(FIFO, "s %s\n", destname);
 	fflush(FIFO);
 
 	if( ! opt_machine_readable )
@@ -456,7 +453,7 @@ int ppop_status(char *argv[])
 		gu_puts("------------------------------------------------------------\n");
 		}
 
-	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
+	if(!(reply_file = wait_for_pprd(TRUE)))
 		return print_reply();
 
 	while((line = gu_getline(line, &line_len, reply_file)))
@@ -469,27 +466,17 @@ int ppop_status(char *argv[])
 				) != 7)
 			{
 			printf("Malformed response: %s\n", line);
-			if(printer_name)
-				gu_free(printer_name);
-			if(job_destname)
-				gu_free(job_destname);
+			gu_free_if(printer_name);
+			gu_free_if(job_destname);
 			continue;
 			}
 
-		gu_puts(printer_name);						/* print printer name */
+		if(! opt_machine_readable)			/* human readable */
+			printf("%-16s ", printer_name);
+		else
+			printf("%s\t", printer_name);
 
-		if(! opt_machine_readable)					/* possibly pad out */
-			{
-			len = strlen(printer_name);
-			while(len++ <= MAX_DESTNAME)
-				putchar(' ');
-			}
-		else									/* in machine readable mode, */
-			{									/* we use a single tab */
-			putchar('\t');
-			}
-
-		if(!opt_machine_readable)					/* If to be human readable, */
+		if(!opt_machine_readable)			/* human readable */
 			{
 			switch(status)
 				{
@@ -593,6 +580,7 @@ int ppop_status(char *argv[])
 
 		putchar('\n');
 
+		/* leave these frees in since they are allocated on each iteration */
 		gu_free(printer_name);
 		gu_free(job_destname);
 		} /* end of loop for each printer */
@@ -607,7 +595,7 @@ int ppop_status(char *argv[])
 =====================================================================*/
 int ppop_message(char *argv[])
 	{
-	struct Destname destname;
+	const char *destname;
 	char fname[MAX_PPR_PATH];
 	FILE *statfile;
 
@@ -617,10 +605,10 @@ int ppop_message(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(parse_dest_name(&destname, argv[0]))
+	if(!(destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
-	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destname.destname);
+	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destname);
 	if((statfile = fopen(fname, "r")))
 		{
 		char *line = NULL; int line_len = 40;
@@ -629,8 +617,6 @@ int ppop_message(char *argv[])
 			if(print_aux_status(line, PRNSTATUS_PRINTING, ""))
 				putchar('\n');
 			}
-		if(line)
-			gu_free(line);
 		fclose(statfile);
 		}
 
@@ -646,11 +632,10 @@ int ppop_message(char *argv[])
 =====================================================================*/
 int ppop_media(char *argv[])
 	{
-	struct Destname destname;
+	const char function[] = "ppop_media";
+	int retcode;
+	const char *destname;
 	FILE *FIFO, *reply_file;
-	struct fcommand1 f1;
-	struct fcommand2 f2;
-	int len;
 
 	if(!argv[0])
 		{
@@ -658,66 +643,71 @@ int ppop_media(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(parse_dest_name(&destname, argv[0]))
+	if(!(destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
-
-	fprintf(FIFO, "f %s\n", argv[0]);
+	fprintf(FIFO, "f %s\n", destname);
 	fflush(FIFO);
 
 	if( ! opt_machine_readable )
 		{
-		printf("Printer                  Bin             Media\n");
+		printf(_("Printer                  Bin             Medium\n"));
 		printf("---------------------------------------------------------------\n");
 		}
 
-	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
+	if(!(reply_file = wait_for_pprd(TRUE)))
 		return print_reply();
 
-	/* Read each fcommand return structure, one for each printer. */
-	if( ! opt_machine_readable )
-	while(fread(&f1, sizeof(struct fcommand1), 1, reply_file))
+	{
+	retcode = EXIT_OK;
+	char *line = NULL;
+	int line_space = 80;
+	while(retcode == EXIT_OK && (line = gu_getline(line, &line_space, reply_file)))
 		{
-		len = printf(f1.prnname);				/* display the printer name */
-
-		if(f1.nbins==0 && ! opt_machine_readable)	/* If no bins, */
-			{									/* display a message to that effect. */
-			while(len++ < 25)
-				putchar(' ');
-			printf("(no bins defined)\n");
-			}
-
-		while(f1.nbins--)						/* for each bin */
+		char *printer, *bin, *medium;
+		int nbins;
+		int pos;
+		if(gu_sscanf(line, "%S %d", &printer, &nbins) != 2)
 			{
-			while(len++<25)						/* "tab" out */
-				putchar(' ');
-
-			fread(&f2, sizeof(struct fcommand2), 1, reply_file);
-			len=printf(f2.bin);					/* print the bin name */
-
-			while(len++<16)						/* "tab" out */
-				putchar(' ');
-
-			printf("%s\n",f2.media);			/* print the media name */
-
-			len = 0;
+			retcode = EXIT_INTERNAL;
+			break;
 			}
-		putchar('\n');
-		}
-
-	else
-	while( fread(&f1,sizeof(struct fcommand1),1,reply_file) )
-		{
-		while(f1.nbins--)						/* for each bin */
+		if(!opt_machine_readable)
 			{
-			fread(&f2,sizeof(struct fcommand2),1,reply_file);
-
-			printf("%s\t%s\t%s\n",f1.prnname,f2.bin,f2.media);
+			printf("%-24s ", printer);
+			pos = 25;
+			if(nbins == 0)
+				printf(_("(no bins defined)\n"));
 			}
+		while(nbins-- > 0)
+			{
+			medium = NULL;
+			if(!(line = gu_getline(line, &line_space, reply_file)) || gu_sscanf(line, "%S %S", &bin, &medium) < 1)
+				{
+				retcode = EXIT_INTERNAL;
+				break;
+				}
+			if(!opt_machine_readable)
+				{
+				while(pos++ < 25)
+					putchar(' ');
+				printf("%-15s %s\n", bin, medium ? medium : "");
+				}
+			else
+				printf("%s\t%s\t%s\n", printer, bin, medium ? medium : "");
+			gu_free(bin);
+			gu_free_if(medium);
+			pos = 0;
+			}
+		gu_free(printer);
 		}
+	}
 
-	return EXIT_OK;
+	if(retcode == EXIT_INTERNAL)
+		fprintf(errors, "%s(): bad response from pprd.\n", function);
+
+	return retcode;
 	} /* end of ppop_media() */
 
 /*==========================================================================
@@ -728,64 +718,72 @@ int ppop_media(char *argv[])
 ==========================================================================*/
 int ppop_mount(char *argv[])
 	{
-	struct Destname destination;
-	char *printer, *binname, *mediumname;
+	int retcode = EXIT_OK;
+	const char *destname, *binname, *mediumname;
 	FILE *FIFO;
 
-	if(!(printer=argv[0]) || !(binname=argv[1]))
+	if(!argv[0] || argv[1])
 		{
 		fprintf(errors, _("Usage: ppop mount <printer> <bin> <medium>\n"));
 		return EXIT_SYNTAX;
 		}
 
-	mediumname = argv[2] ? argv[2] : "";
-
 	if(!assert_am_operator())
 		return EXIT_DENIED;
 
-	if(parse_dest_name(&destination,argv[0]))
+	if(!(destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
+	binname = argv[1];
+	mediumname = argv[2] ? argv[2] : "";
+
 	/* If the mediumname is not empty, make sure it exists. */
-	if(mediumname[0])
-		{
-		char padded_mediumname[MAX_MEDIANAME];
-		FILE *mfile;							/* media file */
-		struct Media ms;
-		ASCIIZ_to_padded(padded_mediumname,mediumname,sizeof(padded_mediumname));
-
-		if((mfile = fopen(MEDIAFILE, "rb")) == (FILE*)NULL)
+	do	{
+		if(mediumname[0])
 			{
-			fprintf(errors, _("Can't open \"%s\", errno=%d (%s)."), MEDIAFILE, errno, gu_strerror(errno));
-			return EXIT_INTERNAL;
-			}
-
-		while(TRUE)
-			{
-			if(fread(&ms,sizeof(struct Media), 1, mfile) == 0)
+			char padded_mediumname[MAX_MEDIANAME];
+			FILE *mfile;							/* media file */
+			struct Media ms;
+			ASCIIZ_to_padded(padded_mediumname,mediumname,sizeof(padded_mediumname));
+	
+			if((mfile = fopen(MEDIAFILE, "rb")) == (FILE*)NULL)
 				{
-				fclose(mfile);
-				fprintf(errors, _("Medium \"%s\" is unknown.\n"), mediumname);
-				return EXIT_ERROR;
-				}
-			if(memcmp(padded_mediumname, ms.medianame, sizeof(ms.medianame)) == 0)
+				fprintf(errors, _("Can't open \"%s\", errno=%d (%s)."), MEDIAFILE, errno, gu_strerror(errno));
+				retcode = EXIT_INTERNAL;
 				break;
+				}
+	
+			while(TRUE)
+				{
+				if(fread(&ms,sizeof(struct Media), 1, mfile) == 0)
+					{
+					fclose(mfile);
+					fprintf(errors, _("Medium \"%s\" is unknown.\n"), mediumname);
+					retcode = EXIT_ERROR;
+					break;
+					}
+				if(memcmp(padded_mediumname, ms.medianame, sizeof(ms.medianame)) == 0)
+					break;
+				}
+	
+			fclose(mfile);
 			}
-
-		fclose(mfile);
-		}
+		} while(TRUE);
 
 	/*
-	** get ready for the response from pprd
-	** and send the mount command
+	** If there was no error detected above, get ready for the 
+	** response from pprd and send the mount command.
 	*/
-	FIFO = get_ready();
-	fprintf(FIFO, "M %s %s %s\n", printer, binname, mediumname);
-	fflush(FIFO);
+	if(retcode == EXIT_OK)
+		{
+		FIFO = get_ready();
+		fprintf(FIFO, "M %s %s %s\n", destname, binname, mediumname);
+		fflush(FIFO);
+		wait_for_pprd(TRUE);
+		retcode = print_reply();
+		}
 
-	wait_for_pprd(TRUE);
-
-	return print_reply();
+	return retcode;
 	} /* end of ppop_mount() */
 
 /*==========================================================================
@@ -811,10 +809,10 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 	{
 	int x;
 	int result = 0;
-	struct Destname destination;
+	const char *destname;
 	FILE *FIFO;
 
-	if(argv[0] == (char*)NULL)
+	if(!argv[0])
 		{
 		switch(variation)
 			{
@@ -847,7 +845,7 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 
 	for(x=0; argv[x]; x++)
 		{
-		if(parse_dest_name(&destination, argv[x]))
+		if(!(destname = parse_destname(argv[x])))
 			{
 			result = EXIT_SYNTAX;
 			break;
@@ -858,16 +856,16 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 		switch(variation)
 			{
 			case 0:				/* start */
-				fprintf(FIFO, "t %s\n", destination.destname);
+				fprintf(FIFO, "t %s\n", destname);
 				break;
 			case 1:				/* stop */
-				fprintf(FIFO, "p %s\n", destination.destname);
+				fprintf(FIFO, "p %s\n", destname);
 				break;
 			case 2:				/* wstop */
-				fprintf(FIFO, "P %s\n", destination.destname);
+				fprintf(FIFO, "P %s\n", destname);
 				break;
 			case 3:				/* halt */
-				fprintf(FIFO, "b %s\n", destination.destname);
+				fprintf(FIFO, "b %s\n", destname);
 				break;
 			}
 
@@ -875,7 +873,8 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 
 		wait_for_pprd(variation != 2);	/* no timeout for wstop */
 
-		if( (result = print_reply()) ) break;
+		if((result = print_reply()))
+			break;
 		}
 
 	return result;
@@ -954,7 +953,7 @@ static int ppop_cancel_byuser(char *destname, int inform)
 int ppop_cancel(char *argv[], int inform)
 	{
 	int x;
-	struct Jobname job;
+	const struct Jobname *job;
 	FILE *FIFO, *reply_file;
 	int count;
 
@@ -969,11 +968,11 @@ int ppop_cancel(char *argv[], int inform)
 
 	for(x=0; argv[x]; x++)
 		{
-		if(parse_job_name(&job, argv[x]) == -1)
+		if(!(job = parse_jobname(argv[x])))
 			return EXIT_SYNTAX;
 
-		if(job.id == -1)		/* If all jobs owned by this user, */
-			{					/* then use special routine. */
+		if(job->id == WILDCARD_JOBID)	/* If it is to be all jobs owned by this user, */
+			{							/* then use special routine. */
 			int ret;
 			if((ret = ppop_cancel_byuser(argv[x], inform)))
 				return ret;
@@ -981,12 +980,12 @@ int ppop_cancel(char *argv[], int inform)
 			}
 
 		/* Make sure the user has permission to cancel this job. */
-		if(!job_permission_check(&job))
+		if(!job_permission_check(job))
 			return EXIT_DENIED;
 
 		/* Ask pprd to cancel it. */
 		FIFO = get_ready();
-		fprintf(FIFO, "c %s %d %d %d\n", job.destname, job.id, job.subid, inform);
+		fprintf(FIFO, "c %s %d %d %d\n", job->destname, job->id, job->subid, inform);
 		fflush(FIFO);
 
 		if(!(reply_file = wait_for_pprd(TRUE)))
@@ -1014,7 +1013,7 @@ int ppop_cancel(char *argv[], int inform)
 int ppop_purge(char *argv[], int inform)
 	{
 	int x;
-	struct Destname dest;
+	const char *destname;
 	FILE *FIFO, *reply_file;
 	int count;
 
@@ -1033,11 +1032,11 @@ int ppop_purge(char *argv[], int inform)
 
 	for(x=0; argv[x]; x++)
 		{
-		if(parse_dest_name(&dest, argv[x]))
+		if(!(destname = parse_destname(argv[x])))
 			return EXIT_SYNTAX;
 
 		FIFO = get_ready();
-		fprintf(FIFO, "c %s -1 -1 %d\n", dest.destname, inform);
+		fprintf(FIFO, "c %s -1 -1 %d\n", destname, inform);
 		fflush(FIFO);
 
 		if(!(reply_file = wait_for_pprd(TRUE)))
@@ -1158,7 +1157,7 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 	if(qentry->status < 0)
 		return FALSE;
 
-	if( ppop_cancel_active_my && ! is_my_job(qentry, qentryfile) )
+	if(ppop_cancel_active_my && !is_my_job(qentry, qentryfile))
 		return TRUE;
 
 	FIFO = get_ready();
@@ -1182,10 +1181,10 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 int ppop_cancel_active(char *argv[], int my, int inform)
 	{
 	int ret;
-	struct Jobname job;
+	const struct Jobname *job;
 
 	/* If parameter missing or it is a job id rather than a destination id, */
-	if(!argv[0] || parse_job_name(&job, argv[0]) || job.id != -1)
+	if(!argv[0] || !(job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
 		{
 		fprintf(errors, _("Usage: ppop cancel-%sactive <destination> ...\n\n"
 				"This command will delete all of the arrested jobs\n"
@@ -1228,11 +1227,11 @@ int ppop_cancel_active(char *argv[], int my, int inform)
 ========================================================================*/
 int ppop_move(char *argv[])
 	{
-	struct Jobname job;
-	struct Destname destination;
+	const struct Jobname *job;
+	const char *new_destname;
 	FILE *FIFO;
 
-	if(! argv[0] || ! argv[1])
+	if(!argv[0] || !argv[1])
 		{
 		fputs(_("Usage: ppop move <job> <destination>\n"
 			  "     ppop move <old_destionation> <new_destination>\n\n"
@@ -1240,26 +1239,24 @@ int ppop_move(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(parse_job_name(&job, argv[0]))
+	if(!(job = parse_jobname(argv[0])))
 		return EXIT_SYNTAX;
 
-	if(job.id == -1)							/* all jobs */
+	if(job->id == WILDCARD_JOBID)				/* all jobs */
 		{
 		if(!assert_am_operator())
 			return EXIT_DENIED;
 		}
-	else if(!job_permission_check(&job))		/* one job */
+	else if(!job_permission_check(job))			/* one job */
 		return EXIT_DENIED;
 
-	if( parse_dest_name(&destination, argv[1]) )
+	if(!(new_destname = parse_destname(argv[1])))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
-
 	fprintf(FIFO, "m %s %d %d %s\n",
-			job.destname, job.id, job.subid,
-			destination.destname);
-
+			job->destname, job->id, job->subid,
+			new_destname);
 	fflush(FIFO);							/* force the buffer contents out */
 
 	wait_for_pprd(TRUE);
@@ -1279,7 +1276,7 @@ int ppop_move(char *argv[])
 int ppop_rush(char *argv[], int newpos)
 	{
 	int x;
-	struct Jobname job;
+	const struct Jobname *job;
 	FILE *FIFO;
 	int result = 0;
 
@@ -1304,16 +1301,16 @@ int ppop_rush(char *argv[], int newpos)
 
 	for(x=0; argv[x]; x++)
 		{
-		if( parse_job_name(&job, argv[x]) )
+		if(!(job = parse_jobname(argv[x])))
 			return EXIT_SYNTAX;
 
 		FIFO = get_ready();
-		fprintf(FIFO, "U %s %d %d %d\n", job.destname, job.id, job.subid, newpos);
+		fprintf(FIFO, "U %s %d %d %d\n", job->destname, job->id, job->subid, newpos);
 		fflush(FIFO);
-
 		wait_for_pprd(TRUE);
 
-		if( (result = print_reply()) ) break;
+		if((result = print_reply()))
+			break;
 		}
 
 	return result;
@@ -1333,7 +1330,7 @@ int ppop_rush(char *argv[], int newpos)
 int ppop_hold_release(char *argv[], int release)
 	{
 	int x;
-	struct Jobname job;
+	const struct Jobname *job;
 	FILE *FIFO;
 	int result = 0;
 
@@ -1355,26 +1352,26 @@ int ppop_hold_release(char *argv[], int release)
 
 	for(x=0; argv[x]; x++)
 		{
-		if( parse_job_name(&job, argv[x]) )
+		if(!(job = parse_jobname(argv[x])))
 			return EXIT_SYNTAX;
 
-		if( job.id == -1 )
+		if(job->id == WILDCARD_JOBID)
 			{
 			fputs(_("You must indicate a specific job.\n"), errors);
 			return EXIT_SYNTAX;
 			}
 
-		if(!job_permission_check(&job))
+		if(!job_permission_check(job))
 			return EXIT_DENIED;
 
 		FIFO = get_ready();
 		fprintf(FIFO, "%c %s %d %d\n", release ? 'r' : 'h',
-				job.destname, job.id, job.subid);
+				job->destname, job->id, job->subid);
 		fflush(FIFO);
-
 		wait_for_pprd(TRUE);
 
-		if( (result = print_reply()) ) break;
+		if((result = print_reply()))
+			break;
 		}
 
 	return result;
@@ -1388,7 +1385,7 @@ int ppop_hold_release(char *argv[], int release)
 ==========================================================================*/
 int ppop_accept_reject(char *argv[], int reject)
 	{
-	struct Destname destination;
+	const char *destname;
 	FILE *FIFO;
 
 	if(!argv[0])
@@ -1408,15 +1405,15 @@ int ppop_accept_reject(char *argv[], int reject)
 	if(!assert_am_operator())
 		return EXIT_DENIED;
 
-	if(parse_dest_name(&destination, argv[0]))
+	if(!(destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
 
 	if(! reject)
-		fprintf(FIFO, "A %s\n", destination.destname);
+		fprintf(FIFO, "A %s\n", destname);
 	else
-		fprintf(FIFO, "R %s\n", destination.destname);
+		fprintf(FIFO, "R %s\n", destname);
 
 	fflush(FIFO);
 
@@ -1433,7 +1430,7 @@ int ppop_accept_reject(char *argv[], int reject)
 int ppop_destination(char *argv[], int info_level)
 	{
 	const char function[] = "ppop_destination";
-	struct Destname destination;
+	const char *search_destname;
 	FILE *FIFO, *reply_file;
 	const char *format;
 	int is_group, is_accepting, is_charge;
@@ -1459,12 +1456,12 @@ int ppop_destination(char *argv[], int info_level)
 		return EXIT_ERROR;
 		}
 
-	if(parse_dest_name(&destination, argv[0]))
+	if(!(search_destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
 	/* Send a request to pprd. */
 	FIFO = get_ready();
-	fprintf(FIFO, "D %s\n", destination.destname);
+	fprintf(FIFO, "D %s\n", search_destname);
 	fflush(FIFO);
 
 	/* If a human is reading our output, give column names. */
@@ -1526,8 +1523,7 @@ int ppop_destination(char *argv[], int info_level)
 		if(gu_sscanf(line, "%S %d %d %d", &destname, &is_group, &is_accepting, &is_charge) != 4)
 			{
 			printf("Malformed response: %s", line);
-			if(destname)
-				gu_free(destname);
+			gu_free_if(destname);
 			continue;
 			}
 
@@ -1553,7 +1549,7 @@ int ppop_destination(char *argv[], int info_level)
 							continue;
 						}
 					}
-				if(pconf_line) gu_free(pconf_line);
+				gu_free_if(pconf_line);
 				fclose(f);
 				}
 			}
@@ -1568,13 +1564,12 @@ int ppop_destination(char *argv[], int info_level)
 				(address ? address : "")
 				);
 
+		/* Do not remove these */
 		gu_free(destname);
-		if(comment) gu_free(comment);
-		if(interface) gu_free(interface);
-		if(address) gu_free(address);
+		gu_free_if(comment);
+		gu_free_if(interface);
+		gu_free_if(address);
 		} /* end of loop which processes responses from pprd. */
-
-	if(line) gu_free(line);
 
 	fclose(reply_file);
 
@@ -1598,7 +1593,7 @@ int ppop_destination(char *argv[], int info_level)
 		if(len > 0 && direntp->d_name[len-1] == '~')
 			continue;
 
-		if(strcmp(destination.destname, "all") == 0 || strcmp(destination.destname, direntp->d_name) == 0)
+		if(strcmp(destname, "all") == 0 || strcmp(destname, direntp->d_name) == 0)
 			{
 			printf(format,
 				direntp->d_name,
@@ -1625,7 +1620,7 @@ int ppop_destination(char *argv[], int info_level)
 ===========================================================================*/
 int ppop_alerts(char *argv[])
 	{
-	struct Destname prn;
+	const char *destname;
 	char fname[MAX_PPR_PATH];
 	struct stat statbuf;
 	FILE *f;
@@ -1637,24 +1632,24 @@ int ppop_alerts(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(parse_dest_name(&prn, argv[0]))
+	if(!(destname = parse_destname(argv[0])))
 		return EXIT_SYNTAX;
 
 	/* See if the printer configuration file exists. */
-	ppr_fnamef(fname, "%s/%s", PRCONF, prn.destname);
+	ppr_fnamef(fname, "%s/%s", PRCONF, destname);
 	if(stat(fname, &statbuf))
 		{
-		fprintf(errors, _("Printer \"%s\" does not exist.\n"), prn.destname);
+		fprintf(errors, _("Printer \"%s\" does not exist.\n"), destname);
 		return EXIT_ERROR;
 		}
 
 	/* Try to open the alerts file. */
-	ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, prn.destname);
-	if((f = fopen(fname, "r")) == (FILE*)NULL)
+	ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, destname);
+	if(!(f = fopen(fname, "r")))
 		{
 		if(errno == ENOENT)
 			{
-			fprintf(errors, _("No alerts for printer \"%s\".\n"), prn.destname);
+			fprintf(errors, _("No alerts for printer \"%s\".\n"), destname);
 			return EXIT_OK;
 			}
 		else
@@ -1669,6 +1664,7 @@ int ppop_alerts(char *argv[])
 		putchar(c);
 
 	fclose(f);
+
 	return EXIT_OK;
 	} /* end of ppop_alerts() */
 
@@ -1680,7 +1676,8 @@ int ppop_alerts(char *argv[])
 int ppop_log(char *argv[])
 	{
 	const char function[] = "ppop_log";
-	struct Jobname job;
+	const struct Jobname *job;
+	int subid;
 	char fname[MAX_PPR_PATH];
 	struct stat statbuf;
 	FILE *f;
@@ -1692,40 +1689,40 @@ int ppop_log(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(parse_job_name(&job, argv[0]))
+	if(!(job = parse_jobname(argv[0])))
 		{
 		fprintf(errors, _("Invalid job id: %s\n"), argv[0]);
 		return EXIT_SYNTAX;
 		}
 
-	if(job.id == -1)
+	if(job->id == WILDCARD_JOBID)
 		{
 		fputs(_("You must indicate a specific job.\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
 	/* For now we will substitute the subid 0 if the subid wasn't specified. */
-	if(job.subid == -1)
-		job.subid = 0;
+	if((subid = job->subid) == WILDCARD_SUBID)
+		subid = 0;
 
 	/* construct the name of the queue file */
 	ppr_fnamef(fname, "%s/%s-%d.%d",
-		QUEUEDIR, job.destname, job.id, job.subid == WILDCARD_SUBID ? 0 : job.subid);
+		QUEUEDIR, job->destname, job->id, subid);
 
 	/* make sure the queue file is there */
 	if(stat(fname,&statbuf))
 		{
-		fprintf(errors, _("Job \"%s\" does not exist.\n"), jobid(job.destname, job.id, job.subid));
+		fprintf(errors, _("Job \"%s\" does not exist.\n"), jobid(job->destname, job->id, subid));
 		return EXIT_ERROR;
 		}
 
 	/* construct the name of the log file */
-	ppr_fnamef(fname, "%s/%s-%d.%d-log", DATADIR, job.destname, job.id, job.subid);
+	ppr_fnamef(fname, "%s/%s-%d.%d-log", DATADIR, job->destname, job->id, subid);
 
 	/* open the log file */
 	if((f = fopen(fname, "r")) == (FILE*)NULL)
 		{
-		fprintf(errors, _("There is no log for job \"%s\".\n"), jobid(job.destname, job.id, job.subid));
+		fprintf(errors, _("There is no log for job \"%s\".\n"), jobid(job->destname, job->id, subid));
 		return EXIT_OK;
 		}
 

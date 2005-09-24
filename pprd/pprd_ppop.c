@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /** \file
@@ -797,8 +797,6 @@ static void ppop_media(const char command[])
 	const char function[] = "ppop_media";
 	char *destname;
 	int destid;
-	struct fcommand1 f1;
-	struct fcommand2 f2;
 	int x, y;
 	int group = FALSE;
 
@@ -835,15 +833,11 @@ static void ppop_media(const char command[])
 		{
 		if(destid == -1 || x==destid || (group && destid_get_member_offset(destid,x)!=-1) )
 			{
-			f1.nbins = printers[x].nbins;
-			strcpy(f1.prnname, printers[x].name);
-			fwrite(&f1, sizeof(struct fcommand1), 1, reply_file);
+			fprintf(reply_file, "%s %d\n", printers[x].name, printers[x].nbins);
 			for(y=0; y < printers[x].nbins; y++)
 				{
 				DODEBUG_MEDIA(("x=%d, y=%d, media=%d",x,y,printers[x].media[y]));
-				gu_strlcpy(f2.bin, printers[x].bins[y], sizeof(f2.bin));
-				gu_strlcpy(f2.media, get_media_name(printers[x].media[y]), sizeof(f2.media));
-				fwrite(&f2, sizeof(struct fcommand2), 1, reply_file);
+				fprintf(reply_file, "%s %s\n", printers[x].bins[y], get_media_name(printers[x].media[y]));
 				}
 			}
 		} /* end of for(x....) */

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-xgrant.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 January 2003.
+# Last modified 23 September 2005.
 #
 
 =head1 NAME
@@ -40,16 +40,20 @@ B<ppr-xgrant>
 
 The program B<ppr-xgrant> resides in F</usr/lib/ppr/bin>.
 
-The xwin responder will not work unless the user "ppr" has permission to pop
+The B<xwin> responder will not work unless the user "ppr" has permission to pop
 up windows on your X-Windows display.  You could use the B<xhost> command to
 allow all processes on the computer to pop up windows, but on a multi-user
 system it is probably better to run B<ppr-xgrant> to copy the magic cookie
-from your F<.Xauthority> file to ppr's F<.Xauthority> file.  That way, an
+from your F<.Xauthority> file to ppr's F<Xauthority> file.  That way, an
 unnecessarily broad grant of access is avoided.
+
+Rather than execute this program directly, it is recommended that you use
+B<ppr-followme> to select the B<xwin> responder.  B<ppr-followme> will
+in turn execute B<ppr-xgrant> in order to grant PPR the necessary permissions.
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2005.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

@@ -1,36 +1,36 @@
-ppr_dscdoc.$(OBJ): ppr_dscdoc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h
+ppr_conffile.o: ppr_conffile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h ppr_conffile.h
 
-ppr_editps.$(OBJ): ppr_editps.c ../include/config.h ../include/gu.h ../include/global_defines.h ppr.h ppr_gab.h ../include/ppr_exits.h
+ppr_dscdoc.o: ppr_dscdoc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h
 
-ppr_conffile.$(OBJ): ppr_conffile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h ppr_conffile.h
+ppr_editps.o: ppr_editps.c ../include/config.h ../include/gu.h ../include/global_defines.h ppr.h ppr_gab.h ../include/ppr_exits.h
 
-ppr_main.$(OBJ): ppr_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ppr_conffile.h ../include/userdb.h ../include/ppr_exits.h ../include/respond.h ../include/version.h ppr_gab.h
+ppr_features.o: ppr_features.c ../include/config.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h
 
-ppr_infile.$(OBJ): ppr_infile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_conffile.h ppr_infile.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
+ppr_infile.o: ppr_infile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_conffile.h ppr_infile.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
 
-ppr_rcache.$(OBJ): ppr_rcache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h
+ppr_main.o: ppr_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ppr_conffile.h ../include/userdb.h ../include/ppr_exits.h ../include/respond.h ../include/version.h ppr_gab.h
 
-ppr_media.$(OBJ): ppr_media.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
+ppr_media.o: ppr_media.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h ../include/respond.h ppr_gab.h
 
-ppr_nest.$(OBJ): ppr_nest.c ../include/config.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h ppr_gab.h
+ppr_nest.o: ppr_nest.c ../include/config.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h ppr_gab.h
 
-ppr_old2new.$(OBJ): ppr_old2new.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h
+ppr_old2new.o: ppr_old2new.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h
 
-ppr_outfile.$(OBJ): ppr_outfile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h
+ppr_outfile.o: ppr_outfile.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h
 
-ppr_req.$(OBJ): ppr_req.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
+ppr_rcache.o: ppr_rcache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ../include/ppr_exits.h
 
-ppr_res.$(OBJ): ppr_res.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
+ppr_req.o: ppr_req.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
 
-ppr_respond.$(OBJ): ppr_respond.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/respond.h ../include/ppr_exits.h
+ppr_res.o: ppr_res.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
 
-ppr_simplify.$(OBJ): ppr_simplify.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ppr_gab.h
+ppr_respond.o: ppr_respond.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/respond.h ../include/ppr_exits.h
 
-ppr_split.$(OBJ): ppr_split.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h
+ppr_simplify.o: ppr_simplify.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ppr_infile.h ppr_gab.h
 
-ppr_things.$(OBJ): ppr_things.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
+ppr_split.o: ppr_split.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h ../include/ppr_exits.h
 
-tbcp2bin.$(OBJ): tbcp2bin.c
+ppr_things.o: ppr_things.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppr.h
 
-ppr_features.$(OBJ): ppr_features.c ../include/config.h ../include/gu.h ../include/global_defines.h ppr.h ../include/ppr_exits.h
+tbcp2bin.o: tbcp2bin.c
 

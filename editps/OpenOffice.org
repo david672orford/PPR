@@ -3,6 +3,15 @@
 while(<STDIN>)
 	{
 	s/^({restore}if)(%%EndResource)$/$1\n$2/;
+	if(/^\/#copies (\d+)/)
+		{
+		my $copies = $1;
+		print "%%BeginNonPPDFeature: NumCopies $copies\n";
+		print;
+		$_ = <STDIN>;
+		print;
+		print "%%EndNonPPDFeature\n";
+		}
 	print;
 	}
 

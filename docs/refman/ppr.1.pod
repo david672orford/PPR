@@ -1344,7 +1344,7 @@ I<The PPR Hackers Guide>
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2005.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

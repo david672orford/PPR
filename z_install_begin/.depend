@@ -1,6 +1,6 @@
-getgrnam.$(OBJ): getgrnam.c
+getgrnam.o: getgrnam.c
 
-getpwnam.$(OBJ): getpwnam.c
+getpwnam.o: getpwnam.c
 
-id.$(OBJ): id.c
+id.o: id.c
 

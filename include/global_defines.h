@@ -101,31 +101,30 @@
 ** Some Practical Limits
 =====================================================================*/
 
-#define MAX_LINE 1024					/* maximum PostScript input line length (now pretty meaningless) */
-#define MAX_CONT 32						/* maximum segment represented by "%%+" */
-#define MAX_TOKENIZED 512				/* longest line we may pass to tokenize() */
-#define MAX_TOKENS 20					/* limit on words per comment line */
-#define MAX_PPR_PATH 128				/* space to reserve for building a file name */
+#define MAX_LINE 1024				/* maximum PostScript input line length (now pretty meaningless) */
+#define MAX_CONT 32					/* maximum segment represented by "%%+" */
+#define MAX_TOKENIZED 512			/* longest line we may pass to tokenize() */
+#define MAX_TOKENS 20				/* limit on words per comment line */
+#define MAX_PPR_PATH 128			/* space to reserve for building a file name */
 
-#define MAX_BINNAME 16					/* max chars in name of input bin */
-#define MAX_MEDIANAME 16				/* max chars in media name */
-#define MAX_COLOURNAME 16				/* max chars in colour name */
-#define MAX_TYPENAME 16					/* max chars media type name */
+#define MAX_BINNAME 16				/* max chars in name of input bin */
+#define MAX_MEDIANAME 16			/* max chars in media name */
+#define MAX_COLOURNAME 16			/* max chars in colour name */
+#define MAX_TYPENAME 16				/* max chars media type name */
 
-#define MAX_DOCMEDIA 4					/* max media types per job */
+#define MAX_DOCMEDIA 4				/* max media types per job */
 
-#define MAX_DESTNAME 16					/* max length of destination name */
-#define MAX_PRINTERS 250				/* no more than 250 printers */
-#define MAX_BINS 10						/* max bins per printer */
-#define MAX_GROUPS 150					/* no more than this may groups */
-#define MAX_GROUPSIZE 8					/* no more than 8 printers per group */
-#define MAX_ALIASES 150					/* no more than 150 queue aliases */
+#define MAX_PRINTERS 250			/* no more than 250 printers */
+#define MAX_BINS 10					/* max bins per printer */
+#define MAX_GROUPS 150				/* no more than this may groups */
+#define MAX_GROUPSIZE 8				/* no more than 8 printers per group */
+#define MAX_ALIASES 150				/* no more than 150 queue aliases */
 
-#define MAX_STATUS_MESSAGE 80			/* maximum length of last message from printer */
+#define MAX_STATUS_MESSAGE 80		/* maximum length of last message from printer */
 
-#define MAX_PPD_NEST 10					/* maximum PPD file include levels */
-#define MAX_PPD_LINE 255				/* maximum line length for PPD files */
-#define MAX_VMOPTIONS 50				/* maximun number of *VMOption lines in PPD file */
+#define MAX_PPD_NEST 10				/* maximum PPD file include levels */
+#define MAX_PPD_LINE 255			/* maximum line length for PPD files */
+#define MAX_VMOPTIONS 50			/* maximun number of *VMOption lines in PPD file */
 
 #define STATE_UPDATE_MAXLINES 1000
 #define STATE_UPDATE_PPRDRV_MAXBYTES 30000

@@ -1,4 +1,4 @@
-ppr-ttf2ps.$(OBJ): ppr-ttf2ps.c ../include/libttf.h
+indexfonts.o: indexfonts.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/libttf.h ../include/libppr_font.h ../include/version.h
 
-indexfonts.$(OBJ): indexfonts.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/libttf.h ../include/libppr_font.h ../include/version.h
+ppr-ttf2ps.o: ppr-ttf2ps.c ../include/libttf.h
 

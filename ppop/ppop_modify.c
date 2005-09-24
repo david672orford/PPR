@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 August 2005.
+** Last modified 23 September 2005.
 */
 
 #include "config.h"
@@ -41,7 +41,6 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
-#include "pprd.h"
 #include "ppop.h"
 #include "util_exits.h"
 #include "version.h"
@@ -66,7 +65,7 @@ struct ADDON
 #define MAX_ADDON_LINES 50
 struct JOB
 	{
-	struct Jobname jobname;
+	const struct Jobname *jobname;
 	char qfname[MAX_PPR_PATH];
 	struct QEntryFile qentry;
 	struct ADDON addon[MAX_ADDON_LINES];
@@ -313,20 +312,20 @@ int ppop_modify(char *argv[])
 		}
 
 	/* Break the job name up into its components. */
-	if(parse_job_name(&job.jobname, argv[0]) == -1)
+	if(!(job.jobname = parse_jobname(argv[0])))
 		return EXIT_SYNTAX;
 
 	/* Do we have permission to modify this job? */
-	if(!job_permission_check(&job.jobname))
+	if(!job_permission_check(job.jobname))
 		return EXIT_DENIED;
 
 	/* Now use those components to build the path to the queue file, which
 	   includes a fully qualified job name. */
 	ppr_fnamef(job.qfname, "%s/%s-%d.%d",
 		QUEUEDIR,
-		job.jobname.destname,
-		job.jobname.id,
-		job.jobname.subid >= 0 ? job.jobname.subid : 0
+		job.jobname->destname,
+		job.jobname->id,
+		job.jobname->subid >= 0 ? job.jobname->subid : 0
 		);
 
 	/* Open that queue file. */
@@ -396,7 +395,7 @@ int ppop_modify(char *argv[])
 
 			/* Let it know what has happened. */
 			fprintf(FIFO, "q %s %d %d %d\n",
-				job.jobname.destname, job.jobname.id, job.jobname.subid,
+				job.jobname->destname, job.jobname->id, job.jobname->subid,
 				&job.qentry.question ? 1 : 0);
 			fflush(FIFO);
 

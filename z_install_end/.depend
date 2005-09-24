@@ -1,4 +1,4 @@
-getservbyname.$(OBJ): getservbyname.c
+getservbyname.o: getservbyname.c
 
-puts.$(OBJ): puts.c
+puts.o: puts.c
 

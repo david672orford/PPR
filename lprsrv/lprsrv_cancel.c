@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 August 2005.
+** Last modified 23 September 2005.
 */
 
 #include "config.h"
@@ -44,37 +44,15 @@
 static int uprint_lprm_ppr(const char agent[], const char user_domain[], const char queue[], const char **arglist)
 	{
 	int result_code = 0;
-	char user[MAX_PRINCIPAL + 1];
+	char *user;
 	const char *item_ptr;
 	int x;
-	char job_name[MAX_DESTNAME + 4 + 1];
 	const char *args[6];
 	int i;
 
 	DODEBUG_UPRINT(("uprint_lprm_ppr(agent = \"%s\", user_domain = \"%s\", queue = \"%s\", arglist = %p", agent, user_domain ? user_domain : "", queue, arglist));
 
-	if(strlen(queue) > MAX_DESTNAME)
-		{
-		uprint_errno = UPE_BADARG;
-		uprint_error_callback(_("The print queue name \"%s\" is too long for PPR."), queue);
-		return -1;
-		}
-
-	if(strlen(agent) > LPR_MAX_P)
-		{
-		uprint_errno = UPE_BADARG;
-		uprint_error_callback(_("The agent name \"%s\" is too long."), agent);
-		return -1;
-		}
-
-	if(strlen(user_domain) > LPR_MAX_H)
-		{
-		uprint_errno = UPE_BADARG;
-		uprint_error_callback(_("The domain name \"%s\" is too long."), user_domain);
-		return -1;
-		}
-
-	snprintf(user, sizeof(user), "%s@%s", strcmp(agent, "root") == 0 ? "*": agent, user_domain);
+	asprintf(user, "%s@%s", strcmp(agent, "root") == 0 ? "*": agent, user_domain);
 
 	/* Start to build a command line: */
 	args[0] = "ppop";
@@ -82,13 +60,12 @@ static int uprint_lprm_ppr(const char agent[], const char user_domain[], const c
 	/* Process the list of jobs to be deleted, one job at a time. */
 	for(x=0; (item_ptr = arglist[x]); x++)
 		{
+		char *job_name = NULL;
 		i = 1;			/* reset on each iteration */
 
 		/* If a job id (a string of digits), */
 		if(strspn(item_ptr, "0123456789") == strlen(item_ptr))
 			{
-			snprintf(job_name, sizeof(job_name), "%s-%s", queue, item_ptr);
-
 			args[i++] = "--user";
 			args[i++] = user;
 
@@ -96,6 +73,7 @@ static int uprint_lprm_ppr(const char agent[], const char user_domain[], const c
 			   if the job is canceled by root. */
 			args[i++] = strcmp(agent, "root") ? "scancel" : "cancel";
 
+			asprintf(&job_name, "%s-%s", queue, item_ptr);
 			args[i++] = job_name;
 			}
 
@@ -142,12 +120,14 @@ static int uprint_lprm_ppr(const char agent[], const char user_domain[], const c
 			args[i++] = strcmp(agent, "root") ? "scancel" : "cancel";
 
 			args[i++] = queue;
-			}
+			} /* is user name */
 
 		args[i] = (const char *)NULL;
 
 		if(uprint_run(PPOP_PATH, args) == -1)
 			result_code = -1;
+
+		gu_free_if(job_name);
 		} /* end of jobs/users list loop */
 
 	/* If no files or users were specified, */
@@ -206,6 +186,7 @@ static int uprint_lprm_ppr(const char agent[], const char user_domain[], const c
 			result_code = 1;
 		}
 
+	gu_free(user);
 	return result_code;
 	} /* end of uprint_lprm_ppr() */
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -34,20 +34,16 @@
 
 /* ========================== Things in ppop.c ================================= */
 
+const char *parse_destname(const char *destname);
+
 struct Jobname
 	{
-	char destname[MAX_DESTNAME+1];
+	const char *destname;
 	int id;
 	int subid;
 	} ;
 
-struct Destname
-	{
-	char destname[MAX_DESTNAME+1];
-	} ;
-
-int parse_job_name(struct Jobname *job, const char *jobname);
-int parse_dest_name(struct Destname *dest, const char *destname);
+const struct Jobname *parse_jobname(const char jobname[]);
 
 extern gu_boolean	opt_verbose;
 extern int 			opt_machine_readable;
@@ -74,7 +70,7 @@ FILE *wait_for_pprd(int do_timeout);
 int print_reply(void);
 
 gu_boolean assert_am_operator(void);
-gu_boolean job_permission_check(struct Jobname *job);
+gu_boolean job_permission_check(const struct Jobname *job);
 int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile);
 
 /* ============== Functions in ppop_cmds_listq.c =================== */

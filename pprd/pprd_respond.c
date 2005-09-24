@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 March 2005.
+** Last modified 23 September 2005.
 */
 
 #include "config.h"
@@ -37,6 +37,7 @@
 #include <stdlib.h>
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "pprd.h"
 #include "./pprd.auto_h"
 

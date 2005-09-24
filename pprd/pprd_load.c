@@ -61,7 +61,8 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	{
 	const char function[] = "load_printer";
 	FILE *prncf;
-	char tempstr[256];					/* for reading lines */
+	char *line = NULL;
+	int line_space = 128;
 	mode_t newmode;						/* new file mode */
 	struct stat pstat;
 	int count; float x1, x2;
@@ -73,7 +74,7 @@ static void load_printer(struct Printer *printer, const char prnname[])
 		fatal(0, "%s(): can't open printer config file \"%s\", errno=%d.", function, fname, errno);
 	}
 
-	strlcpy(printer->name, prnname, sizeof(printer->name));	
+	printer->name = gu_strdup(prnname);
 
 	printer->alert_interval = 0;				/* no alerts */
 	printer->alert_method = (char*)NULL;		/* (At least not until we */
@@ -102,13 +103,13 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	if(pstat.st_mode & S_IXGRP)					/* if group execute is set, */
 		printer->accepting = FALSE;				/* printer not accepting */
 
-	while(fgets(tempstr, sizeof(tempstr), prncf))
+	while((line = gu_getline(line, &line_space, prncf)))
 		{
-		if(*tempstr==';' || *tempstr=='#')
+		if(*line==';' || *line=='#')
 			continue;
 
 		/* For "Alert:" lines, read the interval, method, and address. */
-		else if(lmatch(tempstr, "Alert:"))
+		else if(lmatch(line, "Alert:"))
 			{
 			if(printer->alert_method)
 				{
@@ -120,16 +121,16 @@ static void load_printer(struct Printer *printer, const char prnname[])
 				gu_free(printer->alert_address);
 				printer->alert_address = NULL;
 				}
-			gu_sscanf(tempstr, "Alert: %d %S %S", &printer->alert_interval, &printer->alert_method, &printer->alert_address);
+			gu_sscanf(line, "Alert: %d %S %S", &printer->alert_interval, &printer->alert_method, &printer->alert_address);
 			}
 
 		/* For each "Bin:" line, add the bin to the list */
-		else if(lmatch(tempstr, "Bin:"))
+		else if(lmatch(line, "Bin:"))
 			{
 			if(printer->nbins < MAX_BINS)
 				{
 				char *bin;
-				if(gu_sscanf(tempstr, "Bin: %S", &bin) == 1)
+				if(gu_sscanf(line, "Bin: %S", &bin) == 1)
 					{
 					printer->bins[printer->nbins] = bin;
 					printer->media[printer->nbins] = -1;		/* nothing mounted yet */
@@ -150,7 +151,7 @@ static void load_printer(struct Printer *printer, const char prnname[])
 		** we will charge and if so, make the printer a
 		** protected printer
 		*/
-		else if((count = gu_sscanf(tempstr, "Charge: %f %f", &x1, &x2)) >= 1)
+		else if((count = gu_sscanf(line, "Charge: %f %f", &x1, &x2)) >= 1)
 			{
 			printer->charge_per_duplex = (int)(x1 * 100.0 + 0.5);
 
@@ -274,12 +275,12 @@ void new_printer_config(char *printer)
 				first_deleted = prnid;					/* deleted slots we can use */
 			continue;
 			}
-		if(strcmp(printers[prnid].name, printer) == 0)	/* If the name of this printer */
-			{											/* is the one we are looking for, */
-			if(printers[prnid].alert_method)			/* free its memory blocks. */
-				gu_free(printers[prnid].alert_method);
-			if(printers[prnid].alert_address)
-				gu_free(printers[prnid].alert_address);
+		if(strcmp(printers[prnid].name, printer) == 0)	/* If the name matches the one we are looking for, */
+			{
+			gu_free(printers[prnid].name);
+			printers[prnid].name = NULL;
+			gu_free_if(printers[prnid].alert_method);
+			gu_free_if(printers[prnid].alert_address);
 			break;
 			}
 		}
@@ -311,7 +312,7 @@ void new_printer_config(char *printer)
 	** find out it was deleted.)
 	*/
 	ppr_fnamef(fname, "%s/%s", PRCONF, printer);
-	if((testopen = fopen(fname, "r")) == (FILE*)NULL)
+	if(!(testopen = fopen(fname, "r")))
 		{
 		if(is_new)								/* if new printer */
 			{
@@ -388,18 +389,19 @@ static void load_group(struct Group *cl, const char filename[])
 	const char function[] = "load_group";
 	FILE *clcf;				/* class (group) config file */
 	char fname[MAX_PPR_PATH];
-	char tempstr[256];		/* for reading lines */
-	char tempstr2[32];		/* for extractions */
+	char *line = NULL;		/* for reading lines */
+	int line_space = 128;
+	char *extract;
 	int y;
 	struct stat cstat;
 	mode_t newmod;
-	int line = 0;
+	int linenum = 0;
 
 	ppr_fnamef(fname, "%s/%s", GRCONF, filename);
 	if((clcf = fopen(fname, "r")) == (FILE*)NULL)
 		fatal(0, "%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 
-	strlcpy(cl->name, filename, sizeof(cl->name));			/* store the group name */
+	cl->name = gu_strdup(filename);		/* store the group name */
 	cl->last = -1;						/* initialize last value */
 
 	fstat(fileno(clcf), &cstat);
@@ -419,21 +421,20 @@ static void load_group(struct Group *cl, const char filename[])
 	cl->rotate = TRUE;					/* rotate is default */
 
 	y=0;
-	while(fgets(tempstr, sizeof(tempstr), clcf))
+	while((line = gu_getline(line, &line_space, clcf)))
 		{
-		line++;
+		linenum++;
 
 		/* Read the name of a group member */
-		if(gu_sscanf(tempstr, "Printer: %@s", sizeof(tempstr2), tempstr2) == 1)
+		if(gu_sscanf(line, "Printer: %S", &extract) == 1)
 			{
 			if(y >= MAX_GROUPSIZE)		/* if group has overflowed, */
 				{						/* note error and ignore member */
 				error("group \"%s\" exceeds %d member limit", cl->name, MAX_GROUPSIZE);
-				continue;
 				}
-			if((cl->printers[y] = destid_by_printer(tempstr2)) == -1)
+			else if((cl->printers[y] = destid_by_printer(extract)) == -1)
 				{
-				error("group \"%s\":  member \"%s\" does not exist", cl->name, tempstr2);
+				error("group \"%s\":  member \"%s\" does not exist", cl->name, extract);
 				}
 			else
 				{
@@ -442,14 +443,15 @@ static void load_group(struct Group *cl, const char filename[])
 					cl->protect = TRUE; /* protect the group */
 				y++;					/* increment members index */
 				}
+			gu_free(extract);
 			continue;
 			}
 
 		/* read a rotate flag value */
-		if(strncmp(tempstr, "Rotate:", 7) == 0)
+		if((extract = lmatchp(line, "Rotate:")))
 			{
-			if(gu_torf_setBOOL(&cl->rotate, &tempstr[7]) == -1)
-				fatal(0, "Invalid Rotate option (%s, line %d)", fname, line);
+			if(gu_torf_setBOOL(&cl->rotate, extract) == -1)
+				fatal(0, "Invalid Rotate option (%s, line %d)", fname, linenum);
 			continue;
 			}
 		}
@@ -541,7 +543,11 @@ void new_group_config(char *group)
 			continue;
 			}
 		if(strcmp(groups[x].name, group) == 0)
+			{
+			gu_free(groups[x].name);
+			groups[x].name = NULL;
 			break;
+			}
 		}
 
 	if(x == group_count)

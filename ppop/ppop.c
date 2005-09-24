@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -52,7 +52,6 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
-#include "pprd.h"
 #include "ppop.h"
 #include "util_exits.h"
 #include "version.h"
@@ -286,128 +285,51 @@ int print_reply(void)
 **==================================================================*/
 
 /*
-** This is the routine which makes aliasing work.
-*/
-static int do_aliasing(char *destname)
-	{
-	static int depth = 0;
-	int retval = 0;
-
-	/* printf("do_aliasing(\"%s\")\n", destname); */
-
-	/*
-	** If we are not being called recursively, see if it is a queue 
-	** alias and if it is, replace it with the real queue name.
-	*/
-	if(depth == 0)
-		{
-		char fname[MAX_PPR_PATH];
-		FILE *f;
-		char *line = NULL;
-		int linelen = 128;
-
-		ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);
-		if((f = fopen(fname, "r")))
-			{
-			char *forwhat;
-			while((line = gu_getline(line, &linelen, f)))
-				{
-				if(gu_sscanf(line, "ForWhat: %S", &forwhat) == 1)
-					{
-					static int depth = 0;
-					struct Destname dest;
-
-					depth++;
-					retval = parse_dest_name(&dest, forwhat);
-					depth--;
-
-					if(retval == 0)
-						{
-						strcpy(destname, dest.destname);
-						}
-
-					gu_free(forwhat);
-					break;
-					}
-				}
-			fclose(f);
-
-			if(line)				/* if stopped before end, */
-				{
-				gu_free(line);
-				}
-			else
-				{
-				fprintf(errors, _("The alias \"%s\" doesn't have a forwhat value.\n"), destname);
-				retval = -1;
-				}
-			}
-		}
-
-	/* printf("do_aliasing(): done\n"); */
-	return retval;
-	}
-
-/*
 ** Function for breaking up a queue file name into its constituent parts.
-** If it is not a valid job name return -1, else return 0.
+** If it is not a valid job name, this function returns NULL.
+** It deliberately leaks memory.  We rely on the pools mechanism to clean it up.
 */
-int parse_job_name(struct Jobname *job, const char *jobname)
+const struct Jobname *parse_jobname(const char *jobname)
 	{
+	struct Jobname *job;
 	size_t len;
 	const char *ptr;
 	int c;
 
-	/* Set pointer to start of job name. */
+	job = gu_alloc(1, sizeof(struct Jobname));
 	ptr = jobname;
 
 	/*
 	** Find the full extent of the destination name.  Keep in mind that
 	** embedded hyphens are now allowed.  Note that this is not perfect
-	** because things such as "busprn-2" are still ambiguous.
+	** because things such as "busprn-2" are still ambiguous.  It one 
+	** want to say "all jobs on busprn-2", one must write "busprn-2-*".
 	*/
 	for(len=0; TRUE; len++)
 		{
-		len += strcspn(&ptr[len], "-");			/* get length until next hyphen */
+		len += strcspn(&ptr[len], "-");		/* get length until next hyphen */
 
-		if(ptr[len] == '\0')					/* check for end of string */
+		if(ptr[len] == '\0')				/* check for end of string */
 			break;
 
-		if(ptr[len + 1] == '*')					/* if explicit wildcard queue id as in "busprn-2-*", */
+		if(ptr[len + 1] == '*')				/* if explicit wildcard queue id as in "busprn-2-*", */
 			break;
 
-		if((c = ptr[len+1+strspn(&ptr[len+1], "0123456789")]) == '.' || c == '(' || c=='\0')
+		if((c = ptr[len+1+strspn(&ptr[len+1], "0123456789")]) == '.' || c=='\0')
 			break;
 		}
 
-	/*
-	** If the job name we found above is too long
-	** or it does not have a hyphen after it, this is
-	** a syntax error.
-	*/
-	if(len > MAX_DESTNAME)
-		{
-		fprintf(errors, _("Destination (printer or group) name \"%*s\" is too long.\n"), (int)len, ptr);
-		return -1;
-		}
 	if(len == 0)
 		{
 		fprintf(errors, _("Destination (printer or group) name is empty.\n"));
-		return -1;
+		return NULL;
 		}
 
 	/*
 	** Copy the destination (printer or group) name into the structure.
 	*/
-	strncpy(job->destname, ptr, len);
-	job->destname[len] = '\0';
+	job->destname = gu_strndup(ptr, len);
 	ptr += len;
-
-	/*
-	** Do the alias replacement if the destination name is an alias.
-	*/
-	if(do_aliasing(job->destname) == -1)
-		return -1;
 
 	/*
 	** If there is a hyphen, read the jobid after the hyphen.
@@ -446,49 +368,60 @@ int parse_job_name(struct Jobname *job, const char *jobname)
 	if(*ptr)
 		{
 		fprintf(errors, _("Destination or job name \"%s\" is invalid.\n"), jobname);
-		return -1;
+		return NULL;
 		}
 
-	return 0;	/* indicate sucess */
-	} /* end of parse_job_name() */
+	job->destname = parse_destname(job->destname);
+	
+	return job;
+	} /* end of parse_jobname() */
 
 /*
-** Parse a printer or group name.  This involves separating the host
-** and printer parts.  This process also includes alias resolution.
+** Validate an destination name, possibly resolving aliases.  If the name is
+** valid, it will be returned.  If it is an alias, then the name to which
+** it resolves will be returned in allocated memory.
 */
-int parse_dest_name(struct Destname *dest, const char *destname)
+const char *parse_destname(const char *destname)
 	{
-	int len;
-	const char *ptr;
-
-	ptr = destname;
-
-	if((len = strlen(ptr)) > MAX_DESTNAME)
+	if(strpbrk(destname, DEST_DISALLOWED))
 		{
-		fprintf(errors, _("Destination name \"%*s\" is too long.\n"), len, ptr);
-		return -1;
+		fprintf(errors, _("Destination name \"%s\" contains a disallowed character.\n"), destname);
+		return NULL;
 		}
 
-	if(strpbrk(ptr, DEST_DISALLOWED))
+	if(strchr(DEST_DISALLOWED_LEADING, (int)destname[0]))
 		{
-		fprintf(errors, _("Destination name \"%*s\" contains a disallowed character.\n"), len, ptr);
-		return -1;
+		fprintf(errors, _("Destination name \"%s\" begins with a disallowed character.\n"), destname);
+		return NULL;
 		}
 
-	if(strchr(DEST_DISALLOWED_LEADING, (int)ptr[0]))
+	{
+	char fname[MAX_PPR_PATH];
+	FILE *f;
+	char *line = NULL;
+	int linelen = 128;
+
+	ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);
+	if((f = fopen(fname, "r")))
 		{
-		fprintf(errors, _("Destination name \"%*s\" begins with a disallowed character.\n"), len, ptr);
-		return -1;
+		while((line = gu_getline(line, &linelen, f)))
+			{
+			if(gu_sscanf(line, "ForWhat: %S", &destname) == 1)
+				break;
+			}
+		fclose(f);
+		if(line)
+			gu_free(line);
+		else
+			{
+			fprintf(errors, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
+			return NULL;
+			}
 		}
+	}
 
-	strcpy(dest->destname, ptr);
-
-	/* Do the alias replacement. */
-	if(do_aliasing(dest->destname) == -1)
-		return -1;
-
-	return 0;
-	} /* end of parse_dest_name() */
+	return destname;
+	} /* end of parse_destname() */
 
 /*====================================================================
 ** Security functions
@@ -605,7 +538,7 @@ static gu_boolean username_match(const char username[], const char pattern[])
 ** the specified job.  If he does not, an error message is printed and
 ** FALSE is returned.
 */
-gu_boolean job_permission_check(struct Jobname *job)
+gu_boolean job_permission_check(const struct Jobname *job)
 	{
 	char *job_username = NULL;
 	char *job_magic_cookie = NULL;
@@ -799,87 +732,91 @@ static int main_help(FILE *out)
 */
 static int dispatch(char *argv[])
 	{
+	int retcode = -1;
+	void *my_pool = gu_pool_push(gu_pool_new());
+
 	/*
 	** Since these are used by other programs we
 	** put them first so they will be the fastest.
 	*/
 	if(strcmp(argv[0],"qquery") == 0)
 		return ppop_qquery(&argv[1]);
-	if(strcmp(argv[0],"message") == 0)
+	else if(strcmp(argv[0],"message") == 0)
 		return ppop_message(&argv[1]);
-	if(strcmp(argv[0],"progress") == 0)
+	else if(strcmp(argv[0],"progress") == 0)
 		return ppop_progress(&argv[1]);
 
-	if(strcmp(argv[0],"list") == 0)
+	else if(strcmp(argv[0],"list") == 0)
 		return ppop_list(&argv[1], 0);
-	if(strcmp(argv[0],"nhlist") == 0)		/* For lprsrv, no-header-list */
+	else if(strcmp(argv[0],"nhlist") == 0)		/* For lprsrv, no-header-list */
 		return ppop_list(&argv[1], 1);
-	if(gu_strcasecmp(argv[0],"lpq") == 0)
+	else if(gu_strcasecmp(argv[0],"lpq") == 0)
 		return ppop_lpq(&argv[1]);
-	if(strcmp(argv[0],"mount") == 0)
+	else if(strcmp(argv[0],"mount") == 0)
 		return ppop_mount(&argv[1]);
-	if(strcmp(argv[0],"media") == 0)
+	else if(strcmp(argv[0],"media") == 0)
 		return ppop_media(&argv[1]);
-	if(strcmp(argv[0],"start") == 0)
+	else if(strcmp(argv[0],"start") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 0);
-	if(strcmp(argv[0],"stop") == 0)
+	else if(strcmp(argv[0],"stop") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 1);
-	if(strcmp(argv[0],"wstop") == 0)
+	else if(strcmp(argv[0],"wstop") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 2);
-	if(strcmp(argv[0], "halt") == 0)
+	else if(strcmp(argv[0], "halt") == 0)
 		return ppop_start_stop_wstop_halt(&argv[1], 3);
-	if(strcmp(argv[0], "cancel") == 0)
+	else if(strcmp(argv[0], "cancel") == 0)
 		return ppop_cancel(&argv[1], 1);
-	if(strcmp(argv[0], "scancel") == 0)
+	else if(strcmp(argv[0], "scancel") == 0)
 		return ppop_cancel(&argv[1], 0);
-	if(strcmp(argv[0], "purge") == 0)
+	else if(strcmp(argv[0], "purge") == 0)
 		return ppop_purge(&argv[1], 1);
-	if(strcmp(argv[0], "spurge") == 0)
+	else if(strcmp(argv[0], "spurge") == 0)
 		return ppop_purge(&argv[1], 0);
-	if(strcmp(argv[0], "clean") == 0)
+	else if(strcmp(argv[0], "clean") == 0)
 		return ppop_clean(&argv[1]);
-	if(strcmp(argv[0], "cancel-active") == 0)
+	else if(strcmp(argv[0], "cancel-active") == 0)
 		return ppop_cancel_active(&argv[1], FALSE, 1);
-	if(strcmp(argv[0], "scancel-active") == 0)
+	else if(strcmp(argv[0], "scancel-active") == 0)
 		return ppop_cancel_active(&argv[1], FALSE, 0);
-	if(strcmp(argv[0], "cancel-my-active") == 0)
+	else if(strcmp(argv[0], "cancel-my-active") == 0)
 		return ppop_cancel_active(&argv[1], TRUE, 1);
-	if(strcmp(argv[0], "scancel-my-active") == 0)
+	else if(strcmp(argv[0], "scancel-my-active") == 0)
 		return ppop_cancel_active(&argv[1], TRUE, 0);
-	if(strcmp(argv[0], "move") == 0)
+	else if(strcmp(argv[0], "move") == 0)
 		return ppop_move(&argv[1]);
-	if(strcmp(argv[0], "rush") == 0)
+	else if(strcmp(argv[0], "rush") == 0)
 		return ppop_rush(&argv[1], 0);
-	if(strcmp(argv[0], "last") == 0)
+	else if(strcmp(argv[0], "last") == 0)
 		return ppop_rush(&argv[1], 10000);
-	if(strcmp(argv[0], "hold") == 0)
+	else if(strcmp(argv[0], "hold") == 0)
 		return ppop_hold_release(&argv[1], FALSE);
-	if(strcmp(argv[0], "release") == 0)
+	else if(strcmp(argv[0], "release") == 0)
 		return ppop_hold_release(&argv[1], TRUE);
-	if(strcmp(argv[0], "status") == 0)
+	else if(strcmp(argv[0], "status") == 0)
 		return ppop_status(&argv[1]);
-	if(strcmp(argv[0], "accept") == 0)
+	else if(strcmp(argv[0], "accept") == 0)
 		return ppop_accept_reject(&argv[1], FALSE);
-	if(strcmp(argv[0], "reject") == 0)
+	else if(strcmp(argv[0], "reject") == 0)
 		return ppop_accept_reject(&argv[1], TRUE);
-	if(strcmp(argv[0], "destination") == 0 || strcmp(argv[0],"dest") == 0)
+	else if(strcmp(argv[0], "destination") == 0 || strcmp(argv[0],"dest") == 0)
 		return ppop_destination(&argv[1], 0);
-	if(strcmp(argv[0], "destination-comment") == 0 || strcmp(argv[0],"ldest") == 0)
+	else if(strcmp(argv[0], "destination-comment") == 0 || strcmp(argv[0],"ldest") == 0)
 		return ppop_destination(&argv[1], 1);
-	if(strcmp(argv[0], "destination-comment-address") == 0)
+	else if(strcmp(argv[0], "destination-comment-address") == 0)
 		return ppop_destination(&argv[1], 2);
-	if(strcmp(argv[0], "details") == 0)
+	else if(strcmp(argv[0], "details") == 0)
 		return ppop_details(&argv[1]);
-	if(strcmp(argv[0], "alerts") == 0)
+	else if(strcmp(argv[0], "alerts") == 0)
 		return ppop_alerts(&argv[1]);
-	if(strcmp(argv[0], "log") == 0)
+	else if(strcmp(argv[0], "log") == 0)
 		return ppop_log(&argv[1]);
-	if(strcmp(argv[0], "modify") == 0)
+	else if(strcmp(argv[0], "modify") == 0)
 		return ppop_modify(&argv[1]);
-	if(strcmp(argv[0], "help") == 0)
+	else if(strcmp(argv[0], "help") == 0)
 		return main_help(stdout);
 
-	return -1;		/* dispatcher failed */
+	gu_pool_free(gu_pool_pop(my_pool));
+	return retcode;
 	} /* end of dispatch() */
 
 /*

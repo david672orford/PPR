@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 23 September 2005.
 */
 
 /*
@@ -347,7 +347,8 @@ static void copy_header(void)
 	else
 		{
 		char temp[8];
-		snprintf(temp, sizeof(temp), "%.1f", job.attr.DSClevel < 3.0 ? 3.0 : job.attr.DSClevel);
+		/* Do not change this to snprintf() as that will lead to locale-specific decimal points. */
+		gu_snprintf(temp, sizeof(temp), "%.1f", job.attr.DSClevel < 3.0 ? 3.0 : job.attr.DSClevel);
 		if(job.attr.DSC_job_type)
 			printer_printf("%%!PS-Adobe-%s %s\n", temp, job.attr.DSC_job_type);
 		else
