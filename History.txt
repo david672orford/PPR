@@ -9866,3 +9866,10 @@ no final tarball was released.
 * include/pprd.h: moved the parts needed by ppop into include/global_defines.h and the
   remainder into pprd/pprd.h.
 
+* libgu/gu_utf8_decode.c: added
+
+* libgu/gu_utf8_printf.c: added
+
+* filter_lp/: added UTF-8 support (still broken)
+
+

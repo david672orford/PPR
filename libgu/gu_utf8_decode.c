@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 September 2005.
+** Last modified 28 September 2005.
 */
 
 /*! \file
@@ -49,6 +49,7 @@ static wchar_t gu_utf8_getwc(CHAR_READER_FUNCT f_ptr, void *ptr)
 	int additional_bytes = 0;
 	if((c = (*f_ptr)(ptr)) == WEOF)	/* read a character by calling read function */
 		return (wchar_t)'\0';
+
 	if(c & 0x80)					/* if non-ASCII, */
 		{
 		if((c & 0xE0) == 0xC0)		/* mask: 1110 0000, value: 1100 0000 */
@@ -89,9 +90,9 @@ static wchar_t gu_utf8_getwc(CHAR_READER_FUNCT f_ptr, void *ptr)
 			if((ca = (*f_ptr)(ptr)) == WEOF)
 				return (wchar_t)'\0';
 			if((ca & 0xC0) != 0x80)		/* mask: 1100 0000, value: 1000 0000 */
-				return '?';
+				return INVALID_CHAR;
 			c <<= 6;					/* shift up 6 bits to make room */
-			c &= (ca & 0x3F);			/* take lower 6 bits */
+			c |= (ca & 0x3F);			/* take lower 6 bits */
 			}
 		}
 
@@ -148,7 +149,7 @@ wchar_t gu_utf8_fgetwc(FILE *f)
 	}
 
 /* This is a helper for gu_utf8_sgetwc() below. */
-static int gu_sgetc(const char **pp)
+static int gu_sgetc(const unsigned char **pp)
 	{
 	if(**pp == '\0')
 		return EOF;

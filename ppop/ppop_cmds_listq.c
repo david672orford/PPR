@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 28 September 2005.
 */
 
 /*
@@ -611,7 +611,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
-	char timestr[10];
+	char timestr[32];
 	char pagesstr[4];
 	const char *jobname;
 
@@ -626,11 +626,11 @@ static int ppop_list_item(const struct QEntry *qentry,
 	/* print the job name while letting it overflow */
 	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
 	if(strlen(jobname) > 15)
-		printf("%s\n               ", jobname);
+		gu_utf8_printf("%s\n               ", jobname);
 	else
-		printf("%-15.15s", jobname);
+		gu_utf8_printf("%-15.15s", jobname);
 
-	printf(" %-24.24s %-9.9s %s ",
+	gu_utf8_printf(" %-24.24s %-9.9s %s ",
 		qentryfile->For ? qentryfile->For : "???",
 		timestr,
 		pagesstr
@@ -1582,7 +1582,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 31:					/* subtime */
 				{
-				char timestr[10];
+				char timestr[32];
 				format_time(timestr, sizeof(timestr), (time_t)qentryfile->time);
 				fputs(timestr, stdout);
 				}
