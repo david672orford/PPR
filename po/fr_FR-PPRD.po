@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-28 21:13-0400\n"
+"POT-Creation-Date: 2005-09-29 17:15-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -341,53 +341,53 @@ msgstr "\"%s\" n'est pas une imprimante.\n"
 # "Files: ../pprd/pprd.c ../pprd/pprd_alert.c ../pprd/pprd_load.c "
 # "../pprd/pprd_log.c ../pprd/pprd_mainsup.c ../pprd/pprd_nag.c "
 # "../pprd/pprd_ppopint.c ../pprd/pprd_queue.c ../pprd/pprd_respond.c\n"
-#: ../pprd/pprd_ppop.c:896
+#: ../pprd/pprd_ppop.c:900
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:951 ../pprd/pprd_ppop.c:1031
+#: ../pprd/pprd_ppop.c:954 ../pprd/pprd_ppop.c:1034
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1072 ../pprd/pprd_ppop.c:1079 ../pprd/pprd_ppop.c:1273
-#: ../pprd/pprd_ppop.c:1355
+#: ../pprd/pprd_ppop.c:1075 ../pprd/pprd_ppop.c:1082 ../pprd/pprd_ppop.c:1276
+#: ../pprd/pprd_ppop.c:1358
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1212
+#: ../pprd/pprd_ppop.c:1215
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1221
+#: ../pprd/pprd_ppop.c:1224
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1226
+#: ../pprd/pprd_ppop.c:1229
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1230
+#: ../pprd/pprd_ppop.c:1233
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_ppop.c:1238
+#: ../pprd/pprd_ppop.c:1241
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1240
+#: ../pprd/pprd_ppop.c:1243
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1322 ../pprd/pprd_ppop.c:1379
+#: ../pprd/pprd_ppop.c:1325 ../pprd/pprd_ppop.c:1382
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 September 2005.
+** Last modified 29 September 2005.
 */
 
 /*! \file
@@ -173,6 +173,8 @@ int gu_ini_section_from_sample(const char filename[], const char section_name[])
 ** Other stuff
 ===================================================================*/
 
+void (*signal_interupting(int signum, void (*handler)(int sig)))(int);
+void (*signal_restarting(int signum, void (*handler)(int sig)))(int);
 char *gu_getline(char *line, int *space_available, FILE *fstream);
 char *gu_strerror(int n);
 int gu_wildmat(const char *text, const char *p);
@@ -202,14 +204,36 @@ int gu_fgetint(FILE *input);
 void gu_daemon(mode_t daemon_umask);
 int disk_space(const char *path, unsigned int *free_blocks, unsigned int *free_files);
 int gu_wordwrap(char *string, int width);
-int gu_wrap_printf(const char format[], ...);
-int gu_wrap_eprintf(const char format[], ...);
-void (*signal_interupting(int signum, void (*handler)(int sig)))(int);
-void (*signal_restarting(int signum, void (*handler)(int sig)))(int);
-int gu_vsnprintf (char *str, size_t count, const char *fmt, va_list args);
-int gu_snprintf(char *str, size_t count, const char *fmt, ...);
-int gu_vasprintf(char **ptr, const char *format, va_list ap);
-int gu_asprintf(char **ptr, const char *format, ...);
+int gu_wrap_printf(const char format[], ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 1, 2) ))
+	#endif
+	;
+int gu_wrap_eprintf(const char format[], ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 1, 2) ))
+	#endif
+	;
+int gu_vsnprintf (char *str, size_t count, const char *fmt, va_list args)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 3, 0) ))
+	#endif
+	;
+int gu_snprintf(char *str, size_t count, const char *fmt, ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 3, 4) ))
+	#endif
+	;
+int gu_vasprintf(char **ptr, const char *format, va_list ap)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 2, 0) ))
+	#endif
+	;
+int gu_asprintf(char **ptr, const char *format, ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 2, 3) ))
+	#endif
+	;
 size_t gu_strlcpy(char *dst, const char *src, size_t siz);
 size_t gu_strlcat(char *dst, const char *src, size_t siz);
 int gu_mkstemp(char *template);
@@ -222,28 +246,52 @@ void gu_timeval_cpy(struct timeval *t1, const struct timeval *t2);
 void gu_timeval_zero(struct timeval *t);
 int gu_runl(const char *myname, FILE *errors, const char *progname, ...);
 void gu_psprintf(const char *format, ...)
-#ifdef __GNUC__
-__attribute__ (( format (printf, 1, 2) ))
-#endif
-;
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 1, 2) ))
+	#endif
+	;
 char *gu_ascii_strlower(char *string);
 char *gu_strtrim(char *string);
 char *gu_stresc_convert(char *string);
 char *gu_name_int_value(const char name[], int value);
 char *gu_name_str_value(const char name[], const char value[]);
 char *gu_name_long_value(const char name[], long int value);
-wchar_t gu_utf8_fgetwc(FILE *f);
-wchar_t gu_utf8_sgetwc(const char **pp);
-int gu_utf8_vfprintf(FILE *f, const char *format, va_list args);
-int gu_utf8_printf(const char *format, ...);
-int gu_utf8_fprintf(FILE *f, const char *format, ...);
-int gu_utf8_fputs(const char *string, FILE *f);
-int gu_utf8_puts(const char *string);
-int gu_utf8_putline(const char *string);
 
+/*===================================================================
+** Unicode and internationalization stuff
+===================================================================*/
+
+/* gu_locale.c */
 void gu_locale_init(int argc, char *argv[], const char *domainname, const char *localedir);
 size_t gu_utf8_strftime(char *s, size_t max, const char *format, const struct tm *tm);
 const char *gu_utf8_getenv(const char name[]);
+
+/* gu_utf8_decode.c */
+wchar_t gu_utf8_fgetwc(FILE *f);
+wchar_t gu_utf8_sgetwc(const char **pp);
+
+/* gu_utf8_printf.c */
+int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 2, 0) ))
+	#endif
+	;
+int gu_utf8_fprintf(FILE *f, const char *format, ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 2, 3) ))
+	#endif
+	;
+int gu_utf8_printf(const char *format, ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 1, 2) ))
+	#endif
+	;
+
+/* gu_utf8_put.c */
+wchar_t gu_fputwc(wchar_t wc, FILE *f);
+int gu_utf8_fputs(const char *string, FILE *f);
+int gu_utf8_puts(const char *string);
+int gu_utf8_putline(const char *string);
 
 /*===================================================================
 ** Command line option parsing

@@ -25,7 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 September 2005.
+** Last modified 29 September 2005.
+*/
+
+/*! \file
+    \brief printf() functions which accept UTF-8 input
 */
 
 #include "config.h"
@@ -34,18 +38,6 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
-
-/* This function is similiar to Standard C's fputwc() */
-static wchar_t gu_fputwc(wchar_t wc, FILE *f)
-	{
-	char conv[MB_CUR_MAX];
-	int len;
-	if((len = wctomb(conv, wc)) == -1)	/* if invalid wchar */
-		len = wctomb(conv, (wchar_t)'?');
-	/*printf("(wc=%d,len=%d)", wc, len);*/
-	fwrite(conv, sizeof(char), len, f);
-	return wc;
-	}
 
 /* How many character columns will a UTF-8 character consume.
  * The answer will be 0, 1, or 2.
@@ -91,94 +83,149 @@ struct FSPEC {
 	int format_length;
 	};
 
+enum ARG_FSPEC_FIELD {
+	ARG_FSPEC_FIELD_VALUE,
+	ARG_FSPEC_FIELD_WIDTH,
+	ARG_FSPEC_FIELD_PRECISION
+	};
+
+struct ARG {
+	int fspec_index;
+	enum ARG_FSPEC_FIELD fspec_field;
+	};
+
+static int get_aindex(const char **p, int default_index)
+	{
+	int len;
+	if((len = strspn(*p, "0123456789")) > 0 && (*p)[len] == '$')
+		{
+		int iii = atoi(*p);
+		iii--;
+		(*p) += len;
+		(*p)++;
+		return iii;
+		}
+	else
+		{
+		return default_index;
+		}
+	}
+
+static void arguments_store(struct ARG *arguments, int aindex, int findex, enum ARG_FSPEC_FIELD field)
+	{
+	char function[] = "gu_utf8_vfprintf_arguments_store";
+	if(aindex >= MAX_FSPECS)
+		gu_Throw("%s(): argument index %d is too high", function, aindex+1);
+	if(arguments[aindex].fspec_index != -1)
+		gu_Throw("%s(): double use of argument (by specs %d and %d)", function, arguments[aindex].fspec_index+1, findex+1);
+	arguments[aindex].fspec_index = findex;
+	arguments[aindex].fspec_field = field;
+	}
+
 int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 	{
 	const char function[] = "gu_utf8_vfprintf";
 	int char_count = 0;
 	wchar_t wc;
 	const char *formatp;
-	int iii;
+	int findex;				/* format specifier index */
+	int aindex;				/* argument index */
 	struct FSPEC fspecs[MAX_FSPECS];
-	int arguments[MAX_FSPECS];
+	struct ARG arguments[MAX_FSPECS*3];
+	int len;					/* for general use */
 
-	for(iii = 0; iii < MAX_FSPECS; iii++)
-		arguments[iii] = -1;
+	for(aindex = 0; aindex < MAX_FSPECS; aindex++)
+		arguments[aindex].fspec_index = -1;
 
 	/* First pass, parse all of the format specifiers and note which 
 	 * argument each requires.
 	 */
-	for(formatp = format, iii = 0; (wc = gu_utf8_sgetwc(&formatp)); )
+	for(formatp = format, findex = aindex = 0; (wc = gu_utf8_sgetwc(&formatp)); )
 		{
 		if(wc == '%')
 			{
 			const char *formatp_save = formatp;
 			int position;
-			fspecs[iii].flag_left_justify = FALSE;
-			fspecs[iii].flag_show_sign = FALSE;
-			fspecs[iii].flag_blank = FALSE;
-			fspecs[iii].flag_leading_zeros = FALSE;
-			fspecs[iii].width = 0;
-			fspecs[iii].precision = -1;		/* unspecified */
-			position = iii;
+			fspecs[findex].flag_left_justify = FALSE;
+			fspecs[findex].flag_show_sign = FALSE;
+			fspecs[findex].flag_blank = FALSE;
+			fspecs[findex].flag_leading_zeros = FALSE;
+			fspecs[findex].width = 0;
+			fspecs[findex].precision = -1;		/* unspecified */
+			position = -1;
 
 			/* Is the argument index specified? */
-			{
-			int len;
 			if((len = strspn(formatp, "0123456789")) > 0 && formatp[len] == '$')
 				{
 				position = atoi(formatp);
 				position--;		/* convert from 1 based to 0 based */
-				len++;
-				formatp += len;
+				formatp += (len+1);
 				}
-			}
-		
-			if(position >= MAX_FSPECS)
-				gu_Throw("%s(): argument index too high", function);
-			if(arguments[position] != -1)
-				gu_Throw("%s(): double use of argument (by specs %d and %d)", function, arguments[position]+1, iii+1);
-			arguments[position] = iii;
-
+	
 			/* Look for formatting modifiers. */			
 			while((wc = gu_utf8_sgetwc(&formatp)) && strchr("-+ #0", wc))
 				{
 				switch(wc)
 					{
 					case '-':
-						fspecs[iii].flag_left_justify = TRUE;
+						fspecs[findex].flag_left_justify = TRUE;
 						break;
 					case '+':
-						fspecs[iii].flag_show_sign = TRUE;
+						fspecs[findex].flag_show_sign = TRUE;
 						break;
 					case ' ':
-						fspecs[iii].flag_blank = TRUE;
+						fspecs[findex].flag_blank = TRUE;
 						break;
 					case '0':
-						fspecs[iii].flag_leading_zeros = TRUE;
+						fspecs[findex].flag_leading_zeros = TRUE;
 						break;
 					}
 				}
 	
-			/* Look for field width */	
-			while(gu_ascii_isdigit(wc))
+			/* Look for field width */
+			if(wc == '*')
 				{
-				fspecs[iii].width *= 10;
-				fspecs[iii].width += gu_ascii_digit_value(wc);		
+				int i = get_aindex(&formatp, aindex);
+				arguments_store(arguments, i, findex, ARG_FSPEC_FIELD_WIDTH);
+				aindex++;
 				wc = gu_utf8_sgetwc(&formatp);
+				}
+			else
+				{
+				while(gu_ascii_isdigit(wc))
+					{
+					fspecs[findex].width *= 10;
+					fspecs[findex].width += gu_ascii_digit_value(wc);		
+					wc = gu_utf8_sgetwc(&formatp);
+					}
 				}
 
 			/* Look for precision */
 			if(wc == '.')
 				{
-				fspecs[iii].precision = 0;
+				fspecs[findex].precision = 0;
 				wc = gu_utf8_sgetwc(&formatp);
-				while(gu_ascii_isdigit(wc))
+				if(wc == '*')
 					{
-					fspecs[iii].precision *= 10;
-					fspecs[iii].precision += gu_ascii_digit_value(wc);		
+					int i = get_aindex(&formatp, aindex);
+					arguments_store(arguments, i, findex, ARG_FSPEC_FIELD_PRECISION);
+					aindex++;
 					wc = gu_utf8_sgetwc(&formatp);
 					}
+				else
+					{
+					while(gu_ascii_isdigit(wc))
+						{
+						fspecs[findex].precision *= 10;
+						fspecs[findex].precision += gu_ascii_digit_value(wc);		
+						wc = gu_utf8_sgetwc(&formatp);
+						}
+					}
 				}
+
+			if(position == -1)
+				position = aindex;	
+			arguments_store(arguments, position, findex, ARG_FSPEC_FIELD_VALUE);
 
 			/* Look for parameter size modifiers. */
 			#if 0
@@ -187,13 +234,13 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				switch(wc)
 					{
 					case 'h':
-						fspecs[iii].flag_h = TRUE;
+						fspecs[findex].flag_h = TRUE;
 						break;
 					case 'l':
-						fspecs[iii].flag_l = TRUE;
+						fspecs[findex].flag_l = TRUE;
 						break;
 					case 'L':
-						fspecs[iii].flag_L = TRUE;
+						fspecs[findex].flag_L = TRUE;
 						break;
 					}
 				wc = gu_utf8_sgetwc(&formatp);
@@ -208,10 +255,12 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				case '%':
 					break;
 				case 'd':
-					fspecs[iii].value_type = VALUE_TYPE_INTEGER;
+					fspecs[findex].value_type = VALUE_TYPE_INTEGER;
+					aindex++;
 					break;
 				case 's':
-					fspecs[iii].value_type = VALUE_TYPE_CHARACTER_POINTER;
+					fspecs[findex].value_type = VALUE_TYPE_CHARACTER_POINTER;
+					aindex++;
 					break;
 				default:
 					gu_Throw("%s(): unrecognized format '%c' in \"%s\"", function, wc, format);
@@ -219,40 +268,54 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				}
 
 			/* How many characters does the format specifier consume? */
-			fspecs[iii].format_length = (formatp - formatp_save);
+			fspecs[findex].format_length = (formatp - formatp_save);
 
-			iii++;
+			findex++;
 			}
 		}
 
 	/* Load the required arguments. */
 	{
-	int param_count = iii;
-	for(iii = 0; iii < param_count; iii++)
+	int param_count = aindex;
+	for(aindex = 0; aindex < param_count; aindex++)
 		{
-		if(arguments[iii] == -1)
-			gu_Throw("%s(): parameter gap", function);
-		switch(fspecs[arguments[iii]].value_type)
+		if(arguments[aindex].fspec_index == -1)
+			gu_Throw("%s(): parameter gap at position %d", function, aindex+1);
+		findex = arguments[aindex].fspec_index;
+		switch(arguments[aindex].fspec_field)
 			{
-			case VALUE_TYPE_INTEGER:
-				fspecs[arguments[iii]].value.integer = va_arg(args, int);
+			case ARG_FSPEC_FIELD_VALUE:
+				switch(fspecs[findex].value_type)
+					{
+					case VALUE_TYPE_INTEGER:
+						fspecs[findex].value.integer = va_arg(args, int);
+						break;
+					case VALUE_TYPE_CHARACTER_POINTER:
+						fspecs[findex].value.character_pointer = va_arg(args, char*);
+						break;
+					}
 				break;
-			case VALUE_TYPE_CHARACTER_POINTER:
-				fspecs[arguments[iii]].value.character_pointer = va_arg(args, char*);
+			case ARG_FSPEC_FIELD_WIDTH:
+				fspecs[findex].width = va_arg(args, int);
+				break;
+			case ARG_FSPEC_FIELD_PRECISION:
+				fspecs[findex].precision = va_arg(args, int);
 				break;
 			}
 		}
 	}
 
 	/* Second pass, produce output. */	
-	for(formatp = format, iii = 0; (wc = gu_utf8_sgetwc(&formatp)); )
+	for(formatp = format, findex = 0; (wc = gu_utf8_sgetwc(&formatp)); )
 		{
 		if(wc == '%')
 			{
+			/*printf("width=%d precision=%d\n", fspecs[findex].width, fspecs[findex].precision);*/
+
 			/* Skip up to the type field */
 			{
 			int y;
-			for(y = 0; y < fspecs[iii].format_length; y++)
+			for(y = 0; y < fspecs[findex].format_length; y++)
 				 wc = gu_utf8_sgetwc(&formatp);
 			}
 
@@ -267,7 +330,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					{
 					char buffer[32];
 					int bi;
-					int n = fspecs[iii].value.integer;
+					int n = fspecs[findex].value.integer;
 					gu_boolean negative = FALSE;
 					int width_left;
 
@@ -286,15 +349,15 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 						}
 
 					/* If width is specified, subtract width value including its sign. */
-					if((width_left = fspecs[iii].width) > 0)
+					if((width_left = fspecs[findex].width) > 0)
 						{
 						width_left -= bi;
-						if(negative || fspecs[iii].flag_show_sign || fspecs[iii].flag_blank)
+						if(negative || fspecs[findex].flag_show_sign || fspecs[findex].flag_blank)
 							width_left--;
 						}
 
 					/* If spaces will serve as padding on the left side, insert them now. */
-					if(width_left > 0 && !fspecs[iii].flag_left_justify && !fspecs[iii].flag_leading_zeros)
+					if(width_left > 0 && !fspecs[findex].flag_left_justify && !fspecs[findex].flag_leading_zeros)
 						{
 						while(width_left-- > 0)
 							{
@@ -306,16 +369,16 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					/* Print the sign or a blank space for it. */
 					if(negative)
 						gu_fputwc('-', f);
-					else if(fspecs[iii].flag_show_sign)
+					else if(fspecs[findex].flag_show_sign)
 						gu_fputwc('+', f);
-					else if(fspecs[iii].flag_blank)
+					else if(fspecs[findex].flag_blank)
 						gu_fputwc(' ', f);
 
 					/* If there is leftover space and it should be filled
 					 * with zeros, do so now.  However, left justify
 					 * overrides this.
 					 */
-					if(width_left > 0 && fspecs[iii].flag_leading_zeros && !fspecs[iii].flag_left_justify)
+					if(width_left > 0 && fspecs[findex].flag_leading_zeros && !fspecs[findex].flag_left_justify)
 						{
 						while(width_left-- > 0)
 							gu_fputwc('0', f);
@@ -341,21 +404,28 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				/* UTF-8 String */
 				case 's':
 					{
-					const char *s = fspecs[iii].value.character_pointer;
+					const char *s = fspecs[findex].value.character_pointer;
 					int width_left, limit;
 					wchar_t wc;
 
 					/* If a width was specified, substract the width of the
-					 * string to be printed.
+					 * string to be printed keeping in mind that the
+					 * precision may limit how much of the string is printed.
 					 */ 
-					if((width_left = fspecs[iii].width) > 0)
-						width_left -= gu_utf8_wswidth(s);
+					if((width_left = fspecs[findex].width) > 0)
+						{
+						size_t width = gu_utf8_wswidth(s);
+						if(width <= fspecs[findex].precision)
+							width_left -= width;
+						else
+							width_left -= fspecs[findex].precision;
+						}
 
 					/* If that leaves something, and the string is to be
 					 * right-justified in its field, then print spaces
 					 * as left-hand-side padding.
 					 */
-					if(width_left > 0 && !fspecs[iii].flag_left_justify)
+					if(width_left > 0 && !fspecs[findex].flag_left_justify)
 						{
 						while(width_left-- > 0)
 							{
@@ -369,7 +439,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					 * that if the precision was not specified, then countdown 
 					 * will start at -1 and thus will not reach zero.
 					 */
-				   	limit = fspecs[iii].precision;
+				   	limit = fspecs[findex].precision;
 					while((wc = gu_utf8_sgetwc(&s)) && limit-- != 0)
 						{
 						gu_fputwc(wc, f);
@@ -388,7 +458,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					break;
 				}
 
-			iii++;
+			findex++;
 			}
 		else
 			{
@@ -420,32 +490,6 @@ int gu_utf8_fprintf(FILE *f, const char *format, ...)
 	return ret;
 	}
 
-int gu_utf8_fputs(const char *string, FILE *f)
-	{
-	const char *p = string;
-	wchar_t wc;
-	int count = 0;
-	while((wc = gu_utf8_sgetwc(&p)))
-		{
-		gu_fputwc(wc, f);
-		count++;
-		}
-	return count;
-	}
-
-int gu_utf8_puts(const char *string)
-	{
-	return gu_utf8_fputs(string, stdout);
-	}
-
-int gu_utf8_putline(const char *string)
-	{
-	int count = gu_utf8_fputs(string, stdout);
-	gu_fputwc('\n', stdout);
-	count++;
-	return count;
-	}
-
 /* gcc -DTEST -I../include -Wall -o gu_utf8_printf gu_utf8_printf.c ../libgu.a */
 #ifdef TEST
 #ifdef INTERNATIONAL
@@ -466,6 +510,9 @@ int main(int argc, char *argv[])
 	gu_utf8_printf("[%10s]\n", "right");
 	gu_utf8_printf("[%-10s]\n", "left");
 	gu_utf8_printf("[%-10.10s]\n", "left too long");
+	gu_utf8_printf("[%-*.*s]\n", 10, 10, "left too long");
+	gu_utf8_printf("[%-15.10s]\n", "left too long");
+	gu_utf8_printf("[%1$-*2$.*3$s]\n", "left too long", 15, 10);
 	gu_utf8_printf("right: [%10d]\n", 1000);
 	gu_utf8_printf("left:  [%-10d]\n", 1000);
 	gu_utf8_printf("zeros: [%010d]\n", 1000);

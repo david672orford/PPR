@@ -83,6 +83,7 @@ LIBOBJS=malloc.o \
 	gu_name_value.o \
 	gu_utf8_decode.o \
 	gu_utf8_printf.o \
+	gu_utf8_put.o \
 	gu_locale.o
 
 TARGETS=../libgu.a

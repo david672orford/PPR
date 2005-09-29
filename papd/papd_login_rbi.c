@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_login_rbi.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 29 September 2005.
 */
 
 /*
@@ -63,7 +63,12 @@ int rbi_query(int sesfd, void *qc)
 	if(strcmp(tokens[1], "RBISpoolerID") == 0)
 		{
 		char temp[64];
-		gu_snprintf(temp, sizeof(temp), "(PPR) %.*s (%s)\n", strspn(SHORT_VERSION, "0123456789."), SHORT_VERSION, SHORT_VERSION);
+		gu_snprintf(temp, sizeof(temp),
+			"(PPR) %.*s (%s)\n",
+			(int)strspn(SHORT_VERSION, "0123456789."),
+			SHORT_VERSION,
+			SHORT_VERSION
+			);
 		REPLY(sesfd, temp);
 		return 0;
 		}

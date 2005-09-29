@@ -159,16 +159,19 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 		{
 		case STATUS_WAITING:					/* <--- waiting for printer */
 			{
-			int x;
-			printf("waiting for printer\n");
-			if(qentry->never)					/* If one or more counted out, */
-				{								/* assume it is a group */
-				for(x=0; x < indent; x++)		/* and explain. */
-					putchar(' ');
-				printf("(Not all \"%s\"\n", qentryfile->destname);
-				for(x=0; x < indent; x++)
-					putchar(' ');
-				printf("members are suitable.)\n");
+			gu_utf8_putline(_("waiting for printer"));
+			/* If one or more printers disqualified, assume this is a 
+			 * group and explain.
+			 */
+			if(qentry->never)
+				{
+				gu_utf8_printf(
+					_("%*s(Not all \"%s\"\n"
+					  "%*s members are suitable))\n"),
+					indent, "",
+					qentryfile->destname,
+					indent, ""
+					);
 				}
 			}
 			break;
@@ -178,19 +181,18 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 				{
 				char *line = NULL;
 				int line_available = 80;
+				char *p;
 
-				printf("waiting for media:\n");
+				gu_utf8_putline(_("waiting for media:"));
 
 				while((line = gu_getline(line, &line_available, vfile)) && strcmp(line, CHOPT_QF_ENDTAG1))
 					{
-					if(strncmp(line, "Media: ",7) == 0)
+					if((p = lmatchp(line, "Media:")))
 						{
-						int x;
-						for(x=0; x < indent; x++)		/* indent */
-							putchar(' ');
-						for(x=7; line[x] != '\0' && line[x] != ' '; x++)
-							putchar(line[x]);
-						putchar('\n');
+						gu_utf8_printf("%*s%.*s\n",
+							indent, "",				/* indent line */
+							(int)strcspn(p, " "), p	/* print first word */
+							);
 						}
 					}
 
@@ -198,43 +200,43 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 				}
 			else						/* Caller wants to do it itself. */
 				{
-				printf("waiting for media\n");
+				gu_utf8_putline(_("waiting for media"));
 				}
 			break;
 
 		case STATUS_HELD:				/* <--- job is held */
-			printf("held\n");
+			gu_utf8_putline(_("held"));
 			break;
 
 		case STATUS_STRANDED:			/* <--- job is stranded */
-			printf("stranded\n");
+			gu_utf8_putline(_("stranded"));
 			goto stranded_arrested;
 
 		case STATUS_ARRESTED:			/* <--- job is arrested */
-			printf("arrested\n");
+			gu_utf8_putline(_("arrested"));
 			goto stranded_arrested;
 
 		stranded_arrested:
 			if(vfile)
-			  {
-			  char *line = NULL;
-			  int line_available = 80;
+				{
+				char *line = NULL;
+				int line_available = 80;
+				char *ptr;
 
-			  /* Scan the rest of the queue file. */
-			  while((line = gu_getline(line, &line_available, vfile)) && strcmp(line, CHOPT_QF_ENDTAG1) )
+				/* Scan the rest of the queue file. */
+				while((line = gu_getline(line, &line_available, vfile)) && strcmp(line, CHOPT_QF_ENDTAG1) )
 				{
 				/* Look for "Reason:" lines */
-				if(strncmp(line, "Reason: ", 8) == 0)
+				if((ptr = lmatchp(line, "Reason:")))
 					{
 					/* print indented, wrapping at commas */
-					char *ptr;
 					int x;
-					for(ptr = &line[8]; *ptr; )
+					while(*ptr)
 						{
 						for(x=0; x < reason_indent; x++) /* indent */
 							putchar(' ');
 
-						putchar('(');
+						gu_utf8_puts("(");
 
 						do	{
 							if(*ptr == '|')				/* break at | but */
@@ -245,7 +247,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 							putchar(*ptr);
 							} while( *(ptr++) != ',' && *ptr );
 
-						gu_puts(")\n");
+						gu_utf8_puts(")\n");
 						}
 					break;		/* print only the first reason */
 					} /* end of if this is a "Reason:" line */

@@ -860,7 +860,7 @@ static void ppop_mount(const char command[])
 
 	/* Parse the command we received over the pipe. */
 	medianame[0] = '\0';
-	if(gu_sscanf(command,"M %S %@s %@s",
+	if(gu_sscanf(command, "M %S %@s %@s",
 						&printer,
 						sizeof(binname), binname,
 						sizeof(medianame), medianame) < 2)
@@ -888,14 +888,17 @@ static void ppop_mount(const char command[])
 		}
 
 	/* find the bin in question */
-	for(x=0; strcmp(printers[printer_id].bins[x], binname) != 0; x++)
+	for(x=0; x < printers[printer_id].nbins && strcmp(printers[printer_id].bins[x], binname) != 0; x++)
 		{
-		if(x == printers[printer_id].nbins)		/* if bin not found */
-			{
-			fprintf(reply_file, "%d\n", EXIT_BADBIN);
-			fprintf(reply_file, _("\"%s\" does not have a bin called \"%s\".\n"), printer, binname);
-			return;
-			}
+		/* nothing to do */
+		}
+
+	/* if bin not found, */
+	if(x == printers[printer_id].nbins)
+		{
+		fprintf(reply_file, "%d\n", EXIT_BADBIN);
+		fprintf(reply_file, _("\"%s\" does not have a bin called \"%s\".\n"), printer, binname);
+		return;
 		}
 
 	printers[printer_id].media[x] = get_media_id(medianame);

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-23 23:57-0400\n"
+"POT-Creation-Date: 2005-09-29 17:14-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -529,7 +529,7 @@ msgid "System is out of STREAMS."
 msgstr ""
 
 #: ../interfaces/parallel.c:136 ../interfaces/usb.c:148
-#: ../ppop/ppop_cmds_other.c:751
+#: ../ppop/ppop_cmds_other.c:752
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)."
 msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s)."
@@ -983,7 +983,7 @@ msgstr "bac d'entrée vide"
 msgid "overdue for preventative maintainance"
 msgstr "maintenance préventive plus longue que prévu"
 
-#: ../libppr/snmp_messages.c:237 ../ppop/ppop_cmds_other.c:484
+#: ../libppr/snmp_messages.c:237 ../ppop/ppop_cmds_other.c:485
 msgid "idle"
 msgstr "inactive"
 
@@ -1069,7 +1069,7 @@ msgstr ""
 msgid "No access allowed from node \"%s\".\n"
 msgstr "Accès non autorisé depuis le noeud \"%s\".\n"
 
-#: ../lprsrv/lprsrv.c:174 ../ppad/ppad.c:337 ../ppop/ppop.c:962
+#: ../lprsrv/lprsrv.c:174 ../ppad/ppad.c:337 ../ppop/ppop.c:961
 #: ../unixuser/ppr-followme.c:204
 msgid "Valid switches:\n"
 msgstr "Bascules valides :\n"
@@ -1210,7 +1210,7 @@ msgstr "il y a déjà un serveur qui écoute sur le port TCP %d"
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s() : échec de chmod(\"%s\", %o), errno=%d (%s)"
 
-#: ../ppad/ppad.c:69 ../ppop/ppop.c:84
+#: ../ppad/ppad.c:69 ../ppop/ppop.c:83
 msgid "Fatal: "
 msgstr "Fatal : "
 
@@ -1488,11 +1488,11 @@ msgstr ""
 msgid "PPD File Management:\n"
 msgstr ""
 
-#: ../ppad/ppad.c:318 ../ppop/ppop.c:949
+#: ../ppad/ppad.c:318 ../ppop/ppop.c:948
 msgid "-M\tselect machine-readable output"
 msgstr ""
 
-#: ../ppad/ppad.c:319 ../ppop/ppop.c:950
+#: ../ppad/ppad.c:319 ../ppop/ppop.c:949
 msgid "--machine-readable\tsame as -M"
 msgstr ""
 
@@ -1509,7 +1509,7 @@ msgstr ""
 msgid "--version\tprint PPR version information"
 msgstr "\t--version    affiche le numéro de version de PPR\n"
 
-#: ../ppad/ppad.c:323 ../ppop/ppop.c:958
+#: ../ppad/ppad.c:323 ../ppop/ppop.c:957
 #, fuzzy
 msgid "--help\tprint this help message"
 msgstr "\t--help       affiche ce message\n"
@@ -1542,7 +1542,7 @@ msgstr ""
 msgid "Additional help topics:\n"
 msgstr ""
 
-#: ../ppad/ppad.c:355 ../ppop/ppop.c:978
+#: ../ppad/ppad.c:355 ../ppop/ppop.c:977
 #, c-format
 msgid ""
 "The %s manpage may be viewed by entering this command at a shell prompt:\n"
@@ -1553,7 +1553,7 @@ msgstr ""
 msgid "PPAD, Page Printer Administrator's utility"
 msgstr "PPAD, Page Printer Administrator's utility (outil d'administration)"
 
-#: ../ppad/ppad.c:579 ../ppop/ppop.c:844
+#: ../ppad/ppad.c:579 ../ppop/ppop.c:843
 msgid "Type \"help\" for command list, \"exit\" to quit."
 msgstr "Essayez \"help\" pour la liste des commandes, \"exit\" pour quitter."
 
@@ -2249,11 +2249,11 @@ msgstr "LimitKilobytes : %d %d\n"
 msgid "GrayOK: %s\n"
 msgstr "GrayOK : %s\n"
 
-#: ../ppad/ppad_printer.c:912 ../ppop/ppop_cmds_other.c:1561
+#: ../ppad/ppad_printer.c:912 ../ppop/ppop_cmds_other.c:1558
 msgid "no"
 msgstr "non"
 
-#: ../ppad/ppad_printer.c:912 ../ppop/ppop_cmds_other.c:1561
+#: ../ppad/ppad_printer.c:912 ../ppop/ppop_cmds_other.c:1558
 msgid "yes"
 msgstr "oui"
 
@@ -2654,46 +2654,45 @@ msgstr ""
 msgid "You must supply only the name of an existing printer.\n"
 msgstr "Vous devez indiquer le nom d'une imprimante existante.\n"
 
-#: ../ppad/ppad_util.c:131 ../ppop/ppop.c:178
+#: ../ppad/ppad_util.c:131 ../ppop/ppop.c:176
 msgid "can't open FIFO, pprd is probably not running"
 msgstr "impossible d'ouvrir le FIFO, pprd ne tourne probablement pas"
 
-#: ../ppop/ppop.c:105
-#, c-format
+#: ../ppop/ppop.c:103
 msgid "Error: "
 msgstr "Erreur : "
 
-#: ../ppop/ppop.c:225
+#: ../ppop/ppop.c:223
 #, fuzzy, c-format
 msgid "%s: timeout waiting for response"
 msgstr "Délai expiré en attendant une réponse"
 
-#: ../ppop/ppop.c:324
-#, fuzzy, c-format
+#: ../ppop/ppop.c:322
+#, fuzzy
 msgid "Destination (printer or group) name is empty.\n"
 msgstr "Le nom de destination (imprimante ou groupe) est vide"
 
-#: ../ppop/ppop.c:370
+#: ../ppop/ppop.c:368
 #, c-format
 msgid "Destination or job name \"%s\" is invalid.\n"
 msgstr "La destination ou le nom de travail \"%s\" est invalide.\n"
 
-#: ../ppop/ppop.c:388
+#: ../ppop/ppop.c:386
 #, fuzzy, c-format
 msgid "Destination name \"%s\" contains a disallowed character.\n"
 msgstr "Le nom de destination contient un caractère interdit.\n"
 
-#: ../ppop/ppop.c:394
+#: ../ppop/ppop.c:392
 #, fuzzy, c-format
 msgid "Destination name \"%s\" begins with a disallowed character.\n"
 msgstr "Le nom de destination \"%*s\" commence par un caractère interdit.\n"
 
-#: ../ppop/ppop.c:417
+#: ../ppop/ppop.c:416
 #, fuzzy, c-format
 msgid "The alias \"%s\" does not have a forwhat value.\n"
 msgstr "L'alias \"%s:%s\" n'a pas de valeur forwhat.\n"
 
-#: ../ppop/ppop.c:493
+#: ../ppop/ppop.c:492
 msgid ""
 "You are not allowed to perform the requested\n"
 "operation because you are not a PPR operator.\n"
@@ -2701,7 +2700,7 @@ msgstr ""
 "Vous n'avez pas la permission d'effectuer l'opération\n"
 "demandée parce que vous n'êtes pas un opérateur PPR.\n"
 
-#: ../ppop/ppop.c:619
+#: ../ppop/ppop.c:618
 #, fuzzy, c-format
 msgid ""
 "You may not manipulate the job \"%s\" because it\n"
@@ -2710,226 +2709,260 @@ msgstr ""
 "Vous ne pouvez pas effectuer cette opération parce que le travail\n"
 "\"%s\" n'appartient pas à l'utilisateur \"%s\".\n"
 
-#: ../ppop/ppop.c:669
+#: ../ppop/ppop.c:668
 #, fuzzy
 msgid "Destination commands:"
 msgstr "Destination"
 
-#: ../ppop/ppop.c:670
+#: ../ppop/ppop.c:669
 #, fuzzy
 msgid "ppop destination {<destination>, all}"
 msgstr "Utilisation : ppop reject <destination>\n"
 
-#: ../ppop/ppop.c:671
+#: ../ppop/ppop.c:670
 msgid "    Abbreviation: ppop dest {<destination>, all}"
 msgstr ""
 
-#: ../ppop/ppop.c:672
+#: ../ppop/ppop.c:671
 msgid "ppop destination-comment {<destination>, all}"
 msgstr ""
 
-#: ../ppop/ppop.c:673
+#: ../ppop/ppop.c:672
 msgid "    Abbreviation: ppop ldest {<destination>, all}"
 msgstr ""
 
-#: ../ppop/ppop.c:674
+#: ../ppop/ppop.c:673
 msgid "ppop destination-comment-address {<destination>, all}"
 msgstr ""
 
-#: ../ppop/ppop.c:675
+#: ../ppop/ppop.c:674
 #, fuzzy
 msgid "ppop accept <destination>"
 msgstr "Utilisation : ppop accept <destination>\n"
 
-#: ../ppop/ppop.c:676
+#: ../ppop/ppop.c:675
 #, fuzzy
 msgid "ppop reject <destination>"
 msgstr "Utilisation : ppop reject <destination>\n"
 
-#: ../ppop/ppop.c:677
+#: ../ppop/ppop.c:676
 msgid "Print job commands:"
 msgstr ""
 
-#: ../ppop/ppop.c:678
+#: ../ppop/ppop.c:677
 msgid "ppop list {<destination>, <job>, all} ..."
 msgstr ""
 
-#: ../ppop/ppop.c:679
+#: ../ppop/ppop.c:678
 msgid "ppop details {<destination>, <job>, all} ..."
 msgstr ""
 
-#: ../ppop/ppop.c:680
+#: ../ppop/ppop.c:679
 msgid "ppop lpq {<destination>, <job>, all} [<user>] [<id>] ..."
 msgstr ""
 
-#: ../ppop/ppop.c:681
+#: ../ppop/ppop.c:680
 msgid "ppop qquery {<destination>, <job>, all} <field name 1> ..."
 msgstr ""
 
-#: ../ppop/ppop.c:682
+#: ../ppop/ppop.c:681
 msgid "ppop move {<job>, <old_destination>} <new_destination>"
 msgstr ""
 
-#: ../ppop/ppop.c:683
+#: ../ppop/ppop.c:682
 msgid "ppop hold <job> ..."
 msgstr ""
 
-#: ../ppop/ppop.c:684
+#: ../ppop/ppop.c:683
 msgid "ppop release <job> ..."
 msgstr ""
 
-#: ../ppop/ppop.c:685
+#: ../ppop/ppop.c:684
 msgid "ppop [s]cancel {<job>, <destination>, all} ..."
 msgstr ""
 
-#: ../ppop/ppop.c:686
+#: ../ppop/ppop.c:685
 msgid "ppop [s]purge {<destination>, all} ..."
 msgstr ""
 
-#: ../ppop/ppop.c:687
+#: ../ppop/ppop.c:686
 msgid "ppop [s]cancel-active {<destination>, all} ..."
 msgstr ""
 
-#: ../ppop/ppop.c:688
+#: ../ppop/ppop.c:687
 msgid "ppop [s]cancel-my-active {<destination>, all} ..."
 msgstr ""
 
-#: ../ppop/ppop.c:689
+#: ../ppop/ppop.c:688
 #, fuzzy
 msgid "ppop clean <destination> ..."
 msgstr "Utilisation : ppop accept <destination>\n"
 
-#: ../ppop/ppop.c:690
+#: ../ppop/ppop.c:689
 msgid "ppop rush <job> ..."
 msgstr ""
 
-#: ../ppop/ppop.c:691
+#: ../ppop/ppop.c:690
 msgid "ppop last <job> ..."
 msgstr ""
 
-#: ../ppop/ppop.c:692
+#: ../ppop/ppop.c:691
 #, fuzzy
 msgid "ppop log <job>"
 msgstr "Utilisation : ppop log <travail>\n"
 
-#: ../ppop/ppop.c:693
+#: ../ppop/ppop.c:692
 #, fuzzy
 msgid "ppop progress <job>"
 msgstr "Utilisation : ppop log <travail>\n"
 
-#: ../ppop/ppop.c:694
+#: ../ppop/ppop.c:693
 msgid "ppop modify <job> <name>=<value> ..."
 msgstr ""
 
-#: ../ppop/ppop.c:695
+#: ../ppop/ppop.c:694
 msgid "Printer commands:"
 msgstr ""
 
-#: ../ppop/ppop.c:696
+#: ../ppop/ppop.c:695
 #, fuzzy
 msgid "ppop status {<destination>, all} ..."
 msgstr "Utilisation : ppop status {<imprimante>, <groupe>, all}\n"
 
-#: ../ppop/ppop.c:697
+#: ../ppop/ppop.c:696
 #, fuzzy
 msgid "ppop start <printer> ..."
 msgstr "Utilisation : ppop message <imprimante>\n"
 
-#: ../ppop/ppop.c:698
+#: ../ppop/ppop.c:697
 #, fuzzy
 msgid "ppop halt <printer> ..."
 msgstr "Utilisation : ppop alerts _imprimante_\n"
 
-#: ../ppop/ppop.c:699
+#: ../ppop/ppop.c:698
 #, fuzzy
 msgid "ppop stop <printer> ..."
 msgstr "Utilisation : ppop message <imprimante>\n"
 
-#: ../ppop/ppop.c:700
+#: ../ppop/ppop.c:699
 #, fuzzy
 msgid "ppop wstop <printer>"
 msgstr "Utilisation : ppop message <imprimante>\n"
 
-#: ../ppop/ppop.c:701
+#: ../ppop/ppop.c:700
 #, fuzzy
 msgid "ppop message <printer>"
 msgstr "Utilisation : ppop message <imprimante>\n"
 
-#: ../ppop/ppop.c:702
+#: ../ppop/ppop.c:701
 #, fuzzy
 msgid "ppop alerts <printer>"
 msgstr "Utilisation : ppop alerts _imprimante_\n"
 
-#: ../ppop/ppop.c:703
+#: ../ppop/ppop.c:702
 msgid "Media commands:"
 msgstr ""
 
-#: ../ppop/ppop.c:704
+#: ../ppop/ppop.c:703
 #, fuzzy
 msgid "ppop media {<destination>, all}"
 msgstr "Utilisation : ppop media {<imprimante>, <groupe>, all}\n"
 
-#: ../ppop/ppop.c:705
+#: ../ppop/ppop.c:704
 #, fuzzy
 msgid "ppop mount <printer> <bin> <medium>"
 msgstr "Utilisation : ppop mount <imprimante> <bac> <support>\n"
 
-#: ../ppop/ppop.c:839
+#: ../ppop/ppop.c:838
 msgid "PPOP, Page Printer Operator's utility"
 msgstr "PPOP, Page Printer Operator's utility (outil d'utilisation)"
 
-#: ../ppop/ppop.c:910
+#: ../ppop/ppop.c:909
 msgid "Try \"help\" or \"exit\"."
 msgstr "Essayez \"help\" ou \"exit\"."
 
-#: ../ppop/ppop.c:933
+#: ../ppop/ppop.c:932
 msgid "Spooler has shut down.\n"
 msgstr "Le gestionnaire de file s'est arrêté.\n"
 
-#: ../ppop/ppop.c:951
+#: ../ppop/ppop.c:950
 msgid "-A <seconds>\thide arrested jobs older than <seconds>"
 msgstr ""
 
-#: ../ppop/ppop.c:952
+#: ../ppop/ppop.c:951
 msgid "--arrest-interest-time=<seconds>\tsame as -A"
 msgstr ""
 
-#: ../ppop/ppop.c:953
+#: ../ppop/ppop.c:952
 msgid "-u <user>\tcheck access as if run by <user>"
 msgstr ""
 
-#: ../ppop/ppop.c:954
+#: ../ppop/ppop.c:953
 msgid "--user <user>\tsame as -u"
 msgstr ""
 
-#: ../ppop/ppop.c:955
+#: ../ppop/ppop.c:954
 msgid "--magic-cookie <string>\tpresent job access token"
 msgstr ""
 
-#: ../ppop/ppop.c:956
+#: ../ppop/ppop.c:955
 msgid "--verbose\tprint more information"
 msgstr ""
 
-#: ../ppop/ppop.c:957
+#: ../ppop/ppop.c:956
 #, fuzzy
 msgid "--version\tprint the PPR version information"
 msgstr "\t--version    affiche le numéro de version de PPR\n"
 
-#: ../ppop/ppop.c:975
+#: ../ppop/ppop.c:974
 msgid "Try \"ppop help\" for help with subcommands.\n"
 msgstr "Essayez \"ppop help\" pour avoir de l'aide sur les sous-commandes.\n"
 
-#: ../ppop/ppop.c:1059
+#: ../ppop/ppop.c:1053
 #, fuzzy, c-format
 msgid "You aren't allowed to use the %s option.\n"
 msgstr "Vous n'avez pas le droit d'utiliser l'option --su.\n"
 
-#: ../ppop/ppop.c:1149
+#: ../ppop/ppop.c:1143
 #, fuzzy, c-format
 msgid "%s: unknown sub-command \"%s\", try \"ppop help\"\n"
 msgstr "Commande inconnue, essayez \"ppop help\".\n"
 
-#: ../ppop/ppop_cmds_listq.c:589
+#: ../ppop/ppop_cmds_listq.c:162
+#, fuzzy
+msgid "waiting for printer"
+msgstr "en attente d'un peu de ressources"
+
+#: ../ppop/ppop_cmds_listq.c:169
+#, c-format
+msgid ""
+"%*s(Not all \"%s\"\n"
+"%*s members are suitable))\n"
+msgstr ""
+
+#: ../ppop/ppop_cmds_listq.c:186
+#, fuzzy
+msgid "waiting for media:"
+msgstr "en attente d'un peu de ressources"
+
+#: ../ppop/ppop_cmds_listq.c:203
+#, fuzzy
+msgid "waiting for media"
+msgstr "en attente d'un peu de ressources"
+
+#: ../ppop/ppop_cmds_listq.c:208
+msgid "held"
+msgstr ""
+
+#: ../ppop/ppop_cmds_listq.c:212
+msgid "stranded"
+msgstr ""
+
+#: ../ppop/ppop_cmds_listq.c:216
+msgid "arrested"
+msgstr ""
+
+#: ../ppop/ppop_cmds_listq.c:602
 msgid ""
 "Usage: ppop list {all, <printer>, <group> , <job>} ...\n"
 "\n"
@@ -2945,12 +2978,11 @@ msgstr ""
 "mettre \"all\". Des spécifications multiples peuvent être utilisées\n"
 "avec cette commande.\n"
 
-#: ../ppop/ppop_cmds_listq.c:599
-#, c-format
+#: ../ppop/ppop_cmds_listq.c:612
 msgid "Queue ID        For                      Time      Pgs Status\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:691
+#: ../ppop/ppop_cmds_listq.c:706
 msgid ""
 "Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
 "\n"
@@ -2963,7 +2995,7 @@ msgstr ""
 "La sous-commande \"ppop lpq\" affiche une liste de file dans un format\n"
 "similaire à celui de la commande Berkeley Unix \"lpq\".\n"
 
-#: ../ppop/ppop_cmds_listq.c:1142
+#: ../ppop/ppop_cmds_listq.c:1157
 msgid ""
 "Usage: ppop details {all, <group>, <printer>, <job>}\n"
 "\n"
@@ -2977,12 +3009,12 @@ msgstr ""
 "les travaux mis en file pour le groupe indiqué, les travaux mis en file\n"
 "pour l'imprimante indiquée, ou le travail indiqué.\n"
 
-#: ../ppop/ppop_cmds_listq.c:1354 ../ppop/ppop_modify.c:94
+#: ../ppop/ppop_cmds_listq.c:1369 ../ppop/ppop_modify.c:94
 #, c-format
 msgid "Invalid Addon line: %s\n"
 msgstr "Ligne supplémentaire invalide : %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1873
+#: ../ppop/ppop_cmds_listq.c:1887
 msgid ""
 "Usage: ppop progress <job>\n"
 "\n"
@@ -2994,281 +3026,282 @@ msgstr ""
 "Cette commande montre l'avancement effectué pendant l'impression\n"
 "du travail indiqué.\n"
 
-#: ../ppop/ppop_cmds_other.c:66
-#, c-format
+#: ../ppop/ppop_cmds_other.c:67
 msgid "You had no jobs to cancel.\n"
 msgstr "Vous n'aviez pas de travaux à annuler.\n"
 
-#: ../ppop/ppop_cmds_other.c:68
-#, c-format
+#: ../ppop/ppop_cmds_other.c:69
 msgid "There were no jobs to cancel.\n"
 msgstr "Il n'y avait pas de travaux à annuler.\n"
 
-#: ../ppop/ppop_cmds_other.c:72
+#: ../ppop/ppop_cmds_other.c:73
 #, fuzzy, c-format
 msgid "%d job was canceled.\n"
 msgid_plural "%d jobs were canceled.\n"
 msgstr[0] "1 travail a été annulé.\n"
 msgstr[1] "1 travail a été annulé.\n"
 
-#: ../ppop/ppop_cmds_other.c:90
+#: ../ppop/ppop_cmds_other.c:91
 msgid "Use \"ppop alerts\" to see details."
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:93
+#: ../ppop/ppop_cmds_other.c:94
 msgid "Printer refuses to allow the spooler access."
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:96
+#: ../ppop/ppop_cmds_other.c:97
 msgid "Printer isn't responding."
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:99
+#: ../ppop/ppop_cmds_other.c:100
 msgid "Bad settings, use \"ppop alerts\" to see details."
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:103
+#: ../ppop/ppop_cmds_other.c:104
 #, fuzzy
 msgid "Printer address doesn't exist."
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../ppop/ppop_cmds_other.c:130
+#: ../ppop/ppop_cmds_other.c:131
 #, c-format
 msgid "(%s)"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:154
+#: ../ppop/ppop_cmds_other.c:155
 #, fuzzy, c-format
 msgid "Printer Status: %s"
 msgstr "État de l'imprimante : %s, %s"
 
-#: ../ppop/ppop_cmds_other.c:192
+#: ../ppop/ppop_cmds_other.c:193
 #, c-format
 msgid "Printer Problem: \"%s\""
 msgstr "Problème d'imprimante : \"%s\""
 
-#: ../ppop/ppop_cmds_other.c:207
+#: ../ppop/ppop_cmds_other.c:208
 #, fuzzy, c-format
 msgid " for %d minute"
 msgid_plural " for %d minutes"
 msgstr[0] "%s, en pause pendant %d minutes"
 msgstr[1] "%s, en pause pendant %d minutes"
 
-#: ../ppop/ppop_cmds_other.c:212
+#: ../ppop/ppop_cmds_other.c:213
 #, fuzzy, c-format
 msgid " for %d hour"
 msgid_plural " for %d hours"
 msgstr[0] "%s, en pause pendant %d minutes"
 msgstr[1] "%s, en pause pendant %d minutes"
 
-#: ../ppop/ppop_cmds_other.c:221
+#: ../ppop/ppop_cmds_other.c:222
 #, fuzzy, c-format
 msgid " (as of %d minute ago)"
 msgid_plural " (as of %d minutes ago)"
 msgstr[0] "%s, en pause pendant %d minutes"
 msgstr[1] "%s, en pause pendant %d minutes"
 
-#: ../ppop/ppop_cmds_other.c:226
+#: ../ppop/ppop_cmds_other.c:227
 #, c-format
 msgid " (as of %d hour ago)"
 msgid_plural " (as of %d hours ago)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../ppop/ppop_cmds_other.c:242
+#: ../ppop/ppop_cmds_other.c:243
 msgid "looking up address"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:244
+#: ../ppop/ppop_cmds_other.c:245
 #, fuzzy
 msgid "connecting"
 msgstr "rejette"
 
-#: ../ppop/ppop_cmds_other.c:246
+#: ../ppop/ppop_cmds_other.c:247
 msgid "sending data"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:248
+#: ../ppop/ppop_cmds_other.c:249
 msgid "closing connection"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:250
+#: ../ppop/ppop_cmds_other.c:251
 #, fuzzy
 msgid "querying printer"
 msgstr "Partage de l'imprimante \"%s\"\n"
 
-#: ../ppop/ppop_cmds_other.c:252
+#: ../ppop/ppop_cmds_other.c:253
 msgid "syncing PJL"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:254
+#: ../ppop/ppop_cmds_other.c:255
 #, fuzzy
 msgid "waiting for printer to finish"
 msgstr "en attente d'un peu de ressources"
 
-#: ../ppop/ppop_cmds_other.c:256
+#: ../ppop/ppop_cmds_other.c:257
 #, fuzzy
 msgid "waiting for RIP to finish"
 msgstr "en attente d'un peu de ressources"
 
-#: ../ppop/ppop_cmds_other.c:258
+#: ../ppop/ppop_cmds_other.c:259
 #, fuzzy
 msgid "waiting for responders to finish"
 msgstr "en attente d'un peu de ressources"
 
-#: ../ppop/ppop_cmds_other.c:268
+#: ../ppop/ppop_cmds_other.c:269
 msgid "Operation: "
 msgstr "Opération : "
 
-#: ../ppop/ppop_cmds_other.c:271
+#: ../ppop/ppop_cmds_other.c:272
 #, fuzzy, c-format
 msgid "%s, stalled for %d minute"
 msgid_plural "%s, stalled for %d minutes"
 msgstr[0] "%s, en pause pendant %d minutes"
 msgstr[1] "%s, en pause pendant %d minutes"
 
-#: ../ppop/ppop_cmds_other.c:273
+#: ../ppop/ppop_cmds_other.c:274
 #, c-format
 msgid "%s..."
 msgstr "%s..."
 
-#: ../ppop/ppop_cmds_other.c:294
+#: ../ppop/ppop_cmds_other.c:295
 #, fuzzy, c-format
 msgid "Raw LW Status: \"%s\""
 msgstr "État de LW : \"%s\""
 
-#: ../ppop/ppop_cmds_other.c:316
+#: ../ppop/ppop_cmds_other.c:317
 #, fuzzy, c-format
 msgid "Raw PJL Status: %s"
 msgstr "État PJL : %s"
 
-#: ../ppop/ppop_cmds_other.c:337
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_other.c:338
+#, fuzzy
 msgid "Raw SNMP Status: "
 msgstr "État SNMP : "
 
-#: ../ppop/ppop_cmds_other.c:374
+#: ../ppop/ppop_cmds_other.c:375
 msgid "Page Clock: "
 msgstr "Horloge de page :"
 
-#: ../ppop/ppop_cmds_other.c:379
+#: ../ppop/ppop_cmds_other.c:380
 #, fuzzy, c-format
 msgid "%d second (clock stopt)"
 msgid_plural "%d seconds (clock stopt)"
 msgstr[0] "%d secondes (horloge arrêtée)"
 msgstr[1] "%d secondes (horloge arrêtée)"
 
-#: ../ppop/ppop_cmds_other.c:386
+#: ../ppop/ppop_cmds_other.c:387
 #, fuzzy, c-format
 msgid "%d second"
 msgid_plural "%d seconds"
 msgstr[0] "%d secondes"
 msgstr[1] "%d secondes"
 
-#: ../ppop/ppop_cmds_other.c:407
+#: ../ppop/ppop_cmds_other.c:408
 #, c-format
 msgid "Job on Printer: %s"
 msgstr "Travail sur l'imprimante : %s"
 
-#: ../ppop/ppop_cmds_other.c:439
-#, c-format
+#: ../ppop/ppop_cmds_other.c:440
 msgid "Usage: ppop status {<printer>, <group>, all}\n"
 msgstr "Utilisation : ppop status {<imprimante>, <groupe>, all}\n"
 
-#: ../ppop/ppop_cmds_other.c:452
+#: ../ppop/ppop_cmds_other.c:453
 #, fuzzy
 msgid "Printer"
 msgstr "imprimante"
 
-#: ../ppop/ppop_cmds_other.c:452 ../ppop/ppop_cmds_other.c:1509
+#: ../ppop/ppop_cmds_other.c:453 ../ppop/ppop_cmds_other.c:1506
 msgid "Status"
 msgstr "État"
 
-#: ../ppop/ppop_cmds_other.c:488
+# OTH FIXME vérifier
+#: ../ppop/ppop_cmds_other.c:469
+#, fuzzy, c-format
+msgid "Malformed response: %s\n"
+msgstr "Crédit révoqué : %s\n"
+
+#: ../ppop/ppop_cmds_other.c:489
 #, c-format
 msgid "printing %s (retry %d)"
 msgstr "impression de %s (tentative %d)"
 
-#: ../ppop/ppop_cmds_other.c:490
+#: ../ppop/ppop_cmds_other.c:491
 #, c-format
 msgid "printing %s"
 msgstr "impression de %s"
 
-#: ../ppop/ppop_cmds_other.c:493
+#: ../ppop/ppop_cmds_other.c:494
 #, c-format
 msgid "canceling %s"
 msgstr "annulation de %s"
 
-#: ../ppop/ppop_cmds_other.c:496
+#: ../ppop/ppop_cmds_other.c:497
 #, c-format
 msgid "seizing %s"
 msgstr "saisie de %s"
 
-#: ../ppop/ppop_cmds_other.c:499
+#: ../ppop/ppop_cmds_other.c:500
 #, c-format
 msgid "stopping (printing %s)"
 msgstr "en cours d'arrêt (impression de %s)"
 
-#: ../ppop/ppop_cmds_other.c:502
+#: ../ppop/ppop_cmds_other.c:503
 #, c-format
 msgid "halting (printing %s)"
 msgstr "en cours d'arrêt (impression de %s)"
 
-#: ../ppop/ppop_cmds_other.c:505
+#: ../ppop/ppop_cmds_other.c:506
 msgid "stopt"
 msgstr "arrêtée"
 
-#: ../ppop/ppop_cmds_other.c:510
+#: ../ppop/ppop_cmds_other.c:511
 #, fuzzy, c-format
 msgid "fault, retry %d in %d second"
 msgid_plural "fault, retry %d in %d seconds"
 msgstr[0] "panne, tentative %d dans %d secondes"
 msgstr[1] "panne, tentative %d dans %d secondes"
 
-#: ../ppop/ppop_cmds_other.c:514
+#: ../ppop/ppop_cmds_other.c:515
 msgid "fault, no auto retry"
 msgstr "panne, pas de tentative automatique"
 
-#: ../ppop/ppop_cmds_other.c:518
+#: ../ppop/ppop_cmds_other.c:519
 #, fuzzy, c-format
 msgid "otherwise engaged or off-line, retry %d in %d second"
 msgid_plural "otherwise engaged or off-line, retry %d in %d seconds"
 msgstr[0] "déjà en cours ou hors-ligne, tentative %d dans %d secondes"
 msgstr[1] "déjà en cours ou hors-ligne, tentative %d dans %d secondes"
 
-#: ../ppop/ppop_cmds_other.c:523
+#: ../ppop/ppop_cmds_other.c:524
 msgid "waiting for resource ration"
 msgstr "en attente d'un peu de ressources"
 
-#: ../ppop/ppop_cmds_other.c:604
+#: ../ppop/ppop_cmds_other.c:605
 msgid "Usage: ppop message <printer>\n"
 msgstr "Utilisation : ppop message <imprimante>\n"
 
-#: ../ppop/ppop_cmds_other.c:642
+#: ../ppop/ppop_cmds_other.c:643
 msgid "Usage: ppop media {<printer>, <group>, all}\n"
 msgstr "Utilisation : ppop media {<imprimante>, <groupe>, all}\n"
 
-#: ../ppop/ppop_cmds_other.c:655
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_other.c:656
+#, fuzzy
 msgid "Printer                  Bin             Medium\n"
 msgstr "\t-a                     lance le mode du code d'authentification\n"
 
-#: ../ppop/ppop_cmds_other.c:681
-#, c-format
+#: ../ppop/ppop_cmds_other.c:682
 msgid "(no bins defined)\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:727
-#, c-format
+#: ../ppop/ppop_cmds_other.c:728
 msgid "Usage: ppop mount <printer> <bin> <medium>\n"
 msgstr "Utilisation : ppop mount <imprimante> <bac> <support>\n"
 
-#: ../ppop/ppop_cmds_other.c:761
+#: ../ppop/ppop_cmds_other.c:760
 #, c-format
 msgid "Medium \"%s\" is unknown.\n"
 msgstr "Le support \"%s\" est inconnu.\n"
 
-#: ../ppop/ppop_cmds_other.c:820
+#: ../ppop/ppop_cmds_other.c:817
 msgid ""
 "Usage: ppop start <printer> ...\n"
 "\n"
@@ -3278,7 +3311,7 @@ msgstr ""
 "\n"
 "Cette commande démarre une imprimante précédemment arrêtée.\n"
 
-#: ../ppop/ppop_cmds_other.c:825
+#: ../ppop/ppop_cmds_other.c:822
 msgid ""
 "Usage: ppop stop <printer> ...\n"
 "Usage: ppop wstop {printer}\n"
@@ -3300,7 +3333,7 @@ msgstr ""
 "La seconde forme, \"ppop wstop\", ne retourne pas avant que l'imprimante\n"
 "ne soit réellement arrêtée.\n"
 
-#: ../ppop/ppop_cmds_other.c:834
+#: ../ppop/ppop_cmds_other.c:831
 msgid ""
 "Usage: ppop halt <printer> ...\n"
 "\n"
@@ -3313,7 +3346,7 @@ msgstr ""
 "en cours d'impression, le travail est remis dans la file pour une\n"
 "impression ultérieure.\n"
 
-#: ../ppop/ppop_cmds_other.c:962
+#: ../ppop/ppop_cmds_other.c:959
 msgid ""
 "Usage: ppop cancel {<job>, <destination>}\n"
 "\n"
@@ -3325,7 +3358,7 @@ msgstr ""
 "Cette commande annule un travail ou tous vos travaux mis en queue pour la\n"
 "destination spécifiée.\n"
 
-#: ../ppop/ppop_cmds_other.c:1022
+#: ../ppop/ppop_cmds_other.c:1019
 msgid ""
 "Usage: ppop purge <destination> ...\n"
 "\n"
@@ -3340,11 +3373,11 @@ msgstr ""
 "supplémentaires sont interprétés comme les noms des destinations\n"
 "supplémentaires à purger.\n"
 
-#: ../ppop/ppop_cmds_other.c:1064
+#: ../ppop/ppop_cmds_other.c:1061
 msgid "Syntax error.\n"
 msgstr "Erreur de syntaxe.\n"
 
-#: ../ppop/ppop_cmds_other.c:1111
+#: ../ppop/ppop_cmds_other.c:1108
 msgid ""
 "Usage: ppop clean <destination> ...\n"
 "\n"
@@ -3356,7 +3389,7 @@ msgstr ""
 "Cette commande effacera tous les travaux arrêtés\n"
 "mis en file pour la ou les destinations indiquées\n"
 
-#: ../ppop/ppop_cmds_other.c:1189
+#: ../ppop/ppop_cmds_other.c:1186
 #, c-format
 msgid ""
 "Usage: ppop cancel-%sactive <destination> ...\n"
@@ -3369,22 +3402,22 @@ msgstr ""
 "Cette commande effacera tous les travaux arrêtés\n"
 "mis en file sur la ou les destinations indiquées.\n"
 
-#: ../ppop/ppop_cmds_other.c:1209
+#: ../ppop/ppop_cmds_other.c:1206
 msgid "You have no active jobs to cancel.\n"
 msgstr "Vous n'avez pas de travail actif à annuler.\n"
 
-#: ../ppop/ppop_cmds_other.c:1211
+#: ../ppop/ppop_cmds_other.c:1208
 msgid "There are no active jobs to cancel.\n"
 msgstr "Il n'y a pas de travail actif à annuler.\n"
 
-#: ../ppop/ppop_cmds_other.c:1215
+#: ../ppop/ppop_cmds_other.c:1212
 #, fuzzy, c-format
 msgid "%d active jobs were canceled.\n"
 msgid_plural "%d active jobs were canceled.\n"
 msgstr[0] "%d travaux actifs ont été annulés.\n"
 msgstr[1] "%d travaux actifs ont été annulés.\n"
 
-#: ../ppop/ppop_cmds_other.c:1236
+#: ../ppop/ppop_cmds_other.c:1233
 #, fuzzy
 msgid ""
 "Usage: ppop move <job> <destination>\n"
@@ -3397,7 +3430,7 @@ msgstr ""
 "\n"
 "Cette commande déplace un ou plusieurs travaux vers une file différente.\n"
 
-#: ../ppop/ppop_cmds_other.c:1287
+#: ../ppop/ppop_cmds_other.c:1284
 msgid ""
 "Usage: ppop rush <job> ...\n"
 "\n"
@@ -3407,7 +3440,7 @@ msgstr ""
 "\n"
 "Cette commande déplace les travaux spécifiés vers la tête de la file.\n"
 
-#: ../ppop/ppop_cmds_other.c:1292
+#: ../ppop/ppop_cmds_other.c:1289
 msgid ""
 "Usage: ppop last <job> ...\n"
 "\n"
@@ -3417,7 +3450,7 @@ msgstr ""
 "\n"
 "Cette commande déplace les travaux spécifiés vers la fin de la file.\n"
 
-#: ../ppop/ppop_cmds_other.c:1341
+#: ../ppop/ppop_cmds_other.c:1338
 msgid ""
 "Usage: ppop hold <job> ...\n"
 "\n"
@@ -3429,7 +3462,7 @@ msgstr ""
 "Ceci place les travaux dans l'état retenu. Un travail retenu\n"
 "ne sera pas imprimé tant qu'il n'est pas relâché.\n"
 
-#: ../ppop/ppop_cmds_other.c:1347
+#: ../ppop/ppop_cmds_other.c:1344
 msgid ""
 "Usage: ppop release <job> ...\n"
 "\n"
@@ -3439,19 +3472,19 @@ msgstr ""
 "\n"
 "Cette commande relâche les travaux précédemment retenus ou arrêtés.\n"
 
-#: ../ppop/ppop_cmds_other.c:1360 ../ppop/ppop_cmds_other.c:1700
+#: ../ppop/ppop_cmds_other.c:1357 ../ppop/ppop_cmds_other.c:1697
 msgid "You must indicate a specific job.\n"
 msgstr "Vous devez indiquer un travail spécifique.\n"
 
-#: ../ppop/ppop_cmds_other.c:1394
+#: ../ppop/ppop_cmds_other.c:1391
 msgid "Usage: ppop accept <destionation>\n"
 msgstr "Utilisation : ppop accept <destination>\n"
 
-#: ../ppop/ppop_cmds_other.c:1396
+#: ../ppop/ppop_cmds_other.c:1393
 msgid "Usage: ppop reject <destination>\n"
 msgstr "Utilisation : ppop reject <destination>\n"
 
-#: ../ppop/ppop_cmds_other.c:1398
+#: ../ppop/ppop_cmds_other.c:1395
 msgid ""
 "\n"
 "\tThis command sets the status of a destination.\n"
@@ -3463,7 +3496,7 @@ msgstr ""
 "\tL'état d'une destination peut être affiché avec\n"
 "\tla commande \"ppop destination\".\n"
 
-#: ../ppop/ppop_cmds_other.c:1443
+#: ../ppop/ppop_cmds_other.c:1440
 #, fuzzy
 msgid ""
 "Usage: ppop dest[ination] {<destionation>, all}\n"
@@ -3495,81 +3528,81 @@ msgstr ""
 "\t\"ppop dest-comment-address affiche la commande, l'interface et\n"
 "\tl'adresse.\n"
 
-#: ../ppop/ppop_cmds_other.c:1509
+#: ../ppop/ppop_cmds_other.c:1506
 msgid "Address"
 msgstr "Adresse"
 
-#: ../ppop/ppop_cmds_other.c:1509
+#: ../ppop/ppop_cmds_other.c:1506
 msgid "Charge"
 msgstr "Coût"
 
-#: ../ppop/ppop_cmds_other.c:1509
+#: ../ppop/ppop_cmds_other.c:1506
 msgid "Comment"
 msgstr "Commentaire"
 
-#: ../ppop/ppop_cmds_other.c:1509
+#: ../ppop/ppop_cmds_other.c:1506
 msgid "Destination"
 msgstr "Destination"
 
-#: ../ppop/ppop_cmds_other.c:1509
+#: ../ppop/ppop_cmds_other.c:1506
 msgid "Type"
 msgstr "Type"
 
-#: ../ppop/ppop_cmds_other.c:1559
+#: ../ppop/ppop_cmds_other.c:1556
 msgid "group"
 msgstr "groupe"
 
-#: ../ppop/ppop_cmds_other.c:1559
+#: ../ppop/ppop_cmds_other.c:1556
 msgid "printer"
 msgstr "imprimante"
 
-#: ../ppop/ppop_cmds_other.c:1560
+#: ../ppop/ppop_cmds_other.c:1557
 msgid "accepting"
 msgstr "accepte"
 
-#: ../ppop/ppop_cmds_other.c:1560
+#: ../ppop/ppop_cmds_other.c:1557
 msgid "rejecting"
 msgstr "rejette"
 
-#: ../ppop/ppop_cmds_other.c:1600
+#: ../ppop/ppop_cmds_other.c:1597
 #, fuzzy
 msgid "alias"
 msgstr "Faux"
 
-#: ../ppop/ppop_cmds_other.c:1631
+#: ../ppop/ppop_cmds_other.c:1628
 msgid "Usage: ppop alerts _printer_\n"
 msgstr "Utilisation : ppop alerts _imprimante_\n"
 
-#: ../ppop/ppop_cmds_other.c:1642
+#: ../ppop/ppop_cmds_other.c:1639
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../ppop/ppop_cmds_other.c:1652
+#: ../ppop/ppop_cmds_other.c:1649
 #, c-format
 msgid "No alerts for printer \"%s\".\n"
 msgstr "Pas d'alertes pour l'imprimante \"%s\".\n"
 
-#: ../ppop/ppop_cmds_other.c:1657 ../ppop/ppop_modify.c:334
+#: ../ppop/ppop_cmds_other.c:1654 ../ppop/ppop_modify.c:334
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s).\n"
 msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s).\n"
 
-#: ../ppop/ppop_cmds_other.c:1688
+#: ../ppop/ppop_cmds_other.c:1685
 msgid "Usage: ppop log <job>\n"
 msgstr "Utilisation : ppop log <travail>\n"
 
-#: ../ppop/ppop_cmds_other.c:1694
+#: ../ppop/ppop_cmds_other.c:1691
 #, c-format
 msgid "Invalid job id: %s\n"
 msgstr "Numéro de travail invalide : %s\n"
 
-#: ../ppop/ppop_cmds_other.c:1715
+#: ../ppop/ppop_cmds_other.c:1712
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../ppop/ppop_cmds_other.c:1725
+#: ../ppop/ppop_cmds_other.c:1722
 #, c-format
 msgid "There is no log for job \"%s\".\n"
 msgstr "Il n'y a pas de fichier de log pour le travail \"%s\".\n"
@@ -5494,7 +5527,7 @@ msgstr ""
 "Utilisation :\n"
 "\tppuser add '<nom utilisateur>' '<nom réel>' <code_auth> <crédit de départ> <coupure> <durée de vie>\n"
 
-#: ../ppuser/ppuser.c:239 ../ppuser/ppuser.c:269 ../ppuser/ppuser.c:312
+#: ../ppuser/ppuser.c:239 ../ppuser/ppuser.c:269 ../ppuser/ppuser.c:311
 #, c-format
 msgid "Database error.\n"
 msgstr "Erreur de la base de données.\n"
@@ -5508,7 +5541,7 @@ msgstr ""
 "Utilisation :\n"
 "\tppuser delete '<nom utilisateur>'\n"
 
-#: ../ppuser/ppuser.c:263 ../ppuser/ppuser.c:309 ../ppuser/ppuser.c:363
+#: ../ppuser/ppuser.c:263 ../ppuser/ppuser.c:308 ../ppuser/ppuser.c:362
 #, c-format
 msgid "The user \"%s\" does not exist.\n"
 msgstr "L'utilisateur \"%s\" n'existe pas.\n"
@@ -5542,31 +5575,31 @@ msgstr "Crédit : %s\n"
 msgid "Cutoff point: %s\n"
 msgstr "Point de coupure : %s\n"
 
-#: ../ppuser/ppuser.c:303
+#: ../ppuser/ppuser.c:302
 #, c-format
 msgid "Last Modified: %s\n"
 msgstr "Dernière modification : %s\n"
 
-#: ../ppuser/ppuser.c:305
+#: ../ppuser/ppuser.c:304
 #, c-format
 msgid "Account lifetime: %d\n"
 msgstr "Durée de vie du compte : %d\n"
 
 # OTH FIXME vérifier
-#: ../ppuser/ppuser.c:306
+#: ../ppuser/ppuser.c:305
 #, c-format
 msgid "Credit revoked: %s\n"
 msgstr "Crédit révoqué : %s\n"
 
-#: ../ppuser/ppuser.c:306
+#: ../ppuser/ppuser.c:305
 msgid "FALSE"
 msgstr "FAUX"
 
-#: ../ppuser/ppuser.c:306
+#: ../ppuser/ppuser.c:305
 msgid "TRUE"
 msgstr "VRAI"
 
-#: ../ppuser/ppuser.c:332
+#: ../ppuser/ppuser.c:331
 msgid ""
 "Usage:\n"
 "\tppuser {deposit,withdraw,charge,correction} '<user name>' <amount>\n"
@@ -5574,12 +5607,12 @@ msgstr ""
 "Utilisation :\n"
 "\tppuser {deposit,withdraw,charge,correction} '<nom utilisateur> <montant>'\n"
 
-#: ../ppuser/ppuser.c:366
+#: ../ppuser/ppuser.c:365
 #, c-format
 msgid "Database error, transaction not processed.\n"
 msgstr "Erreur de base de données, transaction non traitée.\n"
 
-#: ../ppuser/ppuser.c:376
+#: ../ppuser/ppuser.c:375
 #, fuzzy
 msgid ""
 "Usage:\n"

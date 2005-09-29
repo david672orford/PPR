@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 April 2005.
+** Last modified 29 September 2005.
 */
 
 /*+ \file
@@ -255,7 +255,7 @@ static int _ppd_open(const char name[])
 			}
 
 		/* Build the path in malloced memory. */
-		gu_asprintf(&fname[nest], "%.*s/%s", (dirend - fname[nest-1]), fname[nest-1], name);
+		gu_asprintf(&fname[nest], "%.*s/%s", (int)(dirend - fname[nest-1]), fname[nest-1], name);
 		}
 
 	/* Open the PPD file for reading. */
@@ -435,7 +435,7 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 			gu_Throw("%s(): assertion failed\n", function);
 
 		/* Build the path in malloced memory. */
-		gu_asprintf(&(self->fname[self->nest + 1]), "%.*s/%s", (ptr - self->fname[self->nest]), self->fname[self->nest], ppdname);
+		gu_asprintf(&(self->fname[self->nest + 1]), "%.*s/%s", (int)(ptr - self->fname[self->nest]), self->fname[self->nest], ppdname);
 		}
 
 	self->nest++;
