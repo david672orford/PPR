@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 28 September 2005.
 */
 
 /*! \file
@@ -43,6 +43,7 @@ likely to be useful many programs, not just in PPR.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/time.h>
+#include <time.h>
 #include <stdarg.h>
 #include <setjmp.h>
 #include <stdlib.h>
@@ -236,6 +237,10 @@ wchar_t gu_utf8_sgetwc(const char **pp);
 int gu_utf8_vfprintf(FILE *f, const char *format, va_list args);
 int gu_utf8_printf(const char *format, ...);
 int gu_utf8_fprintf(FILE *f, const char *format, ...);
+
+void gu_locale_init(int argc, char *argv[], const char *domainname, const char *localedir);
+size_t gu_utf8_strftime(char *s, size_t max, const char *format, const struct tm *tm);
+const char *gu_utf8_getenv(const char name[]);
 
 /*===================================================================
 ** Command line option parsing

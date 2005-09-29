@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 28 September 2005.
 */
 
 /*
@@ -46,7 +46,6 @@
 #include <ctype.h>
 #include <pwd.h>
 #ifdef INTERNATIONAL
-#include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"
@@ -395,30 +394,31 @@ const char *parse_destname(const char *destname)
 		return NULL;
 		}
 
-	{
-	char fname[MAX_PPR_PATH];
-	FILE *f;
-	char *line = NULL;
-	int linelen = 128;
-
-	ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);
-	if((f = fopen(fname, "r")))
+	if(strcmp(destname, "all") != 0)
 		{
-		while((line = gu_getline(line, &linelen, f)))
+		char fname[MAX_PPR_PATH];
+		FILE *f;
+		char *line = NULL;
+		int linelen = 128;
+	
+		ppr_fnamef(fname, "%s/%s", ALIASCONF, destname);
+		if((f = fopen(fname, "r")))
 			{
-			if(gu_sscanf(line, "ForWhat: %S", &destname) == 1)
-				break;
-			}
-		fclose(f);
-		if(line)
-			gu_free(line);
-		else
-			{
-			fprintf(errors, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
-			return NULL;
+			while((line = gu_getline(line, &linelen, f)))
+				{
+				if(gu_sscanf(line, "ForWhat: %S", &destname) == 1)
+					break;
+				}
+			fclose(f);
+			if(line)
+				gu_free(line);
+			else
+				{
+				fprintf(errors, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
+				return NULL;
+				}
 			}
 		}
-	}
 
 	return destname;
 	} /* end of parse_destname() */
@@ -1011,12 +1011,7 @@ int main(int argc, char *argv[])
 	struct gu_getopt_state getopt_state;
 
 	/* Initialize internation messages library. */
-	#ifdef INTERNATIONAL
-	if(!setlocale(LC_ALL, ""))
-		fprintf(stderr, "%s: can't set requested locale\n", argv[0] ? argv[0] : "?");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	#endif
+	gu_locale_init(argc, argv, PACKAGE, LOCALEDIR);
 
 	/* We set this here because Cygnus Win32 doesn't think
 	   that stderr is a constant!  (It turns out that its

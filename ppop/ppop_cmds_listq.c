@@ -52,13 +52,10 @@
  * This routine converts a Unix time to a string.
  *
  * If the job was submitted within the last 24 hours, display the
- * time of day.  Otherwise, display the date.
- *
- * We try to use %X and %x to format the date and time according
- * to the current locale, but these are appearently not defined
- * for all locales, so we fall back to our own formats.
+ * time of day.  Otherwise, display the date.  The date and time
+ * formats can be customized in ppr.conf.
  */
-static void format_time(char *timestr, size_t timestr_len, time_t time_to_format)
+static char *format_time(char *timestr, size_t timestr_len, time_t time_to_format)
 	{
 	struct tm *tm_time;
 	time_t time_now;
@@ -93,28 +90,42 @@ static void format_time(char *timestr, size_t timestr_len, time_t time_to_format
 
 	tm_time = localtime(&time_to_format);
 	time_now = time((time_t*)NULL);
+
+	/* If within last 24 hours, */
 	if(difftime(time_now, time_to_format) >= (24*60*60))
 		{
-		if(!format_date || strftime(timestr, timestr_len, format_date, tm_time) == 0)
+		/* If a date format is defined in ppr.conf, try it. */
+		if(!format_date || gu_utf8_strftime(timestr, timestr_len, format_date, tm_time) == 0)
 			{
-			strftime(timestr, timestr_len, "%d-%b-%y", tm_time);
+			/* It didn't work, do it our way. */
+			gu_utf8_strftime(timestr, timestr_len, "%d-%b-%y", tm_time);
 			}
 		}
+
+	/* If more than 24 hours ago, */
 	else
 		{
-		if(!format_time || strftime(timestr, timestr_len, format_time, tm_time) == 0)
+		/* If a time (clock) format is defined in ppr.conf, try it. */
+		if(!format_time || gu_utf8_strftime(timestr, timestr_len, format_time, tm_time) == 0)
 			{
-			if(strftime(timestr, timestr_len, "%p", tm_time) == 0)
-				strftime(timestr, timestr_len, "%H:%M", tm_time);
+			/* It didn't work.  Use a default which depends on whether 
+			 * AM and PM are acceptable in the current locale.
+			 */
+			if(gu_utf8_strftime(timestr, timestr_len, "%p", tm_time) == 0)
+				gu_utf8_strftime(timestr, timestr_len, "%H:%M", tm_time);
 			else
-				strftime(timestr, timestr_len, "%I:%M%p", tm_time);
+				gu_utf8_strftime(timestr, timestr_len, "%I:%M%p", tm_time);
 			}
 		}
+
+	return timestr;
 	} /* format_time() */
 
 /*
 ** Those subcommands which allow PPRDEST to be used as the default argument
-** should call this.
+** call this.  They pass in their argv[] and get either the same one back
+** or a new one.  If the one they pass in is empty, and PPRDEST is defined,
+** they get a new one consisting only of the value of PPRDEST.
 */
 static char **allow_PPRDEST(char *argv[])
 	{
@@ -596,8 +607,8 @@ static void ppop_list_help(void)
 static void ppop_list_banner(void)
 	{
 /*		123456789012345678901234567890123456789012345678901234567890 */
-printf(_("Queue ID        For                      Time      Pgs Status\n"));
-printf(  "----------------------------------------------------------------------------\n");
+gu_utf8_printf(_("Queue ID        For                      Time      Pgs Status\n"));
+gu_utf8_printf(  "----------------------------------------------------------------------------\n");
 /*		  12345678-xxxx.y David Chappell           21 May 79 999 waiting for printer
 		  glunkish-1004   Joseph Smith             11:31pm   ??? printing on glunkish
 		  melab_deskjet-1004
@@ -611,28 +622,30 @@ static int ppop_list_item(const struct QEntry *qentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
-	char timestr[32];
+	char timestr[64];		/* 9 chars expected, but large buffer for utf-8 */
 	char pagesstr[4];
 	const char *jobname;
 
-	format_time(timestr, sizeof(timestr), (time_t)qentryfile->time);
-
-	/* Convert the number of pages to ASCII. */
-	if(qentryfile->attr.pages < 0 || qentryfile->attr.pages > 999)
-		strlcpy(pagesstr, "???", sizeof(pagesstr));
-	else
-		snprintf(pagesstr, sizeof(pagesstr), "%03d", qentryfile->attr.pages);
-
-	/* print the job name while letting it overflow */
+	/* Print the job name with line wrapping if it overflows its column. */
 	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
 	if(strlen(jobname) > 15)
 		gu_utf8_printf("%s\n               ", jobname);
 	else
 		gu_utf8_printf("%-15.15s", jobname);
 
+
+	/* Convert the number of pages to ASCII with unknown values represented as ???
+	 * and values higher than 999 as >1k. */
+	if(qentryfile->attr.pages < 0)
+		strlcpy(pagesstr, "???", sizeof(pagesstr));
+	else if(qentryfile->attr.pages > 999)
+		strlcpy(pagesstr, ">1k", sizeof(pagesstr));
+	else
+		snprintf(pagesstr, sizeof(pagesstr), "%03d", qentryfile->attr.pages);
+
 	gu_utf8_printf(" %-24.24s %-9.9s %s ",
 		qentryfile->For ? qentryfile->For : "???",
-		timestr,
+		format_time(timestr, sizeof(timestr), (time_t)qentryfile->time),
 		pagesstr
 		);
 
@@ -1582,9 +1595,8 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 			case 31:					/* subtime */
 				{
-				char timestr[32];
-				format_time(timestr, sizeof(timestr), (time_t)qentryfile->time);
-				fputs(timestr, stdout);
+				char timestr[64];		/* 9 chars expected, but large buffer for utf-8 */
+				fputs(format_time(timestr, sizeof(timestr), (time_t)qentryfile->time), stdout);
 				}
 				break;
 			case 32:					/* pages */

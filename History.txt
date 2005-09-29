@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--23 September 2005
+2.00a1, 11 December 2004--29 September 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9866,10 +9866,9 @@ no final tarball was released.
 * include/pprd.h: moved the parts needed by ppop into include/global_defines.h and the
   remainder into pprd/pprd.h.
 
-* libgu/gu_utf8_decode.c: added
+* libgu/: added UTF-8 support modules: gu_utf8_decode.c, gu_utf8_printf.c, gu_locale.c
 
-* libgu/gu_utf8_printf.c: added
+* filter_lp/: added UTF-8 input-file support (still broken)
 
-* filter_lp/: added UTF-8 support (still broken)
-
+* ppop/: converted to use gu_utf8_* functions (unfinished)
 
