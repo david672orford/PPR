@@ -607,8 +607,8 @@ static void ppop_list_help(void)
 static void ppop_list_banner(void)
 	{
 /*		123456789012345678901234567890123456789012345678901234567890 */
-gu_utf8_printf(_("Queue ID        For                      Time      Pgs Status\n"));
-gu_utf8_printf(  "----------------------------------------------------------------------------\n");
+gu_utf8_puts(_("Queue ID        For                      Time      Pgs Status\n"));
+gu_utf8_puts(  "----------------------------------------------------------------------------\n");
 /*		  12345678-xxxx.y David Chappell           21 May 79 999 waiting for printer
 		  glunkish-1004   Joseph Smith             11:31pm   ??? printing on glunkish
 		  melab_deskjet-1004

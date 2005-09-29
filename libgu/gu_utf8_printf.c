@@ -420,6 +420,32 @@ int gu_utf8_fprintf(FILE *f, const char *format, ...)
 	return ret;
 	}
 
+int gu_utf8_fputs(const char *string, FILE *f)
+	{
+	const char *p = string;
+	wchar_t wc;
+	int count = 0;
+	while((wc = gu_utf8_sgetwc(&p)))
+		{
+		gu_fputwc(wc, f);
+		count++;
+		}
+	return count;
+	}
+
+int gu_utf8_puts(const char *string)
+	{
+	return gu_utf8_fputs(string, stdout);
+	}
+
+int gu_utf8_putline(const char *string)
+	{
+	int count = gu_utf8_fputs(string, stdout);
+	gu_fputwc('\n', stdout);
+	count++;
+	return count;
+	}
+
 /* gcc -DTEST -I../include -Wall -o gu_utf8_printf gu_utf8_printf.c ../libgu.a */
 #ifdef TEST
 #ifdef INTERNATIONAL

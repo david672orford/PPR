@@ -237,6 +237,9 @@ wchar_t gu_utf8_sgetwc(const char **pp);
 int gu_utf8_vfprintf(FILE *f, const char *format, va_list args);
 int gu_utf8_printf(const char *format, ...);
 int gu_utf8_fprintf(FILE *f, const char *format, ...);
+int gu_utf8_fputs(const char *string, FILE *f);
+int gu_utf8_puts(const char *string);
+int gu_utf8_putline(const char *string);
 
 void gu_locale_init(int argc, char *argv[], const char *domainname, const char *localedir);
 size_t gu_utf8_strftime(char *s, size_t max, const char *format, const struct tm *tm);

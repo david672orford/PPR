@@ -80,13 +80,13 @@ void fatal(int exitval, const char message[], ... )
 	if(opt_machine_readable)
 		fputs("*FATAL\t", errors);
 	else
-		fputs(_("Fatal: "), errors);
+		gu_utf8_fputs(_("Fatal: "), errors);
 
 	va_start(va, message);
-	vfprintf(errors, message, va);
+	gu_utf8_vfprintf(errors, message, va);
 	va_end(va);
 
-	fputc('\n', errors);
+	gu_utf8_fputs("\n", errors);
 
 	exit(exitval);
 	} /* end of fatal() */
@@ -99,11 +99,10 @@ void fatal(int exitval, const char message[], ... )
 void error(const char message[], ... )
 	{
 	va_list va;
-
 	va_start(va, message);
-	fprintf(errors, _("Error: "));
-	vfprintf(errors, message,va);
-	fprintf(errors, "\n");
+	gu_utf8_fputs(_("Error: "), errors);
+	gu_utf8_vfprintf(errors, message,va);
+	gu_utf8_fputs("\n", errors);
 	va_end(va);
 	} /* end of error() */
 
@@ -221,28 +220,28 @@ FILE *wait_for_pprd(int do_timeout)
 
 	if(timeout)
 		{
-		fprintf(errors, _("%s: timeout waiting for response"), myname);
+		gu_utf8_fprintf(errors, _("%s: timeout waiting for response"), myname);
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
 		}
 
 	if((reply_file = fopen(temp_file_name, "r")) == (FILE*)NULL)
 		{
-		fprintf(errors, "%s(): couldn't open reply file \"%s\", errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno) );
+		gu_utf8_fprintf(errors, "%s(): couldn't open reply file \"%s\", errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno) );
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
 		}
 
 	/* now that file is open, we can dispense with the name */
 	if(unlink(temp_file_name) < 0)
-		fprintf(errors, "%s(): unlink(\"%s\") failed, errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno));
+		gu_utf8_fprintf(errors, "%s(): unlink(\"%s\") failed, errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno));
 
 	/* Read the code which summarizes the result of the operation. */
 	{
 	char reply[8];
 	if(!fgets(reply, sizeof(reply), reply_file) || gu_sscanf(reply, "%d", &pprd_retcode) != 1)
 		{
-		fprintf(errors, "%s(): return code missing in reply file.\n", function);
+		gu_utf8_fprintf(errors, "%s(): return code missing in reply file.\n", function);
 		fclose(reply_file);
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
@@ -320,7 +319,7 @@ const struct Jobname *parse_jobname(const char *jobname)
 
 	if(len == 0)
 		{
-		fprintf(errors, _("Destination (printer or group) name is empty.\n"));
+		gu_utf8_fputs(_("Destination (printer or group) name is empty.\n"), errors);
 		return NULL;
 		}
 
@@ -366,7 +365,7 @@ const struct Jobname *parse_jobname(const char *jobname)
 	*/
 	if(*ptr)
 		{
-		fprintf(errors, _("Destination or job name \"%s\" is invalid.\n"), jobname);
+		gu_utf8_fprintf(errors, _("Destination or job name \"%s\" is invalid.\n"), jobname);
 		return NULL;
 		}
 
@@ -384,13 +383,13 @@ const char *parse_destname(const char *destname)
 	{
 	if(strpbrk(destname, DEST_DISALLOWED))
 		{
-		fprintf(errors, _("Destination name \"%s\" contains a disallowed character.\n"), destname);
+		gu_utf8_fprintf(errors, _("Destination name \"%s\" contains a disallowed character.\n"), destname);
 		return NULL;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)destname[0]))
 		{
-		fprintf(errors, _("Destination name \"%s\" begins with a disallowed character.\n"), destname);
+		gu_utf8_fprintf(errors, _("Destination name \"%s\" begins with a disallowed character.\n"), destname);
 		return NULL;
 		}
 
@@ -414,7 +413,7 @@ const char *parse_destname(const char *destname)
 				gu_free(line);
 			else
 				{
-				fprintf(errors, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
+				gu_utf8_fprintf(errors, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
 				return NULL;
 				}
 			}
@@ -490,7 +489,7 @@ gu_boolean assert_am_operator(void)
 		}
 	else
 		{
-		fputs(_("You are not allowed to perform the requested\n"
+		gu_utf8_fputs(_("You are not allowed to perform the requested\n"
 			"operation because you are not a PPR operator.\n"), errors);
 		return FALSE;
 		}
@@ -587,7 +586,7 @@ gu_boolean job_permission_check(const struct Jobname *job)
 				{
 				break;
 				}
-			fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
+			gu_utf8_fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
 			break;
 			}
 	
@@ -609,13 +608,13 @@ gu_boolean job_permission_check(const struct Jobname *job)
 		/* Check to see that we got a "User:" line: */
 		if(!job_username)
 			{
-			fprintf(errors, "Queue file error, no \"User:\" line.\n");
+			gu_utf8_fputs("Queue file error, no \"User:\" line.\n", errors);
 			break;
 			}
 	
 		if(!privileged() && !username_match(job_username, opt_user))
 			{
-			fprintf(errors,
+			gu_utf8_fprintf(errors,
 				_("You may not manipulate the job \"%s\" because it\n"
 				"does not belong to the user \"%s\".\n"),
 					jobid(job->destname, job->id, job->subid),
@@ -625,7 +624,7 @@ gu_boolean job_permission_check(const struct Jobname *job)
 			}
 		if(opt_magic_cookie && strcmp(opt_magic_cookie, job_magic_cookie) != 0)
 			{
-			fprintf(errors, "Magic cookie doesn't match.\n");
+			gu_utf8_fputs("Magic cookie doesn't match.\n", errors);
 			break;
 			}
 		else
@@ -715,11 +714,11 @@ static int main_help(FILE *out)
 			{
 			if(i == 0)
 				fputc('\n', out);
-			fprintf(out, "%s\n", pxlate);
+			gu_utf8_fprintf(out, "%s\n", pxlate);
 			}
 		else
 			{
-			fprintf(out, "    %s\n", pxlate);
+			gu_utf8_fprintf(out, "    %s\n", pxlate);
 			}
 		}
 	return EXIT_OK;
@@ -836,13 +835,13 @@ static int interactive_mode(void)
 
 	if( ! opt_machine_readable )	/* If a human will be reading our output, */
 		{
-		puts(_("PPOP, Page Printer Operator's utility"));
-		puts(VERSION);
-		puts(COPYRIGHT);
-		puts(AUTHOR);
-		puts("");
-		puts(_("Type \"help\" for command list, \"exit\" to quit."));
-		puts("");
+		gu_utf8_putline(_("PPOP, Page Printer Operator's utility"));
+		gu_utf8_putline(VERSION);
+		gu_utf8_putline(COPYRIGHT);
+		gu_utf8_putline(AUTHOR);
+		gu_utf8_putline("");
+		gu_utf8_putline(_("Type \"help\" for command list, \"exit\" to quit."));
+		gu_utf8_putline("");
 		}
 	else						/* If a machine will be reading our output, */
 		{
@@ -907,7 +906,7 @@ static int interactive_mode(void)
 		if((errorlevel = dispatch(&ar[x])) == -1)
 			{
 			if( ! opt_machine_readable )					/* A human gets english */
-				puts(_("Try \"help\" or \"exit\"."));
+				gu_utf8_putline(_("Try \"help\" or \"exit\"."));
 			else										/* A program gets a code */
 				puts("*UNKNOWN");
 
@@ -930,10 +929,10 @@ static int interactive_mode(void)
 */
 static void pipe_sighandler(int sig)
 	{
-	fputs(_("Spooler has shut down.\n"), errors);
+	gu_utf8_fputs(_("Spooler has shut down.\n"), errors);
 
 	if(opt_machine_readable)
-		fprintf(errors, "*DONE %d\n", EXIT_NOSPOOLER);
+		gu_utf8_fprintf(errors, "*DONE %d\n", EXIT_NOSPOOLER);
 
 	exit(EXIT_NOSPOOLER);
 	} /* end of pipe_sighandler() */
@@ -959,12 +958,12 @@ static void help_switches(FILE *out)
 		NULL
 		};
 
-	fputs(_("Valid switches:\n"), out);
+	gu_utf8_fputs(_("Valid switches:\n"), out);
 	for(i = 0; switch_list[i]; i++)
 		{
 		const char *p = gettext(switch_list[i]);
 		int to_tab = strcspn(p, "\t");
-		fprintf(out, "    %-35.*s %s\n",
+		gu_utf8_fprintf(out, "    %-35.*s %s\n",
 			to_tab, p,
 			p[to_tab] == '\t' ? &p[to_tab + 1] : ""
 			);
@@ -972,9 +971,9 @@ static void help_switches(FILE *out)
 
 	fputc('\n', out);
 
-	fputs(_("Try \"ppop help\" for help with subcommands.\n"), out);
-	fputs("\n", out);
-	fprintf(out,
+	gu_utf8_fputs(_("Try \"ppop help\" for help with subcommands.\n"), out);
+	gu_utf8_fputs("\n", out);
+	gu_utf8_fprintf(out,
 		_(	"The %s manpage may be viewed by entering this command at a shell prompt:\n"
 			"    ppdoc %s\n"
 			),
@@ -1027,7 +1026,7 @@ int main(int argc, char *argv[])
 	uid_t uid = getuid();
 	if((pw = getpwuid(uid)) == (struct passwd *)NULL)
 		{
-		fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
+		gu_utf8_fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		exit(EXIT_INTERNAL);
 		}
 	opt_user = gu_strdup(pw->pw_name);
@@ -1051,7 +1050,7 @@ int main(int argc, char *argv[])
 			case 'u':
 				if(do_u_option(getopt_state.optarg) == -1)
 					{
-					fprintf(errors, _("You aren't allowed to use the %s option.\n"), "-u");
+					gu_utf8_fprintf(errors, _("You aren't allowed to use the %s option.\n"), "-u");
 					exit(EXIT_DENIED);
 					}
 				break;
@@ -1141,7 +1140,7 @@ int main(int argc, char *argv[])
 		{
 		if((result = dispatch(&argv[getopt_state.optind])) == -1)
 			{
-			fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppop help\"\n"), myname, argv[getopt_state.optind]);
+			gu_utf8_fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppop help\"\n"), myname, argv[getopt_state.optind]);
 			result = EXIT_SYNTAX;
 			}
 		}
