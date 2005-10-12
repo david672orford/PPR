@@ -46,7 +46,7 @@ pprd$(DOTEXE): \
 		pprd_media.o pprd_printer.o pprd_state.o \
 		pprd_question.o pprd_ipp.o \
 		../libppr.a ../libgu.a 
-	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) -lefence
 	$(CHMOD) 6755 $@
 
 # This automatically makes a header file which has prototypes for

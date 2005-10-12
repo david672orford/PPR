@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 12 October 2005.
 */
 
 /*
@@ -78,7 +78,7 @@ int destid_by_printer(const char name[])
 
 	for(x=0; x < printer_count; x++)
 		{
-		if(strcmp(printers[x].name, name) == 0 && printers[x].status != PRNSTATUS_DELETED)
+		if(printers[x].status != PRNSTATUS_DELETED && strcmp(printers[x].name, name) == 0)
 			return x;
 		}
 
@@ -95,7 +95,7 @@ static int destid_by_group(const char name[])
 
 	for(x=0; x < group_count; x++)				/* try all groups */
 		{
-		if(strcmp(groups[x].name, name) == 0 && !groups[x].deleted)
+		if(!groups[x].deleted && strcmp(groups[x].name, name) == 0)
 			return destid_by_gindex(x);
 		}
 

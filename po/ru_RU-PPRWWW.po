@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-12 13:04-0400\n"
+"POT-Creation-Date: 2005-10-12 17:06-0400\n"
 "PO-Revision-Date: 2004-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -2492,51 +2492,3 @@ msgstr ""
 #: ../www/test_components.cgi.perl:207
 msgid "Source Download"
 msgstr ""
-
-#~ msgid "Error:"
-#~ msgstr "Неудача:"
-
-#~ msgid "Retry:"
-#~ msgstr "Попытка:"
-
-#~ msgid "Current job:"
-#~ msgstr "Текущая задача:"
-
-#~ msgid "Printer Status"
-#~ msgstr "Положение принтера"
-
-#~ msgid "Printer status:"
-#~ msgstr "Положение принтера:"
-
-#~ msgid "Error: "
-#~ msgstr "Неудача: "
-
-#~ msgid "For:"
-#~ msgstr "Для Кого:"
-
-#~ msgid "Authentication Required"
-#~ msgstr "Удостоверение личности требуется"
-
-#~ msgid "Printers to Monitor"
-#~ msgstr "Принтеры наблудать"
-
-#~ msgid "Alert Messages:"
-#~ msgstr "Собщенния о проблемах:"
-
-#~ msgid "Name:"
-#~ msgstr "Название:"
-
-#~ msgid "Critical?"
-#~ msgstr "Важно?"
-
-#~ msgid "Can't Display File"
-#~ msgstr "Не возможно показать файл"
-
-#~ msgid "Countdown:"
-#~ msgstr "Через:"
-
-#~ msgid "PPR Login"
-#~ msgstr "Вход в систему PPR"
-
-#~ msgid "Player:"
-#~ msgstr "Игрок:"

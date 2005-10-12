@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 August 2005.
+# Last modified 12 October 2005.
 #
 
 include ../Makefile.conf
@@ -39,9 +39,9 @@ DIVISIONS=PPR PPRD PPRWWW PAPD
 
 #=== Build ==================================================================
 
-# There are not depencies listed here.  They are all listed
+# There are no depencies listed here.  They are all listed
 # in .depend.
-all:
+all: $(INTERNATIONAL_ALL)
 
 PPR.pot: pot
 
@@ -121,7 +121,7 @@ depend:
 			do \
 			echo "$$language-$$division.po: $$division.pot"; \
 			echo '	msgmerge --update --no-wrap --sort-by-file --backup=numbered $$@ $$^ && touch $$@'; \
-			echo "all: $$language-$$division.po"; \
+			echo "all-international: $$language-$$division.po"; \
 			echo; \
 			done \
 		done >.depend

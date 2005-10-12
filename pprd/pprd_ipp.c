@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 September 2005.
+** Last modified 12 October 2005.
 */
 
 /*
@@ -203,28 +203,30 @@ static void printer_add_status(struct IPP *ipp, int prnid, struct REQUEST_ATTRS 
 static void ipp_get_printer_attributes(struct IPP *ipp)
     {
 	FUNCTION4DEBUG("ipp_get_printer_attributes")
-	const char *destname;
 	int destid;
 	struct REQUEST_ATTRS *req;
 
 	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
 
+	{
+	const char *destname;
 	if(!(destname = request_attrs_destname(req)) || (destid = destid_by_name(destname)) == -1)
 		{
 		request_attrs_free(req);
 		ipp->response_code = IPP_NOT_FOUND;
 		return;
 		}
-		
+	}
+
 	if(request_attrs_attr_requested(req, "printer-name"))
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
-			"printer-name", gu_strdup(destname), TRUE);
+			"printer-name", destid_to_name(destid), FALSE);
 		}
 	if(request_attrs_attr_requested(req, "printer-uri-supported"))
 		{
 		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-			"printer-uri-supported", destid_is_group ? "/classes/%s" : "/printers/%s", destname);
+			"printer-uri-supported", destid_is_group(destid) ? "/classes/%s" : "/printers/%s", destid_to_name(destid));
 		}
 
 	if(request_attrs_attr_requested(req, "uri_security_supported"))
@@ -558,6 +560,9 @@ static void cups_get_printers(struct IPP *ipp)
 	lock();
 	for(i=0; i < printer_count; i++)
 		{
+		if(printers[i].status == PRNSTATUS_DELETED)
+			continue;
+			
 		if(request_attrs_attr_requested(req, "printer-name"))
 			{
 			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
@@ -640,6 +645,9 @@ static void cups_get_classes(struct IPP *ipp)
 	lock();
 	for(i=0; i < group_count; i++)
 		{
+		if(groups[i].deleted)
+			continue;
+
 		if(request_attrs_attr_requested(req, "printer-name"))
 			{
 			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,

@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 18 April 2005 for PPR version 2.00a1
+ Last revised 12 October 2005 for PPR version 2.00a1
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -93,6 +93,8 @@ Compiling from CVS requires the following additional packages:
 * Doxygen
 
 * HTMLDOC 
+
+* GNU Gettext
 
 =============================================================================
  Programs for PostScript Filters

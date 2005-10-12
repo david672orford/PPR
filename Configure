@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 September 2005.
+# Last modified 12 October 2005.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -880,16 +880,18 @@ cat >&3 <<===EndOfHere10===
 export PORT_NAME=$SYSTEM
 
 # Do we want international messages support?
-# This uses GNU Gettext or Solaris Gettext.
+# This uses GNU Gettext.
 export INTERNATIONAL=${INTERNATIONAL}
 ===EndOfHere10===
 
 if [ -n "$INTERNATIONAL" ]
 	then
-	echo "INTLLIBS=-lintl" >&3
+	echo "INTLLIBS=-lintl -liconv" >&3
+	echo "INTERNATIONAL_ALL=all-international" >&3
 	echo "INTERNATIONAL_INSTALL=install-international" >&3
 	else
-	echo "#INTLLIBS=-lintl" >&3
+	echo "#INTLLIBS=-lintl -liconv" >&3
+	echo "#INTERNATIONAL_ALL=all-international" >&3
 	echo "#INTERNATIONAL_INSTALL=install-international" >&3
 	fi
 echo >&3
