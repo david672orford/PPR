@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 12 October 2005.
 */
 
 #include "config.h"
@@ -37,16 +37,16 @@ char *gu_strtrim(char *string)
 	{
 	char *p;
 	int len;
-	for(p=string; *p && isspace(*p); p++)
+	for(p=string; *p && isspace(*p); p++)	/* skip to first non-space */
 		{
 		}
-	len = strlen(p);
-	if(p > string)
-		{
+	len = strlen(p);						/* length excluding leading space */
+	if(p > string)							/* If there was leading space, */
+		{									/* move the string down to 'cover' it. */
 		memmove(string, p, len);
 		}
-	while(--len >= 0)
-		{
+	while(--len >= 0)						/* Move back from the end */
+		{									/* replacing trailing space with nulls. */
 		if(isspace(string[len]))
 			string[len] = '\0';
 		}

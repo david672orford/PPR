@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 September 2005.
+** Last modified 12 October 2005.
 */
 
 /*! \file
@@ -263,7 +263,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					aindex++;
 					break;
 				default:
-					gu_Throw("%s(): unrecognized format '%c' in \"%s\"", function, wc, format);
+					gu_Throw("%s(): unrecognized format '%c' in \"%s\"", function, (char)wc, format);
 					break;
 				}
 
