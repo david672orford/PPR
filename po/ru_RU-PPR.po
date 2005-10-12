@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-29 17:14-0400\n"
+"POT-Creation-Date: 2005-10-06 16:38-0400\n"
 "PO-Revision-Date: 2005-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -5376,53 +5376,27 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "%d jobs were canceled.\n"
-#~ msgstr "%d задач удалили.\n"
+#~ msgid "Destination (printer or group) name is too long"
+#~ msgstr "Название очереди (принтера или группы) слышком длиное"
 
-#~ msgid "1 active job was canceled.\n"
-#~ msgstr "1 текущое заданое удалено.\n"
+#~ msgid "Destination name \"%*s\" is too long.\n"
+#~ msgstr "Названое очереди \"%*s\" слишком длиное.\n"
 
-#~ msgid "%s(): local nodename or username is too long"
-#~ msgstr "%s(): название локалной узли или имя ползователя слышком длиное"
+#~ msgid "Destination (printer or group) name \"%*s\" is too long.\n"
+#~ msgstr "Название очереди (принтера или группы) \"%*s\" слышком длиное.\n"
 
-#~ msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)"
-#~ msgstr "%s(): возникла ошибка при запуски функции %s(%ld, %ld), errno=%d (%s)"
+#~ msgid "Group name is too long.\n"
+#~ msgstr "Название группы слишком длиное.\n"
 
-#~ msgid "%s(): %s(\"%d\", \"%s\") failed, errno=%d (%s)"
-#~ msgstr "%s(): возникла ошибка при запуски функции %s(\"%d\", \"%s\"), errno=%d (%s)"
+#~ msgid "Alias name is too long.\n"
+#~ msgstr "Псевдоним слишком длиный.\n"
 
-#~ msgid "not an error"
-#~ msgstr "не явлается ошыбкей"
+#, fuzzy
+#~ msgid "The domain name \"%s\" is too long."
+#~ msgstr "Названое очереди \"%*s\" слишком длиное.\n"
 
-#~ msgid "wait() failed"
-#~ msgstr "возникла ошибки при запуски функции wait()"
-
-#~ msgid "too many files"
-#~ msgstr "слишком много файлов"
-
-#~ msgid "unknown remote system"
-#~ msgstr "ниизвестный противоположный компутер"
-
-#~ msgid "out of disk space"
-#~ msgstr "свободная часть диска не хватает"
-
-#~ msgid "internal error"
-#~ msgstr "ошибка в программе"
-
-#~ msgid "file not found"
-#~ msgstr "файл не существует"
-
-#~ msgid "Spooler"
-#~ msgstr "Спулер"
-
-#~ msgid "(The user \"%s\" is acting as your proxy.)\n"
-#~ msgstr "(Испозеватель \"%s\" дествует за вас.)\n"
-
-#~ msgid "%s: Print queue \"%s\" not found.\n"
-#~ msgstr "%s: очередь \"%s\" не найдена.\n"
-
-#~ msgid "%s: getpwuid(%ld) failed to find your account\n"
-#~ msgstr "%s: функция getpwuid(%ld) не нашла ваша счёта\n"
+#~ msgid "The print queue name \"%s\" is too long for PPR."
+#~ msgstr "Название очеред \"%s\" слишком длинние для PPR."
 
 #~ msgid ""
 #~ "\t-X <string>                used by network servers to tell PPR the\n"
@@ -5433,24 +5407,50 @@ msgstr ""
 #~ "\t                           identity of alien users for whom they act\n"
 #~ "\t--proxy-for <string>       то же что -X\n"
 
-#~ msgid "The print queue name \"%s\" is too long for PPR."
-#~ msgstr "Название очеред \"%s\" слишком длинние для PPR."
+#~ msgid "%s: getpwuid(%ld) failed to find your account\n"
+#~ msgstr "%s: функция getpwuid(%ld) не нашла ваша счёта\n"
 
-#, fuzzy
-#~ msgid "The domain name \"%s\" is too long."
-#~ msgstr "Названое очереди \"%*s\" слишком длиное.\n"
+#~ msgid "%s: Print queue \"%s\" not found.\n"
+#~ msgstr "%s: очередь \"%s\" не найдена.\n"
 
-#~ msgid "Alias name is too long.\n"
-#~ msgstr "Псевдоним слишком длиный.\n"
+#~ msgid "(The user \"%s\" is acting as your proxy.)\n"
+#~ msgstr "(Испозеватель \"%s\" дествует за вас.)\n"
 
-#~ msgid "Group name is too long.\n"
-#~ msgstr "Название группы слишком длиное.\n"
+#~ msgid "Spooler"
+#~ msgstr "Спулер"
 
-#~ msgid "Destination (printer or group) name \"%*s\" is too long.\n"
-#~ msgstr "Название очереди (принтера или группы) \"%*s\" слышком длиное.\n"
+#~ msgid "file not found"
+#~ msgstr "файл не существует"
 
-#~ msgid "Destination name \"%*s\" is too long.\n"
-#~ msgstr "Названое очереди \"%*s\" слишком длиное.\n"
+#~ msgid "internal error"
+#~ msgstr "ошибка в программе"
 
-#~ msgid "Destination (printer or group) name is too long"
-#~ msgstr "Название очереди (принтера или группы) слышком длиное"
+#~ msgid "out of disk space"
+#~ msgstr "свободная часть диска не хватает"
+
+#~ msgid "unknown remote system"
+#~ msgstr "ниизвестный противоположный компутер"
+
+#~ msgid "too many files"
+#~ msgstr "слишком много файлов"
+
+#~ msgid "wait() failed"
+#~ msgstr "возникла ошибки при запуски функции wait()"
+
+#~ msgid "not an error"
+#~ msgstr "не явлается ошыбкей"
+
+#~ msgid "%s(): %s(\"%d\", \"%s\") failed, errno=%d (%s)"
+#~ msgstr "%s(): возникла ошибка при запуски функции %s(\"%d\", \"%s\"), errno=%d (%s)"
+
+#~ msgid "%s(): %s(%ld, %ld) failed, errno=%d (%s)"
+#~ msgstr "%s(): возникла ошибка при запуски функции %s(%ld, %ld), errno=%d (%s)"
+
+#~ msgid "%s(): local nodename or username is too long"
+#~ msgstr "%s(): название локалной узли или имя ползователя слышком длиное"
+
+#~ msgid "1 active job was canceled.\n"
+#~ msgstr "1 текущое заданое удалено.\n"
+
+#~ msgid "%d jobs were canceled.\n"
+#~ msgstr "%d задач удалили.\n"
