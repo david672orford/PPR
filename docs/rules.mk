@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 September 2005.
+# Last modified 12 October 2005.
 #
 
 # Where do we install the documentation?
@@ -35,7 +35,7 @@ DOCSDIR=$(WWWDIR)/docs
 POD2MAN=pod2man
 POD2HTML=pod2html
 FIG2DEV=PATH=/usr/bin:/usr/X11R6/bin:$(PATH) fig2dev
-XSLTPROC=/usr/bin/xsltproc
+XSLTPROC=xsltproc
 XMLLINT=xmllint
 HTMLDOC=htmldoc
 FOP=fop

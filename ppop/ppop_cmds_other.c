@@ -441,7 +441,7 @@ int ppop_status(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(!(destname = parse_destname(argv[0])))
+	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
@@ -606,7 +606,7 @@ int ppop_message(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(!(destname = parse_destname(argv[0])))
+	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destname);
@@ -644,7 +644,7 @@ int ppop_media(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(!(destname = parse_destname(argv[0])))
+	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
@@ -732,7 +732,7 @@ int ppop_mount(char *argv[])
 	if(!assert_am_operator())
 		return EXIT_DENIED;
 
-	if(!(destname = parse_destname(argv[0])))
+	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	binname = argv[1];
@@ -842,7 +842,7 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 
 	for(x=0; argv[x]; x++)
 		{
-		if(!(destname = parse_destname(argv[x])))
+		if(!(destname = parse_destname(argv[x], FALSE)))
 			{
 			result = EXIT_SYNTAX;
 			break;
@@ -1029,7 +1029,7 @@ int ppop_purge(char *argv[], int inform)
 
 	for(x=0; argv[x]; x++)
 		{
-		if(!(destname = parse_destname(argv[x])))
+		if(!(destname = parse_destname(argv[x], FALSE)))
 			return EXIT_SYNTAX;
 
 		FIFO = get_ready();
@@ -1247,7 +1247,7 @@ int ppop_move(char *argv[])
 	else if(!job_permission_check(job))			/* one job */
 		return EXIT_DENIED;
 
-	if(!(new_destname = parse_destname(argv[1])))
+	if(!(new_destname = parse_destname(argv[1], FALSE)))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
@@ -1402,7 +1402,7 @@ int ppop_accept_reject(char *argv[], int reject)
 	if(!assert_am_operator())
 		return EXIT_DENIED;
 
-	if(!(destname = parse_destname(argv[0])))
+	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	FIFO = get_ready();
@@ -1453,7 +1453,7 @@ int ppop_destination(char *argv[], int info_level)
 		return EXIT_ERROR;
 		}
 
-	if(!(search_destname = parse_destname(argv[0])))
+	if(!(search_destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	/* Send a request to pprd. */
@@ -1590,7 +1590,7 @@ int ppop_destination(char *argv[], int info_level)
 		if(len > 0 && direntp->d_name[len-1] == '~')
 			continue;
 
-		if(strcmp(destname, "all") == 0 || strcmp(destname, direntp->d_name) == 0)
+		if(strcmp(search_destname, "all") == 0 || strcmp(search_destname, direntp->d_name) == 0)
 			{
 			gu_utf8_printf(format,
 				direntp->d_name,
@@ -1629,7 +1629,7 @@ int ppop_alerts(char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(!(destname = parse_destname(argv[0])))
+	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	/* See if the printer configuration file exists. */

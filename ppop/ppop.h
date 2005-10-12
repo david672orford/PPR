@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 12 October 2005.
 */
 
 /*
@@ -34,7 +34,7 @@
 
 /* ========================== Things in ppop.c ================================= */
 
-const char *parse_destname(const char *destname);
+const char *parse_destname(const char *destname, gu_boolean resolve_aliases);
 
 struct Jobname
 	{

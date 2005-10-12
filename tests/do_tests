@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/tests/do_tests
-# Last modified 25 February 2005.
+# Last modified 12 October 2005.
 #
 
 use Cwd;
@@ -36,7 +36,7 @@ sub do_test
 		return "UNTESTED";
 		}
 
-	open(DIFF, "diff -c ${test_basename}.ok ${test_basename}.out |") || die;
+	open(DIFF, "diff -c ${test_basename}.ok ${test_basename}.out | grep -v 'No differences encountered' |") || die;
 	my $diff_output = "";
 	while(my $diff_line=<DIFF>)
 		{

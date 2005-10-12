@@ -288,10 +288,8 @@ void new_printer_config(char *printer)
 	if(prnid == printer_count)			/* if x points to just after end of list, */
 		{
 		is_new = TRUE;					/* this is a new printer */
-		if(first_deleted != -1)			/* if we have an empty */
-			{							/* slot, */
+		if(first_deleted != -1)			/* if we have an empty slot, */
 			prnid = first_deleted;		/* re-use it */
-			}
 		}
 
 	if(prnid == MAX_PRINTERS)	/* if new printer and no more room, */
@@ -323,58 +321,60 @@ void new_printer_config(char *printer)
 			state_update("PRNDELETE %s", printer);		/* inform queue display programs */
 			printers[prnid].status = PRNSTATUS_DELETED; /* mark as deleted */
 			}
-		unlock();
-		return;
 		}
-	fclose(testopen);			/* We don't want this, so close it. */
 
-	state_update("PRNRELOAD %s", printer);		/* Inform queue display programs. */
-
-	saved_status = printers[prnid].status;		/* We will use these in a moment */
-	saved_ppop_pid = printers[prnid].ppop_pid;	/* if the printer is not new. */
-
-	load_printer(&printers[prnid], printer);	/* load printer configuration */
-	media_mounted_recover(prnid);				/* load the list of mounted media */
-	media_mounted_save(prnid);					/* save updated (very important for pprdrv) */
-
-	/* If this printer already existed, we have to fix things up a bit. */
-	if( ! is_new)
+	else
 		{
-		/* restore its status */
-		printers[prnid].status = saved_status;
-		printers[prnid].ppop_pid = saved_ppop_pid;
-
-		/* Since the configuration is new, this printer may be able to print
-		   jobs it couldn't have printed before.  Scan the queue and clear
-		   the never flag for all of this printer's jobs and clear this printer's
-		   never bit for all jobs for groups to which this printer belongs.
-		   */
-		{
-		int x, prnbit;
-		for(x=0; x < queue_entries; x++)
+		fclose(testopen);			/* We don't want this, so close it. */
+	
+		state_update("PRNRELOAD %s", printer);		/* Inform queue display programs. */
+	
+		saved_status = printers[prnid].status;		/* We will use these in a moment */
+		saved_ppop_pid = printers[prnid].ppop_pid;	/* if the printer is not new. */
+	
+		load_printer(&printers[prnid], printer);	/* load printer configuration */
+		media_mounted_recover(prnid);				/* load the list of mounted media */
+		media_mounted_save(prnid);					/* save updated (very important for pprdrv) */
+	
+		/* If this printer already existed, we have to fix things up a bit. */
+		if( ! is_new)
 			{
-			prnbit = 1;
-			if(queue[x].destid == prnid || (prnbit = destid_printer_bit(queue[x].destid, prnid)) )
+			/* restore its status */
+			printers[prnid].status = saved_status;
+			printers[prnid].ppop_pid = saved_ppop_pid;
+	
+			/* Since the configuration is new, this printer may be able to print
+			   jobs it couldn't have printed before.  Scan the queue and clear
+			   the never flag for all of this printer's jobs and clear this printer's
+			   never bit for all jobs for groups to which this printer belongs.
+			   */
+			{
+			int x, prnbit;
+			for(x=0; x < queue_entries; x++)
 				{
-				queue[x].never &= (0xFF ^ prnbit);
-				if(queue[x].status == STATUS_STRANDED)
-					queue_p_job_new_status(&queue[x], STATUS_WAITING);
+				prnbit = 1;
+				if(queue[x].destid == prnid || (prnbit = destid_printer_bit(queue[x].destid, prnid)) )
+					{
+					queue[x].never &= (0xFF ^ prnbit);
+					if(queue[x].status == STATUS_STRANDED)
+						queue_p_job_new_status(&queue[x], STATUS_WAITING);
+					}
 				}
 			}
-		}
-
-		/* It is possible that the bins changed.  Update the notnow flags for
-		   all jobs that could print on this printer.
-		   */
-		media_update_notnow(prnid);
-
-		/* If the printer is idle, look for something for it to do.
-		   Questions: why is this necessary?
-		   Possible answer: because the bins may have changed.
-		   */
-		if(printers[prnid].status == PRNSTATUS_IDLE)
-			printer_look_for_work(prnid);
-		}
+	
+			/* It is possible that the bins changed.  Update the notnow flags for
+			   all jobs that could print on this printer.
+			   */
+			media_update_notnow(prnid);
+	
+			/* If the printer is idle, look for something for it to do.
+			   Questions: why is this necessary?
+			   Possible answer: because the bins may have changed.
+			   */
+			if(printers[prnid].status == PRNSTATUS_IDLE)
+				printer_look_for_work(prnid);
+			}
+		} /* end if if printer still exists */
 
 	unlock();			/* ok, let things move again */
 	} /* end of new_printer_config() */
@@ -579,34 +579,36 @@ void new_group_config(char *group)
 			state_update("GRPDELETE %s",group);			/* inform queue display programs */
 			groups[x].deleted = TRUE;					/* mark as deleted */
 			}
-		unlock();
-		return;
 		}
-	fclose(testopen);
-
-	state_update("GRPRELOAD %s",group); /* inform queue display programs */
-
-	load_group(&groups[x],group);		/* read the group file */
-
-	/* fix all the jobs for this group */
-	destid = destid_by_gindex(x);
-	for(x = 0; x < queue_entries; x++)
+	else
 		{
-		if(queue[x].destid==destid)		/* if job is for this group, */
-			{							/* reset the media ready lists */
-			media_set_notnow_for_job(&queue[x], TRUE);
-			queue[x].never = 0;			/* Since the membership may have changed, the never bits may be */
-			}							/* invalid, so just clear them */
-		}								/* (they will be set again if necessary). */
+		fclose(testopen);
+	
+		state_update("GRPRELOAD %s",group); /* inform queue display programs */
+	
+		load_group(&groups[x],group);		/* read the group file */
+	
+		/* fix all the jobs for this group */
+		destid = destid_by_gindex(x);
+		for(x = 0; x < queue_entries; x++)
+			{
+			if(queue[x].destid==destid)		/* if job is for this group, */
+				{							/* reset the media ready lists */
+				media_set_notnow_for_job(&queue[x], TRUE);
+				queue[x].never = 0;			/* since the membership may have changed, the never bits may be */
+				}							/* invalid, so just clear them */
+			}								/* (they will be set again if necessary). */
+	
+	
+		/* look for work for any group members which are idle */
+		for(y=0; y<groups[x].members; y++)
+			{
+			if(printers[groups[x].printers[y]].status == PRNSTATUS_IDLE)
+				printer_look_for_work(groups[x].printers[y]);
+			}
+		}
 
 	unlock();
-
-	/* look for work for any group members which are idle */
-	for(y=0; y<groups[x].members; y++)
-		{
-		if(printers[groups[x].printers[y]].status == PRNSTATUS_IDLE)
-			printer_look_for_work(groups[x].printers[y]);
-		}
 	} /* end of new_group_config() */
 
 /*

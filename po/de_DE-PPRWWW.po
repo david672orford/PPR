@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-11 10:46-0400\n"
+"POT-Creation-Date: 2005-10-12 13:04-0400\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -2564,8 +2564,32 @@ msgstr "Rolle"
 msgid "Source Download"
 msgstr "Quellen herunterladen"
 
-#~ msgid "Bins"
-#~ msgstr "Einzüge"
+#~ msgid "Printer status:"
+#~ msgstr "Druckerstatus:"
+
+#~ msgid ""
+#~ "Your web browser failed to validate your username and password\n"
+#~ "using an MD5 Digest as defined by RFC 2117.  If you entered your\n"
+#~ "username and password correctly, it may be that your browser\n"
+#~ "doesn't support MD5 Digest authentication."
+#~ msgstr ""
+#~ "Ihr Webbrower konnte Ihren Benutzernamen und Passwort nicht mittels MD5\n"
+#~ "Verschlüsselung, wie in RFC 2117 beschrieben, verifizieren. Wenn Sie\n"
+#~ "Benutzernamen und Passwort korrekt eingegeben haben, kann es sein, das Ihr\n"
+#~ "Browser MD5 Authentifizierung nicht unterstützt."
+
+#~ msgid "Error: "
+#~ msgstr "Fehler: "
+
+#~ msgid ""
+#~ "This script was invoked without any trailing path.  In other words,\n"
+#~ "it should have been treated as if it were a subdirectory.\n"
+#~ msgstr ""
+#~ "Dieses Script wurde ohne jeglichen folgenden Pfad ausgeführt. Mit anderen\n"
+#~ "Worten sollte es behandelt werden, als wäre es ein Unterverzeichnis.\n"
+
+#~ msgid "Silly Sounds:"
+#~ msgstr "Sounds:"
 
 #~ msgid ""
 #~ "This table has one row for each print job.  The left hand column has\n"
@@ -2580,74 +2604,88 @@ msgstr "Quellen herunterladen"
 #~ "Informationen über jeden Auftrag. Es können leere Zeilen am Enden der\n"
 #~ "Tabelle sein."
 
-#~ msgid "Alert Messages:"
-#~ msgstr "Warnmeldungen:"
+#~ msgid "Printer Status"
+#~ msgstr "Druckerstatus"
 
-#~ msgid "Pages completed:"
-#~ msgstr "Fertiggestellte Seiten:"
-
-#~ msgid "Pages started:"
-#~ msgstr "Begonnene Seiten:"
-
-#~ msgid "Percent sent:"
-#~ msgstr "Gesendet in Prozent:"
-
-#~ msgid "Bytes sent:"
-#~ msgstr "Gesendete Bytes:"
-
-#~ msgid "Total bytes:"
-#~ msgstr "Gesamtgröße in Bytes:"
-
-#~ msgid "For:"
-#~ msgstr "Für:"
-
-#~ msgid "Current job:"
-#~ msgstr "Derzeitiger Auftrag:"
-
-#~ msgid "Printer status:"
-#~ msgstr "Druckerstatus:"
-
-#~ msgid "Countdown:"
-#~ msgstr "Countdown:"
+#~ msgid "Bins"
+#~ msgstr "Einzüge"
 
 #~ msgid "Retry:"
 #~ msgstr "Wiederversuch:"
 
-#~ msgid "Name:"
-#~ msgstr "Name:"
+#~ msgid "Pages started:"
+#~ msgstr "Begonnene Seiten:"
+
+#~ msgid "Countdown:"
+#~ msgstr "Countdown:"
+
+#~ msgid "Can't Display Manpage"
+#~ msgstr "Kan Manualseite nicht anzeigen"
 
 #~ msgid "PPR Login"
 #~ msgstr "PPR Login"
 
-#~ msgid "Printers to Monitor"
-#~ msgstr "zu überwachenden Drucker"
-
-#~ msgid "Player:"
-#~ msgstr "Abspielprogramm:"
-
-#~ msgid "Silly Sounds:"
-#~ msgstr "Sounds:"
-
-#~ msgid "Voice:"
-#~ msgstr "Stimme:"
-
-#~ msgid "Severity Threshold:"
-#~ msgstr "Sicherheitsschwelle:"
-
-#~ msgid "Printing Attempt Results"
-#~ msgstr "Ergebnisse von Druckversuchen"
+#~ msgid "Available Manpages"
+#~ msgstr "Verfügbare Manualseiten"
 
 #~ msgid "Printer Stalled"
 #~ msgstr "Drucker angehalten"
 
-#~ msgid "Printer Status"
-#~ msgstr "Druckerstatus"
+#~ msgid "Error:"
+#~ msgstr "Fehler:"
 
-#~ msgid "Printer Errors"
-#~ msgstr "Druckerfehler"
+#~ msgid "Voice:"
+#~ msgstr "Stimme:"
 
-#~ msgid "Event Categories:"
-#~ msgstr "Ereigniskategorien"
+#~ msgid "Total bytes:"
+#~ msgstr "Gesamtgröße in Bytes:"
+
+#~ msgid "Can't Display Info Document"
+#~ msgstr "Kann Info nicht anzeigen"
+
+#~ msgid "Name:"
+#~ msgstr "Name:"
+
+#~ msgid "Pages completed:"
+#~ msgstr "Fertiggestellte Seiten:"
+
+#~ msgid "Player:"
+#~ msgstr "Abspielprogramm:"
+
+#~ msgid "Alert Messages:"
+#~ msgstr "Warnmeldungen:"
+
+#~ msgid "Documentation for RPM Package %s"
+#~ msgstr "Dokumentation für RPM-Paket %s"
+
+#~ msgid "Authentication Required"
+#~ msgstr "Authentifizierung benötigt"
+
+#~ msgid "Printers to Monitor"
+#~ msgstr "zu überwachenden Drucker"
+
+#~ msgid "Bytes sent:"
+#~ msgstr "Gesendete Bytes:"
+
+#~ msgid "Current job:"
+#~ msgstr "Derzeitiger Auftrag:"
+
+#~ msgid "For:"
+#~ msgstr "Für:"
+
+#~ msgid ""
+#~ "If your server is running Linux and the web browser is running on\n"
+#~ "the server, try connecting to localhost rather than to the machine\n"
+#~ "name.  On Linux systems the PPR web server can determine the user\n"
+#~ "id of the web browser if the connection is to localhost."
+#~ msgstr ""
+#~ "Wenn Ihr Server auf Linux läuft und der Webserver auf dem Server\n"
+#~ "ist, versuchen Sie besser zu localhost als zu dem Hostnamen zu\n"
+#~ "verbinden. Aud Linuxsystemen kann der PPR Webserver die Benutzer ID\n"
+#~ "des Browser erkennen, wenn er zu localhost verbunden ist."
+
+#~ msgid "The file \"%s\" is not within a recognized document directory.\n"
+#~ msgstr "Die Datei \"%s\" befindet sich nicht in einem bekannten Dokumentenverzeichnis.\n"
 
 #~ msgid ""
 #~ "If your browser supports JavaScript, Cookies, and Frames, then\n"
@@ -2662,61 +2700,23 @@ msgstr "Quellen herunterladen"
 #~ "der MD5 Authentifizierung, in der JavaScript und ein CGI script genutzt\n"
 #~ "werden, die Benutzererkennung möglich macht."
 
-#~ msgid ""
-#~ "If your server is running Linux and the web browser is running on\n"
-#~ "the server, try connecting to localhost rather than to the machine\n"
-#~ "name.  On Linux systems the PPR web server can determine the user\n"
-#~ "id of the web browser if the connection is to localhost."
-#~ msgstr ""
-#~ "Wenn Ihr Server auf Linux läuft und der Webserver auf dem Server\n"
-#~ "ist, versuchen Sie besser zu localhost als zu dem Hostnamen zu\n"
-#~ "verbinden. Aud Linuxsystemen kann der PPR Webserver die Benutzer ID\n"
-#~ "des Browser erkennen, wenn er zu localhost verbunden ist."
-
-#~ msgid ""
-#~ "Your web browser failed to validate your username and password\n"
-#~ "using an MD5 Digest as defined by RFC 2117.  If you entered your\n"
-#~ "username and password correctly, it may be that your browser\n"
-#~ "doesn't support MD5 Digest authentication."
-#~ msgstr ""
-#~ "Ihr Webbrower konnte Ihren Benutzernamen und Passwort nicht mittels MD5\n"
-#~ "Verschlüsselung, wie in RFC 2117 beschrieben, verifizieren. Wenn Sie\n"
-#~ "Benutzernamen und Passwort korrekt eingegeben haben, kann es sein, das Ihr\n"
-#~ "Browser MD5 Authentifizierung nicht unterstützt."
-
-#~ msgid "Authentication Required"
-#~ msgstr "Authentifizierung benötigt"
-
 #~ msgid "Can't Display File"
 #~ msgstr "Kann Datei nicht anzeigen"
 
-#~ msgid "Error: "
-#~ msgstr "Fehler: "
+#~ msgid "Severity Threshold:"
+#~ msgstr "Sicherheitsschwelle:"
 
-#~ msgid "Can't Display Info Document"
-#~ msgstr "Kann Info nicht anzeigen"
+#~ msgid "Printing Attempt Results"
+#~ msgstr "Ergebnisse von Druckversuchen"
 
-#~ msgid "Available Manpages"
-#~ msgstr "Verfügbare Manualseiten"
-
-#~ msgid "Can't Display Manpage"
-#~ msgstr "Kan Manualseite nicht anzeigen"
-
-#~ msgid "Error:"
-#~ msgstr "Fehler:"
+#~ msgid "Percent sent:"
+#~ msgstr "Gesendet in Prozent:"
 
 #~ msgid "Section %s"
 #~ msgstr "Abschnitt %s"
 
-#~ msgid "Documentation for RPM Package %s"
-#~ msgstr "Dokumentation für RPM-Paket %s"
+#~ msgid "Printer Errors"
+#~ msgstr "Druckerfehler"
 
-#~ msgid ""
-#~ "This script was invoked without any trailing path.  In other words,\n"
-#~ "it should have been treated as if it were a subdirectory.\n"
-#~ msgstr ""
-#~ "Dieses Script wurde ohne jeglichen folgenden Pfad ausgeführt. Mit anderen\n"
-#~ "Worten sollte es behandelt werden, als wäre es ein Unterverzeichnis.\n"
-
-#~ msgid "The file \"%s\" is not within a recognized document directory.\n"
-#~ msgstr "Die Datei \"%s\" befindet sich nicht in einem bekannten Dokumentenverzeichnis.\n"
+#~ msgid "Event Categories:"
+#~ msgstr "Ereigniskategorien"

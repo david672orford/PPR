@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 May 2005.
+** Last modified 12 October 2005.
 */
 
 /*
@@ -137,7 +137,7 @@ int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modif
 		{
 		if(!(confin = fopen(confin_name, "r")))
 			{
-			if(errno == EEXIST)
+			if(errno == ENOENT)
 				return -1;
 			else
 				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", confin_name, "r", errno, gu_strerror(errno));

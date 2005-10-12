@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 September 2005.
+** Last modified 12 October 2005.
 */
 
 /*
@@ -369,7 +369,7 @@ const struct Jobname *parse_jobname(const char *jobname)
 		return NULL;
 		}
 
-	job->destname = parse_destname(job->destname);
+	job->destname = parse_destname(job->destname, TRUE);
 	
 	return job;
 	} /* end of parse_jobname() */
@@ -379,7 +379,7 @@ const struct Jobname *parse_jobname(const char *jobname)
 ** valid, it will be returned.  If it is an alias, then the name to which
 ** it resolves will be returned in allocated memory.
 */
-const char *parse_destname(const char *destname)
+const char *parse_destname(const char *destname, gu_boolean resolve_aliases)
 	{
 	if(strpbrk(destname, DEST_DISALLOWED))
 		{
@@ -393,7 +393,7 @@ const char *parse_destname(const char *destname)
 		return NULL;
 		}
 
-	if(strcmp(destname, "all") != 0)
+	if(resolve_aliases && strcmp(destname, "all") != 0)
 		{
 		char fname[MAX_PPR_PATH];
 		FILE *f;
