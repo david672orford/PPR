@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 14 October 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -166,8 +166,7 @@ text_display(_("Job creator:"), cgi_data_peek('creator', ''), 40);
 				. "the job in the queue and on behalf of whom.");
 
 		text_display(_("Submitter description:"), cgi_data_peek('for', ''), 30);
-		text_display(_("Submitted by Unix user:"), cgi_data_peek('username', ''), 16);
-		text_display(_("As proxy for:"), cgi_data_peek('proxy-for', ''), 30);
+		text_display(_("Submitted by:"), cgi_data_peek('username', ''), 16);
 		}
 },
 
@@ -223,7 +222,7 @@ text_display(_("Job creator:"), cgi_data_peek('creator', ''), 40);
 my @read_only = qw(
 		jobname longsubtime
 		creator
-		username proxy-for
+		username
 		);
 
 my @read_write = qw(
@@ -277,16 +276,16 @@ sub load {
 sub save {
 		my $jobname = $data{jobname};
 		my $username = $ENV{REMOTE_USER};
+		my $node = $ENV{REMOTE_ADDR};
 		defined($jobname) || die "CGI variable \"jobname\" is undefined";
 		defined($username) || die "CGI environment variable REMOTE_USER not defined";
+		defined($node) || die "CGI environment variable REMOTE_ADDR not defined";
 
-		# Prepare to become the remote user for PPR purposes.
-		require "acl.pl";
-		my @user_id_options;
-		if(defined(getpwnam($username)) || user_acl_allows($username, "ppop"))
-			{ @user_id_options = ("--su", $username) }
-		else
-			{ @user_id_options = ("--proxy-for", "$username@*") }
+		# If the user is remote, so indicate.
+		if(!getpwnam($username))
+			{
+			$username = "$username\@$node";
+			}
 
 		# Encode the special processing line.
 		if(defined($data{'addon:specialprocessing'}))
@@ -306,7 +305,7 @@ sub save {
 
 		print "<p><b>", H_("Save changes to job:"), "</b><br>\n";
 		print "<pre>\n";
-		run($PPOP_PATH, @user_id_options, "modify", $jobname, @list);
+		run($PPOP_PATH, "--user", $username, "modify", $jobname, @list);
 		print "</pre>\n";
 		}
 

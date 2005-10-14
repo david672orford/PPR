@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 14 October 2005.
 */
 
 /*+ \file
@@ -60,15 +60,20 @@ PPR queue.
 struct PRINTER_INFO {
 	char *name;
 	char *interface;
-	struct PPD_PROTOCOLS protocols;
+	char *interface_address;
+	char *interface_options;
 	int feedback;					/* really a boolean */
 	int jobbreak;
 	int codes;
+	char *device_uri;				/* derived from interface_* */
+	char *comment;
+	char *location;
+	struct PPD_PROTOCOLS protocols;
 	gu_boolean binaryOK;
 	char *ppdFile;
 	char *product;
-	char *modelname;
-	char *nickname;
+	char *modelName;
+	char *nickName;
 	char *shortNickName;
 	int psLanguageLevel;
 	char *psVersionStr;
@@ -140,16 +145,21 @@ static struct PRINTER_INFO *do_printer_new_obj(struct QUEUE_INFO *qip, const cha
 	gu_pca_push(qip->printers, (char*)pip);
 	pip->name = gu_strdup(name);
 	pip->interface = NULL;
+	pip->interface_address = NULL;
+	pip->interface_options = NULL;
+	pip->feedback = -1;
+	pip->codes = CODES_DEFAULT;
+	pip->jobbreak = JOBBREAK_DEFAULT;
+	pip->device_uri = NULL;
+	pip->comment = NULL;
+	pip->location = NULL;
 	pip->protocols.TBCP = FALSE;
 	pip->protocols.PJL = FALSE;
-	pip->feedback = -1;
-	pip->jobbreak = JOBBREAK_DEFAULT;
-	pip->codes = CODES_DEFAULT;
 	pip->binaryOK = FALSE;
 	pip->ppdFile = NULL;
 	pip->product = NULL;
-	pip->modelname = NULL;
-	pip->nickname = NULL;
+	pip->modelName = NULL;
+	pip->nickName = NULL;
 	pip->shortNickName = NULL;
 	pip->psLanguageLevel = 1;
 	pip->psVersionStr = NULL;
@@ -281,21 +291,21 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 						case 'M':
 							if((p = lmatchp(line, "*ModelName:")))
 								{
-								if(*p == '"' && !pip->modelname)
-									pip->modelname = ppd_finish_QuotedValue(ppd, p+1);
+								if(*p == '"' && !pip->modelName)
+									pip->modelName = ppd_finish_QuotedValue(ppd, p+1);
 								continue;
 								}
 							break;
 						case 'N':
 							if((p = lmatchp(line, "*NickName:")))
 								{
-								if(*p == '"' && !pip->nickname)
+								if(*p == '"' && !pip->nickName)
 									{
-									pip->nickname = ppd_finish_QuotedValue(ppd, p+1);
+									pip->nickName = ppd_finish_QuotedValue(ppd, p+1);
 
 									/* special parsing rule */
 									if(!pip->shortNickName)
-										pip->shortNickName = pip->nickname;
+										pip->shortNickName = pip->nickName;
 									}
 								continue;
 								}
@@ -441,10 +451,20 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 		DODEBUG(("line: %s", line));
 		switch(line[0])
 			{
-			case 'C':
-				if((p = lmatchp(line, "Comment:")) && depth == 0)
+			case 'A':
+				if(gu_sscanf(line, "Address: %A", &p) == 1)
 					{
-					qip->comment = gu_strdup(p);
+					gu_free_if(pip->interface_address);
+					pip->interface_address = p;
+					continue;
+					}
+				break;
+			case 'C':
+				if((p = lmatchp(line, "Comment:")))
+					{
+					pip->comment = gu_strdup(p);
+					if(depth == 0)
+						qip->comment = pip->comment;
 					continue;
 					}
 				if((p = lmatchp(line, "Codes:")))
@@ -469,6 +489,10 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 					{
 					pip->interface = gu_strdup(p);
 					/* Invalidate lines which preceed "Interface:". */
+					gu_free_if(pip->interface_address);
+					pip->interface_address = NULL;
+					gu_free_if(pip->interface_options);
+					pip->interface_options = NULL;
 					pip->feedback = -1;
 					pip->jobbreak = JOBBREAK_DEFAULT;
 					pip->codes = CODES_DEFAULT;
@@ -479,6 +503,21 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 				if((p = lmatchp(line, "JobBreak:")))
 					{
 					pip->jobbreak = atoi(p);
+					continue;
+					}
+				break;
+			case 'L':
+				if((p = lmatchp(line, "Location:")) && depth == 0)
+					{
+					pip->location = gu_strdup(p);
+					continue;
+					}
+				break;
+			case 'O':
+				if(gu_sscanf(line, "Options: %T", &p) == 1)
+					{
+					gu_free_if(pip->interface_options);
+					pip->interface_options = p;
 					continue;
 					}
 				break;
@@ -637,9 +676,11 @@ static gu_boolean do_alias(struct QUEUE_INFO *qip)
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	{
 	void *pool = gu_pool_new();
-	struct QUEUE_INFO *qip = gu_alloc(1, sizeof(struct QUEUE_INFO));
+	struct QUEUE_INFO *qip;
+
+	GU_OBJECT_POOL_PUSH(pool);
+	qip	= gu_alloc(1, sizeof(struct QUEUE_INFO));
 	qip->pool = pool;
-	GU_OBJECT_POOL_PUSH(qip->pool);
 	qip->debug_level = 0;
 	qip->warnings = NULL;
 	qip->type = qit;
@@ -652,6 +693,7 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	qip->fontlist = gu_pca_new(50, 50);
 	qip->chargeExists = FALSE;
 	GU_OBJECT_POOL_POP(qip->pool);
+
 	return (void*)qip;
 	} /* end of queueinfo_new() */
 
@@ -786,6 +828,18 @@ const char *queueinfo_comment(void *p)
 	return qip->comment;
 	}
 
+/** return the location of the indicated printer
+*/
+const char *queueinfo_location(void *p, int printer_index)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	struct PRINTER_INFO *pip;
+	if(printer_index >= gu_pca_size(qip->printers))
+		return NULL;
+	pip = gu_pca_index(qip->printers, printer_index);
+	return pip->location;
+	}
+
 /** Is the queue in transparent mode?
  *
  * This function returns TRUE if "-H transparent" is in the switchset.
@@ -904,6 +958,32 @@ const char *queueinfo_shortNickName(void *p)
 		if(!answer)
 			answer = pip->shortNickName;
 		else if(strcmp(answer, pip->shortNickName))
+			return NULL;
+		}
+
+	return answer;
+	}
+
+/** read the PostScript ModelName string of the queue's printer(s)
+ *
+ * If these is more than one printer and not all have the same ModelName string, then
+ * this function returns NULL.
+*/
+const char *queueinfo_modelName(void *p)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	struct PRINTER_INFO *pip;
+	int i;
+	const char *answer = NULL;
+
+	for(i=0; i < gu_pca_size(qip->printers); i++)
+		{
+		pip = gu_pca_index(qip->printers, i);
+		if(!pip->modelName)
+			return NULL;
+		if(!answer)
+			answer = pip->modelName;
+		else if(strcmp(answer, pip->modelName))
 			return NULL;
 		}
 
@@ -1235,7 +1315,8 @@ const char *queueinfo_optionValue(void *p, const char name[])
 	}
 
 /*
-** Look up a printer's product, modelname, nickname, and resolution and return a MetaFont mode.
+** Look up a printer's product, modelname, nickname, and resolution and return 
+** a MetaFont mode.
 */
 static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	{
@@ -1252,8 +1333,8 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	/* Assign short variable names and replace NULL pointers
 	   with zero-length strings. */
 	p = pip->product ? pip->product : "";
-	m = pip->modelname ? pip->modelname : "";
-	n = pip->nickname ? pip->nickname : "";
+	m = pip->modelName ? pip->modelName : "";
+	n = pip->nickName ? pip->nickName : "";
 	r = pip->resolution ? pip->resolution : "";
 
 	if(qip->debug_level >= 2)
@@ -1263,7 +1344,7 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 					"\tresolution \"%s\" in \"%s\".\n"), p, m, n, r, MFMODES);
 		}
 
-	if((modefile = fopen(MFMODES, "r")) == (FILE*)NULL)
+	if(!(modefile = fopen(MFMODES, "r")))
 		gu_Throw(_("Can't open \"%s\", errno=%d (%s)"), MFMODES, errno, gu_strerror(errno));
 
 	for(linenum=1; (line = gu_getline(line, &line_space_available, modefile)); linenum++)
@@ -1317,8 +1398,7 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		break;
 		}
 
-	if(line)
-		gu_free(line);
+	gu_free_if(line);
 
 	{
 	int error = ferror(modefile);
@@ -1331,6 +1411,8 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	} /* end of get_mfmode() */
 
 /** Figure out the MetaFont mode for this queue
+ *
+ * For some reason, the returned string is outside of the objects's pool.
  */
 const char *queueinfo_computedMetaFontMode(void *p)
 	{
@@ -1379,6 +1461,9 @@ const char *queueinfo_computedMetaFontMode(void *p)
  * in a practical sense and the temporary array is more than large enough.
  * Since it is allocated on the stack, it is cleaned up perfectly without
  * fragmenting the heap.
+ *
+ * The result string is part of the object's pool, so it should be used
+ * before destroying the queueinfo object.
  */
 const char *queueinfo_computedDefaultFilterOptions(void *p)
 	{
@@ -1419,6 +1504,33 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 	return retval;
 	} /* end of queueinfo_computedDefaultFilterOptions() */
 
+/** Create a CUPS-style URI for a printer's device
+ */
+const char *queueinfo_device_uri(void *p, int printer_index)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	struct PRINTER_INFO *pip;
+
+	if(printer_index >= gu_pca_size(qip->printers))
+		return NULL;
+
+	GU_OBJECT_POOL_PUSH(qip->pool);
+	pip = gu_pca_index(qip->printers, printer_index);
+	if(!pip->device_uri && pip->interface && pip->interface_address)
+		{
+		char *p;
+		gu_asprintf(&p,
+			"%s:%s",
+			pip->interface_address[0] == '/' ? "file" : pip->interface,
+			pip->interface_address
+			);
+		pip->device_uri = p;
+		}
+	GU_OBJECT_POOL_POP(qip->pool);
+
+	return pip->device_uri;
+	}
+
 /*
 ** Test program
 ** gcc -Wall -DTEST -I../include -o queueinfo queueinfo.c ../libppr.a ../libgu.a -lz
@@ -1434,6 +1546,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s: missing argument\n", argv[0]);
 		return 1;
 		}
+
+	printf("memory blocks: %d\n\n", gu_alloc_checkpoint());
+
 	obj = queueinfo_new_load_config(QUEUEINFO_SEARCH, argv[1]);
 	printf("name: %s\n", queueinfo_name(obj));
 	printf("comment: %s\n", queueinfo_comment(obj));
@@ -1458,8 +1573,14 @@ int main(int argc, char *argv[])
 	printf("font_exists[Donald-Duck] = %s\n", queueinfo_fontExists(obj, "Donald-Duck") ? "true" : "false");
 	printf("*Option1 = \"%s\"\n", queueinfo_optionValue(obj, "*Option1"));
 	printf("*InstalledMemory = \"%s\"\n", queueinfo_optionValue(obj, "*InstalledMemory"));
-	printf("mfmode = %s\n", queueinfo_computedMetaFontMode(obj));
+	/*printf("mfmode = %s\n", queueinfo_computedMetaFontMode(obj));*/
 	printf("filter_options = \"%s\"\n", queueinfo_computedDefaultFilterOptions(obj));
+	printf("device-uri = \"%s\"\n", queueinfo_device_uri(obj, 0));
+
+	printf("\nmemory blocks: %d\n", gu_alloc_checkpoint());
+	queueinfo_free(obj);
+	printf("memory blocks: %d\n", gu_alloc_checkpoint());
+
 	return 0;
 	}
 #endif

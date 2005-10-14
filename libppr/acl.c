@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 14 October 2005.
 */
 
 /*! \file
@@ -65,33 +65,32 @@ gu_boolean user_acl_allows(const char user[], const char acl[])
 	/* Look for a line with the user name in the .allow
 	   file for the ACL list. */
 	{
+	gu_boolean answer = FALSE;
 	FILE *f;
 	char fname[MAX_PPR_PATH];
-	char line[256];
+	char *line = NULL;
+	int line_space = 80;
 	ppr_fnamef(fname, "%s/%s.allow", ACLDIR, acl);
 	if((f = fopen(fname, "r")))
 		{
-		while(fgets(line, sizeof(line), f))
+		while((line = gu_getline(line, &line_space, f)))
 			{
 			/* Skip comments. */
 			if(line[0] == '#' || line[0] == ';')
 				continue;
 
-			/* Trim trailing whitespace. */
-			line[strcspn(line, " \t\r\n")] = '\0';
-
-			/* Does it match? */
-			if(strcmp(line, user) == 0)
+			/* Use the line as a username pattern */
+			if(username_match(user, line))
 				{
-				fclose(f);
-				return TRUE;
+				answer = TRUE;
+				break;
 				}
 			}
+		gu_free_if(line);
 		fclose(f);
 		}
+	return answer;
 	}
-
-	return FALSE;
 	} /* end of user_acl_allows() */
 
 /* end of file */

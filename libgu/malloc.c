@@ -270,7 +270,10 @@ void *gu_realloc(void *ptr, size_t number, size_t size)
 	if(rval != ptr)
 		{
 		if(ptr == NULL)
+			{
+			gu_alloc_blocks++;
 			gu_pool_register(rval);
+			}
 		else
 			gu_pool_reregister(rval, ptr);
 		}

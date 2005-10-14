@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 26 April 2005.
+# Last modified 14 October 2005.
 #
 
 =pod
@@ -455,20 +455,8 @@ if(defined($action))
 	# of a PPRcontrol object representing the queue.
 	if($action_routine ne "")
 		{
-		# This should have been caught already.
-		die if(undef_to_empty($ENV{REMOTE_USER}) eq "");
-
-		# Become the remote user for PPR purposes.  If the remove user cooresponds to a 
-		# local user, become that user, otherwise let pprwww act as his proxy.
-		require "acl.pl";
-		if(defined(getpwnam($ENV{REMOTE_USER})) || user_acl_allows($ENV{REMOTE_USER}, "ppop"))
-			{
-			$control->su($ENV{REMOTE_USER});
-			}
-		else
-			{
-			$control->proxy_for("$ENV{REMOTE_USER}\@*");
-			}
+		# Become the remote user for PPR purposes.
+		$control->user("$ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}");
 
 		# Fetch the list of jobs to act on.
 		my @joblist = split(/ /, cgi_data_move("jobs", ""));

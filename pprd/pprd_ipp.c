@@ -62,6 +62,7 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 #include "respond.h"
+#include "queueinfo.h"
 
 /** Convert PPR printer status to IPP status */
 static void printer_add_status(struct IPP *ipp, int prnid, struct REQUEST_ATTRS *req)
@@ -553,7 +554,9 @@ static void ipp_cancel_job(struct IPP *ipp)
 static void cups_get_printers(struct IPP *ipp)
 	{
 	struct REQUEST_ATTRS *req;
+	void *qip;
 	int i;
+	const char *p;
 
 	req = request_attrs_new(ipp, 0);
 	
@@ -583,50 +586,48 @@ static void cups_get_printers(struct IPP *ipp)
 				"printer-is-accepting-jobs", printers[i].accepting);
 			}
 
-		if(request_attrs_attr_requested(req, "device-uri"))
-			{
-			char fname[MAX_PPR_PATH];
-			FILE *f;
-			char *line = NULL;
-			int line_len = 80;
-			char *p;
-			char *interface = NULL;
-			char *address = NULL;
-	
-			ppr_fnamef(fname, "%s/%s", PRCONF, printers[i].name);
-			if((f = fopen(fname, "r")))
+		gu_Try {
+			qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printers[i].name);
+
+			if(request_attrs_attr_requested(req, "printer-location"))
 				{
-				while((line = gu_getline(line, &line_len, f)))
-					{
-					if(gu_sscanf(line, "Interface: %S", &p) == 1)
-						{
-						if(interface)
-							gu_free(interface);
-						interface = p;
-						}
-					if(gu_sscanf(line, "Address: %A", &p) == 1)
-						{
-						if(address)
-							gu_free(address);
-						address = p;
-						}
-					}
-				fclose(f);
-		
-				if(interface && address)
-					{
-					ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri",
-						"%s:%s",
-						address[0] == '/' ? "file" : interface,		/* for benefit of CUPS lpc */
-						address);
-					}
-		
-				if(interface)
-					gu_free(interface);
-				if(address)
-					gu_free(address);
+				if((p = queueinfo_location(qip, 0)))
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-location", gu_strdup(p), TRUE);
 				}
-			} /* device-uri */
+
+			if(request_attrs_attr_requested(req, "printer-info"))
+				{
+				if((p = queueinfo_comment(qip)))
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-info", gu_strdup(p), TRUE);
+				}
+
+			if(request_attrs_attr_requested(req, "color-supported"))
+				{
+				ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "color-supported", queueinfo_colorDevice(qip));
+				}
+
+			if(request_attrs_attr_requested(req, "pages-per-minute"))
+				{
+				ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER, "pages-per-minute", 42);
+				}
+
+			if(request_attrs_attr_requested(req, "printer-make-and-model"))
+				{
+				if((p = queueinfo_modelName(qip)))
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-make-and-model", gu_strdup(p), TRUE);
+				}
+
+			if(request_attrs_attr_requested(req, "device-uri"))
+				{
+				if((p = queueinfo_device_uri(qip, 0)))
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_strdup(p), TRUE);
+				}
+
+			queueinfo_free(qip);
+			}
+		gu_Catch
+			{
+			}
 
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}

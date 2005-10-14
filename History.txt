@@ -9876,4 +9876,19 @@ no final tarball was released.
 
 * po/: added more Russian translations and fixed some errors.
 
+* ppad/ppad.c: expanded the number of error messages about unrecognized 
+  sub-commands from one to three in order to improve specificity.
+
+* ppad/ppad.c: changed --su to --user
+
+* libscript/PPOP.pm: removed proxy_for() method and renamed su() to user().
+
+* www/: changed programs to use user() method of PPOP object rather than
+  su().  Made them unconditionaly generate usernames in the form
+  "$ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}".
+
+* libppr/quentryfile_save.c: moved LC_MESSAGES line after Status-and-Flags 
+  since long language and charset names were pushing it more than 50 bytes in
+  where pprd couldn't find it anymore.
+
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 June 2005.
+# Last modified 14 October 2005.
 #
 
 use 5.005;
@@ -314,6 +314,7 @@ my %queues;
 my %queues_counts;
 {
 my $control = new PPR::PPOP("all");
+#$control->debug(1);
 
 # Get a list of all queues with a description for each.
 foreach my $row ($control->list_destinations_comments_addresses())
@@ -649,7 +650,7 @@ print "\n";
 # End the exception handling block.
 }; if($@)
 	{
-	print "<p>$@</p>\n";
+	print "<p>", html($@), "</p>\n";
 	}
 
 # Emmit a form which will contain any values we want to send to the

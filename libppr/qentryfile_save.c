@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 August 2005.
+** Last modified 14 October 2005.
 */
 
 /*! \file */
@@ -45,11 +45,14 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	/* This line will be useful once distributed printing is implemented. */
 	fprintf(Qfile, "PPRVersion: %s\n", SHORT_VERSION);
 
+	/* This is at the begining of the file so that it will be easy to modify. 
+	 * Do not put anything but PPRVersion before it, otherwise it may be
+	 * to far in to be found by pprd.
+	 */
+	fprintf(Qfile, "Status-and-Flags: %02d %04X\n", (qentry->status * -1), qentry->flags);
+
 	if(qentry->lc_messages)
 		fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages);
-
-	/* This is at the begining of the file so that it will be easy to modify. */
-	fprintf(Qfile, "Status-and-Flags: %02d %04X\n", (qentry->status * -1), qentry->flags);
 
 	/* This is so we will know when the job was submitted. */
 	fprintf(Qfile, "Time: %ld\n", qentry->time);

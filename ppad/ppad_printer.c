@@ -1182,9 +1182,10 @@ int printer_interface(const char *argv[])
 
 	if( ! printer || ! interface || ! address )
 		{
-		fputs(_("You must specify a printer, either new or existing,\n"
-				"an interface, and an address for the interface\n"
-				"to send the job to.\n"), errors);
+		fputs(_("You must specify a printer, either new or existing, an interface program, and\n"
+				"an address of the printer in a format understood by the interface program.\n"
+				"See ppad-interfaces(8) for information about interface programs and their\n"
+			    "address formats.\n"), errors);
 		return EXIT_SYNTAX;
 		}
 

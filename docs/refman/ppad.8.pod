@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 August 2005.
+# Last modified 14 October 2005.
 #
 
 =head1 NAME
@@ -34,7 +34,7 @@ ppad - PPR administrator's utility
 
 =head1 SYNOPSIS
 
-B<ppad> [B<--help>] [B<--version>] [B<-M>] [B<-d> I<debuglevel>] [I<subcommand>] [I<parameters> ...]
+B<ppad> [B<--help>] [B<--version>] [B<-M>] [B<--user> I<username>] [B<-d> I<debuglevel>] [I<subcommand>] [I<parameters> ...]
 
 =head1 DESCRIPTION
 
@@ -73,6 +73,8 @@ executes them.
 If the B<-M> switch is used, B<ppad> will adopt a terser style of output, more
 suitable to parsing by other programs.
 
+If the B<--user> switch is used, B<ppad> will behave as if invoked by the
+indicated user.
 
 
 =head2 Printer Management Subcommands

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 14 October 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -68,7 +68,7 @@ if(defined($action) && $action eq "Close")
 	exit 0;
 	}
 
-if($ENV{REMOTE_USER} eq "" && $action ne "")
+if(undef_to_empty($ENV{REMOTE_USER}) eq "" && $action ne "")
 	{
 	require "cgi_auth.pl";
 	demand_authentication();
@@ -144,10 +144,7 @@ if(!defined($data{ppd_bins}))
 my $control = new PPR::PPOP($name);
 
 # Let ppop know who we are.
-if(undef_to_empty($ENV{REMOTE_USER}) ne "")
-	{
-	$control->su($ENV{REMOTE_USER});
-	}
+$control->user("$ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}");
 
 # Make any required changes.
 print "<pre>\n";

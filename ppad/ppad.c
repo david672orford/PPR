@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 14 October 2005.
 */
 
 /*
@@ -55,7 +55,7 @@ const char myname[] = "ppad";
 int machine_readable = FALSE;
 FILE *errors;
 int debug_level = 0;
-static char *su_user = NULL;
+static char *opt_user = NULL;
 
 /*
 ** Handle fatal errors.
@@ -77,7 +77,7 @@ void fatal(int exitval, const char *message, ...)
 /*
 ** Is the user privileged?  In other words, is the user in the ppad
 ** access control list?  If the user identity has been changed
-** (by the --su switch) since last time this function was called,
+** (by the --user switch) since last time this function was called,
 ** the answer is found again, otherwise a cached answer is returned.
 */
 static gu_boolean privileged(void)
@@ -85,13 +85,13 @@ static gu_boolean privileged(void)
 	static gu_boolean answer = FALSE;
 	static char *answer_username = NULL;
 
-	if(!answer_username || strcmp(su_user, answer_username))
+	if(!answer_username || strcmp(opt_user, answer_username))
 		{
 		gu_free_if(answer_username);
-		answer_username = gu_strdup(su_user);
-		answer = user_acl_allows(su_user, "ppad");
+		answer_username = gu_strdup(opt_user);
+		answer = user_acl_allows(opt_user, "ppad");
 
-		/* This breaks --su for user ppr! */
+		/* This breaks --user for user ppr! */
 		#if 0
 		/* This special exception comes into play when "make install"
 		   is done by a non-root user.  Basically, says that if
@@ -120,12 +120,12 @@ static gu_boolean privileged(void)
 ** user identities.  They will use this so as not to exceed the privledge
 ** of the user for whom they are acting.
 */
-static int su(const char username[])
+static int set_user(const char username[])
 	{
 	if(privileged())
 		{
-		gu_free(su_user);
-		su_user = gu_strdup(username);
+		gu_free(opt_user);
+		opt_user = gu_strdup(username);
 		return 0;
 		}
 	else
@@ -317,6 +317,7 @@ static void help(FILE *out)
 		{
 		N_("-M\tselect machine-readable output"),
 		N_("--machine-readable\tsame as -M"),
+		N_("--user <username>\trun as if by <username>"),
 		N_("-d <n>\tset debug level to <n>"),
 		N_("--debug=<n>\tsame as -d"),
 		N_("--version\tprint PPR version information"),
@@ -358,12 +359,20 @@ static void help(FILE *out)
 
 /*
 ** Command dispatcher.
+**
+** Error codes:
+**	0--255	exit() value
+**  -1		no such subcommand
+**  -2		incomplete subcommand
+**  -3		no such second-level subcommand
 */
 static int dispatch(const char *argv[])
 	{
 	/* media commands */
-	if(gu_strcasecmp(argv[0], "media") == 0 && argv[1])
+	if(gu_strcasecmp(argv[0], "media") == 0)
 		{
+		if(!argv[1])
+			return -2;
 		if(gu_strcasecmp(argv[1], "show") == 0)
 			return media_show(&argv[2]);
 		if(gu_strcasecmp(argv[1], "put") == 0)
@@ -374,13 +383,17 @@ static int dispatch(const char *argv[])
 			return media_export();
 		if(gu_strcasecmp(argv[1], "import") == 0)
 			return media_import(&argv[2]);
+		return -3;
 		}
 
 	/* new printer default */
-	if(gu_strcasecmp(argv[0], "new") == 0 && argv[1])
+	if(gu_strcasecmp(argv[0], "new") == 0)
 		{
+		if(!argv[1])
+			return -2;
 		if(gu_strcasecmp(argv[1], "alerts") == 0)
 			return printer_new_alerts(&argv[2]);
+		return -3;
 		}
 
 	/* Remind (nag) command. */
@@ -393,7 +406,7 @@ static int dispatch(const char *argv[])
 	/* Help commands */
 	if(gu_strcasecmp(argv[0], "help") == 0)
 		{
-		if(argv[1] == (char*)NULL)
+		if(!argv[1])
 			help(stdout);
 		else if(gu_strcasecmp(argv[1], "printer") == 0)
 			help_printer(stdout);
@@ -416,8 +429,10 @@ static int dispatch(const char *argv[])
 		}
 
 	/* alias commands */
-	if(gu_strcasecmp(argv[0], "alias") == 0 && argv[1])
+	if(gu_strcasecmp(argv[0], "alias") == 0)
 		{
+		if(!argv[1])
+			return -2;
 		if(gu_strcasecmp(argv[1], "show") == 0)
 			return alias_show(&argv[2]);
 		if(gu_strcasecmp(argv[1], "forwhat") == 0)
@@ -432,11 +447,14 @@ static int dispatch(const char *argv[])
 			return alias_passthru(&argv[2]);
 		if(gu_strcasecmp(argv[1], "addon") == 0)
 			return alias_addon(&argv[2]);
+		return -3;
 		}
 
 	/* group commands */
-	if(gu_strcasecmp(argv[0], "group") == 0 && argv[1])
+	if(gu_strcasecmp(argv[0], "group") == 0)
 		{
+		if(!argv[1])
+			return -2;
 		if(gu_strcasecmp(argv[1], "show") == 0)
 			return group_show(&argv[2]);
 		if(gu_strcasecmp(argv[1], "comment") == 0)
@@ -463,17 +481,21 @@ static int dispatch(const char *argv[])
 			return group_acls(&argv[2]);
 		if(gu_strcasecmp(argv[1], "addon") == 0)
 			return group_addon(&argv[2]);
+		return -3;
 		}
 
 	/* PPD library commands */
-	if(gu_strcasecmp(argv[0], "ppdlib") == 0 && argv[1])
+	if(gu_strcasecmp(argv[0], "ppdlib") == 0)
 		{
+		if(!argv[1])
+			return -2;
 		if(gu_strcasecmp(argv[1], "query") == 0)
 			return ppdlib_query(&argv[2]);
 		if(gu_strcasecmp(argv[1], "search") == 0)
 			return ppdlib_search(&argv[2]);
 		if(gu_strcasecmp(argv[1], "get") == 0)
 			return ppdlib_get(&argv[2]);
+		return -3;
 		}
 
 	/* printer commands */
@@ -513,8 +535,10 @@ static int dispatch(const char *argv[])
 		return printer_outputorder(&argv[1]);
 	if(gu_strcasecmp(argv[0], "charge") == 0)
 		return printer_charge(&argv[1]);
-	if((gu_strcasecmp(argv[0], "bins") == 0) && argv[1])
+	if(gu_strcasecmp(argv[0], "bins") == 0)
 		{
+		if(!argv[1])
+			return -2;
 		if(gu_strcasecmp(argv[1], "set") == 0)
 			return printer_bins_set_or_add(FALSE, &argv[2]);
 		if(gu_strcasecmp(argv[1], "add") == 0)
@@ -523,6 +547,7 @@ static int dispatch(const char *argv[])
 			return printer_bins_ppd(&argv[2]);
 		if(gu_strcasecmp(argv[1], "delete") == 0)
 			return printer_bins_delete(&argv[2]);
+		return -3;
 		}
 	if(gu_strcasecmp(argv[0], "delete") == 0)
 		return printer_delete(&argv[1]);
@@ -638,7 +663,7 @@ static int interactive_mode(void)
 		** case we print a helpful message and change the errorlevel to
 		** zero since -1 is not a valid exit code for a program.
 		*/
-		if((errorlevel = dispatch((const char **)&ar[x])) == -1)
+		if((errorlevel = dispatch((const char **)&ar[x])) < 0)
 			{
 			if( ! machine_readable )					/* A human gets english */
 				puts("Try \"help\" or \"exit\".");
@@ -666,7 +691,7 @@ static const struct gu_getopt_opt option_words[] =
 		{"debug", 'd', TRUE},
 		{"help", 1000, FALSE},
 		{"version", 1001, FALSE},
-		{"su", 1002, TRUE},
+		{"user", 1002, TRUE},
 		{(char*)NULL, 0, FALSE}
 		} ;
 
@@ -693,7 +718,7 @@ int main(int argc, char *argv[])
 
 	umask(PPR_UMASK);
 
-	/* Figure out the user's name and make it the initial value for su_user. */
+	/* Figure out the user's name and make it the initial value for --user. */
 	{
 	struct passwd *pw;
 	uid_t uid = getuid();
@@ -702,7 +727,7 @@ int main(int argc, char *argv[])
 		fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		exit(EXIT_INTERNAL);
 		}
-	su_user = gu_strdup(pw->pw_name);
+	opt_user = gu_strdup(pw->pw_name);
 	}
 
 	/*
@@ -739,8 +764,8 @@ int main(int argc, char *argv[])
 					}
 				exit(EXIT_OK);
 
-			case 1002:							/* --su */
-				su(getopt_state.optarg);
+			case 1002:							/* --user */
+				set_user(getopt_state.optarg);
 				break;
 
 			default:
@@ -760,9 +785,20 @@ int main(int argc, char *argv[])
 		retval = interactive_mode();
 
 	/* command was not recognized, give help */
-	if(retval == -1)
+	if(retval < 0)
 		{
-		fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind]);
+		switch(retval)
+			{
+			case -1:
+				fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind]);
+				break;
+			case -2:
+				fprintf(errors, _("%s: incomplete sub-command \"%s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind]);
+				break;
+			case -3:
+				fprintf(errors, _("%s: unknown sub-sub-command \"%s %s\", try \"ppad help\"\n"), myname, argv[getopt_state.optind], argv[getopt_state.optind + 1]);
+				break;
+			}
 		retval = EXIT_SYNTAX;
 		}
 

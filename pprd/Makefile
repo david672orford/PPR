@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 October 2005.
+# Last modified 14 October 2005.
 #
 
 include ../Makefile.conf
@@ -46,7 +46,7 @@ pprd$(DOTEXE): \
 		pprd_media.o pprd_printer.o pprd_state.o \
 		pprd_question.o pprd_ipp.o \
 		../libppr.a ../libgu.a 
-	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
+	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 	$(CHMOD) 6755 $@
 
 # This automatically makes a header file which has prototypes for

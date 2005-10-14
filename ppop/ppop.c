@@ -496,43 +496,6 @@ gu_boolean assert_am_operator(void)
 	} /* end of assert_am_operator() */
 
 /*
-** This function compares a job's username to a username pattern
-** which can include basic wildcards.  If they match, it returns TRUE.
-*/
-static gu_boolean username_match(const char username[], const char pattern[])
-	{
-	char *username_at_host, *pattern_at_host;
-	size_t len;
-
-	/* If they match exactly, */
-	if(strcmp(username, pattern) == 0)
-		return TRUE;
-
-	/* If the username is in username@hostname format 
-	 * and pattern is in the same format,
-	 */
-	if((username_at_host = strchr(username, '@')) && (pattern_at_host = strchr(pattern, '@')))
-		{
-		/* If both username and hostname are wildcards, */
-		if(strcmp(pattern, "*@*") == 0)
-			return TRUE;
-
-		/* If username is a wildcard and the host names match, */
-		if(lmatch(pattern, "*@")
-				&& strcmp(username_at_host, pattern_at_host) == 0)
-			return TRUE;
-
-		/* If hostname is a wildcard and the usernames match, */
-		if(strcmp(pattern_at_host, "@*") == 0
-				&& (len = (pattern_at_host - pattern)) == (username_at_host - username)
-				&& strncmp(username, pattern, len) == 0)
-			return TRUE;
-		}
-
-	return FALSE;
-	} /* username_match() */
-
-/*
 ** This function returns TRUE if the current user has permission to touch
 ** the specified job.  If he does not, an error message is printed and
 ** FALSE is returned.
@@ -616,7 +579,7 @@ gu_boolean job_permission_check(const struct Jobname *job)
 			{
 			gu_utf8_fprintf(errors,
 				_("You may not manipulate the job \"%s\" because it\n"
-				"does not belong to the user \"%s\".\n"),
+				  "does not belong to the user \"%s\".\n"),
 					jobid(job->destname, job->id, job->subid),
 					opt_user
 				);

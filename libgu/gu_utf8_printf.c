@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 October 2005.
+** Last modified 14 October 2005.
 */
 
 /*! \file
@@ -254,6 +254,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					break;
 				case '%':
 					break;
+				case 'c':
 				case 'd':
 					fspecs[findex].value_type = VALUE_TYPE_INTEGER;
 					aindex++;
@@ -324,6 +325,11 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				case '%':
 					gu_fputwc('%', f);
 					break;
+
+				/* 8-bit character */
+				case 'c':
+					gu_fputwc(fspecs[findex].value.integer, f);
+					break;	
 
 				/* Decimal integer */
 				case 'd':

@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 September 2005.
+# Last modified 14 October 2005.
 #
 
 =head1 NAME
@@ -36,8 +36,8 @@ PPRcontrol
 
 $control = new PPR::PPOP($queuename);
 $control->destroy();
-$control->su(I<username>);
-$control->proxy_for(I<principal>)
+$control->debug(I<level>);
+$control->user(I<username>);
 $control->qquery(I<fields...>);
 $control->qquery_1job(I<jobname>, I<fields...>);
 $control->cancel(I<jobname>, I<jobs...>);
@@ -74,8 +74,7 @@ use PPR;
 
 $references = 0;
 $ppop_launched = 0;
-$ppop_launched_su_user = "";
-$ppop_launched_proxy_for = "";
+$ppop_launched_user = "";
 
 =head2 PPR::PPOP Constructor
 
@@ -86,22 +85,22 @@ for certain of the member functions.
 =cut
 
 sub new
-  {
-  shift;
+	{
+	shift;
 
-  my $self = {};
-  $self->{queue} = shift;
-  $self->{su_user} = "";
-  $self->{proxy_for} = "";
+	my $self = {};
+	$self->{queue} = shift;
+	$self->{user} = "";
+	$self->{debug} = 0;
 
-  defined($self->{queue}) || croak "Queue name parameter missing";
+	defined($self->{queue}) || croak "Queue name parameter missing";
 
-  $references++;
-  #print STDERR "PPR::PPOP::new(): queue = \"$self->{queue}\", \$references = $references\n";
+	$references++;
+	print STDERR "PPR::PPOP::new(): queue = \"$self->{queue}\", \$references = $references\n" if($self->{debug} > 0);
 
-  bless $self;
-  return $self;
-  }
+	bless $self;
+	return $self;
+	}
 
 =head2 The destroy() Method
 
@@ -117,12 +116,25 @@ sub destroy
     defined($self) || croak;
 
     $references--;
-    #print STDERR "PPR::PPOP::destroy(): \$references = $references\n";
+    print STDERR "PPR::PPOP::destroy(): \$references = $references\n" if($self->{debug} > 0);
     if($references == 0)
     	{
-	$self->shutdown();
+		$self->shutdown();
     	}
     }
+
+=head2 The debug() method
+
+=cut
+
+sub debug
+	{
+	my $self = shift;
+	my $level = shift;
+	defined($self) || croak;
+	print STDERR "Debugging level set to $level.\n";
+	$self->{debug} = $level;
+	}
 
 #
 # This function is called to launch a copy of ppop.  It is launched in
@@ -140,9 +152,9 @@ sub launch
   # new one.  This isn't efficent, but no existing code uses object instances
   # with different user IDs, so this never happens anyway.  We are just
   # being prepared.
-  if($ppop_launched && ($self->{su_user} ne $ppop_launched_su_user || $self->{proxy_for} ne $ppop_launched_proxy_for))
+  if($ppop_launched && $self->{user} ne $ppop_launched_user)
     {
-    #print STDERR "PPR::PPOP::launch(): need shutdown and relaunch\n";
+    print STDERR "PPR::PPOP::launch(): need shutdown and relaunch\n" if($self->{debug} > 0);
     $self->shutdown();
     }
 
@@ -156,33 +168,25 @@ sub launch
     $| = 1;
     print "";
 
-    defined($PPR::PPOP_PATH) || croak;
-
     # Build the basic command line.  The -M option turns on machine-readable mode.
+    defined($PPR::PPOP_PATH) || croak;
     my @COMMAND = ($PPR::PPOP_PATH, "-M");
 
-    # If the su() method was used, add the --user option.  Notice that we detaint the value
-    # without examining it.  We do this because it isn't really user input, though it might
-    # be derived from the environment variable REMOTE_USER.
-	if($self->{su_user} ne "")
+    # If the user() method was used, add the --user option.  Notice that we 
+    # detaint the value without examining it.  We do this because it isn't
+    # really user input, though it might be derived from the environment
+    # variable REMOTE_USER.
+	if($self->{user} ne "")
 		{
-		$self->{su_user} =~ /^(.*)$/ || die;
+		$self->{user} =~ /^(.*)$/ || die;
 		push(@COMMAND, "--user", $1);
-		}
-
-    # If the proxy_for() method was used, add the --proxy-for option.  The above note about
-    # detainting applies here too.
-    if($self->{proxy_for} ne "")
-		{
-		$self->{proxy_for} =~ /^(.*)$/ || die;
-		push(@COMMAND, "--proxy-for", $1);
 		}
 
     #
     # Launch the command.  Note that we temporarily clear PATH so that the
     # child won't inherit it and balk at exec() due to taint checking.
 	#
-    #print STDERR "Launching: ", join(" ", @COMMAND), "\n";
+    print STDERR "Launching: ", join(" ", @COMMAND), "\n" if($self->{debug} > 0);
     ($rdr, $wtr) = (FileHandle->new, FileHandle->new);
 	{
 	local($ENV{PATH});
@@ -205,10 +209,10 @@ sub launch
     $junk =~ /^\*READY\t([0-9.]+)/ || die "ppop not ready: $junk";
 	}
 
-    #print STDERR "PID $pid, PPR version $1\n";
+    print STDERR "PID $pid, PPR version $1\n" if($self->{debug} > 0);
 
     $ppop_launched = $pid;
-    $ppop_launched_su_user = $self->{su_user};
+    $ppop_launched_user = $self->{user};
 
     # Undo whatever that was we did.
     $| = $saved_buffer_mode;
@@ -248,13 +252,14 @@ sub shutdown
 #
 sub read_lists
     {
+	my $self = shift;
     my @result_rows = ();
 
-    #print STDERR "PPR::PPOP::read_lists()\n";
+    print STDERR "PPR::PPOP::read_lists()\n" if($self->{debug} > 0);
 
     while(<$rdr>)
 		{
-		#print STDERR $_;
+		print STDERR $_ if($self->{debug} > 0);
 		chomp;
 		if(/^\*DONE\t([0-9]+)/)
 		    {
@@ -286,13 +291,13 @@ sub do_it
 
     $self->launch();
 
-    #print STDERR "\$ ppop -M ", join(' ', @_), "\n";
+    print STDERR "\$ ppop -M ", join(' ', @_), "\n" if($self->{debug} > 0);
     print $wtr join(' ', @_), "\n";
 
     while(1)
 		{
 		defined($_ = <$rdr>) || croak;
-		#print STDERR $_;
+		print STDERR $_ if($self->{debug} > 0);
 		chomp;
 		if(/^\*DONE\t([0-9]+)/)
 			{
@@ -314,9 +319,9 @@ sub do_it
     return ();
     }
 
-=head2 The su() Method
+=head2 The user() Method
 
-The su() method can be called at any time.  It sets a value for use with
+The user() method can be called at any time.  It sets a value for use with
 the B<ppop --user> switch.  If B<ppop> has already been launched with a different
 value for with no B<--user> switch, it will be relaunched.  If an application
 has multiple PPR::PPOP objects with different usernames set with
@@ -325,23 +330,10 @@ of B<ppop> which will reduce efficiency somewhat.
 
 =cut
 
-sub su
+sub user 
     {
     my $self = shift;
-    defined($self->{su_user} = shift) || croak;
-    }
-
-=head2 The proxy_for() Method
-
-The proxy_for()N method can be called at any time.  It acts just like the
-su() method, except that it sets a value for the B<--proxy-for> switch.
-
-=cut
-
-sub proxy_for
-    {
-    my $self = shift;
-    defined($self->{proxy_for} = shift) || croak;
+    defined($self->{user} = shift) || croak;
     }
 
 =head2 The qquery() Method
@@ -359,7 +351,7 @@ sub qquery
   $self->launch();
 
   # Send a command to ppop.
-  #print STDERR "ppop -M qquery $self->{queue}-* \"", join('" "', @_), "\"\n";
+  print STDERR "ppop -M qquery $self->{queue}-* \"", join('" "', @_), "\"\n" if($self->{debug} > 0);
   print $wtr "qquery $self->{queue}-* ", join(' ', @_), "\n";
 
   my @result = ();
@@ -367,7 +359,7 @@ sub qquery
   while(<$rdr>)
     {
     chomp;
-    #print STDERR "$_\n";
+    print STDERR "$_\n" if($self->{debug} > 0);
     if(/^\*DONE\t([0-9]+)/)
 		{
 		last;
@@ -377,7 +369,7 @@ sub qquery
 		croak "Unexpected line from ppop: $_\n";
     	}
     my @result_fields = split(/\t/, $_, 1000);
-    #print STDERR join(', ', @result_fields), "\n";
+    print STDERR join(', ', @result_fields), "\n" if($self->{debug} > 0);
     $result[$i++] = \@result_fields;
     }
 
@@ -391,29 +383,26 @@ Get the indicated columns for a particular job.
 =cut
 
 sub qquery_1job
-  {
-  my $self = shift;
-  my $jobname = shift;
-  my @result_fields = ();
-
-  defined($jobname) || croak "Missing jobname parameter";
-
-  $self->launch();
-
-  print $wtr "qquery $jobname ", join(' ', @_), "\n";
-
-  while(<$rdr>)
-    {
-    if($_ =~ /^\*DONE\t([0-9]+)/)
 	{
-	last;
-	}
-    chomp;
-    @result_fields = split(/\t/, $_);
-    }
+	my $self = shift;
+	my $jobname = shift;
+	my @result_fields = ();
 
-  return @result_fields;
-  }
+	defined($jobname) || croak "Missing jobname parameter";
+
+	$self->launch();
+
+	print $wtr "qquery $jobname ", join(' ', @_), "\n";
+
+	while(<$rdr>)
+		{
+		last if($_ =~ /^\*DONE\t([0-9]+)/);
+		chomp;
+		@result_fields = split(/\t/, $_);
+		}
+
+	return @result_fields;
+	}
 
 =head2 The cancel() Method
 
@@ -544,10 +533,10 @@ sub get_comment
     my $printer = shift;
     $printer = $self->{queue} unless defined($printer);
 
-    $self->launch();				# start ppop
-    print $wtr "ldest $printer\n";		# send command
-    my @result_rows = read_lists();		# read the response lines
-    my @result_row1 = @{$result_rows[0]};	# take first response
+    $self->launch();							# start ppop
+    print $wtr "ldest $printer\n";				# send command
+    my @result_rows = $self->read_lists();		# read the response lines
+    my @result_row1 = @{$result_rows[0]};		# take first response
 
     return $result_row1[4];			# comment is 4th column
     }
@@ -571,37 +560,36 @@ sub get_pstatus
 
     print $wtr "status $printer\n";
 
-    my @result_rows = read_lists();
-    my $row;
-    foreach $row (@result_rows)
-    	{
-	my $status = $row->[1];
-	my $job = "";
-	my $retry = 0;
-	my $countdown = 0;
+    my @result_rows = $self->read_lists();
+    foreach my $row (@result_rows)
+		{
+		my $status = $row->[1];
+		my $job = "";
+		my $retry = 0;
+		my $countdown = 0;
 
-	# Split out fault engaged into retry number and seconds left.
-	if($status =~ /^((fault)|(engaged)) (\d+) (\d+)$/)
-	    {
-	    ($status, $job, $retry, $countdown) = ($1, "", $4, $5);
-	    }
+		# Split out fault engaged into retry number and seconds left.
+		if($status =~ /^((fault)|(engaged)) (\d+) (\d+)$/)
+			{
+			($status, $job, $retry, $countdown) = ($1, "", $4, $5);
+			}
 
-	# If retrying printing, extract the retry count.
-	elsif($status =~ /^(printing) (\S+) (\d+)$/)
-	    {
-	    ($status, $job, $retry, $countdown) = ($1, $2, $3, 0);
-	    }
+		# If retrying printing, extract the retry count.
+		elsif($status =~ /^(printing) (\S+) (\d+)$/)
+			{
+			($status, $job, $retry, $countdown) = ($1, $2, $3, 0);
+			}
 
-	# Split out various things that halt the job.
-	elsif($status =~ /^((canceling)|(seizing)|(stopping)|(halting)) (\S+) (\d+)$/)
-	    {
-	    ($status, $job, $retry, $countdown) = ($1, $6, $7, 0);
-	    }
+		# Split out various things that halt the job.
+		elsif($status =~ /^((canceling)|(seizing)|(stopping)|(halting)) (\S+) (\d+)$/)
+			{
+			($status, $job, $retry, $countdown) = ($1, $6, $7, 0);
+			}
 
-	# Replace the origional status field with 3 fields
-	# containing its split-out values.
-	splice(@{$row}, 1, 1, $status, $job, $retry, $countdown);
-	}
+		# Replace the origional status field with 3 fields
+		# containing its split-out values.
+		splice(@{$row}, 1, 1, $status, $job, $retry, $countdown);
+		}
 
     return @result_rows;
     }
@@ -620,7 +608,7 @@ sub get_progress
 
     $self->launch();
     print $wtr "progress $job\n";
-    my @result_rows = read_lists();
+    my @result_rows = $self->read_lists();
     return @{shift @result_rows};
     }
 
@@ -670,7 +658,7 @@ sub list_destinations
     $queue = $self->{queue} unless defined($queue);
     $self->launch();
     print $wtr "ldest $queue\n";
-    return read_lists();
+    return $self->read_lists();
     }
 
 =head2 The list_destinations_comments() Method
@@ -689,7 +677,7 @@ sub list_destinations_comments
     $queue = $self->{queue} unless defined($queue);
     $self->launch();
     print $wtr "destination-comment $queue\n";
-    return read_lists();
+    return $self->read_lists();
     }
 
 =head2 The list_destinations_comments_addresses() Method
@@ -707,9 +695,9 @@ sub list_destinations_comments_addresses
     my $queue = shift;
     $queue = $self->{queue} unless defined($queue);
     $self->launch();
-    #print STDERR "ppop -M destination-comment-address $queue\n";
+    print STDERR "ppop -M destination-comment-address $queue\n" if($self->{debug} > 0);
     print $wtr "destination-comment-address $queue\n";
-    return read_lists();
+    return $self->read_lists();
     }
 
 =head2 The list_members() Method
@@ -729,9 +717,9 @@ sub list_members
 
     my $row;
     my @list = ();
-    foreach $row (read_lists())
+    foreach $row ($self->read_lists())
     	{
-	push(@list, $row->[0]);
+		push(@list, $row->[0]);
     	}
     return @list;
     }
@@ -748,7 +736,7 @@ sub media
     my $printer = $self->{queue};
     $self->launch();
     print $wtr "media $printer\n";
-    return read_lists();
+    return $self->read_lists();
     }
 
 =head2
@@ -763,7 +751,7 @@ sub mount
     my $printer = $self->{queue};
     my $bin = shift;
     my $medium = shift;
-    #print "Mount: ", join(' ', $printer, $bin, $medium), "\n";
+    print "Mount: ", join(' ', $printer, $bin, $medium), "\n" if($self->{debug} > 0);
     return $self->do_it("mount", $printer, $bin, $medium);
     }
 

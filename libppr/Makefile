@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 August 2005.
+# Last modified 14 October 2005.
 #
 
 include ../Makefile.conf
@@ -50,6 +50,7 @@ LIBOBJS=\
 	ppr_gcmd.o readppd.o \
 	unsafe.o prune_env.o \
 	acl.o \
+	username_match.o \
 	cs2enc.o enc2font.o font.o \
 	ppr_fnamef.o \
 	interfaces.o \

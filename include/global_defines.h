@@ -398,6 +398,7 @@ void set_ppr_env(void);
 void prune_env(void);
 gu_boolean is_unsafe_ps_name(const char name[]);
 gu_boolean is_pap_PrinterError(const unsigned char *status);
+gu_boolean username_match(const char username[], const char pattern[]);
 gu_boolean user_acl_allows(const char user[], const char acl[]);
 void ppr_fnamef(char target[], const char pattern[], ...);
 gu_boolean interface_default_feedback(const char interface[], const struct PPD_PROTOCOLS *prot);

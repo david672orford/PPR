@@ -111,9 +111,8 @@ my $control = new PPR::PPOP($printer);
 my @action_result = ();
 if(defined($action) && $action ne "Refresh")
 	{
-	# Set the user id for ppop:
-	die if(undef_to_empty($ENV{REMOTE_USER}) eq "");
-	$control->su($ENV{REMOTE_USER});
+	# Set the --user option for ppop:
+	$control->user("$ENV{REMOTE_USER}\@$ENV{REMOTE_ADDR}");
 
 	# Call the correct member function to perform the action.
 	if($action eq 'Start')

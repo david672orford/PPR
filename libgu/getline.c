@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 September 2005.
+** Last modified 14 October 2005.
 */
 
 /*! \file
@@ -49,6 +49,8 @@ is returned.  The caller should initialy set "line_available" to
 a little bigger than the LIKELY line length.  Notice that on EOF
 the line is automatically freed.  If you don't read until EOF you
 must manually free the line.  The file will still be open.
+
+Trailing whichspace is stripped before the line is returned.
 
 Use the function like this:
 

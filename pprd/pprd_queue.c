@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 October 2005.
+** Last modified 14 October 2005.
 */
 
 /*
@@ -234,8 +234,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 		}
 
 		/* start of inner exception handling block */
-		while(1)
-			{
+		do	{
 			if((read_size = read(fd, buf, STATUS_BLOCK_SIZE)) == -1)
 				{
 				error("%s(): read() failed, errno=%d (%s)", function, errno, strerror(errno));
@@ -249,7 +248,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 			buf[STATUS_BLOCK_SIZE] = '\0';
 			if(!(p = strstr(buf, "Status-and-Flags: ")))
 				{
-				error("%s(): can't find place", function);
+				error("%s(): can't find Status-and-Flags line", function);
 				break;
 				}
 			if(lseek(fd, (p - buf), SEEK_SET) == -1)
@@ -272,8 +271,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 				error("%s(): tried to write %d bytes but wrote %d instead", function, (int)to_write_size, (int)written_size);
 				}
 
-			break;		/* end of inner exception handling block */
-			}
+			} while(FALSE);		/* end of inner exception handling block */
 
 		close(fd);
 

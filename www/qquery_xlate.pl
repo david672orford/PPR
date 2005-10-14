@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/qquery_xlate.pl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 April 2004.
+# Last modified 14 October 2005.
 #
 
 require 'cgi_intl.pl';
@@ -54,7 +54,6 @@ require 'cgi_intl.pl';
 'for' =>				[N_('For Whom'),		N_("Whose Job is This?")],
 'username' =>			[N_('Username'),		N_("Unix Username of Job Submitter")],
 'userid' =>				[N_('UID'),				N_("Numberic Unix Userid of Job Submitter")],
-'proxy-for' =>			[N_('Proxy For'),		N_("For Whom is the Submitter Acting as Proxy?")],
 '-' => undef,
 'lpqfilename' =>		[N_('File Name'),		N_("What Was the Name of the Input File?")],
 'title' =>				[N_('Title'),			N_("Descriptive Job Title"), 20],
