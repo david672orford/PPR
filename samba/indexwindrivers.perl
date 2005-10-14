@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 12 October 2005.
 #
 
 #
@@ -81,7 +81,15 @@ $TEMP_PPD_FILE = "$DRVDIR_WINPPD/NEW";
 # List of files for the Adobe 5.x PostScript driver for Windows NT 5.0.
 @FILES_W32X86_3_ADOBE_5 = qw(3/ADOBEPS5.DLL 3/ADOBEPSU.DLL 3/ADOBEPSU.HLP 3/ADOBEPS5.NTF);
 
+$SAMBAPRINT = "$LIBDIR/sambaprint";
+
 $opt_verbose = 1;
+
+if(! -x $SAMBAPRINT)
+	{
+	print STDERR "No Samba TDB support.\n";
+	exit 1;
+	}
 
 #
 # Create the output directory if it doesn't already exist.
@@ -174,7 +182,7 @@ if($opt_verbose)
 open(INDEX, $PPD_INDEX) || die "Can't open index file \"$PPD_INDEX\", $!\n";
 
 # Open sambaprint to accept the driver definitions for Samba.
-open(DRIVERS, "| $LIBDIR/sambaprint drivers import") || die $!;
+open(DRIVERS, "| $SAMBAPRINT drivers import") || die $!;
 
 # For each PPD file, convert it to MS-DOS line termination and store it in the
 # WINPPD subdirectory of the driver distribution share under its MS-DOS file

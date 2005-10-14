@@ -3,6 +3,6 @@
 $PPAD_PATH delete regression-test1
 echo "ppad: $?"
 
-rm $REGTEST_INTERFACE_OUTPUT
+rm -f $REGTEST_INTERFACE_OUTPUT
 
 exit 0
