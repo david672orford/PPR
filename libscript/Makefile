@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/libscript/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 14 October 2005.
 #
 
 include ../Makefile.conf
@@ -39,7 +39,7 @@ BUILT_BINS=alert$(DOTEXE) ppr_conf_query$(DOTEXE) time_elapsed$(DOTEXE) \
 BUILT_LIBS=respond.sh respond.ph \
 	signal.sh \
 	commentary.sh commentary.ph \
-	interface.sh
+	interface.sh interface.tcl
 
 UNBUILT_LIBS=libppr_int.sh \
 	responder_argv.pl \
@@ -111,6 +111,12 @@ interface.sh: ../include/interface.h
 	echo "# Bourne shell translation of interface.h" >interface.sh
 	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([ 	]*\)\(.*\)$$/\1=\2\3#\4/p' \
 		<../include/interface.h >>interface.sh
+
+# Tcl version of interface.h.
+interface.tcl: ../include/interface.h
+	echo "# Tcl translation of interface.h" >interface.sh
+	sed -n -e 's/^#define \([^ ]*\) \([0-9][0-9]*\)\([  ]*\)\(.*\)$$/set \1 \2/p' \
+		<../include/interface.h >>interface.tcl
 
 #=== Install ================================================================
 
