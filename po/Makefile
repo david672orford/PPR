@@ -43,6 +43,8 @@ DIVISIONS=PPR PPRD PPRWWW PAPD
 # in .depend.
 all: $(INTERNATIONAL_ALL)
 
+all-international:
+
 PPR.pot: pot
 
 # Extract the lists of translatable strings.

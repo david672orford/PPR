@@ -1,48 +1,48 @@
 fr_FR-PPR.po: PPR.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: fr_FR-PPR.po
+all-international: fr_FR-PPR.po
 
 fr_FR-PPRD.po: PPRD.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: fr_FR-PPRD.po
+all-international: fr_FR-PPRD.po
 
 fr_FR-PPRWWW.po: PPRWWW.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: fr_FR-PPRWWW.po
+all-international: fr_FR-PPRWWW.po
 
 fr_FR-PAPD.po: PAPD.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: fr_FR-PAPD.po
+all-international: fr_FR-PAPD.po
 
 ru_RU-PPR.po: PPR.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: ru_RU-PPR.po
+all-international: ru_RU-PPR.po
 
 ru_RU-PPRD.po: PPRD.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: ru_RU-PPRD.po
+all-international: ru_RU-PPRD.po
 
 ru_RU-PPRWWW.po: PPRWWW.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: ru_RU-PPRWWW.po
+all-international: ru_RU-PPRWWW.po
 
 ru_RU-PAPD.po: PAPD.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: ru_RU-PAPD.po
+all-international: ru_RU-PAPD.po
 
 de_DE-PPR.po: PPR.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: de_DE-PPR.po
+all-international: de_DE-PPR.po
 
 de_DE-PPRD.po: PPRD.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: de_DE-PPRD.po
+all-international: de_DE-PPRD.po
 
 de_DE-PPRWWW.po: PPRWWW.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: de_DE-PPRWWW.po
+all-international: de_DE-PPRWWW.po
 
 de_DE-PAPD.po: PAPD.pot
 	msgmerge --update --no-wrap --sort-by-file --backup=numbered $@ $^ && touch $@
-all: de_DE-PAPD.po
+all-international: de_DE-PAPD.po
 

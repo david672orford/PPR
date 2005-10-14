@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-13 16:43-0400\n"
+"POT-Creation-Date: 2005-10-14 19:50-0400\n"
 "PO-Revision-Date: 2005-10-14 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -25,7 +25,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
-#: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
+#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
 #: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
@@ -157,7 +157,7 @@ msgstr "Из-за этых проблем, очередь не созданна.
 #: ../www/cliconf.cgi.perl:92 ../www/cliconf.cgi.perl:108
 #: ../www/cliconf.cgi.perl:191 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:867
-#: ../www/prn_control.cgi.perl:386 ../www/prn_media.cgi.perl:214
+#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
@@ -394,7 +394,7 @@ msgstr "Ещё>>"
 msgid "Close without saving changes."
 msgstr "Закрыть без сохранения изменения."
 
-#: ../www/cgi_tabbed.pl:381 ../www/prn_media.cgi.perl:215
+#: ../www/cgi_tabbed.pl:381 ../www/prn_media.cgi.perl:212
 msgid "Save changes."
 msgstr "Сохранить изменения."
 
@@ -724,7 +724,7 @@ msgstr ""
 msgid "Job ID:"
 msgstr "Иденцификатор задачи:"
 
-#: ../www/job_modify.cgi.perl:99
+#: ../www/job_modify.cgi.perl:99 ../www/job_modify.cgi.perl:169
 msgid "Submitted by:"
 msgstr ""
 
@@ -803,30 +803,22 @@ msgstr ""
 msgid "Submitter description:"
 msgstr ""
 
-#: ../www/job_modify.cgi.perl:169
-msgid "Submitted by Unix user:"
-msgstr ""
-
-#: ../www/job_modify.cgi.perl:170
-msgid "As proxy for:"
-msgstr ""
-
-#: ../www/job_modify.cgi.perl:198
+#: ../www/job_modify.cgi.perl:197
 msgid "Log"
 msgstr "Журнал"
 
-#: ../www/job_modify.cgi.perl:201
+#: ../www/job_modify.cgi.perl:200
 msgid ""
 "This page lists potential problems with this job.  If an attempt has already\n"
 "been made to print it and the PostScript code wrote to the stdout or the stderr\n"
 "of the PostScript interpreter, those messages may also appear here."
 msgstr ""
 
-#: ../www/job_modify.cgi.perl:307
+#: ../www/job_modify.cgi.perl:306
 msgid "Save changes to job:"
 msgstr ""
 
-#: ../www/job_modify.cgi.perl:322
+#: ../www/job_modify.cgi.perl:321
 #, perl-format
 msgid "PPR: Modify Job: %s"
 msgstr "PPR: Изменить задачу: %s"
@@ -1315,88 +1307,88 @@ msgstr "Новый принтер сохранается:"
 msgid "Status of Printer \"%s\""
 msgstr "Состояние принтера \"%s\""
 
-#: ../www/prn_control.cgi.perl:143
+#: ../www/prn_control.cgi.perl:142
 #, perl-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
 msgstr "Невозможно [%s] принтер \"%s\" по следующей причиной:"
 
-#: ../www/prn_control.cgi.perl:308 ../www/show_printlog.cgi.perl:173
+#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:173
 msgid "Bytes Sent"
 msgstr "Посланых байтов"
 
-#: ../www/prn_control.cgi.perl:308
+#: ../www/prn_control.cgi.perl:307
 msgid "Bytes Unsent"
 msgstr "Байтов ещё не посланых"
 
-#: ../www/prn_control.cgi.perl:339
+#: ../www/prn_control.cgi.perl:338
 msgid "Pages Completed"
 msgstr "Стнаниц печатаных"
 
-#: ../www/prn_control.cgi.perl:340
+#: ../www/prn_control.cgi.perl:339
 msgid "Pages Started"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:341
+#: ../www/prn_control.cgi.perl:340
 msgid "Pages Unstarted"
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:371
+#: ../www/prn_control.cgi.perl:370
 msgid "Start the printer."
 msgstr "Пускать принтер."
 
-#: ../www/prn_control.cgi.perl:371
+#: ../www/prn_control.cgi.perl:370
 msgid "_Start"
 msgstr "Пускать"
 
-#: ../www/prn_control.cgi.perl:373
+#: ../www/prn_control.cgi.perl:372
 msgid "Sto_p"
 msgstr "Остановить"
 
-#: ../www/prn_control.cgi.perl:373
+#: ../www/prn_control.cgi.perl:372
 msgid "Stop the printer after current job."
 msgstr "Остановить принтер после конца текущей задачи."
 
-#: ../www/prn_control.cgi.perl:375
+#: ../www/prn_control.cgi.perl:374
 msgid "Stop the printer imediately."
 msgstr "Остановить принтер немедленно."
 
-#: ../www/prn_control.cgi.perl:375
+#: ../www/prn_control.cgi.perl:374
 msgid "_Halt"
 msgstr "Обрывать"
 
-#: ../www/prn_control.cgi.perl:377
+#: ../www/prn_control.cgi.perl:376
 msgid "Media"
 msgstr "Носители"
 
-#: ../www/prn_control.cgi.perl:378
+#: ../www/prn_control.cgi.perl:377
 msgid "Change the media mounted on the printer's input trays."
 msgstr "Заменить носитель поставлен на подающем потоке принтера."
 
-#: ../www/prn_control.cgi.perl:380
+#: ../www/prn_control.cgi.perl:379
 msgid "_Refresh"
 msgstr "Обновить"
 
-#: ../www/prn_control.cgi.perl:466
+#: ../www/prn_control.cgi.perl:465
 msgid "fault"
 msgstr "порок есть"
 
-#: ../www/prn_control.cgi.perl:468
+#: ../www/prn_control.cgi.perl:467
 msgid "fault, no auto retry"
 msgstr "порок есть, снова не попробуют"
 
-#: ../www/prn_control.cgi.perl:474
+#: ../www/prn_control.cgi.perl:473
 msgid "offline"
 msgstr "разъединенный"
 
-#: ../www/prn_control.cgi.perl:476
+#: ../www/prn_control.cgi.perl:475
 msgid "otherwise engaged or offline"
 msgstr "или занятый или разъединенный"
 
-#: ../www/prn_control.cgi.perl:481
+#: ../www/prn_control.cgi.perl:480
 msgid "idle"
 msgstr "незанятый"
 
-#: ../www/prn_control.cgi.perl:486
+#: ../www/prn_control.cgi.perl:485
 msgid "stopt"
 msgstr "остановлен"
 
@@ -1405,7 +1397,7 @@ msgstr "остановлен"
 msgid "Media Mounted on Printer \"%s\""
 msgstr "Носитель находащийся на притера \"%s\""
 
-#: ../www/prn_media.cgi.perl:215
+#: ../www/prn_media.cgi.perl:212
 msgid "_Apply"
 msgstr "Принимать"
 
@@ -1851,248 +1843,240 @@ msgstr ""
 msgid "UID"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:57
-msgid "For Whom is the Submitter Acting as Proxy?"
-msgstr ""
-
-#: ../www/qquery_xlate.pl:57 ../www/show_printlog.cgi.perl:171
-msgid "Proxy For"
-msgstr "Доверенный кого"
-
-#: ../www/qquery_xlate.pl:59
+#: ../www/qquery_xlate.pl:58
 #, fuzzy
 msgid "File Name"
 msgstr "Название принтера:"
 
-#: ../www/qquery_xlate.pl:59
+#: ../www/qquery_xlate.pl:58
 msgid "What Was the Name of the Input File?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:60
+#: ../www/qquery_xlate.pl:59
 msgid "Descriptive Job Title"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:60
+#: ../www/qquery_xlate.pl:59
 #, fuzzy
 msgid "Title"
 msgstr "Время"
 
-#: ../www/qquery_xlate.pl:61
+#: ../www/qquery_xlate.pl:60
 msgid "Creator"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:61
+#: ../www/qquery_xlate.pl:60
 msgid "Person or Application that Created the Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:62
+#: ../www/qquery_xlate.pl:61
 msgid "Instructions to a Human Operator for Delivery of the Output"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:62
+#: ../www/qquery_xlate.pl:61
 msgid "Routing Instructions"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:64
+#: ../www/qquery_xlate.pl:63
 msgid "Number of PostScript Page Descriptions"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:64 ../www/qquery_xlate.pl:65
+#: ../www/qquery_xlate.pl:63 ../www/qquery_xlate.pl:64
 #: ../www/show_printlog.cgi.perl:172
 msgid "Pages"
 msgstr "Сколько Страниц"
 
-#: ../www/qquery_xlate.pl:65
+#: ../www/qquery_xlate.pl:64
 msgid "Pages x Copies"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:66
+#: ../www/qquery_xlate.pl:65
 msgid "Copies"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:66
+#: ../www/qquery_xlate.pl:65
 msgid "Number of Copies to be Printed"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:67
+#: ../www/qquery_xlate.pl:66
 msgid "Collate?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:67
+#: ../www/qquery_xlate.pl:66
 msgid "Will the Copies be Collated?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:68
+#: ../www/qquery_xlate.pl:67
 #, fuzzy
 msgid "Page Factor"
 msgstr "Страничные часы:"
 
-#: ../www/qquery_xlate.pl:68
+#: ../www/qquery_xlate.pl:67
 msgid "PostScript Page Descriptions Per Sheet"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:69
+#: ../www/qquery_xlate.pl:68
 msgid "N-Up"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:69
+#: ../www/qquery_xlate.pl:68
 msgid "Number of Logical Pages Per Physical Page"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:70
+#: ../www/qquery_xlate.pl:69
 msgid "Borders?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:70
+#: ../www/qquery_xlate.pl:69
 msgid "Print Borders Around Logical Pages in N-Up Mode?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:71
+#: ../www/qquery_xlate.pl:70
 msgid "How Many Sheets Per Signiture?  (For Booklet Printing.)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:71
+#: ../www/qquery_xlate.pl:70
 msgid "Sig. Sheets"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:72
+#: ../www/qquery_xlate.pl:71
 msgid "Sig. Part"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:72
+#: ../www/qquery_xlate.pl:71
 msgid "The Fronts, the Backs, or Both"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:73
+#: ../www/qquery_xlate.pl:72
 msgid "Total Page Descriptions for All Copies"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:73
+#: ../www/qquery_xlate.pl:72
 #, fuzzy
 msgid "Total Pages"
 msgstr "Печатать пробную страницу"
 
-#: ../www/qquery_xlate.pl:74
+#: ../www/qquery_xlate.pl:73
 msgid "Total Medium Sides to be Marked (after N-Up)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:74 ../www/show_printlog.cgi.perl:172
+#: ../www/qquery_xlate.pl:73 ../www/show_printlog.cgi.perl:172
 msgid "Total Sides"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:75
+#: ../www/qquery_xlate.pl:74
 msgid "Total Medium Sheets to be Used"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:75 ../www/show_printlog.cgi.perl:172
+#: ../www/qquery_xlate.pl:74 ../www/show_printlog.cgi.perl:172
 msgid "Total Sheets"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:77
+#: ../www/qquery_xlate.pl:76
 msgid "Current Queue Priority of this Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:77
+#: ../www/qquery_xlate.pl:76
 msgid "Priority"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:78
+#: ../www/qquery_xlate.pl:77
 msgid "Orig. Priority"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:78
+#: ../www/qquery_xlate.pl:77
 msgid "Original Queue Priority of this Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:80
+#: ../www/qquery_xlate.pl:79
 msgid "Banner?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:80
+#: ../www/qquery_xlate.pl:79
 msgid "Was a Banner Page Requested?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:81
+#: ../www/qquery_xlate.pl:80
 msgid "Trailer?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:81
+#: ../www/qquery_xlate.pl:80
 msgid "Was a Trailer Page Requested?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:83
+#: ../www/qquery_xlate.pl:82
 msgid "Size (input bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:83
+#: ../www/qquery_xlate.pl:82
 msgid "Size of Input File Before Conversion to PostScript"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:84
+#: ../www/qquery_xlate.pl:83
 msgid "Size (PS bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:84
+#: ../www/qquery_xlate.pl:83
 msgid "Size of Input File After Conversion to PostScript"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 msgid "Does this Document have a DSC Prolog?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 #, fuzzy
 msgid "Prolog Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:87
+#: ../www/qquery_xlate.pl:86
 #, fuzzy
 msgid "Docsetup Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:87
+#: ../www/qquery_xlate.pl:86
 msgid "Does this Document have a DSC Document Setup Section?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:88
+#: ../www/qquery_xlate.pl:87
 msgid "Does this Document have a DSC Script?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:88
+#: ../www/qquery_xlate.pl:87
 #, fuzzy
 msgid "Script Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "DSC Proofmode Setting"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "Proofmode"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 #, fuzzy
 msgid "Orientation"
 msgstr "Операция:"
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 msgid "Portrait or Landscape"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:92
+#: ../www/qquery_xlate.pl:91
 msgid "Draft Notice"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:92
+#: ../www/qquery_xlate.pl:91
 msgid "Message to Print Diagonally Across Each Page"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:93
+#: ../www/qquery_xlate.pl:92
 msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:93
+#: ../www/qquery_xlate.pl:92
 #, fuzzy
 msgid "Page Order"
 msgstr "Размир Страницы:"
@@ -2166,70 +2150,70 @@ msgstr "Частота Обновлении:"
 msgid "This page will be reloaded at the indicated interval (in seconds)."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:481
+#: ../www/show_jobs.cgi.perl:469
 #, perl-format
 msgid "You must select one or more jobs before pressing [%s]."
 msgstr "Надо выбирать одну задачу или несколько до того как вы нажимаете [%s]."
 
-#: ../www/show_jobs.cgi.perl:489
+#: ../www/show_jobs.cgi.perl:477
 msgid "You must select a destination queue before pressing [Move]."
 msgstr "Надо выбирать очередь куда посылать до того как вы нажимаете [Переместить]."
 
-#: ../www/show_jobs.cgi.perl:515
+#: ../www/show_jobs.cgi.perl:503
 #, perl-format
 msgid "[%s] Failed"
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:599
+#: ../www/show_jobs.cgi.perl:587
 #, perl-format
 msgid "Job \"%s\""
 msgstr "Задача \"%s\""
 
-#: ../www/show_jobs.cgi.perl:675
+#: ../www/show_jobs.cgi.perl:663
 msgid "Cancel selected jobs."
 msgstr "Удалить выбранные задачи."
 
-#: ../www/show_jobs.cgi.perl:675
+#: ../www/show_jobs.cgi.perl:663
 msgid "_Delete"
 msgstr "Удалить"
 
-#: ../www/show_jobs.cgi.perl:676
+#: ../www/show_jobs.cgi.perl:664
 msgid "Move selected jobs to the front of the queue."
 msgstr "Переместить выбранные задачи на начало очереди."
 
-#: ../www/show_jobs.cgi.perl:676
+#: ../www/show_jobs.cgi.perl:664
 msgid "R_ush"
 msgstr "Ускорить"
 
-#: ../www/show_jobs.cgi.perl:677
+#: ../www/show_jobs.cgi.perl:665
 msgid "Place selected jobs in the held state so that they won't print."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:677
+#: ../www/show_jobs.cgi.perl:665
 msgid "_Hold"
 msgstr "Держать"
 
-#: ../www/show_jobs.cgi.perl:678
+#: ../www/show_jobs.cgi.perl:666
 msgid "Release selected jobs which are held."
 msgstr "Освободить выбранные держание задачи."
 
-#: ../www/show_jobs.cgi.perl:678
+#: ../www/show_jobs.cgi.perl:666
 msgid "_Release"
 msgstr "Освободить"
 
-#: ../www/show_jobs.cgi.perl:679
+#: ../www/show_jobs.cgi.perl:667
 msgid "Open windows in which to modify selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:679
+#: ../www/show_jobs.cgi.perl:667
 msgid "_Modify"
 msgstr "Изменить"
 
-#: ../www/show_jobs.cgi.perl:680
+#: ../www/show_jobs.cgi.perl:668
 msgid "Display log files of selected jobs."
 msgstr ""
 
-#: ../www/show_jobs.cgi.perl:680
+#: ../www/show_jobs.cgi.perl:668
 msgid "_Log"
 msgstr "Журнал"
 
@@ -2271,6 +2255,10 @@ msgstr "Для"
 #: ../www/show_printlog.cgi.perl:171
 msgid "Printer"
 msgstr "Принтер"
+
+#: ../www/show_printlog.cgi.perl:171
+msgid "Proxy For"
+msgstr "Доверенный кого"
 
 #: ../www/show_printlog.cgi.perl:171
 msgid "Unix User"
@@ -2374,56 +2362,56 @@ msgstr "Сделать новый псевдоним"
 msgid "Click here and you will be guided through the process of adding a new alias."
 msgstr "Нажимайте здесь чтобы мастер помог вам составлять новой псевдоним."
 
-#: ../www/show_queues.cgi.perl:464
+#: ../www/show_queues.cgi.perl:465
 msgid "-- No Description --"
 msgstr "-- Описания нет --"
 
-#: ../www/show_queues.cgi.perl:540 ../www/show_queues.cgi.perl:580
+#: ../www/show_queues.cgi.perl:541 ../www/show_queues.cgi.perl:581
 msgid "View Queue"
 msgstr "Посмотреть на очередь"
 
-#: ../www/show_queues.cgi.perl:545
+#: ../www/show_queues.cgi.perl:546
 msgid "Printer Control"
 msgstr "Управлять принтером"
 
-#: ../www/show_queues.cgi.perl:550
+#: ../www/show_queues.cgi.perl:551
 msgid "Printer Properties"
 msgstr "Свойства принтера"
 
-#: ../www/show_queues.cgi.perl:555
+#: ../www/show_queues.cgi.perl:556
 msgid "Test Page"
 msgstr "Печатать пробную страницу"
 
-#: ../www/show_queues.cgi.perl:560 ../www/show_queues.cgi.perl:595
-#: ../www/show_queues.cgi.perl:620
+#: ../www/show_queues.cgi.perl:561 ../www/show_queues.cgi.perl:596
+#: ../www/show_queues.cgi.perl:621
 msgid "Client Configuration"
 msgstr "Настраивать использующий компьютер"
 
-#: ../www/show_queues.cgi.perl:565 ../www/show_queues.cgi.perl:600
+#: ../www/show_queues.cgi.perl:566 ../www/show_queues.cgi.perl:601
 msgid "Printlog"
 msgstr "Журнал задач"
 
-#: ../www/show_queues.cgi.perl:570
+#: ../www/show_queues.cgi.perl:571
 msgid "Delete Printer"
 msgstr "Удалить принтер"
 
-#: ../www/show_queues.cgi.perl:585
+#: ../www/show_queues.cgi.perl:586
 msgid "Member Printer Control"
 msgstr "Управлять члены принтеры"
 
-#: ../www/show_queues.cgi.perl:590
+#: ../www/show_queues.cgi.perl:591
 msgid "Group Properties"
 msgstr "Свойства группы"
 
-#: ../www/show_queues.cgi.perl:605
+#: ../www/show_queues.cgi.perl:606
 msgid "Delete Group"
 msgstr "Удалить группу"
 
-#: ../www/show_queues.cgi.perl:615
+#: ../www/show_queues.cgi.perl:616
 msgid "Alias Properties"
 msgstr "Свойства псевдонима"
 
-#: ../www/show_queues.cgi.perl:625
+#: ../www/show_queues.cgi.perl:626
 msgid "Delete Alias"
 msgstr "Удалить псевдоним"
 

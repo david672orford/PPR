@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-29 17:14-0400\n"
+"POT-Creation-Date: 2005-10-14 19:50-0400\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -15,50 +15,50 @@ msgstr ""
 "Content-Transfer-Encoding: none\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../pprd/pprd_ipp.c:88
+#: ../pprd/pprd_ipp.c:89
 #, c-format
 msgid "printing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:100
+#: ../pprd/pprd_ipp.c:101
 #, c-format
 msgid "canceling %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:112
+#: ../pprd/pprd_ipp.c:113
 #, c-format
 msgid "seizing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:124
+#: ../pprd/pprd_ipp.c:125
 #, c-format
 msgid "stopping (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:136
+#: ../pprd/pprd_ipp.c:137
 #, c-format
 msgid "halting (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:148
+#: ../pprd/pprd_ipp.c:149
 msgid "stopt"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:162
+#: ../pprd/pprd_ipp.c:163
 #, c-format
 msgid "fault, retry %d in %d seconds"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:167
+#: ../pprd/pprd_ipp.c:168
 msgid "fault, no auto retry"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:180
+#: ../pprd/pprd_ipp.c:181
 #, c-format
 msgid "otherwise engaged or off-line, retry %d in %d seconds"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:192
+#: ../pprd/pprd_ipp.c:193
 msgid "waiting for resource ration"
 msgstr ""
 
