@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-12 17:06-0400\n"
+"POT-Creation-Date: 2005-10-13 16:43-0400\n"
 "PO-Revision-Date: 2004-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -44,7 +44,7 @@ msgid ""
 "This program will guide you through the process of\n"
 "creating an alias for a printer or a group of printers."
 msgstr ""
-"Это программа помогает создать alias для принтера\n"
+"Это программа помогает вам создать псевдоним для принтера\n"
 "или для группы принтеров."
 
 #: ../www/alias_addwiz.cgi.perl:62
@@ -65,7 +65,7 @@ msgstr "Название псевдонима:"
 
 #: ../www/alias_addwiz.cgi.perl:73
 msgid "You must enter a name for the alias!"
-msgstr "Вам нужно ввести название для псевдонима!"
+msgstr "Вам нада ввести название для псевдонима!"
 
 #: ../www/alias_addwiz.cgi.perl:75
 #, perl-format
@@ -146,12 +146,12 @@ msgstr "Сохраняем новый псевдоним:"
 
 #: ../www/alias_addwiz.cgi.perl:172 ../www/prn_addwiz.cgi.perl:856
 msgid "The print queue has been created."
-msgstr "Очеред для принтера сделена."
+msgstr "Очередь для принтера созданна."
 
 #: ../www/alias_addwiz.cgi.perl:176 ../www/grp_addwiz.cgi.perl:174
 #: ../www/prn_addwiz.cgi.perl:860
 msgid "Due to the problem indicated above, the queue was not created."
-msgstr ""
+msgstr "Из-за этых проблем, очередь не созданна."
 
 #: ../www/alias_addwiz.cgi.perl:183 ../www/cgi_tabbed.pl:371
 #: ../www/cliconf.cgi.perl:92 ../www/cliconf.cgi.perl:108
@@ -175,7 +175,7 @@ msgstr "Описиваное:"
 
 #: ../www/alias_properties.cgi.perl:64
 msgid "For What"
-msgstr "Для Чего"
+msgstr "Для чего"
 
 #: ../www/alias_properties.cgi.perl:83
 #, perl-format
@@ -269,11 +269,11 @@ msgstr "Вход печеньем"
 
 #: ../www/cgi_menu.pl:39 ../www/show_queues.cgi.perl:217
 msgid "Use this if your browser doesn't support Digest authentication."
-msgstr ""
+msgstr "Ваш веб-браузер не подержует метод опознавание пользователя \"digest\"."
 
 #: ../www/cgi_menu.pl:40
 msgid "Spooler Logs"
-msgstr "Журнал диспетчера"
+msgstr "Журналы диспетчера"
 
 #: ../www/cgi_menu.pl:41
 msgid "Open a window with links to the spooler log files."
@@ -285,7 +285,7 @@ msgstr "Свободное пространство на дисках"
 
 #: ../www/cgi_menu.pl:43
 msgid "Display information about free disk space on the print server."
-msgstr ""
+msgstr "Показать свободние пространство на дисках сервера печати."
 
 #: ../www/cgi_menu.pl:44
 msgid "Tests"
@@ -293,7 +293,7 @@ msgstr "Повирки"
 
 #: ../www/cgi_menu.pl:45
 msgid "Open a window with links to test scripts."
-msgstr ""
+msgstr "Открыть окно с ссылками на проверающие ценары."
 
 #: ../www/cgi_menu.pl:52
 msgid "Window"
@@ -356,7 +356,7 @@ msgstr "Для этого окна"
 
 #: ../www/cgi_menu.pl:83
 msgid "Display the help document for this program in a web browser window"
-msgstr ""
+msgstr "Показать инструкции для исползования этой программы в окне веб-браусера."
 
 #: ../www/cgi_menu.pl:84
 msgid "All PPR Documents"
@@ -364,11 +364,11 @@ msgstr "Все документов о PPR"
 
 #: ../www/cgi_menu.pl:85
 msgid "Open the PPR documentation index in a web browser window"
-msgstr ""
+msgstr "Открыть таблицу содержания документации PPR в окне веб-браусера."
 
 #: ../www/cgi_menu.pl:87
 msgid "Display PPR version information"
-msgstr ""
+msgstr "Паказать версию PPR"
 
 #: ../www/cgi_tabbed.pl:88
 msgid "The load function for this dialog failed with the following error message:"
@@ -380,11 +380,11 @@ msgstr "<<Ещё"
 
 #: ../www/cgi_tabbed.pl:263
 msgid "Bring tabs on the left into view."
-msgstr ""
+msgstr "Показать скрытие ярлыки с левой стороны."
 
 #: ../www/cgi_tabbed.pl:289
 msgid "Bring tabs on the right into view."
-msgstr ""
+msgstr "Показать скрытие ярлыки с правой стороны."
 
 #: ../www/cgi_tabbed.pl:289
 msgid "More>>"
@@ -404,7 +404,7 @@ msgstr "Сохранить"
 
 #: ../www/cliconf.cgi.perl:45
 msgid "Downloadable Client Configuation Files"
-msgstr ""
+msgstr "Загружаемие файлы для настройки клиента"
 
 #: ../www/cliconf.cgi.perl:56
 msgid ""
@@ -412,6 +412,10 @@ msgid ""
 "These include shell scripts for configuring client computers to send print\n"
 "jobs to PPR, PPD files, and icons for opening the PPR web interface."
 msgstr ""
+"Исползуя эту программу вы можете закачивать разние файлы полезние\n"
+"в исползавании PPR.  В том чесле сценария для насроки клиентов-компютеров\n"
+"чтобы они послали задания на печати PPR, фаллы PPD, и значки открывающие\n"
+"веб-интерфайс PPR."
 
 #: ../www/cliconf.cgi.perl:60
 #, perl-format
@@ -420,15 +424,15 @@ msgstr "Что вы хотите загрузить относительно о�
 
 #: ../www/cliconf.cgi.perl:62
 msgid "Spooler Configuration Script"
-msgstr ""
+msgstr "Cценарий для настройик спулера"
 
 #: ../www/cliconf.cgi.perl:63
 msgid "KDE Shortcut to Web Interface"
-msgstr ""
+msgstr "Значок KDE открывающий веб-интерфейс"
 
 #: ../www/cliconf.cgi.perl:64
 msgid "KDE Shortcut to Perl/Tk Interface"
-msgstr ""
+msgstr "Значок KDE открывающий Perl/Tk интерфейс"
 
 #: ../www/cliconf.cgi.perl:72
 msgid "You must make a choice."
@@ -444,6 +448,9 @@ msgid ""
 "to the PPR Web Interface.\n"
 "You will probably want to save it in your Desktop folder."
 msgstr ""
+"Нажмите на кнобку внизу чтобы закачать значок для KDE\n"
+"которой открывает веб-интерфайс PPR.  Стоит сахранять\n"
+"в папке рабочного стола.\n"
 
 #: ../www/cliconf.cgi.perl:90 ../www/cliconf.cgi.perl:106
 #: ../www/cliconf.cgi.perl:185
@@ -456,6 +463,9 @@ msgid ""
 "to the PPR Perl/Tk interface.\n"
 "You will probably want to save it in your Desktop folder."
 msgstr ""
+"Нажмите на кнобку внизу чтобы закачать значок для KDE\n"
+"которой открывает Perl/Tk интерфайс.  Стоит сахранять\n"
+"в папке рабочного стола.\n"
 
 #: ../www/cliconf.cgi.perl:116
 msgid "Create Client Script: Choose a Spooler"
@@ -536,12 +546,12 @@ msgstr "Удалить Принтер \"%s\""
 #: ../www/delete_queue.cgi.perl:71
 #, perl-format
 msgid "Delete Group \"%s\""
-msgstr "Удалить Группу \"%s\""
+msgstr "Удалить группу \"%s\""
 
 #: ../www/delete_queue.cgi.perl:73
 #, perl-format
 msgid "Delete Alias \"%s\""
-msgstr "Удалить Псевдоним \"%s\""
+msgstr "Удалить псевдоним \"%s\""
 
 #: ../www/delete_queue.cgi.perl:99
 #, perl-format
@@ -581,7 +591,7 @@ msgstr "Псевдоним удален."
 #: ../www/df_html.cgi.perl:65
 #, perl-format
 msgid "Disk Space Usage on %s"
-msgstr ""
+msgstr "Занятое пространство диска %s"
 
 #: ../www/df_html.cgi.perl:88
 #, perl-format
@@ -654,15 +664,15 @@ msgstr "Описывать группу "
 
 #: ../www/grp_addwiz.cgi.perl:151
 msgid "Save the Group"
-msgstr ""
+msgstr "Сохранять группу"
 
 #: ../www/grp_addwiz.cgi.perl:156
 msgid "Saving new group:"
-msgstr ""
+msgstr "Сохнанение новой группы:"
 
 #: ../www/grp_addwiz.cgi.perl:170
 msgid "The queue has been created."
-msgstr "Очеред сделен."
+msgstr "Очередь созданна."
 
 #: ../www/grp_control.cgi.perl:67
 #, perl-format
@@ -690,7 +700,7 @@ msgstr "да"
 #: ../www/grp_properties.cgi.perl:314
 #, perl-format
 msgid "PPR: Group Properties: %s"
-msgstr ""
+msgstr "PPR: Свойства группы: %s"
 
 #: ../www/job_log.cgi.perl:56
 #, perl-format
@@ -712,7 +722,7 @@ msgstr ""
 
 #: ../www/job_modify.cgi.perl:98
 msgid "Job ID:"
-msgstr ""
+msgstr "Иденцификатор задачи:"
 
 #: ../www/job_modify.cgi.perl:99
 msgid "Submitted by:"
@@ -724,7 +734,7 @@ msgstr ""
 
 #: ../www/job_modify.cgi.perl:101
 msgid "Job title:"
-msgstr ""
+msgstr "Оглавление задачи:"
 
 #: ../www/job_modify.cgi.perl:102
 msgid "Job creator:"
@@ -739,19 +749,19 @@ msgstr ""
 
 #: ../www/job_modify.cgi.perl:117
 msgid "Your name:"
-msgstr "Ваше Имя"
+msgstr "Ваше Имя:"
 
 #: ../www/job_modify.cgi.perl:118
 msgid "Your department:"
-msgstr "Ваш Отдел"
+msgstr "Ваш Отдел:"
 
 #: ../www/job_modify.cgi.perl:119
 msgid "Your telephone number:"
-msgstr ""
+msgstr "Ваш номер телефона:"
 
 #: ../www/job_modify.cgi.perl:121
 msgid "Account number:"
-msgstr ""
+msgstr "Иденцификатор счёта:"
 
 #: ../www/job_modify.cgi.perl:122
 msgid "Date wanted:"

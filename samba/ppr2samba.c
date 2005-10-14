@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2005.
+** Last modified 13 October 2005.
 */
 
 /*
@@ -113,7 +113,7 @@ static FILE *create_output_file(int vserver)
 		fnp = fname;
 		}
 
-	if((f = fopen(fnp, "w")) == (FILE*)NULL)
+	if(!(f = fopen(fnp, "w")))
 		gu_Throw(_("Can't open \"%s\", errno=%d (%s)\n"), fnp, errno, gu_strerror(errno));
 
 	if(!timestamp_string)

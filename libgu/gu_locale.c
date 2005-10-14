@@ -64,7 +64,7 @@ void gu_locale_init(int argc, char *argv[], const char *domainname, const char *
  */
 static void gu_utf8_locale_copy(char *dst, size_t dst_size, const char *src)
 	{
-	#if 0
+	#ifdef INTERNATIONAL
 	iconv_t state = iconv_open("utf-8", nl_langinfo(CODESET));
 	char *inbuf = (char*)src;		/* iconv() won't modify it */
 	size_t inbytesleft = strlen(src);

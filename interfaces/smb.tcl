@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 15 July 2005.
+# Last modified 14 October 2005.
 #
 
 #########################################################################
@@ -95,7 +95,7 @@ foreach opt $options {
 			set smbpassword $value
 			}
 		default {
-			ppr_alert "$printer" TRUE "Unrecognized interface option: $opt"
+			ppr_alert $printer TRUE "Unrecognized interface option: $opt"
 			exit $EXIT_PRNERR_NORETRY
 			}
 		}
@@ -118,6 +118,7 @@ set f [open "| $SMBCLIENT $escaped_address $smbpassword -U $smbuser -N -c \"prin
 set err_msg ""
 set first "TRUE"
 while {[gets $f line] >= 0} {
+	#exec ./alert $printer TRUE $line
 	switch -glob -- $line {
 		"added interface ip=*" { 
 			# 1st startup message
@@ -145,7 +146,12 @@ while {[gets $f line] >= 0} {
 			}
 		"*Error writing file:*" {
 			regexp {Error writing file: (.+)} $line junk error
-			set err_msg "Smbclient reports error \"$error\" when writing to \"$address\"."
+			set err_msg "Smbclient reports error \"$error\" while writing to \"$address\"."
+			}
+		"Call timed out: server did not respond after *" {
+			# replace "ERRSRV - 22" from above case with something more sensible."
+			regexp {Call timed out: server did not respond after (.+) milliseconds} $line junk sec
+			set err_msg "Server did not resond within $sec ms while writing to \"$address\"."
 			}
 		"NT_STATUS_ACCESS_DENIED opening remote file *" {
 			set err_msg "Access to \"$address\" is denied to user \"$smbuser\"."
