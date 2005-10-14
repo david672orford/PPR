@@ -150,7 +150,7 @@ msgstr "Сохраняем новый псевдоним:"
 
 #: ../www/alias_addwiz.cgi.perl:170 ../www/prn_addwiz.cgi.perl:854
 msgid "The print queue has been created."
-msgstr "Очеред для принтера сделен."
+msgstr "Очередь для принтера сделена."
 
 #: ../www/alias_addwiz.cgi.perl:174 ../www/grp_addwiz.cgi.perl:172
 #: ../www/prn_addwiz.cgi.perl:858
@@ -779,7 +779,7 @@ msgstr ""
 
 #: ../www/grp_addwiz.cgi.perl:168
 msgid "The queue has been created."
-msgstr "Очеред сделен."
+msgstr "Очередь сделена."
 
 #: ../www/grp_control.cgi.perl:66
 #, c-format
