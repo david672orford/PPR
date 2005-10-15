@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-14 19:50-0400\n"
+"POT-Creation-Date: 2005-10-14 19:54-0400\n"
 "PO-Revision-Date: 2005-10-14 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -450,7 +450,7 @@ msgid ""
 msgstr ""
 "Нажмите на кнобку внизу чтобы закачать значок для KDE\n"
 "которой открывает веб-интерфайс PPR.  Стоит сахранять\n"
-"в папке рабочного стола.\n"
+"в папке рабочного стола."
 
 #: ../www/cliconf.cgi.perl:90 ../www/cliconf.cgi.perl:106
 #: ../www/cliconf.cgi.perl:185
@@ -465,7 +465,7 @@ msgid ""
 msgstr ""
 "Нажмите на кнобку внизу чтобы закачать значок для KDE\n"
 "которой открывает Perl/Tk интерфайс.  Стоит сахранять\n"
-"в папке рабочного стола.\n"
+"в папке рабочного стола."
 
 #: ../www/cliconf.cgi.perl:116
 msgid "Create Client Script: Choose a Spooler"

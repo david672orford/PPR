@@ -815,8 +815,8 @@ if [ -n "$CFLAGS" ]
 		echo "  GCC version: $GCC_VERSION_SHORT ($GCC_VERSION)"
 		echo "  Processor: $PROCESSOR"
 	
-		# If this is an Intel platform and the gcc version
-		# is prior to 2.7.2.1 then add -fno-strength-reduce
+		# If this is an Intel platform and the GCC version is prior to 2.7.2.1, then add i
+		# -fno-strength-reduce in order to avoid generating bad code.
 		case $PROCESSOR in
 		    i[3456789]86 )
 			case $GCC_VERSION_SHORT in
@@ -836,13 +836,13 @@ if [ -n "$CFLAGS" ]
 		case $PROCESSOR in
 		    i386 )			# default anyway?
 				;;
-		    i486 )
-				echo "  Selecting i486 code generation."
-				CFLAGS="$CFLAGS -mcpu=i486 -fomit-frame-pointer"
-				;;
-		    i[56]86 )
+		    i[456]86 )
 				case $GCC_VERSION_SHORT in
-				    2.9* | [3456789].* )
+				    3.[456789]* | [456789].* )
+						echo "  Selecting $PROCESSOR code generation."
+						CFLAGS="$CFLAGS -march=$PROCESSOR -fomit-frame-pointer"
+				        ;;
+				    3.* | 2.9* )
 						echo "  Selecting $PROCESSOR code generation."
 						CFLAGS="$CFLAGS -mcpu=$PROCESSOR -fomit-frame-pointer"
 				        ;;

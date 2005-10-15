@@ -705,6 +705,23 @@ void queueinfo_free(void *p)
 	gu_pool_free(qip->pool);
 	}
 
+/** ensure a heap-allocated value will survive the object
+ */
+void *queueinfo_hoist_value(void *p, const void *value)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	void *free_value = (void *)value;	 /* cast is ok, since caller should free */
+
+	if(free_value)
+		{
+		GU_OBJECT_POOL_PUSH(qip->pool);
+		free_value = gu_pool_return((char*)free_value);
+		GU_OBJECT_POOL_POP(qip->pool);
+		}
+
+	return free_value;
+	} /* end of queueinfo_hoist_value() */
+
 /** create a queueinfo object and load a queue's information into it
 */
 void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
@@ -816,6 +833,33 @@ const char *queueinfo_name(void *p)
 	{
 	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	return qip->name;
+	}
+
+/** Create a CUPS-style URI for a printer's device
+ */
+const char *queueinfo_device_uri(void *p, int printer_index)
+	{
+	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
+	struct PRINTER_INFO *pip;
+
+	if(printer_index >= gu_pca_size(qip->printers))
+		return NULL;
+
+	GU_OBJECT_POOL_PUSH(qip->pool);
+	pip = gu_pca_index(qip->printers, printer_index);
+	if(!pip->device_uri && pip->interface && pip->interface_address)
+		{
+		char *p;
+		gu_asprintf(&p,
+			"%s:%s",
+			pip->interface_address[0] == '/' ? "file" : pip->interface,
+			pip->interface_address
+			);
+		pip->device_uri = p;
+		}
+	GU_OBJECT_POOL_POP(qip->pool);
+
+	return pip->device_uri;
 	}
 
 /** return the description of the queue
@@ -1446,8 +1490,6 @@ const char *queueinfo_computedMetaFontMode(void *p)
 			break;
 			}
 		}
-	if(answer)
-		answer = gu_pool_return(answer);
 
 	GU_OBJECT_POOL_POP(qip->pool);
 
@@ -1503,33 +1545,6 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 	
 	return retval;
 	} /* end of queueinfo_computedDefaultFilterOptions() */
-
-/** Create a CUPS-style URI for a printer's device
- */
-const char *queueinfo_device_uri(void *p, int printer_index)
-	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	struct PRINTER_INFO *pip;
-
-	if(printer_index >= gu_pca_size(qip->printers))
-		return NULL;
-
-	GU_OBJECT_POOL_PUSH(qip->pool);
-	pip = gu_pca_index(qip->printers, printer_index);
-	if(!pip->device_uri && pip->interface && pip->interface_address)
-		{
-		char *p;
-		gu_asprintf(&p,
-			"%s:%s",
-			pip->interface_address[0] == '/' ? "file" : pip->interface,
-			pip->interface_address
-			);
-		pip->device_uri = p;
-		}
-	GU_OBJECT_POOL_POP(qip->pool);
-
-	return pip->device_uri;
-	}
 
 /*
 ** Test program

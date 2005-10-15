@@ -592,13 +592,19 @@ static void cups_get_printers(struct IPP *ipp)
 			if(request_attrs_attr_requested(req, "printer-location"))
 				{
 				if((p = queueinfo_location(qip, 0)))
-					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-location", gu_strdup(p), TRUE);
+					{
+					p = queueinfo_hoist_value(qip, p);
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-location", p, TRUE);
+					}
 				}
 
 			if(request_attrs_attr_requested(req, "printer-info"))
 				{
 				if((p = queueinfo_comment(qip)))
-					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-info", gu_strdup(p), TRUE);
+					{
+					p = queueinfo_hoist_value(qip, p);
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-info", p, TRUE);
+					}
 				}
 
 			if(request_attrs_attr_requested(req, "color-supported"))
@@ -614,19 +620,26 @@ static void cups_get_printers(struct IPP *ipp)
 			if(request_attrs_attr_requested(req, "printer-make-and-model"))
 				{
 				if((p = queueinfo_modelName(qip)))
-					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-make-and-model", gu_strdup(p), TRUE);
+					{
+					p = queueinfo_hoist_value(qip, p);
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-make-and-model", p, TRUE);
+					}
 				}
 
 			if(request_attrs_attr_requested(req, "device-uri"))
 				{
 				if((p = queueinfo_device_uri(qip, 0)))
-					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_strdup(p), TRUE);
+					{
+					p = queueinfo_hoist_value(qip, p);
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", p, TRUE);
+					}
 				}
 
 			queueinfo_free(qip);
 			}
 		gu_Catch
 			{
+			/* nothing to do, just don't issue those items */
 			}
 
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
@@ -642,6 +655,8 @@ static void cups_get_classes(struct IPP *ipp)
 	int i, i2;
 	const char *members[MAX_GROUPSIZE];
 	struct REQUEST_ATTRS *req;
+	const char *p;
+
 	req = request_attrs_new(ipp, 0);
 	lock();
 	for(i=0; i < group_count; i++)
@@ -670,6 +685,26 @@ static void cups_get_classes(struct IPP *ipp)
 				members[i2] = printers[groups[i].printers[i2]].name;
 			ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[i].members, members, FALSE);
 			}
+
+		/* This is a very wasteful way to get the comment. */
+		gu_Try {
+			qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printers[i].name);
+
+			if(request_attrs_attr_requested(req, "printer-info"))
+				{
+				if((p = queueinfo_comment(qip)))
+					{
+					p = queueinfo_hoist_value(qip, p);
+					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-info", p, TRUE);
+					}
+				}
+
+			queueinfo_free(qip);
+			}
+		gu_Catch {
+			/* nothing to do */
+			}
+
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	unlock();

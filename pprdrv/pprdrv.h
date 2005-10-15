@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 March 2005.
+** Last modified 14 October 2005.
 */
 
 /*
@@ -109,12 +109,22 @@
 
 /*==================== No tunables below this line. =====================*/
 
+/* What have PJL messages told us about the online status of the printer? */
 enum PJL_ONLINE
 		{
-		PJL_ONLINE_UNKNOWN,
-		PJL_ONLINE_FALSE,
-		PJL_ONLINE_TRUE
+		PJL_ONLINE_UNKNOWN,		/** told us nothing as yet */
+		PJL_ONLINE_FALSE,		/** told us printer is off-line */
+		PJL_ONLINE_TRUE			/** told us printer is on-line */
 		};
+
+/*
+** The structure which is used to translate between PPR media names and
+** the media names in the "%%Media:" lines.
+*/
+struct	Media_Xlate {
+		char *pprname;
+		char *dscname;
+		} ;
 
 /* pprdrv.c: */
 extern volatile gu_boolean sigterm_caught;
@@ -527,15 +537,6 @@ struct PAPERSIZE
 
 extern struct PAPERSIZE papersize[];
 extern int num_papersizes;
-
-/*
-** The structure which is used to translate between PPR media names and
-** the media names in the "%%Media:" lines.
-*/
-struct	Media_Xlate {
-		char *pprname;
-		char *dscname;
-		} ;
 
 /*
 ** Define the debugging macros based on what was chosen above.

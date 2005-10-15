@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 October 2005.
+# Last modified 14 October 2005.
 #
 
 include ../Makefile.conf
@@ -41,11 +41,17 @@ DIVISIONS=PPR PPRD PPRWWW PAPD
 
 # There are no depencies listed here.  They are all listed
 # in .depend.
-all: $(INTERNATIONAL_ALL)
+
+# Disabled because it cause the translations to change a lot and create lots of merge
+# conflicts when there is no translator around.
+all: #$(INTERNATIONAL_ALL)
 
 all-international:
 
 PPR.pot: pot
+PPRD.pot: pot
+PPRWWW.pot: pot
+PPRPAPD.pot: pot
 
 # Extract the lists of translatable strings.
 pot:
@@ -106,7 +112,7 @@ pot:
 
 install: $(INTERNATIONAL_INSTALL)
 
-install-international: all
+install-international: all-international
 	for lang in $(LANGUAGES); \
 		do \
 		./install_mo.sh $$lang $(LOCALEDIR) || exit 1; \

@@ -38,7 +38,10 @@ void queueinfo_add_hypothetical_printer(void *p, const char name[], const char p
 void queueinfo_set_warnings_file(void *p, FILE *errors);
 void queueinfo_set_debug_level(void *p, int debug_level);
 
+void *queueinfo_hoist_value(void *p, const void *value);
+
 const char *queueinfo_name(void *p);
+const char *queueinfo_device_uri(void *p, int printer_index);
 const char *queueinfo_comment(void *p);
 const char *queueinfo_location(void *p, int printer_index);
 gu_boolean  queueinfo_transparentMode(void *);
@@ -64,6 +67,5 @@ const char *queueinfo_optionValue(void *p, const char name[]);
 const char *queueinfo_computedMetaFontMode(void *p);
 const char *queueinfo_computedDefaultFilterOptions(void *p);
 const char *queueinfo_modelName(void *p);
-const char *queueinfo_device_uri(void *p, int printer_index);
 
 /* end of file */
