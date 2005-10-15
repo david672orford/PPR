@@ -554,7 +554,6 @@ static void ipp_cancel_job(struct IPP *ipp)
 static void cups_get_printers(struct IPP *ipp)
 	{
 	struct REQUEST_ATTRS *req;
-	void *qip;
 	int i;
 	const char *p;
 
@@ -587,7 +586,7 @@ static void cups_get_printers(struct IPP *ipp)
 			}
 
 		gu_Try {
-			qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printers[i].name);
+			void *qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printers[i].name);
 
 			if(request_attrs_attr_requested(req, "printer-location"))
 				{
@@ -688,7 +687,7 @@ static void cups_get_classes(struct IPP *ipp)
 
 		/* This is a very wasteful way to get the comment. */
 		gu_Try {
-			qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printers[i].name);
+			void *qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printers[i].name);
 
 			if(request_attrs_attr_requested(req, "printer-info"))
 				{
