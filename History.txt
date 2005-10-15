@@ -9894,7 +9894,10 @@ no final tarball was released.
 * libscript/tcpserver.pl: added capabilities to bind to a specific IP address,
   change to a specified user id, and write a specified PID file; 
   www/ppr-httpd.perl: changed --stanalone-port to --standalone-bind using 
-  the new tcpserver.pl facilities; z_install_end/init.d.sh: added startup
-  for ppr-httpd in standalone mode as controlled by /etc/default/ppr.
+  the new tcpserver.pl facilities
+
+* z_install_end/init.d.sh: added startup for ppr-httpd in standalone mode as 
+  an IPP and an admin server.  This is enabled and disabled by defining values 
+  in /etc/default/ppr.
 
 
