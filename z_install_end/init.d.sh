@@ -53,6 +53,7 @@ CONFDIR="@CONFDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 BINDIR="@BINDIR@"
 EECHO="@EECHO@"
+USER_PPR="@USER_PPR@"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is
 # considered to be a configuration file and isn't deleted if the package is
@@ -95,6 +96,13 @@ do_start ()
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
 		then
 		$LIBDIR/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
+		fi
+
+	# Define IPP_STANDALONE_PORT in /etc/default/ppr if you want to run 
+	# ppr-httpd as an IPP server in standalone mode.
+	if [ -n "$IPP_STANDALONE_PORT" ]
+		then
+		su $USER_PPRWWW $LIBDIR/ppr-httpd --standalone-port $IPP_STANDALONE_PORT --ipp && $EECHO "lprsrv \c"
 		fi
 
 	echo
