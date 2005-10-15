@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 February 2005.
+# Last modified 14 October 2005.
 #
 
 #
@@ -52,8 +52,8 @@ LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
 VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 BINDIR="@BINDIR@"
+RUNDIR="@RUNDIR@"
 EECHO="@EECHO@"
-USER_PPR="@USER_PPR@"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is
 # considered to be a configuration file and isn't deleted if the package is
@@ -63,10 +63,9 @@ test -x $BINDIR/pprd || exit 5
 
 # Read default file such as is found on Debian systems.
 LPRSRV_STANDALONE_PORT=""
+IPP_STANDALONE_BIND=""
+ADMIN_STANDALONE_BIND=""
 test -f /etc/default/ppr && . /etc/default/ppr
-
-# Where will the .pid files be found?
-RUNDIR="$VAR_SPOOL_PPR/run"
 
 do_start ()
 	{
@@ -91,18 +90,32 @@ do_start ()
 		$BINDIR/papd && $EECHO "papd \c"
 		fi
 
-	# Define LPRSRV_STANDALONE_PORT in /etc/default/ppr if you want to run 
-	# lprsrv in standalone mode.
+	# Set LPRSRV_STANDALONE_PORT to a port number of name in /etc/default/ppr if 
+	# you want to run lprsrv in standalone mode.
 	if [ -n "$LPRSRV_STANDALONE_PORT" ]
 		then
 		$LIBDIR/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
 		fi
 
-	# Define IPP_STANDALONE_PORT in /etc/default/ppr if you want to run 
-	# ppr-httpd as an IPP server in standalone mode.
-	if [ -n "$IPP_STANDALONE_PORT" ]
+	# Set IPP_STANDALONE_BIND to IP:port or simply port in /etc/default/ppr if 
+	# you want to run ppr-httpd as an IPP server in standalone mode.
+	if [ -n "$IPP_STANDALONE_BIND" ]
 		then
-		su $USER_PPRWWW $LIBDIR/ppr-httpd --standalone-port $IPP_STANDALONE_PORT --ipp && $EECHO "lprsrv \c"
+		$LIBDIR/ppr-httpd \
+			--standalone-bind $IPP_STANDALONE_BIND \
+			--pidfile $RUNDIR/ppr-httpd-ipp.pid \
+			--ipp \
+		&& $EECHO "ppr-httpd-ipp \c"
+		fi
+
+	# Set ADMIN_STANDALONE_BIND to IP:port or simply port in /etc/default/ppr if 
+	# you want to run ppr-httpd in standalone mode.
+	if [ -n "$ADMIN_STANDALONE_BIND" ]
+		then
+		$LIBDIR/ppr-httpd \
+			--standalone-bind $ADMIN_STANDALONE_BIND \
+			--pidfile $RUNDIR/ppr-httpd-admin.pid \
+		&& $EECHO "ppr-httpd-admin \c"
 		fi
 
 	echo
@@ -128,6 +141,16 @@ do_stop ()
 		then
 		kill `cat $RUNDIR/lprsrv.pid` && $EECHO "lprsrv \c"
 		rm -f $RUNDIR/lprsrv.pid
+		fi
+	if [ -r $RUNDIR/ppr-httpd-ipp.pid ]
+		then
+		kill `cat $RUNDIR/ppr-httpd-ipp.pid` && $EECHO "ppr-httpd-ipp \c"
+		rm -f $RUNDIR/ppr-httpd-ipp.pid
+		fi
+	if [ -r $RUNDIR/ppr-httpd-admin.pid ]
+		then
+		kill `cat $RUNDIR/ppr-httpd-admin.pid` && $EECHO "ppr-httpd-admin \c"
+		rm -f $RUNDIR/ppr-httpd-admin.pid
 		fi
 	echo
 
@@ -164,6 +187,18 @@ do_status()
 		do_status_1 lprsrv 1
 		else
 		do_status_1 lprsrv 0
+		fi
+	if [ -n "$IPP_STANDALONE_BIND" ]
+		then
+		do_status_1 ppr-httpd-ipp 1
+		else
+		do_status_1 ppr-httpd-ipp 0
+		fi
+	if [ -n "$ADMIN_STANDALONE_BIND" ]
+		then
+		do_status_1 ppr-httpd-admin 1
+		else
+		do_status_1 ppr-httpd-admin 0
 		fi
 	}
 

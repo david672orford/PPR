@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 July 2005.
+** Last modified 14 October 2005.
 */
 
 #include "config.h"
@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
 	{
 	{
 	struct passwd *pw;
-	if((pw = getpwuid(getuid())) == (struct passwd *)NULL)
+	if(!(pw = getpwuid(getuid())))
 		{
 		fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)getuid(), errno, gu_strerror(errno));
 		return EXIT_INTERNAL;

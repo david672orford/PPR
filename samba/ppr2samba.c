@@ -486,8 +486,8 @@ int main(int argc, char *argv[])
 	   	gu_asprintf(&part2, ngettext("of %d queue", "of %d queues", total), total);
 		/* Translators: first %s is "of %d queues". */
 		gu_wrap_printf(ngettext(
-						"%d %s exported to \"%s\".\n",
-						"%d %s exported to \"%s\".\n",
+						"%d %d exported to \"%s\".\n",
+						"%d %d exported to \"%s\".\n",
 						total_exported
 						),
 			total_exported, total, smb_include_conf);

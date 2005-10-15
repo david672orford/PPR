@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 14 October 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -160,7 +160,8 @@ umask(002);
 # If there are command line arguments, pull in Getopt::Long
 # to process them.
 #===========================================================
-my $standalone_port = undef;
+my $standalone_bind = undef;
+my $pidfile = undef;
 my $root_xlate = undef;
 my $port = 15010;
 my $ipp = undef;
@@ -169,13 +170,14 @@ if(scalar @ARGV >= 1)
 	{
 	require Getopt::Long;
 	if(!Getopt::Long::GetOptions(
-			"standalone-port=s" => \$standalone_port,
+			"standalone-bind=s" => \$standalone_bind,
+			"pidfile=s" => \$pidfile,
 			"root-xlate=s" => \$root_xlate,
 			"inetd-port=s" => \$port,
 			"ipp" => \$ipp
 			))
 		{
-		print STDERR "Usage: ppr-httpd [--standalone-port=<port>] [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
+		print STDERR "Usage: ppr-httpd [--standalone-bind=[<ip>:]<port>] [--pidfile=<filename>] [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
 		exit 1;
 		}
 	}
@@ -185,9 +187,21 @@ if(defined $ipp)
 	$root_xlate = "cgi-bin/ipp";
 	$port = 631;
 	}
-if(defined $standalone_port)
+if(defined $standalone_bind && $standalone_bind =~ /:(.+)$/)
 	{
-	$port = $standalone_port;
+	$port = $1;
+	}
+
+#===========================================================
+# If standalone mode is called for, load and call
+# tcpserver().	It will fork child processes which will
+# return from tcpserver() with STDIN and STDOUT connected
+# to the remote machine, but the parent will never return.
+#===========================================================
+if(defined $standalone_bind)
+	{
+	require "tcpserver.pl";
+	tcpserver($standalone_bind, $USER_PPRWWW, $pidfile);
 	}
 
 #===========================================================
@@ -196,18 +210,6 @@ if(defined $standalone_port)
 # it doesn't corrupt the HTTP transaction.
 #===========================================================
 open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
-
-#===========================================================
-# If standalone mode is called for, load and call
-# tcpserver().	It will fork child processes which will
-# return from tcpserver() with STDIN and STDOUT connected
-# to the remote machine, but the parent will never return.
-#===========================================================
-if(defined $standalone_port)
-	{
-	require "tcpserver.pl";
-	tcpserver($standalone_port);
-	}
 
 #===========================================================
 # Start of connection handling code.

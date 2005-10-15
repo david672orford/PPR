@@ -9891,4 +9891,10 @@ no final tarball was released.
   since long language and charset names were pushing it more than 50 bytes in
   where pprd couldn't find it anymore.
 
+* libscript/tcpserver.pl: added capabilities to bind to a specific IP address,
+  change to a specified user id, and write a specified PID file; 
+  www/ppr-httpd.perl: changed --stanalone-port to --standalone-bind using 
+  the new tcpserver.pl facilities; z_install_end/init.d.sh: added startup
+  for ppr-httpd in standalone mode as controlled by /etc/default/ppr.
+
 
