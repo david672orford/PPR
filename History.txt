@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--13 October 2005
+2.00a1, 11 December 2004--15 October 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9900,4 +9900,8 @@ no final tarball was released.
   an IPP and an admin server.  This is enabled and disabled by defining values 
   in /etc/default/ppr.
 
+* www/ppr-web.tcl: added Mozilla Firefox to list of browsers to look for.  It is before
+  the old Mozilla Browser.
+
+* www/cliconf.cgi.perl: updated the KDE icons generated to dotdesktop icons.
 

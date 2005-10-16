@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-14 19:52-0400\n"
+"POT-Creation-Date: 2005-10-15 00:09-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -731,7 +731,7 @@ msgstr "Kann Schlüssel in Abschnitt nicht finden."
 msgid "value is not in the correct format"
 msgstr "der Wert ist nicht im korrekten Format"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1364 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1392 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:490 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -749,7 +749,7 @@ msgstr "Zu wenig Felder in \"%s\", Zeile %d"
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr "Nicht-Bool Variable im dritten Feld von \"%s\", Zeile %d"
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1423
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1451
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr "Fehler beim Lesen von \"%s\", Fehlernummer=%d (%s)"
@@ -861,47 +861,47 @@ msgstr "Warnung: PPD Datei \"%s\" enthält einen nichterlaubten ColorDevice Wert 
 msgid "Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"
 msgstr "Warnung: PPD Datei \"%s\" enthält nichterlaubten %s Wert von \"%s\".\n"
 
-#: ../libppr/queueinfo.c:746
+#: ../libppr/queueinfo.c:747
 #, c-format
 msgid "There is no alias called \"%s\""
 msgstr "Es gibt keinen Alias \"%s\""
 
-#: ../libppr/queueinfo.c:751
+#: ../libppr/queueinfo.c:752
 #, c-format
 msgid "There is no group called \"%s\""
 msgstr "Es gibt keine Gruppe \"%s\""
 
-#: ../libppr/queueinfo.c:756
+#: ../libppr/queueinfo.c:757
 #, c-format
 msgid "There is no printer called \"%s\""
 msgstr "Es gibt keinen Drucker \"%s\""
 
-#: ../libppr/queueinfo.c:780
+#: ../libppr/queueinfo.c:781
 #, c-format
 msgid "no printer called \"%s\""
 msgstr "Drucker \"%s\" existiert nicht"
 
-#: ../libppr/queueinfo.c:1380
+#: ../libppr/queueinfo.c:1408
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: zu wenige Felder\n"
 
-#: ../libppr/queueinfo.c:1389
+#: ../libppr/queueinfo.c:1417
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: Feld %d ist leer\n"
 
-#: ../libppr/queueinfo.c:1412
+#: ../libppr/queueinfo.c:1440
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr "Treffer in \"%s\", Zeile %d; mfmode=\"%s\".\n"
 
-#: ../libppr/queueinfo.c:1449
+#: ../libppr/queueinfo.c:1477
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr "Warnung: kein MetaFont Modus für Drucker \"%s\" gefunden.\n"
 
-#: ../libppr/queueinfo.c:1460
+#: ../libppr/queueinfo.c:1488
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr "Warnung: nicht aller Mitglieder der Gruppe \"%s\" haben den sicheren MetaFont Modus.\n"
@@ -5697,8 +5697,8 @@ msgstr[1] ""
 
 #: ../samba/ppr2samba.c:489
 #, fuzzy, c-format
-msgid "%d %s exported to \"%s\".\n"
-msgid_plural "%d %s exported to \"%s\".\n"
+msgid "%d %d exported to \"%s\".\n"
+msgid_plural "%d %d exported to \"%s\".\n"
 msgstr[0] "%d von %d Warteschlagen nach \"%s\" exportiert.\n"
 msgstr[1] "%d von %d Warteschlagen nach \"%s\" exportiert.\n"
 

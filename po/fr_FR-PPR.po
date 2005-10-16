@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-14 19:52-0400\n"
+"POT-Creation-Date: 2005-10-15 00:09-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -733,7 +733,7 @@ msgstr "ne trouve pas la clé dans la section"
 msgid "value is not in the correct format"
 msgstr "La valeur n'est pas dans le format correct"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1364 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1392 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:490 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -751,7 +751,7 @@ msgstr "Trop peu de champs dans \"%s\", ligne %d"
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr "Valeur non booléenne dans le 3ème champ de \"%s\" ligne %d"
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1423
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1451
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr "Erreur de lecture de \"%s\", errno=%d (%s)"
@@ -864,47 +864,47 @@ msgstr "L'imprimante \"%s\" a un fichier PPD \"%s\" invalide.\n"
 msgid "Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"
 msgstr "L'imprimante \"%s\" a un fichier PPD \"%s\" invalide.\n"
 
-#: ../libppr/queueinfo.c:746
+#: ../libppr/queueinfo.c:747
 #, fuzzy, c-format
 msgid "There is no alias called \"%s\""
 msgstr "Il n'y a pas de fichier de log pour le travail \"%s\".\n"
 
-#: ../libppr/queueinfo.c:751
+#: ../libppr/queueinfo.c:752
 #, fuzzy, c-format
 msgid "There is no group called \"%s\""
 msgstr "Il n'y a pas de fichier de log pour le travail \"%s\".\n"
 
-#: ../libppr/queueinfo.c:756
+#: ../libppr/queueinfo.c:757
 #, fuzzy, c-format
 msgid "There is no printer called \"%s\""
 msgstr "Partage de l'imprimante \"%s\"\n"
 
-#: ../libppr/queueinfo.c:780
+#: ../libppr/queueinfo.c:781
 #, fuzzy, c-format
 msgid "no printer called \"%s\""
 msgstr "Problème d'imprimante : \"%s\""
 
-#: ../libppr/queueinfo.c:1380
+#: ../libppr/queueinfo.c:1408
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr "Avertissement : erreur de syntaxe dans \"%s\", ligne %d : trop peu de champs\n"
 
-#: ../libppr/queueinfo.c:1389
+#: ../libppr/queueinfo.c:1417
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr "Avertissement : erreur de syntaxe dans \"%s\", ligne %d : le champ %d est vide\n"
 
-#: ../libppr/queueinfo.c:1412
+#: ../libppr/queueinfo.c:1440
 #, fuzzy, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr "Concordance à \"%s\", ligne %d, mfmode = %s.\n"
 
-#: ../libppr/queueinfo.c:1449
+#: ../libppr/queueinfo.c:1477
 #, fuzzy, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr "Attention : Aucune valeur fournie pour \"%s\".\n"
 
-#: ../libppr/queueinfo.c:1460
+#: ../libppr/queueinfo.c:1488
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr ""
@@ -5729,8 +5729,8 @@ msgstr[1] ""
 
 #: ../samba/ppr2samba.c:489
 #, fuzzy, c-format
-msgid "%d %s exported to \"%s\".\n"
-msgid_plural "%d %s exported to \"%s\".\n"
+msgid "%d %d exported to \"%s\".\n"
+msgid_plural "%d %d exported to \"%s\".\n"
 msgstr[0] "%d sur %d files exportées vers \"%s\".\n"
 msgstr[1] "%d sur %d files exportées vers \"%s\".\n"
 

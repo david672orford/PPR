@@ -4,7 +4,7 @@
 
 <!--
 Filename: printlog.5.sgml
-Last Modified: 23 September 2005.
+Last Modified: 15 October 2005.
 Last Proofread: never
 -->
 
@@ -56,13 +56,11 @@ member of the group <literal>rotate</literal>.</para></listitem>
 is the name as it appeared in the queue listing and on banner pages.  This is a
 quoted field.</para></listitem>
 
-<listitem><para>The 5th field is the name of the Unix user who invoked <command>ppr</command> to
-submit the job.</para></listitem>
+<listitem><para>The 5th field is the name of the username of the user who submitted the job
+</para></listitem>
 
-<listitem><para>The 6th field is the argument to <command>ppr</command>'s
-<option>-X</option> switch, if it was used.  In this case it wasn't used, so
-the field contains a string of zero length.  This is a quoted
-field.</para></listitem>
+<listitem><para>The 6th field is unused.  It was the "proxy for" field prior to
+PPR 2.00.</para></listitem>
 
 <listitem><para>The 7th field is the number of logical pages in the job.  This
 ought to be the number of <literal>%%Page:</literal> comments in the PostScript

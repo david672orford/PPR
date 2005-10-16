@@ -26,9 +26,13 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 15 October 2005.
 #
 
+#
+# This is the program which allows users in a computer "lab" to claim their
+# jobs and release them for printing.
+#
 
 use lib "@PERL_LIBDIR@";
 use PPR;

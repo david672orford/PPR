@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-web.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 April 2003.
+# Last modified 15 October 2005.
 #
 
 =head1 NAME
@@ -38,18 +38,23 @@ B<ppr-web> [B<-d> I<destname>] [I<filename>] ... ]
 
 =head1 DESCRIPTION
 
-This command attempts to open the PPR web interface in a web browser.  If
-it is running under X-Windows and Mozilla is available, that is what will be
-used since it is the browser which best displays the PPR web interface.  It
-X-Windows is not available, Links will be used in text mode.
+This command attempts to open the PPR web interface in a web browser.  It tries
+to pick the browser which best renders the web interface.  There is one search
+list if B<ppr-web> is run under the X Window System and another search list
+if it is run in text mode.
+
+The prefered browser in X-Windows mode is Mozilla Firefox followed by the browser
+from the Mozilla suite, Konqueror and Dillo.  The prefered browser in text mode is
+Links followed by W3m and Lynx.
 
 =head2 Control Panel
 
-If no arguments are supplied, then the PPR control panel will be opened.
+If no arguments are supplied, then the PPR control panel will be opened in a web 
+browser window.
 
-=head2 Queue Display
+=head2 Queue Display and Control
 
-To skip the PPR control panel and open a queue display window, use B<-d>
+To skip the PPR control panel and open a print queue in a web browser window, use B<-d>
 I<destname>.  For example:
 
 	$ ppr-web -d myprn
@@ -61,14 +66,27 @@ are understood to be the names of files to be printed on the indicated
 printer.  There will be no GUI manifestation of this operation, though a
 print dialog is planned for the future.
 
-=head2 Desktop Icons
+=head2 GUI Icons and Menu Entries
 
-If this command is used as the action command of a KDE icon, you will be
-able to double click on it to open a queue window or drop files onto it to
-print them.  To create such an icon, click on the queue's icon in the
-Control Panel and choose the B<Client Configuration> item.  You will be able
-to choose to create an KDE icon.  You can save the icon on your desktop (or
-anywhere else for that matter).
+If you are running a GUI such as KDE or Gnome which has desktop icons or a
+start menu, this command can be used as the the action command.
+
+If the icon or menu entry is configured to run B<ppr-web> without arguments,
+then when you double click on the icon or select the menu entry the web
+interface's control panel will be opened in a web browser window as described
+in section Control Panel above.
+
+If the icon or menu entry is configured to run B<ppr-web> with the arguments
+B<-d> I<queuename>, then double clicking on the icon or selecting the menu
+entry will open the print queue in a web browser window as described in section
+Queue Display and Control above.  If you drop files it, the files will be submitted for
+printing as described in section Job Submission above.
+
+To create such an icon or menu entry in the dotdesktop format which is used by
+KDE and Gnome, click on the queue's icon in the web interface Control Panel and
+choose the B<Client Configuration> item.  You will be able to choose to create
+an KDE/Gnome icon.  You can save the icon on your desktop (or anywhere else for
+that matter).
 
 =head1 SEE ALSO
 
@@ -76,7 +94,7 @@ anywhere else for that matter).
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2005.
 
 =head1 AUTHOR
 

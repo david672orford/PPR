@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 15 October 2005.
 #
 
 #
@@ -92,8 +92,9 @@ if {$queue != ""} {
 
 # These are the browsers in order of preference.  Again, this is according
 # to how well or poorly they render the PPR web interface.  They are listed
-# separately for X11 and character mode.
-set browsers_x11 [list mozilla konqueror]
+# separately for X11 and character mode.  NOTE:  If you change this list,
+# be sure to update ppr-web(1) to match.
+set browsers_x11 [list firefox mozilla konqueror dillo]
 set browsers_character [list links w3m lynx]
 
 set browsers ""
@@ -128,7 +129,7 @@ if {$selected_browser == ""} {
 
 # Now we launch the selected browser.
 switch -exact $selected_browser {
-    mozilla {
+    mozilla | firefox {
 	
 		# Obsolete bounce-off-cgi-script method
 		#exec $location/mozilla -remote \
@@ -181,15 +182,15 @@ switch -exact $selected_browser {
 		# first we try to contact an already-running copy
 		puts "Contacting Mozilla..."
 		set result [catch {
-			exec $location/mozilla -remote \
+			exec $location/$selected_browser -remote \
 				"openurl(file://$env(HOME)/.ppr/ppr-web-control.html,new-window)" \
 				>@stdout 2>@stderr
 			} error]
 	
 		if {$result != 0} {
 		    #puts "\$result=$result, \$error=$error"
-		    puts "Mozilla isn't running yet, starting it..."
-		    exec $location/mozilla \
+		    puts "$selected_browser isn't running yet, starting it..."
+		    exec $location/$selected_browser \
 			"$env(HOME)/.ppr/ppr-web-control.html" \
 			>@stdout 2>@stderr &
 		    }
@@ -197,6 +198,10 @@ switch -exact $selected_browser {
 		}
     konqueror {
 		exec $location/konqueror "$opener_url?url=$final_url;width=$width;height=$height" \
+			>@stdout 2>@stderr
+		}
+	dillo {
+		exec $location/dillo "$final_url" \
 			>@stdout 2>@stderr
 		}
     links {

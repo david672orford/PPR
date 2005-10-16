@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-panel.1.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 August 2003.
+# Last modified 15 October 2005.
 #
 
 =head1 NAME
@@ -47,38 +47,43 @@ the web interface does not.
 
 =head2 Control Panel
 
-If no arguments are supplied, then the PPR control panel will be opened.
+If no arguments are supplied, then the PPR control panel will be opened.  There will
+an icon for each printer and each group.  By clicking on the icons one can open
+printer and queue control windows.
 
-=head2 Queue Display
+=head2 Queue Display and Control
 
-To skip the PPR control panel and open a queue display window, use B<-d>
+To skip the PPR control panel and open a queue display and control window, use B<-d>
 I<destname>.  For example:
 
 	$ ppr-web -d myprn
 
 =head2 Job Submission
 
-If non-option command line parameters are present, they are understood to be
-the names of files to be printed on the indicated printer.  A print dialog
+If non-option command line parameters are present, they are assumed to be
+the names of files to be submitted to the indicated print queue.  A print dialog
 will be opened.  This dialog will allow the user to select a different
 printer, select printer options, and select options provided by PPR such as
 multiple copies.  If the I<-d> option is used, then the indicated queue will
 be selected (though the user can still use the drop-down list to select a
 different one).
 
-=head2 Desktop Icons
+=head2 GUI Icons and Menu Entries
 
-If you are running a GUI such as KDE which provides desktop icons, this
-command can be used as the the action command for an icon.  
+If you are running a GUI such as KDE or Gnome which has desktop icons or a
+start menu, this command can be used as the the action command.
 
-If the icon is configured to run B<ppr-panel> without arguments, then if you
-double click on the icon the control panel will open and if you drop files
-on the icon a print dialog will open.
+If the icon or menu entry is configured to run B<ppr-panel> without arguments,
+then if you double click on the icon or select the menu entry the
+control panel will open as described in section Control Panel above.  If you
+drop files on the icon a print dialog will open to allow you to select a printer
+as described in section Job Submission above.
 
-If the icon is configured to run B<ppr-panel> with the arguments B<-d>
-I<queuename>, then double clicking on the icon will open the queue display
-window and dropping files on the icon will open a print dialog with the 
-indicated queue already selected.
+If the icon or menu item is configured to run B<ppr-panel> with the arguments
+B<-d> I<queuename>, then double clicking on the icon (or selecting the menu
+entry) will open the queue display and control window as described in section
+Queue Display and Control above.  Dropping files on the icon will open a print
+dialog with the indicated queue already selected.
 
 =head1 SEE ALSO
 
@@ -86,7 +91,7 @@ indicated queue already selected.
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2005.
 
 =head1 AUTHOR
 

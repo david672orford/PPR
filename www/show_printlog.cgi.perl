@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 15 October 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -168,7 +168,7 @@ while(<LOG>)
 		print "<h2>", html($qdate), "</h2>\n";
 		print "<table border=1 cellspacing=0>\n";
 		print "<tr>";
-		foreach my $field (N_("Time"), N_("Job ID"), N_("Printer"), N_("For"), N_("Unix User"), N_("Proxy For"),
+		foreach my $field (N_("Time"), N_("Job ID"), N_("Printer"), N_("For"), N_("Username"), N_("Unused"),
 						N_("Pages"), N_("Total Sheets"), N_("Total Sides"), N_("Queued Time"), N_("Printing Time"),
 						N_("Charge"), N_("PJL Pages"), N_("Start Pages"), N_("Increment"), N_("PS Bytes"), N_("Bytes Sent"),
 						N_("Title or Filename"))

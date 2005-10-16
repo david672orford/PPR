@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 15 October 2005.
 #
 
 #
@@ -43,9 +43,7 @@ $VERSION = 0.2;
 use PPR;
 
 # Where do we find files and programs we need?
-$BITMAPS = "${PPR::PERL_LIBDIR}/lib/PrintDesk";
-$GETZONES = "${PPR::LIBDIR}/lib/getzones";
-$NBP_LOOKUP = "${PPR::LIBDIR}/lib/nbp_lookup";
+$BITMAPS = "${PPR::LIBDIR}/PrintDesk";
 $PPOP_PATH = $PPR::PPOP_PATH;
 $TAIL_STATUS_PATH = $PPR::TAIL_STATUS_PATH;
 

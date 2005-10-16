@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-14 19:54-0400\n"
-"PO-Revision-Date: 2005-10-14 16:30-0500\n"
+"POT-Creation-Date: 2005-10-15 11:51-0400\n"
+"PO-Revision-Date: 2005-10-15 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
 "MIME-Version: 1.0\n"
@@ -289,7 +289,7 @@ msgstr "Показать свободние пространство на дис
 
 #: ../www/cgi_menu.pl:44
 msgid "Tests"
-msgstr "Повирки"
+msgstr "Провирки"
 
 #: ../www/cgi_menu.pl:45
 msgid "Open a window with links to test scripts."

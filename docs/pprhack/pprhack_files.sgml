@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_files.sgml
-Last Modified: 18 April 2005
+Last Modified: 15 October 2005
 Last Proofread: 
 -->
 
@@ -90,8 +90,8 @@ contains the last status message received from the printer.</para>
 <para>This directory contains log files.  Error messages may be written in
 these log files when <application>PPR</application> component fail.  If this
 directory contains the file <filename>printlog</filename>,
-<application>PPR</application> will append a line for each file printed. 
-(See Appendix <xref linkend="printlog"/>.)</para>
+<application>PPR</application> will append a line for each file printed.  (See
+printlog(5).)</para>
 
 </sect3>
 
