@@ -9905,3 +9905,10 @@ no final tarball was released.
 
 * www/cliconf.cgi.perl: updated the KDE icons generated to dotdesktop icons.
 
+* www/scoreboard.cgi.perl: removed.  It is unclear why a script with the names of 
+  print queues at Trinity College was included in the first place.  Presumably the
+  idea was to generalized it.
+
+
+
+
