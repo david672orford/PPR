@@ -1,6 +1,7 @@
 <?xml version='1.0'?>
 <!DOCTYPE Article PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN" 
 	"http://www.oasis-open.org/docbook/xml/4.2/docbookx.dtd" [
+<!ENTITY pprhack-theory SYSTEM "pprhack_theory.sgml">
 <!ENTITY pprhack-conf SYSTEM "pprhack_conf.sgml">
 <!ENTITY pprhack-files SYSTEM "pprhack_files.sgml">
 <!ENTITY pprhack-filters SYSTEM "pprhack_filters.sgml">
@@ -21,9 +22,9 @@
 		<firstname>David</firstname>
 		<surname>Chappell</surname>
 	</author>
-	<pubdate>7 November 2003</pubdate>
+	<pubdate>16 October 2005</pubdate>
 	<copyright>
-		<year>1995--2003</year>
+		<year>1995--2005</year>
 		<holder>Trinity College Computing Center</holder>
 	</copyright>
 </articleinfo>
@@ -37,6 +38,7 @@ to users.</para>
 
 </abstract>
 
+&pprhack-theory;
 &pprhack-conf;
 &pprhack-files;
 &pprhack-interfaces;

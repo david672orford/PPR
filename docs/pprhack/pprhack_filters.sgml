@@ -1,11 +1,50 @@
 <!--
 Filename: pprhack_filters.sgml
-Last Modified: 24 August 2005
+Last Modified: 16 October 2005
 Last Proofread: never
 -->
 
 <sect1 id="filters">
-<title>Input Filters</title>
+<title>Input File Filtering</title>
+
+<para>This section describes who <application>PPR</application> converts non-PostScript 
+files to be printed to PostScript.</para>
+
+<sect2>
+<title>Input Format Detection</title>
+
+<para>One of the most noteworthy features of <application>PPR</application> is
+its ability to determine the type of the input file and automatically convert
+it to PostScript if necessary.  The type of the input file is determined by two
+methods.  The first method is the most reliable.  The second is employed only
+if the first fails.</para>
+
+<para>The first method is to look for a "magic number" at the start of the
+file.  Many file format specifications dictate that files conforming to them
+always begin with certain signature bytes.  Formats which specify a signature
+or magic number include DSC conforming PostScript, JFIF, GIF, PNG, DVI,
+WordPerfect documents, PBM, XPM and others.</para>
+
+<para>If no recognized magic number is found, then the first 8192 bytes of the
+file are scanned and the number of times certain characters and constructs are
+found are counted.  The things counted include ASCII control characters,
+non-ASCII characters, HP escape sequences, Troff-style dot commands, TeX style
+backslash commands, and PostScript procedure definitions.  When these things
+have been counted, the totals are used to try to guess at the file
+format.</para>
+
+<para>If <application>PPR</application> ever fails to determine a file's format
+correctly or you wish to print a file in a format for which auto-detection is
+not available, you can override the auto-detection mechanism with
+<command>ppr</command>'s <option>-T</option> switch.</para>
+
+<para>The result of automatic type detect is a file-type name such as one would use
+with the <option>-T</option> switch.</para>
+
+</sect2>
+
+<sect2>
+<title>Filtering the Input File</title>
 
 <para>If <command>ppr</command> determines that the input file is not
 PostScript, it will seek to use a filter to convert it to PostScript.  This
@@ -13,8 +52,8 @@ appendix provides the information you will need to write your own
 <application>PPR</application> input filters.</para>
 
 <para>The filters are found in the directory <filename
-class="Directory">/usr/lib/ppr/filters/</filename>.  Each of these files has
-a name that consists of <filename>filter_</filename> followed by the
+class="Directory">/usr/lib/ppr/filters/</filename>.  Each of these files has a
+name that consists of <filename>filter_</filename> followed by the
 <application>PPR</application> input type name.  For example, the filter for
 JPEG files is called
 <filename>/usr/lib/ppr/filters/filter_jpeg</filename>.</para>
@@ -31,20 +70,30 @@ The parameters are as follows:
 <orderedlist>
 <listitem>
 
-<para>
-The first parameter is the list of filter options.  These are expressed as a
+<para>The first parameter is the list of filter options.  These are expressed as a
 space seperated list of name-value pairs.  The name and value are joined by an
-equal sign.  The options list is formed by concatrnating the contents of the
-<literal>DefFiltOpts:</literal> line in the printer or group configuration file with the
+equal sign.  The options list is formed by concatenating the contents of the
+<literal>DefFiltOpts:</literal> line in the printer's or group's configuration file with the
 contents of any <option>-o</option> lines the user put on the <command>ppr</command> command line.
 
-Before passing the option list to the filter, <command>ppr</command> pre-processes it.  Any
-options whose names begin with a file type name and a hyphen will have the file
-type name and the hyphen removed if the file type name matches the filter being
-invoked, otherwise, such options are discarded.  The names of the parameters (the
-part to the left of the equals sign) are converted to lower case.  The values (the
-part to the right of the equals sign) are not.
+<para>Before invoking the filter, <command>ppr</command> culls and
+pre-processes the option list.  It removes any option which is intended to
+apply only to a specific filter other than the one being used.  An option may
+be applied to a single filter by prefixing its name with the name of the filter
+and a hyphen.  For example, the option <option>noisy=yes</option> should apply
+to all filters and hence won't be culled but the option
+<option>dvi-noisy=yes</option> will be deleted by <command>ppr</command> except
+when it is invoking the DVI filter.  A filter, such as the
+<literal>tex</literal> filter, may invoke another filter such as the
+<literal>dvi</literal> filter to do part of its work.  The first filter will
+generally pass its options on to the second filter, however, since the filter
+list has already been culled, the DVI filter will receive options whose names
+began with "tex-" but will not receive options whose names begin with
+"dvi-".</para>
 
+<para>The names of the parameters (the
+part to the left of the equals sign) are converted to lower case.  The values (the
+part to the right of the equals sign) are not.</para>
 A responder should ignore any option it does not recognize.  If the same option
 appears more than once, the value from the last instance is the one that should be
 used.
@@ -113,19 +162,15 @@ filter_jpeg 'level=2 colour=False resolution=300 freevm=1048576 mfmode=CanonCX \
 
 </para>
 
-<para>
-A filter should interpret any options it recognizes and ignore any it does
+<para>A filter should interpret any options it recognizes and ignore any it does
 not.  If it finds two contradictory options, it should obey the last one.  In
 the example above, the option <option>noisy=yes</option> is the one that prevails.  The
 options <option>freevm=1048576</option> and <option>mfmodes=CanonCX</option> would be ignored simply
-because the JPEG filter has no code to use them.
-</para>
+because the JPEG filter has no code to use them.</para>
 
-<para>
-If the filter exits with a value other than 0, the job will not be discarded.
+<para>If the filter exits with a value other than 0, the job will not be discarded.
 A message may be informed by printing on stderr or invoking a responder, the
-exect behaviour being controled by the <option>-e</option> switch.
-</para>
+exect behaviour being controled by the <option>-e</option> switch.</para>
 
 <para>When a filter is executed, the real user id is that of the user who
 executed <command>ppr</command>.  The effective user id and the saved user id's
@@ -137,8 +182,27 @@ are <literal>ppr</literal>.  The real group id is the same as it was when
 what arguments by running <command>ppr</command> with the <option>-G
 infile:filter</option> option.  </para>
 
+</sect2>
+
+<sect2>
+<title>Supplied Filters</title>
+
+<para>A number of filters are supplied with <application>PPR</application>.
+<application>PPR</application> also includes a number of shell and Perl scripts
+which work together with programs such as TeX, Troff, PBMPlus, and other
+programs often found on Unix systems to form filters.  If the supporting
+programs can not be found, the script filters will not be installed.</para>
+
 <para>The filters supplied with PPR, together with their options are
 described in <ulink url="../refman/ppr.1.html">the ppr(1) man page</ulink>,
 under the section for the <option>-T</option> switch.</para>
+
+<para>It should be noted that <application>PPR</application> does not supply
+a filter for every file type which it can detect or for every value
+of the <option>-T</option> switch.  If <application>PPR</application> does not
+have an appropriate filter, you may be able to supply one and place it
+in the filters directory.</para>
+
+</sect2>
 
 </sect1>

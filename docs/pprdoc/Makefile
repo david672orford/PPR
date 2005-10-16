@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/pprdoc/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 October 2003.
+# Last modified 16 October 2005.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -38,15 +38,13 @@ include ../rules.mk
 
 BUILT=\
 	pprdoc.html \
-	pprdoc.pdf \
-	pprdoc-enter.png pprdoc-printing1.png pprdoc-printing2.png \
-	pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps \
+	pprdoc.pdf 
 	
 #=== Build ==================================================================
 
 all-docs: $(BUILT)
 
-pprdoc.ps: pprdoc-enter.eps pprdoc-printing1.eps pprdoc-printing2.eps
+pprdoc.ps:
 
 #=== Validity Check ================================================================
 

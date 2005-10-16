@@ -1,6 +1,6 @@
 <!--
 Filename: pprhack_conf.sgml
-Last Modified: 18 April 2005
+Last Modified: 16 October 2005
 Last Proofread: 
 -->
 
@@ -321,25 +321,19 @@ lifetime page count before and after the printing of the job (exclusive
 of banner and trailer pages).
 </para>
 
-<para>
-The information obtained through these queries can be logged.  See Section
-<xref linkend="printlog"/>.
-</para>
+<para>The information obtained through these queries can be logged.  See 
+<ulink url="../refman/printlog">printlog(5)</ulink>.</para>
 
-<para>
-If this line is absent or the <replaceable>integer</replaceable> is 0, then this feature is disabled.
-</para>
+<para>If this line is absent or the <replaceable>integer</replaceable> is 0, then this feature is disabled.</para>
 
-<para>
-If the value is 1, then then the PostScript code
+<para>If the value is 1, then then the PostScript code
 <command>statusdict /pagecount get exec ==</command> is used to get the page count.  No
 attempt is made to make sure that the print engine has come to a stop and the
 printer has updated the count before making the query.  On some printers this
 does not cause a problem because the page count is updated imediately.  On
 others it may be solved by using the <literal>pjl</literal> or <literal>signal/pjl</literal> jobbreak
 method which causes PPR to wait until all of the pages have hit the
-output bin before considering the job complete.
-</para>
+output bin before considering the job complete.</para>
 
 <para>
 In the future, additional values for this parameter may be defined.  These

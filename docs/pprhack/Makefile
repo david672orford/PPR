@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/pprhack/Makefile
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 October 2003.
+# Last modified 16 October 2005.
 #
 
 # Pull in settings from Configure, the PPR version number, and special rules
@@ -39,7 +39,10 @@ include ../rules.mk
 BUILT=\
 	pprhack.html \
 	pprhack.pdf \
-	pprhack_interfaces1.png pprhack_interfaces1.eps
+	pprhack_interfaces1.png pprhack_interfaces1.eps \
+	pprhack-enter.eps pprhack-enter.png \
+	pprhack-printing1.eps pprhack-printing1.png \
+	pprhack-printing2.eps pprhack-printing2.png 
 
 #=== Build ==================================================================
 
@@ -58,9 +61,9 @@ pprhack.sgml: \
 		pprhack_rips.sgml
 	touch pprhack.sgml
 
-pprhack.ps: pprhack_interfaces1.eps
+pprhack.ps:  pprhack_interfaces1.eps pprhack-enter.eps pprhack-printing1.eps pprhack-printing2.eps
 
-pprhack.pdf: pprhack_interfaces1.png
+pprhack.pdf: pprhack_interfaces1.png pprhack-enter.png pprhack-printing1.png pprhack-printing2.png
 
 #=== Validity Check ================================================================
 

@@ -597,3 +597,6 @@ more information about RIPs and *pprRIP:.
 
 * index.html: added link to Desktop Entry Specification at Freedesktop.org.
 
+* moved theory of operation section from pprdoc/ to pprhack/.
+
+
