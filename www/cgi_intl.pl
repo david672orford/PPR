@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_intl.pl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 March 2004.
+# Last modified 17 October 2005.
 #
 
 require "paths.ph";
@@ -40,7 +40,7 @@ my $UNTRANSLATED_CHARSET = "iso-8859-1";
 # Which charsets for which languages?
 my $CHARSET_DEFAULT = "iso-8859-1";
 my %CHARSET_EXCEPTIONS = (
-		"ru_RU" => "koi8-r"
+		"ru_RU" => "utf-8"
 		);
 
 # Did we suceed in loading the Perl modules for internationalization and did we
@@ -292,12 +292,18 @@ sub H_NB_
 # submitted when the button is pressed.
 #
 # Arguments:
-#		* The value for name= property of the <input> or <button> tag.
-#		* The value for the value= property of the tag.
-#		* A translatable (but not yet translated) button label with the
-#		  accesskey indicated by a proceding underscore.  An underscore
-#		  should appear in the translation string if an accesskey is desired.
-#		* Anything else to put inside the <input> or <button> tag.
+#	* The value for name= property of the <input> or <button> tag.
+#	* The value for the value= property of the tag.
+#	* A translatable (but not yet translated) button label with the
+#	  accesskey indicated by a proceding underscore.  An underscore
+#	  should appear in the translation string if an accesskey is desired.
+#	* Optional: The text to be displayed when the mouse pointer hovers over 
+#	  the button.  The text should be already translated but not HTML
+#	  encoded.
+#	* Optional: The text of the onclick handler.
+#	* Optional: The CSS class for the <input> or <button> tag.
+#
+# Optional arguments can be skipt by setting them to undef.
 #
 sub isubmit
 	{

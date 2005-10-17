@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 17 October 2005.
 */
 
 /*! \file
@@ -136,7 +136,7 @@ char *gu_pcs_free_keep_cstr(void **pcs)
 	struct PCS *p = (struct PCS *)*pcs;
 	char *strptr;
 	gu_pcs_grow(pcs, 0);		/* ensure there is storage allocated */
-    strptr = p->storage;
+	strptr = p->storage;
 	p->lurkers++;
 	if((p->refcount - p->lurkers) == 0)
 		gu_free(*pcs);

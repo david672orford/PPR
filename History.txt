@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--15 October 2005
+2.00a1, 11 December 2004--17 October 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9909,6 +9909,9 @@ no final tarball was released.
   print queues at Trinity College was included in the first place.  Presumably the
   idea was to generalized it.
 
-
+* www/ppr-httpd.perl, cgi_intl.pl: switched charset for Russian from KOI8-R to
+  UTF-8.  This makes sense since the PO files are already encoded in UTF-8.  It
+  also allows us to use triangular quote marks.  The other languages will
+  probably be switched soon since PPR will be using UTF-8 internally.
 
 

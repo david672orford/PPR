@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/shared.css
-** Last modified 19 March 2004.
+** Last modified 17 October 2005.
 **
 ** This style sheet is imported by all of the PPR web interface applets.
 */
@@ -81,17 +81,17 @@ DIV.popup A, DIV.popup LABEL {
 	display: block;
 	width: 100%;
 	padding: 1pt 5pt 1pt 5pt;
+	font-weight: normal;
+	}
+DIV.popup BUTTON.buttons, DIV.popup INPUT.buttons {
+	border: none;
+	padding: 1pt 5pt 1pt 2pt;		/* !!! fudged, should be same as for <LABEL> !!! */
+	margin: 0pt;
+	background-color: transparent;
 	}
 DIV.popup A:hover, DIV.popup LABEL:hover {
 	background-color: #808080;
 	color: #d0d0d0;
-	}
-DIV.popup BUTTON.buttons, DIV.popup INPUT.buttons {
-	border: none;
-	background-color: transparent;
-	}
-DIV.popup LABEL {
-	font-weight: normal;
 	}
 
 /* We don't want the surround to overlap the menu bar. */

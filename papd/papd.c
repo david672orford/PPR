@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 May 2005.
+** Last modified 17 October 2005.
 */
 
 /*
@@ -488,70 +488,6 @@ static int do_tail(void)
 	return EXIT_OK;
 	}
 
-/*
-** If this program was invoked with excessive permissions (i.e. as root),
-** renounce them now.  This program should be setuid "ppr" and setgid "ppr".
-**
-** We use fputs() and return here because fatal() would put the
-** message into the log file which is not where we want it.  Besides,
-** it could create a log file with wrong permissions.
-*/
-static int drop_privs(void)
-	{
-	uid_t uid, euid;
-	gid_t gid, egid;
-
-	uid = getuid();				/* should be "ppr" or "root" */
-	euid = geteuid();			/* should be "ppr" */
-	gid = getgid();				/* should be "ppr" or "root" */
-	egid = getegid();			/* should be "ppop" */
-
-	/* If effective UID is root, either we are setuid root or not setuid and
-	   being run by root.  We refuse to tolerate either! */
-	if(euid == 0)
-		{
-		fprintf(stderr, "%s: this program must be setuid %s\n", myname, USER_PPR);
-		return(EXIT_INTERNAL);
-		}
-
-	if(uid == 0)				/* if user is root */
-		{						/* then switch to "ppr" */
-		setuid(0);				/* set all three group IDs to "root" */
-		setgid(0);				/* set all three group IDs to "root" (Is this necessary?) */
-
-		/* Make sure we don't keep "root" group. */
-		if(setregid(egid, egid) == -1)
-			{
-			fprintf(stderr, "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)egid, (long)egid, errno, gu_strerror(errno));
-			return EXIT_INTERNAL;
-			}
-
-		/* Now we may set all three UIDs to "ppr". */
-		if(setreuid(euid, euid) == -1)
-			{
-			fprintf(stderr, "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n", myname, (long)euid, (long)euid, errno, gu_strerror(errno));
-			return EXIT_INTERNAL;
-			}
-
-		/* Now be paranoid. */
-		if(setuid(0) != -1)
-			{
-			fprintf(stderr, "%s: setuid(0) didn't fail!\n", myname);
-			return EXIT_INTERNAL;
-			}
-		}
-	else						/* not root */
-		{
-		if(uid != euid)			/* if real user id is not same as owner of papd (euid), */
-			{
-			fputs("Only \"ppr\" or \"root\" may start papd.\n", stderr);
-			return EXIT_DENIED;
-			}
-		}
-
-	return 0;
-	} /* end of drop_privs() */
-
 static const char *option_chars = "";
 static const struct gu_getopt_opt option_words[] =
 		{
@@ -717,7 +653,8 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE_PAPD);
 	#endif
 
-	if((ret = drop_privs()))
+	/* If we are currently running as root, become USER_PPR or die! */
+	if((ret = renounce_root_privs(myname, USER_PPR, NULL, FALSE)))
 		return ret;
 	
 	gu_Try {

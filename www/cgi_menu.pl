@@ -107,10 +107,10 @@ sub menu_radio_set
 	my($name, $values, $current_value, $extra) = @_;
 	foreach	my $value (@{$values})
 		{
-		print "\t\t", '<tr><td><label><input type="radio" name=', html_value($name), ' value=', html_value($value->[0]);
+		print "\t\t", '<tr><td><input type="radio" name=', html_value($name), ' id=', html_value("$name_$value"), ' value=', html_value($value->[0]);
 		print ' checked' if($value->[0] eq $current_value);
 		print " ", $extra if(defined $extra);
-		print '>', html($value->[1]), "</label></td></tr>\n";
+		print '></td><td><label for=', html_value("$name_$value"), '>', html($value->[1]), "</label></td></tr>\n";
 		}
 	}
 
@@ -118,7 +118,7 @@ sub menu_radio_set
 sub menu_link
 	{
 	my($label, $url, $tooltip) = @_;
-	print "\t\t<tr><td>";
+	print "\t\t<tr><td></td><td>";
 	print "\t\t<a href=\"$url\" target=\"_blank\" onclick=\"return wopen(event,this.href)\" title=", html_value($tooltip), ">", html($label), "</a>\n";
 	print "\t\t</td></tr>\n";
 	}
@@ -126,7 +126,7 @@ sub menu_link
 # This creates a menu submit button.  Don't forget that $value must be untranslated.
 sub menu_submit
 	{
-	print "\t\t<tr><td>";
+	print "\t\t<tr><td></td><td>";
 	isubmit(@_);
 	print "\t\t</td></tr>\n";
 	}

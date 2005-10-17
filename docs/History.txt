@@ -599,4 +599,6 @@ more information about RIPs and *pprRIP:.
 
 * moved theory of operation section from pprdoc/ to pprhack/.
 
+* removed pprdoc/ from Makefile and index.html since there is almost nothing
+  left in it.
 

@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 October 2005.
+# Last modified 17 October 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -672,7 +672,7 @@ sub do_get
 		{
 		if($full_path =~ /\.ru\.html?$/i)
 			{
-			$mime_type = "text/html;charset=KOI8-R";
+			$mime_type = "text/html;charset=utf-8";
 			}
 		else
 			{		

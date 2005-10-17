@@ -22,6 +22,8 @@ gu_isspace.o: gu_isspace.c ../include/config.h ../include/gu.h ../include/global
 
 gu_isxdigit.o: gu_isxdigit.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
+gu_locale.o: gu_locale.c ../include/config.h ../include/gu.h
+
 gu_md5.o: gu_md5.c ../include/gu_md5.h
 
 gu_mkstemp.o: gu_mkstemp.c ../include/config.h ../include/gu.h
@@ -79,6 +81,8 @@ gu_uri.o: gu_uri.c ../include/config.h ../include/gu.h
 gu_utf8_decode.o: gu_utf8_decode.c ../include/config.h ../include/gu.h
 
 gu_utf8_printf.o: gu_utf8_printf.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+gu_utf8_put.o: gu_utf8_put.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 gu_wildmat.o: gu_wildmat.c ../include/gu.h
 

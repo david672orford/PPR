@@ -48,7 +48,9 @@ LIBOBJS=\
 	options.o \
 	dimens.o foptions.o ali_str.o \
 	ppr_gcmd.o readppd.o \
-	unsafe.o prune_env.o \
+	unsafe.o \
+	renounce_root_privs.o \
+	prune_env.o \
 	acl.o \
 	username_match.o \
 	cs2enc.o enc2font.o font.o \

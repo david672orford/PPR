@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 17 October 2005.
 */
 
 /*
@@ -86,6 +86,7 @@
 /*============ User: don't change anything below this line. ============*/
 
 /* A few global variables: */
+extern const char myname[];
 extern time_t daemon_start_time;
 extern gu_boolean lockfile_created;
 

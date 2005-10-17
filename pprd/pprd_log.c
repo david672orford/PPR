@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 17 October 2005.
 */
 
 #include "config.h"
@@ -49,7 +49,7 @@ gu_boolean lockfile_created = FALSE;
 /*
 ** This is the core function which all of those below call.
 */
-static void log(const char category[], const char function[], const char message[], va_list va)
+static void pprd_log(const char category[], const char function[], const char message[], va_list va)
 	{
 	FILE *file;
 	if((file = fopen(PPRD_LOGFILE, "a")) != (FILE*)NULL)
@@ -62,7 +62,7 @@ static void log(const char category[], const char function[], const char message
 		fputc('\n', file);
 		fclose(file);
 		}
-	} /* end of log() */
+	} /* end of pprd_log() */
 
 /*
 ** Print an error message and abort.
@@ -82,7 +82,7 @@ void fatal(int exitval, const char message[], ... )
 	{
 	va_list va;
 	va_start(va, message);
-	log("FATAL", NULL, message, va);
+	pprd_log("FATAL", NULL, message, va);
 	va_end(va);
 	}
 
@@ -106,7 +106,7 @@ void fatal(int exitval, const char message[], ... )
 		kill(getpid(), SIGABRT);
 
 		va_start(va, message);	/* silly */
-		log("SIGQUIT", "fatal", "Suicide failed, no core file created", va);
+		pprd_log("SIGQUIT", "fatal", "Suicide failed, no core file created", va);
 		va_end(va);
 		}
 
@@ -120,7 +120,7 @@ void error(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	log("ERROR", NULL, message, va);
+	pprd_log("ERROR", NULL, message, va);
 	va_end(va);
 	} /* end of error() */
 
@@ -131,7 +131,7 @@ void debug(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	log("DEBUG", NULL, message, va);
+	pprd_log("DEBUG", NULL, message, va);
 	va_end(va);
 	} /* end of debug() */
 
@@ -143,7 +143,7 @@ void gu_throw(int exception_type, const char exception_function[], const char fo
 	{
 	va_list va;
 	va_start(va, format);
-	log("libgu exception", exception_function, format, va);
+	pprd_log("libgu exception", exception_function, format, va);
 	va_end(va);
 	fatal(1, "above was fatal");
 	} /* end of gu_throw() */

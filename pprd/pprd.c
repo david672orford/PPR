@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 March 2005.
+** Last modified 17 October 2005.
 */
 
 /*
@@ -58,6 +58,7 @@
 /*
 ** Misc global variables
 */
+const char myname[] = "pprd";
 time_t daemon_start_time;		/* time at which this daemon started */
 struct QEntry *queue;			/* array holding terse queue */
 int queue_size;					/* number of entries for which there is room */
@@ -343,8 +344,13 @@ static int real_main(int argc, char *argv[])
 
 	parse_command_line(argc, argv, &option_foreground);
 
-	/* Switch all UIDs to USER_PPR, all GIDS to GROUP_PPR. */
-	adjust_ids();
+	/* Switch all UIDs to USER_PPR, all GIDS to GROUP_PPR;
+	 * set supplemental group IDs. */
+	{
+	int ret;
+	if((ret = renounce_root_privs(myname, USER_PPR, GROUP_PPR)) != 0)
+		return ret;
+	}
 
 	/* If the --forground switch wasn't used, then dropt into background. */
 	if(! option_foreground)

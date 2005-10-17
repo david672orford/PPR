@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 17 October 2005.
 */
 
 #include "config.h"
@@ -53,8 +53,6 @@
 ** This module contains functions that are called
 ** only once, from main().
 */
-
-static const char myname[] = "pprd";
 
 /*
 ** Create the FIFO for receiving commands from
@@ -143,149 +141,6 @@ void rename_old_log_file(void)
 		rename(PPRD_LOGFILE,newname);
 		}
 	} /* end of rename_old_log_file() */
-
-/*
-** This funtions makes sure that all of the user IDs are "ppr" and all
-** the group IDs are "ppr".  For this to work, pprd must be setuid "ppr"
-** and setgid "ppr".  (Though of course it will also work if run 
-** under ppr:ppr.)
-**
-** This code must not call fatal(), fatal() should not be
-** used until we are sure the permissions are right,
-** otherwise we might be unable to create the log file
-** or could create a log file with the wrong ownership.
-*/
-void adjust_ids(void)
-	{
-	uid_t uid, euid, ppr_uid;
-	gid_t gid, egid, ppr_gid;
-
-	/*
-	** Look up the correct uid and gid we should be running under.
-	*/
-	{
-	struct passwd *pw;
-	struct group *gp;
-
-	if((pw = getpwnam(USER_PPR)) == NULL)
-		{
-		fprintf(stderr, _("%s: The user \"%s\" doesn't exist.\n"), myname, USER_PPR);
-		exit(1);
-		}
-
-	if((gp = getgrnam(GROUP_PPR)) == NULL)
-		{
-		fprintf(stderr, _("%s: The group \"%s\" doesn't exist.\n"), myname, GROUP_PPR);
-		exit(1);
-		}
-
-	if(pw->pw_gid != gp->gr_gid)
-		fprintf(stderr, _("%s: Warning: primary group for user \"%s\" is not \"%s\".\n"), myname, USER_PPR, GROUP_PPR);
-
-	ppr_uid = pw->pw_uid;
-	ppr_gid = gp->gr_gid;
-	}
-
-	/*
-	** Read all 4 IDs.
-	*/
-	uid = getuid();
-	euid = geteuid();
-	gid = getgid();
-	egid = getegid();
-
-	/*
-	** All this is the start of a block that can be disabled for
-	** MS-Windows 95 any anything else that doesn't have real users
-	** and groups.
-	*/
-	#ifndef BROKEN_SETUID_BIT
-	
-	/*
-	** Make sure the permissions and setuid/setgid are right.
-	*/
-	if(euid != ppr_uid)
-		{
-		fprintf(stderr, _("%s: Security problem: euid = %ld\n"
-				"(This program should be setuid %ld (%s).)\n"), myname, (long)euid, (long)ppr_uid, USER_PPR);
-		exit(1);
-		}
-
-	if(egid != ppr_gid)
-		{
-		fprintf(stderr, _("%s: Security problem: egid = %ld\n"
-				"(This program should be setgid %ld (%s).)\n"), myname, (long)euid, (long)ppr_gid, GROUP_PPR);
-		exit(1);
-		}
-
-	/*
-	** Make sure the invoker is authorized.
-	*/
-	if(uid != ppr_uid && uid != 0)
-		{
-		fprintf(stderr, _("%s: Only \"%s\" or \"root\" may start %s.\n"), myname, USER_PPR, myname);
-		exit(1);
-		}
-
-	/*
-	** If we were run by root, initialize our auxiliary groups.
-	*/
-	#ifdef HAVE_INITGROUPS
-	if(uid == 0)
-		{
-		seteuid(0);
-		if(initgroups(USER_PPR, ppr_gid) == -1)
-			{
-			fprintf(stderr, _("%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"), myname, USER_PPR, (long)ppr_gid, errno, gu_strerror(errno));
-			exit(1);
-			}
-		}
-	#endif
-
-	/*
-	** Relinquish any root privledge we may have.  This is difficult because not all 
-	** systems have precisely the same semantics with regard to when the saved IDs 
-	** are set.
-	*/
-
-	/* MacOS 10.2 must not act as its manpage suggest since setuid(ppr_uid) 
-	 * doesn't work except for root. */
-	seteuid(0);
-
-	/* MacOS 10.2 manpage (which is probably the BSD manpage)suggests that
-	 * this will set the saved IDs. */
-	if(setgid(ppr_gid) == -1)
-		{
-		fprintf(stderr, _("%s: setgid(%ld) failed, errno=%d (%s)\n"), myname, (long)ppr_gid, errno, gu_strerror(errno));
-		exit(1);
-		}
-	if(setuid(ppr_uid) == -1)
-		{
-		fprintf(stderr, _("%s: setuid(%ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, errno, gu_strerror(errno));
-		exit(1);
-		}
-
-	/* Linux manpage suggests that this will set the saved IDs. */
-	if(setreuid(ppr_uid, ppr_uid) == -1)
-		{
-		fprintf(stderr, _("%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_uid, (long)ppr_uid, errno, gu_strerror(errno));
-		exit(1);
-		}
-	if(setregid(ppr_gid, ppr_gid) == -1)
-		{
-		fprintf(stderr, _("%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"), myname, (long)ppr_gid, (long)ppr_gid, errno, gu_strerror(errno));
-		exit(1);
-		}
-
-	/* Make sure the system semantics haven't bitten us. */
-	if(setuid(0) != -1)
-		{
-		fprintf(stderr, _("%s: setuid(0) did not fail!\n"), myname);
-		exit(1);
-		}
-
-	#endif /* BROKEN_SETUID_BIT */
-	} /* end of adjust_ids() */
 
 /*========================================================================
 ** The command line options.

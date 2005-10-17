@@ -36,7 +36,8 @@ PROGS=ppr-sync \
 	ppd2macosdrv \
 	custom_hook_docutech \
 	xmessage \
-	ppr-testpage
+	ppr-testpage \
+	tcpbind
 
 #=== Build ==================================================================
 
@@ -48,6 +49,9 @@ xmessage: xmessage.tcl
 
 ppr-testpage$(DOTEXE): ppr-testpage.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
+
+tcpbind$(DOTEXE): tcpbind.o ../libppr.a ../libgu.a
+	$(LD) $(LDFLAGS) -o $@ $^ #$(INTLLIBS)
 
 #=== Install ================================================================
 

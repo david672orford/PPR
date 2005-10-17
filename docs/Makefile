@@ -38,7 +38,7 @@ include ./rules.mk
 PROGS=ppdoc
 HTML=index.html
 
-SUBDIRS=refman pprdoc pprinst pprhack misc
+SUBDIRS=refman pprinst pprhack misc
 
 #=== Build ==================================================================
 

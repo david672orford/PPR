@@ -4,87 +4,56 @@
 
 <article>
 
-<articleinfo>
-	<title>PPR, a Print Spooler for PostScript</title>
-	<author>
-		<firstname>David</firstname>
-		<surname>Chappell</surname>
-		</author>
-	<pubdate>23 September 2005</pubdate>
-	<copyright>
-		<year>1995--2005</year>
-		<holder>Trinity College Computing Center</holder>
-		</copyright>
-</articleinfo>
-
-<abstract>
-
-<para>This document is obsolete.  It contains random chunks of material
-which should be moved into other documents such as the man pages or 
-the hacker's guide.</para>
-
-</abstract>
-
 <sect1>
 <title>Banner and Trailer Pages</title>
 
-<para>
-When many people will be using a printer it is sometimes desirable to
+<para>When many people will be using a printer it is sometimes desirable to
 identify each print job with an extra page on which appears the name of the
 person who sent it as well as other information such as the name of the
-application which generated it and a job title.  <application>PPR</application> is capable of printing
-banner pages as well as trailer pages.
-</para>
+application which generated it and a job title.  <application>PPR</application>
+is capable of printing banner pages as well as trailer pages.</para>
 
-<para>
-When a user submits a print job he may request or reject a banner page and
-request or reject a trailer page.  However <application>PPR</application> considers the user's request as
-a suggestion only, making its final descision based on the user's suggestion,
-and the configuration of the printer.
-</para>
+<para>When a user submits a print job he may request or reject a banner page
+and request or reject a trailer page.  However <application>PPR</application>
+considers the user's request as a suggestion only, making its final descision
+based on the user's suggestion, and the configuration of the printer.</para>
 
-<para>
-If bins are defined for the printer, the suitability of the printer's mounted
-forms for printing banner pages is also a factor.  When printing a banner page,
-<application>PPR</application> will use the currently mounted medium with the highest suitability rating.
-If all mounted media have a suitability rating of 1, no banner or trailer pages
-can be printed.  If bins are defined for the printer and media is mounted, <application>PPR</application>
-will adjust the size, shape, and character size of the banner page to suit the
-medium (paper type) being used.
-</para>
+<para>If bins are defined for the printer, the suitability of the printer's
+mounted forms for printing banner pages is also a factor.  When printing a
+banner page, <application>PPR</application> will use the currently mounted
+medium with the highest suitability rating.  If all mounted media have a
+suitability rating of 1, no banner or trailer pages can be printed.  If bins
+are defined for the printer and media is mounted,
+<application>PPR</application> will adjust the size, shape, and character size
+of the banner page to suit the medium (paper type) being used.</para>
 
-<para>
-If no bins are defined, the banner page will be formated for 8.5 by 11 inch paper
-(or whatever "default medium =" is set to in the [internationalization] section
-if <filename>/etc/ppr/ppr.conf</filename>), but no attempt will be made to
-select a specific input tray or to request a specific page size of the printer.
-</para>
+<para>If no bins are defined, the banner page will be formated for 8.5 by 11
+inch paper (or whatever "default medium =" is set to in the
+[internationalization] section if <filename>/etc/ppr/ppr.conf</filename>), but
+no attempt will be made to select a specific input tray or to request a
+specific page size of the printer.</para>
 
 </sect1>
 
 <sect1>
 <title>User Notification</title>
 
-<para>
-After a job has been printed, an attempt is made to inform the user.  The user
-is also informed if a job is rejected, arrested, or canceled.  The agent which
-performs the actual communication with the user is called a responder.  A
-responder is a small program, generally a shell script, found in the
-<filename class="Directory">/usr/ppr/responders/</filename> directory.  No one responder will be appropriate
-under all circumstances.  For instance, different responders are used to send
-message to Unix shell users and Macintosh clients.
-</para>
+<para>After a job has been printed, an attempt is made to inform the user.  The
+user is also informed if a job is rejected, arrested, or canceled.  The agent
+which performs the actual communication with the user is called a responder.  A
+responder is a small program, generally a shell script, found in the <filename
+class="Directory">/usr/ppr/responders/</filename> directory.  No one responder
+will be appropriate under all circumstances.  For instance, different
+responders are used to send message to Unix shell users and Macintosh
+clients.</para>
 
-<para>
-The responder to use is chosen when <command>ppr</command> is invoked.  It is chosen with the
-<option>-r</option> switch. If no  <option>-r</option> switch is used, the default responder
-<literal>write</literal> is
-used.  If you wish to suppress user notification you should use the <option>-m
-none</option>
-switch.
-</para>
+<para>The responder to use is chosen when <command>ppr</command> is invoked.
+It is chosen with the <option>-r</option> switch. If no  <option>-r</option>
+switch is used, the default responder <literal>write</literal> is used.  If you
+wish to suppress user notification you should use the <option>-m none</option>
+switch.</para>
 
-<para> Among its parameters the responder program is given an address to
+<para>Among its parameters the responder program is given an address to
 send the message to.  The correct format for the address depends on the
 responder.  For example, for the responder <literal>write</literal> it is
 simply a Unix user name.  For the responder <literal>mail</literal> is it an
@@ -94,18 +63,15 @@ should be specified with the <option>-r</option> switch when
 <command>ppr</command> is invoked. If the <option>-r</option> switch is
 ommitted, the default address, the name of the user who is invoking ppr will
 be used.  This address is suitable for the default responder,
-<literal>write</literal>.
-</para>
+<literal>write</literal>.</para>
+
+<para>Additional responder options may be specified with
+<command>ppr</command>'s <option>--responder-options</option> switch.  These
+options are a space separated list of name=value pairs.  If no
+<option>--responder-options</option> switch is used then the list will be
+empty.</para>
 
 <para>
-Additional responder options may be specified with <command>ppr</command>'s
-<option>--responder-options</option> switch.  These options are a space separated list of
-name=value pairs.  If no <option>--responder-options</option> switch is used then the list
-will be empty.
-</para>
-
-<para>
-
 <screen>
 # Authorize the <application>PPR</application> responder:
 /usr/ppr/bin/ppr-xgrant
@@ -115,7 +81,6 @@ will be empty.
 <application>PPR</application>_RESPONDER_ADDRESS=$DISPLAY
 export <application>PPR</application>_RESPONDER <application>PPR</application>_RESPONDER_ADDRESS
 </screen>
-
 </para>
 
 </sect1>
@@ -123,25 +88,24 @@ export <application>PPR</application>_RESPONDER <application>PPR</application>_R
 <sect1 id="progress-reporting">
 <title>Progress Reporting</title>
 
-<para>
-While a job is being printed, <application>PPR</application> queue listings will show how far along it
-is.  Up to three figures are reported.  The first is the percentage of the file
-which has been transmitted, the second is the number of the page which is
-currently being transmitted (an ordinal with the first page transmitted
-being one), the third is the number of pages which the printer reports it
-has deposited in the output bin.  (The number of pages in the output bin
-will only be reported if the jobbreak method is "pjl" or "signal/pjl".)
-</para>
+<para>While a job is being printed, <application>PPR</application> queue
+listings will show how far along it is.  Up to three figures are reported.  The
+first is the percentage of the file which has been transmitted, the second is
+the number of the page which is currently being transmitted (an ordinal with
+the first page transmitted being one), the third is the number of pages which
+the printer reports it has deposited in the output bin.  (The number of pages
+in the output bin will only be reported if the jobbreak method is "pjl" or
+"signal/pjl".)</para>
 
-<para> The data which <command>ppop</command> uses to make these reports is
-deposited in the job's queue file by <command>pprdrv</command>.  It takes
-the form of a line that begins with <literal>Progress:</literal> which
+<para>The data which <command>ppop</command> uses to make these reports is
+deposited in the job's queue file by <command>pprdrv</command>.  It takes the
+form of a line that begins with <literal>Progress:</literal> which
 <command>pprdrv</command> appends to the queue file.  This line has three
-numbers on it.  The first is the number of bytes written so far.  The second
-is the number of <literal>%%Pages:</literal> comments written
-so far. The third number is the number of pages which the printer says it
-has dropt into the output tray.  All three numbers are padded with leading
-zeros so that as they increase their length does not change. </para>
+numbers on it.  The first is the number of bytes written so far.  The second is
+the number of <literal>%%Pages:</literal> comments written so far. The third
+number is the number of pages which the printer says it has dropt into the
+output tray.  All three numbers are padded with leading zeros so that as they
+increase their length does not change.</para>
 
 <para>If the job is not printed successfully the first time, provided the
 <literal>Progress:</literal> line is still the last line in the file,
@@ -154,38 +118,33 @@ will generally only be found if a <literal>Reason:</literal> <footnote>
 arrested. </para> </footnote> line was appended after a
 <literal>Progress:</literal> line.</para>
 
-<para>
-The percentage of the file transmitted, as reported by
-<command>ppop</command>, is obtained
-by dividing the number of bytes transmitted by the size of the origional
-PostScript file and multiplying the result by 100.  The origional PostScript
-file is the input file if it was PostScript or the output of the last filter in
-the filter pipeline.  In some cases the percentage indicated when the job is
-done is somewhat more or less than 100%. Causes such as the alteration
-of DSC comments, the changing of line termination, and the insertion of feature
-code will often make a difference of 1% to 5%.  The insertion of
-procedure set such as the one for N-Up printing or the downloading of fonts can
-result in a total transmission which is several times the size of the origional
-file.  Occasionally a job will be printed which has large unnecessary
-downloaded fonts.  If these are stript out the result will be that only a small
-amount, say 20% of the job will be transmitted.  If switches such as
-<option>-s</option> or <option>-p</option> are used to print only a portion of the job the total
-percentage printed will be reduced accordingly.  All of these circumstances are
-rare, however, so the total printed will almost always be within 5% of
-the origional file size.
-</para>
+<para>The percentage of the file transmitted, as reported by
+<command>ppop</command>, is obtained by dividing the number of bytes
+transmitted by the size of the origional PostScript file and multiplying the
+result by 100.  The origional PostScript file is the input file if it was
+PostScript or the output of the last filter in the filter pipeline.  In some
+cases the percentage indicated when the job is done is somewhat more or less
+than 100%. Causes such as the alteration of DSC comments, the changing of line
+termination, and the insertion of feature code will often make a difference of
+1% to 5%.  The insertion of procedure set such as the one for N-Up printing or
+the downloading of fonts can result in a total transmission which is several
+times the size of the origional file.  Occasionally a job will be printed which
+has large unnecessary downloaded fonts.  If these are stript out the result
+will be that only a small amount, say 20% of the job will be transmitted.  If
+switches such as <option>-s</option> or <option>-p</option> are used to print
+only a portion of the job the total percentage printed will be reduced
+accordingly.  All of these circumstances are rare, however, so the total
+printed will almost always be within 5% of the origional file size.</para>
 
 </sect1>
 
 <sect1 id="media-handling">
 <title>Media Handling</title>
 
-<para>
-Modern laser printers very often have multiple input trays.  At the same
-time, version 3.0 of the Document Structuring Convention describes a
-method whereby the type of medium required for each page in a job may be
-specified.
-</para>
+<para>Modern laser printers very often have multiple input trays.  At the same
+time, version 3.0 of the Document Structuring Convention describes a method
+whereby the type of medium required for each page in a job may be
+specified.</para>
 
 <para>When a job enters the queue, <application>PPR</application> attempts
 to determine what media types are required to print it.  If the document
@@ -204,36 +163,34 @@ different sort of medium. Each time one of these comments is encountered
 is like.</para>
 
 <para>Once the characteristics of all the requested media are determined,
-<application>PPR</application> attempts, for each one, to select a medium
-known to it that matches the requirements.  The list of known types is
-stored in the file <filename>/etc/ppr/media.db</filename>.  For each
-required medium type, <application>PPR</application> makes multiple passes
-over the known media list, relaxing its standards each time until if finds a
-match.  If the proofmode is <literal>NotifyMe</literal> and <application>PPR</application>
-has to relax its standards more than a little, it will reject the job.  The
-list of known media types may be edited with the <command>ppad
-media</command> commands.</para>
+<application>PPR</application> attempts, for each one, to select a medium known
+to it that matches the requirements.  The list of known types is stored in the
+file <filename>/etc/ppr/media.db</filename>.  For each required medium type,
+<application>PPR</application> makes multiple passes over the known media list,
+relaxing its standards each time until if finds a match.  If the proofmode is
+<literal>NotifyMe</literal> and <application>PPR</application> has to relax its
+standards more than a little, it will reject the job.  The list of known media
+types may be edited with the <command>ppad media</command> commands.</para>
 
-<para>
-For each printer the operator has the option of describing what known media type
-is available in each bin or of forgoing automatic media handling entirely.  The
-<command>ppad bins</command> series of commands tells <application>PPR</application> what input bins are available.  If the
-bin list is empty, <application>PPR</application> assumes that the printer can immediately print any job
-queued for it, regardless of what media are required.  If the bin list is not
-empty, <application>PPR</application> will not attempt to print a job until all the required media are
-mounted on one or more bins.  In the case of a group, the job will be started on
-the first member of the group which has the required media in place.
-</para>
+<para>For each printer the operator has the option of describing what known
+media type is available in each bin or of forgoing automatic media handling
+entirely.  The <command>ppad bins</command> series of commands tells
+<application>PPR</application> what input bins are available.  If the bin list
+is empty, <application>PPR</application> assumes that the printer can
+immediately print any job queued for it, regardless of what media are required.
+If the bin list is not empty, <application>PPR</application> will not attempt
+to print a job until all the required media are mounted on one or more bins.
+In the case of a group, the job will be started on the first member of the
+group which has the required media in place.</para>
 
 <para>The operator must indicate what type of medium is in each bin by using
-the <command>ppop mount</command> command.  The media currently mounted on
-all the bins of a printer or of a group may be seen by using the
-<command>ppop media</command> command.  If a job is not being printed
-because the required media are not mounted on any candidate printer, its
-queue status (as indicated by <command>ppop list</command>) will be "waiting
-for media".  A list of the required media will also be displayed.  Media
-handling is closely related to but not the same as automatic bin selection
-which is described in section <xref
+the <command>ppop mount</command> command.  The media currently mounted on all
+the bins of a printer or of a group may be seen by using the <command>ppop
+media</command> command.  If a job is not being printed because the required
+media are not mounted on any candidate printer, its queue status (as indicated
+by <command>ppop list</command>) will be "waiting for media".  A list of the
+required media will also be displayed.  Media handling is closely related to
+but not the same as automatic bin selection which is described in section <xref
 linkend="automatic-bin-selection"/>.</para>
 
 </sect1>
@@ -241,12 +198,10 @@ linkend="automatic-bin-selection"/>.</para>
 <sect1>
 <title>Automatic Modification of Print Jobs</title>
 
-<para>
-The <application>PPR</application> spooler has the ability to modify the print job by inserting PostScript
-code to turn on special printer features such as duplex printing, or to select the
-bin which contains the required paper.  Features or this sort are described in
-this section.
-</para>
+<para>The <application>PPR</application> spooler has the ability to modify the
+print job by inserting PostScript code to turn on special printer features such
+as duplex printing, or to select the bin which contains the required paper.
+Features or this sort are described in this section.</para>
 
 <sect2>
 <title>Inclusion of Feature Code</title>
@@ -260,82 +215,71 @@ on the printer <literal>myprn</literal> with duplex mode turned on, we would
 use this command:</para>
 
 <para>
-
 <screen>
 $ ppr -d myprn -F '*Duplex DuplexNoTumble' mydoc.test
 </screen>
-
 </para>
 
-<para>
-The code for the features selected by <option>-F</option> switches is inserted in the
-Document Setup Section of DSC conforming documents.  For documents which do
-not conform, the code is inserted at the begining of the document.  The code
-to insert is taken directly from the printer's PPD file.
-</para>
+<para>The code for the features selected by <option>-F</option> switches is
+inserted in the Document Setup Section of DSC conforming documents.  For
+documents which do not conform, the code is inserted at the begining of the
+document.  The code to insert is taken directly from the printer's PPD
+file.</para>
 
-<para>
-When inserted, the code is enclosed in
+<para>When inserted, the code is enclosed in
 <literal>%%Begin(End)Feature:</literal> comments.  When the spooler inserts
 duplex code, it brackets the duplex code with code to save and restore the
 current transform matrix since for at least some printers, the duplex code
 given in the PPD file seems to execute "initmatrix".  The two extra lines of
 bracketing code generated by the spooler end with the comment
 <literal>%PPR</literal>.  When the spooler inserts code requested with the
-<option>-F</option>
-switch in a DSC conformant document, it inserts it at the top of the document
-setup section, right after the automatic bin selection code described in the
-next section, unless it is duplex code.  Duplex code is inserted at the very
-end of the document-setup section.  This is done to give it a better chance of
-overriding duplex setting code already in the document.
-</para>
+<option>-F</option> switch in a DSC conformant document, it inserts it at the
+top of the document setup section, right after the automatic bin selection code
+described in the next section, unless it is duplex code.  Duplex code is
+inserted at the very end of the document-setup section.  This is done to give
+it a better chance of overriding duplex setting code already in the
+document.</para>
 
 </sect2>
 
 <sect2 id="automatic-bin-selection">
 <title>Automatic Bin Selection</title>
 
-<para>
-Automatic bin selection is a feature which is closely related to media
-handling (see section <xref linkend="media-handling"/>), but it
-is not the same since it may be disabled for any given job even if media
-handling is being used.  Automatic bin selection will only work if media
-handling is also used, that is, if the bin list for the printer is not empty.
-</para>
+<para>Automatic bin selection is a feature which is closely related to media
+handling (see section <xref linkend="media-handling"/>), but it is not the same
+since it may be disabled for any given job even if media handling is being
+used.  Automatic bin selection will only work if media handling is also used,
+that is, if the bin list for the printer is not empty.</para>
 
-<para>
-If a print job requires only one type of medium and automatic bin selection
-is in effect, then the spooler will insert code in the job to select the
-paper tray which contains the required medium. (Does automatic bin selection
-work for jobs with multiple media types?  Maybe, but it has not been well
-tested.)
-</para>
+<para>If a print job requires only one type of medium and automatic bin
+selection is in effect, then the spooler will insert code in the job to select
+the paper tray which contains the required medium. (Does automatic bin
+selection work for jobs with multiple media types?  Maybe, but it has not been
+well tested.)</para>
 
-<para>
-Since many documents already contains code which influences input tray selection,
-automatic tray selection is not always successful.  This is the strategy used:  In
-the case of non-conforming documents, the code is inserted at the begining of the
-document.  This code will be overridden by any bin select code in the document.
-In the case of conforming documents, that is, those with a properly commented
-document setup section, the bin select code is inserted at the beginning of the
-document setup section.  The likelihood of this code's suceeding depends on
-whether the bin select code the document already contains is properly commented.
-For example, it works better with Apple's LaserWriter 8 than with earlier versions
-of the LaserWriter driver.  LaserWriter 8 encloses the code which selects paper
-source and size in standard comments.  These comments allow the spooler to modify
-this code.  This is how <application>PPR</application> modifies the code: It removes any
-<literal>*InputSlot</literal> code
-and changes <literal>*PageSize</literal> code to equivelent
-<literal>*PageRegion</literal> code.  The spooler
-removes code by placing a percent sign and a space in front of each line,
-converting the code into comments.  It also changes the DSC comments it replaces
-into ordinary comments by placing a percent sign and space in front of each line.
-Thus, you can examine the spooler output and see what code it has replaced. (You
-can examine the spooler output by setting up a printer with the interface
-<literal>dummy</literal>. If you wish to know what code is being sent to a real printer, set up
-the dummy printer with the same options, including PPD file, bins, and mounted
-media.)
-</para>
+<para>Since many documents already contains code which influences input tray
+selection, automatic tray selection is not always successful.  This is the
+strategy used:  In the case of non-conforming documents, the code is inserted
+at the begining of the document.  This code will be overridden by any bin
+select code in the document.  In the case of conforming documents, that is,
+those with a properly commented document setup section, the bin select code is
+inserted at the beginning of the document setup section.  The likelihood of
+this code's suceeding depends on whether the bin select code the document
+already contains is properly commented.  For example, it works better with
+Apple's LaserWriter 8 than with earlier versions of the LaserWriter driver.
+LaserWriter 8 encloses the code which selects paper source and size in standard
+comments.  These comments allow the spooler to modify this code.  This is how
+<application>PPR</application> modifies the code: It removes any
+<literal>*InputSlot</literal> code and changes <literal>*PageSize</literal>
+code to equivelent <literal>*PageRegion</literal> code.  The spooler removes
+code by placing a percent sign and a space in front of each line, converting
+the code into comments.  It also changes the DSC comments it replaces into
+ordinary comments by placing a percent sign and space in front of each line.
+Thus, you can examine the spooler output and see what code it has replaced.
+(You can examine the spooler output by setting up a printer with the interface
+<literal>dummy</literal>. If you wish to know what code is being sent to a real
+printer, set up the dummy printer with the same options, including PPD file,
+bins, and mounted media.)</para>
 
 <para>Combined with the automatic bin selection feature is the automatic
 autoswitch selection feature.  If the bin selected is named
@@ -349,34 +293,27 @@ turned off using the code from the PPD file.  (The HP 4 series of printers
 do not seem to have a command to turn off the automatic tray switch feature.
 This should be regarded as a defect.)</para>
 
-<para>
-The automatic bin selection feature may be disabled by deleting all of the defined
-bins with the <command>ppad bins delete</command> command.  It may be suppressed for the current
-job with <command>ppr</command>'s <option>-B false</option> switch.
-</para>
+<para>The automatic bin selection feature may be disabled by deleting all of
+the defined bins with the <command>ppad bins delete</command> command.  It may
+be suppressed for the current job with <command>ppr</command>'s <option>-B
+false</option> switch.</para>
 
 </sect2>
 
 <sect2>
 <title>Multiple Copies</title>
 
-<para>
-The spooler can insert code to change the number of copies of a document
+<para>The spooler can insert code to change the number of copies of a document
 which are printed.  You may ask to have this code inserted by using the
-<option>-n</option>
-switch when invoking <command>ppr</command>.
-</para>
+<option>-n</option> switch when invoking <command>ppr</command>.</para>
 
-<para>
-If the document is DSC conforming, the code to
-select the number of copies is inserted at the end of the Document Setup
-Section.  If the document sets the number of copies, the code inserted by
-the spooler, coming later in the document, will override it.  Of course, if
-a job sets the number of copies after the end of the Document Setup
-Section, this technique will not work.  (A document which defines the number
-of copies outside the Document Setup Section breaks the rules of DSC
-conformance.)
-</para>
+<para>If the document is DSC conforming, the code to select the number of
+copies is inserted at the end of the Document Setup Section.  If the document
+sets the number of copies, the code inserted by the spooler, coming later in
+the document, will override it.  Of course, if a job sets the number of copies
+after the end of the Document Setup Section, this technique will not work.  (A
+document which defines the number of copies outside the Document Setup Section
+breaks the rules of DSC conformance.)</para>
 
 <para>If a document does not have the DSC comments necessary to identify
 the Document Setup Section, the code is inserted at the top of the document. 
@@ -454,15 +391,13 @@ switch and the second time with the <option>-s backs</option> switch.</para>
 <sect2>
 <title>Page Reversal</title>
 
-<para>
-<application>PPR</application> can often re-order the pages of a document so that they will stack in the
-proper order in a printer's face-up output tray.  In the case of duplex and N-Up
-printing, <application>PPR</application> will work back and forth through the document and will generate
-blank pages where necessary in order to achieve correctly stacked output.  The
-desired output order for a printer may be specified with the <command>ppad
-outputorder</command>
-command.
-</para>
+<para><application>PPR</application> can often re-order the pages of a document
+so that they will stack in the proper order in a printer's face-up output tray.
+In the case of duplex and N-Up printing, <application>PPR</application> will
+work back and forth through the document and will generate blank pages where
+necessary in order to achieve correctly stacked output.  The desired output
+order for a printer may be specified with the <command>ppad
+outputorder</command> command.</para>
 
 </sect2>
 
@@ -480,8 +415,8 @@ used by <application>PPR</application>, a few vendor's procedure sets which
 are included because there are broken versions out there which we don't want
 corrupting the cache, and a few patched vendor procedure sets.</para>
 
-<para>The second source is the font index.  [This section has not been written yet.]
-</para>
+<para>The second source is the font index.  [This section has not been written
+yet.]</para>
 
 <sect3>
 <title>Font Substitution</title>
@@ -502,19 +437,15 @@ The format of <filename>fontsub.conf</filename>
 is described in Appendex <xref linkend="fontsub"/>.
 </para>
 
-<para>
-The substitution file will only be consulted if the ProofMode is
-<literal>Substitute</literal>.  The ProofMode is Substitute by default.  It can be changed
-by a <literal>%%ProofMode:</literal> line in the document comments or by
-<command>ppr</command>'s <option>-P</option> switch.
-</para>
+<para>The substitution file will only be consulted if the ProofMode is
+<literal>Substitute</literal>.  The ProofMode is Substitute by default.  It can
+be changed by a <literal>%%ProofMode:</literal> line in the document comments
+or by <command>ppr</command>'s <option>-P</option> switch.</para>
 
 </sect3>
 
 </sect2>
 
 </sect1>
-
-
 
 </article>

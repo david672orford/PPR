@@ -90,3 +90,5 @@ tokenize.o: tokenize.c ../include/config.h ../include/gu.h ../include/global_def
 
 unsafe.o: unsafe.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
+username_match.o: username_match.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
