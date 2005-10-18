@@ -92,9 +92,9 @@ sub tcpserver
 		}
 
 	# Spawn an child and drop away.
-	close(STDIN);
-	close(STDOUT);
-	close(STDERR);
+	open(STDIN, "</dev/null");
+	open(STDOUT, ">/dev/null");
+	open(STDERR, ">&STDOUT");
 	exit 0 if(fork() != 0);
 
 	if(defined($pidfile))
@@ -129,6 +129,7 @@ sub tcpserver
 		close SERVER || die $!;
 		open(STDIN, "<&CLIENT") || die $!;
 		open(STDOUT, ">&CLIENT") || die $!;
+		open(STDERR, ">&CLIENT") || die $!;
 		last;
 		}
 

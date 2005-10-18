@@ -983,7 +983,7 @@ sub do_cgi
 			open(STDIN, "<&QUERY_READ") || die $!;
 			open(STDOUT, ">&RESP_WRITE") || die $!;
 
-			# Close our origional copies if our ends of the pipes.
+			# Close our origional copies of our ends of the pipes.
 			close(QUERY_READ) || die $!;
 			close(RESP_WRITE) || die $!;
 

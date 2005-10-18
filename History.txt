@@ -9917,4 +9917,7 @@ no final tarball was released.
 * Configure: added CFLAGS and LDFLAGS to eliminate unused functions to the
   Linux section.
 
+* filter_dotmatrix/prop.c: fixed spurious declaration of global variable
+  as static.  (merged into 1.54)
+
 
