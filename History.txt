@@ -9478,3 +9478,7 @@ no final tarball was released.
 * pprdrv/pprdrv.h: moved struct Media_Xlate definition to make GCC 4.0 
   happy.
 
+* filter_dotmatrix/prop.c: fixed spurious declaration of global variable
+  as static.
+
+
