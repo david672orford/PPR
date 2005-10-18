@@ -297,7 +297,7 @@ int width(int c, int italic)
 
 #ifdef GENMETRICS
 
-static int HORIZONTAL_UNITS=120;
+int HORIZONTAL_UNITS=120;
 
 static char CP437_names[256][16];				/* name from CP437 file */
 

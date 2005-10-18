@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54, 11 December 2004--14 October 2005
+1.54, 11 December 2004--18 October 2005
 
 * samba/ppd2win95drv.perl: removed
 
@@ -9474,4 +9474,7 @@ no final tarball was released.
 
 * interfaces/smb.sh: removed; interfaces/smb.tcl: backported from 2.XX 
   branch.
+
+* pprdrv/pprdrv.h: moved struct Media_Xlate definition to make GCC 4.0 
+  happy.
 

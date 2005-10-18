@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 May 2004.
+** Last modified 18 October 2005.
 */
 
 /*
@@ -115,6 +115,15 @@ enum PJL_ONLINE
 		PJL_ONLINE_FALSE,
 		PJL_ONLINE_TRUE
 		};
+
+/*
+** The structure which is used to translate between PPR media names and
+** the media names in the "%%Media:" lines.
+*/
+struct	Media_Xlate {
+		char *pprname;
+		char *dscname;
+		} ;
 
 /* pprdrv.c: */
 extern volatile gu_boolean sigterm_caught;
@@ -532,15 +541,6 @@ struct PAPERSIZE
 
 extern struct PAPERSIZE papersize[];
 extern int num_papersizes;
-
-/*
-** The structure which is used to translate between PPR media names and
-** the media names in the "%%Media:" lines.
-*/
-struct	Media_Xlate {
-		char *pprname;
-		char *dscname;
-		} ;
 
 /*
 ** Define the debugging macros based on what was chosen above.
