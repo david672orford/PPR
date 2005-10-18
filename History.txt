@@ -9914,4 +9914,7 @@ no final tarball was released.
   also allows us to use triangular quote marks.  The other languages will
   probably be switched soon since PPR will be using UTF-8 internally.
 
+* Configure: added CFLAGS and LDFLAGS to eliminate unused functions to the
+  Linux section.
+
 

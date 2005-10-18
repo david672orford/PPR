@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/unixuser/ppr-hexdump.c
-** Copyright 1995--2002, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 November 2002.
+** Last modified 18 October 2005.
 */
 
 /*
@@ -83,7 +83,7 @@ static void hexline(int offset, unsigned char *segment, int len)
 int main(int argc, char *argv[])
 	{
 	int offset = 0;
-	char buffer[BYTES_PER_LINE];
+	unsigned char buffer[BYTES_PER_LINE];
 	int len;
 		
 	while((len = fread(buffer, sizeof(unsigned char), sizeof(buffer), stdin)))

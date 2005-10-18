@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 October 2005.
+# Last modified 18 October 2005.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -1409,12 +1409,12 @@ DOTEXE=
 LIBCMD=ar -crs
 RANLIB=touch
 
-# GCC and Glibc
+# GCC, GNU linker, and Glibc
 CC=gcc
 #CC=g++ -fno-exceptions
-CFLAGS=$CFLAGS -I ../include 
+CFLAGS=$CFLAGS -I ../include -ffunction-sections -fdata-sections
 LD=gcc
-LDFLAGS=
+LDFLAGS=-Wl,--gc-sections
 
 # GCC with Diet libc wrapper
 #CC=diet gcc

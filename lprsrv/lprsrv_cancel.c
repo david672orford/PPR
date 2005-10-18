@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 18 October 2005.
 */
 
 #include "config.h"
@@ -52,7 +52,7 @@ static int uprint_lprm_ppr(const char agent[], const char user_domain[], const c
 
 	DODEBUG_UPRINT(("uprint_lprm_ppr(agent = \"%s\", user_domain = \"%s\", queue = \"%s\", arglist = %p", agent, user_domain ? user_domain : "", queue, arglist));
 
-	asprintf(user, "%s@%s", strcmp(agent, "root") == 0 ? "*": agent, user_domain);
+	asprintf(&user, "%s@%s", strcmp(agent, "root") == 0 ? "*": agent, user_domain);
 
 	/* Start to build a command line: */
 	args[0] = "ppop";

@@ -25,13 +25,14 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 18 October 2005.
 */
 
 #include "config.h"
 #include "gu.h"
 #include "global_defines.h"
 #include "rfc1179.h"
+#include "lprsrv.h"
 
 /*
 ** Return TRUE if the destname is the name

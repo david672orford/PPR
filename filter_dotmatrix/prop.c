@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/prop.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 18 October 2005.
 */
 
 /*
@@ -45,9 +45,12 @@
 #include "filter_dotmatrix.h"
 
 /*
-** Proportional spacing table for Epson FX-850.
+** Proportional spacing table for Epson FX-850.  Units are
+** 1/120 of an inch.  The width of the space character works
+** out to 10 CPI.
 */
 int width_epson[224][2]={
+		/* normal, italic */
 		{12,12},				/* space */
 		{5,10},					/* ! */
 		{8,10},					/* " */
@@ -275,14 +278,14 @@ int width_epson[224][2]={
 		} ;
 
 /*
-** This routine is called from add_char() in linebuf.c
-** It returns the 10 pitch width of the specified character
-** in HORIZONTAL_UNITS.
+** This routine is called from add_char() in linebuf.c.  It returns the 10
+** pitch width of the specified character expressed according to the current
+** value of HORIZONTAL_UNITS (240 for 9 pin, 360 for 24 pin).
 */
 int width(int c, int italic)
 	{
-	if(c < 32)			/* for unlisted characters, */
-		return 12;		/* return space width */
+	if(c < 32 || c > 255)		/* for unlisted characters, */
+		return 12;				/* return space width */
 
 	if(italic)
 		return width_epson[c-32][1] * (HORIZONTAL_UNITS/120);
@@ -297,9 +300,14 @@ int width(int c, int italic)
 
 #ifdef GENMETRICS
 
-static int HORIZONTAL_UNITS=120;
+/* This is a a global variable needed by width().  Since the module which
+ * defines it isn't included when GENMETRICS is set, we must define it
+ * ourselves.  Note that normally it is 240 for 9-pin printers and
+ * 360 for 24-pin printers.  Setting it to 120 gets us the raw numbers
+ * from the table width_epson[] above. */
+int HORIZONTAL_UNITS=120;
 
-static char CP437_names[256][16];				/* name from CP437 file */
+static char CP437_names[256][16];			/* names from CP437 file */
 
 /*
 ** Load the mapping from Code Page 437 to PostScript names.
@@ -354,9 +362,9 @@ static void genmetrics(char *infile, int italic)
 		exit(1);
 		}
 
-	while(strncmp(line,"StartCharMetrics",16))
+	while(!lmatch(line,"StartCharMetrics"))
 		{
-		if(fgets(line,sizeof(line),in) == (char*)NULL)
+		if(!fgets(line,sizeof(line),in))
 			{
 			fprintf(stderr, "CharMetrics section not found in \"%s\".\n", infile);
 			exit(1);
@@ -398,14 +406,28 @@ static void genmetrics(char *infile, int italic)
 			if(strcmp(name, CP437_names[i]) == 0)		/* if match */
 				{
 				normal_width = urx - llx;
-				required_width = (int)( (double)width(i,italic) * 600.0 / 12.0 + 0.5 );
+				/* PostScript fonts are draw in a cell which is 1000 units high.
+				 * For the font Courier the cell is 600 units wide for all 
+				 * characters.  For those characters in the Epson FX-850 
+				 * proportionally-space font which will be 600 units wide
+				 * width() will return 12 (12/120 of an inch).  We scale this
+				 * number up to the PostScript font units. */
+				required_width = (int)((double)width(i,italic) * 600.0 / 12.0 + 0.5 );
 
+				/* For any line and box drawing characters which will be 
+				 * identified by the fact that they have the same width
+				 * as space and have "0000" in columns 5-8 of their names
+				 * we don't dare alter anything. */
 				if(required_width==600 && strncmp(&name[4],"0000",4)==0)
-					{					/* don't alter line draw if we can help it */
+					{
 					lsb = llx;
 					}
-				else					/* most characters get new left */
-					{					/* side bearing */
+
+				/* Most characters get a new left side bearing calculated to
+				 * place the character in the middle of its Epson FX-850
+				 * proportional-spaced cell.  Hopefully will look good. */
+				else
+					{
 					/* lsb = ((normal_width - required_width) / 2); */
 					lsb = llx - ((600 - required_width) / 2 );
 					}

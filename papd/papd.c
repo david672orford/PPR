@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2005.
+** Last modified 18 October 2005.
 */
 
 /*
@@ -654,7 +654,7 @@ int main(int argc, char *argv[])
 	#endif
 
 	/* If we are currently running as root, become USER_PPR or die! */
-	if((ret = renounce_root_privs(myname, USER_PPR, NULL, FALSE)))
+	if((ret = renounce_root_privs(myname, USER_PPR, NULL)))
 		return ret;
 	
 	gu_Try {
