@@ -9891,11 +9891,6 @@ no final tarball was released.
   since long language and charset names were pushing it more than 50 bytes in
   where pprd couldn't find it anymore.
 
-* libscript/tcpserver.pl: added capabilities to bind to a specific IP address,
-  change to a specified user id, and write a specified PID file; 
-  www/ppr-httpd.perl: changed --stanalone-port to --standalone-bind using 
-  the new tcpserver.pl facilities
-
 * z_install_end/init.d.sh: added startup for ppr-httpd in standalone mode as 
   an IPP and an admin server.  This is enabled and disabled by defining values 
   in /etc/default/ppr.
@@ -9920,4 +9915,17 @@ no final tarball was released.
 * filter_dotmatrix/prop.c: fixed spurious declaration of global variable
   as static.  (merged into 1.54)
 
+* Eliminated HAVE_PUTENV since putenv() is part of POSIX, is present on all
+  supported platforms, and is necessary.
+
+* libscript/tcpserver.pl: removed.
+
+* misc/tcpbind.c: added
+
+* www/ppr-httpd.perl: changed standalone mode to use tcpbind rather than
+  tcpserver.pl.
+
+* libgu/daemon.c: reworked to handle lockfile creation.
+
+* pprd/: added --debug.
 

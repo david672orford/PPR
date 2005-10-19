@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 October 2005.
+** Last modified 19 October 2005.
 */
 
 /*
@@ -589,26 +589,17 @@ static int parse_cmdline(int argc, char *argv[])
  */
 static void init(void)
 	{
-	FILE *f;
-
-	if((f = fopen(PIDFILE, "r")))
-		{
-		fclose(f);
-		gu_Throw("daemon already running");
-		}
-
 	/* Set environment variables such as PATH and PPR_VERSION. */
 	set_ppr_env();
 
 	/* Remove some unnecessary and misleading things from the environment. */
 	prune_env();
 
-	/* Go into background. */
-	if(!opt_foreground)
-		gu_daemon(PPR_UMASK);
-
 	/* Change to the PPR home directory. */
 	chdir(LIBDIR);
+
+	/* Go into background. */
+	gu_daemon(myname, opt_foreground, PPR_UMASK, PIDFILE);
 
 	/* Remove any old log file. */
 	unlink(LOGFILE);
@@ -620,11 +611,6 @@ static void init(void)
 	 */ 
 	master_pid = getpid();
 	debug("Daemon starting, master_pid=%ld", (long)master_pid);
-	if((f = fopen(PIDFILE, "w")))
-		{
-		fprintf(f, "%ld\n", (long)master_pid);
-		fclose(f);
-		}
 
 	/*
 	** Install signal handlers for child termination, shutdown, log

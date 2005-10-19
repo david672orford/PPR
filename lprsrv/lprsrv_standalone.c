@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 19 October 2005.
 */
 
 #include "config.h"
@@ -54,95 +54,7 @@
 /*
 ** This module contains functions which lprsrv needs to run in
 ** standalone mode (without Inetd).
-**
-** The standalone mode code is optional.  After we include lprsrv.h
-** (which is done above) we test to see if STANDALONE is defined.
 */
-#ifdef STANDALONE
-
-/* This is set to TRUE in a child process: */
-gu_boolean am_standalone_parent = FALSE;
-
-/*
-** This function is called from the command line parser.
-*/
-int port_name_lookup(const char *name)
-	{
-	struct servent *service;
-	if((service = getservbyname(name, "tcp")) == (struct servent *)NULL)
-		return -1;
-	return ntohs(service->s_port);
-	}
-
-/*
-** Create the lock file which exists mainly
-** so that we can be killed:
-*/
-static void create_lock_file(void)
-	{
-	int lockfilefd;
-	char temp[10];
-
-	am_standalone_parent = TRUE;
-
-	if((lockfilefd = open(LPRSRV_LOCKFILE, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) == -1)
-		fatal(1, _("can't open \"%s\", errno=%d (%s)"), LPRSRV_LOCKFILE, errno, gu_strerror(errno));
-
-	if(gu_lock_exclusive(lockfilefd, FALSE))
-		fatal(1, _("lprsrv is already running in standalone mode"));
-
-	snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
-	write(lockfilefd, temp, strlen(temp));
-	} /* end of create_lock_file() */
-
-/*
-** Create the server well known port and return a
-** file descriptor for it.
-*/
-static int bind_server(int server_port)
-	{
-	const char function[] = "bind_server";
-	uid_t saved_euid;
-	int sockfd;
-	struct sockaddr_in serv_addr;
-
-	saved_euid = geteuid();
-	if(seteuid(0) == -1)
-		fatal(1, "%s(): seteuid(0) failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-
-	if((sockfd = socket(AF_INET, SOCK_STREAM,0)) == -1)
-		fatal(1, "%s(): socket() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-
-	/* We will accept from any IP address and will listen on server_port. */
-	memset(&serv_addr, 0, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-	serv_addr.sin_port = htons(server_port);
-
-	/* Try to avoid being locked out when restarting daemon: */
-	{
-	int one = 1;
-	if(setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, (char *)&one, sizeof(one)) == -1)
-		fatal(1, "%s(): setsockopt() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-	}
-
-	/* Bind to the port. */
-	if(bind(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
-		{
-		if(errno == EADDRINUSE)
-			fatal(1, _("there is already a server listening on TCP port %d"), server_port);
-		fatal(1, "be_server(): bind() failed, errno=%d (%s)", errno, gu_strerror(errno));
-		}
-
-	if(seteuid(saved_euid) == -1)
-		fatal(1, "%s(): seteuid(%ld) failed, errno=%d (%s)", function, (long)saved_euid, errno, gu_strerror(errno));
-
-	/* Set the backlog queue length. */
-	if(listen(sockfd, 5) == -1)
-		fatal(1, "%s(): listen() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-
-	return sockfd;
-	} /* end of bind_server() */
 
 /*
 ** This function is called in the daemon whenever one of the
@@ -164,80 +76,98 @@ static void reapchild(int sig)
 ** connects stdin, stdout, and stderr to the connexion, and returns to main()
 ** in the child.
 */
-static void standalone_main_loop(int sockfd)
+void standalone_accept(char *tcpbind_sockets)
 	{
-	const char function[] = "standalone_main_loop";
-	int pid;
-	struct sockaddr_in cli_addr;
-	unsigned int clilen;				/* !!! things are changing !!! */
-	int newsockfd;
-
-	for( ; ; )							/* loop until killed */
-		{
-		DODEBUG_STANDALONE(("%s(): waiting for connexion", function));
-
-		clilen = sizeof(cli_addr);
-		if((newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr, &clilen)) == -1)
-			{
-			debug("%s(): accept() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-			continue;
-			}
-
-		DODEBUG_STANDALONE(("%s(): connection request from %s", function, inet_ntoa(cli_addr.sin_addr)));
-
-		if((pid = fork()) == -1)		/* error, */
-			{
-			debug("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-			}
-		else if(pid == 0)				/* child */
-			{
-			am_standalone_parent = FALSE;
-			close(sockfd);
-			signal_restarting(SIGCHLD, SIG_IGN);
-			if(newsockfd != 0) dup2(newsockfd, 0);
-			if(newsockfd > 0) close(newsockfd);
-			return;
-			}
-		else							/* parent */
-			{
-			DODEBUG_STANDALONE(("%s(): child %ld launched", function, (long)pid));
-			}
-
-		close(newsockfd);
-		}
-	} /* end of main_loop() */
-
-/*
-** This ties it all together.  It is called from main().
-** Since the last thing it does is call get_connexion(),
-** the parent never returns but the child does numberous times.
-*/
-void run_standalone(int server_port)
-	{
-	int fd;
-
-	/*
-	** Duplicate this process and close the origional one
-	** so that the shell will stop waiting.  Also, disassociate
-	** from the controlling terminal and close all file descriptors.
-	*/
-	gu_daemon(PPR_UMASK);
-
-	/* By convention, PPR processes run in the PPR home
-	   directory. */
-	chdir(LIBDIR);
-
-	DODEBUG_MAIN(("entering standalone mode"));
-	create_lock_file();
-
-	DODEBUG_MAIN(("starting server on port %d", server_port));
-	fd = bind_server(server_port);
+	const char function[] = "run_standalone";
+	#define MAX_FDS 32 
+	int fds[MAX_FDS];
+	int fdcount;
+	int maxfd = -1;
 
 	signal_restarting(SIGCHLD, reapchild);
 
-	standalone_main_loop(fd);
-	} /* run_standalone() */
-#endif
+	{
+	char *p, *item;
+	for(fdcount=0, p=tcpbind_sockets; (item = gu_strsep(&p, ",")); fdcount++)
+		{
+		char *f1, *f2;
+
+		if(fdcount >= MAX_FDS)
+			fatal(1, "listening on too many ports");
+
+		/* Each item is in the format fd=socket. */
+		if(!(f1 = gu_strsep(&item, "=")) || !(f2 = gu_strsep(&item, "=")))
+			fatal(1, "can't parse TCPBIND_SOCKETS item %d", fdcount+1);
+		if((fds[fdcount] = atoi(f1)) <= 0)
+			fatal(1, "can't parse socket number: %s", f1);
+
+		if(fds[fdcount] > maxfd)
+			maxfd = fds[fdcount];
+
+		gu_set_cloexec(fds[fdcount]);
+		gu_nonblock(fds[fdcount], TRUE);
+		}
+	}
+
+	for( ; ; )							/* loop until killed */
+		{
+		int conn_fd;
+		pid_t pid;
+		fd_set fdset;
+		int iii;
+		int selret;
+
+		FD_ZERO(&fdset);
+		for(iii=0; iii < fdcount; iii++)
+			FD_SET(fds[iii], &fdset);
+	
+		DODEBUG_STANDALONE(("%s(): waiting for connexion", function));
+		while((selret = select(maxfd+1, &fdset, NULL, NULL, NULL)) == -1)
+			{
+			if(errno == EINTR)
+				continue;
+			else
+				fatal(1, "select() failed, errno=%d (%s)", errno, strerror(errno));
+			}
+		for(iii=0; selret--; )
+			{
+			if(!FD_ISSET(fds[iii], &fdset))
+				continue;
+
+			{
+			struct sockaddr_in cli_addr;
+			unsigned int clilen = sizeof(cli_addr);
+			if((conn_fd = accept(fds[iii], (struct sockaddr *) &cli_addr, &clilen)) == -1)
+				{
+				debug("%s(): accept() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+				continue;
+				}
+			DODEBUG_STANDALONE(("%s(): connection request from %s", function, inet_ntoa(cli_addr.sin_addr)));
+			}
+	
+			if((pid = fork()) == -1)		/* error, */
+				{
+				debug("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+				}
+			else if(pid == 0)				/* child */
+				{
+				tcpbind_pidfile = NULL;		/* so fatal() doesn't delete parent's PID file */
+				signal_restarting(SIGCHLD, SIG_IGN);
+				if(conn_fd != 0)
+					dup2(conn_fd, 0);
+				if(conn_fd > 0)
+					close(conn_fd);
+				return;
+				}
+			else							/* parent */
+				{
+				DODEBUG_STANDALONE(("%s(): child %ld launched", function, (long)pid));
+				}
+	
+			close(conn_fd);
+			}
+		}
+	} /* end of main_loop() */
 
 /* end of file */
 

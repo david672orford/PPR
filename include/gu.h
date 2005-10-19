@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 September 2005.
+** Last modified 19 October 2005.
 */
 
 /*! \file
@@ -201,7 +201,7 @@ int gu_ascii_xdigit_value(int c);
 int gu_ascii_isspace(int c);
 int gu_sscanf(const char *input, const char *pattern, ...);
 int gu_fgetint(FILE *input);
-void gu_daemon(mode_t daemon_umask);
+void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask, const char lockfile[]);
 int disk_space(const char *path, unsigned int *free_blocks, unsigned int *free_files);
 int gu_wordwrap(char *string, int width);
 int gu_wrap_printf(const char format[], ...)

@@ -160,8 +160,6 @@ umask(002);
 # If there are command line arguments, pull in Getopt::Long
 # to process them.
 #===========================================================
-my $standalone_bind = undef;
-my $pidfile = undef;
 my $root_xlate = undef;
 my $port = 15010;
 my $ipp = undef;
@@ -170,8 +168,6 @@ if(scalar @ARGV >= 1)
 	{
 	require Getopt::Long;
 	if(!Getopt::Long::GetOptions(
-			"standalone-bind=s" => \$standalone_bind,
-			"pidfile=s" => \$pidfile,
 			"root-xlate=s" => \$root_xlate,
 			"inetd-port=s" => \$port,
 			"ipp" => \$ipp
@@ -187,22 +183,6 @@ if(defined $ipp)
 	$root_xlate = "cgi-bin/ipp";
 	$port = 631;
 	}
-if(defined $standalone_bind && $standalone_bind =~ /:(.+)$/)
-	{
-	$port = $1;
-	}
-
-#===========================================================
-# If standalone mode is called for, load and call
-# tcpserver().	It will fork child processes which will
-# return from tcpserver() with STDIN and STDOUT connected
-# to the remote machine, but the parent will never return.
-#===========================================================
-if(defined $standalone_bind)
-	{
-	require "tcpserver.pl";
-	tcpserver($standalone_bind, $USER_PPRWWW, $pidfile);
-	}
 
 #===========================================================
 # If we have access, send STDERR to a debugging file,
@@ -210,6 +190,18 @@ if(defined $standalone_bind)
 # it doesn't corrupt the HTTP transaction.
 #===========================================================
 open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
+
+#===========================================================
+#===========================================================
+if(defined $ENV{TCPBIND_SOCKETS})
+	{
+	my %fds = ();
+	foreach my $item (split(',', $ENV{TCPBIND_SOCKETS}))
+		{
+		my($fd, $port) = split(/=/, $item);
+		$fds{$fd} = $port;
+		}
+	}
 
 #===========================================================
 # Start of connection handling code.

@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/pprd.8.pod
-# Copyright 1995--2003, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2003.
+# Last modified 19 October 2005.
 #
 
 =head1 NAME
@@ -34,7 +34,7 @@ pprd - PostScript PRinter spooling Daemon
 
 =head1 SYNOPSIS
 
-B<pprd> [B<--help>] [B<--version>] [B<--foreground>] [B<--stop>]
+B<pprd> [B<--help>] [B<--version>] [B<--foreground>] [B<--stop>] [B<--debug>]
 
 =head1 DESCRIPTION
 
@@ -45,9 +45,13 @@ invoked it is "root" or "ppr".  If it is not, then B<pprd> exits immediately.
 If the B<--help> or B<--version> switch is used it will print brief usage
 information or PPR version information respectively.
 
-The B<--foreground> switch tells B<pprd> not to puts itself in the background.  Use this switch if you
-are running B<pprd> directly from B<init>.  Note that using this option does not cause debug and error
-messages to be sent to stdout.  They continue to go to F</var/spool/ppr/logs/pprd>.
+The B<--foreground> switch tells B<pprd> not to puts itself in the background.
+Use this switch if you are running B<pprd> directly from B<init>.  Note that
+using this option does not cause debug and error messages to be sent to stdout.
+They continue to go to F</var/spool/ppr/logs/pprd>.
+
+The B<--debug> option implies B<--foreground> but also causes the debug and error
+messages to be sent to stdout.
 
 The B<--stop> option shuts down a previously-started instance of B<pprd>.
 

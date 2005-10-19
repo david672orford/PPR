@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/daemon.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 19 October 2005.
 */
 
 /*! \file
@@ -33,6 +33,9 @@
 */
 
 #include "config.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include <signal.h>
 #include <unistd.h>
 #include <limits.h>
@@ -43,56 +46,80 @@
 /** become a daemon
 
 This function is used to put the calling process into the background.  It
-does this by forking, then parent half to exits.  It does other things too,
+does this by forking, then the parent half exits.  It does other things too,
 such as closing all open files and setting the session id.
 
 */
-void gu_daemon(mode_t daemon_umask)
+void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask, const char lockfile[])
 	{
 	const char function[] = "gu_daemon";
-
-	/* Ignore group leader death.
-	   (I don't think the above description
-	   is quite acurate.)  */
-	signal_interupting(SIGHUP, SIG_IGN);
+	int pid_fd;
 
 	/* Override inherited umask: */
 	umask(daemon_umask);
 
-	/* If we have fork(), then drop into
-	   the background. */
-	#ifdef HAVE_FORK
-	{
-	pid_t pid;
-
-	if((pid = fork()) == -1)
+	if((pid_fd = open(lockfile, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR)) == -1)
 		{
-		fputs("FATAL:  can't fork daemon\n", stderr);
-		gu_Throw("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		fprintf(stderr, "%s: can't create lock file \"%s\", errno=%d (%s)\n", progname, lockfile, errno, strerror(errno));
+		exit(1);
+		}
+	if(gu_lock_exclusive(pid_fd, FALSE))
+		{
+		fprintf(stderr, "%s: daemon already running\n", progname);
+		exit(1);
 		}
 
-	if(pid)
-		_exit(0);
-	}
-	#endif
-
-	/* Dissasociate from controling terminal
-	   and become a process group leader.
-	   (Can we do that if we couldn't fork?) */
-	if(setsid() == -1)
+	if(!standalone)
 		{
-		fputs("FATAL: can't set session id\n", stderr);
-		gu_Throw("%s(): setsid() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		pid_t pid;
+
+		/* Ignore group leader death.
+		   (I don't think the above description
+		   is quite accurate.)  */
+		signal_interupting(SIGHUP, SIG_IGN);
+	
+		/* If we have fork(), then drop into
+		   the background. */
+		#ifdef HAVE_FORK
+		if((pid = fork()) == -1)
+			{
+			fprintf(stderr, "%s: can't fork daemon\n", progname);
+			exit(1);
+			}
+	
+		if(pid)			/* if parent, */
+			_exit(0);
+		#endif
 		}
 
-	/* Close all file descriptors. */
+	/* child from here on */
+
 	{
-	int fd, stopat;
-	stopat = sysconf(_SC_OPEN_MAX);
-	for(fd=0; fd < stopat; fd++)
-		close(fd);
+	char temp[16];
+	gu_snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
+	write(pid_fd, temp, strlen(temp));
+	gu_set_cloexec(pid_fd);
 	}
-	} /* end of daemon() */
+
+	if(!standalone)
+		{	
+		/* Dissasociate from controling terminal and become a process 
+		 * group leader. */
+		if(setsid() == -1)
+			{
+			fprintf(stderr, "%s: can't set session id\n", progname);
+			exit(1);
+			}
+	
+		/* Close all file descriptors. */
+		{
+		int fd, stopat;
+		stopat = sysconf(_SC_OPEN_MAX);
+		for(fd=0; fd < stopat; fd++)
+			close(fd);
+		}
+		}
+	} /* end of gu_daemon() */
 
 /* end of file */
 

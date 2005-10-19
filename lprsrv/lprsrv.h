@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 August 2005.
+** Last modified 19 October 2005.
 */
 
 /*
@@ -55,9 +55,6 @@
 
 /* Where do we want debugging and error messages? */
 #define LPRSRV_LOGFILE LOGDIR"/lprsrv"
-
-/* This locked file is created when running in standalone mode: */
-#define LPRSRV_LOCKFILE RUNDIR"/lprsrv.pid"
 
 /* Number of data structure slots for files received: */
 #define MAX_FILES_PER_JOB 100
@@ -202,6 +199,7 @@ const char *this_node(void);
 void fatal(int exitcode, const char message[], ... );
 void debug(const char message[], ...);
 void warning(const char string[], ...);
+extern char *tcpbind_pidfile;
 
 /* lprsrv_client_info.c: */
 void get_client_info(char *client_dns_name, char *client_ip, int *client_port);
@@ -220,9 +218,7 @@ void do_request_lpq(char *command);
 void do_request_lprm(char *command, const char fromhost[], const struct ACCESS_INFO *access_info);
 
 /* lprsrv_standalone.c: */
-int port_name_lookup(const char *name);
-void run_standalone(int server_port);
-extern int am_standalone_parent;
+void standalone_accept(char *tcpbind_sockets);
 
 /* uprint_claim_*.c: */
 gu_boolean uprint_claim_ppr(const char dest[]);

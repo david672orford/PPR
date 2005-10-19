@@ -109,23 +109,6 @@ int open_fifo(void)
 	} /* end of open_fifo() */
 
 /*
-** Create the lock file which ensures only one pprd at a time.
-*/
-void create_lock_file(void)
-	{
-	int lockfilefd;
-	char temp[10];
-	if((lockfilefd = open(PPRD_LOCKFILE, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
-		fatal(100, "can't open \"%s\", errno=%d (%s)", PPRD_LOCKFILE, errno, gu_strerror(errno));
-	if(gu_lock_exclusive(lockfilefd, FALSE))
-		fatal(100, "pprd already running");
-	snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
-	write(lockfilefd, temp, strlen(temp));
-	gu_set_cloexec(lockfilefd);
-	lockfile_created = TRUE;
-	} /* end of create_lock_file() */
-
-/*
 ** If there is an old log file, rename it.
 */
 void rename_old_log_file(void)
@@ -153,12 +136,13 @@ static const struct gu_getopt_opt option_words[] =
 		{"help", 1001, FALSE},
 		{"foreground", 1002, FALSE},
 		{"stop", 1003, FALSE},
+		{"debug", 1004, FALSE},
 		{(char*)NULL, 0, FALSE}
 		} ;
 
 static void help(FILE *out)
 	{
-	fputs("Usage: pprd [--version] [--help] [--foreground] [--stop]\n", out);
+	fputs("Usage: pprd [--version] [--help] [--foreground] [--stop] [--debug]\n", out);
 	}
 
 static int pprd_stop(void)
@@ -211,7 +195,7 @@ static int pprd_stop(void)
 /*
 ** Parse the options:
 */
-void parse_command_line(int argc, char *argv[], int *option_foreground)
+void parse_command_line(int argc, char *argv[], gu_boolean *option_foreground, gu_boolean *option_debug)
 	{
 	struct gu_getopt_state getopt_state;
 	int optchar;
@@ -238,6 +222,10 @@ void parse_command_line(int argc, char *argv[], int *option_foreground)
 				break;
 			case 1003:			/* --stop */
 				exit_code = pprd_stop();
+				break;
+			case 1004:			/* --debug */
+				*option_foreground = TRUE;
+				*option_debug = TRUE;
 				break;
 			case '?':
 			case ':':

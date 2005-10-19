@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 March 2005.
+# Last modified 19 October 2005.
 #
 
 include ../Makefile.conf
@@ -46,8 +46,7 @@ UNBUILT_LIBS=\
 	speach.pl speach_play.pl \
 	MD5pp.pm \
 	readppd.pl \
-	acl.pl \
-	tcpserver.pl
+	acl.pl
 
 BUILT_OTHER=signal_sh$(DOTEXE)
 

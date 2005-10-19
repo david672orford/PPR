@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 September 2005.
+** Last modified 19 October 2005.
 */
 
 /*! \file
@@ -54,6 +54,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#ifndef INADDR_NONE
+#define INADDR_NONE -1
+#endif
 #include "gu.h"
 #include "global_defines.h"
 
@@ -61,59 +64,77 @@ const char myname[] = "tcpbind";
 
 int main(int argc, char *argv[])
 	{
-	char *bind_addresses, *username;
-	int count;
-	void *list = gu_pcs_new_cstr("TCPBIND_SOCKETS=");
+	char *bind_addresses, *username, *pidname;
 
 	if(getuid() != geteuid())
 		{
 		fprintf(stderr, "%s: should not be setuid!\n", myname);
-		return 1;
+		exit(1);
 		}
 
-	if(argc < 4)
+	if(argc < 5)
 		{
-		fprintf(stderr, "%s: Usage: tcpbind <address> <username> <daemon> ...\n", myname);
-		return 1;
+		fprintf(stderr, "%s: Usage: tcpbind <addresses>:<port> <username> <pidname> <daemon> ...\n", myname);
+		exit(1);
 		}
 	bind_addresses = argv[1];
 	username = argv[2];
+	pidname = argv[3];
 
+	/* Process a comma-separated list of bind addresses. */
 	{
+	int count;
 	char *p, *item;
+	void *list = gu_pcs_new_cstr("TCPBIND_SOCKETS=");
 	for(count=0, p=bind_addresses; (item = gu_strsep(&p, ",")); count++)
 		{
 		char *f1, *f2;
-		int port, fd;
+		int fd, port;
 		struct sockaddr_in serv_addr;
+
+		/* Each item is in the format [IP Address:]port. */
+		/*printf("item: \"%s\"\n", item);*/
 		if(!(f1 = gu_strsep(&item, ":")) || !(f2 = gu_strsep(&item, ":")))
 			{
-			fprintf(stderr, "%s: can't parse address %d\n", myname, count+1);
-			return 1;
+			fprintf(stderr, "%s: syntax error in address:port list\n", myname);
+			exit(1);
 			}
+		/*printf("f1: \"%s\", f2: \"%s\"\n", f1?f1:"", f2);*/
 
 		if((port = atoi(f2)) == 0)
 			{
 			fprintf(stderr, "%s: invalid port: %s\n", myname, f2);
-			return 1;
+			exit(1);
 			}
+
+		memset(&serv_addr, 0, sizeof(serv_addr));
+		serv_addr.sin_family = AF_INET;
+		if(strlen(f1) != 0 && strcmp(f1, "*") != 0)
+			{
+			if((serv_addr.sin_addr.s_addr = inet_addr(f1)) == INADDR_NONE)
+				{
+				fprintf(stderr, "%s: IP address \"%s\" is invalid.\n", myname, f1);
+				exit(1);
+				}
+			}
+		else
+			serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+		serv_addr.sin_port = htons(port);
 
 		if((fd = socket(AF_INET, SOCK_STREAM,0)) == -1)
 			{
 			fprintf(stderr, "%s: socket() failed, errno=%d (%s)\n", myname, errno, strerror(errno));
-			return 1;
+			exit(1);
 			}
 		
-		memset(&serv_addr, 0, sizeof(serv_addr));
-		serv_addr.sin_family = AF_INET;
-		serv_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-		serv_addr.sin_port = htons(port);
-
 		/* Try to avoid being locked out when restarting daemon: */
 		{
 		int one = 1;
 		if(setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, (char *)&one, sizeof(one)) == -1)
+			{
 			fprintf(stderr, "%s: setsockopt() failed, errno=%d (%s)\n", myname, errno, gu_strerror(errno));
+			exit(1);
+			}
 		}
 
 		if(bind(fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1)
@@ -122,24 +143,42 @@ int main(int argc, char *argv[])
 				fprintf(stderr, "%s: there is already a server listening on %s:%d\n", myname, f1, port);
 			else
 				fprintf(stderr, "%s: bind() failed, errno=%d (%s)\n", myname, errno, strerror(errno));
-			return 1;
+			exit(1);
+			}
+
+		if(listen(fd, 5) == -1)
+			{
+			fprintf(stderr, "%s: listen() failed, errno=%d (%s)\n", myname, errno, strerror(errno));
+			exit(1);
 			}
 
 		if(count > 0)
-			gu_pcs_append_char(list, ',');
-		gu_pcs_append_sprintf(list, "%d:%d", port, fd);
+			gu_pcs_append_char(&list, ',');
+		gu_pcs_append_sprintf(&list, "%d=%d", fd, port);
 		}	
+	putenv(gu_pcs_free_keep_cstr(&list));	
+	printf("TCPBIND_SOCKETS=\"%s\"\n", getenv("TCPBIND_SOCKETS"));
 	}
-	
+
+	/* Become the specified user if not already. */
 	{
 	int ret;
 	if((ret = renounce_root_privs(myname, username, NULL)) != 0)
 		return ret;
 	}
 
-	execv(argv[3], &argv[3]);
+	/* Build the name of our PID file, store it in the environment,
+	 * and fork off the daemon process. */
+	{
+	char *p;
+	gu_asprintf(&p, "TCPBIND_PIDFILE=%s/%s.pid", RUNDIR, pidname);
+	putenv(p);
+	gu_daemon(myname, TRUE, UNIX_002, p + strlen("TCPBIND_PIDFILE="));
+	}
+
+	execv(argv[4], &argv[4]);
 	fprintf(stderr, "%s: execv() failed, errno=%d (%s)\n", myname, errno, strerror(errno));
-	return 1;
+	exit(1);
 	} /* end of main() */
 
 /* end of file */

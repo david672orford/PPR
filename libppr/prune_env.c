@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 January 2005.
+** Last modified 19 October 2005.
 */
 
 #include "config.h"
@@ -40,14 +40,12 @@
 */
 void set_ppr_env()
 	{
-	#ifdef HAVE_PUTENV
 	putenv("PPR_VERSION=" SHORT_VERSION);
 	putenv("PATH=" SAFE_PATH);
 	putenv("IFS= \t\n");
 	putenv("SHELL=/bin/sh");
 	putenv("HOME=" LIBDIR);
 	putenv("XAUTHORITY=" RUNDIR "/Xauthority");
-	#endif
 	} /* end of set_ppr_env() */
 
 /*
@@ -64,7 +62,7 @@ void prune_env(void)
 	unsetenv("MANPATH");
 	unsetenv("DISPLAY");
 	unsetenv("WINDOWID");
-	#elif defined(HAVE_PUTENV)
+	#else
 	putenv("TERM=");
 	putenv("TERMINFO=");
 	putenv("USER=");

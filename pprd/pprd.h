@@ -56,7 +56,7 @@
 ** Note that we use C++ comments here to disable the ones we don't want.  This
 ** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
-#if 0
+#if 1
 #define DEBUG 1							/* define function[] strings */
 //#define DEBUG_STARTUP 1				/* initialization routines */
 //#define DEBUG_MAINLOOP 1				/* main loop */
@@ -87,6 +87,8 @@
 
 /* A few global variables: */
 extern const char myname[];
+extern gu_boolean option_foreground;
+extern gu_boolean option_debug;
 extern time_t daemon_start_time;
 extern gu_boolean lockfile_created;
 

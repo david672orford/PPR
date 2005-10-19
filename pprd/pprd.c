@@ -59,6 +59,8 @@
 ** Misc global variables
 */
 const char myname[] = "pprd";
+gu_boolean option_foreground = FALSE;
+gu_boolean option_debug = FALSE;
 time_t daemon_start_time;		/* time at which this daemon started */
 struct QEntry *queue;			/* array holding terse queue */
 int queue_size;					/* number of entries for which there is room */
@@ -318,7 +320,6 @@ static void do_command(int FIFO)
 static int real_main(int argc, char *argv[])
 	{
 	const char function[] = "real_main";
-	int option_foreground = FALSE;
 	int FIFO;					/* First-in-first-out which feeds us requests */
 	sigset_t lock_set;
 	struct timeval next_tick;
@@ -342,7 +343,7 @@ static int real_main(int argc, char *argv[])
 	set_ppr_env();
 	prune_env();
 
-	parse_command_line(argc, argv, &option_foreground);
+	parse_command_line(argc, argv, &option_foreground, &option_debug);
 
 	/* Switch all UIDs to USER_PPR, all GIDS to GROUP_PPR;
 	 * set supplemental group IDs. */
@@ -353,16 +354,8 @@ static int real_main(int argc, char *argv[])
 	}
 
 	/* If the --forground switch wasn't used, then dropt into background. */
-	if(! option_foreground)
-		gu_daemon(PPR_PPRD_UMASK);
-	else
-		umask(PPR_PPRD_UMASK);
-
-	/* Change the home directory to the PPR home directory: */
-	chdir(LIBDIR);
-
-	/* Create /var/spool/ppr/pprd.pid. */
-	create_lock_file();
+	gu_daemon(myname, option_foreground, PPR_PPRD_UMASK, PPRD_LOCKFILE);
+	lockfile_created = TRUE;
 
 	/* Signal handlers for silly stuff. */
 	signal_restarting(SIGPIPE, signal_ignore);
@@ -493,6 +486,8 @@ static int real_main(int argc, char *argv[])
 		} /* end of endless while() loop */
 
 	state_update("SHUTDOWN");
+
+	/* We use fatal because it removes the lock file. */
 	fatal(0, "Received SIGTERM, exiting");
 	} /* end of real_main() */
 

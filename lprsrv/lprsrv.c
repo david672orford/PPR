@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 18 October 2005.
+** Last modified 19 October 2005.
 */
 
 /*
@@ -51,6 +51,8 @@
 #include "lprsrv.h"
 #include "util_exits.h"
 #include "version.h"
+
+char *tcpbind_pidfile;
 
 /*
 ** This function returns the name of this computer.  This is used in some
@@ -110,10 +112,10 @@ void fatal(int exitcode, const char message[], ... )
 
 	va_end(va);
 
-#ifdef STANDALONE
-	if(am_standalone_parent)
-		unlink(LPRSRV_LOCKFILE);
-#endif
+	/* If we are running in standalone mode (started by tcpbind) and are the 
+	 * listener process, then remove the lock file. */
+	if(tcpbind_pidfile)
+		unlink(tcpbind_pidfile);
 
 	exit(exitcode);
 	} /* end of fatal() */
@@ -161,9 +163,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"arrest-interest-interval", 'A', TRUE},
 		{"help", 1000, FALSE},
 		{"version", 1001, FALSE},
-		#ifdef STANDALONE
-		{"standalone-port", 's', TRUE},
-		#endif
 		{(char*)NULL, 0, FALSE}
 		} ;
 
@@ -173,12 +172,6 @@ static const struct gu_getopt_opt option_words[] =
 static void help(FILE *outfile)
 	{
 	fputs(_("Valid switches:\n"), outfile);
-
-#ifdef STANDALONE
-	fputs(_("\t-s <port>\n"
-		"\t--standalone-port <port>\n"
-		"\t\t(run standalone, bind to specified TCP port)\n"), outfile);
-#endif
 
 	fputs(_("\t-A <seconds>\n"
 		"\t--arrest-interest-interval <seconds>\n"
@@ -196,13 +189,11 @@ static void help(FILE *outfile)
 static int real_main(int argc,char *argv[])
 	{
 	const char function[] = "main";
+	char *tcpbind_sockets;
 	char client_dns_name[MAX_HOSTNAME+1];
 	char client_ip[16];
 	int client_port;
 	struct ACCESS_INFO access_info;
-	#ifdef STANDALONE
-	int standalone_port = 0;
-	#endif
 
 	/* Initialize internation messages library. */
 	#ifdef INTERNATIONAL
@@ -224,38 +215,13 @@ static int real_main(int argc,char *argv[])
 	umask(PPR_UMASK);
 
 	/*
-	** Clean up the environement.
+	** Save what we want from the environment and clean it up.
 	*/
+	tcpbind_sockets = gu_strdup(getenv("TCPBIND_SOCKETS"));	/* gu_strdup() doesn't mind NULL */
+	tcpbind_pidfile = gu_strdup(getenv("TCPBIND_PIDFILE"));
 	set_ppr_env();
 	prune_env();
-
-	/*
-	** It is essential that this program run as "root" if it is to act as the user.
-	*/
-	if(getuid())
-		fatal(1, _("lprsrv must run as root"));
-
-	/*
-	** Switch the effective UID to that of the PPR user in order to gain a 
-	** little safety but leave the real UID as root so that we can bind
-	** to priveledged ports (in standalone mode) or become users in order
-	** to print jobs for them.
-	*/
-	{
-	struct passwd *user_ppr;
-
-	if((user_ppr = getpwnam(USER_PPR)) == (struct passwd *)NULL)
-		fatal(1, _("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "getpwnam", USER_PPR, errno, gu_strerror(errno));
-
-	if(setgroups(0, &user_ppr->pw_gid) == -1)
-		fatal(1, _("%s(): %s() failed, errno=%d (%s)"), function, "setgroups", errno, gu_strerror(errno));
-
-	if(setegid(user_ppr->pw_gid) == -1)
-		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "setegid", (long)user_ppr->pw_gid, errno, gu_strerror(errno));
-
-	if(seteuid(user_ppr->pw_uid) == -1)
-		fatal(1, _("%s(): %s(%ld) failed, errno=%d (%s)"), function, "seteuid", (long)user_ppr->pw_uid, errno, gu_strerror(errno));
-	}
+	printf("TCPBIND_SOCKETS=\"%s\"\n", tcpbind_sockets);
 
 	/*
 	** Parse the command line options.  We use the parsing routine
@@ -272,28 +238,6 @@ static int real_main(int argc,char *argv[])
 		{
 		switch(optchar)
 			{
-			case 's':
-				#ifdef STANDALONE
-				{
-				if(strspn(getopt_state.optarg, "0123456789") == strlen(getopt_state.optarg))
-					{
-					standalone_port = atoi(getopt_state.optarg);
-					}
-				else
-					{
-					if((standalone_port = port_name_lookup(getopt_state.optarg)) == -1)
-						{
-						fprintf(stderr, _("Unknown port name: %s"), getopt_state.optarg);
-						exit(EXIT_SYNTAX);
-						}
-					}
-				}
-				break;
-				#else
-				fputs(_("Standalone mode code not present.\n"), stderr);
-				exit(EXIT_SYNTAX);
-				#endif
-
 			case 'A':					/* -A or --arrest-interest-interval */
 				uprint_arrest_interest_interval = getopt_state.optarg;
 				break;
@@ -333,15 +277,11 @@ static int real_main(int argc,char *argv[])
 		}
 	} /* end of command line parsing context */
 
-	/*
-	** If we should run in standalone mode, do it now.
-	** The parent will never return from this function call
-	** but the children will.
-	*/
-	#ifdef STANDALONE
-	if(standalone_port)
-		run_standalone(standalone_port);
-	#endif
+	/* Are we running under tcpbind?  If so, then this function
+	 * will accept connexions and fork() returning in each 
+	 * child with the connexion on fd 0. */
+	if(tcpbind_sockets)
+		standalone_accept(tcpbind_sockets);
 
 	DODEBUG_MAIN(("connexion received"));
 

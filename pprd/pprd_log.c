@@ -52,7 +52,13 @@ gu_boolean lockfile_created = FALSE;
 static void pprd_log(const char category[], const char function[], const char message[], va_list va)
 	{
 	FILE *file;
-	if((file = fopen(PPRD_LOGFILE, "a")) != (FILE*)NULL)
+
+	if(option_debug)
+		file = stdout;
+	else
+		file = fopen(PPRD_LOGFILE, "a");
+
+	if(file)
 		{
 		fputs(category, file);
 		if(function)
@@ -60,7 +66,8 @@ static void pprd_log(const char category[], const char function[], const char me
 		fprintf(file, ": (%s) ", datestamp() );
 		vfprintf(file, message, va);
 		fputc('\n', file);
-		fclose(file);
+		if(!option_debug)
+			fclose(file);
 		}
 	} /* end of pprd_log() */
 
@@ -86,7 +93,13 @@ void fatal(int exitval, const char message[], ... )
 	va_end(va);
 	}
 
-	/* Remove the lock file which also has our PID in it. */
+	/* Remove the lock file which also has our PID in it. 
+	 * The flag lockfile_created is set after pprd determines
+	 * that it is the only copy running and creates the lock file.
+	 * Testing lockfile_created here is important since otherwise
+	 * attempting to start a second copy of the daemon would
+	 * result in the lockfile of the true copy being deleted.
+	 */ 
 	if(lockfile_created)
 		unlink(PPRD_LOCKFILE);
 
