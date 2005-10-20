@@ -99,21 +99,21 @@ do_start ()
 	# <ip> can be left blank.
 	if [ -n "$LPRSRV_STANDALONE_LISTEN" ]
 		then
-		$LIBDIR/tcpbind $LPRSRV_STANALONE_LISTEN $USER_PPR lprsrv \
+		$LIBDIR/tcpbind $LPRSRV_STANDALONE_LISTEN $USER_PPR lprsrv \
 			$LIBDIR/lprsrv && $EECHO "lprsrv \c"
 		fi
 
 	# Same for ppr-httpd for the web interface.
 	if [ -n "$ADMIN_STANDALONE_LISTEN" ]
 		then
-		$LIBDIR/tcpbind $ADMIN_STANALONE_LISTEN $USER_PPRWWW ppr-httpd-admin \
+		$LIBDIR/tcpbind $ADMIN_STANDALONE_LISTEN $USER_PPRWWW ppr-httpd-admin \
 			$LIBDIR/ppr-httpd && $EECHO "ppr-httpd-admin \c"
 		fi
 
 	# Same for ppr-httpd for IPP.
 	if [ -n "$IPP_STANDALONE_LISTEN" ]
 		then
-		$LIBDIR/tcpbind $IPP_STANALONE_LISTEN $USER_PPRWWW ppr-httpd-ipp \
+		$LIBDIR/tcpbind $IPP_STANDALONE_LISTEN $USER_PPRWWW ppr-httpd-ipp \
 			$LIBDIR/ppr-httpd --ipp && $EECHO "ppr-httpd-ipp \c"
 		fi
 

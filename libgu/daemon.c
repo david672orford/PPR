@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 October 2005.
+** Last modified 20 October 2005.
 */
 
 /*! \file
@@ -43,6 +43,16 @@
 #include <string.h>
 #include "gu.h"
 
+/** close all file descriptors beyond stderr (which is 2).
+ */
+void gu_daemon_close_fds(void)
+	{
+	int fd, stopat;
+	stopat = sysconf(_SC_OPEN_MAX);
+	for(fd=3; fd < stopat; fd++)
+		close(fd);
+	}
+
 /** become a daemon
 
 This function is used to put the calling process into the background.  It
@@ -58,11 +68,16 @@ void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask
 	/* Override inherited umask: */
 	umask(daemon_umask);
 
+	/* We open the lock file without O_EXCL because we use locks to determine
+	 * if another daemon still has it open and locked.
+	 */
 	if((pid_fd = open(lockfile, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR)) == -1)
 		{
 		fprintf(stderr, "%s: can't create lock file \"%s\", errno=%d (%s)\n", progname, lockfile, errno, strerror(errno));
 		exit(1);
 		}
+
+	/* This lock is temporary.  The child must create its own. */
 	if(gu_lock_exclusive(pid_fd, FALSE))
 		{
 		fprintf(stderr, "%s: daemon already running\n", progname);
@@ -88,17 +103,24 @@ void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask
 			}
 	
 		if(pid)			/* if parent, */
+			{
+			sleep(1);	/* time for child to request lock */
 			_exit(0);
+			}
 		#endif
 		}
 
 	/* child from here on */
 
+	/* Write the child PID into the previously opened lock file. */
 	{
 	char temp[16];
 	gu_snprintf(temp, sizeof(temp), "%ld\n", (long)getpid());
 	write(pid_fd, temp, strlen(temp));
+	/* Don't pass the lock file descriptor onto our children. */
 	gu_set_cloexec(pid_fd);
+	/* Grab the lock as soon as the parent exits. */
+	gu_lock_exclusive(pid_fd, TRUE);
 	}
 
 	if(!standalone)
@@ -111,12 +133,15 @@ void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask
 			exit(1);
 			}
 	
-		/* Close all file descriptors. */
+		/* Close stdin, stdout, and stderr.  Be careful
+		 * not to close the lock file. */
 		{
-		int fd, stopat;
-		stopat = sysconf(_SC_OPEN_MAX);
-		for(fd=0; fd < stopat; fd++)
-			close(fd);
+		int fd;
+		for(fd=0; fd < 3; fd++)
+			{
+			if(fd != pid_fd)
+				close(fd);
+			}
 		}
 		}
 	} /* end of gu_daemon() */

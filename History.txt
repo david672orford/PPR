@@ -9923,8 +9923,15 @@ no final tarball was released.
 * libgu/daemon.c: reworked to handle lockfile creation; pprd/,papd/: removed
   private lockfile creation code.
 
+* libgu/daemon.c: split out the closing of FD's 3 and higher into a separate 
+  function as we may want to do it and open some of our own before forking
+  into the background.
+
 * libscript/tcpserver.pl: removed; misc/tcpbind.c: added; lprsrv/: changed
   standalone mode to use tcpbind; www/ppr-httpd.perl: changed standalone mode
   to use tcpbind rather than tcpserver.pl.
+
+* cron/ppr-index.c: changed to use renounce_root_privs() rather than makeing
+  the program setuid ppr.
 
 

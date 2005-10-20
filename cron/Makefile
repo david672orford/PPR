@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/init_and_cron/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2005, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 20 October 2005.
 #
 
 include ../Makefile.conf
@@ -33,8 +33,7 @@ include ../Makefile.conf
 #=== Inventory ==============================================================
 
 PROGS_LIB=cron_daily cron_hourly cron_run_daily$(DOTEXE)
-PROGS_BIN=ppr-clean
-PROGS_BIN_SETUID=ppr-index$(DOTEXE)
+PROGS_BIN=ppr-clean ppr-index$(DOTEXE)
 PROGS=$(PROGS_LIB) $(PROGS_BIN) $(PROGS_BIN_SETUID)
 USELIBS=../libppr.a ../libgu.a 
 
@@ -51,9 +50,8 @@ ppr-index$(DOTEXE): ppr-index.o $(USELIBS)
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(LIBDIR) $(PROGS_LIB)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR)  755 $(BINDIR) $(PROGS_BIN)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 6755 $(BINDIR) $(PROGS_BIN_SETUID)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(LIBDIR) $(PROGS_LIB)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) $(PROGS_BIN)
 
 #=== Housekeeping ===========================================================
 

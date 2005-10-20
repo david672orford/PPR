@@ -104,6 +104,7 @@ void standalone_accept(char *tcpbind_sockets, char *pidfile)
 		if((fds[fdcount] = atoi(f1)) <= 0)
 			gu_Throw(X_("can't parse socket number: %s"), f1);
 
+		/* If this is the highest numbered FD yet, note it for first argument of select(). */
 		if(fds[fdcount] > maxfd)
 			maxfd = fds[fdcount];
 
@@ -160,12 +161,24 @@ void standalone_accept(char *tcpbind_sockets, char *pidfile)
 				}
 			else if(pid == 0)				/* child */
 				{
-				tcpbind_pidfile = NULL;		/* child shouldn't delete */
+				/* Child shouldn't delete .pid file if an exception is thrown. */
+				tcpbind_pidfile = NULL;
+
+				/* Why do we have to do this? */
 				signal_restarting(SIGCHLD, SIG_IGN);
+
+				/* Child does not need the listening FD's. */
+				for(iii=0; iii < fdcount; iii++)
+					close(fds[iii]);
+
+				/* Connect connexion to stdin if it isn't already.
+				 * We really on our caller to connect it to stdout too.
+				*/
 				if(conn_fd != 0)
+					{
 					dup2(conn_fd, 0);
-				if(conn_fd > 0)
 					close(conn_fd);
+					}
 				return;
 				}
 			else							/* parent */

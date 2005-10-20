@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 19 August 2005.
+# Last modified 20 October 2005.
 #
 
 =head1 NAME
@@ -49,19 +49,8 @@ The B<--help> option prints a brief description of the options.
 The B<--version> option prints the PPR version information.
 
 B<lprsrv> is an RFC-1179 (Berkeley lpr/lpd) compatible print server.  It
-will accept print jobs over the network and hand them to the Uprint library
-for processing.  By means of the Uprint library, B<lprsrv> can deliver jobs
-to PPR, as well as the BSD and System V spoolers (if present).  It can also
-handle requests to list print queues and to delete jobs.
-
-PPR version 1.32 introduced a heavily reworked B<lprsrv>.  Most of the
-command line options were changed and the access control scheme was
-radically altered.  The pre-1.32 B<lprsrv> is preserved as B<olprsrv>.
-It will be removed completely at some point in the future.
-
-The Uprint configuration file F</etc/ppr/uprint.conf> must be correct for
-B<lprsrv> to work.  See L<UPRINT.1> for details.
-
+will accept print jobs over the network and hand them to B<ppr> for 
+processing.
 
 =head2 Disabling Other RFC 1179 Servers
 
@@ -125,14 +114,12 @@ or, if your B<kill> command doesn't support the modern syntax:
 
 =head2 Setup With Inetd
 
-If Inetd was installed on your system when you ran PPR's B<fixup> program
-during PPR installation, it will have added the necessary line to
-F</etc/services>.  (Remember, you ran /usr/lib/ppr/fixup/fixup as root right
-after you ran B<make install>.) The B<fixup> program will also have put an
-entry in F</etc/inetd.conf> but left it commented out.  In order to enable
-B<lprsrv>, go through this section and make sure the required lines are
-present and remove the comment character from in front of the line in
-F</etc/inetd.conf>.
+If Inetd was installed on your system when you installed PPR, PPR will have
+added the necessary line to F</etc/services> to define the "printer" port.  It
+will also have put an entry in F</etc/inetd.conf> but left it commented out.
+If that was done, just skim through this section and make sure the
+required lines are present and remove the comment character from in front of
+the line in F</etc/inetd.conf>.
 
 First, make sure a line like this is in F</etc/services>:
 
@@ -156,10 +143,10 @@ If the line is already present, make sure there is no "#" in front of it.
 
 The Linux version of Inetd allows us to specify how how many requests per
 minute the server should be allowed to receive.  In the Linux
-F</etc/inetd.conf> example above, the "400" specifies that the B<lprsrv>
-should be allowed to handle up to 400 connections per minute.  If more than
-400 requests are received during one minute, then B<inetd> will disable
-B<lprsrv> for a little while.
+F</etc/inetd.conf> example above, the "400" specifies that the B<lprsrv> should
+be allowed to handle up to 400 connections per minute.  If more than 400
+requests are received during one minute, then B<inetd> will disable B<lprsrv>
+for a little while.
 
 Other versions of Inetd may not have any provision for changing the maximum
 allowed number of connections.  Often they will limit all servers to 60
@@ -193,8 +180,8 @@ add and remove Xinetd configuration information from the system.  All they
 have to do is add files to F</etc/xinetd.d> when installing the package and
 delete them when removing the package.
 
-If PPR's B<fixup> finds Xinetd installed on your system, it will use it
-instead of Inetd.  It will create a file called F</etc/xinetd.d/ppr> which
+If Xinetd was installed on your system when PPR was installed, PPR will set it
+up instead of Inetd.  PPR will create a file called F</etc/xinetd.d/ppr> which
 will read in part:
 
     # RFC 1179 (LPR/LPD) server
@@ -220,26 +207,25 @@ signal.  For example, if Xinetd's process id is 123:
 
 =head2 Standalone Server Operation
 
-Standalone Operation (that is, without B<inetd>) is controled by this option:
+Running B<lprsrv> through B<inetd> usually yields acceptable performance.  But
+if you want to, you can run B<lprsrv> in standalone mode.  This is done by
+using a small wrapper program called B<tcpbind> which creates the necessary
+TCP listening sockets.  It then sets the user ID to the one you specify
+and creats a .pid file recording the process ID.  Finally it executes
+B<lprsrv>.  In turn B<lprsrv> recognizes that it is running in standalone mode
+and accepts connections on the listening sockets which B<tcpbind> has provided.
 
-=over 4
+The command for starting B<lprsrv> in standalone mode is:
 
+	/usr/lib/ppr/tcpbind :printer ppr lprsrv /usr/lib/ppr/lprsrv
 
-=item B<-s> I<port>
+The parameters are respectively the IP address (empty) and port, the username
+under which to run B<lprsrv>, the basename of the .pid file, and the path
+to B<lprsrv>.
 
-=item B<--standalone-port> I<port>
-
-=back
-
-If this switch is used, in either form, B<lprsrv> will run as a daemon.  You
-should use this option if for some reason you can't depend on B<inetd>.
-The argument is the number or name of the port that B<lprsrv> should listen
-on.  The most common value is "printer" or its numberic equivelent "515".
-
-For you convienance, the PPR rc script (which gets installed as
-F</etc/init.d/ppr> or F</etc/rc.d/init.d/ppr> or something like that) has a
-commented out line to start B<lprsrv> in standalone mode.
-
+The PPR Init script will start B<lprsrv> in standalone mode if the variable
+LPRSRV_STANDALONE_LISTEN is set to a list of addresses and ports on which to 
+listen.
 
 =head2 Queue Listing Options
 
@@ -387,14 +373,15 @@ Then create the local spool directory.
 
 =head1 SEE ALSO
 
-See L<UPRINT.1> and the comments in F</etc/ppr/lprsrv.conf>.
+See the comments in F</etc/ppr/lprsrv.conf>.
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2004.
+PPR was written at Trinity College during 1993--2005.
 
 =head1 AUTHORS
 
 David Chappell, Trinity College Computing Center, Hartford, Connecticut.
 
 =cut
+

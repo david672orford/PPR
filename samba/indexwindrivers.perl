@@ -88,7 +88,7 @@ $opt_verbose = 1;
 if(! -x $SAMBAPRINT)
 	{
 	print STDERR "No Samba TDB support.\n";
-	exit 1;
+	exit 0;
 	}
 
 #

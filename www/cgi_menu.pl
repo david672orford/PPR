@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 22 April 2005.
+# Last modified 20 October 2005.
 #
 
 #============================================================================
@@ -107,10 +107,10 @@ sub menu_radio_set
 	my($name, $values, $current_value, $extra) = @_;
 	foreach	my $value (@{$values})
 		{
-		print "\t\t", '<tr><td><input type="radio" name=', html_value($name), ' id=', html_value("$name_$value"), ' value=', html_value($value->[0]);
+		print "\t\t", '<tr><td><input type="radio" name=', html_value($name), ' id=', html_value($name . "_" . $value->[0]), ' value=', html_value($value->[0]);
 		print ' checked' if($value->[0] eq $current_value);
 		print " ", $extra if(defined $extra);
-		print '></td><td><label for=', html_value("$name_$value"), '>', html($value->[1]), "</label></td></tr>\n";
+		print '></td><td><label for=', html_value($name . "_" . $value->[0]), '>', html($value->[1]), "</label></td></tr>\n";
 		}
 	}
 

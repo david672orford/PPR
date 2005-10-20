@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2005.
+# Last modified 20 October 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -173,7 +173,7 @@ if(scalar @ARGV >= 1)
 			"ipp" => \$ipp
 			))
 		{
-		print STDERR "Usage: ppr-httpd [--standalone-bind=[<ip>:]<port>] [--pidfile=<filename>] [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
+		print STDERR "Usage: ppr-httpd [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
 		exit 1;
 		}
 	}
@@ -189,17 +189,73 @@ if(defined $ipp)
 # otherwise throw it away.	We must do something with it so
 # it doesn't corrupt the HTTP transaction.
 #===========================================================
-open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
+if(defined $ENV{TCPBIND_FOREGROUND})
+	{
+	print STDERR "Running in foreground mode, log goes to stderr.\n";
+	}
+else
+	{
+	open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
+	}
 
 #===========================================================
+# Was ppr-httpd launched from tcpbind?  If it was, then
+# TCPBIND_SOCKETS contains a list of listening socket FD's
+# and the port numbers that go with them.
 #===========================================================
 if(defined $ENV{TCPBIND_SOCKETS})
 	{
 	my %fds = ();
+	my $master_fdset = "";
+	my $fdset;
 	foreach my $item (split(',', $ENV{TCPBIND_SOCKETS}))
 		{
-		my($fd, $port) = split(/=/, $item);
-		$fds{$fd} = $port;
+		$item =~ /^(\d+)=(\d+)$/ || die;
+		my($fd, $port) = ($1, $2);
+		#print STDERR "\$fd=$fd, \$port=$port\n";
+		my $file;
+		open($file, "+<&=$fd") || die;
+		$fds{$fd} = [$port, $file];
+		vec($master_fdset, $fd, 1) = 1;
+		}
+	CONWAIT:
+	while(1)
+		{
+		my $nfound = select($fdset=$master_fdset, undef, undef, undef);	
+		#print STDERR "select() reports $nfound ready file descriptors\n";
+		foreach my $fd (keys %fds)
+			{
+			last if($nfound <= 0);		# save time
+			if(vec($fdset, $fd, 1))
+				{
+				#print STDERR "descriptor $fd is ready\n";
+				if(accept(CONN, $fds{$fd}->[1]))
+					{
+					#print STDERR "connexion accepted, fd=", fileno(STDIN), "\n";
+					if((my $pid = fork()) != 0)
+						{
+						#print STDERR "child is $pid\n";
+						close(CONN) || die $!;
+						}
+					else
+						{
+						# child setup
+						foreach my $fd (keys %fds)
+							{ close($fds{$fd}->[1]) || die $!; }
+						if(fileno(CONN) != 0)
+							{ open(STDIN, "<&CONN") || die $!; }
+						if(fileno(CONN) != 1)
+							{ open(STDOUT, ">&STDIN") || die $!; }
+						if(fileno(CONN) > 2)
+							{ close(CONN) || die $!; }
+						$port = $fds{$fd}->[0];
+						#kill 'STOP', $$;
+						last CONWAIT;
+						}
+					}
+				$nfound--;
+				}
+			}
 		}
 	}
 
@@ -225,7 +281,7 @@ else
 	$REMOTE_PORT = 0;
 	}
 }
-print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\".\n";
+print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n";
 
 #===========================================================
 # Main Request Loop

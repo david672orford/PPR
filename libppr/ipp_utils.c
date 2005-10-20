@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 September 2005.
+** Last modified 20 October 2005.
 */
 
 /*! \file */
@@ -250,7 +250,7 @@ static void ipp_readbuf_load(struct IPP *p)
 	{
 	/*DEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));*/
 	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
-		gu_Throw("Read failed");
+		gu_Throw("%s() failed, errno=%d (%s)", "read", errno, strerror(errno));
 	if(p->readbuf_remaining < 1)
 		gu_Throw("premature EOF");
     p->bytes_left -= p->readbuf_remaining;

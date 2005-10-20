@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2005.
+# Last modified 20 October 2005.
 #
 
 include ../Makefile.conf
@@ -71,7 +71,7 @@ install: $(INSTALL_ATALK)
 
 # List if things to install if we have AppleTalk.
 install-atalk: $(BIN_PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(BINDIR) papd
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(BINDIR) papd
 
 #=== Housekeeping ===========================================================
 

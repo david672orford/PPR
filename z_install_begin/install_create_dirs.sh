@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 April 2005.
+# Last modified 20 October 2005.
 #
 
 #=============================================================================
@@ -77,8 +77,8 @@ directory $SHAREDIR 755
 directory $VAR_SPOOL_PPR 755
 directory $CACHEDIR 755
 directory $STATEDIR 755
-directory $RUNDIR 755
-directory $LOGDIR 775 		#group write
+directory $RUNDIR 775		# group write so daemons that run as pprwww can use
+directory $LOGDIR 775 		# group write
 
 #
 # We have to be more careful with this one since it is probably the 

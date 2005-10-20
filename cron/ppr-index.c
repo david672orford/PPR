@@ -94,6 +94,13 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
+	/* Become the specified PPR user if not already. */
+	{
+	int ret;
+	if((ret = renounce_root_privs(myname, USER_PPR, NULL)) != 0)
+		return ret;
+	}
+
 	/* Parse the options. */
 	{
 	struct gu_getopt_state getopt_state;

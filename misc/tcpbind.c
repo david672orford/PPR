@@ -65,6 +65,7 @@ const char myname[] = "tcpbind";
 int main(int argc, char *argv[])
 	{
 	char *bind_addresses, *username, *pidname;
+	gu_boolean option_foreground = FALSE;
 
 	if(getuid() != geteuid())
 		{
@@ -72,15 +73,28 @@ int main(int argc, char *argv[])
 		exit(1);
 		}
 
+	if(argc >= 2 && strcmp(argv[1], "--foreground") == 0)
+		{
+		option_foreground = TRUE;
+		putenv("TCPBIND_FOREGROUND=1");
+		argv++;
+		argc--;
+		}
+	
 	if(argc < 5)
 		{
-		fprintf(stderr, "%s: Usage: tcpbind <addresses>:<port> <username> <pidname> <daemon> ...\n", myname);
+		fprintf(stderr, "%s: Usage: tcpbind [--foreground] <addresses>:<port>,... <username> <pidname> <daemon> ...\n", myname);
 		exit(1);
 		}
 	bind_addresses = argv[1];
 	username = argv[2];
 	pidname = argv[3];
 
+	/* We must close file descriptors 3 and up now because we can't later as we 
+	 * would clobber our listening sockets.
+	 */
+	gu_daemon_close_fds();
+	
 	/* Process a comma-separated list of bind addresses. */
 	{
 	int count;
@@ -88,14 +102,15 @@ int main(int argc, char *argv[])
 	void *list = gu_pcs_new_cstr("TCPBIND_SOCKETS=");
 	for(count=0, p=bind_addresses; (item = gu_strsep(&p, ",")); count++)
 		{
-		char *f1, *f2;
+		char *item2, *f1, *f2;
 		int fd, port;
 		struct sockaddr_in serv_addr;
 
 		/* Each item is in the format [IP Address:]port. */
-		if(!(f1 = gu_strsep(&item, ":")) || !(f2 = gu_strsep(&item, ":")))
+		item2 = item;
+		if(!(f1 = gu_strsep(&item2, ":")) || !(f2 = gu_strsep(&item2, ":")))
 			{
-			fprintf(stderr, "%s: syntax error in address:port list\n", myname);
+			fprintf(stderr, "%s: syntax error in address:port list item %d %s: \n", myname, count+1, item);
 			exit(1);
 			}
 
@@ -160,7 +175,7 @@ int main(int argc, char *argv[])
 	/* Become the specified user if not already. */
 	{
 	int ret;
-	if((ret = renounce_root_privs(myname, username, NULL)) != 0)
+	if((ret = renounce_root_privs(argv[4], username, NULL)) != 0)
 		return ret;
 	}
 
@@ -170,7 +185,7 @@ int main(int argc, char *argv[])
 	char *p;
 	gu_asprintf(&p, "TCPBIND_PIDFILE=%s/%s.pid", RUNDIR, pidname);
 	putenv(p);
-	gu_daemon(myname, FALSE, UNIX_002, p + strlen("TCPBIND_PIDFILE="));
+	gu_daemon(myname, option_foreground, UNIX_002, p + strlen("TCPBIND_PIDFILE="));
 	}
 
 	execv(argv[4], &argv[4]);

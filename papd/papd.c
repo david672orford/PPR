@@ -599,6 +599,7 @@ static void init(void)
 	chdir(LIBDIR);
 
 	/* Go into background. */
+	gu_daemon_close_fds();
 	gu_daemon(myname, opt_foreground, PPR_UMASK, PIDFILE);
 
 	/* Remove any old log file. */

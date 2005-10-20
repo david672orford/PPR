@@ -354,6 +354,7 @@ static int real_main(int argc, char *argv[])
 	}
 
 	/* If the --forground switch wasn't used, then dropt into background. */
+	gu_daemon_close_fds();
 	gu_daemon(myname, option_foreground, PPR_PPRD_UMASK, PPRD_LOCKFILE);
 	lockfile_created = TRUE;
 

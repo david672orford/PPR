@@ -201,6 +201,7 @@ int gu_ascii_xdigit_value(int c);
 int gu_ascii_isspace(int c);
 int gu_sscanf(const char *input, const char *pattern, ...);
 int gu_fgetint(FILE *input);
+void gu_daemon_close_fds(void);
 void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask, const char lockfile[]);
 int disk_space(const char *path, unsigned int *free_blocks, unsigned int *free_files);
 int gu_wordwrap(char *string, int width);
