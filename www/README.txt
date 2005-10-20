@@ -1,6 +1,6 @@
 ==========================================================================
  mouse:~ppr/src/www/README.txt
- 21 February 2003.
+ 20 October 2005.
 ==========================================================================
 
 This directory contains HTML pages, CGI scripts, and images which together
@@ -41,14 +41,14 @@ and one like this to /etc/inetd.conf:
 
 ppradmin stream tcp	nowait.400	pprwww	/usr/sbin/tcpd /usr/ppr/lib/ppr-httpd
 
-The fixup program should have added these lines for you already, but it will
-have left the line in /etc/inetd.conf commented out.  After uncommenting the
-line, send Inetd the the HUP signal to tell it to reload inetd.conf.
+These lines are added when you run "make install", but they are left commented
+out.  After uncommenting the line, send Inetd the the HUP signal to tell it to 
+reload inetd.conf.
 
-If the fixup program discovers that you are using xinetd rather than inetd,
-it will create the file /etc/xinetd.d/ppr which will contain configuration
-sections for ppr-httpd as well as lprsrv.  Both will be disabled.  In order 
-to enable ppr-httpd, you will have to change the line which says:
+If Xinetd was installed when you did "make install", it will have created the
+file /etc/xinetd.d/ppr which will contain configuration sections for ppr-httpd
+as well as lprsrv.  Both will be disabled.  In order to enable ppr-httpd, you
+will have to change the line which says:
 
 	disable = yes
 
@@ -68,9 +68,9 @@ and /etc/hosts.allow to limit access appropriately.
  Connecting
 ==========================================================================
 
-As you may have noticed while reading the previous session, ppr-httpd
-listens for connexions on port 15010.  If the browser is running on the same
-machine as PPR, enter this URL to connect to the PPR web interface:
+As you may have noticed while reading the previous session, connexions for
+ppr-httpd are accepted on port 15010.  If the browser is running on the 
+same machine as PPR, enter this URL to connect to the PPR web interface:
 
 	http://localhost:15010
 

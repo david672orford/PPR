@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 October 2005.
+** Last modified 20 October 2005.
 */
 
 /*
@@ -52,8 +52,6 @@
 #include "util_exits.h"
 #include "version.h"
 
-char *tcpbind_pidfile;
-
 /*
 ** This function returns the name of this computer.  This is used in some
 ** error messages sent to the client.
@@ -71,54 +69,28 @@ const char *this_node(void)
 	} /* end of this_node() */
 
 /*
-** This routine is called by fatal(), debug(), etc.
-** It writes a line to the lprsrv log file.
+** This function writes a line to the lprsrv log file.  It performs 
+** printf()-style formatting.
 */
-static void lprsrv_log(const char category[], const char atfunction[], const char format[], va_list va)
+static void lprsrv_vlog(const char category[], const char format[], va_list va)
 	{
 	FILE *logfile;
-	if((logfile = fopen(LPRSRV_LOGFILE, "a")) != NULL)
+	if((logfile = fopen(LPRSRV_LOGFILE, "a")))
 		{
 		fprintf(logfile, "%s: %s: %ld: ", category, datestamp(), (long)getpid());
-		if(atfunction)
-			fprintf(logfile, "%s(): ", atfunction);
 		vfprintf(logfile, format, va);
 		fputc('\n', logfile);
 		fclose(logfile);
 		}
-	} /* end of lprsrv_log() */
+	} /* end of lprsrv_vlog() */
 
-static void lprsrv_log2(const char category[], const char atfunction[], const char format[], ...)
+static void lprsrv_log(const char category[], const char format[], ...)
 	{
 	va_list va;
 	va_start(va, format);
-	lprsrv_log(category, atfunction, format, va);
+	lprsrv_vlog(category, format, va);
 	va_end(va);
 	}
-
-/*
-** Print an error message and abort.
-*/
-void fatal(int exitcode, const char message[], ... )
-	{
-	va_list va;
-	va_start(va, message);
-
-	lprsrv_log("FATAL", NULL, message, va);
-
-	fputs("lprsrv: ", stdout);
-	vfprintf(stdout, message, va);
-	fputc('\n', stdout);
-
-	va_end(va);
-
-	/* If we are running in standalone mode (started by tcpbind) and are the 
-	 * listener process, then remove the lock file. */
-	if(tcpbind_pidfile)
-		unlink(tcpbind_pidfile);
-
-	exit(exitcode);
-	} /* end of fatal() */
 
 /*
 ** Print a debug line in the lprsrv log file.
@@ -127,7 +99,7 @@ void debug(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	lprsrv_log("DEBUG", NULL, message, va);
+	lprsrv_vlog("DEBUG", message, va);
 	va_end(va);
 	} /* end of debug() */
 
@@ -138,7 +110,7 @@ void warning(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	lprsrv_log("WARNING", NULL, message, va);
+	lprsrv_vlog("WARNING", message, va);
 	va_end(va);
 	} /* end of warning() */
 
@@ -146,7 +118,7 @@ void uprint_error_callback(const char *format, ...)
 	{
 	va_list va;
 	va_start(va, format);
-	lprsrv_log("UPRINT", NULL, format, va);
+	lprsrv_vlog("UPRINT", format, va);
 	va_end(va);
 	} /* end of uprint_error_callback() */
 
@@ -189,7 +161,6 @@ static void help(FILE *outfile)
 static int real_main(int argc,char *argv[])
 	{
 	const char function[] = "main";
-	char *tcpbind_sockets;
 	char client_dns_name[MAX_HOSTNAME+1];
 	char client_ip[16];
 	int client_port;
@@ -201,27 +172,6 @@ static int real_main(int argc,char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif
-
-	/*
-	** Change to ppr's home directory.  That way we know
-	** where our core dumps will go. :-)
-	*/
-	chdir(LIBDIR);
-
-	/*
-	** Set the umask since it is difficult to predict
-	** what umask we will inherit.
-	*/
-	umask(PPR_UMASK);
-
-	/*
-	** Save what we want from the environment and clean it up.
-	*/
-	tcpbind_sockets = gu_strdup(getenv("TCPBIND_SOCKETS"));	/* gu_strdup() doesn't mind NULL */
-	tcpbind_pidfile = gu_strdup(getenv("TCPBIND_PIDFILE"));
-	set_ppr_env();
-	prune_env();
-	printf("TCPBIND_SOCKETS=\"%s\"\n", tcpbind_sockets);
 
 	/*
 	** Parse the command line options.  We use the parsing routine
@@ -279,20 +229,35 @@ static int real_main(int argc,char *argv[])
 
 	/* Are we running under tcpbind?  If so, then this function
 	 * will accept connexions and fork() returning in each 
-	 * child with the connexion on fd 0. */
-	if(tcpbind_sockets)
-		standalone_accept(tcpbind_sockets);
+	 * child with the connexion on fd 0.  The parent process
+	 * will never return from this function. */
+	{
+	char *p;
+	if((p = getenv("TCPBIND_SOCKETS")))
+		standalone_accept(p, getenv("TCPBIND_PIDFILE"));
+	}
 
 	DODEBUG_MAIN(("connexion received"));
 
 	/*
-	** This must be done first thing!
-	** INETD's only guarantee is that
-	** stdin will be connected to the socket.
+	** This must be done before request processing starts.  In practice it is
+	** not necessary, but in theory Inetd's only guarantee is that stdin will
+	**	be connected to the socket.
 	*/
 	dup2(0, 1);
 	dup2(0, 2);
 
+	/*
+	 * Change to a known directory, set a umask (since it is difficult to
+	 * know what Inetd will give us, set PPR-related variables in the 
+	 * environment, and delete junk from the environment.
+	 */
+	chdir(LIBDIR);
+	umask(PPR_UMASK);
+	set_ppr_env();
+	prune_env();
+
+	/* Determine the IP address and port of the client. */
 	get_client_info(client_dns_name, client_ip, &client_port);
 	DODEBUG_MAIN(("connexion is from %s (%s), port %d", client_dns_name, client_ip, client_port));
 
@@ -304,9 +269,9 @@ static int real_main(int argc,char *argv[])
 	   not allowed to connect, then print and error
 	   message and drop the connexion now. */
 	if(! access_info.allow)
-		fatal(1, _("Node \"%s\" is not allowed to connect"), client_dns_name);
+		gu_Throw(_("Node \"%s\" is not allowed to connect"), client_dns_name);
 	if(! access_info.insecure_ports && client_port > 1024)
-		fatal(1, _("Node \"%s\" is not allowed to connect from insecure ports"), client_dns_name);
+		gu_Throw(_("Node \"%s\" is not allowed to connect from insecure ports"), client_dns_name);
 
 	/* Do zero or one commands and exit. */
 	{
@@ -338,12 +303,12 @@ static int real_main(int argc,char *argv[])
 				do_request_lprm(line, client_dns_name, &access_info);
 				break;
 			case 0:
-				fatal(1, "empty command");
+				gu_Throw("empty command");
 			default:								/* what can we do? */
 				if(line[0] < ' ')
-					fatal(1, "unrecognized command: \"^%c%s\"", line[0]+'@', line+1);
+					gu_Throw("unrecognized command: \"^%c%s\"", line[0]+'@', line+1);
 				else
-					fatal(1, "unrecognized command: \"%s\"", line);
+					gu_Throw("unrecognized command: \"%s\"", line);
 			}
 		} /* end of if fgets() worked */
 	} /* end of line reading context */
@@ -357,7 +322,8 @@ int main(int argc, char *argv[])
 		return real_main(argc, argv);
 		}
 	gu_Catch {
-		lprsrv_log2("exception", NULL, "%s", gu_exception);
+		printf("%s\n", gu_exception);
+		lprsrv_log("FATAL", "%s", gu_exception);
 		exit(1);
 		}
 	/* NOREACHED */

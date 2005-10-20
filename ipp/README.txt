@@ -1,5 +1,5 @@
 mouse:~ppr/src/ipp/README.txt
-11 December 2004
+20 October 2005
 
 This directory contains PPR's experimental IPP server.  It is not built or 
 installed automatically.
@@ -27,7 +27,7 @@ in this directory.  To enable it, add this line to /etc/inetd.conf:
  # PPR's IPP server
  ipp stream tcp nowait.400 pprwww /usr/sbin/tcpd /usr/lib/ppr/lib/ppr-httpd --ipp
 
-Disable any other IPP server which may be running (CUPS), and then run:
+Disable any other IPP server which may be running (such as CUPS), and then run:
 
  # kill -HUP _inetd_pid_
 

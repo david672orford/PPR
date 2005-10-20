@@ -1,6 +1,6 @@
 ;
 ; lprsrv.conf.sample
-; Last modified 19 August 2005.
+; Last modified 20 October 2005.
 ;
 ; This is a sample security configuration file for the PPR LPR/LPD
 ; server.  The intent of this sample file is to duplicate as closely
@@ -25,8 +25,8 @@
 ;
 ; This section sets default values for the other sections.  That is, any
 ; parameter setting specified here will be overridden if the parameter is set
-; in the section which matches the name of the host which is sending the print
-; job.  All 10 parameters should be set in this section.
+; in the section which matches the name of the host which is sending the
+; request job.  All four parameters should be set in this section.
 ;
 ; allow
 ;	Specifies whether access should be allowed to matching nodes.
@@ -36,7 +36,7 @@
 ;	nodes in question to honestly identify the user for whom the request
 ;	was generated since ordinary users can make their own requests from
 ;	insecure ports therby bypassing lpr.
-; domain
+; user domain
 ;	Group of computers in which the username will be unique.  By 
 ;   assigning a group of computers one domain name, you can allow
 ;   a user to delete his jobs from any computer in that group.
@@ -48,7 +48,7 @@
 allow = yes
 insecure ports = no
 force mail = no
-domain = $host
+user domain = $host
 
 ;
 ; This section applies to nodes which are granted access by /etc/hosts.lpd,
@@ -56,7 +56,7 @@ domain = $host
 ; apply if some other section also matches the sending node name.
 ;
 [traditional]
-domain = $host
+user domain = $host
 
 ;
 ; This section matches all nodes in a certain NIS netgroup.  Any section which
@@ -64,7 +64,7 @@ domain = $host
 ; this section.
 ;
 ;[@mynetgroup]
-;domain = mynetgroup
+;user domain = mynetgroup
 
 ;
 ; This section applies to all hosts which match any of the pattens listed in 
@@ -84,7 +84,7 @@ domain = $host
 ; he will be able, from Bashir,to cancel a job he submitted from Spock.
 ;
 ;[.cs.domain.org]
-;domain = cs.domain.org
+;user domain = cs.domain.org
 
 ;
 ; This section applies to a specific host.  Since this section

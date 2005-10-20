@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 20 October 2005.
 */
 
 /*
@@ -105,14 +105,14 @@ void get_client_info(char *client_dns_name, char *client_ip, int *client_port)
 	if(getpeername(0, (struct sockaddr *)&client_address, &client_address_len) == -1)
 		{
 		if(errno == ENOTSOCK)
-			fatal(1, _("stdin is not a TCP socket (Run from Inetd or use -s option.)"));
-		fatal(1, "%s(): getpeername() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+			gu_Throw(_("stdin is not a TCP socket (run from inetd or tcpbind)"));
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "getpeername", errno, strerror(errno));
 		}
 	}
 
 	/* Make sure it is an internet address. */
 	if(client_address.sin_family != AF_INET)
-		fatal(1, "%s(): stdin doesn't have an address of type AF_INET!", function);
+		gu_Throw(X_("%s(): stdin doesn't have an address of type AF_INET!"), function);
 
 	/* Convert the IP address to a string and store it for use in logs. */
 	strlcpy(client_ip, inet_ntoa(client_address.sin_addr), sizeof(client_ip));

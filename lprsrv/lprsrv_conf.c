@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 August 2005.
+** Last modified 20 October 2005.
 */
 
 #include "config.h"
@@ -180,7 +180,7 @@ static void get_access_settings_read_section(struct ACCESS_INFO *access, FILE *c
 	DODEBUG_CONF(("%s(access=%p, conffile=%p, startat=%ld, linenum=%d)", function, access, conffile, startat, linenum));
 
 	if(fseek(conffile, startat, SEEK_SET))
-		fatal(1, "%s(): fseek() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "fseek", errno, gu_strerror(errno));
 
 	while(fgets(line, sizeof(line), conffile) && line[0] != '[')
 		{
@@ -286,7 +286,7 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 	int len_best = 0;							/* length of longest match so far */
 
 	if((f = fopen(LPRSRV_CONF, "r")) == (FILE*)NULL)
-		fatal(1, "Can't open \"%s\", errno=%d (%s)", LPRSRV_CONF, errno, gu_strerror(errno));
+		gu_Throw("Can't open \"%s\", errno=%d (%s)", LPRSRV_CONF, errno, gu_strerror(errno));
 
 	while((line = gu_getline(line, &line_space, f)))
 		{
@@ -347,9 +347,9 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 
 	/* The [global] and [other] sections are mandatory. */
 	if(offset_global == -1)
-		fatal(1, "No [global] section in \"%s\"", LPRSRV_CONF);
+		gu_Throw(_("No [global] section in \"%s\""), LPRSRV_CONF);
 	if(offset_other == -1)
-		fatal(1, "No [other] section in \"%s\"", LPRSRV_CONF);
+		gu_Throw(_("No [other] section in \"%s\""), LPRSRV_CONF);
 
 	/*
 	** OK, we know where they are, now we must read them in.
@@ -360,7 +360,7 @@ void get_access_settings(struct ACCESS_INFO *access, const char hostname[])
 
 	/* Make sure the [global] section has set everything. */
 	if(access->user_domain[0] == '\0')
-		fatal(1, "No \"%s =\" in \"%s\" [global]", "user domain", LPRSRV_CONF);
+		gu_Throw(_("No \"%s =\" in \"%s\" [global]"), "user domain", LPRSRV_CONF);
 
 	/* If no section matched, and the client is listed in hosts.lpd or hosts.equiv,
 	   choose the [traditional] section, otherwise choose the [other] section. */

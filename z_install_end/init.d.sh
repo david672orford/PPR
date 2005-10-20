@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 October 2005.
+# Last modified 20 October 2005.
 #
 
 #
@@ -54,6 +54,8 @@ VAR_SPOOL_PPR="@VAR_SPOOL_PPR@"
 BINDIR="@BINDIR@"
 RUNDIR="@RUNDIR@"
 EECHO="@EECHO@"
+USER_PPR="@USER_PPR@"
+USER_PPRWWW="@USER_PPRWWW@"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is
 # considered to be a configuration file and isn't deleted if the package is
@@ -61,10 +63,11 @@ EECHO="@EECHO@"
 # Debian policy supposedly requires exit code 0.
 test -x $BINDIR/pprd || exit 5
 
-# Read default file such as is found on Debian systems.
-LPRSRV_STANDALONE_PORT=""
-IPP_STANDALONE_BIND=""
-ADMIN_STANDALONE_BIND=""
+# If a Debian-style defaults file exists, read it it and let it override
+# the values defined here.
+LPRSRV_STANDALONE_LISTEN=""
+IPP_STANDALONE_LISTEN=""
+ADMIN_STANDALONE_LISTEN=""
 test -f /etc/default/ppr && . /etc/default/ppr
 
 do_start ()
@@ -90,32 +93,28 @@ do_start ()
 		$BINDIR/papd && $EECHO "papd \c"
 		fi
 
-	# Set LPRSRV_STANDALONE_PORT to a port number of name in /etc/default/ppr if 
-	# you want to run lprsrv in standalone mode.
-	if [ -n "$LPRSRV_STANDALONE_PORT" ]
+	# To run lprsrv in standalone mode, set LPRSRV_STANDALONE_LISTEN in
+	# /etc/default/ppr to a list of addresses to listen on.  The list
+	# should be comma-separated.  Each item is in the form <ip>:<port>.
+	# <ip> can be left blank.
+	if [ -n "$LPRSRV_STANDALONE_LISTEN" ]
 		then
-		$LIBDIR/lprsrv -s $LPRSRV_STANDALONE_PORT && $EECHO "lprsrv \c"
+		$LIBDIR/tcpbind $LPRSRV_STANALONE_LISTEN $USER_PPR lprsrv \
+			$LIBDIR/lprsrv && $EECHO "lprsrv \c"
 		fi
 
-	# Set IPP_STANDALONE_BIND to IP:port or simply port in /etc/default/ppr if 
-	# you want to run ppr-httpd as an IPP server in standalone mode.
-	if [ -n "$IPP_STANDALONE_BIND" ]
+	# Same for ppr-httpd for the web interface.
+	if [ -n "$ADMIN_STANDALONE_LISTEN" ]
 		then
-		$LIBDIR/ppr-httpd \
-			--standalone-bind $IPP_STANDALONE_BIND \
-			--pidfile $RUNDIR/ppr-httpd-ipp.pid \
-			--ipp \
-		&& $EECHO "ppr-httpd-ipp \c"
+		$LIBDIR/tcpbind $ADMIN_STANALONE_LISTEN $USER_PPRWWW ppr-httpd-admin \
+			$LIBDIR/ppr-httpd && $EECHO "ppr-httpd-admin \c"
 		fi
 
-	# Set ADMIN_STANDALONE_BIND to IP:port or simply port in /etc/default/ppr if 
-	# you want to run ppr-httpd in standalone mode.
-	if [ -n "$ADMIN_STANDALONE_BIND" ]
+	# Same for ppr-httpd for IPP.
+	if [ -n "$IPP_STANDALONE_LISTEN" ]
 		then
-		$LIBDIR/ppr-httpd \
-			--standalone-bind $ADMIN_STANDALONE_BIND \
-			--pidfile $RUNDIR/ppr-httpd-admin.pid \
-		&& $EECHO "ppr-httpd-admin \c"
+		$LIBDIR/tcpbind $IPP_STANALONE_LISTEN $USER_PPRWWW ppr-httpd-ipp \
+			$LIBDIR/ppr-httpd --ipp && $EECHO "ppr-httpd-ipp \c"
 		fi
 
 	echo
@@ -188,13 +187,13 @@ do_status()
 		else
 		do_status_1 lprsrv 0
 		fi
-	if [ -n "$IPP_STANDALONE_BIND" ]
+	if [ -n "$IPP_STANDALONE_LISTEN" ]
 		then
 		do_status_1 ppr-httpd-ipp 1
 		else
 		do_status_1 ppr-httpd-ipp 0
 		fi
-	if [ -n "$ADMIN_STANDALONE_BIND" ]
+	if [ -n "$ADMIN_STANDALONE_LISTEN" ]
 		then
 		do_status_1 ppr-httpd-admin 1
 		else

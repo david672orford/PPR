@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 October 2005.
+** Last modified 20 October 2005.
 */
 
 /*! \file
@@ -93,13 +93,11 @@ int main(int argc, char *argv[])
 		struct sockaddr_in serv_addr;
 
 		/* Each item is in the format [IP Address:]port. */
-		/*printf("item: \"%s\"\n", item);*/
 		if(!(f1 = gu_strsep(&item, ":")) || !(f2 = gu_strsep(&item, ":")))
 			{
 			fprintf(stderr, "%s: syntax error in address:port list\n", myname);
 			exit(1);
 			}
-		/*printf("f1: \"%s\", f2: \"%s\"\n", f1?f1:"", f2);*/
 
 		if((port = atoi(f2)) == 0)
 			{
@@ -157,7 +155,6 @@ int main(int argc, char *argv[])
 		gu_pcs_append_sprintf(&list, "%d=%d", fd, port);
 		}	
 	putenv(gu_pcs_free_keep_cstr(&list));	
-	printf("TCPBIND_SOCKETS=\"%s\"\n", getenv("TCPBIND_SOCKETS"));
 	}
 
 	/* Become the specified user if not already. */
@@ -173,7 +170,7 @@ int main(int argc, char *argv[])
 	char *p;
 	gu_asprintf(&p, "TCPBIND_PIDFILE=%s/%s.pid", RUNDIR, pidname);
 	putenv(p);
-	gu_daemon(myname, TRUE, UNIX_002, p + strlen("TCPBIND_PIDFILE="));
+	gu_daemon(myname, FALSE, UNIX_002, p + strlen("TCPBIND_PIDFILE="));
 	}
 
 	execv(argv[4], &argv[4]);

@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--17 October 2005
+2.00a1, 11 December 2004--20 October 2005
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9918,14 +9918,13 @@ no final tarball was released.
 * Eliminated HAVE_PUTENV since putenv() is part of POSIX, is present on all
   supported platforms, and is necessary.
 
-* libscript/tcpserver.pl: removed.
-
-* misc/tcpbind.c: added
-
-* www/ppr-httpd.perl: changed standalone mode to use tcpbind rather than
-  tcpserver.pl.
-
-* libgu/daemon.c: reworked to handle lockfile creation.
-
 * pprd/: added --debug.
+
+* libgu/daemon.c: reworked to handle lockfile creation; pprd/,papd/: removed
+  private lockfile creation code.
+
+* libscript/tcpserver.pl: removed; misc/tcpbind.c: added; lprsrv/: changed
+  standalone mode to use tcpbind; www/ppr-httpd.perl: changed standalone mode
+  to use tcpbind rather than tcpserver.pl.
+
 

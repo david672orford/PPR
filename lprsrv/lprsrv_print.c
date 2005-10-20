@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 August 2005.
+** Last modified 20 October 2005.
 */
 
 /*
@@ -110,6 +110,7 @@ static int open_tmp(void)
 */
 static ssize_t receive_data_file(size_t size_of_file, int tempfile)
 	{
+	const char function[] = "receive_data_file";
 	gu_boolean readerror = FALSE;
 	gu_boolean diskfull = FALSE;
 	unsigned int free_files, free_blocks;
@@ -123,7 +124,7 @@ static ssize_t receive_data_file(size_t size_of_file, int tempfile)
 		{
 		fputc(1, stdout);
 		fflush(stdout);
-		fatal(1, "receive_data_file(): disk_space() failed");
+		gu_Throw(_("%s(): %s() failed"), function, "disk_space");
 		}
 
 	DODEBUG_DISKSPACE(("free_blocks=%d, free_files=%d, q_free_blocks=%d, q_free_files=%d",
@@ -175,12 +176,12 @@ static ssize_t receive_data_file(size_t size_of_file, int tempfile)
 			{
 			if(!diskfull)
 				{
-				if( (written=write(tempfile,buffer,towrite)) == -1 )
-					fatal(1, "receive_data_file(): write(%d, ,%d) failed, errno=%d",tempfile,towrite,errno);
+				if((written=write(tempfile,buffer,towrite)) == -1)
+					gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "write", errno, strerror(errno));
 
 				if(written < towrite)
 					{
-					debug("receive_data_file(): disk full");
+					debug("%s(): disk full", function);
 					diskfull = TRUE;
 					}
 				}
@@ -253,6 +254,7 @@ static void handle_solaris_option(void *upr, const char *option)
 */
 static void receive_control_file(int control_file_len, struct DATA_FILE data_files[], int *files_unlinked, void *upr)
 	{
+	const char function[] = "receive_control_file";
 	#define MAX_NAME_CONSIDER 40
 	char last_file_name[MAX_NAME_CONSIDER+1] = {'\0'};
 	static char *control_buffer = (char *)NULL;
@@ -287,7 +289,7 @@ static void receive_control_file(int control_file_len, struct DATA_FILE data_fil
 	for(ptr = control_buffer, toread = control_file_len; toread > 0; ptr += justread, toread -= justread)
 		{
 		if((justread = read(0, ptr, toread)) == -1)
-			fatal(1, "receive_control_file(): read() failed, errno=%d (%s)", errno, gu_strerror(errno));
+			gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "read", errno, gu_strerror(errno));
 		}
 
 	control_buffer[control_buffer_len] = '\0';
@@ -494,11 +496,11 @@ static void dispatch_files_run(const char *prog, const char *args[], int tempfil
 
 	/* Go to the right place in the temporary file: */
 	if(lseek(tempfile, start, SEEK_SET) == -1)
-		fatal(1, "%s(): lseek() failed", function);
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "lseek", errno, strerror(errno));
 
 	/* Open a pipe which will be used to connect us to the child: */
 	if(pipe(fds) == -1)
-		fatal(1, "%s(): pipe() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "pipe", errno, gu_strerror(errno) );
 
 	/* Keep trying until we can fork() a child. */
 	while((pid = fork()) == -1)
@@ -523,17 +525,17 @@ static void dispatch_files_run(const char *prog, const char *args[], int tempfil
 			if(written==readlen)
 				{
 				if((readlen = read(tempfile, buffer, length > sizeof(buffer) ? sizeof(buffer) : length)) == -1)
-					fatal(1, "%s(): read() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+					gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "read", errno, gu_strerror(errno) );
 
 				if(readlen == 0)
-					fatal(1, "%s(): defective temp file?", function);
+					gu_Throw("%s(): defective temp file?", function);
 
 				written = 0;
 				length -= readlen;
 				}
 
-			if( (thiswrite = write(fds[1], buffer+written, readlen-written)) == -1 )
-				fatal(1, "%s(): write() failed, errno=%d (%s)", function, errno, gu_strerror(errno) );
+			if((thiswrite = write(fds[1], buffer+written, readlen-written)) == -1)
+				gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "write", errno, gu_strerror(errno) );
 			written += thiswrite;
 			} while(readlen > written || length > 0);
 
@@ -634,7 +636,7 @@ static void dispatch_files(int tempfile, struct DATA_FILE *data_files, int file_
 					args_used = uprint_print_argv_ppr(upr, args, MAX_PRINT_ARGV);
 					break;
 				default:
-					fatal(1, "%s line %d: missing case", __FILE__, __LINE__);
+					gu_Throw("%s line %d: missing case", __FILE__, __LINE__);
 				}
 			}
 		i = args_used;
@@ -722,7 +724,7 @@ void do_request_take_job(const char printer[], const char fromhost[], const stru
 
 				/* Structure to store UPRINT job information: */
 				if((upr = uprint_new("lprsrv", 0, (const char **)NULL)) == (void*)NULL)
-					fatal(1, "%s(): uprint_new() failed", function);
+					gu_Throw(_("%s(): %s() failed"), function, "uprint_new");
 
 				/* Set the printer: */
 				uprint_set_dest(upr, printer);

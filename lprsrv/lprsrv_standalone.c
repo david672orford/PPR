@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 October 2005.
+** Last modified 20 October 2005.
 */
 
 #include "config.h"
@@ -56,6 +56,8 @@
 ** standalone mode (without Inetd).
 */
 
+static char *tcpbind_pidfile = NULL;
+
 /*
 ** This function is called in the daemon whenever one of the
 ** children launched to service a connexion exits.
@@ -76,15 +78,16 @@ static void reapchild(int sig)
 ** connects stdin, stdout, and stderr to the connexion, and returns to main()
 ** in the child.
 */
-void standalone_accept(char *tcpbind_sockets)
+void standalone_accept(char *tcpbind_sockets, char *pidfile)
 	{
-	const char function[] = "run_standalone";
+	const char function[] = "standalone_accept";
 	#define MAX_FDS 32 
 	int fds[MAX_FDS];
 	int fdcount;
 	int maxfd = -1;
 
 	signal_restarting(SIGCHLD, reapchild);
+	tcpbind_pidfile = pidfile;
 
 	{
 	char *p, *item;
@@ -93,18 +96,23 @@ void standalone_accept(char *tcpbind_sockets)
 		char *f1, *f2;
 
 		if(fdcount >= MAX_FDS)
-			fatal(1, "listening on too many ports");
+			gu_Throw("listening on too many ports");
 
 		/* Each item is in the format fd=socket. */
 		if(!(f1 = gu_strsep(&item, "=")) || !(f2 = gu_strsep(&item, "=")))
-			fatal(1, "can't parse TCPBIND_SOCKETS item %d", fdcount+1);
+			gu_Throw(X_("can't parse TCPBIND_SOCKETS item %d"), fdcount+1);
 		if((fds[fdcount] = atoi(f1)) <= 0)
-			fatal(1, "can't parse socket number: %s", f1);
+			gu_Throw(X_("can't parse socket number: %s"), f1);
 
 		if(fds[fdcount] > maxfd)
 			maxfd = fds[fdcount];
 
+		/* Children don't need listening sockets. */
 		gu_set_cloexec(fds[fdcount]);
+
+		/* Make listening sockets non-blocking just in case select() indicates
+		 * one is ready but accept() disagrees and wants to return EAGAIN.
+		 */
 		gu_nonblock(fds[fdcount], TRUE);
 		}
 	}
@@ -127,7 +135,7 @@ void standalone_accept(char *tcpbind_sockets)
 			if(errno == EINTR)
 				continue;
 			else
-				fatal(1, "select() failed, errno=%d (%s)", errno, strerror(errno));
+				gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "select", errno, strerror(errno));
 			}
 		for(iii=0; selret--; )
 			{
@@ -139,7 +147,8 @@ void standalone_accept(char *tcpbind_sockets)
 			unsigned int clilen = sizeof(cli_addr);
 			if((conn_fd = accept(fds[iii], (struct sockaddr *) &cli_addr, &clilen)) == -1)
 				{
-				debug("%s(): accept() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+				/*if(errno != EAGAIN)*/
+					debug("%s(): accept() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 				continue;
 				}
 			DODEBUG_STANDALONE(("%s(): connection request from %s", function, inet_ntoa(cli_addr.sin_addr)));
@@ -151,7 +160,7 @@ void standalone_accept(char *tcpbind_sockets)
 				}
 			else if(pid == 0)				/* child */
 				{
-				tcpbind_pidfile = NULL;		/* so fatal() doesn't delete parent's PID file */
+				tcpbind_pidfile = NULL;		/* child shouldn't delete */
 				signal_restarting(SIGCHLD, SIG_IGN);
 				if(conn_fd != 0)
 					dup2(conn_fd, 0);
@@ -168,6 +177,12 @@ void standalone_accept(char *tcpbind_sockets)
 			}
 		}
 	} /* end of main_loop() */
+
+void standalone_shutdown(void)
+	{
+	if(tcpbind_pidfile)
+		unlink(tcpbind_pidfile);
+	}
 
 /* end of file */
 
