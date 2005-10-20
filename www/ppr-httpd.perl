@@ -79,32 +79,32 @@ my $TOKEN = '[\!\#\$\%\&\x27\*\+\-\.0-9A-Z\^\_\`a-z\|\~]';
 
 # HTTP error code description strings.
 %RESPONSE_CODES = (
-		200 => 'OK',
-		201 => 'Created',
-		202 => 'Accepted',
-		203 => 'Non-Authoritative Information',
-		204 => 'No Content',
-		205 => 'Reset Content',
-		206 => 'Partial Content',
-		300 => 'Multiple Choices',
-		301 => 'Moved Permanently',
-		302 => 'Moved Temporarily',
-		303 => 'See Other',
-		304 => 'Not Modified',			# yet to be implemented
-		305 => 'Use Proxy',
-		400 => 'Bad Request',
-		401 => 'Unauthorized',
-		402 => 'Payment Required',
-		403 => 'Forbidden',
-		404 => 'Not Found',
-		405 => 'Method Not Allowed',
-		406 => 'Not Acceptable',
-		411 => 'Length Required',
-		416 => 'Requested Range Not Satisfiable',
-		500 => 'Internal Server Error',
-		501 => 'Not Implemented',
-		505 => 'HTTP Version Not Supported'
-);
+	200 => 'OK',
+	201 => 'Created',
+	202 => 'Accepted',
+	203 => 'Non-Authoritative Information',
+	204 => 'No Content',
+	205 => 'Reset Content',
+	206 => 'Partial Content',
+	300 => 'Multiple Choices',
+	301 => 'Moved Permanently',
+	302 => 'Moved Temporarily',
+	303 => 'See Other',
+	304 => 'Not Modified',			# yet to be implemented
+	305 => 'Use Proxy',
+	400 => 'Bad Request',
+	401 => 'Unauthorized',
+	402 => 'Payment Required',
+	403 => 'Forbidden',
+	404 => 'Not Found',
+	405 => 'Method Not Allowed',
+	406 => 'Not Acceptable',
+	411 => 'Length Required',
+	416 => 'Requested Range Not Satisfiable',
+	500 => 'Internal Server Error',
+	501 => 'Not Implemented',
+	505 => 'HTTP Version Not Supported'
+	);
 
 #===========================================================
 # Initialization code.
@@ -205,6 +205,8 @@ else
 #===========================================================
 if(defined $ENV{TCPBIND_SOCKETS})
 	{
+	$SIG{CHLD} = "IGNORE";
+
 	my %fds = ();
 	my $master_fdset = "";
 	my $fdset;

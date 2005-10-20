@@ -539,7 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--15 October 2005.
+2.00a1, 11 December 2004--20 October 2005.
 
 * refman/: removed references to papsrv.
 
@@ -601,4 +601,8 @@ more information about RIPs and *pprRIP:.
 
 * removed pprdoc/ from Makefile and index.html since there is almost nothing
   left in it.
+
+* refman/lprsrv.8.pod: removed references to UPRINT and updated description
+  of standalone operation to describe the new tcpbind based scheme.
+
 
