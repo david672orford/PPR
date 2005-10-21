@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 23 September 2005.
+# Last modified 21 October 2005.
 #
 
 # Pull in settings from Configure.
@@ -60,7 +60,9 @@ ALL_HTML=\
 	ppuser.8.html \
 	lprsrv.8.html \
 	ppr-config.8.html \
-	ppr-clean.8.html
+	ppr-clean.8.html \
+	ppr-httpd.8.html \
+	tcpbind.8.html
 
 # List of man pages in nroff format
 ALL_TROFF=\
@@ -87,7 +89,9 @@ ALL_TROFF=\
 	ppuser.8.man \
 	lprsrv.8.man \
 	ppr-config.8.man \
-	ppr-clean.8.man
+	ppr-clean.8.man \
+	ppr-httpd.8.man \
+	tcpbind.8.man
 
 # List of PODs for cross references
 LIBPODS=ppdoc.1,ppr.1,ppr-filters.1,ppr2samba.8,ppd2macosdrv.8,ppr-index.8,ppop,ppad.8,ppad-interfaces.8,pprd.8,papd.8,ppr-xgrant.1,ppuser.8,lprsrv.8,ppr-hexdump.1,ppr-config.8,ppr-passwd.1,ppr-clean.1,ppr-testpage.1,ppr-ttf2ps.1,ppr-web.1,ppr-panel.1,ppr-followme.1

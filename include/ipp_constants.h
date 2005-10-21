@@ -104,10 +104,14 @@ RFC 2565.  The RFC 2565 names are noted in the comments.
 #define CUPS_GET_PPDS 0x400c
 #define CUPS_MOVE_JOB 0x400d
 
-/* IPP request result codes */
+/*
+ * IPP request result codes
+ * See RFC 2566 section 13.1.
+ */ 
 #define IPP_OK                      0x0000
 #define IPP_OK_SUBST                0x0001
 #define IPP_OK_CONFLICT             0x0002
+
 #define IPP_BAD_REQUEST             0x0400
 #define IPP_FORBIDDEN               0x0401
 #define IPP_NOT_AUTHENTICATED       0x0402
@@ -115,12 +119,24 @@ RFC 2565.  The RFC 2565 names are noted in the comments.
 #define IPP_NOT_POSSIBLE            0x0404
 #define IPP_TIMEOUT                 0x0405
 #define IPP_NOT_FOUND               0x0406
-#define IPP_OPERATION_NOT_SUPPORTED 0x0500
-#define IPP_CHARSET                 0x050d
+
+#define IPP_CHARSET                 0x040d
+
+#define IPP_INTERNAL_ERROR			0x0500
+#define IPP_OPERATION_NOT_SUPPORTED 0x0501
 
 /* IPP printer-state codes */
 #define IPP_PRINTER_IDLE 3
 #define IPP_PRINTER_PROCESSING 4
 #define IPP_PRINTER_STOPPED 5
+
+/* IPP job-state codes */
+#define IPP_JOB_PENDING 3
+#define IPP_JOB_HELD 4
+#define IPP_JOB_PROCESSING 5
+#define IPP_JOB_STOPPED 6
+#define IPP_JOB_CANCELLED 7
+#define IPP_JOB_ABORTED 8
+#define IPP_JOB_COMPLETED 9
 
 /* end of file */

@@ -39,6 +39,7 @@
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
+#include <stdarg.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -61,6 +62,10 @@
 #define FIFO_OPEN_FLAGS (O_WRONLY | O_APPEND)
 #endif
 
+/*
+ * Given a URI, return the base filename without path.  We use this as a
+ * crude way of extracting the queue name from a URI.
+ */
 static const char *uri_basename(const char uri[])
 	{
 	const char *p;
@@ -69,6 +74,245 @@ static const char *uri_basename(const char uri[])
 	else
 		gu_Throw("URI \"%s\" has no basename", uri);
 	}
+
+/*
+ * Launch a program and capture its stdout.
+ */
+static void sigchld_handler(int sig)
+	{
+	}
+static FILE *gu_popen(char *argv[], const char type[])
+	{
+	const char function[] = "gu_popen";
+	pid_t pid;
+	int fds[2];
+
+	signal_restarting(SIGCHLD, sigchld_handler);
+
+	if(pipe(fds) == -1)
+		gu_Throw(_("%s() failed, errno=%d (%s)"), "pipe", errno, strerror(errno));
+
+	if((pid = fork()) == -1)
+		gu_Throw(_("%s() failed, errno=%d (%s)"), "fork", errno, strerror(errno));
+
+	if(pid == 0)				/* child */
+		{
+		if(*type == 'r')
+			{
+			close(fds[0]);
+			if(fds[1] != 1)
+				{
+				dup2(fds[1], 1);
+				close(fds[1]);
+				}
+			}
+		else if(*type == 'w')
+			{
+			close(fds[1]);
+			if(fds[0] != 0)
+				{
+				dup2(fds[0], 0);
+				close(fds[0]);
+				}
+			}
+		execv(argv[0], argv);
+		_exit(255);
+		}
+
+	/* parent */
+	if(*type == 'r')
+		{
+		close(fds[1]);
+		return fdopen(fds[0], type);
+		}
+	else if(*type == 'w')
+		{
+		close(fds[0]);
+		return fdopen(fds[1], type);
+		}
+	else
+		{
+		gu_Throw("%s(): invalid type: %s", function, type);
+		}
+	}
+
+static int gu_pclose(FILE *f)
+	{
+	int status;
+	fclose(f);
+	if(wait(&status) == -1)
+		gu_Throw("%s() failed, errno=%d (%s)", "wait", errno, strerror(errno));
+	if(!WIFEXITED(status))
+		return -1;
+	else
+		return WEXITSTATUS(status);
+	}
+
+static int run(char command[], ...)
+	{
+	va_list va;
+	#define MAX_ARGV 16 
+	char *argv[MAX_ARGV];
+	int iii;
+	FILE *f;
+	char *line = NULL;
+	int line_space = 80;
+
+	argv[0] = command;
+	fprintf(stderr, " $ %s", command);
+	
+	va_start(va, command);
+	for(iii=1; iii < MAX_ARGV; iii++)
+		{
+		if(!(argv[iii] = va_arg(va, char*)))
+			break;
+		fprintf(stderr, " %s", argv[iii]);
+		}
+	va_end(va);
+	fprintf(stderr, "\n");
+
+	f = gu_popen(argv, "r");
+	while((line = gu_getline(line, &line_space, f)))
+		{
+		fprintf(stderr, " %s\n", line);
+		}
+
+	return gu_pclose(f);	
+	}
+
+/** Send a debug message to the HTTP server's error log
+
+This function sends a message to stderr.  Messages sent to stderr end up in
+the HTTP server's error log.  The function takes a printf() style format
+string and argument list.  The marker "ipp: " is prepended to the message.
+
+This function is defined in ipp_utils.h.  It is a callback function 
+from the IPP library.
+
+*/
+void debug(const char message[], ...)
+	{
+	va_list va;
+	va_start(va, message);
+	fputs("ipp: ", stderr);
+	vfprintf(stderr, message, va);
+	fputc('\n', stderr);
+	va_end(va);
+	} /* end of debug() */
+
+/*===========================================================================
+   IPP Request handlers
+===========================================================================*/
+
+/*
+ * This is the default IPP request handler.  It passes the request thru to 
+ * pprd, waits for the reply, and copies the reply back to the client.
+ */
+static volatile gu_boolean sigcaught;
+static void user_sighandler(int sig)
+	{
+	sigcaught = TRUE;
+	}
+
+static volatile gu_boolean timeout;
+static void alarm_sighandler(int sig)
+	{
+	timeout = TRUE;
+	}
+
+static void do_passthru(struct IPP *ipp)
+	{
+	int fifo = -1;
+	int fd = -1;
+	sigset_t set, oset;
+	char fname_dir[MAX_PPR_PATH];
+	char fname_in[MAX_PPR_PATH];
+	char fname_out[MAX_PPR_PATH];
+	long int pid;
+	
+	DEBUG(("do_passthru()"));
+
+	pid = (long int)getpid();
+	gu_snprintf(fname_dir, sizeof(fname_dir), "%s/ppr-ipp", TEMPDIR);
+	mkdir(fname_dir, UNIX_770);
+	gu_snprintf(fname_in,  sizeof(fname_in),  "%s/%ld-in",  fname_dir, pid);
+	gu_snprintf(fname_out, sizeof(fname_out), "%s/%ld-out", fname_dir, pid);
+
+	gu_Try {
+		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)
+			gu_Throw(_("can't open FIFO, pprd is probably not running."));
+
+		if((fd = open(fname_in, O_WRONLY | O_CREAT | O_EXCL, UNIX_660)) == -1)
+			gu_Throw(_("can't create \"%s\", errno=%d (%s)"), fname_in, errno, gu_strerror(errno));
+
+		ipp_request_to_fd(ipp, fd);
+
+		close(fd);
+		fd = -1;
+		
+		signal(SIGUSR1, user_sighandler);
+		signal(SIGALRM, alarm_sighandler);
+
+		sigemptyset(&set);
+		sigaddset(&set, SIGUSR1);
+		sigaddset(&set, SIGALRM);
+		sigprocmask(SIG_BLOCK, &set, &oset);
+		
+		sigcaught = FALSE;
+		timeout = FALSE;
+	
+		{
+		char command[256];
+		int command_len;
+		int ret;
+		gu_snprintf(command, sizeof(command),
+			"IPP %ld ROOT=%s PATH_INFO=%s REMOTE_USER=%s REMOTE_ADDR=%s\n",
+			pid,
+			ipp->root,
+			ipp->path_info,
+			ipp->remote_user ? ipp->remote_user : "",
+			ipp->remote_addr ? ipp->remote_addr : ""
+			);
+		command_len = strlen(command);
+
+		if((ret = write(fifo, command, command_len)) == -1)
+			gu_Throw("write to FIFO failed, errno=%d (%s)", errno, gu_strerror(errno));
+		}
+		
+		alarm(60);
+
+		while(!sigcaught && !timeout)
+			sigsuspend(&oset);
+	
+		alarm(0);
+	
+		if(timeout)
+			gu_Throw("timeout waiting for pprd");
+
+		if((fd = open(fname_out, O_RDONLY)) == -1)
+			gu_Throw("can't open \"%s\", errno=%d (%s)", fname_out, errno, gu_strerror(errno));
+
+		ipp_reply_from_fd(ipp, fd);
+		fd = -1;
+		}
+
+	gu_Final {
+		sigprocmask(SIG_SETMASK, &oset, (sigset_t*)NULL);
+
+		unlink(fname_in);
+		unlink(fname_out);
+
+		if(fd != -1)
+			close(fd);
+		
+		if(fifo != -1)
+			close(fifo);
+		}
+
+	gu_Catch {
+		gu_ReThrow();
+		}
+	} /* end of do_passthru() */
 
 /*
  * Handle IPP_PRINT_JOB 
@@ -220,116 +464,6 @@ static void do_print_job(struct IPP *ipp)
 	
 	} /* end of do_print_job() */
 
-static volatile gu_boolean sigcaught;
-static void user_sighandler(int sig)
-	{
-	sigcaught = TRUE;
-	}
-
-static volatile gu_boolean timeout;
-static void alarm_sighandler(int sig)
-	{
-	timeout = TRUE;
-	}
-
-/*
- * Pass a request thru to pprd, wait for the reply, and convey
- * the reply to the client.
- */
-static void do_passthru(struct IPP *ipp)
-	{
-	int fifo = -1;
-	int fd = -1;
-	sigset_t set, oset;
-	char fname_dir[MAX_PPR_PATH];
-	char fname_in[MAX_PPR_PATH];
-	char fname_out[MAX_PPR_PATH];
-	long int pid;
-	
-	DEBUG(("do_passthru()"));
-
-	pid = (long int)getpid();
-	gu_snprintf(fname_dir, sizeof(fname_dir), "%s/ppr-ipp", TEMPDIR);
-	mkdir(fname_dir, UNIX_770);
-	gu_snprintf(fname_in,  sizeof(fname_in),  "%s/%ld-in",  fname_dir, pid);
-	gu_snprintf(fname_out, sizeof(fname_out), "%s/%ld-out", fname_dir, pid);
-
-	gu_Try {
-		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)
-			gu_Throw(_("can't open FIFO, pprd is probably not running."));
-
-		if((fd = open(fname_in, O_WRONLY | O_CREAT | O_EXCL, UNIX_660)) == -1)
-			gu_Throw(_("can't create \"%s\", errno=%d (%s)"), fname_in, errno, gu_strerror(errno));
-
-		ipp_request_to_fd(ipp, fd);
-
-		close(fd);
-		fd = -1;
-		
-		signal(SIGUSR1, user_sighandler);
-		signal(SIGALRM, alarm_sighandler);
-
-		sigemptyset(&set);
-		sigaddset(&set, SIGUSR1);
-		sigaddset(&set, SIGALRM);
-		sigprocmask(SIG_BLOCK, &set, &oset);
-		
-		sigcaught = FALSE;
-		timeout = FALSE;
-	
-		{
-		char command[256];
-		int command_len;
-		int ret;
-		gu_snprintf(command, sizeof(command),
-			"IPP %ld ROOT=%s PATH_INFO=%s REMOTE_USER=%s REMOTE_ADDR=%s\n",
-			pid,
-			ipp->root,
-			ipp->path_info,
-			ipp->remote_user ? ipp->remote_user : "",
-			ipp->remote_addr ? ipp->remote_addr : ""
-			);
-		command_len = strlen(command);
-
-		if((ret = write(fifo, command, command_len)) == -1)
-			gu_Throw("write to FIFO failed, errno=%d (%s)", errno, gu_strerror(errno));
-		}
-		
-		alarm(60);
-
-		while(!sigcaught && !timeout)
-			sigsuspend(&oset);
-	
-		alarm(0);
-	
-		if(timeout)
-			gu_Throw("timeout waiting for pprd");
-
-		if((fd = open(fname_out, O_RDONLY)) == -1)
-			gu_Throw("can't open \"%s\", errno=%d (%s)", fname_out, errno, gu_strerror(errno));
-
-		ipp_reply_from_fd(ipp, fd);
-		fd = -1;
-		}
-
-	gu_Final {
-		sigprocmask(SIG_SETMASK, &oset, (sigset_t*)NULL);
-
-		unlink(fname_in);
-		unlink(fname_out);
-
-		if(fd != -1)
-			close(fd);
-		
-		if(fifo != -1)
-			close(fifo);
-		}
-
-	gu_Catch {
-		gu_ReThrow();
-		}
-	} /* end of do_passthru() */
-
 /*
  * Handle CUPS_GET_DEFAULT
  */
@@ -393,8 +527,6 @@ static void do_get_devices(struct IPP *ipp)
 static void do_get_ppds(struct IPP *ipp)
 	{
 	struct REQUEST_ATTRS *req;
-	char *ppd_make;
-	int limit;
 	FILE *f;
 	char *line = NULL;
 	int line_space = 256;
@@ -402,8 +534,6 @@ static void do_get_ppds(struct IPP *ipp)
 	int count = 0;
 
 	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PPD_MAKE | REQUEST_ATTRS_SUPPORTS_LIMIT);
-	ppd_make = request_attrs_ppd_make(req);
-	limit = request_attrs_limit(req);
 
 	if(!(f = fopen(PPD_INDEX, "r")))
 		{
@@ -428,11 +558,11 @@ static void do_get_ppds(struct IPP *ipp)
 			}
 
 		/* If filtering my manufacturer, skip those that don't match. */
-		if(ppd_make && strcmp(ppd_make, f_manufacturer) != 0)
+		if(req->ppd_make && strcmp(req->ppd_make, f_manufacturer) != 0)
 			continue;
 
 		/* Do not exceed the number of items limit imposed by the client. */
-		if(limit != -1 && count >= limit)
+		if(req->limit != -1 && count >= req->limit)
 			break;
 
 		/* Include those attributes which were requested. */
@@ -457,50 +587,36 @@ static void do_get_ppds(struct IPP *ipp)
 	}
 
 /*
- * Handle CUPS_ADD_PRINTER
+ * Handle CUPS_ADD_PRINTER also known as CUPS-Add-Modify-Printer
  */
 static void do_add_printer(struct IPP *ipp)
 	{
-	const char *printer_uri = NULL;
-	const char *device_uri = NULL;
-	const char *ppd_name = NULL;
+	const char *printer;
+	struct REQUEST_ATTRS *req;
 		
-	{
-	ipp_attribute_t *attr;
-	for(attr = ipp->request_attrs; attr; attr = attr->next)
-		{
-		if(attr->group_tag == IPP_TAG_OPERATION)
+	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER | REQUEST_ATTRS_SUPPORTS_PCREATE);
+
+	do	{
+		int retcode = 0;
+
+		if(!(printer = request_attrs_destname(req)))
 			{
-			if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
-				printer_uri = attr->values[0].string.text;
+			ipp->response_code = IPP_BAD_REQUEST;
+			break;
 			}
-		else if(attr->group_tag == IPP_TAG_PRINTER)
-			{
-			if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "device-uri") == 0)
-				device_uri = attr->values[0].string.text;
-			else if(attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "ppd-name") == 0)
-				ppd_name = attr->values[0].string.text;
-			}
-		DEBUG(("Unsupported: %s", attr->name));
-		ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
-		}
-	}
 
-	if(!printer_uri)
-		{
-		ipp->response_code = IPP_BAD_REQUEST;
-		return;
-		}
+		/* This must be first in case we are creating the printer. */
+		if(retcode == 0 && req->device_uri)
+			retcode = run(PPAD_PATH, "interface", printer, "dummy", req->device_uri, NULL);
+debug("retcode=%d", retcode);
+		if(retcode == 0 && req->ppd_name)
+			retcode = run(PPAD_PATH, "ppd", printer, req->ppd_name, NULL);
 
-	if(device_uri)
-		{
-		DEBUG(("ppad interface %s %s", uri_basename(printer_uri), device_uri));
-		}
-
-	if(ppd_name)
-		{
-		DEBUG(("ppad ppad %s %s", uri_basename(printer_uri), ppd_name));
-		}
+		if(retcode != 0)
+			ipp->response_code = IPP_BAD_REQUEST;
+		} while(FALSE);
+	
+	request_attrs_free(req);
 	}
 
 int main(int argc, char *argv[])
@@ -633,22 +749,5 @@ int main(int argc, char *argv[])
 
 	return 0;
 	}
-
-/** Send a debug message to the HTTP server's error log
-
-This function sends a message to stderr.  Messages sent to stderr end up in
-the HTTP server's error log.  The function takes a printf() style format
-string and argument list.  The marker "ipp: " is prepended to the message.
-
-*/
-void debug(const char message[], ...)
-	{
-	va_list va;
-	va_start(va, message);
-	fputs("ipp: ", stderr);
-	vfprintf(stderr, message, va);
-	fputc('\n', stderr);
-	va_end(va);
-	} /* end of debug() */
 
 /* end of file */

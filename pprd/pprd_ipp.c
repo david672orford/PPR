@@ -200,6 +200,219 @@ static void printer_add_status(struct IPP *ipp, int prnid, struct REQUEST_ATTRS 
 		}
 	}
 
+/** Handler for IPP_GET_JOBS */
+static void ipp_get_jobs(struct IPP *ipp)
+	{
+	const char function[] = "ipp_get_jobs";
+	const char *destname = NULL;
+	int destname_id = -1;
+	int i;
+	char fname[MAX_PPR_PATH];
+	FILE *qfile;
+	struct QEntryFile qentryfile;
+	struct REQUEST_ATTRS *req;
+
+	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
+
+	if((destname = request_attrs_destname(req)))
+		{
+		if((destname_id = destid_by_name(destname)) == -1)
+			{
+			request_attrs_free(req);
+			ipp->response_code = IPP_NOT_FOUND;
+			return;
+			}
+		}
+
+	lock();
+
+	/* Loop over the queue entries. */
+	for(i=0; i < queue_entries; i++)
+		{
+		if(destname_id != -1 && queue[i].destid != destname_id)
+			continue;
+
+		/* Read and parse the queue file. */
+		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(queue[i].destid), queue[i].id, queue[i].subid);
+		if(!(qfile = fopen(fname, "r")))
+			{
+			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
+			continue;
+			}
+		qentryfile_clear(&qentryfile);
+		{
+		int ret = qentryfile_load(&qentryfile, qfile);
+		fclose(qfile);
+		if(ret == -1)
+			{
+			error("%s(): invalid queue file: %s", function, fname);
+			continue;
+			}
+		}
+
+		if(request_attrs_attr_requested(req, "job-id"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+				"job-id", queue[i].id);
+			}
+		if(request_attrs_attr_requested(req, "job-printer-uri"))
+			{
+			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
+				"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
+			}
+		if(request_attrs_attr_requested(req, "job-uri"))
+			{
+			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
+				"job-uri", "/jobs/%d", queue[i].id);
+			}
+
+		/* Derived from "ppop lpq" */
+		if(request_attrs_attr_requested(req, "job-name"))
+			{
+			const char *ptr;
+			if(!(ptr = qentryfile.lpqFileName))
+				if(!(ptr = qentryfile.Title))
+					ptr = "";
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
+			}
+
+		/* Derived from "ppop lpq" */
+		if(request_attrs_attr_requested(req, "job-originating-user-name"))
+			{
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(qentryfile.user), TRUE);
+			}
+
+		/* Derived from "ppop lpq" */
+		if(request_attrs_attr_requested(req, "job-k-octets"))
+			{
+			long int bytes = qentryfile.PassThruPDL ? qentryfile.attr.input_bytes : qentryfile.attr.postscript_bytes;
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
+			}
+
+		if(request_attrs_attr_requested(req, "job-state"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_ENUM, "job-state", IPP_JOB_PENDING);	
+			}
+			
+		ipp_add_end(ipp, IPP_TAG_JOB);
+
+		qentryfile_free(&qentryfile);
+		}
+
+	unlock();
+
+	request_attrs_free(req);
+	} /* ipp_get_jobs() */
+
+/** Handler for IPP_CANCEL_JOB */
+static void ipp_cancel_job(struct IPP *ipp)
+	{
+	const char function[] = "ipp_cancel_job";
+	struct REQUEST_ATTRS *req;
+	int jobid;
+	int i;
+
+	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_JOB);
+	
+	if((jobid = request_attrs_jobid(req)) == -1)
+		{
+		request_attrs_free(req);
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+
+	lock();
+
+	/* Loop over the queue entries.
+	 * This code is copied from pprd_ppop.c.  We haven't tried to generalize 
+	 * it because we plan to remove the command from pprd_ppop.c and have
+	 * ppop use the IPP command.
+	 */ 
+	for(i=0; i < queue_entries; i++)
+		{
+		if(queue[i].id == jobid)
+			{
+			int prnid;
+
+			/* !!! Access checking should go here !!! */
+			
+			if((prnid = queue[i].status) >= 0)	/* if pprdrv is active */
+				{
+				/* If it is printing we can say it is now canceling, but
+				   if it is halting or stopping we don't want to mess with
+				   that.
+				   */
+				if(printers[prnid].status == PRNSTATUS_PRINTING)
+					printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
+
+				/* Set flag so that job will be deleted when pprdrv dies. */
+				printers[prnid].cancel_job = TRUE;
+
+				/* Change the job status to "being canceled". */
+				queue_p_job_new_status(&queue[i], STATUS_CANCEL);
+
+				/* Kill pprdrv. */
+				pprdrv_kill(prnid);
+				}
+
+			/* If a cancel is in progress, */
+			else if(prnid == STATUS_CANCEL)
+				{
+				/* nothing to do */
+				}
+
+			/* If a hold is in progress, do what we woudld do if the job were being
+			   printed, but without the need to kill() pprdrv again.  This
+			   is tough because the queue doesn't contain the printer
+			   id anymore. */
+			else if(prnid == STATUS_SEIZING)
+				{
+				for(prnid = 0; prnid < printer_count; prnid++)
+					{
+					if(printers[prnid].jobdestid == queue[i].destid
+							&& printers[prnid].id == queue[i].id
+							&& printers[prnid].subid == queue[i].subid
+							)
+						{
+						if(printers[prnid].status == PRNSTATUS_SEIZING)
+							printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
+						printers[prnid].hold_job = FALSE;
+						printers[prnid].cancel_job = TRUE;
+						queue_p_job_new_status(&queue[i], STATUS_CANCEL);
+						break;
+						}
+					}
+				if(prnid == printer_count)
+					error("%s(): couldn't find printer that job is printing on", function);
+				}
+
+			/* If the job is not being printed, we can delete it right now. */
+			else
+				{
+				/*
+				** If job status is not arrested,
+				** use the responder to inform the user that we are canceling it.
+				*/
+				if(queue[i].status != STATUS_ARRESTED)
+					{
+					respond(queue[i].destid, queue[i].id, queue[i].subid,
+							-1,	  /* impossible printer */
+							RESP_CANCELED);
+					}
+
+				/* Remove the job from the queue array and its files form the spool directories. */
+				queue_dequeue_job(queue[i].destid, queue[i].id, queue[i].subid);
+
+				i--;		/* compensate for deletion */
+				}
+			}
+		}
+	
+	unlock();
+
+	request_attrs_free(req);
+	} /* ipp_cancel_job() */
+
 /** Handler for IPP_GET_PRINTER_ATTRIBUTES */
 static void ipp_get_printer_attributes(struct IPP *ipp)
     {
@@ -224,6 +437,21 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
 			"printer-name", destid_to_name(destid), FALSE);
 		}
+
+	if(request_attrs_attr_requested(req, "queued-job-count"))
+		{
+		int iii, count;
+		lock();
+		for(iii=count=0; iii < queue_entries; iii++)
+			{
+			if(queue[iii].destid == destid)
+				count++;
+			}
+		unlock();
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+			"queued-job-count", count);
+		}
+
 	if(request_attrs_attr_requested(req, "printer-uri-supported"))
 		{
 		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
@@ -236,10 +464,42 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 			"uri-security-supported", "none", FALSE);
 		}
 
-	if(request_attrs_attr_requested(req, "printer-make-and-model"))
-		{	/* dummy code */
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-			"printer-make-and-model", "HP LaserJet 4200", FALSE);
+	gu_Try {
+		void *qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, destid_to_name(destid));
+		const char *p;
+
+		if(request_attrs_attr_requested(req, "printer-location"))
+			{
+			if((p = queueinfo_location(qip, 0)))
+				{
+				p = queueinfo_hoist_value(qip, p);
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-location", p, TRUE);
+				}
+			}
+
+		if(request_attrs_attr_requested(req, "printer-info"))
+			{
+			if((p = queueinfo_comment(qip)))
+				{
+				p = queueinfo_hoist_value(qip, p);
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-info", p, TRUE);
+				}
+			}
+
+		if(request_attrs_attr_requested(req, "printer-make-and-model"))
+			{
+			if((p = queueinfo_modelName(qip)))
+				{
+				p = queueinfo_hoist_value(qip, p);
+				ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-make-and-model", p, TRUE);
+				}
+			}
+
+		queueinfo_free(qip);
+		}
+	gu_Catch
+		{
+		/* nothing to do, just don't issue those items */
 		}
 
 	if(destid_is_group(destid))
@@ -344,211 +604,6 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 
 	request_attrs_free(req);
     } /* ipp_get_printer_attributes() */
-
-/** Handler for IPP_GET_JOBS */
-static void ipp_get_jobs(struct IPP *ipp)
-	{
-	const char function[] = "ipp_get_jobs";
-	const char *destname = NULL;
-	int destname_id = -1;
-	int i;
-	char fname[MAX_PPR_PATH];
-	FILE *qfile;
-	struct QEntryFile qentryfile;
-	struct REQUEST_ATTRS *req;
-
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
-
-	if((destname = request_attrs_destname(req)))
-		{
-		if((destname_id = destid_by_name(destname)) == -1)
-			{
-			request_attrs_free(req);
-			ipp->response_code = IPP_NOT_FOUND;
-			return;
-			}
-		}
-
-	lock();
-
-	/* Loop over the queue entries. */
-	for(i=0; i < queue_entries; i++)
-		{
-		if(destname_id != -1 && queue[i].destid != destname_id)
-			continue;
-
-		/* Read and parse the queue file. */
-		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(queue[i].destid), queue[i].id, queue[i].subid);
-		if(!(qfile = fopen(fname, "r")))
-			{
-			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
-			continue;
-			}
-		qentryfile_clear(&qentryfile);
-		{
-		int ret = qentryfile_load(&qentryfile, qfile);
-		fclose(qfile);
-		if(ret == -1)
-			{
-			error("%s(): invalid queue file: %s", function, fname);
-			continue;
-			}
-		}
-
-		if(request_attrs_attr_requested(req, "job-id"))
-			{
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
-				"job-id", queue[i].id);
-			}
-		if(request_attrs_attr_requested(req, "job-printer-uri"))
-			{
-			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
-			}
-		if(request_attrs_attr_requested(req, "job-uri"))
-			{
-			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-uri", "/jobs/%d", queue[i].id);
-			}
-
-		/* Derived from "ppop lpq" */
-		if(request_attrs_attr_requested(req, "job-name"))
-			{
-			const char *ptr;
-			if(!(ptr = qentryfile.lpqFileName))
-				ptr = qentryfile.Title;
-			if(ptr)
-				ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
-			}
-
-		/* Derived from "ppop lpq" */
-		if(request_attrs_attr_requested(req, "job-originating-user-name"))
-			{
-			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(qentryfile.user), TRUE);
-			}
-
-		/* Derived from "ppop lpq" */
-		if(request_attrs_attr_requested(req, "job-k-octets"))
-			{
-			long int bytes = qentryfile.PassThruPDL ? qentryfile.attr.input_bytes : qentryfile.attr.postscript_bytes;
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
-			}
-
-		ipp_add_end(ipp, IPP_TAG_JOB);
-
-		qentryfile_free(&qentryfile);
-		}
-
-	unlock();
-
-	request_attrs_free(req);
-	} /* ipp_get_jobs() */
-
-/** Handler for IPP_CANCEL_JOB */
-static void ipp_cancel_job(struct IPP *ipp)
-	{
-	const char function[] = "ipp_cancel_job";
-	struct REQUEST_ATTRS *req;
-	int jobid;
-	int i;
-
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_JOB);
-	
-	if((jobid = request_attrs_jobid(req)) == -1)
-		{
-		request_attrs_free(req);
-		ipp->response_code = IPP_NOT_FOUND;
-		return;
-		}
-
-	lock();
-
-	/* Loop over the queue entries.
-	 * This code is copied from pprd_ppop.c.  We haven't tried to generalize 
-	 * it because we plan to remove to command from pprd_ppop.c and have
-	 * ppop use the IPP command.
-	 */ 
-	for(i=0; i < queue_entries; i++)
-		{
-		if(queue[i].id == jobid)
-			{
-			int prnid = queue[i].status;
-			if(prnid >= 0)		/* if pprdrv is active */
-				{
-				/* If it is printing we can say it is now canceling, but
-				   if it is halting or stopping we don't want to mess with
-				   that.
-				   */
-				if(printers[prnid].status == PRNSTATUS_PRINTING)
-					printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
-
-				/* Set flag so that job will be deleted when pprdrv dies. */
-				printers[prnid].cancel_job = TRUE;
-
-				/* Change the job status to "being canceled". */
-				queue_p_job_new_status(&queue[i], STATUS_CANCEL);
-
-				/* Kill pprdrv. */
-				pprdrv_kill(prnid);
-				}
-
-			/* If a cancel is in progress, */
-			else if(prnid == STATUS_CANCEL)
-				{
-				/* nothing to do */
-				}
-
-			/* If a hold is in progress, do what we woudld do if the job were being
-			   printed, but without the need to kill() pprdrv again.  This
-			   is tough because the queue doesn't contain the printer
-			   id anymore. */
-			else if(prnid == STATUS_SEIZING)
-				{
-				for(prnid = 0; prnid < printer_count; prnid++)
-					{
-					if(printers[prnid].jobdestid == queue[i].destid
-							&& printers[prnid].id == queue[i].id
-							&& printers[prnid].subid == queue[i].subid
-							)
-						{
-						if(printers[prnid].status == PRNSTATUS_SEIZING)
-							printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
-						printers[prnid].hold_job = FALSE;
-						printers[prnid].cancel_job = TRUE;
-						queue_p_job_new_status(&queue[i], STATUS_CANCEL);
-						break;
-						}
-					}
-				if(prnid == printer_count)
-					error("%s(): couldn't find printer that job is printing on", function);
-				}
-
-			/* If the job is not being printed, we can delete it right now. */
-			else
-				{
-				/*
-				** If job status is not arrested,
-				** use the responder to inform the user that we are canceling it.
-				*/
-				if(queue[i].status != STATUS_ARRESTED)
-					{
-					respond(queue[i].destid, queue[i].id, queue[i].subid,
-							-1,	  /* impossible printer */
-							RESP_CANCELED);
-					}
-
-				/* Remove the job from the queue array and its files form the spool directories. */
-				queue_dequeue_job(queue[i].destid, queue[i].id, queue[i].subid);
-
-				i--;		/* compensate for deletion */
-				}
-			}
-		}
-	
-	unlock();
-
-	request_attrs_free(req);
-	} /* ipp_cancel_job() */
 
 /** Handler for CUPS_GET_PRINTERS */
 static void cups_get_printers(struct IPP *ipp)
@@ -785,7 +840,6 @@ void ipp_dispatch(const char command[])
 		ipp_parse_request_body(ipp);
 		}
 		
-		/* For now, English is all we are capable of. */
 		if(ipp_validate_request(ipp))
 			{
 			debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);

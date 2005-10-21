@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 September 2005.
+** Last modified 21 October 2005.
 */
 
 /*+ \file
@@ -87,14 +87,15 @@ char *ppd_find_file(const char ppdname[])
 			}
 		}
 
-	if(line)
-		gu_free(line);
-	
+	gu_free_if(line);
+	fclose(f);
+
+	/* If we found it in the PPD index, we are done. */	
 	if(filename)
 		return filename;
 
-	/* If we reach here, fall back to the assumption that the name is the name
-	 * of a file in /usr/share/ppr/ppd/.
+	/* If we reach here, fall back to the old assumption that the name 
+	 * is the name of a file in /usr/share/ppr/ppd/.
 	 */
 	gu_asprintf(&filename, "%s/%s", PPDDIR, ppdname);
 	return filename;

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 September 2005.
+** Last modified 21 October 2005.
 */
 
 /*
@@ -1510,7 +1510,7 @@ int ppop_destination(char *argv[], int info_level)
 		}
 
 	/* Wait for a reply from pprd. */
-	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
+	if(!(reply_file = wait_for_pprd(TRUE)))
 		return print_reply();			/* if error, print it */
 
 	/* Process all of the responses from pprd. */

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2005.
+** Last modified 21 October 2005.
 */
 
 /*! \file
@@ -49,6 +49,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -83,7 +84,7 @@ int main(int argc, char *argv[])
 	
 	if(argc < 5)
 		{
-		fprintf(stderr, "%s: Usage: tcpbind [--foreground] <addresses>:<port>,... <username> <pidname> <daemon> ...\n", myname);
+		fprintf(stderr, "%s: Usage: tcpbind [--foreground] <socketlist> <username> <pidname> <daemon> [arguments]\n", myname);
 		exit(1);
 		}
 	bind_addresses = argv[1];
@@ -106,18 +107,27 @@ int main(int argc, char *argv[])
 		int fd, port;
 		struct sockaddr_in serv_addr;
 
-		/* Each item is in the format [IP Address:]port. */
+		/* Each item is in the format [IP Address]:port. */
 		item2 = item;
 		if(!(f1 = gu_strsep(&item2, ":")) || !(f2 = gu_strsep(&item2, ":")))
 			{
-			fprintf(stderr, "%s: syntax error in address:port list item %d %s: \n", myname, count+1, item);
+			fprintf(stderr, "%s: syntax error in socketlist item %d %s: \n", myname, count+1, item);
 			exit(1);
 			}
 
-		if((port = atoi(f2)) == 0)
+		if(strspn(f2, "0123456789") == strlen(f2))
 			{
-			fprintf(stderr, "%s: invalid port: %s\n", myname, f2);
-			exit(1);
+			port = atoi(f2);
+			}
+		else
+			{
+			struct servent *service;
+			if(!(service = getservbyname(f2, "tcp")))
+				{
+				fprintf(stderr, "%s: unknown port: %s\n", myname, f2);
+				exit(1);
+				}
+			port = ntohs(service->s_port);
 			}
 
 		memset(&serv_addr, 0, sizeof(serv_addr));

@@ -605,4 +605,8 @@ more information about RIPs and *pprRIP:.
 * refman/lprsrv.8.pod: removed references to UPRINT and updated description
   of standalone operation to describe the new tcpbind based scheme.
 
+* refman/ppr-httpd.8.sgml: added
+
+* refman/tcpbind.8.sgml: added
+
 
