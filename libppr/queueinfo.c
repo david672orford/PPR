@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 25 October 2005.
 */
 
 /*+ \file
@@ -121,7 +121,8 @@ static void do_switchset(struct QUEUE_INFO *qip, char *switchset)
 	}
 
 /*
- * This notes anything interesting in the PassThru line in the QUEUE_INFO structure.
+ * This notes anything interesting in the PassThru line in the QUEUE_INFO
+ * structure.
  */
 static void do_passthru(struct QUEUE_INFO *qip, char *list)
 	{

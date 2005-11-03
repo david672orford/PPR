@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 October 2005.
+** Last modified 3 November 2005.
 */
 
 /*
@@ -43,7 +43,7 @@
 #include "pprd.auto_h"
 
 /*===========================================================================
-** Functions which work only with local destination IDs.
+** Functions for destination IDs.
 ===========================================================================*/
 
 /*
@@ -140,13 +140,21 @@ int destid_by_name_reversed(char *name)
 /*
 ** Return TRUE if the destination id in question is a group id.
 */
-int destid_is_group(int id)
+gu_boolean destid_is_group(int id)
 	{
-	if(id >= printer_count)		/* printers run 0 - (printer_count - 1) */
-		return -1;
+	if(id >= printer_count)		/* printers IDs run from 0 to (printer_count - 1) */
+		return TRUE;
 	else
-		return 0;
+		return FALSE;
 	} /* end of destid_is_group() */
+
+gu_boolean destid_is_printer(int id)
+	{
+	if(id < printer_count)
+		return TRUE;
+	else
+		return FALSE;
+	}
 
 /*
 ** Get the offset of a certain printer into a certain group array.

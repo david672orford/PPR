@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-15 00:09-0400\n"
+"POT-Creation-Date: 2005-11-03 13:46-0500\n"
 "PO-Revision-Date: 2005-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -31,13 +31,17 @@ msgid "%s: end of file in graphic\n"
 msgstr "%s: конец файла в изобразении\n"
 
 #: ../filter_dotmatrix/inbuf.c:54 ../filter_dotmatrix/inbuf.c:76
-#: ../lprsrv/lprsrv.c:250 ../lprsrv/uprint_run.c:80 ../lprsrv/uprint_run.c:97
-#: ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295 ../ppad/ppad_conf.c:297
-#: ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305 ../ppr/ppr_infile.c:1467
-#: ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586 ../ppr/ppr_infile.c:2243
-#: ../ppr/ppr_main.c:425 ../pprdrv/pprdrv_interface.c:318
-#: ../pprdrv/pprdrv_interface.c:322 ../pprdrv/pprdrv_progress.c:221
-#: ../pprdrv/pprdrv_progress.c:251
+#: ../lprsrv/lprsrv_client_info.c:109 ../lprsrv/lprsrv_conf.c:183
+#: ../lprsrv/lprsrv_print.c:180 ../lprsrv/lprsrv_print.c:292
+#: ../lprsrv/lprsrv_print.c:499 ../lprsrv/lprsrv_print.c:503
+#: ../lprsrv/lprsrv_print.c:528 ../lprsrv/lprsrv_print.c:538
+#: ../lprsrv/lprsrv_standalone.c:139 ../lprsrv/uprint_run.c:80
+#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295
+#: ../ppad/ppad_conf.c:297 ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305
+#: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
+#: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:425
+#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
+#: ../pprdrv/pprdrv_progress.c:221 ../pprdrv/pprdrv_progress.c:251
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
@@ -682,17 +686,17 @@ msgid ""
 "\n"
 msgstr ""
 
-#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:316
+#: ../libgu/getopt.c:203 ../lprsrv/lprsrv.c:211
 #, c-format
 msgid "The %s option requires an argument.\n"
 msgstr ""
 
-#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:320
+#: ../libgu/getopt.c:207 ../lprsrv/lprsrv.c:215
 #, c-format
 msgid "Switches, such as %s, which take an argument must stand alone.\n"
 msgstr ""
 
-#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:324
+#: ../libgu/getopt.c:211 ../lprsrv/lprsrv.c:219
 #, c-format
 msgid "The %s switch does not take an argument.\n"
 msgstr ""
@@ -713,7 +717,7 @@ msgstr ""
 msgid "value is not in the correct format"
 msgstr "выбор не по тому схему"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1392 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1393 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:490 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -731,7 +735,7 @@ msgstr ""
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr ""
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1451
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1452
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr ""
@@ -824,75 +828,125 @@ msgstr ""
 msgid "Unclosed quote"
 msgstr ""
 
-#: ../libppr/queueinfo.c:194
+#: ../libppr/queueinfo.c:195
 #, c-format
 msgid "Extracting information about printer \"%s\" from PPD file \"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:218
+#: ../libppr/queueinfo.c:219
 #, fuzzy, c-format
 msgid "Warning: PPD file \"%s\" has an invalid ColorDevice value of \"%s\".\n"
 msgstr "Принтер \"%s\" имет несовершеный PPD файл \"%s\".\n"
 
-#: ../libppr/queueinfo.c:234 ../libppr/queueinfo.c:236
+#: ../libppr/queueinfo.c:235 ../libppr/queueinfo.c:237
 #, fuzzy, c-format
 msgid "Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"
 msgstr "Принтер \"%s\" имет несовершеный PPD файл \"%s\".\n"
 
-#: ../libppr/queueinfo.c:747
+#: ../libppr/queueinfo.c:748
 #, c-format
 msgid "There is no alias called \"%s\""
 msgstr ""
 
-#: ../libppr/queueinfo.c:752
+#: ../libppr/queueinfo.c:753
 #, c-format
 msgid "There is no group called \"%s\""
 msgstr ""
 
-#: ../libppr/queueinfo.c:757
+#: ../libppr/queueinfo.c:758
 #, c-format
 msgid "There is no printer called \"%s\""
 msgstr ""
 
-#: ../libppr/queueinfo.c:781
+#: ../libppr/queueinfo.c:782
 #, c-format
 msgid "no printer called \"%s\""
 msgstr "нет принтер по названию \"%s\""
 
-#: ../libppr/queueinfo.c:1408
+#: ../libppr/queueinfo.c:1409
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1417
+#: ../libppr/queueinfo.c:1418
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1440
+#: ../libppr/queueinfo.c:1441
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1477
+#: ../libppr/queueinfo.c:1478
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1488
+#: ../libppr/queueinfo.c:1489
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr ""
 
-#: ../libppr/readppd.c:451
+#: ../libppr/readppd.c:452
 #, fuzzy, c-format
 msgid "can't open PPD file \"%s\" (included from \"%s\"), errno=%d (%s)"
 msgstr "не возмозно открыть PPD файл \"%s\", errno=%d (%s)"
 
-#: ../libppr/readppd.c:453
+#: ../libppr/readppd.c:454
 #, c-format
 msgid "can't open PPD file \"%s\", errno=%d (%s)"
 msgstr "не возмозно открыть PPD файл \"%s\", errno=%d (%s)"
+
+#: ../libppr/renounce_root_privs.c:64
+#, fuzzy, c-format
+msgid "%s: The user \"%s\" does not exist.\n"
+msgstr "Использователя \"%s\" нет.\n"
+
+#: ../libppr/renounce_root_privs.c:73
+#, fuzzy, c-format
+msgid "%s: The group \"%s\" does not exist.\n"
+msgstr "Использователя \"%s\" нет.\n"
+
+#: ../libppr/renounce_root_privs.c:78
+#, c-format
+msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+msgstr ""
+
+#: ../libppr/renounce_root_privs.c:99
+#, c-format
+msgid "%s: should not be setuid or setgid\n"
+msgstr ""
+
+#: ../libppr/renounce_root_privs.c:118
+#, fuzzy, c-format
+msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
+msgstr "%s(): возникла ошибка при запуски функции fopen(\"%s\", \"%s\"), errno=%d (%s)\n"
+
+#: ../libppr/renounce_root_privs.c:127
+#, fuzzy, c-format
+msgid "%s: setgid(%ld) failed, errno=%d (%s)\n"
+msgstr "%s(): возникла ошибка при запуски функции %s(%ld), errno=%d (%s)"
+
+#: ../libppr/renounce_root_privs.c:132
+#, fuzzy, c-format
+msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
+msgstr "%s(): возникла ошибка при запуски функции %s(%ld), errno=%d (%s)"
+
+#: ../libppr/renounce_root_privs.c:139
+#, fuzzy, c-format
+msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
+msgstr "%s(): возникла ошибка при запуски функции %s(%ld, %ld), errno=%d (%s)\n"
+
+#: ../libppr/renounce_root_privs.c:144
+#, fuzzy, c-format
+msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
+msgstr "%s(): возникла ошибка при запуски функции %s(%ld, %ld), errno=%d (%s)\n"
+
+#: ../libppr/renounce_root_privs.c:161
+#, c-format
+msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+msgstr ""
 
 #: ../libppr/snmp_messages.c:69
 msgid "paper low"
@@ -1031,19 +1085,12 @@ msgstr ""
 msgid "No access allowed from node \"%s\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:174 ../ppad/ppad.c:338 ../ppop/ppop.c:924
+#: ../lprsrv/lprsrv.c:146 ../ppad/ppad.c:338 ../ppop/ppop.c:924
 #: ../unixuser/ppr-followme.c:204
 msgid "Valid switches:\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:177
-msgid ""
-"\t-s <port>\n"
-"\t--standalone-port <port>\n"
-"\t\t(run standalone, bind to specified TCP port)\n"
-msgstr ""
-
-#: ../lprsrv/lprsrv.c:182
+#: ../lprsrv/lprsrv.c:148
 msgid ""
 "\t-A <seconds>\n"
 "\t--arrest-interest-interval <seconds>\n"
@@ -1054,40 +1101,17 @@ msgid ""
 "\t\t(print this message)\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:235
-msgid "lprsrv must run as root"
-msgstr ""
-
-#: ../lprsrv/lprsrv.c:247 ../ppr/ppr_infile.c:1500
-#, c-format
-msgid "%s(): %s(\"%s\") failed, errno=%d (%s)"
-msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\"), errno=%d (%s)"
-
-#: ../lprsrv/lprsrv.c:253 ../lprsrv/lprsrv.c:256
-#, c-format
-msgid "%s(): %s(%ld) failed, errno=%d (%s)"
-msgstr "%s(): возникла ошибка при запуски функции %s(%ld), errno=%d (%s)"
-
-#: ../lprsrv/lprsrv.c:285
-#, c-format
-msgid "Unknown port name: %s"
-msgstr ""
-
-#: ../lprsrv/lprsrv.c:292
-msgid "Standalone mode code not present.\n"
-msgstr ""
-
-#: ../lprsrv/lprsrv.c:311
+#: ../lprsrv/lprsrv.c:206
 #, c-format
 msgid "Unrecognized switch: %s\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:366
+#: ../lprsrv/lprsrv.c:272
 #, c-format
 msgid "Node \"%s\" is not allowed to connect"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:368
+#: ../lprsrv/lprsrv.c:274
 #, c-format
 msgid "Node \"%s\" is not allowed to connect from insecure ports"
 msgstr ""
@@ -1119,7 +1143,22 @@ msgid ""
 msgstr ""
 
 #: ../lprsrv/lprsrv_client_info.c:108
-msgid "stdin is not a TCP socket (Run from Inetd or use -s option.)"
+msgid "stdin is not a TCP socket (run from inetd or tcpbind)"
+msgstr ""
+
+#: ../lprsrv/lprsrv_conf.c:350
+#, c-format
+msgid "No [global] section in \"%s\""
+msgstr ""
+
+#: ../lprsrv/lprsrv_conf.c:352
+#, c-format
+msgid "No [other] section in \"%s\""
+msgstr ""
+
+#: ../lprsrv/lprsrv_conf.c:363
+#, c-format
+msgid "No \"%s =\" in \"%s\" [global]"
 msgstr ""
 
 #: ../lprsrv/lprsrv_list.c:164
@@ -1131,20 +1170,10 @@ msgid ""
 "to learn the details.\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv_standalone.c:89 ../ppr/ppr_outfile.c:121
-#: ../ppr/ppr_outfile.c:126 ../ppr/ppr_outfile.c:131 ../samba/ppr2samba.c:201
-#, c-format
-msgid "can't open \"%s\", errno=%d (%s)"
-msgstr "не возможно открыть \"%s\", errno=%d (%s)"
-
-#: ../lprsrv/lprsrv_standalone.c:92
-msgid "lprsrv is already running in standalone mode"
-msgstr ""
-
-#: ../lprsrv/lprsrv_standalone.c:133
-#, c-format
-msgid "there is already a server listening on TCP port %d"
-msgstr "сервер слушающый у TCP порта %d уже ест"
+#: ../lprsrv/lprsrv_print.c:127 ../lprsrv/lprsrv_print.c:727
+#, fuzzy, c-format
+msgid "%s(): %s() failed"
+msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
 
 #: ../lprsrv/uprint_run.c:87
 #, c-format
@@ -3887,6 +3916,11 @@ msgstr ""
 msgid "Language \"%s\" in PJL header not recognized"
 msgstr ""
 
+#: ../ppr/ppr_infile.c:1500
+#, c-format
+msgid "%s(): %s(\"%s\") failed, errno=%d (%s)"
+msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\"), errno=%d (%s)"
+
 #: ../ppr/ppr_infile.c:1567
 #, c-format
 msgid "%s(): stat(\"%s\", ?) failed, errno=%d (%s)"
@@ -4603,6 +4637,12 @@ msgstr ""
 #, c-format
 msgid "\"%s\" does not take arguments"
 msgstr ""
+
+#: ../ppr/ppr_outfile.c:121 ../ppr/ppr_outfile.c:126 ../ppr/ppr_outfile.c:131
+#: ../samba/ppr2samba.c:201
+#, c-format
+msgid "can't open \"%s\", errno=%d (%s)"
+msgstr "не возможно открыть \"%s\", errno=%d (%s)"
 
 #: ../ppr/ppr_rcache.c:72
 #, c-format
@@ -5392,3 +5432,6 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 #, c-format
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"

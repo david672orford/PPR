@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-03 13:39-0500\n"
+"POT-Creation-Date: 2005-11-03 13:46-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -14,50 +14,50 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../pprd/pprd_ipp.c:89
+#: ../pprd/pprd_ipp.c:99
 #, c-format
 msgid "printing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:101
+#: ../pprd/pprd_ipp.c:111
 #, c-format
 msgid "canceling %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:113
+#: ../pprd/pprd_ipp.c:123
 #, c-format
 msgid "seizing %s"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:125
+#: ../pprd/pprd_ipp.c:135
 #, c-format
 msgid "stopping (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:137
+#: ../pprd/pprd_ipp.c:147
 #, c-format
 msgid "halting (printing %s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:149
+#: ../pprd/pprd_ipp.c:159
 msgid "stopt"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:163
+#: ../pprd/pprd_ipp.c:173
 #, c-format
 msgid "fault, retry %d in %d seconds"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:168
+#: ../pprd/pprd_ipp.c:178
 msgid "fault, no auto retry"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:181
+#: ../pprd/pprd_ipp.c:191
 #, fuzzy, c-format
 msgid "otherwise engaged or off-line, retry %d in %d seconds"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#: ../pprd/pprd_ipp.c:193
+#: ../pprd/pprd_ipp.c:203
 msgid "waiting for resource ration"
 msgstr ""
 
@@ -390,22 +390,8 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
-
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
-
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "%s: Security problem: euid = %ld\n"
-#~ "(This program should be setuid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s : problème de sécurité : euid = %u\n"
-#~ "(Ce programme devrait être setuid \"%s\".)\n"
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -415,5 +401,19 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "%s : problème de sécurité : egid = %u\n"
 #~ "(Ce programme devrait être setgid \"%s\".)\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
+#, fuzzy
+#~ msgid ""
+#~ "%s: Security problem: euid = %ld\n"
+#~ "(This program should be setuid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s : problème de sécurité : euid = %u\n"
+#~ "(Ce programme devrait être setuid \"%s\".)\n"
+
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
+
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
+
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"

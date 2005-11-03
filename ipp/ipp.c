@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 September 2005.
+** Last modified 25 October 2005.
 */
 
 #include "config.h"
@@ -48,6 +48,7 @@
 #include "global_defines.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
+#include "queueinfo.h"
 
 #if 1
 #define DEBUG(a) debug a
@@ -608,7 +609,6 @@ static void do_add_printer(struct IPP *ipp)
 		/* This must be first in case we are creating the printer. */
 		if(retcode == 0 && req->device_uri)
 			retcode = run(PPAD_PATH, "interface", printer, "dummy", req->device_uri, NULL);
-debug("retcode=%d", retcode);
 		if(retcode == 0 && req->ppd_name)
 			retcode = run(PPAD_PATH, "ppd", printer, req->ppd_name, NULL);
 
@@ -617,6 +617,33 @@ debug("retcode=%d", retcode);
 		} while(FALSE);
 	
 	request_attrs_free(req);
+	}
+
+static void send_ppd(const char name[])
+	{
+	char *queue = gu_strndup(name, strlen(name) - 4);	/* leave off ".ppd" */
+	void *qip = queueinfo_new_load_config(QUEUEINFO_SEARCH, queue);
+	const void *ppd = queueinfo_ppdFile(qip);
+	if(ppd)
+		{
+		void *ppdobj;
+		char *line;
+		printf("Content-Type: text/plain\n\n");
+		ppdobj = ppdobj_new(ppd);
+		while((line = ppdobj_readline(ppdobj)))
+			{
+			printf("%s\n", line);
+			}
+		ppdobj_free(ppdobj);
+		}
+	else
+		{
+		printf("Status: 404 Not Found\n");
+		printf("Content-Type: text/plain\n\n");
+		printf("\n");
+		}
+	queueinfo_free(qip);
+	gu_free_if(queue);
 	}
 
 int main(int argc, char *argv[])
@@ -632,6 +659,19 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
+	/* This is for CUPS PPD downloading. */
+	{
+	const char *p;
+	if((p = getenv("REQUEST_METHOD")) && strcmp(p, "GET") == 0
+			&& (p = getenv("PATH_INFO")) && (p = lmatchp(p, "/printers/"))
+			&& gu_rmatch(p, ".ppd"))
+		{
+		send_ppd(p);
+		return 0;
+		}
+	}
+
+	/* Start of IPP handling */	
 	gu_Try {
 		char *p, *path_info;
 		int content_length;
@@ -656,7 +696,9 @@ int main(int argc, char *argv[])
 		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
 			gu_Throw("CONTENT_LENGTH is missing or invalid");
 
-		/* This is the full URL of this script. */ 
+		/* These CGI variables comprise the full URL of this "script".
+		 * We reassemble the URL.
+		 */ 
 		{
 		char *server, *port, *script;
 
@@ -739,8 +781,8 @@ int main(int argc, char *argv[])
 
 	gu_Catch
 		{
-		printf("Content-Type: text/plain\n");
 		printf("Status: 500\n");
+		printf("Content-Type: text/plain\n");
 		printf("\n");
 		printf("ipp: exception caught: %s\n", gu_exception);
 		fprintf(stderr, "ipp: exception caught: %s\n", gu_exception);
