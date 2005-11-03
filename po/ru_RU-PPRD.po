@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-14 19:50-0400\n"
+"POT-Creation-Date: 2005-11-03 13:39-0500\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -67,96 +67,32 @@ msgstr ""
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:172
-#, c-format
-msgid "%s: The user \"%s\" doesn't exist.\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:178
-#, c-format
-msgid "%s: The group \"%s\" doesn't exist.\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:183
-#, c-format
-msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:209
-#, c-format
-msgid ""
-"%s: Security problem: euid = %ld\n"
-"(This program should be setuid %ld (%s).)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:216
-#, c-format
-msgid ""
-"%s: Security problem: egid = %ld\n"
-"(This program should be setgid %ld (%s).)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:226
-#, c-format
-msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:239
-#, c-format
-msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:259
-#, c-format
-msgid "%s: setgid(%ld) failed, errno=%d (%s)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:264
-#, c-format
-msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:271
-#, c-format
-msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:276
-#, c-format
-msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:283
-#, c-format
-msgid "%s: setuid(0) did not fail!\n"
-msgstr ""
-
-#: ../pprd/pprd_mainsup.c:317
+#: ../pprd/pprd_mainsup.c:156
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:327
+#: ../pprd/pprd_mainsup.c:166
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:331
+#: ../pprd/pprd_mainsup.c:170
 #, c-format
 msgid "Sending SIGTERM to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:335
+#: ../pprd/pprd_mainsup.c:174
 #, c-format
 msgid "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:341
+#: ../pprd/pprd_mainsup.c:180
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:351
+#: ../pprd/pprd_mainsup.c:190
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr ""

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-15 11:51-0400\n"
+"POT-Creation-Date: 2005-11-03 13:39-0500\n"
 "PO-Revision-Date: 2005-10-15 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -154,8 +154,8 @@ msgid "Due to the problem indicated above, the queue was not created."
 msgstr "Из-за этых проблем, очередь не созданна."
 
 #: ../www/alias_addwiz.cgi.perl:183 ../www/cgi_tabbed.pl:371
-#: ../www/cliconf.cgi.perl:92 ../www/cliconf.cgi.perl:108
-#: ../www/cliconf.cgi.perl:191 ../www/delete_queue.cgi.perl:152
+#: ../www/cliconf.cgi.perl:95 ../www/cliconf.cgi.perl:112
+#: ../www/cliconf.cgi.perl:195 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:867
 #: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
@@ -427,51 +427,54 @@ msgid "Spooler Configuration Script"
 msgstr "Cценарий для настройик спулера"
 
 #: ../www/cliconf.cgi.perl:63
-msgid "KDE Shortcut to Web Interface"
+#, fuzzy
+msgid "KDE/Gnome Shortcut to Web Interface"
 msgstr "Значок KDE открывающий веб-интерфейс"
 
 #: ../www/cliconf.cgi.perl:64
-msgid "KDE Shortcut to Perl/Tk Interface"
+#, fuzzy
+msgid "KDE/GNOME Shortcut to Perl/Tk Interface"
 msgstr "Значок KDE открывающий Perl/Tk интерфейс"
 
 #: ../www/cliconf.cgi.perl:72
 msgid "You must make a choice."
 msgstr "Надо принимать выбор."
 
-#: ../www/cliconf.cgi.perl:84 ../www/cliconf.cgi.perl:100
-msgid "Downloadable KDE Icon"
+#: ../www/cliconf.cgi.perl:86 ../www/cliconf.cgi.perl:103
+#, fuzzy
+msgid "Downloadable KDE/Gnome Icon"
 msgstr "Загрузить пиктограм для KDE"
 
-#: ../www/cliconf.cgi.perl:87
+#: ../www/cliconf.cgi.perl:90
+#, fuzzy
 msgid ""
-"Click on the button below to download the KDE shortcut\n"
-"to the PPR Web Interface.\n"
-"You will probably want to save it in your Desktop folder."
+"Click on the button below to download the KDE/Gnome icon for the PPR Web\n"
+"Interface.  You will probably want to save it in your Desktop folder."
 msgstr ""
 "Нажмите на кнобку внизу чтобы закачать значок для KDE\n"
 "которой открывает веб-интерфайс PPR.  Стоит сахранять\n"
 "в папке рабочного стола."
 
-#: ../www/cliconf.cgi.perl:90 ../www/cliconf.cgi.perl:106
-#: ../www/cliconf.cgi.perl:185
+#: ../www/cliconf.cgi.perl:93 ../www/cliconf.cgi.perl:110
+#: ../www/cliconf.cgi.perl:189
 msgid "_Download"
 msgstr "Загрузить"
 
-#: ../www/cliconf.cgi.perl:103
+#: ../www/cliconf.cgi.perl:107
+#, fuzzy
 msgid ""
-"Click on the button below to download the KDE shortcut\n"
-"to the PPR Perl/Tk interface.\n"
-"You will probably want to save it in your Desktop folder."
+"Click on the button below to download the KDE/Gnome icon for the PPR Perl/Tk\n"
+"Interface.  You will probably want to save it in your Desktop folder."
 msgstr ""
 "Нажмите на кнобку внизу чтобы закачать значок для KDE\n"
 "которой открывает Perl/Tk интерфайс.  Стоит сахранять\n"
 "в папке рабочного стола."
 
-#: ../www/cliconf.cgi.perl:116
+#: ../www/cliconf.cgi.perl:120
 msgid "Create Client Script: Choose a Spooler"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:125
+#: ../www/cliconf.cgi.perl:129
 #, perl-format
 msgid ""
 "You have chosen to create a script which you can download and run\n"
@@ -479,52 +482,52 @@ msgid ""
 "queue \"%s\"."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:129
+#: ../www/cliconf.cgi.perl:133
 msgid "Please indicate which print spooler you are using:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:130
+#: ../www/cliconf.cgi.perl:134
 msgid "BSD lpd"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:131
+#: ../www/cliconf.cgi.perl:135
 msgid "LPR Next Generation"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:138
+#: ../www/cliconf.cgi.perl:142
 msgid "You must choose a spooler!"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:148
+#: ../www/cliconf.cgi.perl:152
 msgid "Create Client Script: Local Name"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:156
+#: ../www/cliconf.cgi.perl:160
 #, perl-format
 msgid "Please choose a local name for %s:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:160
+#: ../www/cliconf.cgi.perl:164
 msgid "Please provide a description of this queue:"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:167
+#: ../www/cliconf.cgi.perl:171
 msgid "The local name must not be blank."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:171
+#: ../www/cliconf.cgi.perl:175
 msgid "The description must not be blank."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:180
+#: ../www/cliconf.cgi.perl:184
 msgid "Create Client Script: Download"
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:184
+#: ../www/cliconf.cgi.perl:188
 msgid "Click on the button below to download the install script."
 msgstr ""
 
-#: ../www/cliconf.cgi.perl:186
+#: ../www/cliconf.cgi.perl:190
 msgid "This script must be run as root.  The command to run it is:"
 msgstr ""
 
@@ -823,7 +826,7 @@ msgstr ""
 msgid "PPR: Modify Job: %s"
 msgstr "PPR: Изменить задачу: %s"
 
-#: ../www/job_public.cgi.perl:144
+#: ../www/job_public.cgi.perl:148
 #, perl-format
 msgid ""
 "You have submitted a print job entitled \"%s\".  You may either enter your\n"
@@ -1830,7 +1833,7 @@ msgstr ""
 msgid "Unix Username of Job Submitter"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:55
+#: ../www/qquery_xlate.pl:55 ../www/show_printlog.cgi.perl:171
 #, fuzzy
 msgid "Username"
 msgstr "Пользователь:"
@@ -2257,11 +2260,7 @@ msgid "Printer"
 msgstr "Принтер"
 
 #: ../www/show_printlog.cgi.perl:171
-msgid "Proxy For"
-msgstr "Доверенный кого"
-
-#: ../www/show_printlog.cgi.perl:171
-msgid "Unix User"
+msgid "Unused"
 msgstr ""
 
 #: ../www/show_printlog.cgi.perl:172
@@ -2490,3 +2489,6 @@ msgstr ""
 #: ../www/test_components.cgi.perl:207
 msgid "Source Download"
 msgstr ""
+
+#~ msgid "Proxy For"
+#~ msgstr "Доверенный кого"

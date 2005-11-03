@@ -1,13 +1,12 @@
 # PPR Message file for Russian
 # Copyright (C) 2005, Trinity College Computing Center.
 # This file is distributed under the same license as PPR.
-
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-06-10 12:04-0400\n"
+"POT-Creation-Date: 2005-11-03 13:39-0500\n"
 "PO-Revision-Date: 2005-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -46,7 +45,7 @@ msgstr "Остановлен.\n"
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr "%s(): opendir(\"%s\") не успаел, errno=%d (%s)"
 
-#: ../papd/papd.c:570
+#: ../papd/papd.c:506
 #, c-format
 msgid ""
 "Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"
