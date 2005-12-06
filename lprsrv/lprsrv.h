@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/lprsrv.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2004.
+** Last modified 6 December 2005.
 */
 
 /*
@@ -37,13 +37,13 @@
 #if 0
 /* #define DEBUG_MAIN 1 */				/* main loop */
 /* #define DEBUG_STANDALONE 1 */		/* standalone daemon operation */
-#define DEBUG_SECURITY 1				/* gethostbyname() and gethostbyaddr() */
+/* #define DEBUG_SECURITY 1 */			/* gethostbyname() and gethostbyaddr() */
 #define DEBUG_PRINT 1					/* take job command */
-#define DEBUG_CONTROL_FILE 1			/* read control file */
+/* #define DEBUG_CONTROL_FILE 1 */		/* read control file */
 /* #define DEBUG_GRITTY 1 */			/* details of many things */
 /* #define DEBUG_DISKSPACE 1 */			/* disk space checks */
-#define DEBUG_LPQ 1						/* queue listing */
-#define DEBUG_LPRM 1					/* job removal */
+/* #define DEBUG_LPQ 1 */				/* queue listing */
+/* #define DEBUG_LPRM 1 */				/* job removal */
 /* #define DEBUG_CONF 1 */				/* lprsrv.conf parsing */
 #endif
 
