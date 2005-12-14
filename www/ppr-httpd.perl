@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 October 2005.
+# Last modified 7 December 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -44,6 +44,8 @@ defined($LOGDIR) || die;
 defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
+
+my $DEBUG = 0;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.
@@ -185,9 +187,10 @@ if(defined $ipp)
 	}
 
 #===========================================================
-# If we have access, send STDERR to a debugging file,
-# otherwise throw it away.	We must do something with it so
-# it doesn't corrupt the HTTP transaction.
+# If we are running in the foreground, leave STDERR alone.
+# Otherwise, if we have access, send STDERR to a debugging
+# file, otherwise throw it away.	We must do something
+# with it so it doesn't corrupt the HTTP transaction.
 #===========================================================
 if(defined $ENV{TCPBIND_FOREGROUND})
 	{
@@ -283,7 +286,7 @@ else
 	$REMOTE_PORT = 0;
 	}
 }
-print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n";
+print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n" if($DEBUG > 0);
 
 #===========================================================
 # Main Request Loop
@@ -311,20 +314,23 @@ while(1)
 	# If 0 bytes were read,
 	if(!defined($request))
 		{
-		print STDERR "Client disconnected.\n";
+		print STDERR "Client disconnected.\n" if($DEBUG > 0);
 		last;
 		}
 
 	my $request_time = time();
 
-	print STDERR "===  $$  ================================================\n";
-	print STDERR $request;
+	if($DEBUG > 0)
+		{
+		print STDERR "===  $$  ================================================\n";
+		print STDERR $request;
+		}
 
 	# I don't no if it is our fault or not, but Netscape 4.6 has been known
 	# to send unexpected blank lines.
 	if($request eq "\r\n")
 		{
-		print STDERR "Not a request, just a spurious blank line.\n\n";
+		print STDERR "Not a request, just a spurious blank line.\n\n" if($DEBUG > 0);
 		next;
 		}
 
@@ -362,7 +368,7 @@ while(1)
 
 		last if(! defined $_);
 
-		print STDERR $_;
+		print STDERR $_ if($DEBUG > 0);
 		last if(/^\r?\n$/);
 
 		# If header line with keyword on left,
@@ -419,7 +425,7 @@ while(1)
 		# escaped everything not alpha-numberic just to be plain and to be on
 		# the safe side.
 		#
-		if($request !~ /^($TOKEN+)\s+(\S+)\s+HTTP\/0*(\d+)\.0*(\d+)\s*$/o)
+		if($request !~ /^($TOKEN+)\s+(\S+)\s+HTTP\/0*(\d+)\.0*(\d+)\r?$/o)
 			{
 			my $stript_request = $request;
 			$stript_request =~ s/[\r\n]+$//;
@@ -458,7 +464,7 @@ while(1)
 		# Did the client ask for a specific setting?
 		# Note that I cannot find anything in RFC 2068 to suggest that the
 		# values of these tokens are case-insensitve.  I have noticed
-		# that HotJava 3.0 send "Connection: keep-alive".  At the moment I
+		# that HotJava 3.0 sends "Connection: keep-alive".  At the moment I
 		# consider that a bug we won't accomodate since the failure is
 		# graceful.
 		#
@@ -469,7 +475,7 @@ while(1)
 			while($c =~ m/([^ \t,]+)[ \t,]*/g)
 				{
 				my $token = $1;
-				print STDERR "Connection token: $token\n";
+				print STDERR "Connection token: $token\n" if($DEBUG > 0);
 
 				# HTTP 1.1 persistent connection declined
 				if($token eq "close")
@@ -503,7 +509,7 @@ while(1)
 		#
 		# Clean up the path to prevent security breaches.
 		#
-		print STDERR "Raw path: \"$path\"\n";
+		print STDERR "Raw path: \"$path\"\n" if($DEBUG > 0);
 		{
 		$path =~ s/^\///;
 		my @path_out = ();
@@ -531,7 +537,7 @@ while(1)
 			}
 		$path = join('/', @path_out);
 		}
-		print STDERR "Cleaned path: \"$path\"\n";
+		print STDERR "Cleaned path: \"$path\"\n" if($DEBUG > 0);
 
 		#
 		# Make sure the request method is one we support on at least one URL.
@@ -548,7 +554,7 @@ while(1)
 		if(defined $root_xlate)
 			{
 			my $xlated_path = "$root_xlate/$path";
-			print STDERR "Translating /$path to /$xlated_path\n";
+			print STDERR "Translating /$path to /$xlated_path\n" if($DEBUG > 0);
 			$path = $xlated_path;
 			}
 
@@ -590,10 +596,10 @@ while(1)
 		#
 		elsif($path =~ /^push\//)
 			{
-			print STDERR "Launching push server...\n";
+			print STDERR "Launching push server...\n" if($DEBUG > 0);
 			do_push($path, $request_method, $request_uri, \%request_headers,
 				$request_version_major, $request_version_minor);
-			print STDERR "Done, exiting.\n\n";
+			print STDERR "Done, exiting.\n\n" if($DEBUG > 0);
 			exit 0;
 			}
 
@@ -669,7 +675,7 @@ EndExceptionEntity
 		print "\r\n";
 		print "$body";
 
-		print STDERR "$code $explanation\n";
+		print STDERR "$code $explanation\n" if($DEBUG > 0);
 
 		$resp_header_connection = "close";
 		} # end of exception handling
@@ -682,10 +688,10 @@ EndExceptionEntity
 	# close it now.
 	last if($resp_header_connection eq "close");
 
-	print STDERR "Ready for next request.\n\n";
+	print STDERR "Ready for next request.\n\n" if($DEBUG > 0);
 	}
 
-print STDERR "Server shutdown.\n\n";
+print STDERR "Server shutdown.\n\n" if($DEBUG > 0);
 exit 0;
 
 #=========================================================================
@@ -804,7 +810,7 @@ sub do_get
 	# Extract the file size and modification time from the result of the
 	# implicit fstat() performed by the -d operator above.
 	my($size, $mtime) = (stat _)[7,9];
-	print STDERR "File size is $size bytes, mtime is $mtime.\n";
+	print STDERR "File size is $size bytes, mtime is $mtime.\n" if($DEBUG > 0);
 
 	# Do expiration date calculation.  The date is placed in the future
 	# by the same amount of time as the modification was in the past,
@@ -823,13 +829,13 @@ sub do_get
 		my $ims_parsed;
 		if(!defined($ims_parsed = cgi_time_parse($ims)))
 			{
-			print STDERR "Invalid \"If-Modified-Since: $ims\"\n";
+			print STDERR "Invalid \"If-Modified-Since: $ims\"\n" if($DEBUG > 0);
 			}
 		else
 			{
 			if($mtime <= $ims_parsed)
 				{
-				print STDERR "Not modified.\n";
+				print STDERR "Not modified.\n" if($DEBUG > 0);
 				$status = 304;
 				}
 			}
@@ -842,13 +848,13 @@ sub do_get
 		my $rd_parsed;
 		if(!defined($rd_parsed = cgi_time_parse($rd)))
 			{
-			print STDERR "Unparsable \"If-Range: $rd\".\n";
+			print STDERR "Unparsable \"If-Range: $rd\".\n" if($DEBUG > 0);
 			}
 		else
 			{
 			if($mtime > $rd_parsed)
 				{
-				print STDERR "\"If-Range: $rd\" is false, \"Range:\" will be ignored.\n";
+				print STDERR "\"If-Range: $rd\" is false, \"Range:\" will be ignored.\n" if($DEBUG > 0);
 				$if_range_failed = 1;
 				}
 			}
@@ -860,7 +866,7 @@ sub do_get
 		{
 		if($range !~ /^bytes=(\d*)-(\d*)$/)
 			{
-			print STDERR "Unparsable or unsupported multiple \"Range: $range\".\n";
+			print STDERR "Unparsable or unsupported multiple \"Range: $range\".\n" if($DEBUG > 0);
 			}
 		else
 			{
@@ -903,11 +909,11 @@ sub do_get
 				}
 			else
 				{
-				print STDERR "Meaningless \"Range: $range\".\n";
+				print STDERR "Meaningless \"Range: $range\".\n" if($DEBUG > 0);
 				}
 			}
 		}
-	if(defined($content_range))
+	if(defined($content_range) && $DEBUG > 0)
 		{ print STDERR "Sending only range \"$content_range\".\n" }
 
 	print "HTTP/1.1 $status ", $RESPONSE_CODES{$status}, "\r\n";
@@ -942,12 +948,12 @@ sub do_get
 			$gotten = sysread(F, $buffer, $toread);
 			if(!defined($gotten))
 				{
-				print STDERR "sysread() failed during GET, $!\n";
+				print STDERR "sysread() failed during GET, $!\n" if($DEBUG > 0);
 				exit 0;
 				}
 			if($gotten < $toread)
 				{
-				print STDERR "File grew shorter by ", ($toread - $gotten), " bytes during GET!\n";
+				print STDERR "File grew shorter by ", ($toread - $gotten), " bytes during GET!\n" if($DEBUG > 0);
 				exit 0;
 				}
 			print $buffer;
@@ -955,10 +961,10 @@ sub do_get
 			}
 		}
 
-	if(!close(F))
+	if(!close(F) && $DEBUG > 0)
 		{ print STDERR "close() failed after GET, $!\n" }
 
-	print STDERR "Done sending file.\n\n";
+	print STDERR "Done sending file.\n\n" if($DEBUG > 0);
 	} # do_get()
 
 #=========================================================================
@@ -1010,7 +1016,7 @@ sub do_cgi
 	#	($ENV{AUTH_TYPE}, $ENV{REMOTE_USER}) = ("None", "ppranon");
 	#	}
 
-	print STDERR "Executing CGI program \"$CGI_BIN/$script_basename\".\n";
+	print STDERR "Executing CGI program \"$CGI_BIN/$script_basename\".\n" if($DEBUG > 0);
 
 	# Create two anonymous pipes, one to send data to the CGI script,
 	# the other to receive data.
@@ -1116,7 +1122,7 @@ sub do_cgi
 			die "411 This $method request needs a \"Content-Length:\" header.\n";
 			}
 
-		print STDERR "Sending $countdown bytes of form data.\n";
+		print STDERR "Sending $countdown bytes of form data.\n" if($DEBUG > 0);
 
 		my $count;
 		while($countdown > 0)
@@ -1150,7 +1156,7 @@ sub do_cgi
 
 	close(QUERY_WRITE) || die "close() failed, $!";
 
-	print STDERR "Reading response header from CGI script.\n";
+	print STDERR "Reading response header from CGI script.\n" if($DEBUG > 0);
 	my $other_cgi_headers = "";
 	my $content_length = undef;
 	my $content_type = undef;
@@ -1166,7 +1172,7 @@ sub do_cgi
 		# Blank line ends header.
 		last if($_ eq '');
 
-		print STDERR " $_\n";
+		print STDERR " $_\n" if($DEBUG > 0);
 
 		if(/^Status:\s(\d\d\d)/)				# A CGI thing
 			{
@@ -1211,7 +1217,7 @@ sub do_cgi
 	# the content ourselves.  This shouldn't hurt and should improve caching.
 	if(defined($location))
 		{
-		print STDERR "CGI script redirects to \"$location\".\n";
+		print STDERR "CGI script redirects to \"$location\".\n" if($DEBUG > 0);
 		# The 303 code is designed for just this purpose, but it isn't
 		# defined until HTTP 1.1.  Therefor, for HTTP 1.0 we will use
 		# "Temporary Redirect".
@@ -1235,14 +1241,14 @@ sub do_cgi
 
 		if(!defined(my $ims_parsed = cgi_time_parse($ims)))
 			{
-			print STDERR "Invalid \"If-Modified-Since: $ims\".\n";
+			print STDERR "Invalid \"If-Modified-Since: $ims\".\n" if($DEBUG > 0);
 			}
 		else
 			{
-			print STDERR "mtime: $last_modified, ims: $ims_parsed\n";
+			print STDERR "mtime: $last_modified, ims: $ims_parsed\n" if($DEBUG > 0);
 			if($last_modified <= $ims_parsed)
 				{
-				print STDERR "Not modified.\n";
+				print STDERR "Not modified.\n" if($DEBUG > 0);
 				$status = 304;
 				}
 			}
@@ -1288,7 +1294,7 @@ sub do_cgi
 	# * A blank line to mark the end of the header and the start of the
 	#	entity body
 	#
-	print STDERR "Sending finished HTTP header to client.\n";
+	print STDERR "Sending finished HTTP header to client.\n" if($DEBUG > 0);
 	print "HTTP/1.1 $status ", $RESPONSE_CODES{$status}, "\r\n";
 	print $resp_headers_general;
 	print $other_cgi_headers if($status != 304);
@@ -1298,7 +1304,7 @@ sub do_cgi
 	# the cryptographic challenge.
 	if($status == 401)
 		{
-		print STDERR "CGI script demands authentication.\n";
+		print STDERR "CGI script demands authentication.\n" if($DEBUG > 0);
 		my $challenge = auth_challenge($protection_domain, $stale);
 		#print STDERR "WWW-Authenticate: $challenge\n";
 		print "WWW-Authenticate: $challenge\r\n";
@@ -1336,17 +1342,17 @@ sub do_cgi
 	# Copy the entity body from the CGI script to the client.
 	if($status != 304)
 		{
-		print STDERR "Copying from CGI script to client.\n";
+		print STDERR "Copying from CGI script to client.\n" if($DEBUG > 0);
 		my $buffer;
 		my $length;
 		if($chunked)
 			{
-			print STDERR "Sending chunked response.\n";
+			print STDERR "Sending chunked response.\n" if($DEBUG > 0);
 			# Read buffers full of data
 			while($length = read(RESP_READ, $buffer, $POST_RESPONSE_BUFSIZE))
 				{
 				# send each as a chunk
-				print STDERR $length, " byte chunk\n";
+				print STDERR $length, " byte chunk\n" if($DEBUG > 0);
 				printf("%X\r\n", $length);
 				print $buffer;
 				print "\r\n";
@@ -1357,33 +1363,33 @@ sub do_cgi
 			}
 		else
 			{
-			print STDERR "Sending unchunked response.\n";
+			print STDERR "Sending unchunked response.\n" if($DEBUG > 0);
 			my $total_length = 0;
 			# Just copy buffers thru.  Either we have stated the length
 			# or we will close the connection to signal the end of the
 			# response.
 			while($length = read(RESP_READ, $buffer, $POST_RESPONSE_BUFSIZE))
 				{
-				print STDERR $length, " byte block\n";
+				print STDERR $length, " byte block\n" if($DEBUG > 0);
 				print $buffer;
 				$total_length += $length;
 				}
 			if(defined($content_length) && $total_length != $content_length)
 				{
-				print STDERR "CGI script claimed wrong content length, actual length $total_length.\n";
+				print STDERR "CGI script claimed wrong content length, actual length $total_length.\n" if($DEBUG > 0);
 				}
 			}
 		}
 
 	# Close the pipe from the CGI script.
-	if(!close(RESP_READ))
+	if(!close(RESP_READ) && $DEBUG > 0)
 		{ print STDERR "close() failed on pipe from CGI script: $!" }
 
 	# Do we have to do this too?
 	while(wait() != -1) { }
 
 	# Return the possibly altered "Connection:" header value.
-	print STDERR "CGI executing complete, status: $status, connection: $resp_header_connection\n\n";
+	print STDERR "CGI executing complete, status: $status, connection: $resp_header_connection\n\n" if($DEBUG > 0);
 	return $resp_header_connection;
 	} # do_cgi()
 
@@ -1417,7 +1423,7 @@ sub do_push
 		my $name = $i;
 		$name =~ tr/A-Z_/a-z-/;
 		print QUERY_WRITE $name, ": ", $request_headers->{$i}, "\r\n";
-		print STDERR " ", $name, ": ", $request_headers->{$i}, "\r\n";
+		print STDERR " ", $name, ": ", $request_headers->{$i}, "\r\n" if($DEBUG > 0);
 		}
 	print QUERY_WRITE "\r\n";
 
@@ -1555,7 +1561,7 @@ sub auth_verify
 		# sent it is authentic and reasonably fresh.
 		if(!digest_nonce_validate($domain, $parm{nonce}))
 			{
-			print STDERR "Nonce is too stale.\n";
+			print STDERR "Nonce is too stale.\n" if($DEBUG > 0);
 			return ("", "", 1, undef);
 			}
 
@@ -1575,7 +1581,7 @@ sub auth_verify
 	if($@)
 		{
 		my $error = $@;
-		print STDERR "Digest authentication failed: $error";
+		print STDERR "Digest authentication failed: $error" if($DEBUG > 0);
 		return ("", "", 0, undef);
 		}
 	return @result;
@@ -1658,7 +1664,7 @@ sub auth_verify_cookie
 
 		my $H1 = digest_getpw($username);
 		my $correct_response = md5hex("$H1:$nonce");
-		print STDERR "\$correct_response=\"$correct_response\", \$response=\"$response\"\n";
+		print STDERR "\$correct_response=\"$correct_response\", \$response=\"$response\"\n" if($DEBUG > 0);
 		die "Password is wrong\n" if($response ne $correct_response);
 
 		if(!digest_nonce_validate($domain, $nonce))
@@ -1672,7 +1678,7 @@ sub auth_verify_cookie
 	if($@)
 		{
 		my $error = $@;
-		print STDERR "Cookie digest authentication failed: $error";
+		print STDERR "Cookie digest authentication failed: $error" if($DEBUG > 0);
 		return ("", "");
 		}
 
@@ -1725,7 +1731,7 @@ sub auth_verify_localhost
 	if($@)
 		{
 		my $error = $@;
-		print STDERR "Loopback authentication failed: $error";
+		print STDERR "Loopback authentication failed: $error" if($DEBUG > 0);
 		return ("", "");
 		}
 	else

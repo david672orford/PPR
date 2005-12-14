@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 October 2005.
+** Last modified 6 December 2005.
 */
 
 /*
@@ -223,6 +223,7 @@ static void ipp_get_jobs(struct IPP *ipp)
 	const char function[] = "ipp_get_jobs";
 	const char *destname = NULL;
 	int destname_id = -1;
+	int jobid = -1;
 	int i;
 	char fname[MAX_PPR_PATH];
 	FILE *qfile;
@@ -241,12 +242,16 @@ static void ipp_get_jobs(struct IPP *ipp)
 			}
 		}
 
+	jobid = request_attrs_jobid(req);
+
 	lock();
 
 	/* Loop over the queue entries. */
 	for(i=0; i < queue_entries; i++)
 		{
 		if(destname_id != -1 && queue[i].destid != destname_id)
+			continue;
+		if(jobid != -1 && queue[i].id != jobid)
 			continue;
 
 		/* Read and parse the queue file. */
@@ -694,7 +699,7 @@ void ipp_dispatch(const char command[])
 	char *command_scratch = NULL;
 	struct IPP *ipp = NULL;
 
-	debug("%s(): %s", function, command);
+	DODEBUG_IPP(("%s(): %s", function, command));
 	
 	if(!(p = lmatchsp(command, "IPP")))
 		{
@@ -759,7 +764,7 @@ void ipp_dispatch(const char command[])
 		
 		if(ipp_validate_request(ipp))
 			{
-			debug("%s(): dispatching operation 0x%.2x", function, ipp->operation_id);
+			DODEBUG_IPP(("%s(): dispatching operation 0x%.2x", function, ipp->operation_id));
 			switch(ipp->operation_id)
 				{
 				case IPP_GET_JOBS:
@@ -799,7 +804,7 @@ void ipp_dispatch(const char command[])
 			close(out_fd);
 
 		/* Close the output file and tell the IPP CGI program to take it away. */
-		debug("Sending signal to IPP CGI...");
+		DODEBUG_IPP(("Sending signal to IPP CGI..."));
 		if(kill((pid_t)ipp_cgi_pid, SIGUSR1) == -1)
 			{
 			debug("%s(): kill(%ld, SIGUSR1) failed, errno=%d (%s), deleting reply file", function, (long)ipp_cgi_pid, errno, gu_strerror(errno));
@@ -811,7 +816,7 @@ void ipp_dispatch(const char command[])
 		error("%s(): %s", function, gu_exception);
 		}
 
-	debug("%s(): done", function);
+	DODEBUG_IPP(("%s(): done", function));
 	} /* end of ipp_dispatch() */
 
 /* end of file */

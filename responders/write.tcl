@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 29 March 2005.
+# Last modified 28 November 2005.
 #
 
 #
@@ -60,9 +60,9 @@ set command [ppr_popen_w [list write $responder_address]]
 puts $command "To: $for"
 puts $command "Subject: $subject"
 puts $command ""
-puts $command "=== Short Version ============================================================"
-puts $command [ppr_wordwrap $short_message 78]
-puts $command "=== Long Version ============================================================="
+#puts $command "=== Short Version ============================================================"
+#puts $command [ppr_wordwrap $short_message 78]
+#puts $command "=== Long Version ============================================================="
 puts $command [ppr_wordwrap $long_message 78]
 set result [catch { close $command } error]
 

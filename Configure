@@ -1411,9 +1411,9 @@ RANLIB=touch
 # GCC, GNU linker, and Glibc
 CC=gcc
 #CC=g++ -fno-exceptions
-CFLAGS=$CFLAGS -I ../include #-ffunction-sections -fdata-sections
+CFLAGS=$CFLAGS -I ../include
 LD=gcc
-LDFLAGS=#-Wl,--gc-sections
+LDFLAGS=
 
 # GCC with Diet libc wrapper
 #CC=diet gcc

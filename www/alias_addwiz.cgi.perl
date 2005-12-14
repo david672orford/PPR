@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 August 2005.
+# Last modified 6 December 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -158,7 +158,7 @@ my $addalias_wizard_table = [
 		print "<P><span class=\"label\">", H_("Saving new alias:"), "</span></P>\n";
 		print "<pre>\n";
 		run("id");
-		my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
+		my @PPAD = ($PPAD_PATH, "--user", $ENV{REMOTE_USER});
 		my $name = cgi_data_peek("name", "?");
 		my $e = 0;
 		$e || ($e=run(@PPAD, 'alias', 'forwhat', $name, $data{forwhat}));

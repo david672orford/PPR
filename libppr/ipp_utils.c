@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 October 2005.
+** Last modified 6 December 2005.
 */
 
 /*! \file */
@@ -42,7 +42,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 
-#if 1
+#if 0
 #define DEBUG(a) debug a
 #else
 #define DEBUG(a)
@@ -652,12 +652,12 @@ void ipp_parse_request_body(struct IPP *ipp)
 
 			value_length = ipp_get_ss(ipp);
 
-			debug("0x%.2x (%s) 0x%.2x (%s) name[%d]=\"%s\", value_len=%d",
+			DEBUG(("0x%.2x (%s) 0x%.2x (%s) name[%d]=\"%s\", value_len=%d",
 				delimiter_tag, tag_to_str(delimiter_tag),
 				value_tag, tag_to_str(value_tag),
 				name_length,
 				name ? name : "",
-				value_length);
+				value_length));
 
 			if(name_length > 0)
 				{
@@ -1207,12 +1207,14 @@ void request_attrs_free(struct REQUEST_ATTRS *this)
 		{
 		if(strcmp(value, "TOUCHED") != 0)
 			{
-			debug("requested attribute \"%s\" not implemented", name);
+			DEBUG(("requested attribute \"%s\" not implemented", name));
 			}
 		}
 	gu_pch_free(this->requested_attributes);
 	if(this->printer_uri_obj)
 		gu_uri_free(this->printer_uri_obj);
+	if(this->job_uri_obj)
+		gu_uri_free(this->job_uri_obj);
 	gu_free(this);
 	}
 

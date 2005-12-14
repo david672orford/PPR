@@ -43,6 +43,12 @@ all: $(PROGS)
 ipp$(DOTEXE): ipp.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ZLIBLIBS)
 
+ppr-ipp$(DOTEXE): ppr-ipp.o ../libppr.a ../libgu.a
+	$(LD) $(LDFLAGS) `xml2-config --libs` -o $@ $^
+
+ppr-ipp.o: ppr-ipp.c
+	$(CC) $(CFLAGS) `xml2-config --cflags` -c ppr-ipp.c
+
 #=== Install ================================================================
 
 install: $(PROGS)

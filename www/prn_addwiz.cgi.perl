@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 August 2005.
+# Last modified 6 December 2005.
 #
 
 #
@@ -831,7 +831,7 @@ $addprn_wizard_table = [
 		print "<pre>\n";
 		run("id");
 		defined($PPAD_PATH) || die;
-		my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
+		my @PPAD = ($PPAD_PATH, "--user", $ENV{REMOTE_USER});
 		my $name = cgi_data_peek("name", "?");
 		my $e = 0;
 		$e || ($e=run(@PPAD, 'interface', $name, $data{interface}, $data{address}));

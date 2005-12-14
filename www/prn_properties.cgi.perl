@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 August 2005.
+# Last modified 6 December 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -1038,7 +1038,7 @@ defined($name) || die "No printer name specified!\n";
 my $i;
 
 defined($PPAD_PATH) || die;
-my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
+my @PPAD = ($PPAD_PATH, "--user", $ENV{REMOTE_USER});
 
 print "<p><span class=\"label\">Saving changes:</span></p>\n";
 print "<pre>\n";

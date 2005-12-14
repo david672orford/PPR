@@ -50,7 +50,7 @@
 #include "ipp_utils.h"
 #include "queueinfo.h"
 
-#if 1
+#if 0
 #define DEBUG(a) debug a
 #else
 #define DEBUG(a)

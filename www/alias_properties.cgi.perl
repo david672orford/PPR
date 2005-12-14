@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 13 January 2005.
+# Last modified 6 December 2005.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -233,7 +233,7 @@ defined($PPAD_PATH) || die;
 defined($PPR2SAMBA_PATH) || die;
 
 my $name = $data{name};
-my @PPAD = ($PPAD_PATH, "--su", $ENV{REMOTE_USER});
+my @PPAD = ($PPAD_PATH, "--user", $ENV{REMOTE_USER});
 my $i;
 
 print "<p><b>", H_("Saving changes:"), "</b></p>\n";
