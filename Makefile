@@ -166,7 +166,7 @@ dist-docs:
 # and build the tar file.
 dist: dist-docs clean unconfigure
 	( cd po; make pot )
-	( cd /home/ppr; tar zcf $$HOME/ppr-$(SHORT_VERSION).tar.gz ppr-$(SHORT_VERSION) --exclude 'docbook-*-*' --exclude CVS )
+	( cd /home/ppr; tar -zcf $$HOME/ppr-$(SHORT_VERSION).tar.gz --exclude 'docbook-*-*' --exclude CVS ppr-$(SHORT_VERSION) )
 	@echo
 	@echo "Distribution archive built."
 	@echo
