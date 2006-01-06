@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 October 2005.
+** Last modified 15 December 2005.
 */
 
 /*
@@ -661,10 +661,9 @@ int ppop_media(char *argv[])
 		return print_reply();
 
 	{
-	retcode = EXIT_OK;
 	char *line = NULL;
 	int line_space = 80;
-	while(retcode == EXIT_OK && (line = gu_getline(line, &line_space, reply_file)))
+	for(retcode = EXIT_OK; retcode == EXIT_OK && (line = gu_getline(line, &line_space, reply_file)); )
 		{
 		char *printer, *bin, *medium;
 		int nbins;
