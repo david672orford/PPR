@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_dscdoc.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 10 January 2006.
 */
 
 /*
@@ -440,12 +440,15 @@ static int header_trailer(gu_boolean trailer)
 
 				if( ! found_Title )
 					{
-					char *ptr = line + 8;
-					ptr += strspn(ptr, " \t");
-					if(*ptr=='(')
-						qentry.Title = gu_strdup(tokens[1]);
+					char *p = line + 8;	/* "%%Title:" */
+					p += strspn(p, " \t");
+					if(*p == '(')		/* PostScript quoting */
+						{
+						p = gu_strdup(tokens[1]);
+						qentry.Title = gu_strtrim(p);
+						}
 					else				/* ^ NULL ptr safe */
-						qentry.Title = gu_strdup(ptr);
+						qentry.Title = gu_strdup(p);
 					found_Title = TRUE;
 					}
 				return -1;

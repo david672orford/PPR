@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 10 January 2006.
 */
 
 /*
@@ -379,7 +379,10 @@ static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean e
 						return;
 					}
 
-				fatal(PPREXIT_OTHERERR, _("%s%s is entirely whitespace"), name, is_argument ? _(" argument") : "");
+				if(is_argument)
+					fatal(PPREXIT_OTHERERR, _("%s argument is entirely whitespace"), name);
+				else
+					fatal(PPREXIT_OTHERERR, _("%s is entirely whitespace"), name);
 				}
 			}
 		}
@@ -400,7 +403,7 @@ int write_queue_file(struct QEntryFile *qentry)
 	/* This code looks for things that could make a mess of the queue file. */
 	assert_ok_value(qentry->For, FALSE, FALSE, FALSE, "qentry->For", FALSE);
 	assert_ok_value(qentry->charge_to, TRUE, FALSE, FALSE, "qentry->charge_to", FALSE);
-	assert_ok_value(qentry->Title, TRUE, TRUE, TRUE, "qentry->Title", FALSE);
+	assert_ok_value(qentry->Title, TRUE, TRUE, FALSE, "qentry->Title", FALSE);
 	assert_ok_value(qentry->draft_notice, TRUE, FALSE, FALSE, "qentry->draft_notice", FALSE);
 	assert_ok_value(qentry->Creator, TRUE, FALSE, FALSE, "qentry->Creator", FALSE);
 	assert_ok_value(qentry->Routing, TRUE, FALSE, FALSE, "qentry->Routing", FALSE);
@@ -1425,7 +1428,8 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 				}
 			break;
 
-		case 'C':								/* default title */
+		case 'C':								/* --title, default title */
+			/* Note that --title="" is allowed. */
 			assert_ok_value(optarg, FALSE, TRUE, FALSE, true_option, TRUE);
 			qentry.Title = optarg;
 			break;

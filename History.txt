@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--3 January 2006
+2.00a1, 11 December 2004--13 January 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9940,5 +9940,9 @@ no final tarball was released.
 
 * pprdrv/pprdrv_custom_hook.c: made a missing custom hook program path or
   a bad path fatal errors.
+
+* ppr/ppr_main.c,ppr_dscdoc.c: fixed to reject all-whitespace document title
+  when writing queue file; fixed reading of "%%Title:" to trim whitespace
+  even when the title is PostScript quoted.
 
 
