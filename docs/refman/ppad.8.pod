@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad.8.pod
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 October 2005.
+# Last modified 27 January 2006.
 #
 
 =head1 NAME
@@ -86,6 +86,13 @@ indicated user.
 Displays the configuration of the indicated printer.  The option selections
 described by the output of this command may be changed using the commands
 described below.
+
+=item B<ppad copy> I<printer> I<new_printer>
+
+Copy I<printer> to I<new_printer>.  It is sometimes difficult to determine the
+correct settings for a particular model of printer.  This command allows you
+to create a new printer queue by copying a working one and changing a few
+of the settings.
 
 =item B<ppad comment> I<printer comment>
 
@@ -816,6 +823,10 @@ These subcommands are used to create, modify and destroy printer groups.
 Shows the configuration of the indicated group.  The configuration is
 modified by the commands described below.
 
+=item B<ppad group copy> I<group> I<new_group>
+
+Copy an existing group.  This is handy if you want to create a new group which 
+is similiar to an existing one.
 
 =item B<ppad group comment> I<group> I<comment>
 
@@ -929,26 +940,27 @@ for queues.
 
 =over 4
 
+=item B<ppad alias show> I<alias>
+
+The settings of the alias are displayed.
+
+=item B<ppad alias copy> I<alias> I<new_alias>
+
+Copy an existing alias.  This is handy if you want to create a new alias which 
+is similiar to an existing one.
+
 =item B<ppad alias forwhat> I<alias> I<queue>
 
 If the I<alias> does not exist, it is created as an alias for I<queue>.  If it
 does exist, it is changed to be an alias for I<queue>.
 
-
 =item B<ppad alias delete> I<alias>
 
 The I<alias> is deleted.
 
-
-=item B<ppad alias show> I<alias>
-
-The settings of the alias are displayed.
-
-
 =item B<ppad alias comment> I<alias> I<string>
 
 The descriptive comment for alias I<alias> is set to I<string>.
-
 
 =item B<ppad alias switchset> I<alias> I<list>
 
@@ -957,12 +969,10 @@ the switchset is deleted.
 
 For an explanation of the purposes of switchsets, see B<ppad switchset>.
 
-
 =item B<ppad alias passthru> I<alias> I<list>
 
 The list of file types to be passed through to the printer unfiltered is set
 to I<list>.  If I<list> is ommited, then the passthru list is deleted.
-
 
 =item B<ppad alias addon> I<name> I<value>
 

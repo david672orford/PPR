@@ -91,7 +91,7 @@ static void pprdrv_log_printf(const char msgclass[], const char format[], ...)
 	va_start(va, format);
 	pprdrv_log_vprintf(msgclass, format, va);
 	va_end(va);
-	}
+	} /* pprdrv_log_printf() */
 /*
 ** If possible, write a piece of text to the job's log file.
 */
@@ -126,7 +126,7 @@ static void job_log_printf(const char msgclass[], const char format[], ...)
 	va_start(va, format);
 	job_log_vprintf(msgclass, format, va);
 	va_end(va);
-	}
+	} /* job_log_printf() */
 
 /*
 ** With the exception of the case where pprdrv is invoked with the wrong number
@@ -137,6 +137,15 @@ static void job_log_printf(const char msgclass[], const char format[], ...)
 */
 void hooked_exit(int rval, const char *explain)
 	{
+	static int depth = 0;
+	DODEBUG_MAIN(("hooked_exit(rval=%d, explain[]=\"%s\")", rval, explain ? explain : ""));
+
+	if(depth++ > 0)
+		{
+		DODEBUG_MAIN(("Fatal error during exit hook processing"));
+		exit(rval);
+		}
+	
 	/* Let the commentator know we will be exiting almost immediately so that
 	   it can announce the fact. */
 	commentary_exit_hook(rval, explain);

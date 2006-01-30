@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--13 January 2006
+2.00a1, 11 December 2004--30 January 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9554,7 +9554,8 @@ no final tarball was released.
 
 * commentators/: removed
 
-* Renamed HOMEDIR to LIBDIR, added BINDIR (LIBDIR/bin) (Very many files changed.)
+* Renamed HOMEDIR to LIBDIR, added BINDIR (LIBDIR/bin) (Very many files 
+  changed.)
 
 * z_install_end/fixup_obsolete.sh: removed since we will recomment that users delete 
   or rename their PPR 1.x directories before installing PPR 2.x.
@@ -9944,5 +9945,14 @@ no final tarball was released.
 * ppr/ppr_main.c,ppr_dscdoc.c: fixed to reject all-whitespace document title
   when writing queue file; fixed reading of "%%Title:" to trim whitespace
   even when the title is PostScript quoted.
+
+* ppad/printer.c:printer_show(): switched to pool memory allocation.
+
+* ppad: heavily reworked the destination configuration file library in 
+  ppad_conf.c to use an object; Changed the other modules to use the new code;
+  added commands "ppad copy", "ppad group copy", and "ppad alias copy".
+
+* pprdrv/pprdrv.c: moved chdir(LIBDIR) so that it is invoked even without
+  --test.
 
 

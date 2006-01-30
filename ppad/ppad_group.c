@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_group.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 27 January 2006.
 */
 
 /*
@@ -49,23 +49,16 @@
 #include "ppad.h"
 
 /*
-** Send the spooler a command to re-read a group definition
-*/
-static void reread_group(const char *group)
-	{
-	write_fifo("NG %s\n", group);
-	}
-
-/*
 ** Show a groups members, its rotate setting, and its comment.
 */
 int group_show(const char *argv[])
 	{
 	const char *function = "group_show";
 	const char *group = argv[0];		/* The name of the group to show is the argument. */
-
+	
+	struct CONF_OBJ *obj;
+	char *line, *ptr;
 	int x;
-	char *ptr;
 
 	int rotate = TRUE;					/* Is rotate set for this group? */
 	char *comment = (char*)NULL;		/* Group comment. */
@@ -85,28 +78,24 @@ int group_show(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(grpopen(group, FALSE, FALSE))	/* Open the configuration file. */
-		{
-		fprintf(errors, _("The group \"%s\" does not exist.\n"), group);
+	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
-		}
 
-	while(confread())			/* Read all the lines in the config file. */
+	while((line = conf_getline(obj)))			/* Read all the lines in the config file. */
 		{
-		if((ptr = lmatchp(confline, "Rotate:")))
+		if((ptr = lmatchp(line, "Rotate:")))
 			{
 			if(gu_torf_setBOOL(&rotate,ptr) == -1)
 				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
 			continue;
 			}
-		if(gu_sscanf(confline, "Comment: %T", &ptr) == 1)
+		if(gu_sscanf(line, "Comment: %T", &ptr) == 1)
 			{
-			if(comment)
-				gu_free(comment);
+			gu_free_if(comment);
 			comment = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "Printer: %S", &ptr) == 1)
+		if(gu_sscanf(line, "Printer: %S", &ptr) == 1)
 			{
 			if(member_count < MAX_GROUPSIZE)
 				{
@@ -119,51 +108,43 @@ int group_show(const char *argv[])
 				}
 			continue;
 			}
-		if(gu_sscanf(confline, "Switchset: %T", &ptr) == 1)
+		if(gu_sscanf(line, "Switchset: %T", &ptr) == 1)
 			{
-			if(switchset)
-				gu_free(switchset);
+			gu_free_if(switchset);
 			switchset = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "DefFiltOpts: %T", &ptr) == 1)
+		if(gu_sscanf(line, "DefFiltOpts: %T", &ptr) == 1)
 			{
-			if(deffiltopts)
-				gu_free(deffiltopts);
+			gu_free_if(deffiltopts);
 			deffiltopts = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "PassThru: %T", &ptr) == 1)
+		if(gu_sscanf(line, "PassThru: %T", &ptr) == 1)
 			{
-			if(passthru)
-				gu_free(passthru);
+			gu_free_if(passthru);
 			passthru = ptr;
 			continue;
 			}
-		if(gu_sscanf(confline, "ACLs: %T", &ptr) == 1)
+		if(gu_sscanf(line, "ACLs: %T", &ptr) == 1)
 			{
-			if(acls)
-				gu_free(acls);
+			gu_free_if(acls);
 			acls = ptr;
 			continue;
 			}
-		if(confline[0] >= 'a' && confline[0] <= 'z')	/* if in addon name space */
+		if(line[0] >= 'a' && line[0] <= 'z')	/* if in addon name space */
 			{
 			if(addon_count >= MAX_ADDONS)
-				{
 				fprintf(errors, "%s(): addon[] overflow\n", function);
-				}
 			else
-				{
-				addon[addon_count++] = gu_strdup(confline);
-				}
+				addon[addon_count++] = gu_strdup(line);
 			continue;
 			}
 
 
 		} /* end of line reading while() loop */
 
-	confclose();		/* We are done with the configuration file. */
+	conf_close(obj);		/* We are done with the configuration file. */
 
 	if(!machine_readable)
 		{
@@ -272,6 +253,20 @@ int group_show(const char *argv[])
 	} /* end of group_show() */
 
 /*
+ * Copy the configuration of a group in order to make a new one.
+ */
+int group_copy(const char *argv[])
+	{
+	if( ! argv[0] || ! argv[1] )
+		{
+		fputs(_("You must supply the name of an existing group and\n"
+				"a name for the new group.\n"), errors);
+		return EXIT_SYNTAX;
+		}
+	return conf_copy(QUEUE_TYPE_GROUP, argv[0], argv[1]);
+	}
+
+/*
 ** Set a group's comment.
 */
 int group_comment(const char *argv[])
@@ -286,7 +281,7 @@ int group_comment(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_GROUP, group, "Comment", "%s", comment);
+	return conf_set_name(QUEUE_TYPE_GROUP, group, 0, "Comment", "%s", comment);
 	} /* end of group_comment() */
 
 /*
@@ -306,35 +301,7 @@ int group_rotate(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	/* make sure the group exists */
-	if(grpopen(group, TRUE, FALSE))
-		{
-		fprintf(errors, _("The group \"%s\" does not exist.\n"),group);
-		return EXIT_BADDEST;
-		}
-
-	/* Modify the group's configuration file. */
-	while(confread())
-		{
-		if(lmatch(confline, "Rotate:"))
-			break;
-		else
-			conf_printf("%s\n", confline);
-		}
-
-	conf_printf("Rotate: %s\n", newstate ? "True" : "False");
-
-	while(confread())							/* copy rest of file, */
-		{
-		if(lmatch(confline, "Rotate:"))			/* discard */
-			continue;
-		else									/* copy */
-			conf_printf("%s\n", confline);
-		}
-	confclose();
-
-	reread_group(group);						/* pprd must know the rotate setting */
-	return EXIT_OK;
+	return conf_set_name(QUEUE_TYPE_GROUP, group, CONF_RELOAD, "Rotate", "%s", newstate ? "True" : "False");
 	} /* end of group_rotate() */
 
 /*
@@ -344,6 +311,8 @@ int group_rotate(const char *argv[])
 int group_members_add(const char *argv[], gu_boolean do_add)
 	{
 	const char *group = argv[0];
+	struct CONF_OBJ *obj;
+	char *line;
 	int x;
 	char *ptr;
 	int count = 0;
@@ -390,32 +359,26 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	*/
 	for(x=1; argv[x]; x++)
 		{
-		if(prnopen(argv[x], FALSE))
-			{
-			fprintf(errors, _("The printer \"%s\" does not exist.\n"), argv[x]);
+		if(!(obj = conf_open(QUEUE_TYPE_PRINTER, argv[x], CONF_ENOENT_PRINT)))
 			return EXIT_BADDEST;
-			}
-		else
-			{
-			confclose();
-			}
+		conf_close(obj);
 		}
 
 	/*
 	** If the group to which we are adding a printer
 	** does not exist, create it.
 	*/
-	if(grpopen(group, TRUE, TRUE))
+	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_MODIFY | CONF_CREATE | CONF_RELOAD)))
 		return EXIT_INTERNAL;
 
 	/* Copy up to but not including the 1st "Printer:" line. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(lmatch(confline, "DefFiltOpts:"))		/* discard */
+		if(lmatch(line, "DefFiltOpts:"))		/* discard */
 			continue;
-		if(lmatch(confline, "Printer:"))			/* stop */
+		if(lmatch(line, "Printer:"))			/* stop */
 			break;
-		conf_printf("%s\n", confline);				/* copy */
+		conf_printf(obj, "%s\n", line);			/* copy */
 		}
 
 	gu_Try
@@ -426,7 +389,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 
 		/* Copy all the remaining lines. */
 		do	{
-			if((ptr = lmatchp(confline, "Printer:")))
+			if((ptr = lmatchp(line, "Printer:")))
 				{
 				if(!do_add)				/* If we are adding, just delete it. */
 					continue;
@@ -441,17 +404,17 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 				}
 
 			/* Delete old "DefFiltOpts:" lines as we go. */
-			else if(lmatch(confline, "DefFiltOpts:"))
+			else if(lmatch(line, "DefFiltOpts:"))
 				continue;
 
 			/* Other lines we keep. */
-			conf_printf("%s\n", confline);
-			} while(confread());
+			conf_printf(obj, "%s\n", line);
+			} while(conf_getline(obj));
 
 		/* Add a "Printer:" line for each new member. */
 		for(x=1; argv[x]; x++)
 			{
-			conf_printf("Printer: %s\n", argv[x]);
+			conf_printf(obj, "Printer: %s\n", argv[x]);
 			queueinfo_add_printer(qobj, argv[x]);
 			count++;
 			}
@@ -460,7 +423,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 		{
 		const char *cp = queueinfo_computedDefaultFilterOptions(qobj);
 		if(cp)
-			conf_printf("DefFiltOpts: %s\n", cp);
+			conf_printf(obj, "DefFiltOpts: %s\n", cp);
 		}
 
 		/* See if adding our printer will make the group too big. */
@@ -468,7 +431,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 			gu_CodeThrow(EXIT_OVERFLOW, _("Group \"%s\" would have %d members, only %d are allowed.\n"), group, count, MAX_GROUPSIZE);
 
 		/* Commit the changes. */
-		confclose();
+		conf_close(obj);
 		}
 	gu_Final
 		{
@@ -477,13 +440,10 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 		}
 	gu_Catch
 		{
-		confabort();		/* roll back the changes */
+		conf_abort(obj);		/* roll back the changes */
 		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
-
-	/* necessary because pprd keeps track of mounted media */
-	reread_group(group);
 
 	return EXIT_OK;
 	} /* end of group_add() */
@@ -499,11 +459,12 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 */
 int group_remove_internal(const char *group, const char *member)
 	{
-	char *ptr;
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	int found = FALSE;
 	void *qobj = NULL;
 
-	if(grpopen(group, TRUE, FALSE))
+	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_MODIFY | CONF_RELOAD)))
 		return EXIT_BADDEST;
 
 	gu_Try
@@ -515,33 +476,36 @@ int group_remove_internal(const char *group, const char *member)
 		/*
 		** Copy the configuration file.
 		*/
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "DefFiltOpts:"))		/* delete old lines */
+			if(lmatch(line, "DefFiltOpts:"))		/* delete old lines */
 				continue;
 	
-			if((ptr = lmatchp(confline, "Printer:")))	/* if member name, */
+			if((p = lmatchp(line, "Printer:")))			/* if member name, */
 				{
-				if(strcmp(ptr, member) == 0)			/* If it is the one we */
+				if(strcmp(p, member) == 0)				/* If it is the one we */
 					{									/* are deleting, */
-					found=TRUE;							/* set a flag */
+					found = TRUE;						/* set a flag */
 					continue;							/* and don't copy. */
 					}
-
-				queueinfo_add_printer(qobj, ptr);		/* Otherwise, add its PPD file, */
+				queueinfo_add_printer(qobj, p);			/* Otherwise, add its PPD file, */
 				}
 	
-			conf_printf("%s\n",confline);
+			conf_printf(obj, "%s\n", line);
 			}
 
 		/* Emmit the new "DefFiltOpts:" line. */
 		{
 		const char *cp = queueinfo_computedDefaultFilterOptions(qobj);
 		if(cp)
-			conf_printf("DefFiltOpts: %s\n", cp);
+			conf_printf(obj, "DefFiltOpts: %s\n", cp);
 		}
 
-		confclose();
+		/* Commit the changes only if the printer was found. */
+		if(found)
+			conf_close(obj);
+		else
+			conf_abort(obj);
 		}
 	gu_Final
 		{
@@ -550,20 +514,15 @@ int group_remove_internal(const char *group, const char *member)
 		}
 	gu_Catch
 		{
-		confabort();
+		conf_abort(obj);
 		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
 	if(found)
-		{
-		reread_group(group);
 		return EXIT_OK;
-		}
 	else
-		{
 		return EXIT_NOTFOUND;
-		}
 	} /* end of _group_remove() */
 
 int group_remove(const char *argv[])
@@ -648,7 +607,7 @@ int group_delete(const char *argv[])
 		}
 	else
 		{
-		reread_group(group);
+		write_fifo("NG %s\n", group);
 		return EXIT_OK;
 		}
 	} /* end of group_remove() */
@@ -659,6 +618,7 @@ int group_delete(const char *argv[])
 int group_touch(const char *argv[])
 	{
 	const char *group = argv[0];
+	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -669,16 +629,9 @@ int group_touch(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	/* make sure the printer exists */
-	if(grpopen(group, FALSE, FALSE))
-		{
-		fprintf(errors, _("The group \"%s\" does not exist.\n"),group);
+	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
-
-	confclose();
-
-	reread_group(group);		/* tell pprd to re-read the configuration */
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of group_touch() */
@@ -704,7 +657,7 @@ int group_switchset(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_GROUP, group, "Switchset", newset[0] ? "%s" : NULL, newset);
+	return conf_set_name(QUEUE_TYPE_GROUP, group, 0, "Switchset", newset[0] ? "%s" : NULL, newset);
 	} /* end of group_switchset() */
 
 /*
@@ -712,43 +665,45 @@ int group_switchset(const char *argv[])
 */
 int group_deffiltopts_internal(const char *group)
 	{
-	if(grpopen(group, TRUE, FALSE))
-		{
-		fprintf(errors, "The group \"%s\" does not exist.\n", group);
+	struct CONF_OBJ *obj;
+	char *line, *p;
+
+	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_MODIFY | CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
-		}
 
 	{
 	void *qobj = NULL;
-	const char *p;
 	gu_Try {
 		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
 		queueinfo_set_warnings_file(qobj, errors);
 		queueinfo_set_debug_level(qobj, debug_level);
 			
 		/* Modify the group's configuration file. */
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "DefFiltOpts:"))
+			if(lmatch(line, "DefFiltOpts:"))
 				continue;
 
-			if((p = lmatchp(confline, "Printer:")))
+			if((p = lmatchp(line, "Printer:")))
 				queueinfo_add_printer(qobj, p);
 	
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 			}
 	
-		if((p = queueinfo_computedDefaultFilterOptions(qobj)))
-			conf_printf("DefFiltOpts: %s\n", p);
+		{
+		const char *opts;
+		if((opts = queueinfo_computedDefaultFilterOptions(qobj)))
+			conf_printf(obj, "DefFiltOpts: %s\n", opts);
+		}
 
-		confclose();
+		conf_close(obj);
 		}
 	gu_Final {
 		if(qobj)
 			queueinfo_free(qobj);
 		}
 	gu_Catch {
-		confabort();
+		conf_abort(obj);
 		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
@@ -791,9 +746,8 @@ int group_passthru(const char *argv[])
 		}
 
 	passthru = list_to_string(&argv[1]);
-	retval = conf_set_name(QUEUE_TYPE_GROUP, group, "PassThru", passthru ? "%s" : NULL, passthru);
-	if(passthru) gu_free(passthru);
-
+	retval = conf_set_name(QUEUE_TYPE_GROUP, group, 0, "PassThru", passthru ? "%s" : NULL, passthru);
+	gu_free_if(passthru);
 	return retval;
 	} /* end of group_passthru() */
 
@@ -814,9 +768,8 @@ int group_acls(const char *argv[])
 		}
 
 	acls = list_to_string(&argv[1]);
-	retval = conf_set_name(QUEUE_TYPE_GROUP, group, "ACLs", acls ? "%s" : NULL, acls);
-	if(acls) gu_free(acls);
-
+	retval = conf_set_name(QUEUE_TYPE_GROUP, group, 0, "ACLs", acls ? "%s" : NULL, acls);
+	gu_free_if(acls);
 	return retval;
 	} /* end of group_acls() */
 
@@ -843,7 +796,7 @@ int group_addon(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_GROUP, group, name, (value && value[0]) ? "%s" : NULL, value);
+	return conf_set_name(QUEUE_TYPE_GROUP, group, 0, name, (value && value[0]) ? "%s" : NULL, value);
 	}
 
 /* end of file */

@@ -539,7 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--20 October 2005.
+2.00a1, 11 December 2004--27 January 2006.
 
 * refman/: removed references to papsrv.
 
@@ -609,4 +609,5 @@ more information about RIPs and *pprRIP:.
 
 * refman/tcpbind.8.sgml: added
 
+* refman/ppad.8.pod: added "ppad copy", "ppad group copy", and "ppad alias copy"
 

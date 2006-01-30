@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppop_status.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 April 2005.
+** Last modified 30 January 2006.
 */
 
 #include "config.h"
@@ -310,10 +310,11 @@ static void snmp_status_fixup(void)
 	int x;
 
 	/*
-	** This is where we handle status.start.  The functions that record the status in
-	** this structure don't bother to set status.start, they just set status.last_news
-	** to the current time.  Here we see if the status has changed and if so, set 
-	** status.start to the time in status.last_news.
+	** This is where we handle status.start.  The functions that record the 
+	** status in this structure don't bother to set status.start, they just 
+	** set status.last_news to the current time.  Here we see if the status 
+	** has changed and if so, set status.start to the time in 
+	** status.last_news.
 	*/
 	if(status.hrDeviceStatus != ostatus.hrDeviceStatus					/* if device status changed */
 				|| status.hrPrinterStatus != ostatus.hrPrinterStatus	/* if printer status changed */
@@ -439,8 +440,8 @@ static void ppop_status_write(void)
 		}
 	else
 		{
-		/* If the status file isn't open yet, open it now.  We don't close it,
-		   it gets closed when we exit. */
+		/* If the status file isn't open yet, open it now.  We won't close it,
+		   we'll let it get closed automatically when this program exits. */
 		if(statfile == -1)
 			{
 			char fname[MAX_PPR_PATH];
@@ -633,6 +634,8 @@ void ppop_status_exit_hook(int retval)
 */
 void ppop_status_shutdown(void)
 	{
+	DODEBUG_PPOP_STATUS(("ppop_status_shutdown()"));
+
 	/* All operations have ceased. */
 	message_writemon_operation[0] = '\0';
 

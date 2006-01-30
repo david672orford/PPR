@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_copy_job.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 20 January 2006.
 */
 
 #include "config.h"
@@ -200,7 +200,7 @@ void int_copy_job(int portfd,
 			{
 			if(!runaway_plaint)
 				{
-				alert(int_cmdline.printer, TRUE, "Driver for \"%s\" is defective.", int_cmdline.address);
+				alert(int_cmdline.printer, TRUE, "Driver for port \"%s\" is defective.", int_cmdline.address);
 				runaway_plaint = TRUE;
 				}
 			/* exit(EXIT_PRNERR_NORETRY); */

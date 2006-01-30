@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 30 January 2006.
 */
 
 /*
@@ -1961,7 +1961,6 @@ int real_main(int argc, char *argv[])
 		{
 		argi++;
 		test_mode = TRUE;
-		chdir(LIBDIR);
 		}
 
 	/*
@@ -1978,6 +1977,13 @@ int real_main(int argc, char *argv[])
 	printer.Name = argv[argi];
 	QueueFile = argv[argi+1];
 	group_pass = atoi(argv[argi+2]);
+
+	/* The interfaces expect that the current directory will be 
+	 * our lib directory where they can find things such as
+	 * interface.sh.
+	 */
+	if(chdir(LIBDIR) == -1)
+		gu_Throw("%s(\"%s\") failed, errno=%d (%s)", "chdir", LIBDIR, errno, strerror(errno));
 
 	/* If any debugging at all is turned on, then log the program startup. */
 	#ifdef DEBUG

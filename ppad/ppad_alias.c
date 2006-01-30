@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_alias.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 27 January 2006.
 */
 
 #include "config.h"
@@ -45,7 +45,8 @@
 int alias_show(const char *argv[])
 	{
 	const char *alias = argv[0];
-	char *ptr;
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	char *comment = NULL, *forwhat = NULL, *switchset = NULL, *passthru = NULL;
 
 	if(!alias)
@@ -54,37 +55,34 @@ int alias_show(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(confopen(QUEUE_TYPE_ALIAS, alias, FALSE, FALSE) == -1)
-		{
-		fprintf(errors, _("The alias \"%s\" does not exist.\n"), alias);
+	if(!(obj = conf_open(QUEUE_TYPE_ALIAS, alias, CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
-		}
 
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(gu_sscanf(confline, "ForWhat: %S", &ptr) == 1)
+		if(gu_sscanf(line, "ForWhat: %S", &p) == 1)
 			{
 			gu_free_if(forwhat);
-			forwhat = ptr;
+			forwhat = p;
 			}
-		else if(gu_sscanf(confline, "Comment: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Comment: %T", &p) == 1)
 			{
 			gu_free_if(comment);
-			comment = ptr;
+			comment = p;
 			}
-		else if(gu_sscanf(confline, "Switchset: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Switchset: %T", &p) == 1)
 			{
 			gu_free_if(switchset);
-			switchset = ptr;
+			switchset = p;
 			}
-		else if(gu_sscanf(confline, "PassThru: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "PassThru: %T", &p) == 1)
 			{
 			gu_free_if(passthru);
-			passthru = ptr;
+			passthru = p;
 			}
 		}
 
-	confclose();
+	conf_close(obj);
 
 	if(! machine_readable)
 		{
@@ -103,18 +101,31 @@ int alias_show(const char *argv[])
 		printf("passthru\t%s\n", passthru ? passthru : "");
 		}
 
-	if(comment) gu_free(comment);
-	if(forwhat) gu_free(forwhat);
-	if(switchset) gu_free(switchset);
-	if(passthru) gu_free(passthru);
+	gu_free_if(comment);
+	gu_free_if(forwhat);
+	gu_free_if(switchset);
+	gu_free_if(passthru);
 
 	return EXIT_OK;
+	}
+
+int alias_copy(const char *argv[])
+	{
+	if( ! argv[0] || ! argv[1] )
+		{
+		fputs(_("You must supply the name of an existing printer and\n"
+				"a name for the new printer.\n"), errors);
+		return EXIT_SYNTAX;
+		}
+	return conf_copy(QUEUE_TYPE_PRINTER, argv[0], argv[1]);
 	}
 
 int alias_forwhat(const char *argv[])
 	{
 	const char *alias = argv[0];
 	const char *forwhat = argv[1];
+	struct CONF_OBJ *obj;
+	char *line;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -139,52 +150,31 @@ int alias_forwhat(const char *argv[])
 		}
 
 	/* Make sure the preposed forwhat exists. */
-	if(confopen(QUEUE_TYPE_GROUP, forwhat, FALSE, FALSE) == -1 && confopen(QUEUE_TYPE_PRINTER, forwhat, FALSE, FALSE) == -1)
+	if(!(obj = conf_open(QUEUE_TYPE_GROUP, forwhat, 0)) && !(obj = conf_open(QUEUE_TYPE_PRINTER, forwhat, 0)))
 		{
 		fprintf(errors, _("The name \"%s\" is not that of an existing group or printer.\n"), forwhat);
 		return EXIT_BADDEST;
 		}
-	confclose();
+	conf_close(obj);
 
-	/* If we can't open an old one, create a new one. */
-	if(confopen(QUEUE_TYPE_ALIAS, alias, TRUE, FALSE) == -1)
+	if(!(obj = conf_open(QUEUE_TYPE_ALIAS, alias, CONF_MODIFY | CONF_CREATE)))
+		return EXIT_INTERNAL;
+
+	while((line = conf_getline(obj)) && !lmatch(line, "ForWhat:"))
+		conf_printf(obj, "%s\n", line);
+
+	conf_printf(obj, "ForWhat: %s\n", forwhat);
+
+	while((line = conf_getline(obj)))
 		{
-		FILE *newconf;
-		char fname[MAX_PPR_PATH];
-
-		ppr_fnamef(fname, "%s/%s", ALIASCONF, alias);
-		if((newconf = fopen(fname, "w")) == (FILE*)NULL)
-			{
-			fprintf(errors, _("Failed to create alias config file \"%s\", errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
-			return EXIT_INTERNAL;
-			}
-
-		fprintf(newconf, "ForWhat: %s\n", forwhat);
-
-		fclose(newconf);
+		if(!lmatch(line, "ForWhat:"))
+			conf_printf(obj, "%s\n", line);
 		}
 
-	/* Modify an old alias. */
-	else
-		{
-		while(confread() && !lmatch(confline, "ForWhat:"))
-			{
-			conf_printf("%s\n", confline);
-			}
-
-		conf_printf("ForWhat: %s\n", forwhat);
-
-		while(confread())
-			{
-			if(!lmatch(confline, "ForWhat:"))
-				conf_printf("%s\n", confline);
-			}
-
-		confclose();
-		}
+	conf_close(obj);
 
 	return EXIT_OK;
-	}
+	} /* alias_forwhat() */
 
 int alias_delete(const char *argv[])
 	{
@@ -216,7 +206,7 @@ int alias_delete(const char *argv[])
 		}
 
 	return EXIT_OK;
-	}
+	} /* alias_delete() */
 
 int alias_comment(const char *argv[])
 	{
@@ -230,8 +220,8 @@ int alias_comment(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_ALIAS, alias, "Comment", "%s", comment);
-	}
+	return conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, "Comment", "%s", comment);
+	} /* alias_comment() */
 
 int alias_switchset(const char *argv[])
 	{
@@ -251,8 +241,8 @@ int alias_switchset(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_ALIAS, alias, "Switchset", newset[0] ? "%s" : NULL, newset);
-	}
+	return conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, "Switchset", newset[0] ? "%s" : NULL, newset);
+	} /* alias_switchset() */
 
 int alias_passthru(const char *argv[])
 	{
@@ -269,11 +259,10 @@ int alias_passthru(const char *argv[])
 		}
 
 	passthru = list_to_string(&argv[1]);
-	retval = conf_set_name(QUEUE_TYPE_ALIAS, alias, "PassThru", passthru ? "%s" : NULL, passthru);
-	if(passthru) gu_free(passthru);
-
+	retval = conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, "PassThru", passthru ? "%s" : NULL, passthru);
+	gu_free_if(passthru);
 	return retval;
-	}
+	} /* alias_passthru() */
 
 /*
 ** Set an alias addon option.
@@ -298,8 +287,8 @@ int alias_addon(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_ALIAS, alias, name, value ? "%s" : NULL, value);
-	}
+	return conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, name, value ? "%s" : NULL, value);
+	} /* alias_addon() */
 
 /* end of file */
 

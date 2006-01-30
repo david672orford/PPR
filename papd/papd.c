@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 October 2005.
+** Last modified 30 January 2006.
 */
 
 /*
@@ -595,7 +595,7 @@ static void init(void)
 	/* Remove some unnecessary and misleading things from the environment. */
 	prune_env();
 
-	/* Change to the PPR home directory. */
+	/* Change to the PPR library directory. */
 	chdir(LIBDIR);
 
 	/* Go into background. */

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 26 January 2006.
 */
 
 /*
@@ -182,6 +182,7 @@ static void help_printer(FILE *out)
     const char *command_list[] =
     	{
 		N_("ppad show <printer>"),
+		N_("ppad copy <existing_printer> <new_printer>"),
 		N_("ppad interface <printer> <interface> <address>"),
 		N_("ppad delete <printer>"),
 		N_("ppad comment <printer> <string>"),
@@ -232,6 +233,7 @@ static void help_group(FILE *out)
 	const char *command_list[] =
 		{
 		N_("ppad group show <group>"),
+		N_("ppad group copy <existing_group> <new_group>"),
 		N_("ppad group members <group> <printer> ..."),
 		N_("ppad group add <group> <printer>"),
 		N_("ppad group remove <group> <printer>"),
@@ -261,6 +263,7 @@ static void help_alias(FILE *out)
 	const char *command_list[] =
 		{
 		N_("ppad alias show <alias>"),
+		N_("ppad alias copy <existing_alias> <new_alias>"),
 		N_("ppad alias forwhat <alias> <queuename>"),
 		N_("ppad alias delete <alias>"),
 		N_("ppad alias comment <alias> <comment>"),
@@ -435,6 +438,8 @@ static int dispatch(const char *argv[])
 			return -2;
 		if(gu_strcasecmp(argv[1], "show") == 0)
 			return alias_show(&argv[2]);
+		if(gu_strcasecmp(argv[1], "copy") == 0)
+			return alias_copy(&argv[2]);
 		if(gu_strcasecmp(argv[1], "forwhat") == 0)
 			return alias_forwhat(&argv[2]);
 		if(gu_strcasecmp(argv[1], "delete") == 0)
@@ -457,6 +462,8 @@ static int dispatch(const char *argv[])
 			return -2;
 		if(gu_strcasecmp(argv[1], "show") == 0)
 			return group_show(&argv[2]);
+		if(gu_strcasecmp(argv[1], "copy") == 0)
+			return group_copy(&argv[2]);
 		if(gu_strcasecmp(argv[1], "comment") == 0)
 			return group_comment(&argv[2]);
 		if(gu_strcasecmp(argv[1], "rotate") == 0)
@@ -501,6 +508,8 @@ static int dispatch(const char *argv[])
 	/* printer commands */
 	if(gu_strcasecmp(argv[0], "show") == 0)
 		return printer_show(&argv[1]);
+	if(gu_strcasecmp(argv[0], "copy") == 0)
+		return printer_copy(&argv[1]);
 	if(gu_strcasecmp(argv[0], "comment") == 0)
 		return printer_comment(&argv[1]);
 	if(gu_strcasecmp(argv[0], "location") == 0)

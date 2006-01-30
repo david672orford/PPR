@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 27 January 2006.
 */
 
 /*
@@ -36,13 +36,11 @@
 
 /* functions and global variables in ppad.c */
 extern const char myname[];
-
 void fatal(int exitval, const char *string, ...)
 #ifdef __GNUC__
 __attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
-
 gu_boolean am_administrator(void);
 extern FILE *errors;
 extern int machine_readable;
@@ -57,6 +55,7 @@ int media_import(const char *argv[]);
 
 /* functions in ppad_printer.c */
 int printer_show(const char *argv[]);
+int printer_copy(const char *argv[]);
 int printer_comment(const char *argv[]);
 int printer_location(const char *argv[]);
 int printer_department(const char *argv[]);
@@ -94,6 +93,7 @@ int printer_userparams(const char *argv[]);
 
 /* functions in ppad_group.c */
 int group_show(const char *argv[]);
+int group_copy(const char *argv[]);
 int group_comment(const char *argv[]);
 int group_rotate(const char *argv[]);
 int group_members_add(const char *argv[], gu_boolean do_add);
@@ -110,6 +110,7 @@ int group_acls(const char *argv[]);
 
 /* functions in ppad_alias.c */
 int alias_show(const char *argv[]);
+int alias_copy(const char *argv[]);
 int alias_forwhat(const char *argv[]);
 int alias_delete(const char *argv[]);
 int alias_comment(const char *argv[]);
@@ -118,17 +119,31 @@ int alias_passthru(const char *argv[]);
 int alias_addon(const char *argv[]);
 
 /* functions in ppad_conf.c */
-extern char *confline;
 enum QUEUE_TYPE { QUEUE_TYPE_PRINTER, QUEUE_TYPE_GROUP, QUEUE_TYPE_ALIAS };
-int prnopen(const char prnname[], gu_boolean modify);
-int grpopen(const char grpname[], gu_boolean modify, gu_boolean create);
-int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify, gu_boolean create);
-int confread(void);
-int conf_printf(const char string[], ...);
-int conf_vprintf(const char string[], va_list va);
-int confabort(void);
-int confclose(void);
-int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], const char name[], const char value[], ...);
+struct CONF_OBJ
+	{
+	enum QUEUE_TYPE queue_type;
+	const char *name;
+	int flags;
+	char in_name[MAX_PPR_PATH];
+	FILE *in;
+	char out_name[MAX_PPR_PATH];
+	FILE *out;
+	char *line;
+	int line_space;
+	};
+#define CONF_MODIFY 1			/** open for modify */
+#define CONF_CREATE 2			/** create if doesn't exist */
+#define CONF_ENOENT_PRINT 4		/** print a message if doesn't exist and no modify */
+#define CONF_RELOAD 8			/** instruct pprd to reload after modify */
+struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], int flags);
+char *conf_getline(struct CONF_OBJ *obj);
+int conf_printf(struct CONF_OBJ *obj, const char string[], ...);
+int conf_vprintf(struct CONF_OBJ *obj, const char string[], va_list va);
+int conf_abort(struct CONF_OBJ *obj);
+int conf_close(struct CONF_OBJ *obj);
+int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], int extra_flags, const char name[], const char value[], ...);
+int conf_copy(enum QUEUE_TYPE, const char from[], const char to[]);
 
 /* functions in ppad_util.c */
 int ppop2(const char *parm1, const char *parm2);

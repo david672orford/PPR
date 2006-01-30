@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2005.
+** Last modified 30 January 2006.
 */
 
 /*
@@ -353,6 +353,9 @@ static int real_main(int argc, char *argv[])
 		return ret;
 	}
 
+	/* This is a bit of tradition. */
+	chdir(LIBDIR);
+	
 	/* If the --forground switch wasn't used, then dropt into background. */
 	gu_daemon_close_fds();
 	gu_daemon(myname, option_foreground, PPR_PPRD_UMASK, PPRD_LOCKFILE);

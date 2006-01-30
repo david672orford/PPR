@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_defines.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 17 October 2005.
+** This file was last modified 30 January 2006.
 */
 
 /*
@@ -353,7 +353,10 @@ struct PPD_PROTOCOLS
 	gu_boolean PJL;
 	} ;
 
-/* Possible Codes values: */
+/* Possible Codes values.  This is in this is in global_defines.h rather
+ * than interface.h because it is used to describe both the capabilities
+ * of the interface and the characteristics of the document.
+ */ 
 #define CODES_DEFAULT -1
 #define CODES_UNKNOWN 0
 #define CODES_Clean7Bit 1

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_printer.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 27 January 2006.
 */
 
 /*==============================================================
@@ -54,14 +54,6 @@
 #include "ppad.h"
 
 /*
-** Send the spooler a command to re-read a printer definition.
-*/
-static void reread_printer(const char *printer)
-	{
-	write_fifo("NP %s\n", printer);
-	} /* end of rearead_printer() */
-
-/*
 ** Update the "DefFiltOpts:" lines of any groups which have
 ** this printer as a member.
 **
@@ -74,14 +66,16 @@ static int update_groups_deffiltopts(const char *printer)
 	DIR *dir;
 	struct dirent *direntp;
 	int len;
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	int is_a_member;
 
 	if(debug_level > 0)
 		printf("Updating \"DefFiltOpts:\" for groups of which \"%s\" is a member.\n", printer);
 
-	if((dir = opendir(GRCONF)) == (DIR*)NULL)
+	if(!(dir = opendir(GRCONF)))
 		{
-		fprintf(errors, "%s(): opendir() failed\n", function);
+		fprintf(errors, _("%s(): %s() failed, errno=%d (%s)\n"), function, "opendir", errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -91,24 +85,19 @@ static int update_groups_deffiltopts(const char *printer)
 			continue;							/* and temporary files */
 
 		len=strlen(direntp->d_name);			/* Emacs style backup files */
-		if( len > 0 && direntp->d_name[len-1]=='~' )
+		if(len > 0 && direntp->d_name[len-1]=='~')
 			continue;							/* should be skipt. */
 
 		is_a_member = FALSE;					/* start by assuming it is not */
 
-		if(grpopen(direntp->d_name, FALSE, FALSE))	/* open the group file for read */
-			{
-			fprintf(errors, "%s(): grpopen(\"%s\", FALSE, FALSE) failed", function, direntp->d_name);
-			closedir(dir);
-			return EXIT_INTERNAL;
-			}
+		/* Open group config file for read. */
+		if(!(obj = conf_open(QUEUE_TYPE_GROUP, direntp->d_name, 0)))
+			fatal(EXIT_INTERNAL, "%s(): conf_open(QUEUE_TYPE_GROUP, \"%s\", 0) failed", function, direntp->d_name);
 
-		while(confread())						/* read until end of file */
+		while((line = conf_getline(obj)))		/* read until end of file */
 			{
-			if(lmatch(confline, "Printer:"))
+			if((p = lmatchp(line, "Printer:")))
 				{
-				char *p = &confline[8];
-				p += strspn(p, " \t");
 				if(strcmp(p, printer) == 0)
 					{
 					is_a_member = TRUE;
@@ -117,7 +106,7 @@ static int update_groups_deffiltopts(const char *printer)
 				}
 			}
 
-		confclose();							/* close the group file */
+		conf_close(obj);						/* close the group file */
 
 		/*
 		** If membership was detected, then call the routine in
@@ -136,62 +125,9 @@ static int update_groups_deffiltopts(const char *printer)
 	return EXIT_OK;
 	} /* end of update_groups_deffiltopts() */
 
-/*
-** Read the word provided and return BANNER_*
-*/
-static int flag_code(const char *option)
-	{
-	if(gu_strcasecmp(option, "never") == 0)
-		return BANNER_FORBIDDEN;
-	if(gu_strcasecmp(option, "no") == 0)
-		return BANNER_DISCOURAGED;
-	if(gu_strcasecmp(option, "yes") == 0)
-		return BANNER_ENCOURAGED;
-	if(gu_strcasecmp(option, "always") == 0)
-		return BANNER_REQUIRED;
-	return BANNER_INVALID;				/* no match */
-	} /* end of flag_code() */
-
-/*
-** Set the default Alert: line.
-*/
-int printer_new_alerts(const char *argv[])
-	{
-	int frequency;
-	const char *method;
-	const char *address;
-	FILE *newprn;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
-	if(! argv[0]
-				|| strspn(argv[0],"-0123456789") != strlen(argv[0])
-				|| ! argv[1] || ! argv[2])
-		{
-		fputs(_("You must supply an alert frequency, such as \"7\", an alert method,\n"
-				"such as \"mail\", and an alert address, such as \"alertreaders\".\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	frequency = atoi(argv[0]);
-	method = argv[1];
-	address = argv[2];
-
-	if(!(newprn = fopen(NEWPRN_CONFIG,"w")))
-		{
-		fprintf(errors, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
-		return EXIT_INTERNAL;
-		}
-
-	fprintf(newprn, "Alert: %d %s %s\n", frequency, method, address);
-
-	fclose(newprn);
-	return EXIT_OK;
-	} /* end of printer_new_alerts() */
-
 /*===================================================================
-** Code for ppad show begins here.
+** Functions for translating between the textual and integer 
+** versions of PPR enums.
 ===================================================================*/
 
 #define FEEDBACK_NO 0
@@ -203,6 +139,86 @@ int printer_new_alerts(const char *argv[])
 #define OUTPUTORDER_REVERSE -1
 #define OUTPUTORDER_PPD 0
 #define OUTPUTORDER_INVALID -100
+
+#define JOBBREAK_INVALID -100
+
+#define CODES_INVALID -100
+
+/*
+** Read the word provided and return BANNER_*
+*/
+static int flag_code(const char option[])
+	{
+	if(gu_strcasecmp(option, "never") == 0)
+		return BANNER_FORBIDDEN;
+	if(gu_strcasecmp(option, "no") == 0)
+		return BANNER_DISCOURAGED;
+	if(gu_strcasecmp(option, "yes") == 0)
+		return BANNER_ENCOURAGED;
+	if(gu_strcasecmp(option, "always") == 0)
+		return BANNER_REQUIRED;
+	return BANNER_INVALID;				/* no match */
+	} /* flag_code() */
+
+/*
+ * Read the word provided and return JOBBREAK_*.
+ */
+static int jobbreak_code(const char jobbreak[])
+	{
+	if(gu_strcasecmp(jobbreak, "default")==0)
+		return JOBBREAK_DEFAULT;
+	else if(gu_strcasecmp(jobbreak, "none") == 0)
+		return JOBBREAK_NONE;
+	else if(gu_strcasecmp(jobbreak, "signal") == 0)
+		return JOBBREAK_SIGNAL;
+	else if(gu_strcasecmp(jobbreak, "control-d")==0)
+		return JOBBREAK_CONTROL_D;
+	else if(gu_strcasecmp(jobbreak, "pjl")==0)
+		return JOBBREAK_PJL;
+	else if(gu_strcasecmp(jobbreak, "signal/pjl")==0)
+		return JOBBREAK_SIGNAL_PJL;
+	else if(gu_strcasecmp(jobbreak, "save/restore")==0)
+		return JOBBREAK_SAVE_RESTORE;
+	else if(gu_strcasecmp(jobbreak, "newinterface")==0)
+		return JOBBREAK_NEWINTERFACE;
+	else
+		return JOBBREAK_INVALID;
+	} /* jobbreak_code() */
+
+/*
+ * Read the word provided and return FEEDBACK_*.
+ */
+static int feedback_code(const char feedback[])
+	{
+	gu_boolean temp;
+	if(gu_strcasecmp(feedback, "default") == 0)
+		return FEEDBACK_DEFAULT;
+	if(gu_torf_setBOOL(&temp, feedback) == -1)
+	   return FEEDBACK_INVALID;
+	if(temp)
+		return FEEDBACK_YES;
+	return FEEDBACK_NO;
+	}
+
+/*
+ * Read the word provided and return FEEDBACK_*.
+ */
+static int codes_code(const char codes[])
+	{
+	if(gu_strcasecmp(codes, "default") == 0)
+		return CODES_DEFAULT;
+	else if(gu_strcasecmp(codes, "UNKNOWN") == 0)
+		return CODES_UNKNOWN;
+	else if(gu_strcasecmp(codes, "Clean7Bit") == 0)
+		return CODES_Clean7Bit;
+	else if(gu_strcasecmp(codes, "Clean8Bit") == 0)
+		return CODES_Clean8Bit;
+	else if(gu_strcasecmp(codes, "Binary")==0)
+		return CODES_Binary;
+	else if(gu_strcasecmp(codes, "TBCP")==0)
+		return CODES_TBCP;
+	return CODES_INVALID;
+	}
 
 /*
 ** Take a BANNER_* value and return a description
@@ -317,6 +333,48 @@ static const char *codes_description(int codes)
 		}
 	} /* end of codes_description() */
 
+/*===========================================================================
+** Set the default Alert: line.
+===========================================================================*/
+int printer_new_alerts(const char *argv[])
+	{
+	int frequency;
+	const char *method;
+	const char *address;
+	FILE *newprn;
+
+	if( ! am_administrator() )
+		return EXIT_DENIED;
+
+	if(! argv[0]
+				|| strspn(argv[0],"-0123456789") != strlen(argv[0])
+				|| ! argv[1] || ! argv[2])
+		{
+		fputs(_("You must supply an alert frequency, such as \"7\", an alert method,\n"
+				"such as \"mail\", and an alert address, such as \"alertreaders\".\n"), errors);
+		return EXIT_SYNTAX;
+		}
+
+	frequency = atoi(argv[0]);
+	method = argv[1];
+	address = argv[2];
+
+	if(!(newprn = fopen(NEWPRN_CONFIG,"w")))
+		{
+		fprintf(errors, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
+		return EXIT_INTERNAL;
+		}
+
+	fprintf(newprn, "Alert: %d %s %s\n", frequency, method, address);
+
+	fclose(newprn);
+	return EXIT_OK;
+	} /* end of printer_new_alerts() */
+
+/*===================================================================
+** Code for ppad show begins here.
+===================================================================*/
+
 /*
 ** Read a printer's configuration file and print a report.
 ** It is not necessary to be an operator in order to execute this command.
@@ -328,10 +386,12 @@ static const char *codes_description(int codes)
 int printer_show(const char *argv[])
 	{
 	const char function[] = "printer_show";
+	void *pool;
 	const char *printer = argv[0];		/* Argument is printer to show. */
 
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	int count;							/* general use */
-	char *ptr;							/* general use */
 	float tf1, tf2;
 	char scratch[10];
 
@@ -387,120 +447,94 @@ int printer_show(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(prnopen(printer, FALSE) == -1)	/* if printer does not exist, */
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
-		}
+
+	pool = gu_pool_push(gu_pool_new());
 
 	/*
 	** This loop examines each line in the printer's configuration
 	** file and gathers information.
 	*/
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(gu_sscanf(confline, "Interface: %S", &ptr) == 1)
+		if(gu_sscanf(line, "Interface: %S", &p) == 1)
 			{
-			if(interface) gu_free(interface);
-			interface = ptr;
-
+			interface = p;
 			/* Invalidate lines which preceed "Interface:". */
 			jobbreak = JOBBREAK_DEFAULT;
 			feedback = FEEDBACK_DEFAULT;
 			codes = CODES_DEFAULT;
 			}
-		else if(gu_sscanf(confline, "Address: %A", &ptr) == 1)
+		else if(gu_sscanf(line, "Address: %A", &p) == 1)
 			{
-			if(address) gu_free(address);		/* discard any preceding address lines */
-			address = ptr;
+			address = p;
 			}
-		else if(gu_sscanf(confline, "Options: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Options: %T", &p) == 1)
 			{
-			if(options) gu_free(options);
-			options = ptr;
+			options = p;
 			}
-		else if((ptr = lmatchp(confline, "Feedback:")))
+		else if((p = lmatchp(line, "Feedback:")))
 			{
 			gu_boolean temp;
-			if(gu_torf_setBOOL(&temp,ptr) == -1)
+			if(gu_torf_setBOOL(&temp, p) == -1)
 				feedback = FEEDBACK_INVALID;
 			if(temp)
 				feedback = FEEDBACK_YES;
 			else
 				feedback = FEEDBACK_NO;
 			}
-		else if(gu_sscanf(confline, "JobBreak: %d", &jobbreak) == 1)
+		else if(gu_sscanf(line, "JobBreak: %d", &jobbreak) == 1)
 			{
 			/* nothing to do */
 			}
-		else if(gu_sscanf(confline, "Codes: %d", &codes) == 1)
+		else if(gu_sscanf(line, "Codes: %d", &codes) == 1)
 			{
 			/* nothing to do */
 			}
-		else if((ptr = lmatchp(confline, "RIP:")))
+		else if((p = lmatchp(line, "RIP:")))
 			{
-			if(rip_name)
-				gu_free(rip_name);
-			if(rip_output_language)
-				gu_free(rip_output_language);
-			if(rip_options)
-				gu_free(rip_options);
-			gu_sscanf(ptr, "%S %S %T", &rip_name, &rip_output_language, &rip_options);
+			rip_name = NULL;
+			rip_output_language = NULL;
+			rip_options = NULL;
+			gu_sscanf(p, "%S %S %T", &rip_name, &rip_output_language, &rip_options);
 			}
-		else if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
+		else if(gu_sscanf(line, "PPDFile: %A", &p) == 1)
 			{
-			if(PPDFile)
-				gu_free(PPDFile);
-			PPDFile = ptr;
+			PPDFile = p;
 			}
-		else if(gu_sscanf(confline, "Bin: %A", &ptr) == 1)
+		else if(gu_sscanf(line, "Bin: %A", &p) == 1)
 			{
 			if(bincount<MAX_BINS)
-				bins[bincount++] = ptr;
+				bins[bincount++] = p;
 			}
-		else if(gu_sscanf(confline, "Comment: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Comment: %T", &p) == 1)
 			{
-			if(comment)
-				gu_free(comment);
-			comment = ptr;
+			comment = p;
 			}
-		else if(gu_sscanf(confline, "Location: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Location: %T", &p) == 1)
 			{
-			if(location)
-				gu_free(location);
-			location = ptr;
+			location = p;
 			}
-		else if(gu_sscanf(confline, "Department: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Department: %T", &p) == 1)
 			{
-			if(department)
-				gu_free(department);
-			department = ptr;
+			department = p;
 			}
-		else if(gu_sscanf(confline, "Contact: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Contact: %T", &p) == 1)
 			{
-			if(contact)
-				gu_free(contact);
-			contact = ptr;
+			contact = p;
 			}
-		else if(lmatch(confline, "FlagPages:"))
+		else if(lmatch(line, "FlagPages:"))
 			{
-			gu_sscanf(confline, "FlagPages: %d %d", &banner, &trailer);
+			gu_sscanf(line, "FlagPages: %d %d", &banner, &trailer);
 			}
-		else if(lmatch(confline, "Alert:"))
+		else if(lmatch(line, "Alert:"))
 			{
-			if(alerts_method)
-				{
-				gu_free(alerts_method);
-				alerts_method = NULL;
-				}
-			if(alerts_address)
-				{
-				gu_free(alerts_address);
-				alerts_address = NULL;
-				}
-			gu_sscanf(confline, "Alert: %d %S %S", &alerts_frequency, &alerts_method, &alerts_address);
+			alerts_method = NULL;
+			alerts_address = NULL;
+			gu_sscanf(line, "Alert: %d %S %S", &alerts_frequency, &alerts_method, &alerts_address);
 			}
-		else if(gu_sscanf(confline, "OutputOrder: %@s", sizeof(scratch), scratch) == 1)
+		else if(gu_sscanf(line, "OutputOrder: %@s", sizeof(scratch), scratch) == 1)
 			{
 			if(strcmp(scratch, "Normal") == 0)
 				outputorder = 1;
@@ -509,7 +543,7 @@ int printer_show(const char *argv[])
 			else
 				outputorder = -100;
 			}
-		else if((count = gu_sscanf(confline, "Charge: %f %f", &tf1, &tf2)) > 0)
+		else if((count = gu_sscanf(line, "Charge: %f %f", &tf1, &tf2)) > 0)
 			{
 			/* Convert dollars to cents, pounds to pence, etc.: */
 			charge_duplex_sheet = (int)(tf1 * 100.0 + 0.5);
@@ -520,19 +554,15 @@ int printer_show(const char *argv[])
 			else
 				charge_duplex_sheet = charge_simplex_sheet;
 			}
-		else if(gu_sscanf(confline, "Switchset: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Switchset: %T", &p) == 1)
 			{
-			if(switchset)
-				gu_free(switchset);
-			switchset = ptr;
+			switchset = p;
 			}
-		else if(gu_sscanf(confline, "DefFiltOpts: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "DefFiltOpts: %T", &p) == 1)
 			{
-			if(deffiltopts)
-				gu_free(deffiltopts);
-			deffiltopts = ptr;
+			deffiltopts = p;
 			}
-		else if(gu_sscanf(confline, "PPDOpt: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "PPDOpt: %T", &p) == 1)
 			{
 			if(ppdopts_count >= (sizeof(ppdopts) / sizeof(ppdopts[0])))
 				{
@@ -540,44 +570,39 @@ int printer_show(const char *argv[])
 				}
 			else
 				{
-				ppdopts[ppdopts_count++] = ptr;
+				ppdopts[ppdopts_count++] = p;
 				}
 			}
-		else if(gu_sscanf(confline, "PassThru: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "PassThru: %T", &p) == 1)
 			{
-			if(passthru)
-				gu_free(passthru);
-			passthru = ptr;
+			passthru = p;
 			}
-		else if(gu_sscanf(confline, "LimitPages: %d %d", &limitpages_lower, &limitpages_upper) == 2)
+		else if(gu_sscanf(line, "LimitPages: %d %d", &limitpages_lower, &limitpages_upper) == 2)
 			{
 			/* nothing more to do */
 			}
-		else if(gu_sscanf(confline, "LimitKilobytes: %d %d", &limitkilobytes_lower, &limitkilobytes_upper) == 2)
+		else if(gu_sscanf(line, "LimitKilobytes: %d %d", &limitkilobytes_lower, &limitkilobytes_upper) == 2)
 			{
 			/* nothing more to do */
 			}
-		else if((ptr = lmatchp(confline, "GrayOK:")))
+		else if((p = lmatchp(line, "GrayOK:")))
 			{
-			if(gu_torf_setBOOL(&grayok,ptr) == -1)
-				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", ptr);
+			if(gu_torf_setBOOL(&grayok,p) == -1)
+				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", p);
 			}
-		else if(gu_sscanf(confline, "ACLs: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "ACLs: %T", &p) == 1)
 			{
-			if(acls)
-				gu_free(acls);
-			acls = ptr;
+			acls = p;
 			}
-		else if(gu_sscanf(confline, "PageTimeLimit: %d", &pagetimelimit) == 1)
+		else if(gu_sscanf(line, "PageTimeLimit: %d", &pagetimelimit) == 1)
 			{
 			/* nothing more to do */
 			}
-		else if(gu_sscanf(confline, "Userparams: %T", &ptr) == 1)
+		else if(gu_sscanf(line, "Userparams: %T", &p) == 1)
 			{
-			if(userparams) gu_free(userparams);
-			userparams = ptr;
+			userparams = p;
 			}
-		else if(confline[0] >= 'a' && confline[0] <= 'z')		/* if in addon name space */
+		else if(line[0] >= 'a' && line[0] <= 'z')		/* if in addon name space */
 			{
 			if(addon_count >= MAX_ADDONS)
 				{
@@ -585,20 +610,19 @@ int printer_show(const char *argv[])
 				}
 			else
 				{
-				addon[addon_count++] = gu_strdup(confline);
+				addon[addon_count++] = gu_strdup(line);
 				}
 			}
 
 		} /* end of loop for each configuration file line */
 
-	confclose();
+	conf_close(obj);
 
 	/*
 	** Determine the jobbreak, feedback, and codes
 	** defaults for this interface.
 	*/
 	{
-	char *pline, *p;
 	char *cups_raster_filter = NULL;
 	char *cups_postscript_filter = NULL;
 	gu_boolean ColorDevice = FALSE;
@@ -615,9 +639,9 @@ int printer_show(const char *argv[])
 		gu_Try {
 			ppdobj = ppdobj_new(PPDFile);
 
-			while((pline = ppdobj_readline(ppdobj)))
+			while((line = ppdobj_readline(ppdobj)))
 				{
-				if((p = lmatchp(pline, "*Protocols:")))
+				if((p = lmatchp(line, "*Protocols:")))
 					{
 					char *f;
 					while((f = gu_strsep(&p, " \t")))
@@ -630,7 +654,7 @@ int printer_show(const char *argv[])
 					continue;
 					} /* "*Protocols:" */
 	
-				if((p = lmatchp(pline, "*pprRIP:")) && !rip_ppd_name)
+				if((p = lmatchp(line, "*pprRIP:")) && !rip_ppd_name)
 					{
 					char *f1, *f2, *f3;
 					if((f1 = gu_strsep(&p, " \t")) && (f2 = gu_strsep(&p, " \t")))
@@ -647,7 +671,7 @@ int printer_show(const char *argv[])
 					continue;
 					} /* "*pprRIP:" */
 	
-				if((p = lmatchp(pline, "*cupsFilter:")))
+				if((p = lmatchp(line, "*cupsFilter:")))
 					{
 					char *p1, *p2, *p3;
 					if(*p++ == '"' && (p1 = strchr(p, '"')))
@@ -668,7 +692,7 @@ int printer_show(const char *argv[])
 					continue;
 					} /* "*cupsFilter:" */
 	
-				if((p = lmatchp(pline, "*ColorDevice:")))
+				if((p = lmatchp(line, "*ColorDevice:")))
 					{
 					gu_torf_setBOOL(&ColorDevice,p);
 					continue;
@@ -720,11 +744,6 @@ int printer_show(const char *argv[])
 		rip_output_language = rip_ppd_output_language;
 		rip_options = rip_ppd_options;
 		}
-
-	if(cups_raster_filter)
-		gu_free(cups_raster_filter);
-	if(cups_postscript_filter)
-		gu_free(cups_postscript_filter);
 	}
 
 	/*
@@ -817,7 +836,6 @@ int printer_show(const char *argv[])
 			{
 			gu_puts("  ");
 			printf(_("PPDOpts: %s\n"), ppdopts[x]);
-			gu_free(ppdopts[x]);
 			}
 		}
 
@@ -831,8 +849,6 @@ int printer_show(const char *argv[])
 				printf("%s", bins[x]);
 			else
 				printf(", %s", bins[x]);
-
-			gu_free(bins[x]);
 			}
 		putchar('\n');
 		}
@@ -931,7 +947,6 @@ int printer_show(const char *argv[])
 			for(x = 0; x < addon_count; x++)
 				{
 				printf("\t%s\n", addon[x]);
-				gu_free(addon[x]);
 				}
 			}
 		}
@@ -1005,7 +1020,6 @@ int printer_show(const char *argv[])
 			if(x)
 				putchar(' ');
 			printf("%.*s %.*s", len1, p1, len2, p2);
-			gu_free(ppdopts[x]);
 			}
 		}
 		putchar('\n');
@@ -1019,7 +1033,6 @@ int printer_show(const char *argv[])
 				printf("%s", bins[x]);
 			else
 				printf(" %s", bins[x]);
-			gu_free(bins[x]);
 			}
 		}
 		putchar('\n');
@@ -1056,55 +1069,41 @@ int printer_show(const char *argv[])
 					{
 					printf("addon\t%s\n", addon[x]);
 					}
-				gu_free(addon[x]);
 				}
 			}
 		} /* end of machine_readable */
 
-	/* Free some memory which we allocated: */
-	if(comment) gu_free(comment);
-	if(location) gu_free(location);
-	if(department) gu_free(department);
-	if(contact) gu_free(contact);
-	if(interface) gu_free(interface);
-	if(address) gu_free(address);
-	if(options) gu_free(options);
-	if(rip_name != rip_ppd_name)
-		{
-		if(rip_name) gu_free(rip_name);
-		if(rip_output_language) gu_free(rip_output_language);
-		if(rip_options) gu_free(rip_options);
-		}
-	if(rip_ppd_name) gu_free(rip_ppd_name);
-	if(rip_ppd_output_language) gu_free(rip_ppd_output_language);
-	if(rip_ppd_options) gu_free(rip_ppd_options);
-	if(PPDFile) gu_free(PPDFile);
-	if(alerts_method) gu_free(alerts_method);
-	if(alerts_address) gu_free(alerts_address);
-	if(deffiltopts) gu_free(deffiltopts);
-	if(switchset) gu_free(switchset);
-	if(passthru) gu_free(passthru);
-	if(acls) gu_free(acls);
+	gu_pool_free(gu_pool_pop(pool));
 
 	return EXIT_OK;
 	} /* end of printer_show() */
+
+/*==========================================================================
+** Copy a printer
+==========================================================================*/
+int printer_copy(const char *argv[])
+	{
+	if( ! argv[0] || ! argv[1] )
+		{
+		fputs(_("You must supply the name of an existing printer and\n"
+				"a name for the new printer.\n"), errors);
+		return EXIT_SYNTAX;
+		}
+	return conf_copy(QUEUE_TYPE_PRINTER, argv[0], argv[1]);
+	}
 
 /*==========================================================================
 ** Set a printer's comment.
 ==========================================================================*/
 int printer_comment(const char *argv[])
 	{
-	const char *printer = argv[0];
-	const char *comment = argv[1];
-
-	if( ! printer || ! comment )
+	if( ! argv[0] || ! argv[1] )
 		{
 		fputs(_("You must supply the name of an existing printer and\n"
 				"a comment to attach to it.\n"), errors);
 		return EXIT_SYNTAX;
 		}
-
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "Comment", "%s", comment);
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Comment", "%s", argv[1]);
 	} /* end of printer_comment() */
 
 /*==========================================================================
@@ -1112,17 +1111,13 @@ int printer_comment(const char *argv[])
 ==========================================================================*/
 int printer_location(const char *argv[])
 	{
-	const char *printer = argv[0];
-	const char *location = argv[1];
-
-	if( ! printer || ! location )
+	if( ! argv[0] || ! argv[1] )
 		{
 		fputs(_("You must supply the name of an existing printer and\n"
 				"a location name to attach to it.\n"), errors);
 		return EXIT_SYNTAX;
 		}
-
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "Location", "%s", location);
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Location", "%s", argv[1]);
 	} /* end of printer_location() */
 
 /*==========================================================================
@@ -1130,17 +1125,13 @@ int printer_location(const char *argv[])
 ==========================================================================*/
 int printer_department(const char *argv[])
 	{
-	const char *printer = argv[0];
-	const char *department = argv[1];
-
-	if( ! printer || ! department )
+	if( ! argv[0] || ! argv[1] )
 		{
 		fputs(_("You must supply the name of an existing printer and\n"
 				"a department name to attach to it.\n"), errors);
 		return EXIT_SYNTAX;
 		}
-
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "Department", "%s", department);
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Department", "%s", argv[1]);
 	} /* end of printer_department() */
 
 /*==========================================================================
@@ -1148,17 +1139,13 @@ int printer_department(const char *argv[])
 ==========================================================================*/
 int printer_contact(const char *argv[])
 	{
-	const char *printer = argv[0];
-	const char *contact = argv[1];
-
-	if( ! printer || ! contact )
+	if( ! argv[0] || ! argv[1] )
 		{
 		fputs(_("You must supply the name of an existing printer and\n"
 				"a contact name to attach to it.\n"), errors);
 		return EXIT_SYNTAX;
 		}
-
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "Contact", "%s", contact);
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Contact", "%s", argv[1]);
 	} /* end of printer_contact() */
 
 /*=========================================================================
@@ -1176,6 +1163,7 @@ int printer_interface(const char *argv[])
 	const char *printer = argv[0];
 	const char *interface = argv[1];
 	const char *address = argv[2];
+	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -1189,13 +1177,13 @@ int printer_interface(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(strpbrk(printer, DEST_DISALLOWED) != (char*)NULL)
+	if(strpbrk(printer, DEST_DISALLOWED))
 		{
 		fputs(_("The printer name contains a disallowed character.\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
-	if(strchr(DEST_DISALLOWED_LEADING, (int)printer[0]) != (char*)NULL)
+	if(strchr(DEST_DISALLOWED_LEADING, (int)printer[0]))
 		{
 		fputs(_("The printer name begins with a disallowed character.\n"), errors);
 		return EXIT_SYNTAX;
@@ -1229,84 +1217,75 @@ int printer_interface(const char *argv[])
 		}
 	}
 
-	/* if new printer */
-	if( prnopen(printer, TRUE) )		/* try to open printer config for write */
-		{								/* if we fail, create a new printer */
-		FILE *newconf;
-		FILE *defaults;
-		char fname[MAX_PPR_PATH];
-		int c;
-
-		/* create a config file */
-		ppr_fnamef(fname, "%s/%s", PRCONF, printer);
-		if((newconf = fopen(fname,"w")) == (FILE*)NULL)
-			{
-			fprintf(errors, _("Failed to create printer config file \"%s\", errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
-			return EXIT_INTERNAL;
-			}
-
-		fprintf(newconf, "Interface: %s\n", interface);			/* write the interface */
-		fprintf(newconf, "Address: \"%s\"\n", address);
-		fprintf(newconf, "PPDFile: Apple LaserWriter Plus\n");	/* specify a good generic PPD file */
-		fprintf(newconf, "DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX\n");
-
-		if((defaults = fopen(NEWPRN_CONFIG,"r")) != (FILE*)NULL)
-			{
-			while((c = fgetc(defaults)) != -1)
-				fputc(c,newconf);
-			fclose(defaults);
-			}
-
-		fclose(newconf);
-		reread_printer(printer);		/* tell pprd to re-read the configuration */
-		}								/* (really for the 1st time) */
-
-	/* if old printer */
-	else
+	if((obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY)))		/* existing? */
 		{
+		char *line, *p;
 		gu_boolean different_interface = TRUE;
 
 		/* Copy up to the 1st "Interface:". */
-		while(confread())
+		while((line  = conf_getline(obj)))
 			{
-			if(lmatch(confline, "Interface:"))
+			if((p = lmatchp(line, "Interface:")))
 				{
-				char *p = &confline[10];
-				p += strspn(p, " \t");
 				if(strcmp(interface, p) == 0)
 					different_interface = FALSE;
 				break;
 				}
 			else				/* while deleting spurious "JobBreak:" and */
 				{				/* "Feedback:" lines as we go */
-				if(!lmatch(confline, "Address:")
-						&& !lmatch(confline, "Options:")
-						&& !lmatch(confline, "JobBreak:")
-						&& !lmatch(confline, "Feedback:")
-						&& !lmatch(confline, "Codes:") )
+				if(!lmatch(line, "Address:")
+						&& !lmatch(line, "Options:")
+						&& !lmatch(line, "JobBreak:")
+						&& !lmatch(line, "Feedback:")
+						&& !lmatch(line, "Codes:") )
 					{
-					conf_printf("%s\n", confline);
+					conf_printf(obj, "%s\n", line);
 					}
 				}
 			}
 
 		/* Write the new lines. */
-		conf_printf("Interface: %s\n", interface);
-		conf_printf("Address: \"%s\"\n", address);
+		conf_printf(obj, "Interface: %s\n", interface);
+		conf_printf(obj, "Address: \"%s\"\n", address);
 
 		/* And copy the rest of the file while removing certain old lines. */
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(!lmatch(confline, "Interface:")
-						&& !lmatch(confline, "Address:")
-						&& (!lmatch(confline, "Options:") || !different_interface)
-						&& (!lmatch(confline, "JobBreak:") || !different_interface)
-						&& (!lmatch(confline, "Feedback:") || !different_interface)
-						&& (!lmatch(confline, "Codes:") || !different_interface) )
-				conf_printf("%s\n", confline);
+			if(!lmatch(line, "Interface:")
+						&& !lmatch(line, "Address:")
+						&& (!lmatch(line, "Options:") || !different_interface)
+						&& (!lmatch(line, "JobBreak:") || !different_interface)
+						&& (!lmatch(line, "Feedback:") || !different_interface)
+						&& (!lmatch(line, "Codes:") || !different_interface) )
+				conf_printf(obj, "%s\n", line);
 			}
-		confclose();
+		conf_close(obj);
 		}
+
+	else								/* new printer */
+		{
+		FILE *defaults;
+
+		if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_CREATE | CONF_RELOAD)))
+			return EXIT_INTERNAL;
+
+		conf_printf(obj, "Interface: %s\n", interface);
+		conf_printf(obj, "Address: \"%s\"\n", address);
+		conf_printf(obj, "PPDFile: Apple LaserWriter Plus\n");	/* specify a good generic PPD file */
+		conf_printf(obj, "DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX\n");
+
+		/* if there is a defaults file, include it */
+		if((defaults = fopen(NEWPRN_CONFIG,"r")))
+			{
+			char *line = NULL;
+			int line_space = 80;
+			while((line = gu_getline(line, &line_space, defaults)))
+				conf_printf(obj, "%s\n", line);
+			fclose(defaults);
+			}
+
+		conf_close(obj);
+		}								/* (really for the 1st time) */
 
 	return EXIT_OK;
 	} /* end of printer_interface() */
@@ -1317,6 +1296,8 @@ int printer_interface(const char *argv[])
 int printer_options(const char *argv[])
 	{
 	const char *printer = argv[0];
+	struct CONF_OBJ *obj;
+	char *line;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -1328,23 +1309,20 @@ int printer_options(const char *argv[])
 		}
 
 	/* make sure the printer exists */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
-		}
 
 	/* Modify the printer's configuration file. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(lmatch(confline, "Options:"))				/* Delete "Options: " lines before */
+		if(lmatch(line, "Options:"))					/* Delete "Options: " lines before */
 			continue;									/* the "Interface: " line. */
-		if(lmatch(confline, "Interface:"))				/* Break loop after copying */
+		if(lmatch(line, "Interface:"))					/* Break loop after copying */
 			{											/* the "Interface: " line */
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 			break;
 			}
-		conf_printf("%s\n", confline);
+		conf_printf(obj, "%s\n", line);
 		}
 
 	/* If we have a meaningful new line to write, write it now. */
@@ -1355,106 +1333,90 @@ int printer_options(const char *argv[])
 		if(strcmp(p, "none") == 0)
 			fprintf(errors, X_("Warning: setting options to \"none\" is deprecated\n"));
 		else
-			conf_printf("Options: %s\n", p);
+			conf_printf(obj, "Options: %s\n", p);
 		gu_free(p);
 		}
 	}
 
-	while(confread())							/* copy rest of file, */
+	while((line = conf_getline(obj)))						/* copy rest of file, */
 		{
-		if(lmatch(confline, "Options:"))
+		if(lmatch(line, "Options:"))
 			continue;
 		else
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 		}
-	confclose();
+
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of printer_options() */
 
 /*
+ * Set a numberic Interface parameter.  If the value is less than zero, then
+ * the setting is simply removed.
+ */
+static int printer_interface_param(const char printer[], const char param[], int value)
+	{
+	struct CONF_OBJ *obj;
+	char *line;
+	int param_len = strlen(param);
+
+	/* Make sure the printer exists. */
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
+		return EXIT_BADDEST;
+
+	/* Modify the printer's configuration file. */
+	while((line = conf_getline(obj)))
+		{
+		if(strncmp(line, param, param_len) == 0 && line[param_len] == ':')
+			continue;
+		conf_printf(obj, "%s\n", line);
+		if(lmatch(line, "Interface:"))			/* stop after "Interface:" line */
+			break;
+		}
+
+	/* If the parameter value is not JOBBREAK_DEFAULT, CODES_DEFAULT, or FEEDBACK_DEFAULT, */
+	if(value >= 0)
+		{
+		if(strcmp(param, "Feedback") == 0)
+			conf_printf(obj, "%s: %s\n", param, value ? "True" : "False");
+		else
+			conf_printf(obj, "%s: %d\n", param, value);
+		}
+
+	while((line = conf_getline(obj)))			/* copy rest of file, */
+		{
+		if(strncmp(line, param, param_len) == 0 && line[param_len] == ':')
+			continue;
+		conf_printf(obj, "%s\n", line);
+		}
+
+	conf_close(obj);
+
+	return EXIT_OK;
+	} /* printer_interface_param() */
+
+/*
 ** Set a printer's jobbreak flag.
 */
-static void printer_jobbreak_help(void)
-	{
-	fputs(_("You must supply the name of an existing printer and a jobbreak mode setting.\n"
-		"Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
-		"\"save/restore\", \"newinterface\", and \"default\".\n"), errors);
-	} /* end of printer_jobbreak_help() */
-
 int printer_jobbreak(const char *argv[])
 	{
 	const char *printer = argv[0];
-	int newstate;
+	const char *jobbreak = argv[1];
+	int new_value;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! printer || ! argv[1])
+	if(! printer || ! jobbreak || (new_value = jobbreak_code(jobbreak)) == JOBBREAK_INVALID)
 		{
-		printer_jobbreak_help();
+		fputs(_("You must supply the name of an existing printer and a jobbreak mode setting.\n"
+			"Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
+			"\"save/restore\", \"newinterface\", and \"default\".\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
-	if(gu_strcasecmp(argv[1], "none") == 0)
-		newstate = JOBBREAK_NONE;
-	else if(gu_strcasecmp(argv[1], "signal") == 0)
-		newstate = JOBBREAK_SIGNAL;
-	else if(gu_strcasecmp(argv[1], "control-d")==0)
-		newstate = JOBBREAK_CONTROL_D;
-	else if(gu_strcasecmp(argv[1], "pjl")==0)
-		newstate = JOBBREAK_PJL;
-	else if(gu_strcasecmp(argv[1], "signal/pjl")==0)
-		newstate = JOBBREAK_SIGNAL_PJL;
-	else if(gu_strcasecmp(argv[1], "save/restore")==0)
-		newstate = JOBBREAK_SAVE_RESTORE;
-	else if(gu_strcasecmp(argv[1], "newinterface")==0)
-		newstate = JOBBREAK_NEWINTERFACE;
-	else if(gu_strcasecmp(argv[1], "default")==0)
-		newstate = JOBBREAK_DEFAULT;
-	else
-		{
-		printer_jobbreak_help();
-		return EXIT_SYNTAX;
-		}
-
-	/* Make sure the printer exists. */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
-		return EXIT_BADDEST;
-		}
-
-	/* Modify the printer's configuration file. */
-	while(confread())
-		{
-		if(lmatch(confline, "JobBreak:"))				/* delete "JobBreak:" lines */
-			continue;
-		if(lmatch(confline, "Interface:"))				/* stop after "Interface:" line */
-			{
-			conf_printf("%s\n", confline);
-			break;
-			}
-		conf_printf("%s\n", confline);
-		}
-
-	/*
-	** If the new jobbreak setting is not "default",
-	** write a new "JobBreak:" line.
-	*/
-	if(newstate != JOBBREAK_DEFAULT)
-		conf_printf("JobBreak: %d\n", newstate);
-
-	while(confread())							/* copy rest of file, */
-		{
-		if(lmatch(confline, "JobBreak:"))		/* deleting any further "JobBreak: " lines */
-			continue;
-		else
-			conf_printf("%s\n", confline);
-		}
-	confclose();
-
-	return EXIT_OK;
+	return printer_interface_param(printer, "JobBreak", new_value);
 	} /* end of printer_jobbreak() */
 
 /*
@@ -1463,137 +1425,44 @@ int printer_jobbreak(const char *argv[])
 int printer_feedback(const char *argv[])
 	{
 	const char *printer = argv[0];
-	gu_boolean newstate;
+	const char *feedback = argv[1];
+	int new_value;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! printer || ! argv[1]
-		|| (gu_torf_setBOOL(&newstate,argv[1])==-1 && gu_strcasecmp(argv[1],"default")!=0)
-		)
+	if(! printer || ! feedback || (new_value = feedback_code(feedback)) == FEEDBACK_INVALID)
 		{
 		fputs(_("You must supply the name of an existing printer\n"
 				"and \"true\", \"false\", or \"default\".\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
-	/* make sure the printer exists */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
-		return EXIT_BADDEST;
-		}
-
-	/* Modify the printer's configuration file. */
-	while(confread())
-		{
-		if(lmatch(confline, "Feedback:"))				/* delete "Feedback:" lines */
-			continue;
-		if(lmatch(confline, "Interface:"))				/* stop after copying the */
-			{											/* "Interface:" line */
-			conf_printf("%s\n", confline);
-			break;
-			}
-		conf_printf("%s\n", confline);
-		}
-
-	/* If the new feedback setting is not "default", */
-	/* write a new "Feedback:" line.				 */
-	if(strcmp(argv[1],"default") != 0)
-		conf_printf("Feedback: %s\n", newstate ? "True" : "False");
-
-	while(confread())							/* copy rest of file, */
-		{
-		if(lmatch(confline, "Feedback:"))
-			continue;
-		else
-			conf_printf("%s\n", confline);
-		}
-	confclose();
-
-	return EXIT_OK;
+	return printer_interface_param(printer, "Feedback", new_value);
 	} /* end of printer_feedback() */
 
 /*
 ** Set a printer's codes setting.
 */
-static void printer_codes_help(void)
-	{
-	fputs(_("You must supply the name of an existing printer and a codes setting.\n"
-		"Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
-		"\"UNKNOWN\", and \"default\".\n"), errors);
-	} /* end of printer_jobbreak_help() */
-
 int printer_codes(const char *argv[])
 	{
 	const char *printer = argv[0];
-	int newcodes;
+	const char *codes = argv[1];
+	int new_value;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! printer || ! argv[1] )
+	if( ! printer || ! codes || (new_value = codes_code(codes)) == CODES_INVALID)
 		{
-		printer_codes_help();
+		fputs(_("You must supply the name of an existing printer and a codes setting.\n"
+			"Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
+			"\"UNKNOWN\", and \"default\".\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
-	if(gu_strcasecmp(argv[1], "default") == 0)
-		newcodes = CODES_DEFAULT;
-	else if(gu_strcasecmp(argv[1], "UNKNOWN") == 0)
-		newcodes = CODES_UNKNOWN;
-	else if(gu_strcasecmp(argv[1], "Clean7Bit") == 0)
-		newcodes = CODES_Clean7Bit;
-	else if(gu_strcasecmp(argv[1], "Clean8Bit") == 0)
-		newcodes = CODES_Clean8Bit;
-	else if(gu_strcasecmp(argv[1], "Binary")==0)
-		newcodes = CODES_Binary;
-	else if(gu_strcasecmp(argv[1], "TBCP")==0)
-		newcodes = CODES_TBCP;
-	else
-		{
-		printer_codes_help();
-		return EXIT_SYNTAX;
-		}
-
-	/* Make sure the printer exists. */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
-		return EXIT_BADDEST;
-		}
-
-	/* Modify the printer's configuration file. */
-	while(confread())
-		{
-		if(lmatch(confline, "Codes:"))					/* delete "JobBreak:" lines */
-			continue;
-		if(lmatch(confline, "Interface:"))				/* stop after "Interface:" line */
-			{
-			conf_printf("%s\n", confline);
-			break;
-			}
-		conf_printf("%s\n", confline);
-		}
-
-	/*
-	** If the new codes setting is not "DEFAULT",
-	** write a new "JobBreak:" line.
-	*/
-	if(newcodes != CODES_DEFAULT)
-		conf_printf("Codes: %d\n", (int)newcodes);
-
-	while(confread())							/* copy rest of file, */
-		{
-		if(lmatch(confline, "Codes:"))			/* deleting any further "JobBreak: " lines */
-			continue;
-		else
-			conf_printf("%s\n", confline);
-		}
-	confclose();
-
-	return EXIT_OK;
-	} /* end of printer_jobbreak() */
+	return printer_interface_param(printer, "Codes", new_value);
+	} /* end of printer_codes() */
 
 /*
 ** Set the RIP.
@@ -1629,7 +1498,7 @@ int printer_rip(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "RIP", rip ? "%s %s %s" : NULL, rip, output_language, options ? options : "");
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "RIP", rip ? "%s %s %s" : NULL, rip, output_language, options ? options : "");
 	} /* end of printer_rip() */
 
 /*
@@ -1646,8 +1515,9 @@ int printer_ppd(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *ppdname = argv[1];
+	struct CONF_OBJ *obj;
 	void *qobj = NULL;
-	const char *p;
+	const char *line, *p;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -1662,11 +1532,8 @@ int printer_ppd(const char *argv[])
 	** Make sure the printer exists,
 	** opening its configuration file if it does.
 	*/
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
 
 	gu_Try
 		{
@@ -1685,64 +1552,53 @@ int printer_ppd(const char *argv[])
 		** As we go, delete lines which will be obsolete since the PPD
 		** file is changing.
 		*/
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "PPDFile:"))				/* stop at */
+			if(lmatch(line, "PPDFile:"))				/* stop at */
 				break;
-	
-			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+			if(lmatch(line, "DefFiltOpts:"))			/* delete */
 				continue;
-	
-			if(lmatch(confline, "PPDOpt:"))					/* delete */
+			if(lmatch(line, "PPDOpt:"))					/* delete */
 				continue;
-	
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 			}
 	
 		/* Write the new "PPDFile:" lines. */
-		conf_printf("PPDFile: %s\n", ppdname);
+		conf_printf(obj, "PPDFile: %s\n", ppdname);
 	
 		/*
 		** Copy the rest of the file, deleting "PPDFile:" lines and any
 		** lines made obsolete by the fact that the PPD file has been
 		** changed.
 		*/
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "PPDFile:"))				/* delete */
+			if(lmatch(line, "PPDFile:"))				/* delete */
 				continue;
-	
-			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+			if(lmatch(line, "DefFiltOpts:"))			/* delete */
 				continue;
-	
-			if(lmatch(confline, "PPDOpt:"))					/* delete */
+			if(lmatch(line, "PPDOpt:"))					/* delete */
 				continue;
-	
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 			}
 
 		/* Insert the new "DefFiltOpts:" line. */
 		if((p = queueinfo_computedDefaultFilterOptions(qobj)))
-			conf_printf("DefFiltOpts: %s\n", p);
+			conf_printf(obj, "DefFiltOpts: %s\n", p);
 
 		/* This will commit the changes. */
-		confclose();
+		conf_close(obj);
 		}
 	gu_Final {
 		if(qobj)
 			queueinfo_free(qobj);
 		}
 	gu_Catch {
-		confabort();
+		conf_abort(obj);
 		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	
-	/* Tell pprd we have changed the printer's configuration so that
-	   it can clear the never bits for this printer.
-	   */
-	reread_printer(printer);
-
 	/* Update any groups which have this printer as a member. */
 	return update_groups_deffiltopts(printer);
 	} /* end of printer_ppd() */
@@ -1757,6 +1613,8 @@ int printer_alerts(const char *argv[])
 	int frequency;
 	const char *method = argv[2];
 	const char *address = argv[3];
+	struct CONF_OBJ *obj;
+	char *line;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -1773,35 +1631,29 @@ int printer_alerts(const char *argv[])
 
 	frequency = atoi(argv[1]);
 
-	/* make sure the printer exists */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
 
 	/* Modify the printer's configuration file. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(lmatch(confline, "Alert:"))
+		if(lmatch(line, "Alert:"))
 			break;
 		else
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 		}
 
-	conf_printf("Alert: %d %s %s\n", frequency, method, address);
+	conf_printf(obj, "Alert: %d %s %s\n", frequency, method, address);
 
-	while(confread())							/* copy rest of file, */
+	while((line = conf_getline(obj)))			/* copy rest of file, */
 		{										/* deleting further */
-		if(lmatch(confline, "Alert:"))			/* "Alert:" lines. */
+		if(lmatch(line, "Alert:"))				/* "Alert:" lines. */
 			continue;
 		else
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 		}
 
-	confclose();
-
-	reread_printer(printer);	/* tell pprd to re-read the configuration */
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of printer_alert() */
@@ -1816,6 +1668,8 @@ int printer_frequency(const char *argv[])
 	int frequency;						/* dispatch every frequency alerts */
 	char *method = (char*)NULL;			/* by method */
 	char *address = (char*)NULL;		/* to address */
+	struct CONF_OBJ *obj;
+	char *line;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -1829,59 +1683,44 @@ int printer_frequency(const char *argv[])
 	printer = argv[0];
 	frequency = atoi(argv[1]);
 
-	/* make sure the printer exists */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
 
 	/* Modify the printer's configuration file. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(lmatch(confline, "Alert:"))
+		if(lmatch(line, "Alert:"))
 			{
-			int x=6;	/* 7 is length of "Alert: " */
-			int len;
-
-			x += strspn(&confline[x]," \t0123456789");	/* skip spaces and */
-														/* digits */
-			len=strcspn(&confline[x]," \t");			/* get word length */
-			method = gu_strndup(&confline[x], len);
-			x += len;									/* move past word */
-			x += strspn(&confline[x]," \t");			/* skip spaces */
-
-			len = strcspn(&confline[x]," \t\n");		/* get length */
-			address = gu_strndup(&confline[x],len);
-
+			int old_frequency;
+			gu_free_if(method);
+			gu_free_if(address);
+			gu_sscanf(line, "Alert: %d %S %Z", &old_frequency, method, address);
 			break;
 			}
 		else
 			{
-			conf_printf("%s\n",confline);
+			conf_printf(obj, "%s\n", line);
 			}
 		}
 
 	if(! method || ! address)
 		{
-		confabort();
 		fputs(_("No alert method and address defined, use \"ppad alerts\".\n"), errors);
+		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
 
-	conf_printf("Alert: %d %s %s\n",frequency,method,address);
-
-	while(confread())							/* copy rest of file, */
+	conf_printf(obj, "Alert: %d %s %s\n", frequency, method, address);
+ 
+	while((line = conf_getline(obj)))			/* copy rest of file, */
 		{										/* deleting further */
-		if(lmatch(confline, "Alert:"))			/* "Alert:" lines. */
+		if(lmatch(line, "Alert:"))				/* "Alert:" lines. */
 			continue;
 		else
-			conf_printf("%s\n",confline);
+			conf_printf(obj, "%s\n", line);
 		}
 
-	confclose();				/* put new file into place */
-
-	reread_printer(printer);	/* tell pprd to re-read the configuration */
+	conf_close(obj);				/* put new file into place */
 
 	return EXIT_OK;
 	} /* end of printer_frequency() */
@@ -1908,15 +1747,17 @@ int printer_flags(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if((banner = flag_code(argv[1])) == BANNER_INVALID
-				|| (trailer = flag_code(argv[2])) == BANNER_INVALID)
+	if(		(
+			banner = flag_code(argv[1])) == BANNER_INVALID
+			|| (trailer = flag_code(argv[2])) == BANNER_INVALID
+			)
 		{
 		fputs(_("Banner and trailer must be set to \"never\", \"no\",\n"
 				"\"yes\", or \"always\".\n"), errors);
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "FlagPages", "%d %d", banner, trailer);
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "FlagPages", "%d %d", banner, trailer);
 	} /* end of printer_flags() */
 
 /*
@@ -1949,10 +1790,7 @@ int printer_outputorder(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(newstate)
-		return conf_set_name(QUEUE_TYPE_PRINTER, printer, "OutputOrder", "%s", newstate);
-	else
-		return conf_set_name(QUEUE_TYPE_PRINTER, printer, "OutputOrder", NULL);
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "OutputOrder", newstate ? "%s" : NULL, newstate);
 	} /* end of printer_direction() */
 
 /*
@@ -1988,7 +1826,7 @@ int printer_charge(const char *argv[])
 			fprintf(errors, _("A second parameter is not allowed because first is \"%s\"."), argv[1]);
 			return EXIT_SYNTAX;
 			}
-		retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, "Charge", NULL);
+		retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "Charge", NULL);
 		}
 	else
 		{
@@ -2014,15 +1852,12 @@ int printer_charge(const char *argv[])
 		else
 			newcharge_simplex_sheet = newcharge_duplex_sheet;
 
-		retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, "Charge", "%d.%02d %d.%02d",
+		retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "Charge", "%d.%02d %d.%02d",
 				newcharge_duplex_sheet / 100,
 				newcharge_duplex_sheet % 100,
 				newcharge_simplex_sheet / 100,
 				newcharge_simplex_sheet % 100);
 		}
-
-	if(retval == EXIT_OK)
-		reread_printer(printer);
 
 	return retval;
 	} /* end of printer_charge() */
@@ -2036,7 +1871,9 @@ int printer_charge(const char *argv[])
 int printer_bins_ppd(const char *argv[])
 	{
 	const char *printer;				/* name of printer whose configuration should be changed */
-	char *ppdname = (char*)NULL;
+	struct CONF_OBJ *obj;
+	char *line;
+	char *ppdname = NULL;
 	char *ppdline;						/* a line read from the PPD file */
 	int x;
 	int ret;
@@ -2044,7 +1881,7 @@ int printer_bins_ppd(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! (printer=argv[0]))
+	if(! (printer = argv[0]))
 		{
 		fputs(_("You must supply the name of an existing printer.\n"), errors);
 		return EXIT_SYNTAX;
@@ -2057,36 +1894,33 @@ int printer_bins_ppd(const char *argv[])
 		}
 
 	/* make sure the printer exists */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
 
 	/* Modify the printer's configuration file. */
-	while(confread())							/* copy all lines */
+	while((line = conf_getline(obj)))				/* copy all lines */
 		{
-		if(lmatch(confline, "PPDFile:"))
+		if(lmatch(line, "PPDFile:"))
 			{
-			gu_sscanf(confline,"PPDFile: %A", &ppdname);
+			gu_sscanf(line,"PPDFile: %A", &ppdname);
 			}
 
-		if(lmatch(confline, "Bin:"))			/* don't copy those */
+		if(lmatch(line, "Bin:"))				/* don't copy those */
 			continue;							/* that begin with "Bin: " */
 		else
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 		}
 
 	if(! ppdname)
 		{
 		fputs(_("Printer configuration file does not have a \"PPDFile:\" line.\n"), errors);
-		confabort();
+		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
 
 	if((ret = ppd_open(ppdname, errors)))
 		{
-		confabort();
+		conf_abort(obj);
 		return ret;
 		}
 
@@ -2099,14 +1933,11 @@ int printer_bins_ppd(const char *argv[])
 
 			ppdline[x+strcspn(&ppdline[x],":/")] = '\0';
 												/* terminate at start of translation or code */
-			conf_printf("Bin: %s\n", &ppdline[x]);
+			conf_printf(obj, "Bin: %s\n", &ppdline[x]);
 			}
 		}
 
-	confclose();
-
-	/* Instruct pprd to reread the printer configuration file. */
-	reread_printer(printer);
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of printer_bins_ppd() */
@@ -2117,6 +1948,8 @@ int printer_bins_ppd(const char *argv[])
 int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	{
 	const char *printer, *bin;
+	struct CONF_OBJ *obj;
+	char *line;
 	int idx;					/* the bin we are working on */
 	int count = 0;				/* number of bins in conf file */
 	gu_boolean duplicate;
@@ -2130,24 +1963,21 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_MODIFY)))
 		return EXIT_BADDEST;
-		}
 
 	/* Copy up to the first "Bin:" line. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(lmatch(confline, "Bin:"))
+		if(lmatch(line, "Bin:"))
 			break;
-		conf_printf("%s\n", confline);
+		conf_printf(obj, "%s\n", line);
 		}
 
 	/* Delete or copy all the "Bin:" lines */
 	duplicate = FALSE;
 	do	{
-		if(!(bin = lmatchp(confline, "Bin:")))
+		if(!(bin = lmatchp(line, "Bin:")))
 			break;
 
 		if(add)
@@ -2161,20 +1991,20 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 					}
 				}
 
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 			count++;
 			}
-		} while(confread());
+		} while((line = conf_getline(obj)));
 
 	if(duplicate)
 		{
-		confabort();
+		conf_abort(obj);
 		return EXIT_ALREADY;
 		}
 
 	/* Add the new "Bin:" lines. */
 	for(idx=1; argv[idx]; idx++, count++)
-		conf_printf("Bin: %s\n", argv[idx]);
+		conf_printf(obj, "Bin: %s\n", argv[idx]);
 
 	/* If this would make for too many bins, abort the changes. */
 	if(count > MAX_BINS)
@@ -2183,19 +2013,16 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 				"have %d bins and the %d bin limit would be exceeded.\n"),
 				idx - 1, idx == 2 ? "" : "s",
 				printer, count, MAX_BINS);
-		confabort();
+		conf_abort(obj);
 		return EXIT_OVERFLOW;
 		}
 
 	/* Copy the rest of the file */
-	while(confread())
-		conf_printf("%s\n",confline);
+	while((line = conf_getline(obj)))
+		conf_printf(obj, "%s\n", line);
 
 	/* Commit to the changes. */
-	confclose();
-
-	/* We must inform pprd because it keeps track of mounted media. */
-	reread_printer(printer);
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of printer_bins_set_or_add() */
@@ -2206,9 +2033,10 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 int printer_bins_delete(const char *argv[])
 	{
 	const char *printer;
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	int idx;
 	int misses;
-	char *ptr;
 	int found[MAX_BINS];
 
 	if(! am_administrator())
@@ -2231,24 +2059,18 @@ int printer_bins_delete(const char *argv[])
 		found[idx - 1] = FALSE;
 		}
 
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
 
 	/* Copy the file, removing the bin lines that match as we go. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(lmatch(confline, "Bin:"))
+		if((p = lmatchp(line, "Bin:")))
 			{
-			/* Make a pointer to the bin name */
-			ptr = &confline[5 + strspn(&confline[5], " \t")];
-
 			/* Search the delete list for the bin. */
 			for(idx=1; argv[idx]; idx++)
 				{
-				if(strcmp(ptr, argv[idx]) == 0)
+				if(strcmp(p, argv[idx]) == 0)
 					{
 					found[idx - 1] = TRUE;
 					break;
@@ -2260,7 +2082,7 @@ int printer_bins_delete(const char *argv[])
 				continue;
 			}
 
-		conf_printf("%s\n", confline);
+		conf_printf(obj, "%s\n", line);
 		}
 
 	/* Check and see if all of the bins were found. */
@@ -2277,22 +2099,19 @@ int printer_bins_delete(const char *argv[])
 	/* If any of the bins to be deleted are not found, cancel whole command. */
 	if(misses)
 		{
-		confabort();
+		conf_abort(obj);
 		return EXIT_BADBIN;
 		}
 
 	/* Commit to the changes */
-	confclose();
-
-	/* We must inform pprd because it keeps track of mounted media. */
-	reread_printer(printer);
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of printer_bins_delete() */
 
 /*
  * This function clears a directory of files (one level only)
- * and then removes it.
+ * and then removes it.  It is used when removing a printer.
  */
 static void remove_directory(const char dirname[])
 	{
@@ -2320,6 +2139,8 @@ int printer_delete(const char *argv[])
 	{
 	const char function[] = "printer_delete";
 	const char *printer = argv[0];
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	char fname[MAX_PPR_PATH];
 	DIR *dir;
 	struct dirent *direntp;
@@ -2340,9 +2161,8 @@ int printer_delete(const char *argv[])
 	ppop2("purge", printer);			/* cancel all existing jobs */
 
 	/*
-	 * Remove the printer from membership in each 
-	 * and every group.  Rather laborious, don't 
-	 * you think?
+	 * Remove the printer from membership in each and every group.  Rather 
+	 * laborious, don't you think?
 	 */
 	if(!(dir = opendir(GRCONF)))
 		{
@@ -2361,19 +2181,17 @@ int printer_delete(const char *argv[])
 
 		is_a_member = FALSE;
 
-		if(grpopen(direntp->d_name, FALSE, FALSE))
+		if(!(obj = conf_open(QUEUE_TYPE_GROUP, direntp->d_name, 0)))
 			{
-			fprintf(errors, "%s(): grpopen(\"%s\", FALSE, FALSE) failed", function, direntp->d_name);
+			fprintf(errors, "%s(): conf_open(QUEUE_TYPE_GROUP, \"%s\", 0) failed", function, direntp->d_name);
 			closedir(dir);
 			return EXIT_INTERNAL;
 			}
 
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "Printer:"))
+			if((p = lmatchp(line, "Printer:")))
 				{
-				char *p = &confline[8];
-				p += strspn(confline, " \t");
 				if(strcmp(p, printer) == 0)
 					{
 					is_a_member = TRUE;
@@ -2382,7 +2200,7 @@ int printer_delete(const char *argv[])
 				}
 			}
 
-		confclose();
+		conf_close(obj);
 
 		if(is_a_member)
 			group_remove_internal(direntp->d_name,printer);
@@ -2413,7 +2231,7 @@ int printer_delete(const char *argv[])
 	remove_directory(fname);
 
 	/* Send a printer-touch command to pprd. */
-	reread_printer(printer);
+	write_fifo("NP %s\n", printer);
 
 	return EXIT_OK;
 	} /* end of printer_delete() */
@@ -2424,6 +2242,7 @@ int printer_delete(const char *argv[])
 int printer_touch(const char *argv[])
 	{
 	const char *printer = argv[0];
+	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -2434,16 +2253,10 @@ int printer_touch(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	/* make sure the printer exists */
-	if(prnopen(printer, FALSE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	/* Just open it in read-only mode with CONF_RELOAD set and close it again. */
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
-
-	confclose();
-
-	reread_printer(printer);	/* tell pprd to re-read the configuration */
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of printer_touch() */
@@ -2469,7 +2282,7 @@ int printer_switchset(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, "Switchset", newset[0] ? "%s" : NULL, newset);
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "Switchset", newset[0] ? "%s" : NULL, newset);
 	} /* end of printer_switchset() */
 
 /*
@@ -2481,6 +2294,7 @@ int printer_switchset(const char *argv[])
 int printer_deffiltopts(const char *argv[])
 	{
 	const char *printer = argv[0];
+	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
@@ -2491,39 +2305,38 @@ int printer_deffiltopts(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
-		}
 
 	{
 	void *qobj = NULL;
-	const char *p;
+	char *line;
 	gu_Try {
 		qobj = queueinfo_new_load_config(QUEUEINFO_PRINTER, printer);
 		queueinfo_set_warnings_file(qobj, errors);
 		queueinfo_set_debug_level(qobj, debug_level);
 
-		/* Modify the printer's configuration file. */
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+			if(lmatch(line, "DefFiltOpts:"))			/* delete */
 				continue;
-			conf_printf("%s\n", confline);
+			conf_printf(obj, "%s\n", line);
 			}
 
+		{
+		const char *p;
 		if((p = queueinfo_computedDefaultFilterOptions(qobj)))
-			conf_printf("DefFiltOpts: %s\n", p);
+			conf_printf(obj, "DefFiltOpts: %s\n", p);
+		}
 
-		confclose();
+		conf_close(obj);
 		}
 	gu_Final {
 		if(qobj)
 			queueinfo_free(qobj);
 		}
 	gu_Catch {
-		confabort();
+		conf_abort(obj);
 		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
@@ -2550,8 +2363,8 @@ int printer_passthru(const char *argv[])
 		}
 
 	passthru = list_to_string(&argv[1]);
-	retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, "PassThru", passthru ? "%s" : NULL, passthru);
-	if(passthru) gu_free(passthru);
+	retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "PassThru", passthru ? "%s" : NULL, passthru);
+	gu_free_if(passthru);
 
 	return retval;
 	} /* end of printer_passthru() */
@@ -2565,11 +2378,12 @@ int printer_ppdopts(const char *argv[])
 	{
 	const char function[] = "printer_ppdopts";
 	const char *printer;				/* printer whose configuration should be edited */
+	struct CONF_OBJ *obj;
+	char *line, *p;
 	const char **answers = (const char **)NULL;
 
 	char *PPDFile = (char*)NULL;		/* name of PPD file to open */
 	char *InstalledMemory = (char*)NULL;
-	char *ptr;
 	unsigned int next_value;
 	int c;
 	char *values[100];					/* the list of possible values */
@@ -2579,7 +2393,7 @@ int printer_ppdopts(const char *argv[])
 		return EXIT_DENIED;
 
 	/* Make sure the required parameter is supplied. */
-	if(! (printer = argv[0]))
+	if(!(printer = argv[0]))
 		{
 		fputs(_("You must supply the name of a printer.\n"), errors);
 		return EXIT_SYNTAX;
@@ -2593,12 +2407,12 @@ int printer_ppdopts(const char *argv[])
 	for(next_value=0; next_value < (sizeof(values)/sizeof(char*)); next_value++)
 		values[next_value] = (char*)NULL;
 
-	/* Open the printer's configuration file for modification. */
-	if(prnopen(printer, TRUE))
-		{
-		fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+	/* Open the printer's configuration file for modification.  We include
+	 * CONF_RELOAD because pprd might want to clear the never flag for
+	 * this printer.
+	 */ 
+	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
-		}
 
 	{
 	void *ppd_obj = NULL;
@@ -2608,20 +2422,20 @@ int printer_ppdopts(const char *argv[])
 		** "PPDOpt:" and "DefFiltOpts:" lines and noting which
 		** PPD file is to be used.
 		*/
-		while(confread())
+		while((line = conf_getline(obj)))
 			{
-			if(lmatch(confline, "PPDOpt:"))					/* delete */
+			if(lmatch(line, "PPDOpt:"))					/* delete */
 				continue;
 	
-			if(lmatch(confline, "DefFiltOpts:"))			/* delete */
+			if(lmatch(line, "DefFiltOpts:"))			/* delete */
 				continue;
 	
-			conf_printf("%s\n", confline);					/* copy to output file */
+			conf_printf(obj, "%s\n", line);				/* copy to output file */
 	
-			if(gu_sscanf(confline, "PPDFile: %A", &ptr) == 1)
+			if(gu_sscanf(line, "PPDFile: %A", &p) == 1)
 				{
-				if(PPDFile) gu_free(PPDFile);
-				PPDFile = ptr;
+				gu_free_if(PPDFile);
+				PPDFile = p;
 				}
 			}
 	
@@ -2649,21 +2463,21 @@ int printer_ppdopts(const char *argv[])
 			{
 			if(!in_installable_options)
 				{
-				if((ptr = lmatchp(ppdline, "*OpenGroup:")))
+				if((p = lmatchp(ppdline, "*OpenGroup:")))
 					{
-					if(lmatch(ptr, "InstallableOptions"))	/* !!! */
+					if(lmatch(p, "InstallableOptions"))	/* !!! */
 						in_installable_options = TRUE;
 					}
 				continue;
 				}
 
-			if((ptr = lmatchp(ppdline, "*CloseGroup:")))
+			if((p = lmatchp(ppdline, "*CloseGroup:")))
 				{
 				in_installable_options = FALSE;
 				continue;
 				}
 
-			if((ptr = lmatchp(ppdline, "*OpenUI")))
+			if((p = lmatchp(ppdline, "*OpenUI")))
 				{
 				/*
 				** If we already have a pointer to the name of the current
@@ -2685,15 +2499,15 @@ int printer_ppdopts(const char *argv[])
 					}
 	
 				/* Truncate after the end of the translation string. */
-				ptr[strcspn(ptr, ":")] = '\0';
+				p[strcspn(p, ":")] = '\0';
 	
 				/* Print the option name and its translation string. */
 				if(!answers)
-					printf("%s\n", ptr);
+					printf("%s\n", p);
 	
 				/* Save the option name and translation string. */
-				ui_open = gu_strdup(ptr);
-				ui_open_mrlen = strcspn(ptr, "/");
+				ui_open = gu_strdup(p);
+				ui_open_mrlen = strcspn(p, "/");
 	
 				/* Set to indicated no accumulated values. */
 				next_value = 1;
@@ -2704,35 +2518,36 @@ int printer_ppdopts(const char *argv[])
 			/* If this is one of the choices, */
 			if(ui_open && strcspn(ppdline, "/ \t") == ui_open_mrlen && strncmp(ppdline, ui_open, ui_open_mrlen) == 0)
 				{
-				ptr = ppdline;
-				ptr += strcspn(ptr, " \t");
-				ptr += strspn(ptr, " \t");
+				p = ppdline;
+				p += strcspn(p, " \t");
+				p += strspn(p, " \t");
 	
 				/* Truncate after option name and translation string. */
-				ptr[strcspn(ptr, ":")] = '\0';
+				p[strcspn(p, ":")] = '\0';
 	
-				if(!answers) printf("%d) %s\n", next_value, ptr);
+				if(!answers)
+					printf("%d) %s\n", next_value, p);
 	
 				if(next_value >= (sizeof(values) / sizeof(char*)))
 					{
 					fprintf(errors, "%s(): values[] overflow\n", function);
-					confabort();
+					conf_abort(obj);
 					return EXIT_INTERNAL;
 					}
 	
-				if(values[next_value]) gu_free(values[next_value]);
-				values[next_value++] = gu_strdup(ptr);
+				gu_free_if(values[next_value]);
+				values[next_value++] = gu_strdup(p);
 	
 				continue;
 				}
 	
 			/* If this is the end of an option, ask for a choice. */
-			if(ui_open && (ptr = lmatchp(ppdline, "*CloseUI:")))
+			if(ui_open && (p = lmatchp(ppdline, "*CloseUI:")))
 				{
-				if( strncmp(ptr, ui_open, strcspn(ui_open, "/")) )
+				if( strncmp(p, ui_open, strcspn(ui_open, "/")) )
 					{
 					fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), errors);
-					fprintf(errors, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(ptr,"/\n"), ptr);
+					fprintf(errors, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(p,"/\n"), p);
 					}
 	
 				/* If there are answers on the command line, */
@@ -2769,7 +2584,7 @@ int printer_ppdopts(const char *argv[])
 					else if(!valid)
 						{
 						fprintf(errors, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
-						confabort();
+						conf_abort(obj);
 						return EXIT_SYNTAX;
 						}
 					}
@@ -2800,16 +2615,16 @@ int printer_ppdopts(const char *argv[])
 				if(c != 0)
 					{
 					/* Print a line with the selected option. */
-					conf_printf("PPDOpt: %.*s %.*s", strcspn(ui_open, "/"), ui_open, strcspn(values[c],"/"), values[c]);
+					conf_printf(obj, "PPDOpt: %.*s %.*s", strcspn(ui_open, "/"), ui_open, strcspn(values[c],"/"), values[c]);
 	
 					/* If translation strings are provided for both the category and the
 					   selected option, print them afterward so that they can later
 					   be shown in the "ppad show" output. */
 					if( strchr(ui_open, '/') && strchr(values[c],'/'))
-						conf_printf(" (%s %s)", (strchr(ui_open, '/') + 1), (strchr(values[c], '/') + 1));
+						conf_printf(obj, " (%s %s)", (strchr(ui_open, '/') + 1), (strchr(values[c], '/') + 1));
 	
 					/* End the configuration file line. */
-					conf_printf("\n");
+					conf_printf(obj, "\n");
 	
 					/* If this is the amount of installed memory, feed the
 					   value to the code which is generating the "DefFiltOpts:" line. */
@@ -2840,7 +2655,7 @@ int printer_ppdopts(const char *argv[])
 			queueinfo_set_debug_level(qobj, debug_level);
 			queueinfo_add_hypothetical_printer(qobj, printer, PPDFile, InstalledMemory);
 			if((cp = queueinfo_computedDefaultFilterOptions(qobj)))
-				conf_printf("DefFiltOpts: %s\n", cp);
+				conf_printf(obj, "DefFiltOpts: %s\n", cp);
 			}
 		gu_Final {
 			if(qobj)
@@ -2853,31 +2668,25 @@ int printer_ppdopts(const char *argv[])
 		}
 		
 		/* Close the new configuration file and move it into place. */
-		confclose();
+		conf_close(obj);
 		}
 	gu_Final {
 		if(ppd_obj)
 			ppdobj_free(ppd_obj);
 		}
 	gu_Catch {
-		confabort();
+		conf_abort(obj);
 		fprintf(errors, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
 
-	/* Tell pprd, since it might want to clear the never flag for this printer. */
-	reread_printer(printer);
-
 	/* Free any lingering memory blocks */
-	if(PPDFile)
-		gu_free(PPDFile);
-	if(InstalledMemory)
-		gu_free(InstalledMemory);
+	gu_free_if(PPDFile);
+	gu_free_if(InstalledMemory);
 	for(next_value=0; next_value < (sizeof(values)/sizeof(char*)); next_value++)
 		{
-		if(values[next_value])
-			gu_free(values[next_value]);
+		gu_free_if(values[next_value]);
 		}
 
 	/*
@@ -2894,7 +2703,6 @@ int printer_limitpages(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit_lower, limit_upper;
-	int ret;
 
 	if(!printer || !argv[1] || !argv[2])
 		{
@@ -2916,11 +2724,7 @@ int printer_limitpages(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, "LimitPages", (limit_lower > 0 || limit_upper > 0) ? "%d %d" : NULL, limit_lower, limit_upper);
-
-	reread_printer(printer);
-
-	return ret;
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "LimitPages", (limit_lower > 0 || limit_upper > 0) ? "%d %d" : NULL, limit_lower, limit_upper);
 	} /* end or printer_limitpages() */
 
 /*
@@ -2930,7 +2734,6 @@ int printer_limitkilobytes(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit_lower, limit_upper;
-	int ret;
 
 	if(!printer || !argv[1] || !argv[2])
 		{
@@ -2952,11 +2755,7 @@ int printer_limitkilobytes(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, "LimitKilobytes", (limit_lower > 0 || limit_upper > 0) ? "%d %d" : NULL, limit_lower, limit_upper);
-
-	reread_printer(printer);
-
-	return ret;
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "LimitKilobytes", (limit_lower > 0 || limit_upper > 0) ? "%d %d" : NULL, limit_lower, limit_upper);
 	} /* end or printer_limitkilobytes() */
 
 /*
@@ -2966,7 +2765,6 @@ int printer_grayok(const char *argv[])
 	{
 	const char *printer = argv[0];
 	gu_boolean grayok;
-	int ret;
 
 	if(!printer || !argv[1])
 		{
@@ -2981,14 +2779,10 @@ int printer_grayok(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	/* If FALSE, set to 0, otherwise delete line. */
-	ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, "GrayOK", grayok ? NULL : "false");
-
-	/* This change may change the eligibility of some jobs. */
-	if(grayok)
-		reread_printer(printer);
-
-	return ret;
+	/* If FALSE, set to 0, otherwise delete line.  A reload is required when
+	 * turning on GrayOK since it affects the eligibility of all-grayscale jobs.
+	 */
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, grayok ? CONF_RELOAD : 0, "GrayOK", grayok ? NULL : "false");
 	} /* end of printer_grayok() */
 /*
 ** Set the printer's "ACLs:" line.
@@ -3007,8 +2801,8 @@ int printer_acls(const char *argv[])
 		}
 
 	acls = list_to_string(&argv[1]);
-	retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, "ACLs", acls ? "%s" : NULL, acls);
-	if(acls) gu_free(acls);
+	retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "ACLs", acls ? "%s" : NULL, acls);
+	gu_free_if(acls);
 
 	return retval;
 	} /* end of printer_acls() */
@@ -3030,9 +2824,8 @@ int printer_userparams(const char *argv[])
 		}
 
 	userparams = list_to_string(&argv[1]);
-	result = conf_set_name(QUEUE_TYPE_PRINTER, printer, "Userparams", userparams ? "%s" : NULL, userparams);
-	if(userparams) gu_free(userparams);
-
+	result = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "Userparams", userparams ? "%s" : NULL, userparams);
+	gu_free_if(userparams);
 	return result;
 	} /* end of printer_userparams() */
 
@@ -3058,7 +2851,7 @@ int printer_pagetimelimit(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, "PageTimeLimit", (limit > 0) ? "%d" : NULL, limit);
+	ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "PageTimeLimit", (limit > 0) ? "%d" : NULL, limit);
 
 	return ret;
 	} /* end or printer_pagetimelimit() */
@@ -3086,7 +2879,7 @@ int printer_addon(const char *argv[])
 		return EXIT_SYNTAX;
 		}
 
-	return conf_set_name(QUEUE_TYPE_PRINTER, printer, name, (value && value[0]) ? "%s" : NULL, value);
+	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, name, (value && value[0]) ? "%s" : NULL, value);
 	} /* end of printer_addon() */
 
 /*

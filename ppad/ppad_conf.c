@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_conf.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 October 2005.
+** Last modified 27 January 2006.
 */
 
 /*
@@ -49,194 +49,180 @@
 #include "ppad.h"
 #include "util_exits.h"
 
-#define STATE_CLOSED 0			/* no file open */
-#define STATE_NOMODIFY 1		/* file open for read */
-#define STATE_MODIFY 2			/* file open for write */
-
-static int state = STATE_CLOSED;
-static FILE *confin;
-static char confin_name[MAX_PPR_PATH];
-static FILE *confout;
-static char confout_name[MAX_PPR_PATH];
-char *confline = NULL;
-static int confline_len;
-
-/** Open a configuration file.
- * This is called by prnopen() and grpopen() below.
- */
-int confopen(enum QUEUE_TYPE queue_type, const char destname[], gu_boolean modify, gu_boolean create)
+/* Convert a queue type to the appropriate configuration file directory path. */
+static const char *conf_directory(enum QUEUE_TYPE queue_type)
 	{
-	const char function[] = "confopen";
-	const char *confdir;
-
 	switch(queue_type)
 		{
 		case QUEUE_TYPE_PRINTER:
-			confdir = PRCONF;
-			break;
+			return PRCONF;
 		case QUEUE_TYPE_GROUP:
-			confdir = GRCONF;
-			break;
+			return GRCONF;
 		case QUEUE_TYPE_ALIAS:
-			confdir = ALIASCONF;
-			break;
+			return ALIASCONF;
 		}
+	}
 
-	confin = NULL;
+/** Open a PPR destination configuration file.
+ */
+struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], int flags)
+	{
+	const char function[] = "conf_open";
+	struct CONF_OBJ *obj = gu_alloc(1, sizeof(struct CONF_OBJ));
 
-	ppr_fnamef(confin_name, "%s/%s", confdir, destname);
+	obj->queue_type = queue_type;
+	obj->name = destname;
+	obj->flags = flags;
+	obj->in = NULL;
+	obj->out = NULL;
+	obj->line = NULL;
+	obj->line_space = 80;
 
-	if(debug_level >= 1)
-		printf("Opening \"%s\" %s.\n", confin_name, modify ? "for edit" : "read-only");
+	ppr_fnamef(obj->in_name, "%s/%s", conf_directory(queue_type), destname);
 
-	again:				/* <-- for locking retries */
-
-	/*
-	** If modifying the file, we must open it for read
-	** and open a temporary file for write.
-	*/
-	if(modify)
+	if(flags & CONF_MODIFY)				/* modify existing, possibly create */
 		{
-		/* must open for update if we want an exclusive lock */
-		if(!(confin = fopen(confin_name, "r+")))
+		if(debug_level >= 1)
 			{
-			if(errno == ENOENT)		/* if open failed because doesn't exist, */
-				{
-				if(!create)			/* unless we are to create it, */
-					return -1;		/* report that destination doesn't exist */
-				}
+			if(flags & CONF_CREATE)
+				printf("Opening \"%s\" (create new or modify existing).\n", obj->in_name);
 			else
-				{
-				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", confin_name, "r+", errno, gu_strerror(errno));
-				}
+				printf("Opening \"%s\" (modify existing).\n", obj->in_name);
 			}
-		else	/* if open suceeded, lock file */
-			{
-			if(gu_lock_exclusive(fileno(confin), FALSE))	/* if lock failed, */
+
+		do	{
+			/* must open for update if we want an exclusive lock */
+			if(!(obj->in = fopen(obj->in_name, "r+")))
 				{
-				fclose(confin);
+				if(errno == ENOENT)		/* if open failed because doesn't exist, */
+					break;
+				else
+					fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r+", errno, gu_strerror(errno));
+				}
+
+			if(gu_lock_exclusive(fileno(obj->in), FALSE))	/* if lock failed, */
+				{
+				fclose(obj->in);
+				obj->in = NULL;
 				printf(_("Waiting for lock to clear.\n"));
 				sleep(1);
-				goto again;
+				}
+			} while(!obj->in);
+		}
+	else if(flags & CONF_CREATE)		/* create only, no modify existing */
+		{
+		struct stat statbuf;
+		if(debug_level >= 1)
+			printf("Opening \"%s\" (create new).\n", obj->in_name);
+		if(stat(obj->in_name, &statbuf) == 0)
+			{
+			switch(obj->queue_type)
+				{
+				case QUEUE_TYPE_PRINTER:
+					fprintf(errors, _("The printer \"%s\" already exists.\n"), destname);
+					break;
+				case QUEUE_TYPE_GROUP:
+					fprintf(errors, _("The group \"%s\" already exists.\n"), destname);
+					break;
+				case QUEUE_TYPE_ALIAS:
+					fprintf(errors, _("The alias \"%s\" already exists.\n"), destname);
+					break;
+				}
+			gu_free(obj);
+			obj = NULL;
+			}
+		}
+	else								/* read-only */
+		{
+		if(flags & CONF_CREATE)
+			printf("Opening \"%s\" (read only).\n", obj->in_name);
+		if(!(obj->in = fopen(obj->in_name, "r")))
+			{
+			if(errno != ENOENT)
+				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r", errno, gu_strerror(errno));
+			}
+		}
+
+	/* If we are modifying the file, we must create a temporary file for the new version. */
+	if(flags & CONF_MODIFY || flags & CONF_CREATE)
+		{
+		/* Create temporary file in same dir, hidden (from pprd). */
+		ppr_fnamef(obj->out_name,"%s/.ppad%ld", conf_directory(queue_type), (long)getpid());
+		if(!(obj->out = fopen(obj->out_name, "w")))
+			fatal(EXIT_INTERNAL, _("Can't open temporary file \"%s\" for write, errno=%d (%s)"), obj->out_name, errno, gu_strerror(errno));
+		}
+
+	/* If we didn't find it and it is not OK to create it, we have failed. */
+	if(!obj->in && !(flags & CONF_CREATE))
+		{
+		if(flags & CONF_ENOENT_PRINT)
+			{
+			switch(queue_type)
+				{
+				case QUEUE_TYPE_PRINTER:
+					fprintf(errors, _("The printer \"%s\" does not exist.\n"), destname);
+					break;
+				case QUEUE_TYPE_GROUP:
+					fprintf(errors, _("The group \"%s\" does not exist.\n"), destname);
+					break;
+				case QUEUE_TYPE_ALIAS:
+					fprintf(errors, _("The alias \"%s\" does not exist.\n"), destname);
+					break;
 				}
 			}
-
-		/* Create temporary file in same dir, hidden (from pprd). */
-		ppr_fnamef(confout_name,"%s/.ppad%ld", confdir, (long)getpid());
-		if((confout = fopen(confout_name, "w")) == (FILE*)NULL)
-			fatal(EXIT_INTERNAL, _("Can't open temporary file \"%s\" for write, errno=%d (%s)"), confout_name, errno, gu_strerror(errno));
-
-		state = STATE_MODIFY;
+		gu_free(obj);
+		obj = NULL;
 		}
 
-	/*
-	** If we will not be modifying the file, we need
-	** only open it for read.
-	*/
-	else
-		{
-		if(!(confin = fopen(confin_name, "r")))
-			{
-			if(errno == ENOENT)
-				return -1;
-			else
-				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", confin_name, "r", errno, gu_strerror(errno));
-			}
-		state = STATE_NOMODIFY;
-		}
-
-	confline_len = 128;
-	confline = (char*)gu_alloc(confline_len, sizeof(char));
-
-	return 0;
-	} /* end of confopen() */
-
-/** Open a printer configuration file
- * Open the configuration file for printer prname[].  Return 0
- * on success, -1 on failure.  If modify is TRUE, create a temporary
- * file into which to write a new version of the printer configuration file.
-*/
-int prnopen(const char prnname[], gu_boolean modify)
-	{
-	return confopen(QUEUE_TYPE_PRINTER, prnname, modify, FALSE);
-	} /* end of prnopen() */
-
-/** Open a group configuration file
- * Open the configuration file for the group grname[].  Return 0
- * on sucess, -1 on failure.  If modify is TRUE, create a temporary
- * file into which to write a new version of the group configuration
- * file.  If create is TRUE, create the temporary file even if the
- * group configuration file doesn't exist yet.
-*/
-int grpopen(const char *grpname, gu_boolean modify, gu_boolean create)
-	{
-	return confopen(QUEUE_TYPE_GROUP, grpname, modify, create);
-	} /* end of grpopen() */
+	return obj;
+	} /* end of conf_open() */
 
 /*
 ** Read a line from the configuration file.
-** If we suceed, return TRUE.
-** The line is returned in the global variable "confline[]".
+** If we suceed, return the line.
 */
-int confread(void)
+char *conf_getline(struct CONF_OBJ *obj)
 	{
-	const char function[] = "confread";
-	int len;
-
-	if(state == STATE_CLOSED)
-		fatal(EXIT_INTERNAL, X_("%s(): attempt to read without open file"), function);
-
-	if(!confin)
-		return FALSE;
+	if(!obj->in)
+		return NULL;
 	
-	if(fgets(confline, confline_len, confin) == (char*)NULL)
-		return FALSE;
-
-	len = strlen(confline);
-
-	while(len == (confline_len - 1) && confline[len - 1] != '\n')
-		{
-		confline_len *= 2;
-		confline = (char*)gu_realloc(confline, confline_len, sizeof(char));
-		if(!fgets((confline + len), (confline_len - len), confin)) break;
-		len = strlen(confline);
-		}
-
-	/* Remove trailing spaces. */
-	while((--len >= 0) && isspace(confline[len]) )
-		confline[len] = '\0';
+	if(!(obj->line = gu_getline(obj->line, &(obj->line_space), obj->in)))
+		return NULL;
 
 	if(debug_level >= 3)
-		printf("<%s\n", confline);
+		printf("<%s\n", obj->line);
 
-	return TRUE;
+	return obj->line;
 	} /* end of confread() */
 
 /*
 ** Write a line to the temporary file.
 */
-int conf_printf(const char format_str[], ...)
+int conf_printf(struct CONF_OBJ *obj, const char format_str[], ...)
 	{
 	va_list va;
 	int retval;
 	va_start(va, format_str);
-	retval = conf_vprintf(format_str, va);
+	retval = conf_vprintf(obj, format_str, va);
 	va_end(va);
 	return retval;
 	} /* end of conf_printf() */
 
-int conf_vprintf(const char format_str[], va_list va)
+int conf_vprintf(struct CONF_OBJ *obj, const char format_str[], va_list va)
 	{
-	if(state != STATE_MODIFY)
+	if(!obj->out)
 		fatal(EXIT_INTERNAL, "conf_write_vprintf(): internal error, file not open for modify");
-
-	vfprintf(confout, format_str, va);
 
 	if(debug_level >= 3)
 		{
+		va_list our_copy;
+		va_copy(our_copy, va);
 		fputc('>', stdout);
-		vfprintf(stdout, format_str, va);
+		vfprintf(stdout, format_str, our_copy);
+		va_end(our_copy);
 		}
+
+	vfprintf(obj->out, format_str, va);
 
 	return 0;
 	} /* end of conf_vprintf() */
@@ -257,66 +243,76 @@ int conf_vprintf(const char format_str[], va_list va)
 ** for the reload would sometimes come between the unlink()
 ** and the rename().
 */
-int confclose(void)
+int conf_close(struct CONF_OBJ *obj)
 	{
-	const char *function = "confclose";
-	switch(state)
+	const char *function = "conf_close";
+	if(obj->out)
 		{
-		case STATE_CLOSED:
-			fatal(EXIT_INTERNAL, "%s(): no file open", function);
-		case STATE_NOMODIFY:
-			if(debug_level >= 1)
-				printf("Closing \"%s\".\n", confin_name);
-			fclose(confin);
-			state = STATE_CLOSED;
-			break;
-		case STATE_MODIFY:
+		struct stat statbuf;
+		if(debug_level >= 1)
+			printf("Saving new \"%s\".\n", obj->in_name);
+
+		/* Reduce race condition time!	(See below.) */
+		fflush(obj->out);
+
+		/* Copy the protections from the old to the new configuration file because the user execute
+		   bit tells if the printer is stopt and the other execute bit tells if it is protected.
+
+		   !!! There is a possibility that pprd will modify the attributes in the split second
+		   between when we read them and when we move the new file into place.
+
+		   It will be good to get rid of this nonsense.
+		   
+		   */
+		if(obj->in)		/* if not new, */
 			{
-			struct stat statbuf;
-			if(debug_level >= 1)
-				printf("Saving new \"%s\".\n", confin_name);
-
-			/* Reduce race condition time!	(See below.) */
-			fflush(confout);
-
-			/* Copy the protections from the old to the new
-			   configuration file because the user execute
-			   bit tells if the printer is stopt and the
-			   other execute bit tells if it is protected.
-			   !!! There is a possibility that pprd will
-			   modify the attributes in the split second
-			   between when we read them and when we move
-			   the new file into place. */
-			if(confin)
-				{
-				if(fstat(fileno(confin), &statbuf) < 0)
-					fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fstat", errno, gu_strerror(errno));
-				if(fclose(confin) == EOF)
-					fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fclose", errno, gu_strerror(errno));
-				if(chmod(confout_name, statbuf.st_mode) < 0)
-					fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "chmod", errno, gu_strerror(errno));
-				}
-
-			if(fclose(confout) == EOF)
+			if(fstat(fileno(obj->in), &statbuf) < 0)
+				fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fstat", errno, gu_strerror(errno));
+			if(fclose(obj->in) == EOF)
 				fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fclose", errno, gu_strerror(errno));
-
-			/* Replace old with new. */
-			if(rename(confout_name, confin_name) < 0)
-				fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "rename", errno, gu_strerror(errno));
-
-			state = STATE_CLOSED;
+			if(chmod(obj->out_name, statbuf.st_mode) < 0)
+				fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "chmod", errno, gu_strerror(errno));
 			}
-			break;
+
+		if(fclose(obj->out) == EOF)
+			fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "fclose", errno, gu_strerror(errno));
+
+		/* Replace old with new. */
+		if(rename(obj->out_name, obj->in_name) < 0)
+			fatal(EXIT_INTERNAL, _("%s(): %s() failed, errno=%d (%s)"), function, "rename", errno, gu_strerror(errno));
 		}
 
-	if(confline)
+	else
 		{
-		gu_free(confline);
-		confline = NULL;
+		if(debug_level >= 1)
+			printf("Closing \"%s\".\n", obj->in_name);
+		fclose(obj->in);
 		}
+
+	/* Should we tell pprd that the file has been changed?  Notice that
+	 * this is allowed even in read-only mode in order to support "ppad touch".
+	 */ 
+	if(obj->flags & CONF_RELOAD)
+		{
+		switch(obj->queue_type)
+			{
+			case QUEUE_TYPE_PRINTER:
+				write_fifo("NP %s\n", obj->name);
+				break;
+			case QUEUE_TYPE_GROUP:
+				write_fifo("NG %s\n", obj->name);
+				break;
+			case QUEUE_TYPE_ALIAS:
+				/* pprd doesn't know about these */
+				break;
+			}
+		}
+
+	gu_free_if(obj->line);
+	gu_free(obj);
 
 	return 0;
-	} /* end of confclose() */
+	} /* end of conf_close() */
 
 /*
 ** Close the configuration file and delete the new copy.
@@ -324,30 +320,19 @@ int confclose(void)
 ** This is used to abort the modification of the
 ** configuration file.
 */
-int confabort(void)
+int conf_abort(struct CONF_OBJ *obj)
 	{
-	const char function[] = "confabort";
-	switch(state)
+	if(obj->out)
 		{
-		case STATE_CLOSED:
-			fatal(EXIT_INTERNAL, "%s(): internal error, no file open", function);
-		case STATE_NOMODIFY:
-			fatal(EXIT_INTERNAL, "%s(): internal error, not open in write mode", function);
-		case STATE_MODIFY:
-			if(debug_level >= 1)
-				printf("Discarding changes to \"%s\".\n", confin_name);
-			fclose(confin);
-			fclose(confout);
-			unlink(confout_name);
-			state = STATE_CLOSED;
-			break;
+		if(debug_level >= 1)
+			printf("Discarding changes to \"%s\".\n", obj->in_name);
+		fclose(obj->in);
+		fclose(obj->out);
+		unlink(obj->out_name);
 		}
 
-	if(confline)
-		{
-		gu_free(confline);
-		confline = NULL;
-		}
+	gu_free_if(obj->line);
+	gu_free(obj);
 
 	return 0;
 	} /* end of confabort() */
@@ -362,65 +347,87 @@ int confabort(void)
 ** If value is NULL, then this function serves to delete the
 ** keyword from the file.
 */
-int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], const char name[], const char value[], ...)
+int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], int extra_flags, const char name[], const char value[], ...)
 	{
 	int name_len = strlen(name);
+	struct CONF_OBJ *obj;
+	char *line;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
 	/* Open the printer or group configuration file. */
-	if(confopen(queue_type, queue_name, TRUE, FALSE) == -1)
-		{
-		switch(queue_type)
-			{
-			case QUEUE_TYPE_PRINTER:
-				fprintf(errors, _("The printer \"%s\" does not exist.\n"), queue_name);
-				break;
-			case QUEUE_TYPE_GROUP:
-				fprintf(errors, _("The group \"%s\" does not exist.\n"), queue_name);
-				break;
-			case QUEUE_TYPE_ALIAS:
-				fprintf(errors, _("The alias \"%s\" does not exist.\n"), queue_name);
-				break;
-			}
+	if(!(obj = conf_open(queue_type, queue_name, CONF_MODIFY | CONF_ENOENT_PRINT | extra_flags)))
 		return EXIT_BADDEST;
-		}
 
 	/* Copy up to but now including the first instance of
 	   the line to be changed. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(strncmp(confline, name, name_len) == 0 && confline[name_len] == ':')
+		if(strncmp(line, name, name_len) == 0 && line[name_len] == ':')
 			break;
-		conf_printf("%s\n", confline);
+		conf_printf(obj, "%s\n", line);
 		}
 
 	/* If the new value is non-NULL, write it. */
 	if(value)
 		{
 		va_list va;
-		conf_printf("%s: ", name);
+		conf_printf(obj, "%s: ", name);
 		va_start(va, value);
-		conf_vprintf(value, va);
+		conf_vprintf(obj, value, va);
 		va_end(va);
-		conf_printf("\n");
+		conf_printf(obj, "\n");
 		}
 
 	/* Copy any remaining lines, while deleting any furthur
 	   instances of the line that was changed. */
-	while(confread())
+	while((line = conf_getline(obj)))
 		{
-		if(strncmp(confline, name, name_len) == 0 && confline[name_len] == ':')
+		if(strncmp(line, name, name_len) == 0 && line[name_len] == ':')
 			continue;
-		conf_printf("%s\n", confline);
+		conf_printf(obj, "%s\n", line);
 		}
 
 	/* Commit changes */
-	confclose();
+	conf_close(obj);
 
 	return EXIT_OK;
 	} /* end of conf_set_name() */
+
+/** Duplicate a PPR destination.
+ */
+int conf_copy(enum QUEUE_TYPE queue_type, const char from[], const char to[])
+	{
+	int retval = EXIT_OK;
+	struct CONF_OBJ *from_obj = NULL, *to_obj = NULL;
+	char *line;
+
+	do	{
+		if(!(from_obj = conf_open(queue_type, from, CONF_ENOENT_PRINT)))
+			{
+			retval = EXIT_BADDEST;
+			break;
+			}
+
+		if(!(to_obj = conf_open(queue_type, to, CONF_CREATE)))
+			{
+			retval = EXIT_BADDEST;
+			break;
+			}
+
+		while((line = conf_getline(from_obj)))
+			conf_printf(to_obj, "%s\n", line);
+
+		} while(FALSE);
+
+	if(to_obj)
+		conf_close(to_obj);
+	if(from_obj)
+		conf_close(from_obj);
+
+	return retval;
+	} /* conf_copy() */
 
 /* end of file */
 

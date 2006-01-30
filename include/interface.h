@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/interface.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 October 2003.
+** Last modified 30 January 2006.
 */
 
 /*
@@ -63,7 +63,7 @@
 /* Exit values for pprdrv only: */
 #define EXIT_INCAPABLE 50			/* printer wants (lacks) features or resources */
 
-/* the possible jobbreak methods */
+/* the possible Jobbreak methods */
 #define JOBBREAK_DEFAULT -1			/* <-- not a real setting, used only in ppad */
 #define JOBBREAK_NONE 0				/* unusable */
 #define JOBBREAK_SIGNAL 1			/* SIGUSR1 handshake (tricky) */
