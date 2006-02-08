@@ -1,0 +1,39 @@
+#! /bin/sh
+
+echo "Setting comment..."
+$PPAD_PATH comment regression-test1 "Test Comment"
+echo "ppad: $?"
+
+echo "Setting location..."
+$PPAD_PATH location regression-test1 "Test Location"
+echo "ppad: $?"
+
+echo "Setting department..."
+$PPAD_PATH department regression-test1 "Test Department"
+echo "ppad: $?"
+
+echo "Setting contact..."
+$PPAD_PATH contact regression-test1 "Test Contact"
+echo "ppad: $?"
+
+$TESTBIN/dump_printer regression-test1
+
+echo "Clearing comment..."
+$PPAD_PATH comment regression-test1
+echo "ppad: $?"
+
+echo "Clearing location..."
+$PPAD_PATH location regression-test1
+echo "ppad: $?"
+
+echo "Clearing department..."
+$PPAD_PATH department regression-test1
+echo "ppad: $?"
+
+echo "Clearing contact..."
+$PPAD_PATH contact regression-test1
+echo "ppad: $?"
+
+$TESTBIN/dump_printer regression-test1
+
+exit 0

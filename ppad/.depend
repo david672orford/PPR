@@ -1,16 +1,18 @@
-ppad.o: ppad.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h ../include/version.h
+dispatch_table.o: ./dispatch_table.c ../include/dispatch.h dispatch_table.h
 
-ppad_alias.o: ppad_alias.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
+ppad.o: ./ppad.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h ../include/dispatch.h dispatch_table.h ../include/version.h
 
-ppad_conf.o: ppad_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
+ppad_alias.o: ./ppad_alias.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h dispatch_table.h
 
-ppad_group.o: ppad_group.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/queueinfo.h ppad.h
+ppad_conf.o: ./ppad_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
 
-ppad_media.o: ppad_media.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/util_exits.h ppad.h
+ppad_group.o: ./ppad_group.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/queueinfo.h ppad.h dispatch_table.h
 
-ppad_ppd.o: ppad_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h
+ppad_media.o: ./ppad_media.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/util_exits.h ppad.h dispatch_table.h
 
-ppad_printer.o: ppad_printer.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/interface.h ../include/queueinfo.h ppad.h
+ppad_ppd.o: ./ppad_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h dispatch_table.h
 
-ppad_util.o: ppad_util.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
+ppad_printer.o: ./ppad_printer.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/interface.h ../include/queueinfo.h ppad.h dispatch_table.h
+
+ppad_util.o: ./ppad_util.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
 

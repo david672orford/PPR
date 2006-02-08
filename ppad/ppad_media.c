@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_media.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 8 February 2006.
 */
 
 /*
@@ -51,6 +51,7 @@
 #include "global_structs.h"
 #include "util_exits.h"
 #include "ppad.h"
+#include "dispatch_table.h"
 
 /* globals */
 static int inerror = 0;			/* used by get_answer() */
@@ -88,7 +89,7 @@ static double ppad_convert_dimension(const char *string)
 
 	if((answer = convert_dimension(string)) < 0)
 		{
-		fputs(_("Unknown unit specifier.\n"), errors);
+		fputs(_("Unknown unit specifier.\n"), stderr);
 		return -1;
 		}
 
@@ -128,9 +129,20 @@ static FILE *open_database(const char mode[])
 	}
 
 /*
-** add or modify a media database record
+<command>
+	<name><word>media</word><word>put</word></name>
+	<desc>add or modify a media database record</desc>
+	<args>
+		<arg flags="optional"><name>medium</name><desc>name of medium</desc></arg>
+		<arg flags="optional"><name>width</name><desc>width of medium</desc></arg>
+		<arg flags="optional"><name>height</name><desc>height of medium</desc></arg>
+		<arg flags="optional"><name>weight</name><desc>weight of medium</desc></arg>
+		<arg flags="optional"><name>color</name><desc>color of medium</desc></arg>
+		<arg flags="optional"><name>suitability</name><desc>suitability as flag page (1-10)</desc></arg>
+	</args>
+</command>
 */
-int media_put(const char *argv[])
+int command_media_put(const char *argv[])
 	{
 	FILE *ffile;
 	struct Media media;
@@ -358,9 +370,15 @@ int media_put(const char *argv[])
 	} /* end of media_put() */
 
 /*
-** display a media record
+<command>
+	<name><word>media</word><word>show</word></name>
+	<desc>display a media database record</desc>
+	<args>
+		<arg flags="optional"><name>medium</name><desc>name of medium</desc></arg>
+	</args>
+</command>
 */
-int media_show(const char *argv[])
+int command_media_show(const char *argv[])
 	{
 	int index = 0;				/* moving index into argv[] for answers */
 	FILE *ffile;
@@ -391,7 +409,7 @@ int media_show(const char *argv[])
 			{
 			if(! all)
 				{
-				fprintf(errors, _("Medium \"%s\" not found.\n"), asciiz);
+				fprintf(stderr, _("Medium \"%s\" not found.\n"), asciiz);
 				ret = EXIT_NOTFOUND;
 				}
 			break;
@@ -426,7 +444,16 @@ int media_show(const char *argv[])
 	return ret;
 	} /* end of media_show() */
 
-int media_delete(const char *argv[])
+/*
+<command>
+	<name><word>media</word><word>delete</word></name>
+	<desc>delete a media database record</desc>
+	<args>
+		<arg flags="optional"><name>medium</name><desc>name of medium</desc></arg>
+	</args>
+</command>
+*/
+int command_media_delete(const char *argv[])
 	{
 	int index=0;
 	FILE *ffile;
@@ -445,7 +472,7 @@ int media_delete(const char *argv[])
 		if(fread(&media,sizeof(struct Media),1,ffile) == 0)
 			{
 			fclose(ffile);
-			fprintf(errors, _("Medium \"%s\" not found.\n"), asciiz);
+			fprintf(stderr, _("Medium \"%s\" not found.\n"), asciiz);
 			return EXIT_NOTFOUND;
 			}
 		if(memcmp(media.medianame,padded,sizeof(media.medianame))==0)
@@ -468,9 +495,14 @@ int media_delete(const char *argv[])
 	} /* end of media_delete() */
 
 /*
-** Emmit a shell script which could be used to recreate the database.
+<command>
+	<name><word>media</word><word>export</word></name>
+	<desc>emmit a shell script which can be used to recreate the media database</desc>
+	<args>
+	</args>
+</command>
 */
-int media_export(void)
+int command_media_export(const char *argv[])
 	{
 	FILE *ffile;
 	struct Media media;
@@ -502,11 +534,17 @@ int media_export(void)
 	} /* end of media_export() */
 
 /*
-** Import a file of ppad media commands.
+<command>
+	<name><word>media</word><word>import</word></name>
+	<desc>emmit a shell script which can be used to recreate the media database</desc>
+	<args>
+		<arg><name>filename</name><desc>name of file to import</desc></arg>
+	</args>
+</command>
 */
-int media_import(const char *argv[])
+int command_media_import(const char *argv[])
 	{
-	const char *filename;
+	const char *filename = argv[0];
 	FILE *f;
 	int line_available = 80;
 	char *line = NULL;
@@ -519,12 +557,6 @@ int media_import(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(!(filename = argv[0]))
-		{
-		fputs(_("You must supply a filename.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(strcmp(filename, "-") == 0)
 		{
 		f = fdopen(dup(0), "r");
@@ -533,7 +565,7 @@ int media_import(const char *argv[])
 		{
 		if(!(f = fopen(filename, "r")))
 			{
-			fprintf(errors, _("Can't open \"%s\", errno=%d (%s)\n"), filename, errno, gu_strerror(errno));
+			fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), filename, errno, gu_strerror(errno));
 			return EXIT_NOTFOUND;
 			}
 		}
@@ -560,11 +592,13 @@ int media_import(const char *argv[])
 				&& ar[2] && gu_strcasecmp(ar[2], "put") == 0
 				)
 			{
-			media_put(&ar[3]);
+			int ret = command_media_put(&ar[3]);
+			if(ret != EXIT_OK)
+				return ret;
 			}
 		else
 			{
-			fprintf(errors, _("Command on line %d is not ppad media put.\n"), linenum);
+			fprintf(stderr, _("Command on line %d is not ppad media put.\n"), linenum);
 			break;
 			}
 		}
@@ -576,6 +610,6 @@ int media_import(const char *argv[])
 		}
 
 	return EXIT_OK;
-	}
+	} /* command_media_export() */
 
 /* end of file */

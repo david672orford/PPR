@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_ppd.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 August 2005.
+** Last modified 8 February 2006.
 */
 
 #include "config.h"
@@ -40,6 +40,7 @@
 #include "global_defines.h"
 #include "util_exits.h"
 #include "ppad.h"
+#include "dispatch_table.h"
 
 #if 0
 #define DEBUG 1
@@ -774,27 +775,24 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	return EXIT_OK;
 	} /* end of ppd_query_core() */
 
-/*==========================================================================
-** ppad ppdlib query
-**
-** Send a query to a printer using a specified interface and address and
-** produce a list of suitable PPD files.
-==========================================================================*/
-int ppdlib_query(const char *argv[])
+/*
+<command>
+	<name><word>ppdlib</word><word>query</word></name>
+	<desc>query a printer specified by interface and address and produce list of suitable PPD files</desc>
+	<args>
+		<arg><name>interface</name><desc>name interface program to use</desc></arg>
+		<arg><name>address</name><desc>address to pass to interface</desc></arg>
+		<arg flags="optional"><name>options</name><desc>options to pass to interface</desc></arg>
+	</args>
+</command>
+*/
+int command_ppdlib_query(const char *argv[])
 	{
-	const char *interface, *address, *options;
+	const char *interface = argv[0];
+	const char *address = argv[1];
+	const char *options = argv[2];
 	struct QUERY *q = NULL;
 	int ret = EXIT_OK;
-
-	if(!(interface = argv[0]) || !(address = argv[1]) || ((options = argv[2]) && argv[3]))
-		{
-		fputs(
-			_("You must supply the name of an interface and an address.  If necessary, a\n"
-			  "quoted list of options may follow the address.\n"),
-			errors
-			);
-		return EXIT_SYNTAX;
-		}
 
 	gu_Try
 		{
@@ -815,12 +813,16 @@ int ppdlib_query(const char *argv[])
 	return ret;
 	} /* end of ppd_query */
 
-/*=========================================================================
- * ppad ppdlib search
- *
- * List PPD files matching a pattern.
-=========================================================================*/
-int ppdlib_search(const char *argv[])
+/*
+<command>
+	<name><word>ppdlib</word><word>search</word></name>
+	<desc>list PPD files matching a pattern</desc>
+	<args>
+		<arg><name>pattern</name><desc>pattern to match to printer model names</desc></arg>
+	</args>
+</command>
+*/
+int command_ppdlib_search(const char *argv[])
 	{
 	const char *pattern;
 	gu_boolean wildcards;
@@ -831,15 +833,9 @@ int ppdlib_search(const char *argv[])
 	char *p;
 	char *f_description, *f_filename;
 
-	if(!(pattern = argv[0]) || argv[1])
-		{
-		fputs(_("You must supply a search pattern.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(!(f = fopen(PPD_INDEX, "r")))
 		{
-		fprintf(errors, _("Can't open \"%s\", errno=%d (%s)\n"), PPD_INDEX, errno, gu_strerror(errno));
+		fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), PPD_INDEX, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -877,29 +873,26 @@ int ppdlib_search(const char *argv[])
 	return EXIT_OK;
 	} /* end of ppdlib_search() */
 
-/*=========================================================================
-** Display the text of the requested PPD file.
-=========================================================================*/
-int ppdlib_get(const char *argv[])
+/*
+<command>
+	<name><word>ppdlib</word><word>get</word></name>
+	<desc>display the text of a PPD file</desc>
+	<args>
+		<arg><name>modelname</name><desc>model name of the printer</desc></arg>
+	</args>
+</command>
+*/
+int command_ppdlib_get(const char *argv[])
 	{
 	const char *name;
 	void *ppd = NULL;;
-
-	if(!(name = argv[0]) || argv[1])
-		{
-		fputs(
-			_("You must supply the name of a PPD file.\n"),
-			errors
-			);
-		return EXIT_SYNTAX;
-		}
 
 	gu_Try {
 		ppd = ppdobj_new(name);
 		}
 	gu_Catch
 		{
-		fprintf(errors, "%s: %s", myname, gu_exception);
+		fprintf(stderr, "%s: %s", myname, gu_exception);
 		return EXIT_NOTFOUND;	/* a guess */
 		}
 
@@ -914,7 +907,7 @@ int ppdlib_get(const char *argv[])
 		ppdobj_free(ppd);
 		}
 	gu_Catch {
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 	

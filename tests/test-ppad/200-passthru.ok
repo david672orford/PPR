@@ -5,8 +5,8 @@ Dumping configuration file...
 Interface: dummy
 Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
-DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 PassThru: pcl
 
 Use ppad to dump the configuration...
@@ -72,8 +72,8 @@ Dumping configuration file...
 Interface: dummy
 Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
-DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 PassThru: pcl pdf
 
 Use ppad to dump the configuration...
@@ -139,8 +139,8 @@ Dumping configuration file...
 Interface: dummy
 Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
-DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 PassThru: xyz abc def jhk lmn opq
 
 Use ppad to dump the configuration...
@@ -206,8 +206,8 @@ Dumping configuration file...
 Interface: dummy
 Address: "/dev/lp0"
 PPDFile: Apple LaserWriter Plus
-DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 Alert: 7 mail nobody@localhost
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
 
 Use ppad to dump the configuration...
 Printer name: regression-test1

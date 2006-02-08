@@ -1,0 +1,147 @@
+Setting comment...
+ppad: 0
+Setting location...
+ppad: 0
+Setting department...
+ppad: 0
+Setting contact...
+ppad: 0
+Dumping configuration file...
+Interface: dummy
+Address: "/dev/lp0"
+PPDFile: Apple LaserWriter Plus
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+Alert: 7 mail nobody@localhost
+Comment: Test Comment
+Location: Test Location
+Department: Test Department
+Contact: Test Contact
+
+Use ppad to dump the configuration...
+Printer name: regression-test1
+  Comment: Test Comment
+  Location: Test Location
+  Department: Test Department
+  Contact: Test Contact
+Interface: dummy
+  Address: "/dev/lp0"
+  Options: 
+  JobBreak: none (by default)
+  Feedback: no (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: nobody@localhost
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
+Switchset: 
+ppad: 0
+
+Do it again in machine-readable mode...
+name	regression-test1
+comment	Test Comment
+location	Test Location
+department	Test Department
+contact	Test Contact
+interface	dummy
+address	/dev/lp0
+options	
+jobbreak	default none
+feedback	default no
+codes	default Binary
+rip			
+rip_ppd			
+rip_which	PPD
+alerts	7 mail nobody@localhost
+flags	no no
+charge	 
+ppd	Apple LaserWriter Plus
+ppdopts	
+bins	
+outputorder	PPD
+deffiltopts	level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+switchset	
+passthru	
+limitpages	0 0
+limitkilobytes	0 0
+grayok	yes
+acls	
+pagetimelimit	0
+userparams	
+ppad: 0
+
+Clearing comment...
+ppad: 0
+Clearing location...
+ppad: 0
+Clearing department...
+ppad: 0
+Clearing contact...
+ppad: 0
+Dumping configuration file...
+Interface: dummy
+Address: "/dev/lp0"
+PPDFile: Apple LaserWriter Plus
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+Alert: 7 mail nobody@localhost
+
+Use ppad to dump the configuration...
+Printer name: regression-test1
+  Comment: 
+Interface: dummy
+  Address: "/dev/lp0"
+  Options: 
+  JobBreak: none (by default)
+  Feedback: no (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: nobody@localhost
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
+Switchset: 
+ppad: 0
+
+Do it again in machine-readable mode...
+name	regression-test1
+comment	
+location	
+department	
+contact	
+interface	dummy
+address	/dev/lp0
+options	
+jobbreak	default none
+feedback	default no
+codes	default Binary
+rip			
+rip_ppd			
+rip_which	PPD
+alerts	7 mail nobody@localhost
+flags	no no
+charge	 
+ppd	Apple LaserWriter Plus
+ppdopts	
+bins	
+outputorder	PPD
+deffiltopts	level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+switchset	
+passthru	
+limitpages	0 0
+limitkilobytes	0 0
+grayok	yes
+acls	
+pagetimelimit	0
+userparams	
+ppad: 0
+

@@ -1,0 +1,23 @@
+#! /bin/sh
+
+echo "Setting PPD..."
+$PPAD_PATH ppd regression-test1 "HP LaserJet 4000 Series"
+echo "ppad: $?"
+echo "Setting PPD options..."
+$PPAD_PATH ppdopts regression-test1 \
+	"*HPOption_Tray3" True \
+	"*HPOption_Tray4" True \
+	"*HPOption_Duplexer" True \
+	"*HPOption_Disk" False \
+	"*HPOption_Envelope_Feeder" False \
+	"*HPOption_PaperPolicy" NearestSizeAdjust \
+	"*InstalledMemory" 28MB
+echo "ppad: $?"
+$TESTBIN/dump_printer regression-test1
+
+echo "Restoring PPD expected by later tests..."
+$PPAD_PATH ppd regression-test1 "Apple LaserWriter Plus"
+echo "ppad: $?"
+$TESTBIN/dump_printer regression-test1
+
+exit 0

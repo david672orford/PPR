@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-03 13:46-0500\n"
+"POT-Creation-Date: 2006-01-30 12:34-0500\n"
 "PO-Revision-Date: 2005-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -36,12 +36,13 @@ msgstr "%s: конец файла в изобразении\n"
 #: ../lprsrv/lprsrv_print.c:499 ../lprsrv/lprsrv_print.c:503
 #: ../lprsrv/lprsrv_print.c:528 ../lprsrv/lprsrv_print.c:538
 #: ../lprsrv/lprsrv_standalone.c:139 ../lprsrv/uprint_run.c:80
-#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:293 ../ppad/ppad_conf.c:295
-#: ../ppad/ppad_conf.c:297 ../ppad/ppad_conf.c:301 ../ppad/ppad_conf.c:305
+#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:270 ../ppad/ppad_conf.c:272
+#: ../ppad/ppad_conf.c:274 ../ppad/ppad_conf.c:278 ../ppad/ppad_conf.c:282
 #: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
-#: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:425
-#: ../pprdrv/pprdrv_interface.c:318 ../pprdrv/pprdrv_interface.c:322
-#: ../pprdrv/pprdrv_progress.c:221 ../pprdrv/pprdrv_progress.c:251
+#: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:428
+#: ../pprdrv/pprdrv_custom_hook.c:64 ../pprdrv/pprdrv_interface.c:318
+#: ../pprdrv/pprdrv_interface.c:322 ../pprdrv/pprdrv_progress.c:221
+#: ../pprdrv/pprdrv_progress.c:251
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
@@ -518,7 +519,7 @@ msgid "System is out of STREAMS."
 msgstr ""
 
 #: ../interfaces/parallel.c:136 ../interfaces/usb.c:148
-#: ../ppop/ppop_cmds_other.c:752
+#: ../ppop/ppop_cmds_other.c:751
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)."
 msgstr "Не возмозно открыть \"%s\", errno=%d (%s)."
@@ -718,7 +719,7 @@ msgid "value is not in the correct format"
 msgstr "выбор не по тому схему"
 
 #: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1393 ../ppr/ppr_editps.c:144
-#: ../ppr/ppr_main.c:490 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
+#: ../ppr/ppr_main.c:493 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
 #, c-format
@@ -1085,7 +1086,7 @@ msgstr ""
 msgid "No access allowed from node \"%s\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:146 ../ppad/ppad.c:338 ../ppop/ppop.c:924
+#: ../lprsrv/lprsrv.c:146 ../ppad/ppad.c:341 ../ppop/ppop.c:924
 #: ../unixuser/ppr-followme.c:204
 msgid "Valid switches:\n"
 msgstr ""
@@ -1213,579 +1214,608 @@ msgid "ppad show <printer>"
 msgstr ""
 
 #: ../ppad/ppad.c:185
+#, fuzzy
+msgid "ppad copy <existing_printer> <new_printer>"
+msgstr "ppad comment <принтер> <текст>"
+
+#: ../ppad/ppad.c:186
 msgid "ppad interface <printer> <interface> <address>"
 msgstr ""
 
-#: ../ppad/ppad.c:186
+#: ../ppad/ppad.c:187
 msgid "ppad delete <printer>"
 msgstr ""
 
-#: ../ppad/ppad.c:187
+#: ../ppad/ppad.c:188
 msgid "ppad comment <printer> <string>"
 msgstr "ppad comment <принтер> <текст>"
 
-#: ../ppad/ppad.c:188
+#: ../ppad/ppad.c:189
 msgid "ppad location <printer> <string>"
 msgstr ""
 
-#: ../ppad/ppad.c:189
+#: ../ppad/ppad.c:190
 msgid "ppad department <printer> <string>"
 msgstr ""
 
-#: ../ppad/ppad.c:190
+#: ../ppad/ppad.c:191
 msgid "ppad contact <printer> <string>"
 msgstr ""
 
-#: ../ppad/ppad.c:191
+#: ../ppad/ppad.c:192
 msgid "ppad options <printer> <quoted_list>"
 msgstr ""
 
-#: ../ppad/ppad.c:192
+#: ../ppad/ppad.c:193
 msgid "ppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}"
 msgstr ""
 
-#: ../ppad/ppad.c:193
+#: ../ppad/ppad.c:194
 msgid "ppad feedback <printer> {True, False}"
 msgstr ""
 
-#: ../ppad/ppad.c:194
+#: ../ppad/ppad.c:195
 msgid "ppad codes <printer> {Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, DEFAULT}"
 msgstr ""
 
-#: ../ppad/ppad.c:195
+#: ../ppad/ppad.c:196
 msgid "ppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]"
 msgstr ""
 
-#: ../ppad/ppad.c:196
+#: ../ppad/ppad.c:197
 msgid "ppad ppd <printer> <filename>"
 msgstr ""
 
-#: ../ppad/ppad.c:197
+#: ../ppad/ppad.c:198
 msgid "ppad ppdq <printer>"
 msgstr ""
 
-#: ../ppad/ppad.c:198
+#: ../ppad/ppad.c:199
 msgid "ppad alerts <printer> <frequency> <method> <address>"
 msgstr ""
 
-#: ../ppad/ppad.c:199
+#: ../ppad/ppad.c:200
 msgid "ppad frequency <printer> <integer>"
 msgstr ""
 
-#: ../ppad/ppad.c:200
+#: ../ppad/ppad.c:201
 msgid "ppad flags <printer> {never, no, yes, always} {never, no, yes, always}"
 msgstr ""
 
-#: ../ppad/ppad.c:201
+#: ../ppad/ppad.c:202
 msgid "ppad charge <printer> {<money>, none} [<money>]"
 msgstr ""
 
-#: ../ppad/ppad.c:202
+#: ../ppad/ppad.c:203
 msgid "ppad outputorder <printer> {Normal, Reverse, PPD}"
 msgstr ""
 
-#: ../ppad/ppad.c:203
+#: ../ppad/ppad.c:204
 msgid "ppad bins ppd <printer>"
 msgstr ""
 
-#: ../ppad/ppad.c:204
+#: ../ppad/ppad.c:205
 msgid "ppad bins add <printer> <bin>"
 msgstr ""
 
-#: ../ppad/ppad.c:205
+#: ../ppad/ppad.c:206
 msgid "ppad bins delete <printer> <bin>"
 msgstr ""
 
-#: ../ppad/ppad.c:206
+#: ../ppad/ppad.c:207
 msgid "ppad touch <printer>"
 msgstr ""
 
-#: ../ppad/ppad.c:207
+#: ../ppad/ppad.c:208
 msgid "ppad switchset <printer> <list>"
 msgstr ""
 
-#: ../ppad/ppad.c:208
+#: ../ppad/ppad.c:209
 msgid "ppad deffiltopts <printer>"
 msgstr ""
 
-#: ../ppad/ppad.c:209
+#: ../ppad/ppad.c:210
 msgid "ppad passthru <printer> <list>"
 msgstr ""
 
-#: ../ppad/ppad.c:210
+#: ../ppad/ppad.c:211
 msgid "ppad ppdopts <printer>"
 msgstr "ppad ppdopts <принтер>"
 
-#: ../ppad/ppad.c:211
+#: ../ppad/ppad.c:212
 msgid "ppad limitpages <printer> <number> <number>"
 msgstr ""
 
-#: ../ppad/ppad.c:212
+#: ../ppad/ppad.c:213
 msgid "ppad limitkilobytes <printer> <number> <number>"
 msgstr ""
 
-#: ../ppad/ppad.c:213
+#: ../ppad/ppad.c:214
 msgid "ppad grayok <printer> <boolean>"
 msgstr ""
 
-#: ../ppad/ppad.c:214
+#: ../ppad/ppad.c:215
 msgid "ppad acls <name> <acl> ..."
 msgstr ""
 
-#: ../ppad/ppad.c:215
+#: ../ppad/ppad.c:216
 msgid "ppad userparams <name> <list>"
 msgstr ""
 
-#: ../ppad/ppad.c:216
+#: ../ppad/ppad.c:217
 msgid "ppad pagetimelimit <name> <value>"
 msgstr ""
 
-#: ../ppad/ppad.c:217
+#: ../ppad/ppad.c:218
 msgid "ppad addon <name> <value>"
 msgstr ""
 
-#: ../ppad/ppad.c:221
+#: ../ppad/ppad.c:222
 msgid "Printer Management:\n"
 msgstr "Управленние принтером:\n"
 
-#: ../ppad/ppad.c:234
+#: ../ppad/ppad.c:235
 msgid "ppad group show <group>"
 msgstr ""
 
-#: ../ppad/ppad.c:235
-msgid "ppad group members <group> <printer> ..."
-msgstr ""
-
 #: ../ppad/ppad.c:236
-msgid "ppad group add <group> <printer>"
+msgid "ppad group copy <existing_group> <new_group>"
 msgstr ""
 
 #: ../ppad/ppad.c:237
-msgid "ppad group remove <group> <printer>"
+msgid "ppad group members <group> <printer> ..."
 msgstr ""
 
 #: ../ppad/ppad.c:238
-msgid "ppad group delete <group>"
+msgid "ppad group add <group> <printer>"
 msgstr ""
 
 #: ../ppad/ppad.c:239
-msgid "ppad group comment <group> <comment>"
+msgid "ppad group remove <group> <printer>"
 msgstr ""
 
 #: ../ppad/ppad.c:240
-msgid "ppad group rotate <group> {true, false}"
+msgid "ppad group delete <group>"
 msgstr ""
 
 #: ../ppad/ppad.c:241
-msgid "ppad group touch <group>"
+msgid "ppad group comment <group> <comment>"
 msgstr ""
 
 #: ../ppad/ppad.c:242
-msgid "ppad group switchset <printer> <list>"
+msgid "ppad group rotate <group> {true, false}"
 msgstr ""
 
 #: ../ppad/ppad.c:243
-msgid "ppad group deffiltopts <group>"
+msgid "ppad group touch <group>"
 msgstr ""
 
 #: ../ppad/ppad.c:244
-msgid "ppad group passthru <group> <list>"
+msgid "ppad group switchset <printer> <list>"
 msgstr ""
 
 #: ../ppad/ppad.c:245
-msgid "ppad group acls <name> <acl> ..."
+msgid "ppad group deffiltopts <group>"
 msgstr ""
 
 #: ../ppad/ppad.c:246
+msgid "ppad group passthru <group> <list>"
+msgstr ""
+
+#: ../ppad/ppad.c:247
+msgid "ppad group acls <name> <acl> ..."
+msgstr ""
+
+#: ../ppad/ppad.c:248
 msgid "ppad group addon <name> <value>"
 msgstr ""
 
-#: ../ppad/ppad.c:250
+#: ../ppad/ppad.c:252
 msgid "Group Management:\n"
 msgstr ""
 
-#: ../ppad/ppad.c:263
+#: ../ppad/ppad.c:265
 msgid "ppad alias show <alias>"
 msgstr ""
 
-#: ../ppad/ppad.c:264
-msgid "ppad alias forwhat <alias> <queuename>"
-msgstr ""
-
-#: ../ppad/ppad.c:265
-msgid "ppad alias delete <alias>"
-msgstr ""
-
 #: ../ppad/ppad.c:266
-msgid "ppad alias comment <alias> <comment>"
+msgid "ppad alias copy <existing_alias> <new_alias>"
 msgstr ""
 
 #: ../ppad/ppad.c:267
-msgid "ppad alias switchset <alias> <list>"
+msgid "ppad alias forwhat <alias> <queuename>"
 msgstr ""
 
 #: ../ppad/ppad.c:268
-msgid "ppad alias passthru <alias> <list>"
+msgid "ppad alias delete <alias>"
 msgstr ""
 
 #: ../ppad/ppad.c:269
+msgid "ppad alias comment <alias> <comment>"
+msgstr ""
+
+#: ../ppad/ppad.c:270
+msgid "ppad alias switchset <alias> <list>"
+msgstr ""
+
+#: ../ppad/ppad.c:271
+msgid "ppad alias passthru <alias> <list>"
+msgstr ""
+
+#: ../ppad/ppad.c:272
 msgid "ppad alias addon <name> <value>"
 msgstr ""
 
-#: ../ppad/ppad.c:273
+#: ../ppad/ppad.c:276
 msgid "Alias Management:\n"
 msgstr "Управленние псевдонимом:\n"
 
-#: ../ppad/ppad.c:286
+#: ../ppad/ppad.c:289
 msgid "ppad ppdlib query <interface> <address> [<quoted_options_list>]"
 msgstr ""
 
-#: ../ppad/ppad.c:287
+#: ../ppad/ppad.c:290
 msgid "ppad ppdlib search <pattern>"
 msgstr "ppad ppdlib search <шаблом>"
 
-#: ../ppad/ppad.c:288
+#: ../ppad/ppad.c:291
 msgid "ppad ppdlib get <name>"
 msgstr ""
 
-#: ../ppad/ppad.c:292
+#: ../ppad/ppad.c:295
 msgid "PPD File Management:\n"
 msgstr ""
 
-#: ../ppad/ppad.c:318 ../ppop/ppop.c:911
+#: ../ppad/ppad.c:321 ../ppop/ppop.c:911
 msgid "-M\tselect machine-readable output"
 msgstr ""
 
-#: ../ppad/ppad.c:319 ../ppop/ppop.c:912
+#: ../ppad/ppad.c:322 ../ppop/ppop.c:912
 msgid "--machine-readable\tsame as -M"
 msgstr "--machine-readable\tто же что -M"
 
-#: ../ppad/ppad.c:320
+#: ../ppad/ppad.c:323
 #, fuzzy
 msgid "--user <username>\trun as if by <username>"
 msgstr "--user <полжователь>\tто же что -u"
 
-#: ../ppad/ppad.c:321
+#: ../ppad/ppad.c:324
 msgid "-d <n>\tset debug level to <n>"
 msgstr ""
 
-#: ../ppad/ppad.c:322
+#: ../ppad/ppad.c:325
 msgid "--debug=<n>\tsame as -d"
 msgstr "--debug=<n>\tто же что -d"
 
-#: ../ppad/ppad.c:323
+#: ../ppad/ppad.c:326
 msgid "--version\tprint PPR version information"
 msgstr "--version\tпокажат идентификатор версии PPR"
 
-#: ../ppad/ppad.c:324 ../ppop/ppop.c:920
+#: ../ppad/ppad.c:327 ../ppop/ppop.c:920
 msgid "--help\tprint this help message"
 msgstr "--help\tпоказать это собщение"
 
-#: ../ppad/ppad.c:329
+#: ../ppad/ppad.c:332
 msgid "ppad help printer"
 msgstr ""
 
-#: ../ppad/ppad.c:330
+#: ../ppad/ppad.c:333
 msgid "ppad help group"
 msgstr ""
 
-#: ../ppad/ppad.c:331
+#: ../ppad/ppad.c:334
 msgid "ppad help alias"
 msgstr ""
 
-#: ../ppad/ppad.c:332
+#: ../ppad/ppad.c:335
 msgid "ppad help media"
 msgstr ""
 
-#: ../ppad/ppad.c:333
+#: ../ppad/ppad.c:336
 msgid "ppad help ppdlib"
 msgstr ""
 
-#: ../ppad/ppad.c:334
+#: ../ppad/ppad.c:337
 msgid "ppad help other"
 msgstr ""
 
-#: ../ppad/ppad.c:348
+#: ../ppad/ppad.c:351
 msgid "Additional help topics:\n"
 msgstr ""
 
-#: ../ppad/ppad.c:356 ../ppop/ppop.c:940
+#: ../ppad/ppad.c:359 ../ppop/ppop.c:940
 #, c-format
 msgid ""
 "The %s manpage may be viewed by entering this command at a shell prompt:\n"
 "    ppdoc %s\n"
 msgstr ""
 
-#: ../ppad/ppad.c:599
+#: ../ppad/ppad.c:608
 msgid "PPAD, Page Printer Administrator's utility"
 msgstr ""
 
-#: ../ppad/ppad.c:604 ../ppop/ppop.c:806
+#: ../ppad/ppad.c:613 ../ppop/ppop.c:806
 msgid "Type \"help\" for command list, \"exit\" to quit."
 msgstr ""
 
-#: ../ppad/ppad.c:793
+#: ../ppad/ppad.c:802
 #, c-format
 msgid "%s: unknown sub-command \"%s\", try \"ppad help\"\n"
 msgstr ""
 
-#: ../ppad/ppad.c:796
+#: ../ppad/ppad.c:805
 #, c-format
 msgid "%s: incomplete sub-command \"%s\", try \"ppad help\"\n"
 msgstr ""
 
-#: ../ppad/ppad.c:799
+#: ../ppad/ppad.c:808
 #, c-format
 msgid "%s: unknown sub-sub-command \"%s %s\", try \"ppad help\"\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:53
+#: ../ppad/ppad_alias.c:54
 msgid "You must supply the name of an alias to show.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:59 ../ppad/ppad_alias.c:208 ../ppad/ppad_conf.c:384
-#, c-format
-msgid "The alias \"%s\" does not exist.\n"
-msgstr ""
-
-#: ../ppad/ppad_alias.c:91
+#: ../ppad/ppad_alias.c:89
 #, c-format
 msgid "Alias name: %s\n"
 msgstr "Псевдоним: %s\n"
 
-#: ../ppad/ppad_alias.c:92 ../ppad/ppad_group.c:172 ../ppad/ppad_printer.c:737
+#: ../ppad/ppad_alias.c:90 ../ppad/ppad_group.c:153 ../ppad/ppad_printer.c:756
 #, c-format
 msgid "Comment: %s\n"
 msgstr "Заметки: %s\n"
 
-#: ../ppad/ppad_alias.c:93
+#: ../ppad/ppad_alias.c:91
 #, c-format
 msgid "For what: %s\n"
 msgstr "Чего: %s\n"
 
-#: ../ppad/ppad_alias.c:94 ../ppad/ppad_group.c:194 ../ppad/ppad_printer.c:893
+#: ../ppad/ppad_alias.c:92 ../ppad/ppad_group.c:175 ../ppad/ppad_printer.c:909
 msgid "Switchset: "
 msgstr ""
 
-#: ../ppad/ppad_alias.c:95 ../ppad/ppad_group.c:201 ../ppad/ppad_printer.c:900
+#: ../ppad/ppad_alias.c:93 ../ppad/ppad_group.c:182 ../ppad/ppad_printer.c:916
 #, c-format
 msgid "PassThru types: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:124
+#: ../ppad/ppad_alias.c:116 ../ppad/ppad_printer.c:1088
+#, fuzzy
+msgid ""
+"You must supply the name of an existing printer and\n"
+"a name for the new printer.\n"
+msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#: ../ppad/ppad_alias.c:135
 msgid ""
 "You must supply the name of a new or existing alias and\n"
 "the name of the queue it is to be an alias for.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:131
+#: ../ppad/ppad_alias.c:142
 msgid "Alias name contains a disallowed character.\n"
 msgstr "Запрощеное букво или символ находется в псевдониме.\n"
 
-#: ../ppad/ppad_alias.c:137
+#: ../ppad/ppad_alias.c:148
 msgid "Alias name begins with a disallowed character.\n"
 msgstr "Перое букво псевдонима из запрошеных.\n"
 
-#: ../ppad/ppad_alias.c:144
+#: ../ppad/ppad_alias.c:155
 #, c-format
 msgid "The name \"%s\" is not that of an existing group or printer.\n"
 msgstr "Название \"%s\" не явлается названием настоящого група или принтера.\n"
 
-#: ../ppad/ppad_alias.c:158
+#: ../ppad/ppad_alias.c:198 ../ppad/ppad_conf.c:169
 #, c-format
-msgid "Failed to create alias config file \"%s\", errno=%d (%s).\n"
+msgid "The alias \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:228
+#: ../ppad/ppad_alias.c:218
 msgid ""
 "You must supply the name of an existing alias and\n"
 "a comment to attach to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:243
+#: ../ppad/ppad_alias.c:233
 msgid "You must supply the name of an alias and a set of switches.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:250 ../ppad/ppad_group.c:703
-#: ../ppad/ppad_printer.c:2468
+#: ../ppad/ppad_alias.c:240 ../ppad/ppad_group.c:656
+#: ../ppad/ppad_printer.c:2281
 msgid "Bad set of switches.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:265
+#: ../ppad/ppad_alias.c:255
 msgid ""
 "You must specify an alias and a (possibly empty) list\n"
 "of file types.  These file types should be the same as\n"
 "those used with the \"ppr -T\" option.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:289
+#: ../ppad/ppad_alias.c:278
 msgid ""
 "You must supply the name of an existing alias, the name of an addon\n"
 "parameter.  A value for the parameter is optional.  If you do not\n"
 "supply a value, the parameter will be unset.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:842
-#: ../ppad/ppad_printer.c:3085
+#: ../ppad/ppad_alias.c:286 ../ppad/ppad_group.c:795
+#: ../ppad/ppad_printer.c:2878
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr ""
 
-#: ../ppad/ppad_conf.c:110 ../ppad/ppad_conf.c:143
+#: ../ppad/ppad_conf.c:100 ../ppad/ppad_conf.c:142
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%d\", \"%s\"), errno=%d (%s)"
 
-#: ../ppad/ppad_conf.c:118
+#: ../ppad/ppad_conf.c:107
 #, c-format
 msgid "Waiting for lock to clear.\n"
 msgstr ""
 
-#: ../ppad/ppad_conf.c:127
+#: ../ppad/ppad_conf.c:122
+#, fuzzy, c-format
+msgid "The printer \"%s\" already exists.\n"
+msgstr "Принтер \"%s\" не существует.\n"
+
+#: ../ppad/ppad_conf.c:125
+#, fuzzy, c-format
+msgid "The group \"%s\" already exists.\n"
+msgstr "Использователя \"%s\" нет.\n"
+
+#: ../ppad/ppad_conf.c:128
+#, fuzzy, c-format
+msgid "The alias \"%s\" already exists.\n"
+msgstr "Использователя \"%s\" нет.\n"
+
+#: ../ppad/ppad_conf.c:152
 #, c-format
 msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
 msgstr "Невозможно сождать временый файл \"%s\" в режиме записи, errno=%d (%s)"
 
-#: ../ppad/ppad_conf.c:378 ../ppad/ppad_group.c:395 ../ppad/ppad_printer.c:392
-#: ../ppad/ppad_printer.c:1333 ../ppad/ppad_printer.c:1424
-#: ../ppad/ppad_printer.c:1483 ../ppad/ppad_printer.c:1562
-#: ../ppad/ppad_printer.c:1667 ../ppad/ppad_printer.c:1779
-#: ../ppad/ppad_printer.c:1835 ../ppad/ppad_printer.c:2062
-#: ../ppad/ppad_printer.c:2135 ../ppad/ppad_printer.c:2236
-#: ../ppad/ppad_printer.c:2399 ../ppad/ppad_printer.c:2440
-#: ../ppad/ppad_printer.c:2496 ../ppad/ppad_printer.c:2599
+#: ../ppad/ppad_conf.c:163 ../ppad/ppad_printer.c:2217
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Принтер \"%s\" не существует.\n"
 
-#: ../ppad/ppad_conf.c:381 ../ppad/ppad_group.c:90 ../ppad/ppad_group.c:312
-#: ../ppad/ppad_group.c:591 ../ppad/ppad_group.c:640 ../ppad/ppad_group.c:675
+#: ../ppad/ppad_conf.c:166 ../ppad/ppad_group.c:550 ../ppad/ppad_group.c:599
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:84
+#: ../ppad/ppad_group.c:77
 msgid "You must supply the name of a group to show.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:99 ../ppad/ppad_printer.c:563
+#: ../ppad/ppad_group.c:89 ../ppad/ppad_printer.c:591
 #, c-format
 msgid "WARNING: invalid \"%s\" setting: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:170
+#: ../ppad/ppad_group.c:151
 #, c-format
 msgid "Group name: %s\n"
 msgstr "Название группы: %s\n"
 
-#: ../ppad/ppad_group.c:174
+#: ../ppad/ppad_group.c:155
 msgid "Members:"
 msgstr "Члены:"
 
-#: ../ppad/ppad_group.c:184
+#: ../ppad/ppad_group.c:165
 msgid "False"
 msgstr "Не верно"
 
-#: ../ppad/ppad_group.c:184
+#: ../ppad/ppad_group.c:165
 #, c-format
 msgid "Rotate: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:184
+#: ../ppad/ppad_group.c:165
 msgid "True"
 msgstr ""
 
-#: ../ppad/ppad_group.c:187 ../ppad/ppad_printer.c:796
+#: ../ppad/ppad_group.c:168 ../ppad/ppad_printer.c:815
 msgid "Default Filter Options: "
 msgstr ""
 
-#: ../ppad/ppad_group.c:205 ../ppad/ppad_printer.c:916
+#: ../ppad/ppad_group.c:186 ../ppad/ppad_printer.c:932
 #, c-format
 msgid "ACLs: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:211 ../ppad/ppad_printer.c:930
+#: ../ppad/ppad_group.c:192 ../ppad/ppad_printer.c:946
 msgid "Addon:"
 msgstr ""
 
-#: ../ppad/ppad_group.c:284
+#: ../ppad/ppad_group.c:262
+#, fuzzy
+msgid ""
+"You must supply the name of an existing group and\n"
+"a name for the new group.\n"
+msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#: ../ppad/ppad_group.c:279
 msgid ""
 "You must supply the name of a group and\n"
 "a comment to attach to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:305
+#: ../ppad/ppad_group.c:300
 msgid "You must supply the name of a group and \"true\" or \"false\".\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:359
+#: ../ppad/ppad_group.c:328
 msgid ""
 "You must specify a new or existing group and one or more printers\n"
 "to add to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:368
+#: ../ppad/ppad_group.c:337
 msgid ""
 "You must specify a new or existing group and zero or more printers\n"
 "to be its members.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:376
+#: ../ppad/ppad_group.c:345
 msgid "Group name contains a disallowed character.\n"
 msgstr "Название группы содержает запрешеный символ.\n"
 
-#: ../ppad/ppad_group.c:382
+#: ../ppad/ppad_group.c:351
 msgid "Group name begins with a disallowed character.\n"
 msgstr "Название группы начинается запрешеным символом.\n"
 
-#: ../ppad/ppad_group.c:437
+#: ../ppad/ppad_group.c:400
 #, c-format
 msgid "Printer \"%s\" is already a member of \"%s\".\n"
 msgstr "Принтер \"%s\" уже явлается членом группы \"%s\".\n"
 
-#: ../ppad/ppad_group.c:468
+#: ../ppad/ppad_group.c:431
 #, c-format
 msgid "Group \"%s\" would have %d members, only %d are allowed.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:580
+#: ../ppad/ppad_group.c:539
 msgid "You must specify a group and a printer or printers to remove from it.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:594
+#: ../ppad/ppad_group.c:553
 #, c-format
 msgid "The group \"%s\" does not have a member called \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:618
+#: ../ppad/ppad_group.c:577
 msgid "You must specify a group to delete.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:624 ../ppad/ppad_printer.c:2055
+#: ../ppad/ppad_group.c:583 ../ppad/ppad_printer.c:1892
 msgid "Too many parameters.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:668 ../ppad/ppad_group.c:769
+#: ../ppad/ppad_group.c:628 ../ppad/ppad_group.c:724
 msgid "You must supply the name of a group.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:696
+#: ../ppad/ppad_group.c:649
 msgid "You must supply the name of a group and a set of switches.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:787
+#: ../ppad/ppad_group.c:742
 msgid ""
 "You must specify a group and a (possibly empty) list\n"
 "of file types.  These file types should be the same as\n"
 "those used with the \"ppr -T\" option.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:811
+#: ../ppad/ppad_group.c:765
 msgid ""
 "You must specify a group and a (possibly empty) list\n"
 "of PPR access control lists.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:834
+#: ../ppad/ppad_group.c:787
 msgid ""
 "You must supply the name of an existing group, and the name of an addon\n"
 "parameter.  A value for the parameter is optional.  If you do not\n"
@@ -1983,7 +2013,7 @@ msgid ""
 "quoted list of options may follow the address.\n"
 msgstr ""
 
-#: ../ppad/ppad_ppd.c:811 ../ppad/ppad_printer.c:3119
+#: ../ppad/ppad_ppd.c:811 ../ppad/ppad_printer.c:2912
 #, c-format
 msgid "%s: query failed: %s\n"
 msgstr "%s: запрос остаётся без ответа: %s\n"
@@ -1996,208 +2026,213 @@ msgstr "Вам нада ввисти шаблом.\n"
 msgid "You must supply the name of a PPD file.\n"
 msgstr "Название \"%s\" не явлается названием настоящого файла PPD.\n"
 
-#: ../ppad/ppad_printer.c:172
+#: ../ppad/ppad_printer.c:78 ../ppr/ppr_respond.c:167
+#, c-format
+msgid "%s(): %s() failed, errno=%d (%s)\n"
+msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)\n"
+
+#: ../ppad/ppad_printer.c:353
 msgid ""
 "You must supply an alert frequency, such as \"7\", an alert method,\n"
 "such as \"mail\", and an alert address, such as \"alertreaders\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:183
+#: ../ppad/ppad_printer.c:364
 #, c-format
 msgid "Unable to create \"%s\", errno=%d (%s).\n"
 msgstr "Невозможно создать \"%s\", errno=%d (%s).\n"
 
-#: ../ppad/ppad_printer.c:386
+#: ../ppad/ppad_printer.c:446
 msgid "You must specify a printer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:645
+#: ../ppad/ppad_printer.c:669
 #, c-format
 msgid "WARNING: can't parse RIP information in PPD file\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:735
+#: ../ppad/ppad_printer.c:754
 #, c-format
 msgid "Printer name: %s\n"
 msgstr "Название принтера: %s\n"
 
-#: ../ppad/ppad_printer.c:741
+#: ../ppad/ppad_printer.c:760
 #, c-format
 msgid "Location: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:746
+#: ../ppad/ppad_printer.c:765
 #, c-format
 msgid "Department: %s\n"
 msgstr "Удел: %s\n"
 
-#: ../ppad/ppad_printer.c:751
+#: ../ppad/ppad_printer.c:770
 #, c-format
 msgid "Contact: %s\n"
 msgstr "Контактное лицо: %s\n"
 
-#: ../ppad/ppad_printer.c:757 ../ppad/ppad_printer.c:760
-#: ../ppad/ppad_printer.c:792
+#: ../ppad/ppad_printer.c:776 ../ppad/ppad_printer.c:779
+#: ../ppad/ppad_printer.c:811
 msgid "<undefined>"
 msgstr "<неопределеное>"
 
-#: ../ppad/ppad_printer.c:757
+#: ../ppad/ppad_printer.c:776
 #, c-format
 msgid "Interface: %s\n"
 msgstr "Посредническая програма (interface): %s\n"
 
-#: ../ppad/ppad_printer.c:760
+#: ../ppad/ppad_printer.c:779
 #, c-format
 msgid "Address: \"%s\"\n"
 msgstr "Адрес: \"%s\"\n"
 
-#: ../ppad/ppad_printer.c:763
+#: ../ppad/ppad_printer.c:782
 #, c-format
 msgid "Options: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:766
+#: ../ppad/ppad_printer.c:785
 msgid "JobBreak: "
 msgstr ""
 
-#: ../ppad/ppad_printer.c:768 ../ppad/ppad_printer.c:776
-#: ../ppad/ppad_printer.c:784
+#: ../ppad/ppad_printer.c:787 ../ppad/ppad_printer.c:795
+#: ../ppad/ppad_printer.c:803
 #, c-format
 msgid "%s (by default)"
 msgstr "%s (по молчанию)"
 
-#: ../ppad/ppad_printer.c:774
+#: ../ppad/ppad_printer.c:793
 msgid "Feedback: "
 msgstr ""
 
-#: ../ppad/ppad_printer.c:782
+#: ../ppad/ppad_printer.c:801
 msgid "Codes: "
 msgstr "Цтифры: "
 
-#: ../ppad/ppad_printer.c:792
+#: ../ppad/ppad_printer.c:811
 #, c-format
 msgid "PPDFile: %s\n"
 msgstr "PPD файл: %s\n"
 
-#: ../ppad/ppad_printer.c:807
+#: ../ppad/ppad_printer.c:826
 #, c-format
 msgid "RIP: %s %s \"%s\"\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:807
+#: ../ppad/ppad_printer.c:826
 #, c-format
 msgid "RIP: %s %s \"%s\" (from PPD)\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:819
+#: ../ppad/ppad_printer.c:838
 #, c-format
 msgid "PPDOpts: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:825
+#: ../ppad/ppad_printer.c:843
 msgid "Bins: "
 msgstr "Потоки: "
 
-#: ../ppad/ppad_printer.c:841
+#: ../ppad/ppad_printer.c:857
 #, c-format
 msgid "OutputOrder: %s\n"
 msgstr "Очеред страниц (outputorder): %s\n"
 
-#: ../ppad/ppad_printer.c:846
+#: ../ppad/ppad_printer.c:862
 #, c-format
 msgid "Alert frequency: %d "
 msgstr ""
 
-#: ../ppad/ppad_printer.c:850
+#: ../ppad/ppad_printer.c:866
 msgid "(never send alerts)"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:853
+#: ../ppad/ppad_printer.c:869
 msgid "(send alert on every error)"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:856
+#: ../ppad/ppad_printer.c:872
 msgid "(send alert on first error, send notice on recovery)"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:860
+#: ../ppad/ppad_printer.c:876
 #, c-format
 msgid "(send alert every %d errors)"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:862
+#: ../ppad/ppad_printer.c:878
 #, c-format
 msgid "(send alert after %d errors, send notice on recovery)"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:866
+#: ../ppad/ppad_printer.c:882
 #, c-format
 msgid "Alert method: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:866 ../ppad/ppad_printer.c:867
+#: ../ppad/ppad_printer.c:882 ../ppad/ppad_printer.c:883
 msgid "none"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:867
+#: ../ppad/ppad_printer.c:883
 #, c-format
 msgid "Alert address: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:872
+#: ../ppad/ppad_printer.c:888
 #, c-format
 msgid "Flags: %s %s (banners %s, trailers %s)\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:877
+#: ../ppad/ppad_printer.c:893
 #, c-format
 msgid "Charge: "
 msgstr "Плата: "
 
-#: ../ppad/ppad_printer.c:880
+#: ../ppad/ppad_printer.c:896
 #, c-format
 msgid "no charge\n"
 msgstr "платы нет\n"
 
-#: ../ppad/ppad_printer.c:884
+#: ../ppad/ppad_printer.c:900
 #, c-format
 msgid "%s per duplex sheet, "
 msgstr ""
 
-#: ../ppad/ppad_printer.c:885
+#: ../ppad/ppad_printer.c:901
 #, c-format
 msgid "%s per simplex sheet\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:904
+#: ../ppad/ppad_printer.c:920
 #, c-format
 msgid "LimitPages: %d %d\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:908
+#: ../ppad/ppad_printer.c:924
 #, c-format
 msgid "LimitKilobytes: %d %d\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:912
+#: ../ppad/ppad_printer.c:928
 #, c-format
 msgid "GrayOK: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:912 ../ppop/ppop_cmds_other.c:1558
+#: ../ppad/ppad_printer.c:928 ../ppop/ppop_cmds_other.c:1557
 msgid "no"
 msgstr "нет"
 
-#: ../ppad/ppad_printer.c:912 ../ppop/ppop_cmds_other.c:1558
+#: ../ppad/ppad_printer.c:928 ../ppop/ppop_cmds_other.c:1557
 msgid "yes"
 msgstr "да"
 
-#: ../ppad/ppad_printer.c:920
+#: ../ppad/ppad_printer.c:936
 #, c-format
 msgid "PageTimeLimit: %d\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:924
+#: ../ppad/ppad_printer.c:940
 #, c-format
 msgid "Userparams: %s\n"
 msgstr ""
@@ -2208,25 +2243,25 @@ msgid ""
 "a comment to attach to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1120
+#: ../ppad/ppad_printer.c:1116
 msgid ""
 "You must supply the name of an existing printer and\n"
 "a location name to attach to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1138
+#: ../ppad/ppad_printer.c:1130
 msgid ""
 "You must supply the name of an existing printer and\n"
 "a department name to attach to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1156
+#: ../ppad/ppad_printer.c:1144
 msgid ""
 "You must supply the name of an existing printer and\n"
 "a contact name to attach to it.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1185
+#: ../ppad/ppad_printer.c:1173
 msgid ""
 "You must specify a printer, either new or existing, an interface program, and\n"
 "an address of the printer in a format understood by the interface program.\n"
@@ -2234,54 +2269,49 @@ msgid ""
 "address formats.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1194
+#: ../ppad/ppad_printer.c:1182
 msgid "The printer name contains a disallowed character.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1200
+#: ../ppad/ppad_printer.c:1188
 msgid "The printer name begins with a disallowed character.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1222
+#: ../ppad/ppad_printer.c:1210
 #, c-format
 msgid "The interface \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1227
+#: ../ppad/ppad_printer.c:1215
 #, c-format
 msgid "The interface \"%s\" not executable.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1244
-#, c-format
-msgid "Failed to create printer config file \"%s\", errno=%d (%s).\n"
-msgstr ""
-
-#: ../ppad/ppad_printer.c:1326
+#: ../ppad/ppad_printer.c:1307
 msgid "Insufficient parameters.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1380
+#: ../ppad/ppad_printer.c:1413
 msgid ""
 "You must supply the name of an existing printer and a jobbreak mode setting.\n"
 "Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
 "\"save/restore\", \"newinterface\", and \"default\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1475
+#: ../ppad/ppad_printer.c:1436
 msgid ""
 "You must supply the name of an existing printer\n"
 "and \"true\", \"false\", or \"default\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1522
+#: ../ppad/ppad_printer.c:1458
 msgid ""
 "You must supply the name of an existing printer and a codes setting.\n"
 "Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
 "\"UNKNOWN\", and \"default\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1607
+#: ../ppad/ppad_printer.c:1476
 msgid ""
 "You must supply the name of an existing printer.  If you supply no other\n"
 "parameters, the RIP setting will revert to the PPD file default.  To select\n"
@@ -2289,61 +2319,61 @@ msgid ""
 "output language (such as \"pcl\" or \"other\"), and a RIP options string.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1616
+#: ../ppad/ppad_printer.c:1485
 msgid "The RIP name may not be an empty string.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1622
+#: ../ppad/ppad_printer.c:1491
 msgid "The RIP output language may not be an empty string.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1628
+#: ../ppad/ppad_printer.c:1497
 msgid "Too many parameters.  Did you forget to quote the list of options?\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1657
+#: ../ppad/ppad_printer.c:1527
 msgid "You must supply the name of an existing printer and a PPD file.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1768
+#: ../ppad/ppad_printer.c:1626
 msgid ""
 "You must supply the name of a printer, an alert frequency, such as \"7\",\n"
 "an alert method, such as \"mail\", and an alert address,\n"
 "such as \"alertreaders@domain.com\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1825
+#: ../ppad/ppad_printer.c:1679
 msgid "You must specify a printer and a new alert frequency.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1868
+#: ../ppad/ppad_printer.c:1708
 msgid "No alert method and address defined, use \"ppad alerts\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1905
+#: ../ppad/ppad_printer.c:1744
 msgid ""
 "You must supply the name of an existing printer, a new banner\n"
 "option, and a new trailer option.  Valid banner and trailer\n"
 "options are \"never\", \"no\", \"yes\", and \"always\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1914
+#: ../ppad/ppad_printer.c:1755
 msgid ""
 "Banner and trailer must be set to \"never\", \"no\",\n"
 "\"yes\", or \"always\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1935
+#: ../ppad/ppad_printer.c:1776
 msgid ""
 "You must supply the name of an existing printer and\n"
 "a new outputorder.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1948
+#: ../ppad/ppad_printer.c:1789
 msgid "Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1973
+#: ../ppad/ppad_printer.c:1811
 msgid ""
 "Insufficient parameters.  You must supply the name of a printer\n"
 "and an amount to change per sheet.  If you wish, you may specify\n"
@@ -2355,174 +2385,174 @@ msgid ""
 "any money.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1988
+#: ../ppad/ppad_printer.c:1826
 #, c-format
 msgid "A second parameter is not allowed because first is \"%s\"."
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2000 ../ppad/ppad_printer.c:2005
+#: ../ppad/ppad_printer.c:1838 ../ppad/ppad_printer.c:1843
 #, c-format
 msgid "The value \"%s\" is not in the correct format for decimal currency."
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2049
+#: ../ppad/ppad_printer.c:1886
 msgid "You must supply the name of an existing printer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2082
+#: ../ppad/ppad_printer.c:1916
 msgid "Printer configuration file does not have a \"PPDFile:\" line.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2129
+#: ../ppad/ppad_printer.c:1962
 msgid "You must specify an existing printer and a new bin name or names.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2159
+#: ../ppad/ppad_printer.c:1989
 #, c-format
 msgid "Printer \"%s\" already has a bin called \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2182
+#: ../ppad/ppad_printer.c:2012
 #, c-format
 msgid ""
 "Can't add these %d bin%s to \"%s\" because then the printer would\n"
 "have %d bins and the %d bin limit would be exceeded.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2219
+#: ../ppad/ppad_printer.c:2047
 msgid "You must specify a printer and a bin or bins to remove from it.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2228
+#: ../ppad/ppad_printer.c:2056
 #, c-format
 msgid "You can't delete more than %d bins at a time.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2272
+#: ../ppad/ppad_printer.c:2094
 #, c-format
 msgid "The printer \"%s\" does not have a bin called \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2334
+#: ../ppad/ppad_printer.c:2155
 msgid "You must specify a printer to delete.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2349
+#: ../ppad/ppad_printer.c:2169
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)\n"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\"), errno=%d (%s)"
 
-#: ../ppad/ppad_printer.c:2433 ../ppad/ppad_printer.c:2490
-#: ../ppad/ppad_printer.c:2584
+#: ../ppad/ppad_printer.c:2252 ../ppad/ppad_printer.c:2304
+#: ../ppad/ppad_printer.c:2398
 msgid "You must supply the name of a printer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2461
+#: ../ppad/ppad_printer.c:2274
 msgid "You must supply the name of a printer and a set of switches.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2546
+#: ../ppad/ppad_printer.c:2359
 msgid ""
 "You must specify a printer and a (possibly empty) list\n"
 "of file types.  These file types should be the same as\n"
 "those used with the \"ppr -T\" option.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2630
+#: ../ppad/ppad_printer.c:2444
 #, fuzzy, c-format
 msgid "The printer \"%s\" has no \"PPDFile:\" line in its configuration file."
 msgstr "Принтер \"%s\" не имет PPD файл.\n"
 
-#: ../ppad/ppad_printer.c:2682
+#: ../ppad/ppad_printer.c:2496
 #, c-format
 msgid "WARNING: Unclosed UI block \"%s\" in PPD file.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2734
+#: ../ppad/ppad_printer.c:2549
 msgid "WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2767
+#: ../ppad/ppad_printer.c:2582
 #, c-format
 msgid "Warning:\t No value provided for \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2771
+#: ../ppad/ppad_printer.c:2586
 #, c-format
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2782
+#: ../ppad/ppad_printer.c:2597
 #, c-format
 msgid "Choose 1 thru %d or 0 if unknown> "
 msgstr "Выберайте от 1 по %в или 0 если не известно> "
 
-#: ../ppad/ppad_printer.c:2829
+#: ../ppad/ppad_printer.c:2644
 #, c-format
 msgid "WARNING: Unclosed UI block in PPD file: \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2901
+#: ../ppad/ppad_printer.c:2709
 msgid ""
 "You must supply the name of an existing printer and the minimum and maximum number\n"
 "of pages of the documents it should be allowed to print.  To clear either limit,\n"
 "set it to 0.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2909 ../ppad/ppad_printer.c:2945
+#: ../ppad/ppad_printer.c:2717 ../ppad/ppad_printer.c:2748
 msgid "The lower limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2915 ../ppad/ppad_printer.c:2951
+#: ../ppad/ppad_printer.c:2723 ../ppad/ppad_printer.c:2754
 msgid "The upper limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2937
+#: ../ppad/ppad_printer.c:2740
 msgid ""
 "You must supply the name of an existing printer and the minimum and maximum number\n"
 "of kilobytes of the documents it should be allowed to print.  To clear either limit,\n"
 "set it to 0.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2973
+#: ../ppad/ppad_printer.c:2771
 msgid "You must specify a printer and a boolean value.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2980
+#: ../ppad/ppad_printer.c:2778
 msgid "Value is not boolean.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:3004
+#: ../ppad/ppad_printer.c:2798
 msgid ""
 "You must specify a printer and a (possibly empty) list\n"
 "of PPR access control lists.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:3027
+#: ../ppad/ppad_printer.c:2821
 msgid ""
 "You must supply the name of a printer.  You may also supply a new\n"
 "quoted, space delimited list of name=value pairs.  If you don't\n"
 "supply such a list, any existing list will be deleted.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:3050
+#: ../ppad/ppad_printer.c:2843
 msgid ""
 "You must supply the name of an existing printer and the maximum number of\n"
 "seconds to allow per page.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:3057
+#: ../ppad/ppad_printer.c:2850
 msgid "The limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:3077
+#: ../ppad/ppad_printer.c:2870
 msgid ""
 "You must supply the name of an existing printer, the name of an addon\n"
 "parameter.  A value for the parameter is optional.  If you do not\n"
 "supply a value, the parameter will be unset.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:3103
+#: ../ppad/ppad_printer.c:2896
 msgid "You must supply only the name of an existing printer.\n"
 msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
@@ -3040,7 +3070,7 @@ msgstr "Използования: ppop status {<принтер>, <группа>,
 msgid "Printer"
 msgstr "Принтер"
 
-#: ../ppop/ppop_cmds_other.c:453 ../ppop/ppop_cmds_other.c:1506
+#: ../ppop/ppop_cmds_other.c:453 ../ppop/ppop_cmds_other.c:1505
 msgid "Status"
 msgstr "Состояние"
 
@@ -3120,27 +3150,27 @@ msgstr ""
 msgid "Printer                  Bin             Medium\n"
 msgstr "Очередный ID    Для Кого                 Когда     #Ср Состояное\n"
 
-#: ../ppop/ppop_cmds_other.c:682
+#: ../ppop/ppop_cmds_other.c:681
 msgid "(no bins defined)\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:728
+#: ../ppop/ppop_cmds_other.c:727
 msgid "Usage: ppop mount <printer> <bin> <medium>\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:760
+#: ../ppop/ppop_cmds_other.c:759
 #, c-format
 msgid "Medium \"%s\" is unknown.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:817
+#: ../ppop/ppop_cmds_other.c:816
 msgid ""
 "Usage: ppop start <printer> ...\n"
 "\n"
 "This command starts a previously stopt printer.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:822
+#: ../ppop/ppop_cmds_other.c:821
 msgid ""
 "Usage: ppop stop <printer> ...\n"
 "Usage: ppop wstop {printer}\n"
@@ -3153,7 +3183,7 @@ msgid ""
 "has actually stopt.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:831
+#: ../ppop/ppop_cmds_other.c:830
 msgid ""
 "Usage: ppop halt <printer> ...\n"
 "\n"
@@ -3161,7 +3191,7 @@ msgid ""
 "the job is returned to the queue for later printing.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:959
+#: ../ppop/ppop_cmds_other.c:958
 msgid ""
 "Usage: ppop cancel {<job>, <destination>}\n"
 "\n"
@@ -3169,7 +3199,7 @@ msgid ""
 "specified destination.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1019
+#: ../ppop/ppop_cmds_other.c:1018
 msgid ""
 "Usage: ppop purge <destination> ...\n"
 "\n"
@@ -3178,11 +3208,11 @@ msgid ""
 "interpreted as the names of extra destinations to purge.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1061
+#: ../ppop/ppop_cmds_other.c:1060
 msgid "Syntax error.\n"
 msgstr "Синтаксическая ошибка.\n"
 
-#: ../ppop/ppop_cmds_other.c:1108
+#: ../ppop/ppop_cmds_other.c:1107
 msgid ""
 "Usage: ppop clean <destination> ...\n"
 "\n"
@@ -3190,7 +3220,7 @@ msgid ""
 "queued for the indicated destination or destinations\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1186
+#: ../ppop/ppop_cmds_other.c:1185
 #, c-format
 msgid ""
 "Usage: ppop cancel-%sactive <destination> ...\n"
@@ -3199,15 +3229,15 @@ msgid ""
 "queued for the indicated destination or destinations.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1206
+#: ../ppop/ppop_cmds_other.c:1205
 msgid "You have no active jobs to cancel.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1208
+#: ../ppop/ppop_cmds_other.c:1207
 msgid "There are no active jobs to cancel.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1212
+#: ../ppop/ppop_cmds_other.c:1211
 #, c-format
 msgid "%d active jobs were canceled.\n"
 msgid_plural "%d active jobs were canceled.\n"
@@ -3215,7 +3245,7 @@ msgstr[0] "%d текущих заданий удаленых.\n"
 msgstr[1] "%d текущих заданий удаленых.\n"
 msgstr[2] "%d текущих заданий удаленых.\n"
 
-#: ../ppop/ppop_cmds_other.c:1233
+#: ../ppop/ppop_cmds_other.c:1232
 msgid ""
 "Usage: ppop move <job> <destination>\n"
 "     ppop move <old_destionation> <new_destination>\n"
@@ -3223,21 +3253,21 @@ msgid ""
 "This command moves a job or jobs to a different queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1284
+#: ../ppop/ppop_cmds_other.c:1283
 msgid ""
 "Usage: ppop rush <job> ...\n"
 "\n"
 "This command moves the specified jobs to the head of the queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1289
+#: ../ppop/ppop_cmds_other.c:1288
 msgid ""
 "Usage: ppop last <job> ...\n"
 "\n"
 "This command moves the specified jobs to the end of the queue.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1338
+#: ../ppop/ppop_cmds_other.c:1337
 msgid ""
 "Usage: ppop hold <job> ...\n"
 "\n"
@@ -3245,26 +3275,26 @@ msgid ""
 "which is held will not be printed until it is released.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1344
+#: ../ppop/ppop_cmds_other.c:1343
 msgid ""
 "Usage: ppop release <job> ...\n"
 "\n"
 "This command releases previously held or arrested jobs.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1357 ../ppop/ppop_cmds_other.c:1697
+#: ../ppop/ppop_cmds_other.c:1356 ../ppop/ppop_cmds_other.c:1696
 msgid "You must indicate a specific job.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1391
+#: ../ppop/ppop_cmds_other.c:1390
 msgid "Usage: ppop accept <destionation>\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1393
+#: ../ppop/ppop_cmds_other.c:1392
 msgid "Usage: ppop reject <destination>\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1395
+#: ../ppop/ppop_cmds_other.c:1394
 msgid ""
 "\n"
 "\tThis command sets the status of a destination.\n"
@@ -3272,7 +3302,7 @@ msgid ""
 "\tthe \"ppop destination\" command.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1440
+#: ../ppop/ppop_cmds_other.c:1439
 msgid ""
 "Usage: ppop dest[ination] {<destionation>, all}\n"
 "       ppop ldest {<destionation>, all}\n"
@@ -3288,80 +3318,80 @@ msgid ""
 "\tform displays the command and the interface and address.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1506
+#: ../ppop/ppop_cmds_other.c:1505
 msgid "Address"
 msgstr "Адрес"
 
-#: ../ppop/ppop_cmds_other.c:1506
+#: ../ppop/ppop_cmds_other.c:1505
 msgid "Charge"
 msgstr "Плата"
 
-#: ../ppop/ppop_cmds_other.c:1506
+#: ../ppop/ppop_cmds_other.c:1505
 msgid "Comment"
 msgstr "Заметки"
 
-#: ../ppop/ppop_cmds_other.c:1506
+#: ../ppop/ppop_cmds_other.c:1505
 msgid "Destination"
 msgstr "Очередь"
 
-#: ../ppop/ppop_cmds_other.c:1506
+#: ../ppop/ppop_cmds_other.c:1505
 msgid "Type"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1556
+#: ../ppop/ppop_cmds_other.c:1555
 msgid "group"
 msgstr "групаа"
 
-#: ../ppop/ppop_cmds_other.c:1556
+#: ../ppop/ppop_cmds_other.c:1555
 msgid "printer"
 msgstr "принтер"
 
-#: ../ppop/ppop_cmds_other.c:1557
+#: ../ppop/ppop_cmds_other.c:1556
 msgid "accepting"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1557
+#: ../ppop/ppop_cmds_other.c:1556
 msgid "rejecting"
 msgstr "итказется"
 
-#: ../ppop/ppop_cmds_other.c:1597
+#: ../ppop/ppop_cmds_other.c:1596
 msgid "alias"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1628
+#: ../ppop/ppop_cmds_other.c:1627
 msgid "Usage: ppop alerts _printer_\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1639
+#: ../ppop/ppop_cmds_other.c:1638
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1649
+#: ../ppop/ppop_cmds_other.c:1648
 #, c-format
 msgid "No alerts for printer \"%s\".\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1654 ../ppop/ppop_modify.c:334
+#: ../ppop/ppop_cmds_other.c:1653 ../ppop/ppop_modify.c:334
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s).\n"
 msgstr "Не возмозно открыть \"%s\", errno=%d (%s).\n"
 
-#: ../ppop/ppop_cmds_other.c:1685
+#: ../ppop/ppop_cmds_other.c:1684
 msgid "Usage: ppop log <job>\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1691
+#: ../ppop/ppop_cmds_other.c:1690
 #, c-format
 msgid "Invalid job id: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1712
+#: ../ppop/ppop_cmds_other.c:1711
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1722
+#: ../ppop/ppop_cmds_other.c:1721
 #, c-format
 msgid "There is no log for job \"%s\".\n"
 msgstr ""
@@ -3398,7 +3428,7 @@ msgstr ""
 msgid "\"%s\" comment has no argument"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:141 ../ppr/ppr_dscdoc.c:730
+#: ../ppr/ppr_dscdoc.c:141 ../ppr/ppr_dscdoc.c:733
 #, c-format
 msgid "Keyword \"%s\" declared (atend) in trailer"
 msgstr ""
@@ -3463,41 +3493,41 @@ msgstr ""
 msgid "Page level keyword \"%s\" in header comments"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:492
+#: ../ppr/ppr_dscdoc.c:495
 #, c-format
 msgid "Language extension \"%s\" is unrecognized"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:690 ../ppr/ppr_dscdoc.c:791
+#: ../ppr/ppr_dscdoc.c:693 ../ppr/ppr_dscdoc.c:794
 #, c-format
 msgid "Obsolete \"%s\" comment ignored"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:945
+#: ../ppr/ppr_dscdoc.c:948
 #, c-format
 msgid "Ignoring NonPPDFeature NumCopies which requests \"%s\" copies"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:989
+#: ../ppr/ppr_dscdoc.c:992
 #, c-format
 msgid "Document uses DSC version %.1f which is > 3.0"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:1027
+#: ../ppr/ppr_dscdoc.c:1030
 msgid "Header comments section is unterminated"
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:1117 ../ppr/ppr_dscdoc.c:1119
+#: ../ppr/ppr_dscdoc.c:1120 ../ppr/ppr_dscdoc.c:1122
 #, c-format
 msgid "No \"%s\" before first \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:1147
+#: ../ppr/ppr_dscdoc.c:1150
 #, c-format
 msgid "No \"%s\" before \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_dscdoc.c:1175
+#: ../ppr/ppr_dscdoc.c:1178
 #, c-format
 msgid "Extra \"%%%%EndProlog\""
 msgstr ""
@@ -3961,7 +3991,7 @@ msgstr "нинужный код ^D в начале файла"
 msgid "Failed to open log file, using stderr.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:348 ../ppr/ppr_main.c:356 ../ppr/ppr_main.c:382
+#: ../ppr/ppr_main.c:348 ../ppr/ppr_main.c:356
 msgid " argument"
 msgstr ""
 
@@ -3985,56 +4015,61 @@ msgstr ""
 msgid "%s is empty"
 msgstr "%s пустой"
 
-#: ../ppr/ppr_main.c:382
-#, c-format
-msgid "%s%s is entirely whitespace"
+#: ../ppr/ppr_main.c:383
+#, fuzzy, c-format
+msgid "%s argument is entirely whitespace"
 msgstr "%s%s составлается изклучително из пробелных символов"
 
-#: ../ppr/ppr_main.c:423
+#: ../ppr/ppr_main.c:385
+#, fuzzy, c-format
+msgid "%s is entirely whitespace"
+msgstr "%s%s составлается изклучително из пробелных символов"
+
+#: ../ppr/ppr_main.c:426
 #, c-format
 msgid "can't open queue file \"%s\", errno=%d (%s)"
 msgstr ""
 
-#: ../ppr/ppr_main.c:534
+#: ../ppr/ppr_main.c:537
 #, c-format
 msgid "request id is %s-%d (1 file)\n"
 msgstr "название задания %s-%d (1 файл)\n"
 
-#: ../ppr/ppr_main.c:536
+#: ../ppr/ppr_main.c:539
 #, c-format
 msgid "Request id: %s-%d.%d\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:563
+#: ../ppr/ppr_main.c:566
 msgid "can't open printing charge database"
 msgstr ""
 
-#: ../ppr/ppr_main.c:666
+#: ../ppr/ppr_main.c:669
 #, c-format
 msgid "mortally wounded by signal %d (%s)."
 msgstr "ранен до смерти сигнадом (%d) (%s)."
 
-#: ../ppr/ppr_main.c:695
+#: ../ppr/ppr_main.c:698
 #, c-format
 msgid "%s failed, exit code = 242 (exec() failed?)"
 msgstr "Возникла ошибка при запуске команды %s, код завершения = 242 (exec() потерпела ошибку?)"
 
-#: ../ppr/ppr_main.c:698
+#: ../ppr/ppr_main.c:701
 #, c-format
 msgid "%s failed, exit code = %d"
 msgstr "Возникла ошибка при запуске команды %s, код завершения = %d"
 
-#: ../ppr/ppr_main.c:705
+#: ../ppr/ppr_main.c:708
 #, c-format
 msgid "%s died on receipt of signal %d, core dumped"
 msgstr "Команда %s завершилась при прихода сигнала %s, дамп оперативной памяти выполнен"
 
-#: ../ppr/ppr_main.c:707
+#: ../ppr/ppr_main.c:710
 #, c-format
 msgid "%s died on receipt of signal %d"
 msgstr "Команда %s завершилась при приходе сигнала %d"
 
-#: ../ppr/ppr_main.c:858
+#: ../ppr/ppr_main.c:861
 msgid ""
 "usage: ppr [switches] [filename]\n"
 "\n"
@@ -4042,29 +4077,29 @@ msgid ""
 "\t-I                         insert destination's switchset macro here\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:863
+#: ../ppr/ppr_main.c:866
 msgid ""
 "\t-u <username>              username of job submitter\n"
 "\t-f <realname>              real name of cooresponding to username\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:867
+#: ../ppr/ppr_main.c:870
 msgid "\t--charge-to <string>       PPR charge account to bill for job\n"
 msgstr "\t--charge-to <текст>        счет из которого взять денгы\n"
 
-#: ../ppr/ppr_main.c:870
+#: ../ppr/ppr_main.c:873
 msgid "\t--title <string>           set default document title\n"
 msgstr "\t--title <текст>            опеделить название документа\n"
 
-#: ../ppr/ppr_main.c:873
+#: ../ppr/ppr_main.c:876
 msgid "\t-O <string>                overlay `Draft' notice\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:876
+#: ../ppr/ppr_main.c:879
 msgid "\t--routing <string>         provide routing (delivery) instructions\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:879
+#: ../ppr/ppr_main.c:882
 msgid ""
 "\t-m <method>                response method\n"
 "\t-m none                    no response\n"
@@ -4080,19 +4115,19 @@ msgstr ""
 "\t--responder-address        то же что -r\n"
 "\t--responder-options <list> list of name=value responder options\n"
 
-#: ../ppr/ppr_main.c:887
+#: ../ppr/ppr_main.c:890
 msgid ""
 "\t--commentary {status,stall,exit}\n"
 "\t                           requested commentary of listed types\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:891
+#: ../ppr/ppr_main.c:894
 msgid ""
 "\t-b {yes,no,dontcare}       express banner page preference\n"
 "\t-t {yes,no,dontcare}       express trailer page preference\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:895
+#: ../ppr/ppr_main.c:898
 msgid ""
 "\t-w log                     routes warnings to log file\n"
 "\t-w stderr                  routes warnings to stderr (default)\n"
@@ -4100,19 +4135,19 @@ msgid ""
 "\t-w {severe,peeve,none}     sets warning level\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:901
+#: ../ppr/ppr_main.c:904
 msgid ""
 "\t--strip-fontindex true     strip out fonts listed in font index\n"
 "\t--strip-fontindex false    don't strip these fonts (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:905
+#: ../ppr/ppr_main.c:908
 msgid ""
 "\t--strip-printer true       strip out resources already in printer\n"
 "\t--strip-printer false      don't strip these resources (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:909
+#: ../ppr/ppr_main.c:912
 msgid ""
 "\t-F '<feature name>'        inserts setup code for a printer feature\n"
 "\t--feature '<feature name>' same as above\n"
@@ -4122,44 +4157,44 @@ msgstr ""
 "\t--feature '<feature name>' то же что -F\n"
 "\t--features                 list available printer features\n"
 
-#: ../ppr/ppr_main.c:914
+#: ../ppr/ppr_main.c:917
 msgid "\t--ripopts '<options>'      options to pass to external RIP\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:917
+#: ../ppr/ppr_main.c:920
 msgid ""
 "\t-K true                    keep feature code though not in PPD file\n"
 "\t-K false                   don't keep bad feature code (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:921
+#: ../ppr/ppr_main.c:924
 msgid "\t-D <mediumname>            sets default medium\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:924
+#: ../ppr/ppr_main.c:927
 msgid ""
 "\t-B false                   disable automatic bin selection\n"
 "\t-B true                    enable automatic bin selection (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:930
+#: ../ppr/ppr_main.c:933
 msgid "\t--file-type <option>       same as -T\n"
 msgstr "\t--file-type <выбор>        то же что -T\n"
 
-#: ../ppr/ppr_main.c:933
+#: ../ppr/ppr_main.c:936
 msgid ""
 "\t-o <string>                specify filter options\n"
 "\t--markup [format, lp, pr, fallback-lp, fallback-pr]\n"
 "\t                           set handling of LaTeX, HTML, and such\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:938
+#: ../ppr/ppr_main.c:941
 msgid ""
 "\t-N <positive integer>      print pages N-Up\n"
 "\t-N noborders               turn off N-Up borders\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:942
+#: ../ppr/ppr_main.c:945
 msgid ""
 "\t-n <positive integer>      print n copies\n"
 "\t-n collate                 print collated copies\n"
@@ -4169,27 +4204,27 @@ msgstr ""
 "\t-n collate                 print collated copies\n"
 "\t--copies <option>          то же что -n\n"
 
-#: ../ppr/ppr_main.c:947
+#: ../ppr/ppr_main.c:950
 #, c-format
 msgid ""
 "\t-R for                     read \"%%For:\" line\n"
 "\t-R ignore-for              don't read \"%%For:\" (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:951
+#: ../ppr/ppr_main.c:954
 #, c-format
 msgid ""
 "\t-R title                   use title from \"%%Title:\" (default)\n"
 "\t-R ignore-title            ignore \"%%Title:\" comment\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:955
+#: ../ppr/ppr_main.c:958
 msgid ""
 "\t-R copies                  read copy count from document (default)\n"
 "\t-R ignore-copies           don't read copy count\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:959
+#: ../ppr/ppr_main.c:962
 msgid ""
 "\t-R duplex:softsimplex      read duplex mode, assume simplex (default)\n"
 "\t-R duplex:simplex          read duplex mode, assume simplex\n"
@@ -4198,28 +4233,28 @@ msgid ""
 "\t-R ignore-duplex           don't read duplex mode\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:966
+#: ../ppr/ppr_main.c:969
 #, c-format
 msgid ""
 "\t-R routing                 use routing from \"%%Routing:\" (default)\n"
 "\t-R ignore-routing          ignore \"%%Routing:\" comment\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:970
+#: ../ppr/ppr_main.c:973
 #, c-format
 msgid ""
 "\t-Z true                    ignore jobs without %%EOF\n"
 "\t-Z false                   don't ignore (default)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:974
+#: ../ppr/ppr_main.c:977
 msgid ""
 "\t-P notifyme                set ProofMode to NotifyMe\n"
 "\t-P substitute              set ProofMode to Substitute\n"
 "\t-P trustme                 set ProofMode to TrustMe\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:979
+#: ../ppr/ppr_main.c:982
 msgid ""
 "\t-e none                    discard error messages\n"
 "\t-e stderr                  report errors on stderr (default)\n"
@@ -4229,24 +4264,24 @@ msgid ""
 "\t-e no-hexdump              discourage hexdump in absence of filter\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:987
+#: ../ppr/ppr_main.c:990
 msgid ""
 "\t-s <positive integer>      signature sheet count\n"
 "\t-s booklet                 automatic signature sheet count\n"
 "\t-s {both,fronts,backs}     indicate part of each signature to print\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:992
+#: ../ppr/ppr_main.c:995
 msgid "\t-Y <options>               experimental job splitting feature\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:995
+#: ../ppr/ppr_main.c:998
 msgid "\t--page-list <page-list>    print only the pages indicated\n"
 msgstr ""
 "\t--page-list <список страниц>\n"
 "\t                           печатать толко упаминанния страницы\n"
 
-#: ../ppr/ppr_main.c:998
+#: ../ppr/ppr_main.c:1001
 msgid ""
 "\t-G <string>                gab about subject indicated by <string>\n"
 "\t--gab <string>             same as -G\n"
@@ -4254,35 +4289,35 @@ msgstr ""
 "\t-G <string>                gab about subject indicated by <string>\n"
 "\t--gab <string>             то же что -G\n"
 
-#: ../ppr/ppr_main.c:1002
+#: ../ppr/ppr_main.c:1005
 msgid "\t--hold                     job should be held immediately\n"
 msgstr "\t--hold                     держать задачу при ее прибытия\n"
 
-#: ../ppr/ppr_main.c:1005
+#: ../ppr/ppr_main.c:1008
 msgid "\t--question <path>          path of HTML question page\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1008
+#: ../ppr/ppr_main.c:1011
 msgid "\t--save                     job should be saved after printing\n"
 msgstr "\t--save                     оставить задание в очереди после завершенния\n"
 
-#: ../ppr/ppr_main.c:1011
+#: ../ppr/ppr_main.c:1014
 msgid "\t-q <integer>               sets priority of print job\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1014
+#: ../ppr/ppr_main.c:1017
 msgid "\t-U                         unlink job file after queuing it\n"
 msgstr "\t-U                         удалить ввиденный файл когда задание находится в очереди\n"
 
-#: ../ppr/ppr_main.c:1017
+#: ../ppr/ppr_main.c:1020
 msgid "\t-Q <string>                TrueType query answer given (for papd)\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1020
+#: ../ppr/ppr_main.c:1023
 msgid "\t--lpq-filename <string>    filename for ppop lpq listings\n"
 msgstr "\t--lpq-filename <текст>     название файла для ppop lpq\n"
 
-#: ../ppr/ppr_main.c:1023
+#: ../ppr/ppr_main.c:1026
 msgid ""
 "\t-H <hack name>             turn on a hack\n"
 "\t-H no-<hack name>          turn off a hack\n"
@@ -4292,268 +4327,268 @@ msgstr ""
 "\t-H no-<hack name>          turn off a hack\n"
 "\t--hack [no-]<hack name>    то же что -H\n"
 
-#: ../ppr/ppr_main.c:1028
+#: ../ppr/ppr_main.c:1031
 msgid "\t--editps-level <pos int>   set level of editing for -H editps\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1031
+#: ../ppr/ppr_main.c:1034
 msgid "\t--show-jobid               print the queue id of submitted jobs\n"
 msgstr "\t--show-jobid               показать идентификатор задание\n"
 
-#: ../ppr/ppr_main.c:1034
+#: ../ppr/ppr_main.c:1037
 msgid "\t--print-id-to-fd           print the numberic queue id file descriptor\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1037
+#: ../ppr/ppr_main.c:1040
 msgid ""
 "\t--version                  print PPR version information\n"
 "\t--help                     print this help\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1067
+#: ../ppr/ppr_main.c:1070
 msgid "Too many -F switches"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1221
+#: ../ppr/ppr_main.c:1224
 #, c-format
 msgid "Unknown option --%.*s inserted by -I switch"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1226
+#: ../ppr/ppr_main.c:1229
 #, c-format
 msgid "Unknown option -%c inserted by -I switch"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1229
+#: ../ppr/ppr_main.c:1232
 #, c-format
 msgid "Option -%c inserted by -I switch is missing an argument"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1232
+#: ../ppr/ppr_main.c:1235
 #, c-format
 msgid "Option -%c inserted by -I switch has an unneeded argument"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1292
+#: ../ppr/ppr_main.c:1295
 #, c-format
 msgid "Invalid category in %s: %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1334 ../ppr/ppr_main.c:1341 ../ppr/ppr_main.c:1687
+#: ../ppr/ppr_main.c:1337 ../ppr/ppr_main.c:1344 ../ppr/ppr_main.c:1691
 #, c-format
 msgid "Non-privileged users may not use %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1355 ../ppr/ppr_main.c:1360
+#: ../ppr/ppr_main.c:1358 ../ppr/ppr_main.c:1363
 #, c-format
 msgid "Invalid %s option"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1375
+#: ../ppr/ppr_main.c:1378
 #, c-format
 msgid "invalid %s option"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1384
+#: ../ppr/ppr_main.c:1387
 #, c-format
 msgid "Invalid %s argument format"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1389
+#: ../ppr/ppr_main.c:1392
 #, c-format
 msgid "%s option specifies unrecognized file type \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1394
+#: ../ppr/ppr_main.c:1397
 #, c-format
 msgid "%s option must be between 0 and 39"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1399 ../ppr/ppr_main.c:1515 ../ppr/ppr_main.c:1717
-#: ../ppr/ppr_main.c:1722
+#: ../ppr/ppr_main.c:1402 ../ppr/ppr_main.c:1519 ../ppr/ppr_main.c:1721
+#: ../ppr/ppr_main.c:1726
 #, c-format
 msgid "%s must be followed by \"true\" or \"false\""
 msgstr "после %s должно следить или \"true\" (вирно) или \"false\" (не вирно)"
 
-#: ../ppr/ppr_main.c:1411
+#: ../ppr/ppr_main.c:1414
 #, c-format
 msgid "%s option (N-Up) must be between 1 and 16"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1423
+#: ../ppr/ppr_main.c:1426
 msgid "Number of copies must be positive"
 msgstr "Количество экземпларов должно быть положительным числом"
 
-#: ../ppr/ppr_main.c:1442
+#: ../ppr/ppr_main.c:1446
 #, c-format
 msgid "Only privileged users may use \"%s for\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1509 ../ppr/ppr_main.c:1629 ../ppr/ppr_main.c:1646
+#: ../ppr/ppr_main.c:1513 ../ppr/ppr_main.c:1633 ../ppr/ppr_main.c:1650
 #, c-format
 msgid "Unrecognized %s option: %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1531
+#: ../ppr/ppr_main.c:1535
 #, c-format
 msgid "%s must be followed by \"notifyme\", \"substitute\", or \"trustme\""
 msgstr "%s требует \"notifyme\", \"substitute\", или \"trustme\""
 
-#: ../ppr/ppr_main.c:1537
+#: ../ppr/ppr_main.c:1541
 #, c-format
 msgid "%s must be set to \"true\" or \"false\""
 msgstr "%s должно быт или \"true\" (вирно) или \"false\" (не вирно)"
 
-#: ../ppr/ppr_main.c:1554
+#: ../ppr/ppr_main.c:1558
 #, c-format
 msgid "%s must be followed by \"none\", \"stderr\", \"responder\", or \"both\""
 msgstr "%s требует \"none\", \"stderr\", \"responder\", или \"both\""
 
-#: ../ppr/ppr_main.c:1569
+#: ../ppr/ppr_main.c:1573
 #, c-format
 msgid "%s option must be \"fronts\", \"backs\", \"both\", \"booklet\", or a positive integer"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1641
+#: ../ppr/ppr_main.c:1645
 #, c-format
 msgid "Unrecognized %s option: \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1693
+#: ../ppr/ppr_main.c:1697
 #, c-format
 msgid "Argument for %s must be between 1 and 10"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1708
+#: ../ppr/ppr_main.c:1712
 #, c-format
 msgid "Invalid setting for %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1753
+#: ../ppr/ppr_main.c:1757
 #, c-format
 msgid "Unrecognized switch %s.  Try --help"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1756
+#: ../ppr/ppr_main.c:1760
 #, c-format
 msgid "The %s option requires an argument"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1759
+#: ../ppr/ppr_main.c:1763
 #, c-format
 msgid "The %s switch takes an argument and so must stand alone"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1762
+#: ../ppr/ppr_main.c:1766
 #, c-format
 msgid "The %s switch does not take an argument"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1821
+#: ../ppr/ppr_main.c:1825
 #, c-format
 msgid "getpwnam(\"%s\") failed"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1823
+#: ../ppr/ppr_main.c:1827
 #, c-format
 msgid "This program must be setuid and owned by \"%s\""
 msgstr ""
 
-#: ../ppr/ppr_main.c:1825
+#: ../ppr/ppr_main.c:1829
 #, c-format
 msgid "%s: warning: either account \"%s\" or this program has the wrong group ID.\n"
 msgstr ""
 
-#: ../ppr/ppr_main.c:1894
+#: ../ppr/ppr_main.c:1898
 msgid "getpwuid() fails to find your account"
 msgstr "getpwuid() не нашёл вашого счёта"
 
-#: ../ppr/ppr_main.c:2040
+#: ../ppr/ppr_main.c:2044
 msgid "Destination (printer or group) name is empty"
 msgstr "Название очереди (принтера или группы) пустой"
 
-#: ../ppr/ppr_main.c:2042
+#: ../ppr/ppr_main.c:2046
 msgid "Destination (printer or group) name contains a disallowed character"
 msgstr "Название очереди (принтера или группы) содержает запрешаный символ"
 
-#: ../ppr/ppr_main.c:2044
+#: ../ppr/ppr_main.c:2048
 msgid "Destination (printer or group) name starts with a disallowed character"
 msgstr "Первый символ названия очереди (принтера или группы) явлается запрешаным"
 
-#: ../ppr/ppr_main.c:2064
+#: ../ppr/ppr_main.c:2068
 msgid "spaces may not precede \"=\" in filter options"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2067
+#: ../ppr/ppr_main.c:2071
 msgid "filter options must take form keyword=value"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2072
+#: ../ppr/ppr_main.c:2076
 msgid "last -o keyword has no value"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2075
+#: ../ppr/ppr_main.c:2079
 msgid "spaces may not follow \"=\" in filter options"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2086
+#: ../ppr/ppr_main.c:2090
 msgid "unclosed quote in filter option value"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2104
+#: ../ppr/ppr_main.c:2108
 msgid "only one file name allowed"
 msgstr "позволено въводить названое толко одного файла"
 
-#: ../ppr/ppr_main.c:2143
+#: ../ppr/ppr_main.c:2147
 msgid "Input file is empty, nothing to print"
 msgstr "Ввиденный файл пустой, ничего разпечатать"
 
-#: ../ppr/ppr_main.c:2221
+#: ../ppr/ppr_main.c:2225
 #, c-format
 msgid "%d character follows EOF mark"
 msgid_plural "%d characters follow EOF mark"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../ppr/ppr_main.c:2239
+#: ../ppr/ppr_main.c:2243
 #, c-format
 msgid "input file was truncated (no %%%%EOF)"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2248
+#: ../ppr/ppr_main.c:2252
 msgid "Unclosed resource or resources"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2258
+#: ../ppr/ppr_main.c:2262
 #, c-format
 msgid "No \"%%%%Trailer:\" comment"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2260
+#: ../ppr/ppr_main.c:2264
 #, c-format
 msgid "Unexpected EOF in unclosed %s"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2380
+#: ../ppr/ppr_main.c:2384
 #, c-format
 msgid "No valid \"%%%%Pages:\" comment"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2385
+#: ../ppr/ppr_main.c:2389
 #, c-format
 msgid "\"%%%%Pages:\" comment is wrong, changing it from %d to %d"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2390
+#: ../ppr/ppr_main.c:2394
 #, c-format
 msgid "Missing \"%%%%Page:\" comments or incorrect \"%%%%Pages:\" comment"
 msgstr ""
 
-#: ../ppr/ppr_main.c:2490
+#: ../ppr/ppr_main.c:2494
 msgid "Disk full"
 msgstr "Диск переполен"
 
-#: ../ppr/ppr_main.c:2529
+#: ../ppr/ppr_main.c:2533
 #, c-format
 msgid "%s: -U: can't unlink(\"%s\"), errno=%d (%s)\n"
 msgstr "%s: -U: невозможно удалить \"%s\", errno=%d (%s)\n"
@@ -4695,11 +4730,6 @@ msgstr ""
 #, c-format
 msgid "Resource \"%s\" is supplied but isn't listed as supplied"
 msgstr ""
-
-#: ../ppr/ppr_respond.c:167
-#, c-format
-msgid "%s(): %s() failed, errno=%d (%s)\n"
-msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)\n"
 
 #: ../ppr/ppr_simplify.c:116
 #, c-format

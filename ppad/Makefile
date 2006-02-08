@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ppad/Makefile
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 10 December 2004.
+# Last modified 8 February 2006.
 #
 
 include ../Makefile.conf
@@ -41,17 +41,28 @@ all: $(BIN_PROGS)
 
 ppad$(DOTEXE): \
 		ppad.o \
+		ppad_conf.o \
+		ppad_util.o \
 		ppad_printer.o \
 		ppad_media.o \
 		ppad_group.o \
-		ppad_conf.o \
-		ppad_util.o \
 		ppad_alias.o \
 		ppad_ppd.o \
+		dispatch_table.o \
 		../libppr.a \
 		../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS) $(ZLIBLIBS)
 	chmod 4755 $@
+
+# Extract an XML description of the commands from comments in the
+# C source code.
+dispatch_table.xml: ppad.c ppad_media.c ppad_ppd.c ppad_printer.c ppad_group.c ppad_alias.c
+	( echo "<?xml version=\"1.0\"?>"; echo "<dispatch>"; sed -n -e '/^<command>/,/^<\/command>/ p' *.c; echo "</dispatch>" ) >dispatch_table.xml
+
+# Convert an XML description of subcommands into C source code
+# for a table which describes them.
+dispatch_table.h: dispatch_table.xml ../libppr/dispatch_table.xsl
+	xsltproc ../libppr/dispatch_table.xsl dispatch_table.xml >dispatch_table.c
 
 #=== Install ================================================================
 

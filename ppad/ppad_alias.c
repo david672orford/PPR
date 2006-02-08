@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2006.
+** Last modified 8 February 2006.
 */
 
 #include "config.h"
@@ -41,19 +41,23 @@
 #include "global_defines.h"
 #include "ppad.h"
 #include "util_exits.h"
+#include "dispatch_table.h"
 
-int alias_show(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>show</word></name>
+	<desc>show configuration of <arg>alias</arg></desc>
+	<args>
+		<arg><name>alias</name><desc>alias to show</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_show(const char *argv[])
 	{
 	const char *alias = argv[0];
 	struct CONF_OBJ *obj;
 	char *line, *p;
 	char *comment = NULL, *forwhat = NULL, *switchset = NULL, *passthru = NULL;
-
-	if(!alias)
-		{
-		fputs(_("You must supply the name of an alias to show.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(obj = conf_open(QUEUE_TYPE_ALIAS, alias, CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
@@ -107,20 +111,34 @@ int alias_show(const char *argv[])
 	gu_free_if(passthru);
 
 	return EXIT_OK;
-	}
+	} /* command_alias_show() */
 
-int alias_copy(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>copy</word></name>
+	<desc>copy alias <arg>existing</arg> creating alias <arg>new</arg></desc>
+	<args>
+		<arg><name>existing</name><desc>name of existing alias</desc></arg>
+		<arg><name>new</name><desc>name of new alias</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_copy(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a name for the new printer.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 	return conf_copy(QUEUE_TYPE_PRINTER, argv[0], argv[1]);
-	}
+	} /* command_alias_copy() */
 
-int alias_forwhat(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>forwhat</word></name>
+	<desc>modify the target of an alias or create a new alias</desc>
+	<args>
+		<arg><name>alias</name><desc>name of new or existing alias</desc></arg>
+		<arg><name>for</name><desc>new target of alias</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_forwhat(const char *argv[])
 	{
 	const char *alias = argv[0];
 	const char *forwhat = argv[1];
@@ -130,29 +148,22 @@ int alias_forwhat(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(!alias || !forwhat)
-		{
-		fputs(_("You must supply the name of a new or existing alias and\n"
-				"the name of the queue it is to be an alias for.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(strpbrk(alias, DEST_DISALLOWED))
 		{
-		fputs(_("Alias name contains a disallowed character.\n"), errors);
+		fputs(_("Alias name contains a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
-	if(strchr(DEST_DISALLOWED_LEADING, (int)alias[0]) != (char*)NULL)
+	if(strchr(DEST_DISALLOWED_LEADING, (int)alias[0]))
 		{
-		fputs(_("Alias name begins with a disallowed character.\n"), errors);
+		fputs(_("Alias name begins with a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	/* Make sure the preposed forwhat exists. */
 	if(!(obj = conf_open(QUEUE_TYPE_GROUP, forwhat, 0)) && !(obj = conf_open(QUEUE_TYPE_PRINTER, forwhat, 0)))
 		{
-		fprintf(errors, _("The name \"%s\" is not that of an existing group or printer.\n"), forwhat);
+		fprintf(stderr, _("The name \"%s\" is not that of an existing group or printer.\n"), forwhat);
 		return EXIT_BADDEST;
 		}
 	conf_close(obj);
@@ -174,9 +185,18 @@ int alias_forwhat(const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* alias_forwhat() */
+	} /* command_alias_forwhat() */
 
-int alias_delete(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>delete</word></name>
+	<desc>delete an alias</desc>
+	<args>
+		<arg><name>alias</name><desc>name of alias to be deleted</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_delete(const char *argv[])
 	{
 	const char *alias = argv[0];
 	char fname[MAX_PPR_PATH];
@@ -184,111 +204,111 @@ int alias_delete(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(!alias)
-		{
-		fputs("error!\n", errors);
-		return EXIT_SYNTAX;
-		}
-
 	ppr_fnamef(fname, "%s/%s", ALIASCONF, alias);
 	if(unlink(fname))
 		{
 		if(errno==ENOENT)
 			{
-			fprintf(errors, _("The alias \"%s\" does not exist.\n"), alias);
+			fprintf(stderr, _("The alias \"%s\" does not exist.\n"), alias);
 			return EXIT_BADDEST;
 			}
 		else
 			{
-			fprintf(errors, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
+			fprintf(stderr, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
 			return EXIT_INTERNAL;
 			}
 		}
 
 	return EXIT_OK;
-	} /* alias_delete() */
+	} /* command_alias_delete() */
 
-int alias_comment(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>comment</word></name>
+	<desc>modify an alias's comment field</desc>
+	<args>
+		<arg><name>alias</name><desc>name of alias to be modified</desc></arg>
+		<arg flags="optional"><name>comment</name><desc>comment to attach (ommit to delete)</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_comment(const char *argv[])
 	{
-	const char *alias = argv[0];
-	const char *comment = argv[1];
+	return conf_set_name(QUEUE_TYPE_ALIAS, argv[0], 0, "Comment", argv[1] ? "%s" : NULL, argv[1]);
+	} /* command_alias_comment() */
 
-	if( ! alias || ! comment )
-		{
-		fputs(_("You must supply the name of an existing alias and\n"
-				"a comment to attach to it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	return conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, "Comment", "%s", comment);
-	} /* alias_comment() */
-
-int alias_switchset(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>switchset</word></name>
+	<desc>attach a set of switches to an alias</desc>
+	<args>
+		<arg><name>alias</name><desc>name of alias to be modified</desc></arg>
+		<arg flags="optional repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_switchset(const char *argv[])
 	{
 	const char *alias = argv[0];
 	char newset[256];
 
-	if(!alias)
-		{
-		fputs(_("You must supply the name of an alias and a set of switches.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	/* convert the switch set to a line */
 	if(make_switchset_line(newset, &argv[1]))
 		{
-		fputs(_("Bad set of switches.\n"), errors);
+		fputs(_("Bad set of switches.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, "Switchset", newset[0] ? "%s" : NULL, newset);
-	} /* alias_switchset() */
+	} /* command_alias_switchset() */
 
-int alias_passthru(const char *argv[])
+/*
+<command>
+	<name><word>alias</word><word>passthru</word></name>
+	<desc>set an alias's passthru language list</desc>
+	<args>
+		<arg><name>alias</name><desc>name of alias to be modified</desc></arg>
+		<arg flags="optional repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
+	</args>
+</command>
+*/
+int command_alias_passthru(const char *argv[])
 	{
 	const char *alias = argv[0];
 	char *passthru;
 	int retval;
 
-	if(!alias)
-		{
-		fputs(_("You must specify an alias and a (possibly empty) list\n"
-				"of file types.  These file types should be the same as\n"
-				"those used with the \"ppr -T\" option.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	passthru = list_to_string(&argv[1]);
 	retval = conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, "PassThru", passthru ? "%s" : NULL, passthru);
 	gu_free_if(passthru);
 	return retval;
-	} /* alias_passthru() */
+	} /* command_alias_passthru() */
 
 /*
-** Set an alias addon option.
+<command>
+	<name><word>alias</word><word>addon</word></name>
+	<desc>set alias parameters for use by a PPR extension</desc>
+	<args>
+		<arg><name>alias</name><desc>name of alias to be modified</desc></arg>
+		<arg><name>param</name><desc>addon parameter to modify</desc></arg>
+		<arg flags="optional"><name>value</name><desc>new value for <arg>param</arg> (ommit to delete)</desc></arg>
+	</args>
+</command>
 */
-int alias_addon(const char *argv[])
+int command_alias_addon(const char *argv[])
 	{
 	const char *alias = argv[0];
 	const char *name = argv[1];
 	const char *value = argv[2];
 
-	if(!alias || !name || (value && argv[3]))
-		{
-		fputs(_("You must supply the name of an existing alias, the name of an addon\n"
-				"parameter.  A value for the parameter is optional.  If you do not\n"
-				"supply a value, the parameter will be unset.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
-		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), errors);
+		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_ALIAS, alias, 0, name, value ? "%s" : NULL, value);
-	} /* alias_addon() */
+	} /* command_alias_addon() */
 
 /* end of file */
 

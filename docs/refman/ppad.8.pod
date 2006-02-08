@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 January 2006.
+# Last modified 31 January 2006.
 #
 
 =head1 NAME
@@ -94,30 +94,34 @@ correct settings for a particular model of printer.  This command allows you
 to create a new printer queue by copying a working one and changing a few
 of the settings.
 
-=item B<ppad comment> I<printer comment>
+=item B<ppad comment> [I<printer comment>]
 
 Sets the comment field of the indicated printer.  Highly recommended!  This
 comment field is often displayed in user interfaces which allow the user
 to choose a printer.  You should set this field to something that will help
-the user to identify the printer.
+the user to identify the printer.  If you really want to clear the comment
+field, omit the value.
 
-=item B<ppad location> I<printer location>
+=item B<ppad location> [I<printer location>]
 
 This command can be used to attach a location description to the printer
 queue.  This information could be useful to field service personel who want
-to visit the printer.
+to visit the printer.  If the value is omited, the location description 
+field will be cleared.
 
-=item B<ppad department> I<printer department>
+=item B<ppad department> [I<printer department>]
 
 This command can be used to indicate the department of your organization
 which uses the printer.  This information is for the edification of human
-operators and field service personel.
+operators and field service personel.  If the value is omited, the department
+field will be cleared.
 
-=item B<ppad contact> I<printer contact>
+=item B<ppad contact> [I<printer contact>]
 
 This command provides a way to specify the name and telephone number of a
 person that a human operator may want to contact when he notices a problem
-with the printer.  This should be a person who works near the printer.
+with the printer.  This should be a person who works near the printer.  
+If the value is omited, the printer contact field will be cleared.
 
 =item B<ppad interface> I<printer interface address>
 
@@ -828,7 +832,7 @@ modified by the commands described below.
 Copy an existing group.  This is handy if you want to create a new group which 
 is similiar to an existing one.
 
-=item B<ppad group comment> I<group> I<comment>
+=item B<ppad group comment> I<group> [I<comment>]
 
 Sets a group's comment field.  Highly recommended!
 
@@ -958,7 +962,7 @@ does exist, it is changed to be an alias for I<queue>.
 
 The I<alias> is deleted.
 
-=item B<ppad alias comment> I<alias> I<string>
+=item B<ppad alias comment> I<alias> [I<comment>]
 
 The descriptive comment for alias I<alias> is set to I<string>.
 

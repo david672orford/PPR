@@ -49,8 +49,6 @@ extern gu_boolean	opt_verbose;
 extern int 			opt_machine_readable;
 extern int			opt_arrest_interest_interval;
 
-extern FILE *errors;
-
 void fatal(int exitval, const char *string, ...)
 #ifdef __GNUC__
 __attribute__ (( noreturn, format (printf, 2, 3) ))

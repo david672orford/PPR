@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/templates/module.c
+** mouse:~ppr/src/ppad/dispatch.h
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -28,22 +28,27 @@
 ** Last modified 8 February 2006.
 */
 
-/*! \file
-	\brief skeletal module
+int dispatch(const char myname[], const char *argv[]);
 
-	Long description goes here.
+enum COMMAND_NODE_TYPE { COMMAND_NODE_BRANCH, COMMAND_NODE_LEAF };
 
-*/
+struct COMMAND_ARG {
+	const char *name;
+	int flags;
+	const char *description;
+	};
 
-#include "config.h"
-#ifdef INTERNATIONAL
-#include <libintl.h>
-#endif
-#include "gu.h"
-#include "global_defines.h"
+struct COMMAND_NODE
+	{
+	const char *name;
+	enum COMMAND_NODE_TYPE type;
+	const char *description;
+	int flags;
+	int (*function)(const char *argv[]);
+	void *value;
+	};
 
-/** first function
-	Long description goes here.
-*/
+/* root of the command dispatch table */
+extern struct COMMAND_NODE commands[];
 
 /* end of file */

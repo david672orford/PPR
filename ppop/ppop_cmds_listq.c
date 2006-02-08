@@ -603,7 +603,7 @@ static void ppop_list_help(void)
 		"This command will print information about the specified jobs.\n"
 		"Jobs may be specified by job id, by queue, or \"all\" may\n"
 		"be specified.  Multiple specifications may be used with this\n"
-		"command.\n"), errors);
+		"command.\n"), stderr);
 	}
 
 static void ppop_list_banner(void)
@@ -705,7 +705,7 @@ static void ppop_lpq_help(void)
 	{
 	fputs(_("Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n\n"
 		"The \"ppop lpq\" subcommand prints a queue listing in a format\n"
-		"similiar to that of the Berkeley Unix \"lpq\" command.\n"), errors);
+		"similiar to that of the Berkeley Unix \"lpq\" command.\n"), stderr);
 	}
 
 /*
@@ -1157,7 +1157,7 @@ static void ppop_details_help(void)
 	fputs(_("Usage: ppop details {all, <group>, <printer>, <job>}\n\n"
 		"This command displays a detailed description of all jobs,\n"
 		"the jobs queued for the indicated group, the jobs queued\n"
-		"for the indicated printer, or the indicated job.\n"), errors);
+		"for the indicated printer, or the indicated job.\n"), stderr);
 	}
 
 static void ppop_details_banner(void)
@@ -1334,7 +1334,7 @@ static int addon_count;
 
 static void ppop_qquery_help(void)
 	{
-	fputs("Wrong syntax!\n",errors);
+	fputs("Wrong syntax!\n",stderr);
 	} /* end of ppop_qquery_help() */
 
 static void ppop_qquery_banner(void)
@@ -1366,7 +1366,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		{
 		if(!(p = strchr(line, ':')))
 			{
-			fprintf(errors, _("Invalid Addon line: %s\n"), line);
+			fprintf(stderr, _("Invalid Addon line: %s\n"), line);
 			continue;
 			}
 
@@ -1739,7 +1739,7 @@ int ppop_qquery(char *argv[])
 
 		if(x >= MAX_QQUERY_ITEMS)
 			{
-			fprintf(errors, X_("%s(): MAX_QQUERY_ITEMS exceeded\n"), function);
+			fprintf(stderr, X_("%s(): MAX_QQUERY_ITEMS exceeded\n"), function);
 			return EXIT_SYNTAX;
 			}
 
@@ -1747,7 +1747,7 @@ int ppop_qquery(char *argv[])
 			{
 			if(addon_count >= MAX_QQUERY_ADDON_ITEMS)
 				{
-				fprintf(errors, X_("%s(): MAX_QQUERY_ADDON_ITEMS exceeded\n"), function);
+				fprintf(stderr, X_("%s(): MAX_QQUERY_ADDON_ITEMS exceeded\n"), function);
 				return EXIT_SYNTAX;
 				}
 			addon[addon_count].name = (ptr + 6);
@@ -1856,7 +1856,7 @@ int ppop_qquery(char *argv[])
 
 		else
 			{
-			fprintf(errors, "Name of field number %d unrecognized: \"%s\"\n", x+1, ptr);
+			fprintf(stderr, "Name of field number %d unrecognized: \"%s\"\n", x+1, ptr);
 			return EXIT_SYNTAX;
 			}
 		}
@@ -1884,9 +1884,9 @@ int ppop_qquery(char *argv[])
 
 static void ppop_progress_help(void)
 	{
-	fputs(_("Usage: ppop progress <job>\n\n"
+	gu_utf8_fputs(_("Usage: ppop progress <job>\n\n"
 		"This command shows the progress made printing the\n"
-		"indicated job.\n"), errors);
+		"indicated job.\n"), stderr);
 	}
 
 static void ppop_progress_banner(void)

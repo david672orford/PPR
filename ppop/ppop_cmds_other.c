@@ -437,7 +437,7 @@ int ppop_status(char *argv[])
 
 	if(!argv[0])
 		{
-		gu_utf8_fprintf(errors, _("Usage: ppop status {<printer>, <group>, all}\n"));
+		gu_utf8_fprintf(stderr, _("Usage: ppop status {<printer>, <group>, all}\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -602,7 +602,7 @@ int ppop_message(char *argv[])
 
 	if(!argv[0] || argv[1])
 		{
-		fputs(_("Usage: ppop message <printer>\n"), errors);
+		fputs(_("Usage: ppop message <printer>\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -640,7 +640,7 @@ int ppop_media(char *argv[])
 
 	if(!argv[0])
 		{
-		gu_utf8_fputs(_("Usage: ppop media {<printer>, <group>, all}\n"), errors);
+		gu_utf8_fputs(_("Usage: ppop media {<printer>, <group>, all}\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -705,7 +705,7 @@ int ppop_media(char *argv[])
 	}
 
 	if(retcode == EXIT_INTERNAL)
-		gu_utf8_fprintf(errors, "%s(): bad response from pprd.\n", function);
+		gu_utf8_fprintf(stderr, "%s(): bad response from pprd.\n", function);
 
 	return retcode;
 	} /* end of ppop_media() */
@@ -724,7 +724,7 @@ int ppop_mount(char *argv[])
 
 	if(!argv[0] || !argv[1])
 		{
-		gu_utf8_fprintf(errors, _("Usage: ppop mount <printer> <bin> <medium>\n"));
+		gu_utf8_fprintf(stderr, _("Usage: ppop mount <printer> <bin> <medium>\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -748,7 +748,7 @@ int ppop_mount(char *argv[])
 	
 			if(!(mfile = fopen(MEDIAFILE, "rb")))
 				{
-				gu_utf8_fprintf(errors, _("Can't open \"%s\", errno=%d (%s)."), MEDIAFILE, errno, gu_strerror(errno));
+				gu_utf8_fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)."), MEDIAFILE, errno, gu_strerror(errno));
 				retcode = EXIT_INTERNAL;
 				break;
 				}
@@ -756,7 +756,7 @@ int ppop_mount(char *argv[])
 			do	{
 				if(fread(&ms,sizeof(struct Media), 1, mfile) == 0)
 					{
-					gu_utf8_fprintf(errors, _("Medium \"%s\" is unknown.\n"), mediumname);
+					gu_utf8_fprintf(stderr, _("Medium \"%s\" is unknown.\n"), mediumname);
 					retcode = EXIT_ERROR;
 					break;
 					}
@@ -814,7 +814,7 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 			{
 			case 0:
 				fputs(_("Usage: ppop start <printer> ...\n\n"
-						"This command starts a previously stopt printer.\n"), errors);
+						"This command starts a previously stopt printer.\n"), stderr);
 				break;
 			case 1:
 			case 2:
@@ -824,12 +824,12 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 						"printed when this command is issued, the printer does not\n"
 						"actually stop until the job is done.\n\n"
 						"The second form, \"ppop wstop\" does not return until the printer\n"
-						"has actually stopt.\n"), errors);
+						"has actually stopt.\n"), stderr);
 				break;
 			case 3:
 				fputs(_("Usage: ppop halt <printer> ...\n\n"
 						"This command stops the printer immediately.  If a job is printing,\n"
-						"the job is returned to the queue for later printing.\n"), errors);
+						"the job is returned to the queue for later printing.\n"), stderr);
 				break;
 			}
 
@@ -892,7 +892,7 @@ static int ppop_cancel_byuser_total;
 static int ppop_cancel_byuser_inform;
 
 static void ppop_cancel_byuser_help(void)
-	{ fputs("Syntax error.\n", errors); }
+	{ fputs("Syntax error.\n", stderr); }
 
 static void ppop_cancel_byuser_banner(void)
 	{ }
@@ -957,7 +957,7 @@ int ppop_cancel(char *argv[], int inform)
 		{
 		fputs(_("Usage: ppop cancel {<job>, <destination>}\n\n"
 			  "This command cancels a job or all of your jobs queued for the\n"
-			  "specified destination.\n"), errors);
+			  "specified destination.\n"), stderr);
 
 		return EXIT_SYNTAX;
 		}
@@ -1018,7 +1018,7 @@ int ppop_purge(char *argv[], int inform)
 		fputs(_("Usage: ppop purge <destination> ...\n\n"
 				"This command cancels all jobs queued for a particular destination.\n"
 				"Only an operator may use this command.  Extra arguments are\n"
-				"interpreted as the names of extra destinations to purge.\n"), errors);
+				"interpreted as the names of extra destinations to purge.\n"), stderr);
 
 		return EXIT_SYNTAX;
 		}
@@ -1057,7 +1057,7 @@ static int ppop_clean_total;
 
 static void ppop_clean_help(void)
 	{
-	fputs(_("Syntax error.\n"), errors);
+	fputs(_("Syntax error.\n"), stderr);
 	}
 
 static void ppop_clean_banner(void)
@@ -1106,7 +1106,7 @@ int ppop_clean(char *argv[])
 		{
 		fputs(_("Usage: ppop clean <destination> ...\n\n"
 				"This command will delete all of the arrested jobs\n"
-				"queued for the indicated destination or destinations\n"), errors);
+				"queued for the indicated destination or destinations\n"), stderr);
 		exit(EXIT_SYNTAX);
 		}
 
@@ -1135,7 +1135,7 @@ static int ppop_cancel_active_inform;
 
 static void ppop_cancel_active_help(void)
 	{
-	fputs("Syntax error.\n", errors);
+	fputs("Syntax error.\n", stderr);
 	}
 
 static void ppop_cancel_active_banner(void)
@@ -1182,7 +1182,7 @@ int ppop_cancel_active(char *argv[], int my, int inform)
 	/* If parameter missing or it is a job id rather than a destination id, */
 	if(!argv[0] || !(job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
 		{
-		gu_utf8_fprintf(errors, _("Usage: ppop cancel-%sactive <destination> ...\n\n"
+		gu_utf8_fprintf(stderr, _("Usage: ppop cancel-%sactive <destination> ...\n\n"
 				"This command will delete all of the arrested jobs\n"
 				"queued for the indicated destination or destinations.\n"), my ? "my-" : "");
 		exit(EXIT_SYNTAX);
@@ -1231,7 +1231,7 @@ int ppop_move(char *argv[])
 		{
 		fputs(_("Usage: ppop move <job> <destination>\n"
 			  "     ppop move <old_destionation> <new_destination>\n\n"
-			  "This command moves a job or jobs to a different queue.\n"), errors);
+			  "This command moves a job or jobs to a different queue.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1281,12 +1281,12 @@ int ppop_rush(char *argv[], int newpos)
 		if(newpos == 0)
 			{
 			fputs(_("Usage: ppop rush <job> ...\n\n"
-				"This command moves the specified jobs to the head of the queue.\n"), errors);
+				"This command moves the specified jobs to the head of the queue.\n"), stderr);
 			}
 		else
 			{
 			fputs(_("Usage: ppop last <job> ...\n\n"
-				"This command moves the specified jobs to the end of the queue.\n"), errors);
+				"This command moves the specified jobs to the end of the queue.\n"), stderr);
 			}
 
 		return EXIT_SYNTAX;
@@ -1336,12 +1336,12 @@ int ppop_hold_release(char *argv[], int release)
 			{
 			fputs(_("Usage: ppop hold <job> ...\n\n"
 				"This causes jobs to be placed in the held state.  A job\n"
-				"which is held will not be printed until it is released.\n"), errors);
+				"which is held will not be printed until it is released.\n"), stderr);
 			}
 		else
 			{
 			fputs(_("Usage: ppop release <job> ...\n\n"
-				"This command releases previously held or arrested jobs.\n"), errors);
+				"This command releases previously held or arrested jobs.\n"), stderr);
 			}
 		return EXIT_SYNTAX;
 		}
@@ -1353,7 +1353,7 @@ int ppop_hold_release(char *argv[], int release)
 
 		if(job->id == WILDCARD_JOBID)
 			{
-			fputs(_("You must indicate a specific job.\n"), errors);
+			fputs(_("You must indicate a specific job.\n"), stderr);
 			return EXIT_SYNTAX;
 			}
 
@@ -1387,13 +1387,13 @@ int ppop_accept_reject(char *argv[], int reject)
 	if(!argv[0])
 		{
 		if(! reject)
-			fputs(_("Usage: ppop accept <destionation>\n"), errors);
+			fputs(_("Usage: ppop accept <destionation>\n"), stderr);
 		else
-			fputs(_("Usage: ppop reject <destination>\n"), errors);
+			fputs(_("Usage: ppop reject <destination>\n"), stderr);
 
 		fputs(_("\n\tThis command sets the status of a destination.\n"
 				"\tThe status of a destination may be displayed with\n"
-				"\tthe \"ppop destination\" command.\n"), errors);
+				"\tthe \"ppop destination\" command.\n"), stderr);
 
 		return EXIT_SYNTAX;
 		}
@@ -1447,7 +1447,7 @@ int ppop_destination(char *argv[], int info_level)
 				"\n"
 				"\tThe \"ppop ldest\" form of this command also displays the comment\n"
 				"\tattached to the printer or group.  The \"ppop dest-comment-address\n"
-				"\tform displays the command and the interface and address.\n"), errors);
+				"\tform displays the command and the interface and address.\n"), stderr);
 
 		return EXIT_ERROR;
 		}
@@ -1624,7 +1624,7 @@ int ppop_alerts(char *argv[])
 
 	if(! argv[0])
 		{
-		fputs(_("Usage: ppop alerts _printer_\n"), errors);
+		fputs(_("Usage: ppop alerts _printer_\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1635,7 +1635,7 @@ int ppop_alerts(char *argv[])
 	ppr_fnamef(fname, "%s/%s", PRCONF, destname);
 	if(stat(fname, &statbuf))
 		{
-		gu_utf8_fprintf(errors, _("Printer \"%s\" does not exist.\n"), destname);
+		gu_utf8_fprintf(stderr, _("Printer \"%s\" does not exist.\n"), destname);
 		return EXIT_ERROR;
 		}
 
@@ -1645,12 +1645,12 @@ int ppop_alerts(char *argv[])
 		{
 		if(errno == ENOENT)
 			{
-			gu_utf8_fprintf(errors, _("No alerts for printer \"%s\".\n"), destname);
+			gu_utf8_fprintf(stderr, _("No alerts for printer \"%s\".\n"), destname);
 			return EXIT_OK;
 			}
 		else
 			{
-			gu_utf8_fprintf(errors, _("Can't open \"%s\", errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
+			gu_utf8_fprintf(stderr, _("Can't open \"%s\", errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
 			return EXIT_INTERNAL;
 			}
 		}
@@ -1681,19 +1681,19 @@ int ppop_log(char *argv[])
 
 	if(!argv[0])
 		{
-		fputs(_("Usage: ppop log <job>\n"), errors);
+		fputs(_("Usage: ppop log <job>\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(!(job = parse_jobname(argv[0])))
 		{
-		gu_utf8_fprintf(errors, _("Invalid job id: %s\n"), argv[0]);
+		gu_utf8_fprintf(stderr, _("Invalid job id: %s\n"), argv[0]);
 		return EXIT_SYNTAX;
 		}
 
 	if(job->id == WILDCARD_JOBID)
 		{
-		fputs(_("You must indicate a specific job.\n"), errors);
+		fputs(_("You must indicate a specific job.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1708,7 +1708,7 @@ int ppop_log(char *argv[])
 	/* make sure the queue file is there */
 	if(stat(fname,&statbuf))
 		{
-		gu_utf8_fprintf(errors, _("Job \"%s\" does not exist.\n"), jobid(job->destname, job->id, subid));
+		gu_utf8_fprintf(stderr, _("Job \"%s\" does not exist.\n"), jobid(job->destname, job->id, subid));
 		return EXIT_ERROR;
 		}
 
@@ -1718,7 +1718,7 @@ int ppop_log(char *argv[])
 	/* open the log file */
 	if((f = fopen(fname, "r")) == (FILE*)NULL)
 		{
-		gu_utf8_fprintf(errors, _("There is no log for job \"%s\".\n"), jobid(job->destname, job->id, subid));
+		gu_utf8_fprintf(stderr, _("There is no log for job \"%s\".\n"), jobid(job->destname, job->id, subid));
 		return EXIT_OK;
 		}
 

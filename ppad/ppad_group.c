@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2006.
+** Last modified 8 February 2006.
 */
 
 /*
@@ -47,11 +47,18 @@
 #include "util_exits.h"
 #include "queueinfo.h"
 #include "ppad.h"
+#include "dispatch_table.h"
 
 /*
-** Show a groups members, its rotate setting, and its comment.
+<command>
+	<name><word>group</word><word>show</word></name>
+	<desc>show configuration of <arg>group</arg></desc>
+	<args>
+		<arg><name>group</name><desc>group to show</desc></arg>
+	</args>
+</command>
 */
-int group_show(const char *argv[])
+int command_group_show(const char *argv[])
 	{
 	const char *function = "group_show";
 	const char *group = argv[0];		/* The name of the group to show is the argument. */
@@ -72,12 +79,6 @@ int group_show(const char *argv[])
 	char *addon[MAX_ADDONS];
 	int addon_count = 0;
 
-	if(! group)
-		{
-		fputs(_("You must supply the name of a group to show.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
 
@@ -86,7 +87,7 @@ int group_show(const char *argv[])
 		if((ptr = lmatchp(line, "Rotate:")))
 			{
 			if(gu_torf_setBOOL(&rotate,ptr) == -1)
-				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
+				fprintf(stderr, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
 			continue;
 			}
 		if(gu_sscanf(line, "Comment: %T", &ptr) == 1)
@@ -103,7 +104,7 @@ int group_show(const char *argv[])
 				}
 			else
 				{
-				fprintf(errors, "%s(): too many members: %s\n", function, ptr);
+				fprintf(stderr, "%s(): too many members: %s\n", function, ptr);
 				gu_free(ptr);
 				}
 			continue;
@@ -135,7 +136,7 @@ int group_show(const char *argv[])
 		if(line[0] >= 'a' && line[0] <= 'z')	/* if in addon name space */
 			{
 			if(addon_count >= MAX_ADDONS)
-				fprintf(errors, "%s(): addon[] overflow\n", function);
+				fprintf(stderr, "%s(): addon[] overflow\n", function);
 			else
 				addon[addon_count++] = gu_strdup(line);
 			continue;
@@ -236,58 +237,58 @@ int group_show(const char *argv[])
 
 		}
 
-	if(comment)
-		gu_free(comment);
+	gu_free_if(comment);
 	for(x=0;x<member_count;x++)
 		gu_free(members[x]);
-	if(deffiltopts)
-		gu_free(deffiltopts);
-	if(switchset)
-		gu_free(switchset);
-	if(passthru)
-		gu_free(passthru);
-	if(acls)
-		gu_free(acls);
+	gu_free_if(deffiltopts);
+	gu_free_if(switchset);
+	gu_free_if(passthru);
+	gu_free_if(acls);
 
 	return EXIT_OK;
-	} /* end of group_show() */
+	} /* command_group_show() */
 
 /*
- * Copy the configuration of a group in order to make a new one.
- */
-int group_copy(const char *argv[])
+<command>
+	<name><word>group</word><word>copy</word></name>
+	<desc>copy group <arg>existing</arg> creating group <arg>new</arg></desc>
+	<args>
+		<arg><name>existing</name><desc>name of existing group</desc></arg>
+		<arg><name>new</name><desc>name of new group</desc></arg>
+	</args>
+</command>
+*/
+int command_group_copy(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing group and\n"
-				"a name for the new group.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 	return conf_copy(QUEUE_TYPE_GROUP, argv[0], argv[1]);
-	}
+	} /* command_group_copy() */
 
 /*
-** Set a group's comment.
+<command>
+	<name><word>group</word><word>comment</word></name>
+	<desc>modify a group's comment field</desc>
+	<args>
+		<arg><name>group</name><desc>name of group to be modified</desc></arg>
+		<arg flags="optional"><name>comment</name><desc>new comment (ommit to delete)</desc></arg>
+	</args>
+</command>
 */
-int group_comment(const char *argv[])
+int command_group_comment(const char *argv[])
 	{
-	const char *group = argv[0];
-	const char *comment = argv[1];
-
-	if( ! group || ! comment )
-		{
-		fputs(_("You must supply the name of a group and\n"
-				"a comment to attach to it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	return conf_set_name(QUEUE_TYPE_GROUP, group, 0, "Comment", "%s", comment);
-	} /* end of group_comment() */
+	return conf_set_name(QUEUE_TYPE_GROUP, argv[0], 0, "Comment", argv[1] ? "%s" : NULL, argv[1]);
+	} /* group_comment() */
 
 /*
-** Set a group's rotate setting.
+<command>
+	<name><word>group</word><word>rotate</word></name>
+	<desc>enable or disable rotational printer use</desc>
+	<args>
+		<arg><name>group</name><desc>name of group to be modified</desc></arg>
+		<arg><name>rotate</name><desc>True for rotate mode</desc></arg>
+	</args>
+</command>
 */
-int group_rotate(const char *argv[])
+int command_group_rotate(const char *argv[])
 	{
 	const char *group = argv[0];
 	gu_boolean newstate;
@@ -295,20 +296,16 @@ int group_rotate(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! group || ! argv[1] || gu_torf_setBOOL(&newstate,argv[1]) == -1)
+	if(gu_torf_setBOOL(&newstate,argv[1]) == -1)
 		{
-		fputs(_("You must supply the name of a group and \"true\" or \"false\".\n"), errors);
+		fputs(_("Value must be \"true\" or \"false\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_GROUP, group, CONF_RELOAD, "Rotate", "%s", newstate ? "True" : "False");
-	} /* end of group_rotate() */
+	} /* group_rotate() */
 
-/*
-** Add a member to a group, creating the group if
-** it does not already exist.
-*/
-int group_members_add(const char *argv[], gu_boolean do_add)
+static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 	{
 	const char *group = argv[0];
 	struct CONF_OBJ *obj;
@@ -321,34 +318,15 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(do_add)
-		{
-		if(! group || ! argv[1])
-			{
-			fputs(_("You must specify a new or existing group and one or more printers\n"
-				"to add to it.\n"), errors);
-			return EXIT_SYNTAX;
-			}
-		}
-	else
-		{
-		if(!group)
-			{
-			fputs(_("You must specify a new or existing group and zero or more printers\n"
-				"to be its members.\n"), errors);
-			return EXIT_SYNTAX;
-			}
-		}
-
 	if(strpbrk(group, DEST_DISALLOWED))
 		{
-		fputs(_("Group name contains a disallowed character.\n"), errors);
+		fputs(_("Group name contains a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)group[0]))
 		{
-		fputs(_("Group name begins with a disallowed character.\n"), errors);
+		fputs(_("Group name begins with a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -384,7 +362,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	gu_Try
 		{
 		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
-		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_warnings_file(qobj, stderr);
 		queueinfo_set_debug_level(qobj, debug_level);
 
 		/* Copy all the remaining lines. */
@@ -441,12 +419,42 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	gu_Catch
 		{
 		conf_abort(obj);		/* roll back the changes */
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
 	return EXIT_OK;
-	} /* end of group_add() */
+	} /* end of group_members_or_add_internal() */
+
+/*
+<command>
+	<name><word>group</word><word>add</word></name>
+	<desc>add <arg>members</arg> to a <arg>group</arg> (possibly creating <arg>group</arg>)</desc>
+	<args>
+		<arg><name>group</name><desc>name of group to create or modify</desc></arg>
+		<arg flags="repeat"><name>members</name><desc>members to add to <arg>group</arg></desc></arg>
+	</args>
+</command>
+*/
+int command_group_add(const char *argv[])
+	{
+	return group_members_or_add_internal(TRUE, argv);
+	} /* command_group_add() */
+
+/*
+<command>
+	<name><word>group</word><word>members</word></name>
+	<desc>set members list of <arg>group</arg> to <arg>members</arg> (possibly creating <arg>group</arg></desc>
+	<args>
+		<arg><name>group</name><desc>name of group to create or modify</desc></arg>
+		<arg flags="repeat"><name>member</name><desc>list of members for <arg>group</arg></desc></arg>
+	</args>
+</command>
+*/
+int command_group_members(const char *argv[])
+	{
+	return group_members_or_add_internal(FALSE, argv);
+	} /* command_group_members() */
 
 /*
 ** Remove a member from a group.  This is a separate function because
@@ -470,7 +478,7 @@ int group_remove_internal(const char *group, const char *member)
 	gu_Try
 		{
 		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
-		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_warnings_file(qobj, stderr);
 		queueinfo_set_debug_level(qobj, debug_level);
 
 		/*
@@ -515,7 +523,7 @@ int group_remove_internal(const char *group, const char *member)
 	gu_Catch
 		{
 		conf_abort(obj);
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
@@ -523,9 +531,19 @@ int group_remove_internal(const char *group, const char *member)
 		return EXIT_OK;
 	else
 		return EXIT_NOTFOUND;
-	} /* end of _group_remove() */
+	} /* end of group_remove_internal() */
 
-int group_remove(const char *argv[])
+/*
+<command>
+	<name><word>group</word><word>remove</word></name>
+	<desc>remove <arg>member</arg> from <arg>group</arg></desc>
+	<args>
+		<arg><name>group</name><desc>name of existing group from which <arg>member</arg> is to be removed</desc></arg>
+		<arg><name>member</name><desc>name of member to remove from <arg>group</arg></desc></arg>
+	</args>
+</command>
+*/
+int command_group_remove(const char *argv[])
 	{
 	const char function[] = "group_remove";
 	const char *group = argv[0];
@@ -534,12 +552,6 @@ int group_remove(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! group || ! argv[1] )
-		{
-		fputs(_("You must specify a group and a printer or printers to remove from it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	for(x=1; argv[x]; x++)
 		{
 		switch(group_remove_internal(group, argv[x]))
@@ -547,13 +559,13 @@ int group_remove(const char *argv[])
 			case EXIT_OK:				/* continue if no error yet */
 				break;
 			case EXIT_BADDEST:
-				fprintf(errors, _("The group \"%s\" does not exist.\n"), group);
+				fprintf(stderr, _("The group \"%s\" does not exist.\n"), group);
 				return EXIT_BADDEST;
 			case EXIT_NOTFOUND:
-				fprintf(errors, _("The group \"%s\" does not have a member called \"%s\".\n"), group, argv[x]);
+				fprintf(stderr, _("The group \"%s\" does not have a member called \"%s\".\n"), group, argv[x]);
 				return EXIT_NOTFOUND;
 			default:
-				fprintf(errors, "%s(): assertion failed\n", function);
+				fprintf(stderr, "%s(): assertion failed\n", function);
 				return EXIT_INTERNAL;
 			}
 		}
@@ -562,27 +574,21 @@ int group_remove(const char *argv[])
 	} /* end of group_remove() */
 
 /*
-** Delete a group.
+<command>
+	<name><word>group</word><word>delete</word></name>
+	<desc>delete <arg>group</arg></desc>
+	<args>
+		<arg><name>group</name><desc>group to delete</desc></arg>
+	</args>
+</command>
 */
-int group_delete(const char *argv[])
+int command_group_delete(const char *argv[])
 	{
 	const char *group = argv[0];
 	char fname[MAX_PPR_PATH];
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
-
-	if(! group)
-		{
-		fputs(_("You must specify a group to delete.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	if(argv[1])
-		{
-		fputs(_("Too many parameters.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	/*
 	** Use ppop commands to accept no more jobs
@@ -596,12 +602,12 @@ int group_delete(const char *argv[])
 		{
 		if(errno==ENOENT)
 			{
-			fprintf(errors, _("The group \"%s\" does not exist.\n"), group);
+			fprintf(stderr, _("The group \"%s\" does not exist.\n"), group);
 			return EXIT_BADDEST;
 			}
 		else
 			{
-			fprintf(errors, "unlink(\"%s\") failed, errno=%d\n",fname,errno);
+			fprintf(stderr, "unlink(\"%s\") failed, errno=%d\n",fname,errno);
 			return EXIT_INTERNAL;
 			}
 		}
@@ -613,21 +619,21 @@ int group_delete(const char *argv[])
 	} /* end of group_remove() */
 
 /*
-** Tell the spooler to re-read a group configuration.
+<command>
+	<name><word>group</word><word>touch</word></name>
+	<desc>instruct pprd to reload <arg>group</arg></desc>
+	<args>
+		<arg><name>group</name><desc>group to reload</desc></arg>
+	</args>
+</command>
 */
-int group_touch(const char *argv[])
+int command_group_touch(const char *argv[])
 	{
 	const char *group = argv[0];
 	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
-
-	if(! group)
-		{
-		fputs(_("You must supply the name of a group.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
@@ -637,23 +643,24 @@ int group_touch(const char *argv[])
 	} /* end of group_touch() */
 
 /*
-** Change the "Switchset:" line.
+<command>
+	<name><word>group</word><word>switchset</word></name>
+	<desc>attach a set of switches to a group</desc>
+	<args>
+		<arg><name>group</name><desc>name of group to be modified</desc></arg>
+		<arg flags="optional repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
+	</args>
+</command>
 */
-int group_switchset(const char *argv[])
+int command_group_switchset(const char *argv[])
 	{
 	const char *group = argv[0];		/* name of group */
 	char newset[256];					/* new set of switches */
 
-	if(! group)
-		{
-		fputs(_("You must supply the name of a group and a set of switches.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	/* convert the switch set to a line */
 	if(make_switchset_line(newset, &argv[1]))
 		{
-		fputs(_("Bad set of switches.\n"), errors);
+		fputs(_("Bad set of switches.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -675,7 +682,7 @@ int group_deffiltopts_internal(const char *group)
 	void *qobj = NULL;
 	gu_Try {
 		qobj = queueinfo_new(QUEUEINFO_GROUP, group);
-		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_warnings_file(qobj, stderr);
 		queueinfo_set_debug_level(qobj, debug_level);
 			
 		/* Modify the group's configuration file. */
@@ -704,7 +711,7 @@ int group_deffiltopts_internal(const char *group)
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -712,39 +719,40 @@ int group_deffiltopts_internal(const char *group)
 	return EXIT_OK;
 	} /* end of group_deffiltopts_internal() */
 
-int group_deffiltopts(const char *argv[])
+/*
+<command>
+	<name><word>group</word><word>deffiltopts</word></name>
+	<desc>update a group's default filter options</desc>
+	<args>
+		<arg><name>group</name><desc>group to update</desc></arg>
+	</args>
+</command>
+*/
+int command_group_deffiltopts(const char *argv[])
 	{
 	const char *group = argv[0];		/* name of group */
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! group )
-		{
-		fputs(_("You must supply the name of a group.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	return group_deffiltopts_internal(group);
 	} /* end of group_deffiltopts() */
 
 /*
-** Set the group "PassThru:" line.
+<command>
+	<name><word>group</word><word>passthru</word></name>
+	<desc>set a group's passthru language list</desc>
+	<args>
+		<arg><name>group</name><desc>name of group to be modified</desc></arg>
+		<arg flags="optional repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
+	</args>
+</command>
 */
-int group_passthru(const char *argv[])
+int command_group_passthru(const char *argv[])
 	{
 	const char *group = argv[0];
 	char *passthru;
 	int retval;
-
-	if(!group)
-		{
-		fputs(_("You must specify a group and a (possibly empty) list\n"
-				"of file types.  These file types should be the same as\n"
-				"those used with the \"ppr -T\" option.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	passthru = list_to_string(&argv[1]);
 	retval = conf_set_name(QUEUE_TYPE_GROUP, group, 0, "PassThru", passthru ? "%s" : NULL, passthru);
 	gu_free_if(passthru);
@@ -752,20 +760,20 @@ int group_passthru(const char *argv[])
 	} /* end of group_passthru() */
 
 /*
-** Set the group "ACLs:" line.
+<command>
+	<name><word>group</word><word>acls</word></name>
+	<desc>set list of ACLs listing those who can submit to <arg>group</arg></desc>
+	<args>
+		<arg><name>group</name><desc>name of group to be modified</desc></arg>
+		<arg flags="optional repeat"><name>acls</name><desc>list of ACLs (ommit to remove restrictions)</desc></arg>
+	</args>
+</command>
 */
-int group_acls(const char *argv[])
+int command_group_acls(const char *argv[])
 	{
 	const char *group = argv[0];
 	char *acls;
 	int retval;
-
-	if(!group)
-		{
-		fputs(_("You must specify a group and a (possibly empty) list\n"
-				"of PPR access control lists.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	acls = list_to_string(&argv[1]);
 	retval = conf_set_name(QUEUE_TYPE_GROUP, group, 0, "ACLs", acls ? "%s" : NULL, acls);
@@ -774,25 +782,25 @@ int group_acls(const char *argv[])
 	} /* end of group_acls() */
 
 /*
-** Set a group addon option.
+<command>
+	<name><word>group</word><word>addon</word></name>
+	<desc>set group parameters for use by a PPR extension</desc>
+	<args>
+		<arg><name>group</name><desc>name of group to be modified</desc></arg>
+		<arg><name>param</name><desc>addon parameter to modify</desc></arg>
+		<arg flags="optional"><name>value</name><desc>new value for <arg>param</arg> (ommit to delete)</desc></arg>
+	</args>
+</command>
 */
-int group_addon(const char *argv[])
+int command_group_addon(const char *argv[])
 	{
 	const char *group = argv[0];
 	const char *name = argv[1];
 	const char *value = argv[2];
 
-	if(!group || !name || (value && argv[3]))
-		{
-		fputs(_("You must supply the name of an existing group, and the name of an addon\n"
-				"parameter.  A value for the parameter is optional.  If you do not\n"
-				"supply a value, the parameter will be unset.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
-		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), errors);
+		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 

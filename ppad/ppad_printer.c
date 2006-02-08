@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2006.
+** Last modified 31 January 2006.
 */
 
 /*==============================================================
@@ -52,6 +52,7 @@
 #include "interface.h"
 #include "queueinfo.h"
 #include "ppad.h"
+#include "dispatch_table.h"
 
 /*
 ** Update the "DefFiltOpts:" lines of any groups which have
@@ -75,7 +76,7 @@ static int update_groups_deffiltopts(const char *printer)
 
 	if(!(dir = opendir(GRCONF)))
 		{
-		fprintf(errors, _("%s(): %s() failed, errno=%d (%s)\n"), function, "opendir", errno, strerror(errno));
+		fprintf(stderr, _("%s(): %s() failed, errno=%d (%s)\n"), function, "opendir", errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -333,10 +334,18 @@ static const char *codes_description(int codes)
 		}
 	} /* end of codes_description() */
 
-/*===========================================================================
-** Set the default Alert: line.
-===========================================================================*/
-int printer_new_alerts(const char *argv[])
+/*
+<command>
+	<name><word>new</word><word>alerts</word></name>
+	<desc>set default alerts settings for new printers</desc>
+	<args>
+		<arg><name>frequency</name><desc>error count at which to send alert</desc></arg>
+		<arg><name>method</name><desc>method by which to send alert</desc></arg>
+		<arg><name>address</name><desc>address to which to send alert</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_new_alerts(const char *argv[])
 	{
 	int frequency;
 	const char *method;
@@ -346,12 +355,9 @@ int printer_new_alerts(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! argv[0]
-				|| strspn(argv[0],"-0123456789") != strlen(argv[0])
-				|| ! argv[1] || ! argv[2])
+	if(strspn(argv[0],"-0123456789") != strlen(argv[0]))
 		{
-		fputs(_("You must supply an alert frequency, such as \"7\", an alert method,\n"
-				"such as \"mail\", and an alert address, such as \"alertreaders\".\n"), errors);
+		fprintf(stderr, _("Alerts interval must be an integer.\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -361,7 +367,7 @@ int printer_new_alerts(const char *argv[])
 
 	if(!(newprn = fopen(NEWPRN_CONFIG,"w")))
 		{
-		fprintf(errors, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
+		fprintf(stderr, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -369,21 +375,22 @@ int printer_new_alerts(const char *argv[])
 
 	fclose(newprn);
 	return EXIT_OK;
-	} /* end of printer_new_alerts() */
-
-/*===================================================================
-** Code for ppad show begins here.
-===================================================================*/
+	} /* command_new_alerts() */
 
 /*
-** Read a printer's configuration file and print a report.
-** It is not necessary to be an operator in order to execute this command.
+<command>
+	<name><word>printer</word><word>show</word></name>
+	<desc>show configuration of <arg>printer</arg></desc>
+	<args>
+		<arg><name>printer</name><desc>printer to show</desc></arg>
+	</args>
+</command>
 **
 ** We might someday be able to replace much of this function with a
 ** queueinfo object (../libppr/queueinfo.c) but as of 30 January 2004 it
 ** isn't mature enough.
 */
-int printer_show(const char *argv[])
+int command_printer_show(const char *argv[])
 	{
 	const char function[] = "printer_show";
 	void *pool;
@@ -443,7 +450,7 @@ int printer_show(const char *argv[])
 
 	if(! printer)
 		{
-		fputs(_("You must specify a printer.\n"), errors);
+		fputs(_("You must specify a printer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -566,7 +573,7 @@ int printer_show(const char *argv[])
 			{
 			if(ppdopts_count >= (sizeof(ppdopts) / sizeof(ppdopts[0])))
 				{
-				fprintf(errors, "%s(): PPDOpts overflow\n", function);
+				fprintf(stderr, "%s(): PPDOpts overflow\n", function);
 				}
 			else
 				{
@@ -588,7 +595,7 @@ int printer_show(const char *argv[])
 		else if((p = lmatchp(line, "GrayOK:")))
 			{
 			if(gu_torf_setBOOL(&grayok,p) == -1)
-				fprintf(errors, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", p);
+				fprintf(stderr, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", p);
 			}
 		else if(gu_sscanf(line, "ACLs: %T", &p) == 1)
 			{
@@ -606,7 +613,7 @@ int printer_show(const char *argv[])
 			{
 			if(addon_count >= MAX_ADDONS)
 				{
-				fprintf(errors, "%s(): addon[] overflow\n", function);
+				fprintf(stderr, "%s(): addon[] overflow\n", function);
 				}
 			else
 				{
@@ -666,7 +673,7 @@ int printer_show(const char *argv[])
 						}
 					else
 						{
-						fprintf(errors, _("WARNING: can't parse RIP information in PPD file\n"));
+						fprintf(stderr, _("WARNING: can't parse RIP information in PPD file\n"));
 						}
 					continue;
 					} /* "*pprRIP:" */
@@ -705,7 +712,7 @@ int printer_show(const char *argv[])
 				ppdobj_free(ppdobj);
 			}
 		gu_Catch {
-			fprintf(errors, "%s: %s\n", myname, gu_exception);
+			fprintf(stderr, "%s: %s\n", myname, gu_exception);
 			}
 
 		} /* if(PPDFile) */
@@ -1076,80 +1083,94 @@ int printer_show(const char *argv[])
 	gu_pool_free(gu_pool_pop(pool));
 
 	return EXIT_OK;
-	} /* end of printer_show() */
+	} /* command_show() */
 
-/*==========================================================================
-** Copy a printer
-==========================================================================*/
-int printer_copy(const char *argv[])
+/*
+<command>
+	<name><word>printer</word><word>copy</word></name>
+	<desc>copy printer <arg>existing</arg> creating printer <arg>new</arg></desc>
+	<args>
+		<arg><name>existing</name><desc>name of existing printer</desc></arg>
+		<arg><name>new</name><desc>name of new printer</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_copy(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a name for the new printer.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 	return conf_copy(QUEUE_TYPE_PRINTER, argv[0], argv[1]);
 	}
 
-/*==========================================================================
-** Set a printer's comment.
-==========================================================================*/
-int printer_comment(const char *argv[])
+/*
+<command>
+	<name><word>printer</word><word>comment</word></name>
+	<desc>modify a printer's comment field</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional"><name>comment</name><desc>comment to attach (ommit to delete)</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_comment(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a comment to attach to it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Comment", "%s", argv[1]);
-	} /* end of printer_comment() */
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Comment", argv[1] ? "%s" : NULL, argv[1]);
+	} /* command_comment() */
 
-/*==========================================================================
-** Set a printer's location.
-==========================================================================*/
-int printer_location(const char *argv[])
+/*
+<command>
+	<name><word>printer</word><word>location</word></name>
+	<desc>modify a printer's location field</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional"><name>location</name><desc>new location description (ommit to delete)</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_location(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a location name to attach to it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Location", "%s", argv[1]);
-	} /* end of printer_location() */
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Location", argv[1] ? "%s" : NULL, argv[1]);
+	} /* command_location() */
 
-/*==========================================================================
-** Set a printer's department.
-==========================================================================*/
-int printer_department(const char *argv[])
+/*
+<command>
+	<name><word>printer</word><word>department</word></name>
+	<desc>modify a printer's department field</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional"><name>department</name><desc>new department description (ommit to delete)</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_department(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a department name to attach to it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Department", "%s", argv[1]);
-	} /* end of printer_department() */
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Department", argv[1] ? "%s" : NULL, argv[1]);
+	} /* command_department() */
 
-/*==========================================================================
-** Set a printer's contact.
-==========================================================================*/
-int printer_contact(const char *argv[])
+/*
+<command>
+	<name><word>printer</word><word>contact</word></name>
+	<desc>modify a printer's contact field</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional"><name>contact</name><desc>new contact description (ommit to delete)</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_contact(const char *argv[])
 	{
-	if( ! argv[0] || ! argv[1] )
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a contact name to attach to it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Contact", "%s", argv[1]);
-	} /* end of printer_contact() */
+	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Contact", argv[1] ? "%s" : NULL, argv[1]);
+	} /* command_contact() */
 
-/*=========================================================================
-** Set a printer's interface and the interface's address.
+/*
+<command>
+	<name><word>printer</word><word>interface</word></name>
+	<desc>set a printers interface program and address</desc>
+	<args>
+		<arg><name>printer</name><desc>printer to modify or create</desc></arg>
+		<arg><name>interface</name><desc>interface program to use</desc></arg>
+		<arg><name>address</name><desc>address to pass to interface program</desc></arg>
+	</args>
+</command>
+**
 ** We will delete "JobBreak:" and "Feedback:" lines if the
 ** interface is changed or if there was previously no "Interface:"
 ** line.  We will also delete all "JobBreak:" and "Feedback:" lines
@@ -1157,8 +1178,8 @@ int printer_contact(const char *argv[])
 **
 ** We will only ask the spooler to re-read the configuration file
 ** if this command creates the printer.
-=========================================================================*/
-int printer_interface(const char *argv[])
+*/
+int command_printer_interface(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *interface = argv[1];
@@ -1168,24 +1189,15 @@ int printer_interface(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! printer || ! interface || ! address )
-		{
-		fputs(_("You must specify a printer, either new or existing, an interface program, and\n"
-				"an address of the printer in a format understood by the interface program.\n"
-				"See ppad-interfaces(8) for information about interface programs and their\n"
-			    "address formats.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(strpbrk(printer, DEST_DISALLOWED))
 		{
-		fputs(_("The printer name contains a disallowed character.\n"), errors);
+		fputs(_("The printer name contains a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)printer[0]))
 		{
-		fputs(_("The printer name begins with a disallowed character.\n"), errors);
+		fputs(_("The printer name begins with a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1207,12 +1219,12 @@ int printer_interface(const char *argv[])
 
 	if(stat(p, &statbuf) < 0)
 		{
-		fprintf(errors, _("The interface \"%s\" does not exist.\n"), interface);
+		fprintf(stderr, _("The interface \"%s\" does not exist.\n"), interface);
 		return EXIT_NOTFOUND;
 		}
 	if(! (statbuf.st_mode & S_IXUSR) )
 		{
-		fprintf(errors, _("The interface \"%s\" not executable.\n"), interface);
+		fprintf(stderr, _("The interface \"%s\" not executable.\n"), interface);
 		return EXIT_NOTFOUND;
 		}
 	}
@@ -1288,12 +1300,19 @@ int printer_interface(const char *argv[])
 		}								/* (really for the 1st time) */
 
 	return EXIT_OK;
-	} /* end of printer_interface() */
+	} /* command_interface() */
 
-/*===========================================================================
-** Set a printer's interface options string.
-===========================================================================*/
-int printer_options(const char *argv[])
+/*
+<command>
+	<name><word>printer</word><word>options</word></name>
+	<desc>set a printer's interface options string</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>options</name><desc>interface options (ommit to clear)</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_options(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
@@ -1301,12 +1320,6 @@ int printer_options(const char *argv[])
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
-
-	if(! printer)
-		{
-		fputs(_("Insufficient parameters.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	/* make sure the printer exists */
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
@@ -1331,7 +1344,7 @@ int printer_options(const char *argv[])
 	if(p)
 		{
 		if(strcmp(p, "none") == 0)
-			fprintf(errors, X_("Warning: setting options to \"none\" is deprecated\n"));
+			fprintf(stderr, X_("Warning: setting options to \"none\" is deprecated\n"));
 		else
 			conf_printf(obj, "Options: %s\n", p);
 		gu_free(p);
@@ -1349,7 +1362,7 @@ int printer_options(const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* end of printer_options() */
+	} /* command_options() */
 
 /*
  * Set a numberic Interface parameter.  If the value is less than zero, then
@@ -1397,9 +1410,16 @@ static int printer_interface_param(const char printer[], const char param[], int
 	} /* printer_interface_param() */
 
 /*
-** Set a printer's jobbreak flag.
+<command>
+	<name><word>printer</word><word>jobbreak</word></name>
+	<desc>set a printer's jobbreak method</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>jobbreak</name><desc>signal, control-d, pjl, signal/pjl, newinterface, or default</desc></arg>
+	</args>
+</command>
 */
-int printer_jobbreak(const char *argv[])
+int command_printer_jobbreak(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *jobbreak = argv[1];
@@ -1408,21 +1428,29 @@ int printer_jobbreak(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! printer || ! jobbreak || (new_value = jobbreak_code(jobbreak)) == JOBBREAK_INVALID)
+	if((new_value = jobbreak_code(jobbreak)) == JOBBREAK_INVALID)
 		{
-		fputs(_("You must supply the name of an existing printer and a jobbreak mode setting.\n"
-			"Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
-			"\"save/restore\", \"newinterface\", and \"default\".\n"), errors);
+		/* We omit "none" and "save/restore" from this list because
+		 * we want to remove them. */
+		fputs(_("Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
+			"\"newinterface\", and \"default\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return printer_interface_param(printer, "JobBreak", new_value);
-	} /* end of printer_jobbreak() */
+	} /* command_jobbreak() */
 
 /*
-** Set a printer's feedback flag.
+<command>
+	<name><word>printer</word><word>feedback</word></name>
+	<desc>set a printer's feedback flag</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>feedback</name><desc>true, false, or default</desc></arg>
+	</args>
+</command>
 */
-int printer_feedback(const char *argv[])
+int command_printer_feedback(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *feedback = argv[1];
@@ -1431,20 +1459,26 @@ int printer_feedback(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if(! printer || ! feedback || (new_value = feedback_code(feedback)) == FEEDBACK_INVALID)
+	if((new_value = feedback_code(feedback)) == FEEDBACK_INVALID)
 		{
-		fputs(_("You must supply the name of an existing printer\n"
-				"and \"true\", \"false\", or \"default\".\n"), errors);
+		fputs(_("Valid feedback settings are \"true\", \"false\", or \"default\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return printer_interface_param(printer, "Feedback", new_value);
-	} /* end of printer_feedback() */
+	} /* command_feedback() */
 
 /*
-** Set a printer's codes setting.
+<command>
+	<name><word>printer</word><word>codes</word></name>
+	<desc>set a printer's passable codes info</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>codes</name><desc>Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, or default</desc></arg>
+	</args>
+</command>
 */
-int printer_codes(const char *argv[])
+int command_printer_codes(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *codes = argv[1];
@@ -1453,56 +1487,62 @@ int printer_codes(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! printer || ! codes || (new_value = codes_code(codes)) == CODES_INVALID)
+	if((new_value = codes_code(codes)) == CODES_INVALID)
 		{
-		fputs(_("You must supply the name of an existing printer and a codes setting.\n"
-			"Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
-			"\"UNKNOWN\", and \"default\".\n"), errors);
+		fputs(_("Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
+			"\"UNKNOWN\", and \"default\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return printer_interface_param(printer, "Codes", new_value);
-	} /* end of printer_codes() */
+	} /* command_codes() */
 
 /*
-** Set the RIP.
+<command>
+	<name><word>printer</word><word>rip</word></name>
+	<desc>change external RIP settings for <arg>printer</arg></desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>rip</name><desc>name of external RIP</desc></arg>
+		<arg><name>output</name><desc>type of output file produced by <arg>rip</arg> (such as \"pcl\" or \"other\")</desc></arg>
+		<arg><name>options</name><desc>space-separated list of options to pass to RIP</desc></arg>
+	</args>
+</command>
 */
-int printer_rip(const char *argv[])
+int command_printer_rip(const char *argv[])
 	{
 	const char *printer = argv[0], *rip = argv[1], *output_language = argv[2], *options = argv[3];
 
-	if(!printer || (printer && rip && !output_language))
+	if(rip && !output_language)
 		{
-		fputs(_("You must supply the name of an existing printer.  If you supply no other\n"
-				"parameters, the RIP setting will revert to the PPD file default.  To select\n"
-				"a different RIP, supply the RIP name (such as \"gs\" or \"ppr-gs\"), an\n"
-				"output language (such as \"pcl\" or \"other\"), and a RIP options string.\n"), errors);
+		fputs(_("If you set a RIP, you must specify the output language.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(rip && strlen(rip) == 0)
 		{
-		fputs(_("The RIP name may not be an empty string.\n"), errors);
+		fputs(_("The RIP name may not be an empty string.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(output_language && strlen(output_language) == 0)
 		{
-		fputs(_("The RIP output language may not be an empty string.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	if(rip && output_language && options && argv[4])
-		{
-		fputs(_("Too many parameters.  Did you forget to quote the list of options?\n"), errors);
+		fputs(_("The RIP output language may not be an empty string.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "RIP", rip ? "%s %s %s" : NULL, rip, output_language, options ? options : "");
-	} /* end of printer_rip() */
+	} /* command_rip() */
 
 /*
-** Set a printer's PPD file.
+<command>
+	<name><word>printer</word><word>ppd</word></name>
+	<desc>set a printer's description (PPD) file</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>modelname</name><desc>name of printer description</desc></arg>
+	</args>
+</command>
 **
 ** We do this by modifying the configuration file's "PPDFile:" line.  The 
 ** spooler doesn't keep track of the PPD file, but it needs to know if
@@ -1511,7 +1551,7 @@ int printer_rip(const char *argv[])
 ** Thus we tell the spooler that the config file has changed so that it
 ** will clear the "never" bits.
 */
-int printer_ppd(const char *argv[])
+int command_printer_ppd(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *ppdname = argv[1];
@@ -1521,12 +1561,6 @@ int printer_ppd(const char *argv[])
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
-
-	if( ! printer || ! ppdname )
-		{
-		fputs(_("You must supply the name of an existing printer and a PPD file.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	/*
 	** Make sure the printer exists,
@@ -1539,7 +1573,7 @@ int printer_ppd(const char *argv[])
 		{
 		/* Get ready to collect information for a "DefFiltOpts:" line. */
 		qobj = queueinfo_new(QUEUEINFO_PRINTER, printer);
-		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_warnings_file(qobj, stderr);
 		queueinfo_set_debug_level(qobj, debug_level);
 
 		/* Consider the printer's PPD file.  If this fails, stop. */
@@ -1595,19 +1629,27 @@ int printer_ppd(const char *argv[])
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	
 	/* Update any groups which have this printer as a member. */
 	return update_groups_deffiltopts(printer);
-	} /* end of printer_ppd() */
+	} /* command_ppd() */
 
 /*
-** Change the configuration file "Alert: " lines which
-** tells where to send alerts and how often.
+<command>
+	<name><word>printer</word><word>alerts</word></name>
+	<desc>set frequency and destination of printer alerts</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>frequency</name><desc>error count at which to send alert</desc></arg>
+		<arg><name>method</name><desc>method by which to send alert</desc></arg>
+		<arg><name>address</name><desc>address to which to send alert</desc></arg>
+	</args>
+</command>
 */
-int printer_alerts(const char *argv[])
+int command_printer_alerts(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int frequency;
@@ -1619,13 +1661,9 @@ int printer_alerts(const char *argv[])
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! printer || ! argv[1]
-				|| (strspn(argv[1], "-0123456789") != strlen(argv[1]))
-				|| ! method || ! address )
+	if(strspn(argv[1], "-0123456789") != strlen(argv[1]))
 		{
-		fputs(_("You must supply the name of a printer, an alert frequency, such as \"7\",\n"
-				"an alert method, such as \"mail\", and an alert address,\n"
-				"such as \"alertreaders@domain.com\".\n"), errors);
+		fprintf(stderr, _("Alerts interval must be an integer.\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -1656,13 +1694,22 @@ int printer_alerts(const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* end of printer_alert() */
+	} /* command_alert() */
 
 /*
+<command>
+	<name><word>printer</word><word>frequency</word></name>
+	<desc>alter frequency of printer alerts</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>frequency</name><desc>error count at which to send alert</desc></arg>
+	</args>
+</command>
+**
 ** Change the configuration file "Alert:" line to change the
 ** alert frequency.  The absence of an  "Alert:" line is an error.
 */
-int printer_frequency(const char *argv[])
+int command_printer_frequency(const char *argv[])
 	{
 	const char *printer;
 	int frequency;						/* dispatch every frequency alerts */
@@ -1676,7 +1723,7 @@ int printer_frequency(const char *argv[])
 
 	if( ! argv[0] || ! argv[1] )
 		{
-		fputs(_("You must specify a printer and a new alert frequency.\n"), errors);
+		fputs(_("You must specify a printer and a new alert frequency.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1705,7 +1752,7 @@ int printer_frequency(const char *argv[])
 
 	if(! method || ! address)
 		{
-		fputs(_("No alert method and address defined, use \"ppad alerts\".\n"), errors);
+		fputs(_("No alert method and address defined, use \"ppad alerts\".\n"), stderr);
 		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
@@ -1723,13 +1770,20 @@ int printer_frequency(const char *argv[])
 	conf_close(obj);				/* put new file into place */
 
 	return EXIT_OK;
-	} /* end of printer_frequency() */
+	} /* command_frequency() */
 
 /*
-** Change the configuration file "FlagPages:" line which
-** tells whether or not to print banner and trailer pages.
+<command>
+	<name><word>printer</word><word>flags</word></name>
+	<desc>set rules for printing flag (banner and trailer) pages</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>banner</name><desc>never, no, yes, or always</desc></arg>
+		<arg><name>trailer</name><desc>never, no, yes, or always</desc></arg>
+	</args>
+</command>
 */
-int printer_flags(const char *argv[])
+int command_printer_flags(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int banner;
@@ -1739,44 +1793,36 @@ int printer_flags(const char *argv[])
 	int trailer;
 	#endif
 
-	if(! printer || ! argv[1] || ! argv[2])
-		{
-		fputs(_("You must supply the name of an existing printer, a new banner\n"
-				"option, and a new trailer option.  Valid banner and trailer\n"
-				"options are \"never\", \"no\", \"yes\", and \"always\".\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
-	if(		(
-			banner = flag_code(argv[1])) == BANNER_INVALID
-			|| (trailer = flag_code(argv[2])) == BANNER_INVALID
-			)
+	if(	(banner = flag_code(argv[1])) == BANNER_INVALID
+		||
+		(trailer = flag_code(argv[2])) == BANNER_INVALID
+		)
 		{
 		fputs(_("Banner and trailer must be set to \"never\", \"no\",\n"
-				"\"yes\", or \"always\".\n"), errors);
+				"\"yes\", or \"always\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "FlagPages", "%d %d", banner, trailer);
-	} /* end of printer_flags() */
+	} /* command_flags() */
 
 /*
-** Change the configuration "OutputOrder:" line.
-** The direction may be "Normal", "Reverse" or "ppd".
+<command>
+	<name><word>printer</word><word>outputorder</word></name>
+	<desc>set rules for printing flag (banner and trailer) pages</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>order</name><desc>normal, reverse, or ppd</desc></arg>
+	</args>
+</command>
+**
 ** If the direction is "ppd", the "OutputOrder:" line is deleted
 ** from the configuration file.
 */
-int printer_outputorder(const char *argv[])
+int command_printer_outputorder(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *newstate;
-
-	if(! printer || ! argv[1])
-		{
-		fputs(_("You must supply the name of an existing printer and\n"
-				"a new outputorder.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	if(gu_strcasecmp(argv[1], "Normal") == 0)
 		newstate = "Normal";
@@ -1786,44 +1832,39 @@ int printer_outputorder(const char *argv[])
 		newstate = NULL;
 	else
 		{
-		fputs(_("Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"), errors);
+		fputs(_("Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "OutputOrder", newstate ? "%s" : NULL, newstate);
-	} /* end of printer_direction() */
+	} /* command_direction() */
 
 /*
-** Change the charge made for printing.
+<command>
+	<name><word>printer</word><word>charge</word></name>
+	<desc>set or clear per-sheet charge (possibly 0.00)</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>per-sheet/duplex</name><desc>none or N.NN</desc></arg>
+		<arg flags="optional"><name>simplex</name><desc>N.NN</desc></arg>
+	</args>
+</command>
 **
 ** !!! BUG BUG BUG !!!
 ** We get the printer configuration re-read, but
 ** we really ought to get the group configurations
 ** re-read too.
 */
-int printer_charge(const char *argv[])
+int command_printer_charge(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int retval;
-
-	if(! printer || ! argv[1])
-		{
-		fputs(_("Insufficient parameters.  You must supply the name of a printer\n"
-				"and an amount to change per sheet.  If you wish, you may specify\n"
-				"an amount to charge per duplex sheet and then an amount to charge\n"
-				"per simplex sheet.  If you specify only one amount, it will apply\n"
-				"to both.  To remove a printer charge, set the charge to \"none\".\n"
-				"In contrast, setting the charge to \"0.00\" will mean that only users\n"
-				"with charge accounts may print, even though they will not be charged\n"
-				"any money.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	if(argv[1][0] == '\0' || strcmp(argv[1], "none") == 0)
 		{
 		if(argv[2] && strlen(argv[2]) > 0)
 			{
-			fprintf(errors, _("A second parameter is not allowed because first is \"%s\"."), argv[1]);
+			fprintf(stderr, _("A second parameter is not allowed because first is \"%s\"."), argv[1]);
 			return EXIT_SYNTAX;
 			}
 		retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "Charge", NULL);
@@ -1835,12 +1876,12 @@ int printer_charge(const char *argv[])
 		/* Check for proper syntax of values.  This check isn't really rigorous enough!!! */
 		if(strspn(argv[1], "0123456789.") != strlen(argv[1]))
 			{
-			fprintf(errors, _("The value \"%s\" is not in the correct format for decimal currency."), argv[1]);
+			fprintf(stderr, _("The value \"%s\" is not in the correct format for decimal currency."), argv[1]);
 			return EXIT_SYNTAX;
 			}
 		if(argv[2] && strspn(argv[2], "0123456789.") != strlen(argv[2]))
 			{
-			fprintf(errors, _("The value \"%s\" is not in the correct format for decimal currency."), argv[2]);
+			fprintf(stderr, _("The value \"%s\" is not in the correct format for decimal currency."), argv[2]);
 			return EXIT_SYNTAX;
 			}
 
@@ -1860,15 +1901,18 @@ int printer_charge(const char *argv[])
 		}
 
 	return retval;
-	} /* end of printer_charge() */
+	} /* command_charge() */
 
 /*
-** Extract the printer bins list from the PPD file
-** and put it in the configuration file.
-**
-** This will overwrite any bin list in the configuration file.
+<command>
+	<name><word>printer</word><word>bins</word><word>ppd</word></name>
+	<desc>set bins list from PPD file</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+	</args>
+</command>
 */
-int printer_bins_ppd(const char *argv[])
+int command_printer_bins_ppd(const char *argv[])
 	{
 	const char *printer;				/* name of printer whose configuration should be changed */
 	struct CONF_OBJ *obj;
@@ -1883,13 +1927,13 @@ int printer_bins_ppd(const char *argv[])
 
 	if(! (printer = argv[0]))
 		{
-		fputs(_("You must supply the name of an existing printer.\n"), errors);
+		fputs(_("You must supply the name of an existing printer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(argv[1])
 		{
-		fputs(_("Too many parameters.\n"), errors);
+		fputs(_("Too many parameters.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1913,12 +1957,12 @@ int printer_bins_ppd(const char *argv[])
 
 	if(! ppdname)
 		{
-		fputs(_("Printer configuration file does not have a \"PPDFile:\" line.\n"), errors);
+		fputs(_("Printer configuration file does not have a \"PPDFile:\" line.\n"), stderr);
 		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
 
-	if((ret = ppd_open(ppdname, errors)))
+	if((ret = ppd_open(ppdname, stderr)))
 		{
 		conf_abort(obj);
 		return ret;
@@ -1940,14 +1984,14 @@ int printer_bins_ppd(const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* end of printer_bins_ppd() */
+	} /* command_bins_ppd() */
 
 /*
 ** Add bin(s) to a printer's bin list.
 */
-int printer_bins_set_or_add(gu_boolean add, const char *argv[])
+static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	{
-	const char *printer, *bin;
+	const char *printer = argv[0], *bin;
 	struct CONF_OBJ *obj;
 	char *line;
 	int idx;					/* the bin we are working on */
@@ -1956,12 +2000,6 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 
 	if(! am_administrator())
 		return EXIT_DENIED;
-
-	if(! (printer=argv[0]) || ! argv[1])
-		{
-		fputs(_("You must specify an existing printer and a new bin name or names.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_MODIFY)))
 		return EXIT_BADDEST;
@@ -1986,7 +2024,7 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 				{
 				if(strcmp(bin, argv[idx]) == 0)
 					{
-					fprintf(errors, _("Printer \"%s\" already has a bin called \"%s\".\n"), printer, argv[idx]);
+					fprintf(stderr, _("Printer \"%s\" already has a bin called \"%s\".\n"), printer, argv[idx]);
 					duplicate = TRUE;
 					}
 				}
@@ -2009,7 +2047,7 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	/* If this would make for too many bins, abort the changes. */
 	if(count > MAX_BINS)
 		{
-		fprintf(errors, _("Can't add these %d bin%s to \"%s\" because then the printer would\n"
+		fprintf(stderr, _("Can't add these %d bin%s to \"%s\" because then the printer would\n"
 				"have %d bins and the %d bin limit would be exceeded.\n"),
 				idx - 1, idx == 2 ? "" : "s",
 				printer, count, MAX_BINS);
@@ -2025,14 +2063,51 @@ int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* end of printer_bins_set_or_add() */
+	} /* command_bins_set_or_add() */
 
 /*
-** Remove bin(s) from a printer's bin list.
+<command>
+	<name><word>printer</word><word>bins</word><word>set</word></name>
+	<desc>set bins list</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>bins</name><desc>bins to use</desc></arg>
+	</args>
+</command>
 */
-int printer_bins_delete(const char *argv[])
+int command_printer_bins_set(const char *argv[])
 	{
-	const char *printer;
+	return printer_bins_set_or_add(FALSE, argv);
+	} /* command_bins_set() */
+
+/*
+<command>
+	<name><word>printer</word><word>bins</word><word>add</word></name>
+	<desc>add to bins list</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>bins</name><desc>bins to add</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_bins_add(const char *argv[])
+	{
+	return printer_bins_set_or_add(TRUE, argv);
+	} /* command_bins_add() */
+
+/*
+<command>
+	<name><word>printer</word><word>bins</word><word>delete</word></name>
+	<desc>delete from bins list</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>bins</name><desc>bins to remove</desc></arg>
+	</args>
+</command>
+*/
+int command_printer_bins_delete(const char *argv[])
+	{
+	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
 	char *line, *p;
 	int idx;
@@ -2042,18 +2117,12 @@ int printer_bins_delete(const char *argv[])
 	if(! am_administrator())
 		return EXIT_DENIED;
 
-	if(! (printer=argv[0]) || ! argv[1])
-		{
-		fputs(_("You must specify a printer and a bin or bins to remove from it.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	/* Set a checklist entry for each bin to be removed to no. */
-	for(idx=1; argv[idx] != (char*)NULL; idx++)
+	for(idx=1; argv[idx]; idx++)
 		{
 		if(idx > MAX_BINS)
 			{
-			fprintf(errors, _("You can't delete more than %d bins at a time.\n"), MAX_BINS);
+			fprintf(stderr, _("You can't delete more than %d bins at a time.\n"), MAX_BINS);
 			return EXIT_SYNTAX;
 			}
 		found[idx - 1] = FALSE;
@@ -2091,7 +2160,7 @@ int printer_bins_delete(const char *argv[])
 		{
 		if(! found[idx - 1])
 			{
-			fprintf(errors, _("The printer \"%s\" does not have a bin called \"%s\".\n"), printer, argv[idx]);
+			fprintf(stderr, _("The printer \"%s\" does not have a bin called \"%s\".\n"), printer, argv[idx]);
 			misses++;
 			}
 		}
@@ -2107,7 +2176,7 @@ int printer_bins_delete(const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* end of printer_bins_delete() */
+	} /* command_bins_delete() */
 
 /*
  * This function clears a directory of files (one level only)
@@ -2134,8 +2203,15 @@ static void remove_directory(const char dirname[])
 /*
 ** Delete a printer configuration file and inform the spooler
 ** that we have deleted it so it can do so too.
+<command>
+	<name><word>printer</word><word>delete</word></name>
+	<desc>delete <arg>printer</arg></desc>
+	<args>
+		<arg><name>printer</name><desc>printer to be deleted</desc></arg>
+	</args>
+</command>
 */
-int printer_delete(const char *argv[])
+int command_printer_delete(const char *argv[])
 	{
 	const char function[] = "printer_delete";
 	const char *printer = argv[0];
@@ -2152,7 +2228,7 @@ int printer_delete(const char *argv[])
 
 	if(!printer)
 		{
-		fputs(_("You must specify a printer to delete.\n"), errors);
+		fputs(_("You must specify a printer to delete.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2166,7 +2242,7 @@ int printer_delete(const char *argv[])
 	 */
 	if(!(dir = opendir(GRCONF)))
 		{
-		fprintf(errors, _("%s(): %s(\"%s\") failed, errno=%d (%s)\n"), function, "opendir", GRCONF, errno, strerror(errno));
+		fprintf(stderr, _("%s(): %s(\"%s\") failed, errno=%d (%s)\n"), function, "opendir", GRCONF, errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -2183,7 +2259,7 @@ int printer_delete(const char *argv[])
 
 		if(!(obj = conf_open(QUEUE_TYPE_GROUP, direntp->d_name, 0)))
 			{
-			fprintf(errors, "%s(): conf_open(QUEUE_TYPE_GROUP, \"%s\", 0) failed", function, direntp->d_name);
+			fprintf(stderr, "%s(): conf_open(QUEUE_TYPE_GROUP, \"%s\", 0) failed", function, direntp->d_name);
 			closedir(dir);
 			return EXIT_INTERNAL;
 			}
@@ -2214,12 +2290,12 @@ int printer_delete(const char *argv[])
 		{
 		if(errno==ENOENT)
 			{
-			fprintf(errors, _("The printer \"%s\" does not exist.\n"), printer);
+			fprintf(stderr, _("The printer \"%s\" does not exist.\n"), printer);
 			return EXIT_BADDEST;
 			}
 		else
 			{
-			fprintf(errors, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
+			fprintf(stderr, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
 			return EXIT_INTERNAL;
 			}
 		}
@@ -2234,24 +2310,24 @@ int printer_delete(const char *argv[])
 	write_fifo("NP %s\n", printer);
 
 	return EXIT_OK;
-	} /* end of printer_delete() */
+	} /* command_delete() */
 
 /*
-** Just tell the spooler to re-read the configuration file.
+<command>
+	<name><word>printer</word><word>touch</word></name>
+	<desc>instruct pprd to reload <arg>printer</arg></desc>
+	<args>
+		<arg><name>printer</name><desc>printer to reload</desc></arg>
+	</args>
+</command>
 */
-int printer_touch(const char *argv[])
+int command_printer_touch(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
-
-	if(! printer)
-		{
-		fputs(_("You must supply the name of a printer.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	/* Just open it in read-only mode with CONF_RELOAD set and close it again. */
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_ENOENT_PRINT | CONF_RELOAD)))
@@ -2259,51 +2335,49 @@ int printer_touch(const char *argv[])
 	conf_close(obj);
 
 	return EXIT_OK;
-	} /* end of printer_touch() */
+	} /* command_touch() */
 
 /*
-** Change the switchset line in the configuration file.
+<command>
+	<name><word>printer</word><word>switchset</word></name>
+	<desc>attach a set of switches to a printer</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
+	</args>
+</command>
 */
-int printer_switchset(const char *argv[])
+int command_printer_switchset(const char *argv[])
 	{
 	const char *printer = argv[0];		/* name of printer */
 	char newset[256];					/* new set of switches */
 
-	if( ! printer )
-		{
-		fputs(_("You must supply the name of a printer and a set of switches.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	/* convert the switch set to a line */
 	if(make_switchset_line(newset, &argv[1]))
 		{
-		fputs(_("Bad set of switches.\n"), errors);
+		fputs(_("Bad set of switches.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "Switchset", newset[0] ? "%s" : NULL, newset);
-	} /* end of printer_switchset() */
+	} /* command_switchset() */
 
 /*
-** This command is called to re-read the printer's "PPDFile:"
-** line and construct an appropriate "DefFiltOpts:" line.
-**
-** The "ppad ppd" and "ppad ppdopts" commands do this too.
+<command>
+	<name><word>printer</word><word>deffiltopts</word></name>
+	<desc>update a printer's default filter options</desc>
+	<args>
+		<arg><name>printer</name><desc>printer to update</desc></arg>
+	</args>
+</command>
 */
-int printer_deffiltopts(const char *argv[])
+int command_printer_deffiltopts(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
-
-	if(! printer)
-		{
-		fputs(_("You must supply the name of a printer.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
@@ -2313,7 +2387,7 @@ int printer_deffiltopts(const char *argv[])
 	char *line;
 	gu_Try {
 		qobj = queueinfo_new_load_config(QUEUEINFO_PRINTER, printer);
-		queueinfo_set_warnings_file(qobj, errors);
+		queueinfo_set_warnings_file(qobj, stderr);
 		queueinfo_set_debug_level(qobj, debug_level);
 
 		while((line = conf_getline(obj)))
@@ -2337,18 +2411,25 @@ int printer_deffiltopts(const char *argv[])
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
 
 	return EXIT_OK;
-	} /* end of printer_deffiltopts() */
+	} /* command_deffiltopts() */
 
 /*
-** Set the printer "PassThru:" line.
+<command>
+	<name><word>printer</word><word>passthru</word></name>
+	<desc>set a printer's passthru language list</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
+	</args>
+</command>
 */
-int printer_passthru(const char *argv[])
+int command_printer_passthru(const char *argv[])
 	{
 	const char *printer = argv[0];
 	char *passthru;
@@ -2358,7 +2439,7 @@ int printer_passthru(const char *argv[])
 		{
 		fputs(_("You must specify a printer and a (possibly empty) list\n"
 				"of file types.  These file types should be the same as\n"
-				"those used with the \"ppr -T\" option.\n"), errors);
+				"those used with the \"ppr -T\" option.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2367,17 +2448,30 @@ int printer_passthru(const char *argv[])
 	gu_free_if(passthru);
 
 	return retval;
-	} /* end of printer_passthru() */
+	} /* command_passthru() */
 
 /*
+<command>
+	<name><word>printer</word><word>ppdopts</word></name>
+	<desc>choose optional printer features from PPD file</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional"><name>feature</name><desc>feature name</desc></arg>
+		<arg flags="optional"><name>option</name><desc>condition of <arg>feature</arg></desc></arg>
+	</args>
+</command>
+**
+** Note that though it is not reflected in the XML description above, feature
+** and option can be repeated as a pair!!!
+**
 ** This command opens the PPD file and asks the user for an answer for each
 ** option found therein.  For each answer it generates a "PPDOpts:" line
 ** for the printer configuration file.
 */
-int printer_ppdopts(const char *argv[])
+int command_printer_ppdopts(const char *argv[])
 	{
 	const char function[] = "printer_ppdopts";
-	const char *printer;				/* printer whose configuration should be edited */
+	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
 	char *line, *p;
 	const char **answers = (const char **)NULL;
@@ -2391,13 +2485,6 @@ int printer_ppdopts(const char *argv[])
 	/* Make sure we have the necessary authority. */
 	if(!am_administrator())
 		return EXIT_DENIED;
-
-	/* Make sure the required parameter is supplied. */
-	if(!(printer = argv[0]))
-		{
-		fputs(_("You must supply the name of a printer.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	/* Are there answers on the command line? */
 	if(argv[1])
@@ -2493,7 +2580,7 @@ int printer_ppdopts(const char *argv[])
 				*/
 				if(ui_open)
 					{
-					fprintf(errors, _("WARNING: Unclosed UI block \"%s\" in PPD file.\n"), ui_open);
+					fprintf(stderr, _("WARNING: Unclosed UI block \"%s\" in PPD file.\n"), ui_open);
 					gu_free(ui_open);
 					ui_open = (char*)NULL;
 					}
@@ -2530,7 +2617,7 @@ int printer_ppdopts(const char *argv[])
 	
 				if(next_value >= (sizeof(values) / sizeof(char*)))
 					{
-					fprintf(errors, "%s(): values[] overflow\n", function);
+					fprintf(stderr, "%s(): values[] overflow\n", function);
 					conf_abort(obj);
 					return EXIT_INTERNAL;
 					}
@@ -2546,8 +2633,8 @@ int printer_ppdopts(const char *argv[])
 				{
 				if( strncmp(p, ui_open, strcspn(ui_open, "/")) )
 					{
-					fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), errors);
-					fprintf(errors, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(p,"/\n"), p);
+					fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), stderr);
+					fprintf(stderr, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(p,"/\n"), p);
 					}
 	
 				/* If there are answers on the command line, */
@@ -2579,11 +2666,11 @@ int printer_ppdopts(const char *argv[])
 						}
 					if(!found)
 						{
-						fprintf(errors, _("Warning:	 No value provided for \"%s\".\n"), ui_open);
+						fprintf(stderr, _("Warning:	 No value provided for \"%s\".\n"), ui_open);
 						}
 					else if(!valid)
 						{
-						fprintf(errors, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
+						fprintf(stderr, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
 						conf_abort(obj);
 						return EXIT_SYNTAX;
 						}
@@ -2641,7 +2728,7 @@ int printer_ppdopts(const char *argv[])
 		/* Sanity check. */
 		if(ui_open)
 			{
-			fprintf(errors, _("WARNING: Unclosed UI block in PPD file: \"%s\".\n"), ui_open);
+			fprintf(stderr, _("WARNING: Unclosed UI block in PPD file: \"%s\".\n"), ui_open);
 			gu_free(ui_open);
 			}
 	
@@ -2651,7 +2738,7 @@ int printer_ppdopts(const char *argv[])
 		const char *cp;
 		gu_Try {
 			qobj = queueinfo_new(QUEUEINFO_PRINTER, printer);
-			queueinfo_set_warnings_file(qobj, errors);
+			queueinfo_set_warnings_file(qobj, stderr);
 			queueinfo_set_debug_level(qobj, debug_level);
 			queueinfo_add_hypothetical_printer(qobj, printer, PPDFile, InstalledMemory);
 			if((cp = queueinfo_computedDefaultFilterOptions(qobj)))
@@ -2676,7 +2763,7 @@ int printer_ppdopts(const char *argv[])
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(errors, "%s: %s\n", myname, gu_exception);
+		fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -2694,172 +2781,184 @@ int printer_ppdopts(const char *argv[])
 	** groups which have this printer as a member.
 	*/
 	return update_groups_deffiltopts(printer);
-	} /* end of printer_ppdopts() */
+	} /* command_ppdopts() */
 
 /*
-** Set a printer's pages limit.
+<command>
+	<name><word>printer</word><word>limitpages</word></name>
+	<desc>set lower and upper bounds on pages printed</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>lower</name><desc>minium number of pages, 0 for no limit</desc></arg>
+		<arg><name>upper</name><desc>maximum number of pages, 0 for no limit</desc></arg>
+	</args>
+</command>
 */
-int printer_limitpages(const char *argv[])
+int command_printer_limitpages(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit_lower, limit_upper;
 
-	if(!printer || !argv[1] || !argv[2])
-		{
-		fputs(_("You must supply the name of an existing printer and the minimum and maximum number\n"
-				"of pages of the documents it should be allowed to print.  To clear either limit,\n"
-				"set it to 0.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if((limit_lower = atoi(argv[1])) < 0)
 		{
-		fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), errors);
+		fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if((limit_upper = atoi(argv[2])) < 0)
 		{
-		fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), errors);
+		fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "LimitPages", (limit_lower > 0 || limit_upper > 0) ? "%d %d" : NULL, limit_lower, limit_upper);
-	} /* end or printer_limitpages() */
+	} /* command_limitpages() */
 
 /*
-** Set a printer's kilobytes limit.
+<command>
+	<name><word>printer</word><word>limitkilobytes</word></name>
+	<desc>set lower and upper bounds on job size in kilobytes</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>lower</name><desc>minium number of kilobytes, 0 for no limit</desc></arg>
+		<arg><name>upper</name><desc>maximum number of kilobytes, 0 for no limit</desc></arg>
+	</args>
+</command>
 */
-int printer_limitkilobytes(const char *argv[])
+int command_printer_limitkilobytes(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit_lower, limit_upper;
 
-	if(!printer || !argv[1] || !argv[2])
-		{
-		fputs(_("You must supply the name of an existing printer and the minimum and maximum number\n"
-				"of kilobytes of the documents it should be allowed to print.  To clear either limit,\n"
-				"set it to 0.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if((limit_lower = atoi(argv[1])) < 0)
 		{
-		fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), errors);
+		fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if((limit_upper = atoi(argv[2])) < 0)
 		{
-		fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), errors);
+		fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "LimitKilobytes", (limit_lower > 0 || limit_upper > 0) ? "%d %d" : NULL, limit_lower, limit_upper);
-	} /* end or printer_limitkilobytes() */
+	} /* command_limitkilobytes() */
 
 /*
-** Set the printer's "GrayOK:" line.
+<command>
+	<name><word>printer</word><word>grayok</word></name>
+	<desc>allow or prohibit grayscale-only (non-color) documents</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>grayok</name><desc>true, or false</desc></arg>
+	</args>
+</command>
 */
-int printer_grayok(const char *argv[])
+int command_printer_grayok(const char *argv[])
 	{
 	const char *printer = argv[0];
 	gu_boolean grayok;
 
-	if(!printer || !argv[1])
-		{
-		fputs(_("You must specify a printer and a boolean value.\n"),
-				errors);
-		return EXIT_SYNTAX;
-		}
-
 	if(gu_torf_setBOOL(&grayok, argv[1]) == -1)
 		{
-		fputs(_("Value is not boolean.\n"), errors);
+		fputs(_("Value is not boolean.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
-	/* If FALSE, set to 0, otherwise delete line.  A reload is required when
-	 * turning on GrayOK since it affects the eligibility of all-grayscale jobs.
+	/* If FALSE, set to "false", otherwise delete line.  A reload is required when
+	 * turning on GrayOK since it affects the eligibility of all-grayscale jobs
+	 * which may already have been declared inelligible for certain printers.
 	 */
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, grayok ? CONF_RELOAD : 0, "GrayOK", grayok ? NULL : "false");
-	} /* end of printer_grayok() */
+	} /* command_grayok() */
+
 /*
-** Set the printer's "ACLs:" line.
+<command>
+	<name><word>printer</word><word>acls</word></name>
+	<desc>set list of ACLs listing those who can submit to <arg>printer</arg></desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>acls</name><desc>list of ACLs (ommit to remove restrictions)</desc></arg>
+	</args>
+</command>
 */
-int printer_acls(const char *argv[])
+int command_printer_acls(const char *argv[])
 	{
 	const char *printer = argv[0];
 	char *acls;
 	int retval;
-
-	if(!printer)
-		{
-		fputs(_("You must specify a printer and a (possibly empty) list\n"
-				"of PPR access control lists.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	acls = list_to_string(&argv[1]);
 	retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "ACLs", acls ? "%s" : NULL, acls);
 	gu_free_if(acls);
 
 	return retval;
-	} /* end of printer_acls() */
+	} /* command_acls() */
 
 /*
-** Set the printer's timeout values.
+<command>
+	<name><word>printer</word><word>userparams</word></name>
+	<desc>set PostScript userparam values</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg flags="optional repeat"><name>parameters</name><desc>list of name=value pairs</desc></arg>
+	</args>
+</command>
 */
-int printer_userparams(const char *argv[])
+int command_printer_userparams(const char *argv[])
 	{
 	const char *printer = argv[0];
 	char *userparams;
 	int result;
-
-	if(!printer)
-		{
-		fputs(_("You must supply the name of a printer.  You may also supply a new\n"
-				"quoted, space delimited list of name=value pairs.  If you don't\n"
-				"supply such a list, any existing list will be deleted.\n"), errors);
-		}
-
 	userparams = list_to_string(&argv[1]);
 	result = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "Userparams", userparams ? "%s" : NULL, userparams);
 	gu_free_if(userparams);
 	return result;
-	} /* end of printer_userparams() */
+	} /* command_userparams() */
 
+/*
+<command>
+	<name><word>printer</word><word>pagetimelimit</word></name>
+	<desc>set time limit on processing of each page</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>seconds</name><desc>number of seconds to allow per page</desc></arg>
+	</args>
+</command>
+*/
 /*
 ** Set a printer's per-page time limit
 */
-int printer_pagetimelimit(const char *argv[])
+int command_printer_pagetimelimit(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit;
 	int ret;
 
-	if(!printer || !argv[1])
-		{
-		fputs(_("You must supply the name of an existing printer and the maximum number of\n"
-				"seconds to allow per page.\n"), errors);
-		return EXIT_SYNTAX;
-		}
-
 	if((limit = atoi(argv[1])) < 0)
 		{
-		fputs(_("The limit must be 0 (unlimited) or a positive integer.\n"), errors);
+		fputs(_("The limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	ret = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "PageTimeLimit", (limit > 0) ? "%d" : NULL, limit);
 
 	return ret;
-	} /* end or printer_pagetimelimit() */
+	} /* command_pagetimelimit() */
 
 /*
-** Set a printer addon option.
+<command>
+	<name><word>printer</word><word>addon</word></name>
+	<desc>set printer parameters for use by a PPR extension</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+		<arg><name>param</name><desc>addon parameter to modify</desc></arg>
+		<arg flags="optional"><name>value</name><desc>new value for <arg>param</arg> (ommit to delete)</desc></arg>
+	</args>
+</command>
 */
-int printer_addon(const char *argv[])
+int command_printer_addon(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *name = argv[1];
@@ -2869,33 +2968,33 @@ int printer_addon(const char *argv[])
 		{
 		fputs(_("You must supply the name of an existing printer, the name of an addon\n"
 				"parameter.  A value for the parameter is optional.  If you do not\n"
-				"supply a value, the parameter will be unset.\n"), errors);
+				"supply a value, the parameter will be unset.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
-		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), errors);
+		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	return conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, name, (value && value[0]) ? "%s" : NULL, value);
-	} /* end of printer_addon() */
+	} /* command_addon() */
 
 /*
-** Send a query to the printer and produce a list of suitable PPD files.
+<command>
+	<name><word>printer</word><word>ppdq</word></name>
+	<desc>send query to printer and produce list of suitable PPD files</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
+	</args>
+</command>
 */
-int printer_ppdq(const char *argv[])
+int command_printer_ppdq(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct QUERY *q = NULL;
 	int ret = EXIT_OK;
-
-	if(!printer || argv[1])
-		{
-		fputs(_("You must supply only the name of an existing printer.\n"), errors);
-		return EXIT_SYNTAX;
-		}
 
 	gu_Try
 		{
@@ -2914,7 +3013,6 @@ int printer_ppdq(const char *argv[])
 		}
 
 	return EXIT_OK;
-	} /* end of printer_ppdq */
+	} /* command_ppdq() */
 
 /* end of file */
-

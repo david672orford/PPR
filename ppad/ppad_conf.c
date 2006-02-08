@@ -119,13 +119,13 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 			switch(obj->queue_type)
 				{
 				case QUEUE_TYPE_PRINTER:
-					fprintf(errors, _("The printer \"%s\" already exists.\n"), destname);
+					fprintf(stderr, _("The printer \"%s\" already exists.\n"), destname);
 					break;
 				case QUEUE_TYPE_GROUP:
-					fprintf(errors, _("The group \"%s\" already exists.\n"), destname);
+					fprintf(stderr, _("The group \"%s\" already exists.\n"), destname);
 					break;
 				case QUEUE_TYPE_ALIAS:
-					fprintf(errors, _("The alias \"%s\" already exists.\n"), destname);
+					fprintf(stderr, _("The alias \"%s\" already exists.\n"), destname);
 					break;
 				}
 			gu_free(obj);
@@ -160,13 +160,13 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 			switch(queue_type)
 				{
 				case QUEUE_TYPE_PRINTER:
-					fprintf(errors, _("The printer \"%s\" does not exist.\n"), destname);
+					fprintf(stderr, _("The printer \"%s\" does not exist.\n"), destname);
 					break;
 				case QUEUE_TYPE_GROUP:
-					fprintf(errors, _("The group \"%s\" does not exist.\n"), destname);
+					fprintf(stderr, _("The group \"%s\" does not exist.\n"), destname);
 					break;
 				case QUEUE_TYPE_ALIAS:
-					fprintf(errors, _("The alias \"%s\" does not exist.\n"), destname);
+					fprintf(stderr, _("The alias \"%s\" does not exist.\n"), destname);
 					break;
 				}
 			}

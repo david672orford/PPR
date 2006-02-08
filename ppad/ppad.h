@@ -25,16 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2006.
-*/
-
-/*
-** This is the header file for the PPR administrator's utility ppad.
+** Last modified 7 February 2006.
 */
 
 #include "libppr_query.h"
 
-/* functions and global variables in ppad.c */
+/* global functions and global variables in ppad.c */
 extern const char myname[];
 void fatal(int exitval, const char *string, ...)
 #ifdef __GNUC__
@@ -46,79 +42,16 @@ extern FILE *errors;
 extern int machine_readable;
 extern int debug_level;
 
-/* functions in ppad_media.c */
-int media_show(const char *argv[]);
-int media_put(const char *argv[]);
-int media_delete(const char *argv[]);
-int media_export(void);
-int media_import(const char *argv[]);
-
-/* functions in ppad_printer.c */
-int printer_show(const char *argv[]);
-int printer_copy(const char *argv[]);
-int printer_comment(const char *argv[]);
-int printer_location(const char *argv[]);
-int printer_department(const char *argv[]);
-int printer_contact(const char *argv[]);
-int printer_interface(const char *argv[]);
-int printer_options(const char *argv[]);
-int printer_jobbreak(const char *argv[]);
-int printer_feedback(const char *argv[]);
-int printer_codes(const char *argv[]);
-int printer_rip(const char *argv[]);
-int printer_ppd(const char *argv[]);
-int printer_ppdq(const char *argv[]);
-int printer_alerts(const char *argv[]);
-int printer_frequency(const char *argv[]);
-int printer_flags(const char *argv[]);
-int printer_outputorder(const char *argv[]);
-int printer_charge(const char *argv[]);
-int printer_bins_ppd(const char *argv[]);
-int printer_bins_set_or_add(gu_boolean add, const char *argv[]);
-int printer_bins_delete(const char *argv[]);
-int printer_delete(const char *argv[]);
-int printer_new_alerts(const char *argv[]);
-int printer_touch(const char *argv[]);
-int printer_switchset(const char *argv[]);
-int printer_deffiltopts(const char *argv[]);
-int printer_passthru(const char *argv[]);
-int printer_ppdopts(const char *argv[]);
-int printer_limitpages(const char *argv[]);
-int printer_limitkilobytes(const char *argv[]);
-int printer_grayok(const char *argv[]);
-int printer_addon(const char *argv[]);
-int printer_acls(const char *argv[]);
-int printer_pagetimelimit(const char *argv[]);
-int printer_userparams(const char *argv[]);
-
-/* functions in ppad_group.c */
-int group_show(const char *argv[]);
-int group_copy(const char *argv[]);
-int group_comment(const char *argv[]);
-int group_rotate(const char *argv[]);
-int group_members_add(const char *argv[], gu_boolean do_add);
-int group_remove(const char *argv[]);
-int group_remove_internal(const char *group, const char *member);
-int group_delete(const char *argv[]);
-int group_touch(const char *argv[]);
-int group_switchset(const char *argv[]);
-int group_deffiltopts_internal(const char *group);
-int group_deffiltopts(const char *argv[]);
-int group_passthru(const char *argv[]);
-int group_addon(const char *argv[]);
-int group_acls(const char *argv[]);
-
-/* functions in ppad_alias.c */
-int alias_show(const char *argv[]);
-int alias_copy(const char *argv[]);
-int alias_forwhat(const char *argv[]);
-int alias_delete(const char *argv[]);
-int alias_comment(const char *argv[]);
-int alias_switchset(const char *argv[]);
-int alias_passthru(const char *argv[]);
-int alias_addon(const char *argv[]);
-
-/* functions in ppad_conf.c */
+/* === functions in ppad_util.c === */
+int ppop2(const char *parm1, const char *parm2);
+void write_fifo(const char string[], ...);
+int make_switchset_line(char *line, const char *argv[]);
+void print_switchset(char *switchset);
+int print_wrapped(const char *deffiltopts, int starting_column);
+char *list_to_string(const char *argv[]);
+int exception_to_exitcode(int exception_code);
+	
+/* === functions in ppad_conf.c === */
 enum QUEUE_TYPE { QUEUE_TYPE_PRINTER, QUEUE_TYPE_GROUP, QUEUE_TYPE_ALIAS };
 struct CONF_OBJ
 	{
@@ -145,20 +78,12 @@ int conf_close(struct CONF_OBJ *obj);
 int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], int extra_flags, const char name[], const char value[], ...);
 int conf_copy(enum QUEUE_TYPE, const char from[], const char to[]);
 
-/* functions in ppad_util.c */
-int ppop2(const char *parm1, const char *parm2);
-void write_fifo(const char string[], ...);
-int make_switchset_line(char *line, const char *argv[]);
-void print_switchset(char *switchset);
-int print_wrapped(const char *deffiltopts, int starting_column);
-char *list_to_string(const char *argv[]);
-int exception_to_exitcode(int exception_code);
-	
+/* functions in ppad_group.c */
+int group_remove_internal(const char *group, const char *member);
+int group_deffiltopts_internal(const char *group);
+
 /* functions in ppad_ppd.c */
 int ppd_query_core(const char printer[], struct QUERY *q);
-int ppdlib_query(const char *argv[]);
-int ppdlib_search(const char *argv[]);
-int ppdlib_get(const char *argv[]);
 
 /* end of file */
 

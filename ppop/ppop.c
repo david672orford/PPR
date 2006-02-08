@@ -64,11 +64,6 @@ static char			*opt_user = NULL;
 static const char	*opt_magic_cookie = NULL;
 int					opt_arrest_interest_interval = -1;
 
-/* File to which to send errors, generally equal to stderr,
- * but set to stdout when -M is used.
- */ 
-FILE *errors;
-
 /*
 ** Handle fatal errors.
 ** Print a message and exit.
@@ -78,15 +73,15 @@ void fatal(int exitval, const char message[], ... )
 	va_list va;
 
 	if(opt_machine_readable)
-		fputs("*FATAL\t", errors);
+		fputs("*FATAL\t", stderr);
 	else
-		gu_utf8_fputs(_("Fatal: "), errors);
+		gu_utf8_fputs(_("Fatal: "), stderr);
 
 	va_start(va, message);
-	gu_utf8_vfprintf(errors, message, va);
+	gu_utf8_vfprintf(stderr, message, va);
 	va_end(va);
 
-	gu_utf8_fputs("\n", errors);
+	gu_utf8_fputs("\n", stderr);
 
 	exit(exitval);
 	} /* end of fatal() */
@@ -100,9 +95,9 @@ void error(const char message[], ... )
 	{
 	va_list va;
 	va_start(va, message);
-	gu_utf8_fputs(_("Error: "), errors);
-	gu_utf8_vfprintf(errors, message,va);
-	gu_utf8_fputs("\n", errors);
+	gu_utf8_fputs(_("Error: "), stderr);
+	gu_utf8_vfprintf(stderr, message,va);
+	gu_utf8_fputs("\n", stderr);
 	va_end(va);
 	} /* end of error() */
 
@@ -220,28 +215,28 @@ FILE *wait_for_pprd(int do_timeout)
 
 	if(timeout)
 		{
-		gu_utf8_fprintf(errors, _("%s: timeout waiting for response"), myname);
+		gu_utf8_fprintf(stderr, _("%s: timeout waiting for response"), myname);
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
 		}
 
 	if((reply_file = fopen(temp_file_name, "r")) == (FILE*)NULL)
 		{
-		gu_utf8_fprintf(errors, "%s(): couldn't open reply file \"%s\", errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno) );
+		gu_utf8_fprintf(stderr, "%s(): couldn't open reply file \"%s\", errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno) );
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
 		}
 
 	/* now that file is open, we can dispense with the name */
 	if(unlink(temp_file_name) < 0)
-		gu_utf8_fprintf(errors, "%s(): unlink(\"%s\") failed, errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno));
+		gu_utf8_fprintf(stderr, "%s(): unlink(\"%s\") failed, errno=%d (%s)\n", function, temp_file_name, errno, gu_strerror(errno));
 
 	/* Read the code which summarizes the result of the operation. */
 	{
 	char reply[8];
 	if(!fgets(reply, sizeof(reply), reply_file) || gu_sscanf(reply, "%d", &pprd_retcode) != 1)
 		{
-		gu_utf8_fprintf(errors, "%s(): return code missing in reply file.\n", function);
+		gu_utf8_fprintf(stderr, "%s(): return code missing in reply file.\n", function);
 		fclose(reply_file);
 		reply_file = (FILE*)NULL;
 		return (FILE*)NULL;
@@ -319,7 +314,7 @@ const struct Jobname *parse_jobname(const char *jobname)
 
 	if(len == 0)
 		{
-		gu_utf8_fputs(_("Destination (printer or group) name is empty.\n"), errors);
+		gu_utf8_fputs(_("Destination (printer or group) name is empty.\n"), stderr);
 		return NULL;
 		}
 
@@ -365,7 +360,7 @@ const struct Jobname *parse_jobname(const char *jobname)
 	*/
 	if(*ptr)
 		{
-		gu_utf8_fprintf(errors, _("Destination or job name \"%s\" is invalid.\n"), jobname);
+		gu_utf8_fprintf(stderr, _("Destination or job name \"%s\" is invalid.\n"), jobname);
 		return NULL;
 		}
 
@@ -383,13 +378,13 @@ const char *parse_destname(const char *destname, gu_boolean resolve_aliases)
 	{
 	if(strpbrk(destname, DEST_DISALLOWED))
 		{
-		gu_utf8_fprintf(errors, _("Destination name \"%s\" contains a disallowed character.\n"), destname);
+		gu_utf8_fprintf(stderr, _("Destination name \"%s\" contains a disallowed character.\n"), destname);
 		return NULL;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)destname[0]))
 		{
-		gu_utf8_fprintf(errors, _("Destination name \"%s\" begins with a disallowed character.\n"), destname);
+		gu_utf8_fprintf(stderr, _("Destination name \"%s\" begins with a disallowed character.\n"), destname);
 		return NULL;
 		}
 
@@ -413,7 +408,7 @@ const char *parse_destname(const char *destname, gu_boolean resolve_aliases)
 				gu_free(line);
 			else
 				{
-				gu_utf8_fprintf(errors, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
+				gu_utf8_fprintf(stderr, _("The alias \"%s\" does not have a forwhat value.\n"), destname);
 				return NULL;
 				}
 			}
@@ -490,7 +485,7 @@ gu_boolean assert_am_operator(void)
 	else
 		{
 		gu_utf8_fputs(_("You are not allowed to perform the requested\n"
-			"operation because you are not a PPR operator.\n"), errors);
+			"operation because you are not a PPR operator.\n"), stderr);
 		return FALSE;
 		}
 	} /* end of assert_am_operator() */
@@ -549,7 +544,7 @@ gu_boolean job_permission_check(const struct Jobname *job)
 				{
 				break;
 				}
-			gu_utf8_fprintf(errors, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
+			gu_utf8_fprintf(stderr, X_("Can't open queue file \"%s\" to verify access rights, errno=%d (%s).\n"), fname, errno, gu_strerror(errno));
 			break;
 			}
 	
@@ -571,13 +566,13 @@ gu_boolean job_permission_check(const struct Jobname *job)
 		/* Check to see that we got a "User:" line: */
 		if(!job_username)
 			{
-			gu_utf8_fputs("Queue file error, no \"User:\" line.\n", errors);
+			gu_utf8_fputs("Queue file error, no \"User:\" line.\n", stderr);
 			break;
 			}
 	
 		if(!privileged() && !username_match(job_username, opt_user))
 			{
-			gu_utf8_fprintf(errors,
+			gu_utf8_fprintf(stderr,
 				_("You may not manipulate the job \"%s\" because it\n"
 				  "does not belong to the user \"%s\".\n"),
 					jobid(job->destname, job->id, job->subid),
@@ -587,7 +582,7 @@ gu_boolean job_permission_check(const struct Jobname *job)
 			}
 		if(opt_magic_cookie && strcmp(opt_magic_cookie, job_magic_cookie) != 0)
 			{
-			gu_utf8_fputs("Magic cookie doesn't match.\n", errors);
+			gu_utf8_fputs("Magic cookie doesn't match.\n", stderr);
 			break;
 			}
 		else
@@ -892,10 +887,10 @@ static int interactive_mode(void)
 */
 static void pipe_sighandler(int sig)
 	{
-	gu_utf8_fputs(_("Spooler has shut down.\n"), errors);
+	gu_utf8_fputs(_("Spooler has shut down.\n"), stderr);
 
 	if(opt_machine_readable)
-		gu_utf8_fprintf(errors, "*DONE %d\n", EXIT_NOSPOOLER);
+		gu_utf8_fprintf(stderr, "*DONE %d\n", EXIT_NOSPOOLER);
 
 	exit(EXIT_NOSPOOLER);
 	} /* end of pipe_sighandler() */
@@ -975,11 +970,6 @@ int main(int argc, char *argv[])
 	/* Initialize internation messages library. */
 	gu_locale_init(argc, argv, PACKAGE, LOCALEDIR);
 
-	/* We set this here because Cygnus Win32 doesn't think
-	   that stderr is a constant!  (It turns out that its
-	   behavior conforms to ANSI C and POSIX.) */
-	errors = stderr;
-
 	/* paranoia */
 	umask(PPR_UMASK);
 
@@ -989,7 +979,7 @@ int main(int argc, char *argv[])
 	uid_t uid = getuid();
 	if((pw = getpwuid(uid)) == (struct passwd *)NULL)
 		{
-		gu_utf8_fprintf(errors, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
+		gu_utf8_fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		exit(EXIT_INTERNAL);
 		}
 	opt_user = gu_strdup(pw->pw_name);
@@ -1003,7 +993,7 @@ int main(int argc, char *argv[])
 			{
 			case 'M':					/* -M or --machine-readable */
 				opt_machine_readable = TRUE;
-				errors = stdout;
+				stderr = stdout;
 				break;
 
 			case 'A':					/* -A or --arrest-interest-interval */
@@ -1013,7 +1003,7 @@ int main(int argc, char *argv[])
 			case 'u':
 				if(do_u_option(getopt_state.optarg) == -1)
 					{
-					gu_utf8_fprintf(errors, _("You aren't allowed to use the %s option.\n"), "-u");
+					gu_utf8_fprintf(stderr, _("You aren't allowed to use the %s option.\n"), "-u");
 					exit(EXIT_DENIED);
 					}
 				break;
@@ -1044,10 +1034,10 @@ int main(int argc, char *argv[])
 				break;
 
 			default:
-				gu_getopt_default(myname, optchar, &getopt_state, errors);
+				gu_getopt_default(myname, optchar, &getopt_state, stderr);
 
 				if(optchar == '?')
-					help_switches(errors);
+					help_switches(stderr);
 
 				exit(EXIT_SYNTAX);
 				break;
@@ -1103,7 +1093,7 @@ int main(int argc, char *argv[])
 		{
 		if((result = dispatch(&argv[getopt_state.optind])) == -1)
 			{
-			gu_utf8_fprintf(errors, _("%s: unknown sub-command \"%s\", try \"ppop help\"\n"), myname, argv[getopt_state.optind]);
+			gu_utf8_fprintf(stderr, _("%s: unknown sub-command \"%s\", try \"ppop help\"\n"), myname, argv[getopt_state.optind]);
 			result = EXIT_SYNTAX;
 			}
 		}
