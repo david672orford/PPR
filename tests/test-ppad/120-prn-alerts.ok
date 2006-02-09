@@ -1,0 +1,68 @@
+Setting alerts...
+ppad: 0
+Changing alert frequency...
+ppad: 0
+Dumping configuration file...
+Interface: dummy
+Address: "/dev/lp0"
+PPDFile: Apple LaserWriter Plus
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+Alert: 15 mail nobody@nowhere
+
+Use ppad to dump the configuration...
+Printer name: regression-test1
+  Comment: 
+Interface: dummy
+  Address: "/dev/lp0"
+  Options: 
+  JobBreak: none (by default)
+  Feedback: no (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
+Alert frequency: 15 (send alert every 15 errors)
+  Alert method: mail
+  Alert address: nobody@nowhere
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
+Switchset: 
+ppad: 0
+
+Do it again in machine-readable mode...
+name	regression-test1
+comment	
+location	
+department	
+contact	
+interface	dummy
+address	/dev/lp0
+options	
+jobbreak	default none
+feedback	default no
+codes	default Binary
+rip			
+rip_ppd			
+rip_which	PPD
+alerts	15 mail nobody@nowhere
+flags	no no
+charge	 
+ppd	Apple LaserWriter Plus
+ppdopts	
+bins	
+outputorder	PPD
+deffiltopts	level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+switchset	
+passthru	
+limitpages	0 0
+limitkilobytes	0 0
+grayok	yes
+acls	
+pagetimelimit	0
+userparams	
+ppad: 0
+
+Putting old alert settings back...
+ppad: 0

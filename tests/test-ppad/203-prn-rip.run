@@ -1,0 +1,15 @@
+#! /bin/sh
+
+echo "Setting RIP..."
+$PPAD_PATH rip regression-test1 ppr-gs pcl -sDEVICE=pxlmono
+echo "ppad: $?"
+
+$TESTBIN/dump_printer regression-test1
+
+echo "Clearing RIP..."
+$PPAD_PATH rip regression-test1
+echo "ppad: $?"
+
+$TESTBIN/dump_printer regression-test1
+
+exit 0

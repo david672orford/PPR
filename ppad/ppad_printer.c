@@ -25,13 +25,37 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 31 January 2006.
+** Last modified 9 February 2006.
 */
 
 /*==============================================================
 ** This module is part of the printer administrator's utility.
 ** It contains the code to implement those sub-commands which
 ** manipulate printers.
+<helptopic>
+	<name>printer-new</name>
+	<desc>default settings for new printers</desc>
+</helptopic>
+<helptopic>
+	<name>printer-basic</name>
+	<desc>basic printer commands</desc>
+</helptopic>
+<helptopic>
+	<name>printer-advanced</name>
+	<desc>commands related to PostScript Printer Descriptions</desc>
+</helptopic>
+<helptopic>
+	<name>printer-ppd</name>
+	<desc>commands related to PostScript Printer Descriptions</desc>
+</helptopic>
+<helptopic>
+	<name>printer-description</name>
+	<desc>printer description fields</desc>
+</helptopic>
+<helptopic>
+	<name>printer-limits</name>
+	<desc>limits on print jobs</desc>
+</helptopic>
 ==============================================================*/
 
 #include "config.h"
@@ -335,17 +359,17 @@ static const char *codes_description(int codes)
 	} /* end of codes_description() */
 
 /*
-<command>
+<command helptopic="printers-new">
 	<name><word>new</word><word>alerts</word></name>
 	<desc>set default alerts settings for new printers</desc>
 	<args>
-		<arg><name>frequency</name><desc>error count at which to send alert</desc></arg>
-		<arg><name>method</name><desc>method by which to send alert</desc></arg>
-		<arg><name>address</name><desc>address to which to send alert</desc></arg>
+		<arg><name>frequency</name><desc>error count at which to send alerts</desc></arg>
+		<arg><name>method</name><desc>method by which to send alerts</desc></arg>
+		<arg><name>address</name><desc>address to which to send alerts</desc></arg>
 	</args>
 </command>
 */
-int command_printer_new_alerts(const char *argv[])
+int command_new_alerts(const char *argv[])
 	{
 	int frequency;
 	const char *method;
@@ -378,8 +402,8 @@ int command_printer_new_alerts(const char *argv[])
 	} /* command_new_alerts() */
 
 /*
-<command>
-	<name><word>printer</word><word>show</word></name>
+<command helptopics="printer-basic">
+	<name><word>show</word></name>
 	<desc>show configuration of <arg>printer</arg></desc>
 	<args>
 		<arg><name>printer</name><desc>printer to show</desc></arg>
@@ -390,7 +414,7 @@ int command_printer_new_alerts(const char *argv[])
 ** queueinfo object (../libppr/queueinfo.c) but as of 30 January 2004 it
 ** isn't mature enough.
 */
-int command_printer_show(const char *argv[])
+int command_show(const char *argv[])
 	{
 	const char function[] = "printer_show";
 	void *pool;
@@ -1086,8 +1110,8 @@ int command_printer_show(const char *argv[])
 	} /* command_show() */
 
 /*
-<command>
-	<name><word>printer</word><word>copy</word></name>
+<command helptopics="printer-basic">
+	<name><word>copy</word></name>
 	<desc>copy printer <arg>existing</arg> creating printer <arg>new</arg></desc>
 	<args>
 		<arg><name>existing</name><desc>name of existing printer</desc></arg>
@@ -1095,14 +1119,14 @@ int command_printer_show(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_copy(const char *argv[])
+int command_copy(const char *argv[])
 	{
 	return conf_copy(QUEUE_TYPE_PRINTER, argv[0], argv[1]);
 	}
 
 /*
-<command>
-	<name><word>printer</word><word>comment</word></name>
+<command helptopics="printer-basic,printer-description">
+	<name><word>comment</word></name>
 	<desc>modify a printer's comment field</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1110,14 +1134,14 @@ int command_printer_copy(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_comment(const char *argv[])
+int command_comment(const char *argv[])
 	{
 	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Comment", argv[1] ? "%s" : NULL, argv[1]);
 	} /* command_comment() */
 
 /*
-<command>
-	<name><word>printer</word><word>location</word></name>
+<command helptopics="printer-description">
+	<name><word>location</word></name>
 	<desc>modify a printer's location field</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1125,14 +1149,14 @@ int command_printer_comment(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_location(const char *argv[])
+int command_location(const char *argv[])
 	{
 	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Location", argv[1] ? "%s" : NULL, argv[1]);
 	} /* command_location() */
 
 /*
-<command>
-	<name><word>printer</word><word>department</word></name>
+<command helptopics="printer-description">
+	<name><word>department</word></name>
 	<desc>modify a printer's department field</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1140,14 +1164,14 @@ int command_printer_location(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_department(const char *argv[])
+int command_department(const char *argv[])
 	{
 	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Department", argv[1] ? "%s" : NULL, argv[1]);
 	} /* command_department() */
 
 /*
-<command>
-	<name><word>printer</word><word>contact</word></name>
+<command helptopics="printer-description">
+	<name><word>contact</word></name>
 	<desc>modify a printer's contact field</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1155,14 +1179,14 @@ int command_printer_department(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_contact(const char *argv[])
+int command_contact(const char *argv[])
 	{
 	return conf_set_name(QUEUE_TYPE_PRINTER, argv[0], 0, "Contact", argv[1] ? "%s" : NULL, argv[1]);
 	} /* command_contact() */
 
 /*
-<command>
-	<name><word>printer</word><word>interface</word></name>
+<command helptopics="printer-basic">
+	<name><word>interface</word></name>
 	<desc>set a printers interface program and address</desc>
 	<args>
 		<arg><name>printer</name><desc>printer to modify or create</desc></arg>
@@ -1179,7 +1203,7 @@ int command_printer_contact(const char *argv[])
 ** We will only ask the spooler to re-read the configuration file
 ** if this command creates the printer.
 */
-int command_printer_interface(const char *argv[])
+int command_interface(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *interface = argv[1];
@@ -1303,16 +1327,16 @@ int command_printer_interface(const char *argv[])
 	} /* command_interface() */
 
 /*
-<command>
-	<name><word>printer</word><word>options</word></name>
+<command helptopics="printer-basic">
+	<name><word>options</word></name>
 	<desc>set a printer's interface options string</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>options</name><desc>interface options (ommit to clear)</desc></arg>
+		<arg flags="optional,repeat"><name>options</name><desc>interface options (ommit to clear)</desc></arg>
 	</args>
 </command>
 */
-int command_printer_options(const char *argv[])
+int command_options(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
@@ -1410,8 +1434,8 @@ static int printer_interface_param(const char printer[], const char param[], int
 	} /* printer_interface_param() */
 
 /*
-<command>
-	<name><word>printer</word><word>jobbreak</word></name>
+<command helptopics="printer-advanced">
+	<name><word>jobbreak</word></name>
 	<desc>set a printer's jobbreak method</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1419,7 +1443,7 @@ static int printer_interface_param(const char printer[], const char param[], int
 	</args>
 </command>
 */
-int command_printer_jobbreak(const char *argv[])
+int command_jobbreak(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *jobbreak = argv[1];
@@ -1441,8 +1465,8 @@ int command_printer_jobbreak(const char *argv[])
 	} /* command_jobbreak() */
 
 /*
-<command>
-	<name><word>printer</word><word>feedback</word></name>
+<command helptopics="printer-advanced">
+	<name><word>feedback</word></name>
 	<desc>set a printer's feedback flag</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1450,7 +1474,7 @@ int command_printer_jobbreak(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_feedback(const char *argv[])
+int command_feedback(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *feedback = argv[1];
@@ -1469,8 +1493,8 @@ int command_printer_feedback(const char *argv[])
 	} /* command_feedback() */
 
 /*
-<command>
-	<name><word>printer</word><word>codes</word></name>
+<command helptopics="printer-advanced">
+	<name><word>codes</word></name>
 	<desc>set a printer's passable codes info</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1478,7 +1502,7 @@ int command_printer_feedback(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_codes(const char *argv[])
+int command_codes(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *codes = argv[1];
@@ -1498,20 +1522,23 @@ int command_printer_codes(const char *argv[])
 	} /* command_codes() */
 
 /*
-<command>
-	<name><word>printer</word><word>rip</word></name>
+<command helptopics="printer-advanced">
+	<name><word>rip</word></name>
 	<desc>change external RIP settings for <arg>printer</arg></desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg><name>rip</name><desc>name of external RIP</desc></arg>
-		<arg><name>output</name><desc>type of output file produced by <arg>rip</arg> (such as \"pcl\" or \"other\")</desc></arg>
-		<arg><name>options</name><desc>space-separated list of options to pass to RIP</desc></arg>
+		<arg flags="optional"><name>rip</name><desc>name of external RIP</desc></arg>
+		<arg flags="optional"><name>output</name><desc>type of output file produced by <arg>rip</arg> (such as \"pcl\" or \"other\")</desc></arg>
+		<arg flags="optional"><name>options</name><desc>space-separated list of options to pass to RIP</desc></arg>
 	</args>
 </command>
 */
-int command_printer_rip(const char *argv[])
+int command_rip(const char *argv[])
 	{
-	const char *printer = argv[0], *rip = argv[1], *output_language = argv[2], *options = argv[3];
+	const char *printer = argv[0];
+	const char *rip = argv[1];
+	const char *output_language = argv[2];
+	const char *options = argv[3];
 
 	if(rip && !output_language)
 		{
@@ -1535,8 +1562,8 @@ int command_printer_rip(const char *argv[])
 	} /* command_rip() */
 
 /*
-<command>
-	<name><word>printer</word><word>ppd</word></name>
+<command helptopics="printer-basic,printer-ppad">
+	<name><word>ppd</word></name>
 	<desc>set a printer's description (PPD) file</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1551,7 +1578,7 @@ int command_printer_rip(const char *argv[])
 ** Thus we tell the spooler that the config file has changed so that it
 ** will clear the "never" bits.
 */
-int command_printer_ppd(const char *argv[])
+int command_ppd(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *ppdname = argv[1];
@@ -1638,18 +1665,18 @@ int command_printer_ppd(const char *argv[])
 	} /* command_ppd() */
 
 /*
-<command>
-	<name><word>printer</word><word>alerts</word></name>
+<command helptopics="printer-advanced">
+	<name><word>alerts</word></name>
 	<desc>set frequency and destination of printer alerts</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg><name>frequency</name><desc>error count at which to send alert</desc></arg>
-		<arg><name>method</name><desc>method by which to send alert</desc></arg>
-		<arg><name>address</name><desc>address to which to send alert</desc></arg>
+		<arg><name>frequency</name><desc>error count at which to send alerts</desc></arg>
+		<arg><name>method</name><desc>method by which to send alerts</desc></arg>
+		<arg><name>address</name><desc>address to which to send alerts</desc></arg>
 	</args>
 </command>
 */
-int command_printer_alerts(const char *argv[])
+int command_alerts(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int frequency;
@@ -1697,38 +1724,38 @@ int command_printer_alerts(const char *argv[])
 	} /* command_alert() */
 
 /*
-<command>
-	<name><word>printer</word><word>frequency</word></name>
+<command helptopics="printer-advanced">
+	<name><word>frequency</word></name>
 	<desc>alter frequency of printer alerts</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg><name>frequency</name><desc>error count at which to send alert</desc></arg>
+		<arg><name>frequency</name><desc>error count at which to send alerts</desc></arg>
 	</args>
 </command>
 **
 ** Change the configuration file "Alert:" line to change the
 ** alert frequency.  The absence of an  "Alert:" line is an error.
 */
-int command_printer_frequency(const char *argv[])
+int command_frequency(const char *argv[])
 	{
 	const char *printer;
-	int frequency;						/* dispatch every frequency alerts */
-	char *method = (char*)NULL;			/* by method */
-	char *address = (char*)NULL;		/* to address */
+	int alert_frequency;
+	char *alert_method = (char*)NULL;
+	char *alert_address = (char*)NULL;
 	struct CONF_OBJ *obj;
 	char *line;
 
 	if( ! am_administrator() )
 		return EXIT_DENIED;
 
-	if( ! argv[0] || ! argv[1] )
+	if(strspn(argv[1], "-0123456789") != strlen(argv[1]))
 		{
-		fputs(_("You must specify a printer and a new alert frequency.\n"), stderr);
+		fprintf(stderr, _("Alerts interval must be an integer.\n"));
 		return EXIT_SYNTAX;
 		}
 
 	printer = argv[0];
-	frequency = atoi(argv[1]);
+	alert_frequency = atoi(argv[1]);
 
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
@@ -1738,10 +1765,9 @@ int command_printer_frequency(const char *argv[])
 		{
 		if(lmatch(line, "Alert:"))
 			{
-			int old_frequency;
-			gu_free_if(method);
-			gu_free_if(address);
-			gu_sscanf(line, "Alert: %d %S %Z", &old_frequency, method, address);
+			gu_free_if(alert_method);
+			gu_free_if(alert_address);
+			gu_sscanf(line, "Alert: %*d %S %S", &alert_method, &alert_address);
 			break;
 			}
 		else
@@ -1750,14 +1776,16 @@ int command_printer_frequency(const char *argv[])
 			}
 		}
 
-	if(! method || ! address)
+	if(! alert_method || ! alert_address)
 		{
 		fputs(_("No alert method and address defined, use \"ppad alerts\".\n"), stderr);
 		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
 
-	conf_printf(obj, "Alert: %d %s %s\n", frequency, method, address);
+	conf_printf(obj, "Alert: %d %s %s\n", alert_frequency, alert_method, alert_address);
+	gu_free(alert_method);
+	gu_free(alert_address);
  
 	while((line = conf_getline(obj)))			/* copy rest of file, */
 		{										/* deleting further */
@@ -1773,8 +1801,8 @@ int command_printer_frequency(const char *argv[])
 	} /* command_frequency() */
 
 /*
-<command>
-	<name><word>printer</word><word>flags</word></name>
+<command helptopics="printer-flags">
+	<name><word>flags</word></name>
 	<desc>set rules for printing flag (banner and trailer) pages</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1783,7 +1811,7 @@ int command_printer_frequency(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_flags(const char *argv[])
+int command_flags(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int banner;
@@ -1807,8 +1835,8 @@ int command_printer_flags(const char *argv[])
 	} /* command_flags() */
 
 /*
-<command>
-	<name><word>printer</word><word>outputorder</word></name>
+<command helptopics="printer-advanced,printer-ppd">
+	<name><word>outputorder</word></name>
 	<desc>set rules for printing flag (banner and trailer) pages</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1819,7 +1847,7 @@ int command_printer_flags(const char *argv[])
 ** If the direction is "ppd", the "OutputOrder:" line is deleted
 ** from the configuration file.
 */
-int command_printer_outputorder(const char *argv[])
+int command_outputorder(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *newstate;
@@ -1840,8 +1868,8 @@ int command_printer_outputorder(const char *argv[])
 	} /* command_direction() */
 
 /*
-<command>
-	<name><word>printer</word><word>charge</word></name>
+<command helptopics="printer-advanced">
+	<name><word>charge</word></name>
 	<desc>set or clear per-sheet charge (possibly 0.00)</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -1855,7 +1883,7 @@ int command_printer_outputorder(const char *argv[])
 ** we really ought to get the group configurations
 ** re-read too.
 */
-int command_printer_charge(const char *argv[])
+int command_charge(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int retval;
@@ -1904,15 +1932,15 @@ int command_printer_charge(const char *argv[])
 	} /* command_charge() */
 
 /*
-<command>
-	<name><word>printer</word><word>bins</word><word>ppd</word></name>
+<command helptopics="printer-advanced,printer-ppd">
+	<name><word>bins</word><word>ppd</word></name>
 	<desc>set bins list from PPD file</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
 	</args>
 </command>
 */
-int command_printer_bins_ppd(const char *argv[])
+int command_bins_ppd(const char *argv[])
 	{
 	const char *printer;				/* name of printer whose configuration should be changed */
 	struct CONF_OBJ *obj;
@@ -2066,46 +2094,46 @@ static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	} /* command_bins_set_or_add() */
 
 /*
-<command>
-	<name><word>printer</word><word>bins</word><word>set</word></name>
+<command helptopics="printer-advanced,printer-ppd">
+	<name><word>bins</word><word>set</word></name>
 	<desc>set bins list</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>bins</name><desc>bins to use</desc></arg>
+		<arg flags="optional,repeat"><name>bins</name><desc>bins to use</desc></arg>
 	</args>
 </command>
 */
-int command_printer_bins_set(const char *argv[])
+int command_bins_set(const char *argv[])
 	{
 	return printer_bins_set_or_add(FALSE, argv);
 	} /* command_bins_set() */
 
 /*
-<command>
-	<name><word>printer</word><word>bins</word><word>add</word></name>
+<command helptopics="printer-advanced,printer-ppd">
+	<name><word>bins</word><word>add</word></name>
 	<desc>add to bins list</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>bins</name><desc>bins to add</desc></arg>
+		<arg flags="optional,repeat"><name>bins</name><desc>bins to add</desc></arg>
 	</args>
 </command>
 */
-int command_printer_bins_add(const char *argv[])
+int command_bins_add(const char *argv[])
 	{
 	return printer_bins_set_or_add(TRUE, argv);
 	} /* command_bins_add() */
 
 /*
-<command>
-	<name><word>printer</word><word>bins</word><word>delete</word></name>
+<command helptopics="printer-advanced,printer-ppd">
+	<name><word>bins</word><word>delete</word></name>
 	<desc>delete from bins list</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>bins</name><desc>bins to remove</desc></arg>
+		<arg flags="optional,repeat"><name>bins</name><desc>bins to remove</desc></arg>
 	</args>
 </command>
 */
-int command_printer_bins_delete(const char *argv[])
+int command_bins_delete(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
@@ -2201,17 +2229,15 @@ static void remove_directory(const char dirname[])
 	}
 
 /*
-** Delete a printer configuration file and inform the spooler
-** that we have deleted it so it can do so too.
-<command>
-	<name><word>printer</word><word>delete</word></name>
+<command helptopics="printer-basic">
+	<name><word>delete</word></name>
 	<desc>delete <arg>printer</arg></desc>
 	<args>
 		<arg><name>printer</name><desc>printer to be deleted</desc></arg>
 	</args>
 </command>
 */
-int command_printer_delete(const char *argv[])
+int command_delete(const char *argv[])
 	{
 	const char function[] = "printer_delete";
 	const char *printer = argv[0];
@@ -2313,15 +2339,15 @@ int command_printer_delete(const char *argv[])
 	} /* command_delete() */
 
 /*
-<command>
-	<name><word>printer</word><word>touch</word></name>
+<command helptopics="">
+	<name><word>touch</word></name>
 	<desc>instruct pprd to reload <arg>printer</arg></desc>
 	<args>
 		<arg><name>printer</name><desc>printer to reload</desc></arg>
 	</args>
 </command>
 */
-int command_printer_touch(const char *argv[])
+int command_touch(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
@@ -2338,16 +2364,16 @@ int command_printer_touch(const char *argv[])
 	} /* command_touch() */
 
 /*
-<command>
-	<name><word>printer</word><word>switchset</word></name>
+<command helptopics="printer-advanced">
+	<name><word>switchset</word></name>
 	<desc>attach a set of switches to a printer</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
+		<arg flags="optional,repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
 	</args>
 </command>
 */
-int command_printer_switchset(const char *argv[])
+int command_switchset(const char *argv[])
 	{
 	const char *printer = argv[0];		/* name of printer */
 	char newset[256];					/* new set of switches */
@@ -2363,15 +2389,15 @@ int command_printer_switchset(const char *argv[])
 	} /* command_switchset() */
 
 /*
-<command>
-	<name><word>printer</word><word>deffiltopts</word></name>
+<command helptopics="">
+	<name><word>deffiltopts</word></name>
 	<desc>update a printer's default filter options</desc>
 	<args>
 		<arg><name>printer</name><desc>printer to update</desc></arg>
 	</args>
 </command>
 */
-int command_printer_deffiltopts(const char *argv[])
+int command_deffiltopts(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
@@ -2420,16 +2446,16 @@ int command_printer_deffiltopts(const char *argv[])
 	} /* command_deffiltopts() */
 
 /*
-<command>
-	<name><word>printer</word><word>passthru</word></name>
+<command helptopics="printer-advanced">
+	<name><word>passthru</word></name>
 	<desc>set a printer's passthru language list</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
+		<arg flags="optional,repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
 	</args>
 </command>
 */
-int command_printer_passthru(const char *argv[])
+int command_passthru(const char *argv[])
 	{
 	const char *printer = argv[0];
 	char *passthru;
@@ -2451,13 +2477,13 @@ int command_printer_passthru(const char *argv[])
 	} /* command_passthru() */
 
 /*
-<command>
-	<name><word>printer</word><word>ppdopts</word></name>
+<command helptopics="printer-advanced,printer-ppd">
+	<name><word>ppdopts</word></name>
 	<desc>choose optional printer features from PPD file</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional"><name>feature</name><desc>feature name</desc></arg>
-		<arg flags="optional"><name>option</name><desc>condition of <arg>feature</arg></desc></arg>
+		<arg flags="optional,repeat"><name>feature</name><desc>feature name</desc></arg>
+		<arg flags="optional,repeat"><name>option</name><desc>condition of <arg>feature</arg></desc></arg>
 	</args>
 </command>
 **
@@ -2468,7 +2494,7 @@ int command_printer_passthru(const char *argv[])
 ** option found therein.  For each answer it generates a "PPDOpts:" line
 ** for the printer configuration file.
 */
-int command_printer_ppdopts(const char *argv[])
+int command_ppdopts(const char *argv[])
 	{
 	const char function[] = "printer_ppdopts";
 	const char *printer = argv[0];
@@ -2784,8 +2810,8 @@ int command_printer_ppdopts(const char *argv[])
 	} /* command_ppdopts() */
 
 /*
-<command>
-	<name><word>printer</word><word>limitpages</word></name>
+<command helptopics="printer-limit">
+	<name><word>limitpages</word></name>
 	<desc>set lower and upper bounds on pages printed</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -2794,7 +2820,7 @@ int command_printer_ppdopts(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_limitpages(const char *argv[])
+int command_limitpages(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit_lower, limit_upper;
@@ -2816,7 +2842,7 @@ int command_printer_limitpages(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>limitkilobytes</word></name>
+	<name><word>limitkilobytes</word></name>
 	<desc>set lower and upper bounds on job size in kilobytes</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -2825,7 +2851,7 @@ int command_printer_limitpages(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_limitkilobytes(const char *argv[])
+int command_limitkilobytes(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit_lower, limit_upper;
@@ -2847,7 +2873,7 @@ int command_printer_limitkilobytes(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>grayok</word></name>
+	<name><word>grayok</word></name>
 	<desc>allow or prohibit grayscale-only (non-color) documents</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -2855,7 +2881,7 @@ int command_printer_limitkilobytes(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_grayok(const char *argv[])
+int command_grayok(const char *argv[])
 	{
 	const char *printer = argv[0];
 	gu_boolean grayok;
@@ -2875,15 +2901,15 @@ int command_printer_grayok(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>acls</word></name>
+	<name><word>acls</word></name>
 	<desc>set list of ACLs listing those who can submit to <arg>printer</arg></desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>acls</name><desc>list of ACLs (ommit to remove restrictions)</desc></arg>
+		<arg flags="optional,repeat"><name>acls</name><desc>list of ACLs (ommit to remove restrictions)</desc></arg>
 	</args>
 </command>
 */
-int command_printer_acls(const char *argv[])
+int command_acls(const char *argv[])
 	{
 	const char *printer = argv[0];
 	char *acls;
@@ -2898,15 +2924,15 @@ int command_printer_acls(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>userparams</word></name>
+	<name><word>userparams</word></name>
 	<desc>set PostScript userparam values</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
-		<arg flags="optional repeat"><name>parameters</name><desc>list of name=value pairs</desc></arg>
+		<arg flags="optional,repeat"><name>parameters</name><desc>list of name=value pairs</desc></arg>
 	</args>
 </command>
 */
-int command_printer_userparams(const char *argv[])
+int command_userparams(const char *argv[])
 	{
 	const char *printer = argv[0];
 	char *userparams;
@@ -2919,7 +2945,7 @@ int command_printer_userparams(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>pagetimelimit</word></name>
+	<name><word>pagetimelimit</word></name>
 	<desc>set time limit on processing of each page</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -2930,7 +2956,7 @@ int command_printer_userparams(const char *argv[])
 /*
 ** Set a printer's per-page time limit
 */
-int command_printer_pagetimelimit(const char *argv[])
+int command_pagetimelimit(const char *argv[])
 	{
 	const char *printer = argv[0];
 	int limit;
@@ -2949,7 +2975,7 @@ int command_printer_pagetimelimit(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>addon</word></name>
+	<name><word>addon</word></name>
 	<desc>set printer parameters for use by a PPR extension</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
@@ -2958,7 +2984,7 @@ int command_printer_pagetimelimit(const char *argv[])
 	</args>
 </command>
 */
-int command_printer_addon(const char *argv[])
+int command_addon(const char *argv[])
 	{
 	const char *printer = argv[0];
 	const char *name = argv[1];
@@ -2983,14 +3009,14 @@ int command_printer_addon(const char *argv[])
 
 /*
 <command>
-	<name><word>printer</word><word>ppdq</word></name>
+	<name><word>ppdq</word></name>
 	<desc>send query to printer and produce list of suitable PPD files</desc>
 	<args>
 		<arg><name>printer</name><desc>name of printer to be modified</desc></arg>
 	</args>
 </command>
 */
-int command_printer_ppdq(const char *argv[])
+int command_ppdq(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct QUERY *q = NULL;

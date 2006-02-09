@@ -48,6 +48,12 @@ struct COMMAND_NODE
 	void *value;
 	};
 
+struct COMMAND_HELP
+	{
+	const char *name;
+	const char *description;
+	};
+
 /* root of the command dispatch table */
 extern struct COMMAND_NODE commands[];
 

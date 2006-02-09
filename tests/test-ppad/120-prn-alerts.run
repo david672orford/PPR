@@ -1,7 +1,7 @@
 #! /bin/sh
 
 echo "Setting alerts..."
-$PPAD_PATH alerts regression-test1 email 7 nobody@nowhere
+$PPAD_PATH alerts regression-test1 7 mail nobody@nowhere
 echo "ppad: $?"
 
 echo "Changing alert frequency..."
@@ -9,5 +9,9 @@ $PPAD_PATH frequency regression-test1 15
 echo "ppad: $?"
 
 $TESTBIN/dump_printer regression-test1
+
+echo "Putting old alert settings back..."
+$PPAD_PATH alerts regression-test1 7 mail nobody@localhost
+echo "ppad: $?"
 
 exit 0

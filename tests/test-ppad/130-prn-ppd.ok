@@ -1,0 +1,144 @@
+Setting PPD...
+ppad: 0
+Setting PPD options...
+ppad: 0
+Dumping configuration file...
+Interface: dummy
+Address: "/dev/lp0"
+PPDFile: HP LaserJet 4000 Series
+Alert: 7 mail nobody@localhost
+PPDOpt: *HPOption_Tray3 True (Tray 3 Installed)
+PPDOpt: *HPOption_Tray4 True (Tray 4 Installed)
+PPDOpt: *HPOption_Duplexer True (Duplex Unit Installed)
+PPDOpt: *HPOption_Disk False (Printer Hard Disk Not Installed)
+PPDOpt: *HPOption_Envelope_Feeder False (Envelope Feeder Not Installed)
+PPDOpt: *HPOption_PaperPolicy NearestSizeAdjust (Fit to Page Nearest Size and Scale)
+PPDOpt: *InstalledMemory 28MB (Total Memory 28 - 35 MB)
+DefFiltOpts: level=2 colour=False resolution=600 freevm=24500000 mfmode=ljfour
+
+Use ppad to dump the configuration...
+Printer name: regression-test1
+  Comment: 
+Interface: dummy
+  Address: "/dev/lp0"
+  Options: 
+  JobBreak: none (by default)
+  Feedback: no (by default)
+  Codes: Binary (by default)
+PPDFile: HP LaserJet 4000 Series
+  Default Filter Options: level=2 colour=False resolution=600 freevm=24500000
+    mfmode=ljfour
+  PPDOpts: *HPOption_Tray3 True (Tray 3 Installed)
+  PPDOpts: *HPOption_Tray4 True (Tray 4 Installed)
+  PPDOpts: *HPOption_Duplexer True (Duplex Unit Installed)
+  PPDOpts: *HPOption_Disk False (Printer Hard Disk Not Installed)
+  PPDOpts: *HPOption_Envelope_Feeder False (Envelope Feeder Not Installed)
+  PPDOpts: *HPOption_PaperPolicy NearestSizeAdjust (Fit to Page Nearest Size and Scale)
+  PPDOpts: *InstalledMemory 28MB (Total Memory 28 - 35 MB)
+  Bins: 
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: nobody@localhost
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
+Switchset: 
+ppad: 0
+
+Do it again in machine-readable mode...
+name	regression-test1
+comment	
+location	
+department	
+contact	
+interface	dummy
+address	/dev/lp0
+options	
+jobbreak	default none
+feedback	default no
+codes	default Binary
+rip			
+rip_ppd			
+rip_which	PPD
+alerts	7 mail nobody@localhost
+flags	no no
+charge	 
+ppd	HP LaserJet 4000 Series
+ppdopts	*HPOption_Tray3 True *HPOption_Tray4 True *HPOption_Duplexer True *HPOption_Disk False *HPOption_Envelope_Feeder False *HPOption_PaperPolicy NearestSizeAdjust *InstalledMemory 28MB
+bins	
+outputorder	PPD
+deffiltopts	level=2 colour=False resolution=600 freevm=24500000 mfmode=ljfour
+switchset	
+passthru	
+limitpages	0 0
+limitkilobytes	0 0
+grayok	yes
+acls	
+pagetimelimit	0
+userparams	
+ppad: 0
+
+Restoring PPD expected by later tests...
+ppad: 0
+Dumping configuration file...
+Interface: dummy
+Address: "/dev/lp0"
+PPDFile: Apple LaserWriter Plus
+Alert: 7 mail nobody@localhost
+DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+
+Use ppad to dump the configuration...
+Printer name: regression-test1
+  Comment: 
+Interface: dummy
+  Address: "/dev/lp0"
+  Options: 
+  JobBreak: none (by default)
+  Feedback: no (by default)
+  Codes: Binary (by default)
+PPDFile: Apple LaserWriter Plus
+  Default Filter Options: level=1 colour=False resolution=300 freevm=172872
+    mfmode=CanonCX
+  Bins: 
+  OutputOrder: PPD
+Alert frequency: 7 (send alert every 7 errors)
+  Alert method: mail
+  Alert address: nobody@localhost
+Flags: no no (banners discouraged, trailers discouraged)
+Charge: no charge
+Switchset: 
+ppad: 0
+
+Do it again in machine-readable mode...
+name	regression-test1
+comment	
+location	
+department	
+contact	
+interface	dummy
+address	/dev/lp0
+options	
+jobbreak	default none
+feedback	default no
+codes	default Binary
+rip			
+rip_ppd			
+rip_which	PPD
+alerts	7 mail nobody@localhost
+flags	no no
+charge	 
+ppd	Apple LaserWriter Plus
+ppdopts	
+bins	
+outputorder	PPD
+deffiltopts	level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX
+switchset	
+passthru	
+limitpages	0 0
+limitkilobytes	0 0
+grayok	yes
+acls	
+pagetimelimit	0
+userparams	
+ppad: 0
+

@@ -57,7 +57,11 @@ ppad$(DOTEXE): \
 # Extract an XML description of the commands from comments in the
 # C source code.
 dispatch_table.xml: ppad.c ppad_media.c ppad_ppd.c ppad_printer.c ppad_group.c ppad_alias.c
-	( echo "<?xml version=\"1.0\"?>"; echo "<dispatch>"; sed -n -e '/^<command>/,/^<\/command>/ p' *.c; echo "</dispatch>" ) >dispatch_table.xml
+	( echo "<?xml version=\"1.0\"?>"; \
+		 echo "<dispatch>"; \
+		 sed -n -e '/^<command.*>/,/^<\/command>/ p' -e '/^<helptopic.*>/,/^<\/helptopic>/ p' *.c; \
+		 echo "</dispatch>" \
+	) >dispatch_table.xml
 
 # Convert an XML description of subcommands into C source code
 # for a table which describes them.

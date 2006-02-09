@@ -38,20 +38,38 @@
 #include "dispatch.h"
 
 /*
+ * Print a description of a commands arguments.
+ */
+static void help_describe(FILE *out, const char myname[], const char *argv[], int index, struct COMMAND_ARG *args_template)
+	{
+	int iii;
+	gu_utf8_fprintf(out, _("Usage: %s"), myname);
+	for(iii=0; iii < index; iii++)
+		gu_utf8_fprintf(out, " %s", argv[iii]);
+	for(iii=0; args_template[iii].name; iii++)
+		gu_utf8_fprintf(out, (args_template[iii].flags & 1) ? " [<%s>]" : " <%s>", args_template[iii].name);
+	gu_utf8_fprintf(out, "\n");
+	for(iii=0; args_template[iii].name; iii++)
+		gu_utf8_fprintf(out, "    %s -- %s\n", args_template[iii].name, args_template[iii].description);
+	} /* help_describe() */
+
+/*
  * The built-in command "help"
  */
 static int help(const char myname[], const char *argv[])
 	{
 	struct COMMAND_NODE *cmd = commands;
-	const char *topic = argv[0];
 	int iii;
-	if(topic)
+	if(argv[0] && argv[1])
+		{
+		}
+	else if(argv[0])
 		{
 		}
 	else
 		{
 		gu_utf8_printf(_("Usage: %s help <command>\n"), myname);
-		gu_utf8_puts(_("Top level commands:\n"));
+		gu_utf8_puts(_("Help topics:\n"));
 		for(iii=0; cmd[iii].name; iii++)
 			{
 			if(cmd[iii].type == COMMAND_NODE_BRANCH)
@@ -64,7 +82,7 @@ static int help(const char myname[], const char *argv[])
 /*
  * Called from dispatch(), this function attempts to execute the command function.
  */
-static int invoke_command(const char myname[], const char *argv[], struct COMMAND_NODE *cmd)
+static int invoke_command(const char myname[], const char *argv[], int index, struct COMMAND_NODE *cmd)
 	{
 	int iii;
 	gu_boolean repeat = FALSE;
@@ -72,12 +90,13 @@ static int invoke_command(const char myname[], const char *argv[], struct COMMAN
 
 	for(iii=0; TRUE; iii++)
 		{
-		if(!argv[iii])		/* if we ran out of arguments, */
+		if(!argv[index+iii])		/* if we ran out of arguments, */
 			{
 			/* If this one is not optional, */
-			if((args_template[iii].flags & 1) != 0)
+			if(args_template[iii].name && (args_template[iii].flags & 1) == 0)
 				{
 				gu_utf8_fprintf(stderr, _("%s: too few arguments\n"), myname);
+				help_describe(stderr, myname, argv, index, args_template);
 				return EXIT_SYNTAX;
 				}
 			break;
@@ -88,6 +107,7 @@ static int invoke_command(const char myname[], const char *argv[], struct COMMAN
 			if(!repeat)
 				{
 				gu_utf8_fprintf(stderr, _("%s: too many arguments\n"), myname);
+				help_describe(stderr, myname, argv, index, args_template);
 				return EXIT_SYNTAX;
 				}
 			break;
@@ -99,7 +119,7 @@ static int invoke_command(const char myname[], const char *argv[], struct COMMAN
 		}
 
 	/* Looks good, lets dispatch! */
-	return (cmd->function)(argv);
+	return (cmd->function)(&argv[index]);
 	} /* invoke_command() */
 
 int dispatch(const char myname[], const char *argv[])
@@ -130,7 +150,7 @@ int dispatch(const char myname[], const char *argv[])
 						table_index = 0;				/* start at the start of this branch's table */
 						break;
 					case COMMAND_NODE_LEAF:
-						return invoke_command(myname, &argv[argv_index+1], &cmd[table_index]);
+						return invoke_command(myname, argv, argv_index+1, &cmd[table_index]);
 					}
 				}
 			}
