@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_respond.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 10 February 2006.
 */
 
 #include "config.h"
@@ -46,7 +46,12 @@
 */
 void responder_child_hook(pid_t pid, int wstat)
 	{
-	DODEBUG_RESPOND(("(respond process?)"));
+	#ifndef DEBUG_RESPOND
+	if(!WIFEXITED(wstat))
+	#endif
+		{
+		debug(" (%ld is presumably a respond process)", (long)pid);
+		}
 	} /* end of responder_child_hook() */
 
 /*
@@ -112,7 +117,7 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 			gu_name_str_value("job", job),
 			gu_name_int_value("response_code", response_code),
 			gu_name_str_value("destination", destname),
-			gu_name_str_value("printer", prnname),
+			gu_name_str_value("printer", prnname),	/* NULL is handled */
 			gu_name_str_value("charge_per_duplex", per_duplex_str),
 			gu_name_str_value("charge_per_simplex", per_simplex_str),
 			NULL);
@@ -121,8 +126,8 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 		} /* end of child clause */
 
 	/* parent drops through */
+	DODEBUG_RESPOND(("%s(): pid=%ld", function, (long)pid));
 	close(qfile_fd);
-
 	} /* end of respond2() */
 
 /*

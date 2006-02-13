@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ipp.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 December 2005.
+** Last modified 10 February 2006.
 */
 
 /*
@@ -326,7 +326,10 @@ static void ipp_get_jobs(struct IPP *ipp)
 	request_attrs_free(req);
 	} /* ipp_get_jobs() */
 
-/** Handler for IPP_CANCEL_JOB */
+/** Handler for IPP_CANCEL_JOB
+ *
+ * !!! Does not yet return proper result codes !!!
+ */
 static void ipp_cancel_job(struct IPP *ipp)
 	{
 	const char function[] = "ipp_cancel_job";
@@ -639,7 +642,7 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, int
 
 /** Handler for IPP_GET_PRINTER_ATTRIBUTES */
 static void ipp_get_printer_attributes(struct IPP *ipp)
-    {
+	{
 	FUNCTION4DEBUG("ipp_get_printer_attributes")
 	const char *destname;
 	int destid;
@@ -651,7 +654,7 @@ static void ipp_get_printer_attributes(struct IPP *ipp)
 	else
 		add_queue_attributes(ipp, req, destid);
 	request_attrs_free(req);
-    } /* ipp_get_printer_attributes() */
+	} /* ipp_get_printer_attributes() */
 
 /** Handler for CUPS_GET_PRINTERS */
 static void cups_get_printers(struct IPP *ipp)
@@ -764,7 +767,7 @@ void ipp_dispatch(const char command[])
 		
 		if(ipp_validate_request(ipp))
 			{
-			DODEBUG_IPP(("%s(): dispatching operation 0x%.2x", function, ipp->operation_id));
+			DODEBUG_IPP(("%s(): dispatching operation 0x%.4x (%s)", function, ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
 			switch(ipp->operation_id)
 				{
 				case IPP_GET_JOBS:
@@ -783,7 +786,7 @@ void ipp_dispatch(const char command[])
 					cups_get_printers(ipp);
 					break;
 				default:
-					gu_Throw("unsupported operation");
+					gu_Throw("unsupported operation: 0x%.2x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id));
 					break;
 				}
 			}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 October 2005.
+** Last modified 9 February 2006.
 */
 
 #include "config.h"
@@ -50,7 +50,7 @@
 #include "ipp_utils.h"
 #include "queueinfo.h"
 
-#if 0
+#if 1
 #define DEBUG(a) debug a
 #else
 #define DEBUG(a)
@@ -135,7 +135,7 @@ static FILE *gu_popen(char *argv[], const char type[])
 		{
 		gu_Throw("%s(): invalid type: %s", function, type);
 		}
-	}
+	} /* gu_popen() */
 
 static int gu_pclose(FILE *f)
 	{
@@ -147,7 +147,7 @@ static int gu_pclose(FILE *f)
 		return -1;
 	else
 		return WEXITSTATUS(status);
-	}
+	} /* gu_pclose() */
 
 static int run(char command[], ...)
 	{
@@ -179,7 +179,7 @@ static int run(char command[], ...)
 		}
 
 	return gu_pclose(f);	
-	}
+	} /* run() */
 
 /** Send a debug message to the HTTP server's error log
 
@@ -313,7 +313,7 @@ static void do_passthru(struct IPP *ipp)
 	gu_Catch {
 		gu_ReThrow();
 		}
-	} /* end of do_passthru() */
+	} /* do_passthru() */
 
 /*
  * Handle IPP_PRINT_JOB 
@@ -463,7 +463,7 @@ static void do_print_job(struct IPP *ipp)
 		}
 	}
 	
-	} /* end of do_print_job() */
+	} /* do_print_job() */
 
 /*
  * Handle CUPS_GET_DEFAULT
@@ -728,7 +728,7 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request_header(ipp);
 
-		DEBUG(("dispatching operation 0x%.2x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
+		DEBUG(("dispatching operation 0x%.4x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
 		switch(ipp->operation_id)
 			{
 			case IPP_PRINT_JOB:

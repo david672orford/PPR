@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/ipp/Makefile
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 25 October 2005.
+# Last modified 9 February 2006.
 #
 
 include ../Makefile.conf
@@ -43,11 +43,11 @@ all: $(PROGS)
 ipp$(DOTEXE): ipp.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ZLIBLIBS)
 
-ppr-ipp$(DOTEXE): ppr-ipp.o ../libppr.a ../libgu.a
+ppr-ipp-client$(DOTEXE): ppr-ipp-client.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) `xml2-config --libs` -o $@ $^
 
-ppr-ipp.o: ppr-ipp.c
-	$(CC) $(CFLAGS) `xml2-config --cflags` -c ppr-ipp.c
+ppr-ipp-client.o: ppr-ipp-client.c
+	$(CC) $(CFLAGS) `xml2-config --cflags` -c ppr-ipp-client.c
 
 #=== Install ================================================================
 

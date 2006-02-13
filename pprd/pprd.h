@@ -56,7 +56,7 @@
 ** Note that we use C++ comments here to disable the ones we don't want.  This
 ** OK only because it is inside a block that is normaly excluded by the #if 0.
 */
-#if 0
+#if 1
 #define DEBUG 1							/* define function[] strings */
 //#define DEBUG_STARTUP 1				/* initialization routines */
 //#define DEBUG_MAINLOOP 1				/* main loop */
@@ -68,7 +68,7 @@
 //#define DEBUG_DEQUEUE 1				/* removal from the queue */
 //#define DEBUG_MEDIA 1					/* media operations */
 //#define DEBUG_TICK 1					/* debug timer tick routine */
-//#define DEBUG_RESPOND 1				/* launching of responders */
+#define DEBUG_RESPOND 1				/* launching of responders */
 //#define DEBUG_PPOPINT 1				/* interface to ppop */
 //#define DEBUG_ALERTS 1				/* sending of operator alerts */
 //#define DEBUG_NODEID 1				/* allocating and deallocating node id numbers */

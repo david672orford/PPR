@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/ppr-respond.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 10 February 2006.
 */
 
 /*
@@ -128,7 +128,7 @@ static char *elapsed_time_description(int elapsed_time)
 			hours = 0;
 			}
 		gu_asprintf(&part2, ngettext("%d hour", "%d hours", hours), hours);
-		/* Translators: %s is replaced with "%d minutes" */
+		/* Translators: %s is replaced with "%d hours" */
 		gu_asprintf(&message, ngettext("%d day %s", "%d days %s", days), days, part2);
 		gu_free(part2);
 		}
