@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/browsers/usb.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 14 February 2006.
 */
 
 #include "before_system.h"
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
 		return 0;
 		}
 
-	if(strcmp(argv[1], "USB LP Ports") != 0)
+	if(strcmp(argv[1], "USB LP Devices") != 0)
 		{
 		printf("; Not a valid USB zone.\n");
 		return 0;
