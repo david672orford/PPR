@@ -494,8 +494,9 @@ static void set_options(const char *printer_name, const char *printer_options, i
 
 /*
 ** Explain why reading from or writing to the printer port failed.
+** If we return (which we won't), then loop processing will continue.
 */
-static void printer_error(int error_number)
+static void printer_error(const char syscall[], int fd, int error_number)
 	{
 	switch(error_number)
 		{
@@ -589,7 +590,7 @@ int int_main(int argc, char *argv[])
 		for(x=0; x < 20; x++)
 			{
 			if(ioctl(portfd, TIOCMGET, &modem_status) < 0)
-				printer_error(errno);
+				printer_error("ioctl", portfd, errno);
 
 			DODEBUG(("modem status: %s %s %s",
 					modem_status & TIOCM_CD ? "CD" : "",

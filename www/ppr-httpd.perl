@@ -1,7 +1,7 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 December 2005.
+# Last modified 14 February 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -45,7 +45,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 1;
+my $DEBUG = 0;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.
@@ -368,8 +368,9 @@ while(1)
 
 		last if(! defined $_);
 
-		print STDERR $_ if($DEBUG > 0);
 		last if(/^\r?\n$/);
+	
+		print STDERR " ", $_ if($DEBUG > 1);
 
 		# If header line with keyword on left,
 		if(/^([^:\s]+):\s*([^\r\n]+)/)
@@ -391,7 +392,7 @@ while(1)
 			$prevname = $name;
 			}
 
-		# If header continuation line, add the previous value.
+		# If this is a header continuation line, add the previous value.
 		# RFC 2068 does not mention inserting a comma in section 4.2.
 		elsif(/^\s+([^\r\n]+)/)
 			{
@@ -1338,6 +1339,16 @@ sub do_cgi
 		print "Pragma: no-cache\r\n";
 		}
 	print "\r\n";
+
+	# Workaround for bug in CUPS 1.1.17 which doesn't handle chunked
+	# transfer encoding properly if the end of the header and the 
+	# start of the body are in one packet.
+	if($chunked && $content_type eq "application/ipp")
+		{
+		$| = 1;
+		print "";
+		$| = 0;
+		}
 
 	# Copy the entity body from the CGI script to the client.
 	if($status != 304)

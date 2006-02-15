@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 January 2006.
+** Last modified 15 February 2006.
 */
 
 #include "config.h"
@@ -39,6 +39,9 @@
 #include <time.h>
 #ifdef USE_SHUTDOWN
 #include <sys/socket.h>
+#endif
+#ifdef INTERNATIONAL
+#include <libintl.h>
 #endif
 #include "gu.h"
 #include "global_defines.h"
@@ -69,8 +72,10 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 ** send a control-T to the printer if the send buffer is empty and nothing has
 ** been sent for idle_status_interval seconds or more.
 **
-** If a system call fails in an unexpected way, then the function pointed to
-** by fatal_prn_err is called.
+** If the select(), read(), or write() system call fails, then the function pointed 
+** to by prn_err is called.  The first parameter is the name of the system
+** call which failed.  If the error is fatal, it should abort the interface
+** program.  If it returns, the loop will continue.
 **
 ** If the argument send_eof is not a NULL pointer, then the function it points 
 ** to is called with the printer file descriptor as its lone argument once the
@@ -126,7 +131,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 */
 void int_copy_job(int portfd,
 		int idle_status_interval,
-		void (*fatal_prn_err)(int err),
+		void (*prn_err)(const char syscall[], int fd, int err),
 		void (*send_eoj_funct)(int fd), 
 		void (*status_function)(void * status_address), void *status_address, int status_interval,
 		const char *init_string
@@ -147,21 +152,22 @@ void int_copy_job(int portfd,
 	time_t time_next_control_t = 0;		/* time of next schedualed control-T (if not postponed) */
 	time_t time_next_status = 0;		/* time of next schedualed status function call */
 	struct timeval *timeout, timeout_workspace;
-	int runaway_detect = 0;
-	gu_boolean runaway_plaint = FALSE;
+	int select_write_wrong = 0;			/* how many times in a row did select() mislead us about write() readiness? */
+	int select_read_wrong = 0;			/* same for read() readiness */
 
 	DODEBUG(("int_copy_job(portfd=%d, idle_status_interval=%d)", portfd, idle_status_interval));
 
 	/*
-	** Set the printer port to O_NONBLOCK.  This is important because we don't
-	** want to block if it can't yet accept BUFFER_SIZE bytes.
+	** If the interface's feedback option is true, set the printer port to
+	** O_NONBLOCK.  This is important because we don't want to block if it
+	** can't yet accept BUFFER_SIZE bytes.
 	**
 	** We could set stdin and stdout to O_NONBLOCK too, but they are much less
 	** likely to block for an appreciatable period of time and we aren't
-	** such if the code that prints %%[ ... ]%% messages can deal with a
+	** sure if the code that prints %%[ ... ]%% messages can deal with a
 	** non-blocking stdout.
 	*/
-	gu_nonblock(portfd, TRUE);
+	gu_nonblock(portfd, int_cmdline.feedback);
 
 	/*
 	** Initialize these timers to their first-fire times.  If we didn't, they
@@ -196,15 +202,16 @@ void int_copy_job(int portfd,
 				|| (send_eoj_funct && !recv_eoj)
 				)
 		{
-		if(runaway_detect > 5)
+		if(select_write_wrong > 10 || select_write_wrong > 10)
 			{
-			if(!runaway_plaint)
-				{
-				alert(int_cmdline.printer, TRUE, "Driver for port \"%s\" is defective.", int_cmdline.address);
-				runaway_plaint = TRUE;
-				}
-			/* exit(EXIT_PRNERR_NORETRY); */
-			sleep(1);
+			alert(int_cmdline.printer, TRUE,
+					_("Device driver for printer port \"%s\" is defective.  It may\n"
+					"operate with reduced function if you turn off two-way operation with the\n"
+				    "command \"ppad feedback %s false\".\n"),
+				int_cmdline.address,
+				int_cmdline.printer
+				);
+			exit(EXIT_PRNERR_NORETRY);
 			}
 			
 		FD_ZERO(&rfds);
@@ -263,10 +270,10 @@ void int_copy_job(int portfd,
 
 		/* Wait until the there is date to read or write or
 		   the timeout expires. */
-		if((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
+		while((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
 			{
 			DODEBUG(("select() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-			(*fatal_prn_err)(errno);
+			(*prn_err)("select", portfd, errno);
 			}
 
 		DODEBUG(("select() returned %d", selret));
@@ -308,6 +315,7 @@ void int_copy_job(int portfd,
 			continue;
 			}
 
+		/* If pprdrv has sent us data, */
 		if(FD_ISSET(0, &rfds))
 			{
 			DODEBUG(("data available on stdin"));
@@ -337,6 +345,8 @@ void int_copy_job(int portfd,
 				}
 			}
 
+		/* If the printer is ready to receive the data from pprdrv which
+		 * we already have buffered, */
 		else if(FD_ISSET(portfd, &wfds))
 			{
 			int len;
@@ -345,19 +355,14 @@ void int_copy_job(int portfd,
 				{
 				DODEBUG(("write() failed, errno=%d (%s)", errno, gu_strerror(errno)));
 				if(errno == EAGAIN)
-					len = 0;
+					select_write_wrong++;	/* demerit for being wrong */
 				else
-					(*fatal_prn_err)(errno);
+					(*prn_err)("write", portfd, errno);
+				len = 0;
 				}
 
-			/* If select() told use the printer was ready but it wasn't, assign
-			 * a demerit point.  One is understandable.  More than a few
-			 * indicates that the port driver is bad.
-			 */
-			if(len == 0)
-				runaway_detect++;
-			else
-				runaway_detect = 0;
+			if(len > 0)
+				select_write_wrong = 0;
 			
 			DODEBUG(("wrote %d byte%s to printer", len, len != 1 ? "s" : ""));
 			DODEBUG(("--->\"%.*s\"<---", len, xmit_ptr));
@@ -374,6 +379,7 @@ void int_copy_job(int portfd,
 				}
 			}
 
+		/* If we have received "feedback" data from the printer, */
 		if(FD_ISSET(portfd, &rfds))
 			{
 			DODEBUG(("data available on printer"));
@@ -381,20 +387,28 @@ void int_copy_job(int portfd,
 				{
 				DODEBUG(("read() failed, errno=%d (%s)", errno, gu_strerror(errno)));
 				if(errno == EAGAIN)
-					recv_len = 0;
+					select_read_wrong++;	/* demerit for being wrong */
 				else
-					(*fatal_prn_err)(errno);
+					(*prn_err)("read", portfd, errno);
+				recv_len = 0;
 				}
 
 			DODEBUG(("read %d byte%s from printer", recv_len, recv_len != 1 ? "s" : ""));
 			DODEBUG(("--->\"%.*s\"<---", recv_len, recv_ptr));
 
 			if(recv_len > 0)
+				{
 				recv_state = COPYSTATE_WRITING;
+				select_read_wrong = 0;
+				}
 			else
+				{
 				recv_eoj = TRUE;
+				}
 			}
 
+		/* If the pipe to pprdrv can accept "feedback" data which we
+		 * have buffered, */
 		else if(FD_ISSET(1, &wfds))
 			{
 			int len;

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 15 February 2006.
 */
 
 /*
@@ -140,30 +140,6 @@ static int open_parallel(void)
 
 	return portfd;
 	} /* end of open_parallel() */
-
-/*
-** Explain why reading from or writing to the printer port failed.
-*/
-static void printer_error(int error_number)
-	{
-	/* Maybe we tried to read data back from a one-way port. */
-	if(error_number == EINVAL && int_cmdline.feedback)
-		{
-		alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
-		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	/* Maybe we tried to read data back from a one-way printer. 
-	   This error code was observed in Linux 2.4.18 with an HP DeskJet 500. */
-	if(error_number == EIO && int_cmdline.feedback)
-		{
-		alert(int_cmdline.printer, TRUE, _("Printer on \"%s\" does not support 2-way communication."), int_cmdline.address);
-		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-	exit(EXIT_PRNERR);
-	}
 
 /*
 ** This routine prints (on the pipe to pprdrv) a series of LaserWriter-style 
@@ -411,7 +387,7 @@ int int_main(int argc, char *argv[])
 	/*kill(getpid(), SIGSTOP);*/
 	int_copy_job(portfd,
 		options.idle_status_interval,
-		printer_error,
+		parallel_port_error,
 		NULL,
 		status_function,
 		(void*)&portfd,

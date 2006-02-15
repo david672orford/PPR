@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/tcpip.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2005.
+** Last modified 15 February 2006.
 */
 
 /*
@@ -108,9 +108,9 @@ struct OPTIONS
 
 /*
 ** Explain why reading from or writing to the TCP connnection to the printer
-** failed.
+** failed.  If we were to return (which we won't), the loop would continue.
 */
-static void explain_error_in_context(int error_number)
+static void explain_error_in_context(const char syscall[], int fd, int error_number)
 	{
 	switch(error_number)
 		{

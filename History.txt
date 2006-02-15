@@ -8097,8 +8097,7 @@ line was being parsed twice.
   stdout is a pipe and if the write size is less than PIPE_BUF but bigger
   than the available space, write() may decline it even though select()
   says the descriptor is ready for writing.  Added check for EAGAIN to
-  read from stdin (just to be paranoid).  Added code to set stdin and
-  stdout to non-blocking mode.
+  read from stdin (just to be paranoid).
 
 * www/cgi_tabbed.pl, cgi_wizard.pl, show_jobs.cgi.perl: Added alt="" to spacer
   images.
@@ -9372,7 +9371,9 @@ no final tarball was released.
   Linux 2.6.4 USBLP driver is defective and does this.  What is more, write()
   actually sends the data!  The result is pages and pages of gibberish.  This
   code is intended to turn a frustrating malfunction which casts suspicion 
-  in all the wrong directions into an identifiable error condition.
+  in all the wrong directions into an identifiable error condition.  (Abort
+  changed to logging a warning and sleeping for one second every time select()
+  lies 5 times in a row.)
 
 * www/ppr-passwd.c: added more memset() calls to zero out even rejected and
   incorrectly typed passwords as soon as possible so that they are less likely
@@ -9963,6 +9964,18 @@ no final tarball was released.
   to libppr/dispatch.c:dispatch()
 
 * ppop/,ppad/: dropt FILE *error in favor of setting stderr = stdout.
+
+* libppr/int_copy_job.c: changed handling of bad select() to require
+  administrator to turn off feedback; run in blocking mode if feedback
+  is off; this should provide a better workaround for lame port drivers
+  which don't implement select(); added syscall[] and fd arguments
+  to the printer error callback.
+
+* interfaces/parallel*: moved printer error callback into the system-
+  dependent part (parallell_generic.c and parallel_linux.c) and
+  kept the Linux errno interpretation only in the latter, added code
+  to deal with ENOSPC and EIO during write().
+
 
 
 

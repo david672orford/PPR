@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel.h
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2003.
+** Last modified 15 February 2006.
 */
 
 /* Those interface options which are not parallel port settings: */
@@ -46,6 +46,7 @@ struct OPTIONS {
 void parallel_port_setup(int fd, const struct OPTIONS *options);
 void parallel_port_reset(int fd);
 int parallel_port_status(int fd);
+void parallel_port_error(const char syscall[], int fd, int error_number);
 void parallel_port_cleanup(int fd);
 int parallel_port_probe(const char address[]);
 

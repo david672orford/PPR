@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel_linux.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 January 2005.
+** Last modified 15 February 2006.
 */
 
 /*
@@ -35,10 +35,12 @@
 */
 
 #include "config.h"
+#include <string.h>
+#include <errno.h>
 #include <signal.h>
 #include <sys/ioctl.h>
-#include <linux/lp.h>
 #include <unistd.h>
+#include <linux/lp.h>
 #ifndef LP_PSELECD
 #warning "Your linux/lp.h file is buggy, compensating!"
 #define LP_PERRORP		0x08
@@ -46,9 +48,13 @@
 #define LP_POUTPA		0x20
 #define LP_PBUSY		0x80
 #endif
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"
+#include "libppr_int.h"
 #include "parallel.h"
 
 /*
@@ -116,6 +122,55 @@ int parallel_port_status(int fd)
 		status |= PARALLEL_PORT_BUSY;
 
 	return status;
+	}
+
+/*
+ * This is the routine which is called on parallel port errors.  Customized 
+ * versions for particular operating systems should attempt to deduce the
+ * actual cause of the error from syscall[] and error_number.  The fd 
+ * parameter is provided in case it is desirable to perform tests
+ * on the printer port in order to determine the cause of the error.
+ */
+void parallel_port_error(const char syscall[], int fd, int error_number)
+	{
+	/* These conditions were identified experimentally. */
+	if(strcmp(syscall, "read") == 0)
+		{
+		/* Maybe we tried to read data back from a one-way port. */
+		if(error_number == EINVAL && int_cmdline.feedback)
+			{
+			alert(int_cmdline.printer, TRUE,  _("Printer port \"%s\" does not support 2-way communication."), int_cmdline.address);
+			alert(int_cmdline.printer, FALSE, _("Check BIOS settings to see if 2-way communication is disabled."));
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			}
+	
+		/* Maybe we tried to read data back from a one-way printer. 
+		   This error code was observed in Linux 2.4.18 with an HP DeskJet 500. */
+		if(error_number == EIO && int_cmdline.feedback)
+			{
+			alert(int_cmdline.printer, TRUE, _("Printer connected to port \"%s\" does not support 2-way communication."), int_cmdline.address);
+			exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
+			}
+		}
+
+	/* These innocent conditions were identified by examining the source code
+	 * of Linux 2.6.x. */
+	else if(strcmp(syscall, "write") == 0)
+		{
+		if(errno == ENOSPC && parallel_port_status(fd) & PARALLEL_PORT_PAPEROUT)
+			{
+			sleep(2);
+			return;
+			}
+		if(errno == EIO && parallel_port_status(fd) & PARALLEL_PORT_OFFLINE)
+			{
+			sleep(2);
+			return;
+			}
+		}
+	
+	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed during %s(), errno=%d (%s)."), syscall, error_number, gu_strerror(error_number));
+	exit(EXIT_PRNERR);
 	}
 
 /*
