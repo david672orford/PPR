@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad-interfaces.8.pod
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 30 May 2004.
+# Last modified 15 February 2006.
 #
 
 =head1 NAME
@@ -43,6 +43,7 @@ and the recomended interfaces.
 
 These are the interfaces which are distributed with PPR:
 
+
 =head2 B<simple>
 
 The interface B<simple> is a shell script which sends the job to a Unix port.
@@ -50,10 +51,11 @@ The address is the port name, such as F</dev/lp0>.  It has no provision for
 setting baud rate or other port options as the B<serial> interface can.  By
 default, this interface uses the jobbreak method B<control-d>, however, the
 method B<control-d/pjl> is also suitable if the printer understands the HP PJL.
-See the B<ppad jobbreak> section of this document.  PostScript errors will
+See the B<ppad jobbreak> command in the L<ppad>(8) manpage.  PostScript errors will
 not be detected when using this interface.  If your printer is connected to
 the parallel port or the print spooling computer, you should probably use the
 newer B<parallel> interface instead of the B<simple> one.
+
 
 =head2 B<serial>
 
@@ -135,12 +137,11 @@ The option "idle_status_interval=" will instruct the interface to send a
 control-T to the printer every so many seconds, though these transmissions
 will be delayed if there is data available to send.  The control-T's will
 cause some printers to send back status messages which will be displayed
-by B<ppop status>.  (They will be displayed on an indented line under the
-queue status).  If this option is set to 0, then no control-T's will be sent.
+by B<ppop status> on an indented line under the queue status).  If this 
+option is set to 0, then no control-T's will be sent.
 
 The default for this option is 15 if B<feedback> is B<true> and B<jobbreak>
-is B<control-d>, 0 otherwise. In previous versions, the default was always
-0.
+is B<control-d> or B<pjl>, 0 otherwise.
 
 =back
 
@@ -151,6 +152,7 @@ By default, this interface uses the jobbreak method B<control-d>, however,
 the method B<pjl> is also suitable if the printer understands the HP PJL.
 See the B<ppad jobbreak> section of this document.
 
+
 =head2 B<parallel>
 
 This interface sends the print job to the parallel port specified in its
@@ -160,20 +162,15 @@ address.
 
 =item idle_status_interval=
 
-The option "idle_status_interval=" will instruct the interface to send a
-control-T to the printer every so many seconds, though these transmissions
-will be delayed if there is data available to send.  The control-T's will
-cause some printers to send back status messages which will be displayed by
-B<ppop status>.  (They will be displayed on an indented line under the queue
-status).  If this option is set to 0, then no control-T's will be sent. The
-default for this option is 15 if B<feedback> is B<true> and B<jobbreak> is
-B<control-d>, 0 otherwise.
+Please see the description of B<serial> for an explanation of this option.
 
 =item status_interval=
 
 The option "status_interval=" sets the interval (in seconds) at which the
-interface will request the Centronics parallel port status.  By default this
-is 15.
+interface will request the status of the printer as communicated through the
+parallel port status lines.  The there are three status lines which report
+the conditions off-line, paper-out, and error.  By default this option is 
+set to 15.
 
 =item reset_before=
 
@@ -202,6 +199,7 @@ should be a simple matter to add support for other operating systems.
 If your printer, parallel port hardware, and operating system's parallel
 port driver support bidirectional communication, then you may use
 the B<ppad feedback> command to enable PostScript error detection.
+
 
 =head2 B<usb>
 
@@ -253,6 +251,34 @@ Some printer's do not have an IEEE 1284 identification string.  The second print
 in the example above does not.  Suggestions as to how to deal with such cases
 are welcome.
 
+=over 4
+
+=item idle_status_interval=
+
+Please see the description B<serial> or parallel interface for an explanation 
+of this option.
+
+=item status_interval=
+
+This option presently does nothing.
+
+=item init=
+
+This option selects one of several initialization strings.  Some USB printers
+require this string in order for the USB interface got wrest the printer's 
+attention away from the parallel port.  Valid values are:
+
+=over 4
+
+=item epson
+
+Required by the Epson C62 and possibly others.
+
+=back
+
+=back
+
+
 =head2 B<dummy>
 
 The interface B<dummy> is for testing purposes.  It is a shell script which
@@ -272,6 +298,7 @@ This interface has an option "create=".  If it is true, then the interface
 will create the output file if it doesn't exist yet.  It is true by default.
 
 =back
+
 
 =head2 B<atalk>
 
@@ -313,7 +340,7 @@ off-line".
 
 The option "idle_status_interval=" is 0 by default.  If it is set to a
 positive value, expressing a number of seconds, then the interface will
-attempt the retrieve the most current printer status approximately that
+attempt to retrieve the most current printer status approximately that
 often.  (The timing is actually rather erratic.)
 
 =item address_cache=
@@ -328,6 +355,7 @@ used if the response is positive.  The address cache is considered invalid if th
 interface or the address has changed.
 
 =back
+
 
 =head2 B<tcpip>
 
@@ -366,13 +394,13 @@ them.
 
 =item connect_timeout=
 
-The option "connect_timeout=" controls how long the B<tcpip> interface will
+This option controls how long the B<tcpip> interface will
 wait for the printer to respond to a connexion request.  The default is 20
 seconds.
 
 =item refused=
 
-The option "refused=" tells the interface how to react if the printer
+This option tells the interface how to react if the printer
 refuses its connection attempt.  The possible values are "engaged" and
 "error".  The default is "engaged" which causes the interface to assume
 that the printer is off-line or busy and report it as such to the spooler.
@@ -381,28 +409,19 @@ the printer's alerts log and report and report a printer fault to the spooler.
 
 =item refused_retries=
 
-The option "refused_retries=" tells the interface how many times it should
+This option tells the interface how many times it should
 retry a refused connexion before taking the action specified by the
 "refused=" option.  The retries occur at 2 second intervals.
 
 =item sndbuf_size=
 
-The option "sndbuf_size=" can be used to set the value of the socket option
+This option can be used to set the value of the socket option
 SO_SNDBUF.  If this option is ommited, the system default is accepted.
 
 =item idle_status_interval=
 
-The option "idle_status_interval=" will instruct the interface to send a
-control-T to the printer every so many seconds whenever the interface doesn't
-have anything else to send to the printer.  This will cause some printers to
-send back status messages which will be displayed by B<ppop status>.  (It will
-be displayed as an indented line under the queue status).  The default for this
-option is "15" if B<feedback> is B<true> and B<jobbreak> is B<control-d>, 0
-otherwise.
-
-If B<feedback> is B<true> and B<jobbreak> is B<control-d>, then the default
-for this the "idle_status_interval=" option is 15, otherwise it is 0.  In
-previous versions of PPR, the default is always 0.
+Please see the description B<serial> or parallel interface for an explanation 
+of this option.
 
 This option is especially useful with HP printers with JetDirect network cards.
 These cards have TCP timeout which by default is 90 seconds.  If the card does
@@ -451,9 +470,11 @@ connect retry code which takes care of this problem.  The default is
 
 =back
 
+
 =head2 B<socketapi>
 
 This interface is the same as B<tcpip>.
+
 
 =head2 B<appsocket>
 
@@ -461,10 +482,12 @@ This interface differs from the B<tcpip> interface only in its default
 options and jobbreak method.  The default jobbreak method is B<newinterface>
 and the default option that differs is "appsocket_status_interval=15".
 
+
 =head2 B<jetdirect>
 
 This interace differs from the B<tcpip> only in its default options.  The
 default option that differs is "snmp_status_interval=15".
+
 
 =head2 B<pros>
 
@@ -488,6 +511,7 @@ PROS A and PROS B are simply two different implementations of the client.
 One accepts the print data on stdin, the other runs as a daemon and accepts
 the print data over a named pipe.  Thus the protocol which this interface
 program supports is simply PROS.
+
 
 =head2 B<lpr>
 
@@ -553,6 +577,7 @@ This interface also has the experimental options "chunk_size=",
 "exaggerated_size=", and "temp_first=".  No documentation is provided for
 these at this time.
 
+
 =head2 B<clispool>
 
 The interface B<clispool> (formerly called B<client>) sends the job to an
@@ -580,6 +605,7 @@ has not been tested in several years.
 PostScript errors will not be detected when using the B<clispool> interface
 because the protocol it implements does not support bidirectional
 communication with the printer.
+
 
 =head2 B<smb>
 
@@ -611,240 +637,8 @@ communication with the printer.
 
 =head1 RECOMENDATIONS
 
-This section contains notes about various printers and embedded print
-servers as recommendations as to which PPR interface programs to use with
-them.
-
-Please send contributions to this section to ppr-bugs@trincoll.edu.
-
-
-
-
-
-=head2 Apple LaserWriter II
-
-
-The Apple LaserWriter II and many other printers of that era have internal
-networking such as the QMS-PS 810 support only the LocalTalk variant of
-AppleTalk.
-
-=over 4
-
-=item B<atalk>
-
-Fully functional.  The AppleTalk type is C<LaserWriter>.
-
-=back
-
-
-
-
-
-
-=head2 HP DeskWriter with AppleTalk
-
-HP made a version of the DeskJet with LocalTalk support.  They called it the
-DeskWriter.  Since these printers don't have internal PostScript
-interpreters, they were tested with Ghostscript.
-
-=over 4
-
-=item B<atalk>
-
-Works well.  The AppleTalk type is "DeskWriter".
-
-=back
-
-
-
-
-
-=head2 HP JetDirect (Internal)
-
-PPR has been extensively tested with HP printers with internal JetDirect
-cards.
-
-=over 4
-
-=item B<atalk>
-
-This interface is highly recommended.  It works in bidirectional mode. 
-These printer advertize AppleTalk names with several types, including
-C<LaserWriter>, which is probably what you should use in the address.
-
-Some printers will give better status reporting if one selects the
-B<signal/pjl> jobbreak method.  However the 4M will malfunction.  The 4M+
-works fine though.
-
-=item B<jetdirect>
-
-This interface is highly recommended.  It works in bidirectional mode.
-Uses port 9100.
-
-=item B<lpr>
-
-Works as well as the B<lpr> interface ever works.  Use a queue name of
-C<RAW>.
-
-=back
-
-
-
-
-
-=head2 HP JetDirect (External)
-
-HP external JetDirect devices which strap to the backs of DeskJets 
-have received basic testing.  The printers tested did not have 
-internal PostScript interpreters and so were used with Ghostscript.
-
-=over 4
-
-=item B<jetdirect>
-
-Works well.  The port number is 9100.
-
-=back
-
-
-
-
-
-=head2 Extended Systems PocketPrintServer
-
-This product works but does not support bidirectional communication at all.
-It is a small box with a parallel port on one end and 10BaseT and 2BaseT
-connectors on the other.
-
-=over 4
-
-=item B<tcpip>
-
-Works.  The default port for these devices is 9100.
-
-=item B<lpr>
-
-Works as well as the B<lpr> interface ever works.
-
-=back
-
-
-
-
-
-=head2 AXIS Communications 540+/542+ print server
-
-This print server is a small box with a parallel connector at one end and a
-10BaseT Ethernet connection at the other.  It supports numberous networking
-protocols including PROS, SMB, SocketAPI, LPR, FTP, and AppleTalk PAP. The
-product information page is at
-L<http://www.axis.com/techsup/prtsrv/axis_540/>.  It costs less than US$100.
-
-=over 4
-
-=item B<pros>
-
-This option is recommended since it allows reporting of off-line and
-paper-out and should support bidirectional communication.  It is recommended
-that you use a queue name of C<LPT1>.
-
-=item B<tcpip>
-
-This works.  It is not known if the print server support bidirectional
-communication using this protocol.  The default port is 9900.
-
-=item B<lpr>
-
-Works as well as the B<lpr> interface ever works.  It is recommended that
-you use a queue name of C<LPT1>.
-
-=item B<atalk>
-
-Untested but supposedly supported.
-
-=item B<smb>
-
-Untested but supposedly supported.
-
-=back
-
-
-
-
-
-=head2 Canon ImageRunner
-
-=over 4
-
-=item B<atalk>
-
-Works, including bindirectional communication if one selects the name ending
-in "DIRECT".
-
-=item B<tcpip>
-
-Works, but not bidirectional.  The port number is ????.  Canon calls this
-the Universal Printing Protocol.
-
-=item B<smb>
-
-Works.  Offers three queues called C<HOLD>, C<PRINT>, and C<DIRECT>.
-
-=item B<lpr>
-
-Works as well as the B<lpr> interface ever works.
-
-=back
-
-
-
-
-
-=head2 NIB 450-E Ricoh Aficio 450
-
-This is a network interface board for a Ricoh Aficio 450 combination photo
-copier and laser printer.  At the time of testing in 1999 it performed
-poorly, manifesting numberous bugs in its network protocol implementations.
-Among other things, the bidirectional communication was slow and jerky and
-lost characters.  End of job handshaking generally didn't work.  It also
-frequently dropt off the network.
-
-This entry is here to give you some ideas as to how to work around crippling
-bugs.
-
-=over 4
-
-=item B<atalk>
-
-Has serious problems due to the end of job handshaking failures.  Might work
-if one were to disable feedback.  The B<signal/pjl> jobbreak method will not
-work at all over this interface, appearently because the embedded print
-server TBCP encodes the PJL universal exit language sequence before sending
-it to the printer.  Using this interface method is not recommended.
-
-=item B<tcpip>
-
-Even though bidirectional communication is supported using this protocol,
-control-d handshaking is defective, so jobbreak method B<control-d> will
-result in a hung queue unless feedback is disabled (which has the effect of
-disabling PPR's end-of-job handshaking).  Since characters from the printer
-to the PPR server are lost, jobbreak method B<pjl> may sometimes result
-in a hung queue unless feedback is disabled.  The default port number is
-10001.  If you wish to change the port number on the printer, select a "Base
-Port" number which is one less than the desired port number.  For example,
-select 9099 if you want the printer to listen on port 9100.
-
-=item B<lpr>
-
-Works as long as one uses a queue name of C<PORT1>.  The capitalization is
-said to be important.  The printer will accept other queue names but will
-drop the connexion right after replying that they are OK.
-
-=back
-
-
-
-
+Recomendations as to which interface program to use with which printers
+can be found in the PPR Wiki at L<http://ppr.trincoll.edu/wiki/?PrinterTips>.
 
 =head1 SEE ALSO
 
@@ -852,7 +646,7 @@ ppad(8)
 
 =head1 HISTORY
 
-PPR was written at Trinity College during 1993--2003.
+PPR was written at Trinity College during 1993--2006.
 It was first released to the public on 26 April 1995.
 
 =head1 AUTHOR

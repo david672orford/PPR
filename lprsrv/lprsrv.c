@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -72,18 +72,27 @@ const char *this_node(void)
 ** This routine is called by fatal(), debug(), etc.
 ** It writes a line to the lprsrv log file.
 */
-static void log(const char category[], const char atfunction[], const char format[], va_list va)
+static void lprsrv_vlog(const char category[], const char atfunction[], const char format[], va_list va)
 	{
 	FILE *logfile;
 	if((logfile = fopen(LPRSRV_LOGFILE, "a")) != NULL)
 		{
 		fprintf(logfile, "%s: %s: %ld: ", category, datestamp(), (long)getpid());
-		if(atfunction) fprintf(logfile, "%s(): ", atfunction);
+		if(atfunction)
+			fprintf(logfile, "%s(): ", atfunction);
 		vfprintf(logfile, format, va);
 		fputc('\n', logfile);
 		fclose(logfile);
 		}
-	} /* end of log() */
+	} /* lprsrv_vlog() */
+
+static void lprsrv_log(const char category[], const char atfunction[], const char format[], ...)
+	{
+	va_list va;
+	va_start(va, format);
+	lprsrv_vlog(category, atfunction, format, va);
+	va_end(va);
+	} /* lprsrv_log() */
 
 /*
 ** Print an error message and abort.
@@ -93,7 +102,7 @@ void fatal(int exitcode, const char message[], ... )
 	va_list va;
 	va_start(va, message);
 
-	log("FATAL", NULL, message, va);
+	lprsrv_vlog("FATAL", NULL, message, va);
 
 	fputs("lprsrv: ", stdout);
 	vfprintf(stdout, message, va);
@@ -116,7 +125,7 @@ void debug(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	log("DEBUG", NULL, message, va);
+	lprsrv_vlog("DEBUG", NULL, message, va);
 	va_end(va);
 	} /* end of debug() */
 
@@ -127,7 +136,7 @@ void warning(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	log("WARNING", NULL, message, va);
+	lprsrv_vlog("WARNING", NULL, message, va);
 	va_end(va);
 	} /* end of warning() */
 
@@ -135,7 +144,7 @@ void uprint_error_callback(const char *format, ...)
 	{
 	va_list va;
 	va_start(va, format);
-	log("UPRINT", NULL, format, va);
+	lprsrv_vlog("UPRINT", NULL, format, va);
 	va_end(va);
 	} /* end of uprint_error_callback() */
 
@@ -408,7 +417,7 @@ int main(int argc, char *argv[])
 		return real_main(argc, argv);
 		}
 	gu_Catch {
-		log("exception", NULL, "%s", gu_exception);
+		lprsrv_log("exception", NULL, "%s", gu_exception);
 		exit(1);
 		}
 	/* NOREACHED */

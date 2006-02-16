@@ -33,7 +33,7 @@
 ** and generates a file for Samba to include from smb.conf.
 */
 
-#include "config.h"
+#include "before_system.h"
 #include <sys/stat.h>
 #include <errno.h>
 #include <dirent.h>
@@ -285,7 +285,7 @@ static void do_config_file(struct DIRS *dir, const char qname[], int *total_expo
 		if(drivername)
 			gu_free(drivername);
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		switch(dir->type)

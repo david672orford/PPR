@@ -56,6 +56,7 @@ LIBOBJS=\
 	alert.$(OBJ) \
 	tail_status.$(OBJ) \
 	query.$(OBJ) \
+	queueinfo.$(OBJ) \
 	pagemask.$(OBJ) \
 	destinfo.$(OBJ) \
 	ipp_utils.$(OBJ) \

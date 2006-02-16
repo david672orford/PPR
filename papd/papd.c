@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 May 2005.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -384,7 +384,7 @@ void connexion_callback(int sesfd, struct ADV *this_adv, int net, int node)
 			}
 		}
 
-    queueinfo_delete(queue_config);
+    queueinfo_free(queue_config);
 	
 	DODEBUG_LOOP(("child daemon done"));
 	} /* end of connexion_callback() */

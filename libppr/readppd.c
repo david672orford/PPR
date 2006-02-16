@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/readppd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 October 2004.
+** Last modified 16 February 2006.
 */
 
 /*+ \file
@@ -458,13 +458,13 @@ void *ppdobj_new(const char ppdname[])
 		ppdobj_open(self, ppdname);
 		}
 	gu_Catch {
-		ppdobj_delete(self);
+		ppdobj_free(self);
 		gu_ReThrow();
 		}
 	return (void*)self;
 	}
 
-void ppdobj_delete(void *p)
+void ppdobj_free(void *p)
 	{
 	struct PPDOBJ *self = p;
 

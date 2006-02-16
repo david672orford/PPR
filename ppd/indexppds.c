@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppd/indexppds.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 May 2004.
+** Last modified 16 February 2006.
 */
 
 #include "before_system.h"
@@ -284,7 +284,7 @@ static int do_file(FILE *indexfile, const char filename[], const char base_filen
 		);
 
 	delete_pool(temp_pool);
-	ppdobj_delete(obj);
+	ppdobj_free(obj);
 		
 	return EXIT_OK;
 	} /* end of do_file() */
