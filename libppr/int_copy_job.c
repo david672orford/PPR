@@ -363,7 +363,7 @@ void int_copy_job(int portfd,
 				}
 
 			if(len > 0)
-				select_write_wrong = 0;
+				select_write_wrong = 0;		/* remember, this is consecutive wrongness */
 			
 			DODEBUG(("wrote %d byte%s to printer", len, len != 1 ? "s" : ""));
 			DODEBUG(("--->\"%.*s\"<---", len, xmit_ptr));
@@ -400,7 +400,7 @@ void int_copy_job(int portfd,
 			if(recv_len > 0)
 				{
 				recv_state = COPYSTATE_WRITING;
-				select_read_wrong = 0;
+				select_read_wrong = 0;		/* string of wrongness broken */
 				}
 			else
 				{
