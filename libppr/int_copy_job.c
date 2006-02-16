@@ -270,10 +270,11 @@ void int_copy_job(int portfd,
 
 		/* Wait until the there is date to read or write or
 		   the timeout expires. */
-		while((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
+		if((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
 			{
 			DODEBUG(("select() failed, errno=%d (%s)", errno, gu_strerror(errno)));
 			(*prn_err)("select", portfd, errno);
+			continue;		/* if prn_err() didn't abort, restart loop */
 			}
 
 		DODEBUG(("select() returned %d", selret));
