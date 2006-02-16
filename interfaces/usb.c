@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 February 2006.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -178,7 +178,8 @@ static void printer_error(const char syscall[], int fd, int error_number)
 
 		default:	 /* If all else fails, we end up here. */
 			alert(int_cmdline.printer, TRUE,
-				_("USB port communication failed, errno=%d (%s)."),
+				_("USB port communication failed during %s(), errno=%d (%s)."),
+				syscall,
 			   	error_number,
 			   	gu_strerror(error_number)
 				);
@@ -345,7 +346,7 @@ static const char *find_usb_printer(const char address[])
 		if(access(port_temp, F_OK) != 0)
 			break;
 
-		if(get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
+		if(lpioc_get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
 			{
 			if(errno != ENODEV)
 				printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
@@ -394,7 +395,7 @@ static int usb_port_probe(const char address[])
 	unsigned char device_id[1024];		/* IEEE 1284 DeviceID string */
 	char *p, *item, *name, *value;
 
-	if(get_device_id(address, device_id, sizeof(device_id)) == -1)
+	if(lpioc_get_device_id(address, device_id, sizeof(device_id)) == -1)
 		{
 		if(errno == EACCES)
 			return EXIT_PRNERR_NORETRY_ACCESS_DENIED;

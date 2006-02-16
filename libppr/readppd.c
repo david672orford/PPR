@@ -280,7 +280,7 @@ static int _ppd_open(const char name[])
 		}
 
 	return EXIT_OK;
-	} /* end of _ppd_open() */
+	} /* _ppd_open() */
 
 /** Open the indicated PPD file.
 

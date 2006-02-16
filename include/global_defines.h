@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 30 January 2006.
+** This file was last modified 16 February 2006.
 */
 
 /*
@@ -412,7 +412,6 @@ void valert(const char printername[], int dateflag, const char string[], va_list
 void alert(const char printername[], int dateflag, const char string[], ...);
 void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*callback)(char *p, void *extra), int timeout, void *extra);
 const char *dest_ppdfile(const char destname[]);
-int get_device_id(const char port[], unsigned char *device_id, int device_id_max);
 int translate_snmp_error(int bit, const char **set_description, const char **set_raw1, int *set_severity);
 int translate_snmp_status(int device_status, int printer_status, const char **set_description, const char **set_raw1, int *set_severity);
 

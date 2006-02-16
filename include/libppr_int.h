@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 February 2006.
+** Last modified 16 February 2006.
 */
 
 #ifndef LIBPPR_INT_H
@@ -96,11 +96,7 @@ void int_copy_job(int portfd,
 	const char *init_string
 	);
 void print_pap_status(const unsigned char *status);
-void int_exit(int exitvalue)
-	#ifdef __GNUC__
-	__attribute__ (( noreturn ))
-	#endif
-	;
+int lpioc_get_device_id(const char port[], unsigned char *device_id, int device_id_max);
 void int_debug(const char format[], ...)
 	#ifdef __GNUC__
 	__attribute__ ((format (printf, 1, 2)))

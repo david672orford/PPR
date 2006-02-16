@@ -9496,7 +9496,8 @@ no final tarball was released.
 * interfaces/smb.sh: clarified error message about proper address format; 
   switched from using smbclient's exit code (which is appearently useless) to
   looking for patterns in its output as a way to detect errors; converted from
-  Borne Shell to Tcl and renamed to smb.tcl.
+  Borne Shell to Tcl and renamed to smb.tcl; removed -P from smbclient 
+  command line.
 
 * www/ppr-passwd.c: fixed --delete (merged into 1.54)
 
@@ -9745,8 +9746,6 @@ no final tarball was released.
 
 * misc/ppr-testpage.c: added copyright notice to generated PostScript.
 
-* interfaces/smb.tcl: removed -P from smbclient command line
-
 * ppr-bsd/, ppr-sysv/: removed.  Decided to drop the UPRINT programs
   because the emerging standard API for printing on free Unix systems
   is IPP and particularly the CUPS client library.  I had planned to
@@ -9976,7 +9975,5 @@ no final tarball was released.
   kept the Linux errno interpretation only in the latter, added code
   to deal with ENOSPC and EIO during write().
 
-
-
-
+* interfaces/usb.c: added a table of init strings.
 

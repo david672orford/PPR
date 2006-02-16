@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 February 2006.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -220,7 +220,7 @@ const char *dev_names[] =
  */
 const char *probe_names[] =
 	{
-	"/proc/sys/dev/parport/parport%d/autoprobe",	/* Linux 2.4.x */
+	"/proc/sys/dev/parport/parport%d/autoprobe",	/* Linux 2.4.x, 2.6.x */
 	"/proc/parport/%d/autoprobe",					/* Linux 2.2.x */
 	NULL
 	};

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_log.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2005.
+** Last modified 16 February 2006.
 */
 
 #include "config.h"
@@ -69,7 +69,7 @@ static void pprd_log(const char category[], const char function[], const char me
 		if(!option_debug)
 			fclose(file);
 		}
-	} /* end of pprd_log() */
+	} /* pprd_log() */
 
 /*
 ** Print an error message and abort.
@@ -124,7 +124,7 @@ void fatal(int exitval, const char message[], ... )
 		}
 
 	exit(exitval);
-	} /* end of fatal() */
+	} /* fatal() */
 
 /*
 ** Print a log line classifying it as an error.
@@ -135,7 +135,7 @@ void error(const char message[], ...)
 	va_start(va, message);
 	pprd_log("ERROR", NULL, message, va);
 	va_end(va);
-	} /* end of error() */
+	} /* error() */
 
 /*
 ** Print a log line, classifying it as a debug line.
@@ -146,7 +146,7 @@ void debug(const char message[], ...)
 	va_start(va, message);
 	pprd_log("DEBUG", NULL, message, va);
 	va_end(va);
-	} /* end of debug() */
+	} /* debug() */
 
 /*
 ** Override the default gu_throw() so that we can get the
@@ -159,7 +159,7 @@ void gu_throw(int exception_type, const char exception_function[], const char fo
 	pprd_log("libgu exception", exception_function, format, va);
 	va_end(va);
 	fatal(1, "above was fatal");
-	} /* end of gu_throw() */
+	} /* gu_throw() */
 
 /* end of file */
 

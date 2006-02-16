@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/libppr/get_device_id.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** mouse:~ppr/src/libppr/lpioc_get_device_id.c
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 May 2004.
+** Last modified 16 February 2006.
 */
 
 #include "config.h"
@@ -51,7 +51,7 @@
  * can be found in Randy Dunlap's patch which added support for the necessary
  * IOCTL to the Linux USB driver.
  */
-int get_device_id(const char port[], unsigned char *device_id, int device_id_max)
+int lpioc_get_device_id(const char port[], unsigned char *device_id, int device_id_max)
 	{
 	#ifdef PPR_LINUX
 	int fd;

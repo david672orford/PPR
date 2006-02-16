@@ -82,7 +82,7 @@ static void lprsrv_vlog(const char category[], const char format[], va_list va)
 		fputc('\n', logfile);
 		fclose(logfile);
 		}
-	} /* end of lprsrv_vlog() */
+	} /* lprsrv_vlog() */
 
 static void lprsrv_log(const char category[], const char format[], ...)
 	{
@@ -90,7 +90,7 @@ static void lprsrv_log(const char category[], const char format[], ...)
 	va_start(va, format);
 	lprsrv_vlog(category, format, va);
 	va_end(va);
-	}
+	} /* lprsrv_log() */
 
 /*
 ** Print a debug line in the lprsrv log file.

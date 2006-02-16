@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 February 2006.
+# Last modified 16 February 2006.
 #
 
 include ../Makefile.conf
@@ -38,9 +38,11 @@ LIBOBJS=\
 	int_acache.o int_debug.o \
 	int_copy_job.o int_tcp_connect.o \
 	int_tcp_probe.o \
+	lpioc_get_device_id.o \
 	datestamp.o \
 	tokenize.o \
-	qentryfile_clear.o qentryfile_load.o qentryfile_save.o qentryfile_free.o parse_qfname.o \
+	qentryfile_clear.o qentryfile_load.o qentryfile_save.o qentryfile_free.o \
+	parse_qfname.o \
 	quote.o \
 	findres.o \
 	protected.o money.o \
@@ -63,7 +65,6 @@ LIBOBJS=\
 	pagemask.o \
 	destinfo.o \
 	ipp_utils.o \
-	get_device_id.o \
 	snmp_messages.o \
 	dispatch.o
 
