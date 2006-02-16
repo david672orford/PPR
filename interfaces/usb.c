@@ -178,7 +178,8 @@ static void printer_error(const char syscall[], int fd, int error_number)
 
 		default:	 /* If all else fails, we end up here. */
 			alert(int_cmdline.printer, TRUE,
-				_("USB port communication failed, errno=%d (%s)."),
+				_("USB port communication failed during %s(), errno=%d (%s)."),
+				syscall,
 			   	error_number,
 			   	gu_strerror(error_number)
 				);
