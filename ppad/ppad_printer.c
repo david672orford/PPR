@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_printer.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 May 2004.
+** Last modified 16 February 2006.
 */
 
 /*==============================================================
@@ -682,7 +682,7 @@ int printer_show(const char *argv[])
 			}
 		gu_Final {
 			if(ppdobj)
-				ppdobj_delete(ppdobj);
+				ppdobj_free(ppdobj);
 			}
 		gu_Catch {
 			fprintf(errors, "%s: %s\n", myname, gu_exception);
@@ -1738,7 +1738,7 @@ int printer_ppd(const char *argv[])
 		}
 	gu_Final {
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		confabort();
@@ -2511,7 +2511,7 @@ int printer_deffiltopts(const char *argv[])
 		}
 	gu_Final {
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		confabort();
@@ -2835,7 +2835,7 @@ int printer_ppdopts(const char *argv[])
 			}
 		gu_Final {
 			if(qobj)
-				queueinfo_delete(qobj);
+				queueinfo_free(qobj);
 			}
 		gu_Catch {
 			gu_ReThrow();
@@ -2848,7 +2848,7 @@ int printer_ppdopts(const char *argv[])
 		}
 	gu_Final {
 		if(ppd_obj)
-			ppdobj_delete(ppd_obj);
+			ppdobj_free(ppd_obj);
 		}
 	gu_Catch {
 		confabort();

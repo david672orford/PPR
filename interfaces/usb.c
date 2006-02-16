@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/usb.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -83,6 +83,15 @@ struct OPTIONS {
 	int status_interval;
 	const char *init;
 	} ;
+
+static const struct {
+	const char *name;
+	const char *value;
+	} init_strings[] =
+	{
+		{"epson", "\35\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@"},
+		{NULL, NULL}
+	};
 
 /*
 ** Open the printer port.
@@ -154,15 +163,17 @@ static int connect_usb(const char port[])
 	} /* end of connect_usb() */
 
 /*
-** Explain why reading from or writing to the printer port failed.
-*/
-static void printer_error(int error_number)
+ * This is a callback function called by int_copy_job().  It gives
+ * us an opportunity to abort.
+ */
+static void printer_error(const char syscall[], int fd, int error_number)
 	{
 	switch(error_number)
 		{
 		case ENODEV:
 			alert(int_cmdline.printer, TRUE,
-				_("Printer turned off or disconnected while printing."));
+				_("Printer turned off or disconnected while printing.")
+				);
 			exit(EXIT_PRNERR);
 
 		default:	 /* If all else fails, we end up here. */
@@ -199,7 +210,10 @@ static void parse_options(int portfd, struct OPTIONS *options)
 	options->init = NULL;
 
 	/* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
-	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
+	if(int_cmdline.feedback 
+			&& (int_cmdline.jobbreak == JOBBREAK_CONTROL_D 
+				|| int_cmdline.jobbreak == JOBBREAK_PJL)
+		)
 		options->idle_status_interval = 15;
 
 	options_start(int_cmdline.options, &o);
@@ -228,7 +242,23 @@ static void parse_options(int portfd, struct OPTIONS *options)
 			}
 		else if(strcmp(name, "init") == 0)
 			{
-			options->init = "\35\000\000\000\033\001@EJL 1284.4\n@EJL     \n\033@";
+			int x;
+			gu_boolean found = FALSE;
+			for(x=0; init_strings[x].name; x++)
+				{
+				if(strcmp(value, init_strings[x].name) == 0)
+					{
+					options->init = init_strings[x].value;
+					found = TRUE;
+					break;
+					}
+				}
+			if(!found)
+				{
+				o.error = N_("unrecognized init selection");
+				retval = -1;
+				break;
+				}
 			}
 		else
 			{
@@ -268,6 +298,7 @@ static const char *find_usb_printer(const char address[])
 	char *mfg, *mdl, *sern;
 	char *ret = NULL;
 
+	/* Figure out which USB port naming convention applies. */
 	for(i=0; (port_pattern = port_patterns[i]); i++)
 		{
 		gu_snprintf(port_temp, sizeof(port_temp), port_pattern, 0);
@@ -278,6 +309,7 @@ static const char *find_usb_printer(const char address[])
 	if(!port_pattern)	/* If no USB printer ports, */
 		return NULL;
 
+	/* Parse the address */
 	search_mfg = search_mdl = search_sern = NULL;
 	for(p = temp = gu_strdup(address); (item = gu_strsep(&p, ";")); )
 		{
@@ -305,8 +337,10 @@ static const char *find_usb_printer(const char address[])
 		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
+	/* Step through the possible ports. */
 	for(i=0; TRUE; i++)
 		{
+		/* Stop when we hit the first missing port.  (Could there be gaps?!!!) */
 		gu_snprintf(port_temp, sizeof(port_temp), port_pattern, i);
 		if(access(port_temp, F_OK) != 0)
 			break;
@@ -319,7 +353,7 @@ static const char *find_usb_printer(const char address[])
 			}
 
 		mfg = mdl = sern = NULL;
-		for(p = device_id; (item = gu_strsep(&p, ";")); )
+		for(p = (char*)device_id; (item = gu_strsep(&p, ";")); )
 			{
 			if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
 				{
@@ -349,7 +383,7 @@ static const char *find_usb_printer(const char address[])
 		return gu_strdup(ret);
 	else
 		return NULL;
-	}
+	} /* find_usb_printer() */
 
 /*
 ** Implementation of the --probe option.
@@ -370,7 +404,7 @@ static int usb_port_probe(const char address[])
 		return EXIT_PRNERR;
 		}
 
-	for(p = device_id; (item = gu_strsep(&p, ";")); )
+	for(p = (char*)device_id; (item = gu_strsep(&p, ";")); )
 		{
 		if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
 			{
@@ -482,8 +516,8 @@ int int_main(int argc, char *argv[])
 
 	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
-	/* Parse printer_options and set struct OPTIONS and
-	   printer port apropriately: */
+	/* Parse printer_options and act on them by setting members of
+	 * struct OPTIONS and performing ioctl() operations on portfd. */
 	parse_options(portfd, &options);
 
 	/* Read the job data from stdin and send it to portfd. */

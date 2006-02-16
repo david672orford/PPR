@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_group.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 February 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -473,7 +473,7 @@ int group_members_add(const char *argv[], gu_boolean do_add)
 	gu_Final
 		{
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch
 		{
@@ -549,7 +549,7 @@ int group_remove_internal(const char *group, const char *member)
 	gu_Final
 		{
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch
 		{
@@ -748,7 +748,7 @@ int group_deffiltopts_internal(const char *group)
 		}
 	gu_Final {
 		if(qobj)
-			queueinfo_delete(qobj);
+			queueinfo_free(qobj);
 		}
 	gu_Catch {
 		confabort();

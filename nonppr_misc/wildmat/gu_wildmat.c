@@ -8,8 +8,11 @@
 **	* added ANSI_CONTROLS_EXTENSION and the code it enables
 **	* renamed it to gu_wildmat() to avoid conflicts
 **
-** Last PPR change: 5 November 2003
+** Last PPR change: 28 February 2005
 */
+#include "gu.h"
+#undef TRUE
+#undef FALSE
 #define ANSI_CONTROLS_EXTENSION
 
 /*  $Revision$

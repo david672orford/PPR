@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 16 February 2006.
 */
 
 #ifndef LIBPPR_INT_H
@@ -90,7 +90,7 @@ void int_addrcache_save(const char printer[], const char interface[], const char
 char *int_addrcache_load(const char printer[], const char interface[], const char address[], int *age);
 void int_copy_job(int portfd,
 	int idle_status_interval,
-	void (*fatal_prn_err)(int err),
+	void (*prn_err)(const char syscall[], int fd, int err),
 	void (*send_eoj_funct)(int fd),
 	void (*snmp_function)(void *address), void *address, int snmp_status_interval,
 	const char *init_string

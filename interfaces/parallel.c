@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -142,30 +142,6 @@ static int open_parallel(void)
 	} /* end of open_parallel() */
 
 /*
-** Explain why reading from or writing to the printer port failed.
-*/
-static void printer_error(int error_number)
-	{
-	/* Maybe we tried to read data back from a one-way port. */
-	if(error_number == EINVAL && int_cmdline.feedback)
-		{
-		alert(int_cmdline.printer, TRUE, _("Port \"%s\" does not support 2-way communication."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	/* Maybe we tried to read data back from a one-way printer. 
-	   This error code was observed 2.4.18 with an HP DeskJet 500. */
-	if(error_number == EIO && int_cmdline.feedback)
-		{
-		alert(int_cmdline.printer, TRUE, _("Printer on \"%s\" does not support 2-way communication."), int_cmdline.address);
-		int_exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
-		}
-
-	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed, errno=%d (%s)."), error_number, gu_strerror(error_number));
-	int_exit(EXIT_PRNERR);
-	}
-
-/*
 ** This routine prints (on the pipe to pprdrv) a series of LaserWriter-style 
 ** descriptions of any Centronics error states indicated by the value 
 ** returned by	parallel_port_status().
@@ -242,7 +218,10 @@ static void parse_options(int portfd, struct OPTIONS *options)
 	options->reset_on_cancel = FALSE;
 
 	/* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
-	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
+	if(int_cmdline.feedback 
+			&& (int_cmdline.jobbreak == JOBBREAK_CONTROL_D 
+				|| int_cmdline.jobbreak == JOBBREAK_PJL)
+		)
 		options->idle_status_interval = 15;
 
 	options_start(int_cmdline.options, &o);
@@ -271,25 +250,21 @@ static void parse_options(int portfd, struct OPTIONS *options)
 			}
 		else if(strcmp(name, "reset_before") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&options->reset_before,value) == -1)
 				{
 				o.error = N_("Value must be boolean");
 				retval = -1;
 				break;
 				}
-			options->reset_before = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "reset_on_cancel") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&(options->reset_on_cancel),value) == -1)
 				{
 				o.error = N_("Value must be boolean");
 				retval = -1;
 				break;
 				}
-			options->reset_on_cancel = answer ? TRUE : FALSE;
 			}
 		else
 			{
@@ -412,7 +387,7 @@ int int_main(int argc, char *argv[])
 	/*kill(getpid(), SIGSTOP);*/
 	int_copy_job(portfd,
 		options.idle_status_interval,
-		printer_error,
+		parallel_port_error,
 		NULL,
 		status_function,
 		(void*)&portfd,

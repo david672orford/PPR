@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/editps/Windows_XP
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,32 +26,51 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 June 2005.
+# Last modified 13 January 2006.
 #
 
 #
 # This filter is for Microsoft Windows XP's PostScript driver (PScript5.dll
-# version 5.2*).
+# version 5.2*).  It corrects the following problems:
+#
+# * This driver sometimes omits the "%%Page:" comments, seeminly when used with
+#   certain PPD files.  We look for the page preamble and insert a "%%Page:"
+#   comment if it is missing.
+# * Adobe Acrobat (now known as Adobe Reader) sometimes inserts comments
+#   indicating that the job requires "ProcSet CIDInit" instead of "procset
+#   CIDInit".  (This appears to have been fixed in Adobe Reader 7.0.)
+# * This driver has an N-Up feature which PPR needs to know about in order 
+#   to properly compute the amount of paper consumed and in order to send
+#   the pages to the printer in the correct order.
+#
+# Enable this editps for jobs if the page count is listed in the queue
+# as ??? or Acrobat jobs refuse to print with errors about ProcSet CIDInit.
+#
+# Thanks to Tim Leamy of UC Davis for his research, advice, and sample 
+# code which were invaluable in the writing of this editps filter.
 #
 
+# Line buffer
 my $line;
 
-# Copy down to the end of the document setup section but don't print
-# the end tag because it is followed by some lines which should be inside
-# of it.
+# Copy up to the end of the document setup section but don't print
+# the end tag because it is followed by some lines which should have
+# been placed inside of it.
 while($line = <STDIN>)
 	{
+	# Admit that we have been messing with the code:
 	$line =~ s/^(%%Creator: [^\r]+)\r?$/$1, fixed by PPR's Editps/;
+	# Fix Adobe Acrobat's boo-boo:
 	$line =~ s/^(%%IncludeResource:) ProcSet /$1 procset /;
 	last if($line =~ /^%%EndSetup\r?$/);
 	print $line;
 	}
 
-# Move stuff between "%%EndSetup" and start of first page
+# Move PostScript code between "%%EndSetup" and start of first page
 # into the document setup section.
 while($line = <STDIN>)
 	{
-	last if($line =~ /^%%/);
+	last if($line =~ /^%%/);	# stop at first comment
 	print $line;
 	}
 
@@ -60,11 +79,22 @@ while(defined $line)
 	{
 	if($line =~ /^%%Page:/)
 		{
+		# Collect everything up the and including "%%EndPageSetup".
+		# We do this because when processing the first page we may
+		# want to drop a few comments into the still unclosed 
+		# Document Setup section based on what we see.
+		#
+		# Note that this should consume the "%%EndPageComments" comment
+		# preventing it from being seen by the next clause.
 		my $page_header = $line;
 		while($line = <STDIN>)
 			{
-			# -90 1 581 829 2 1 definenup
-			if($line =~ /^[-0-9]+ \d+ \d+ \d+ (\d+) (\d+) definenup\s*$/ && $page == 0)
+			# If this is the start of the first page, detect invocation
+			# of the Windows driver's N-Up feature and generate a comment
+			# which informs PPR of N.  The code which we detect looks
+			# something like this:
+			#    -90 1 581 829 2 1 definenup
+			if($page == 0 && $line =~ /^[-0-9]+ \d+ \d+ \d+ (\d+) (\d+) definenup\s*$/)
 				{
 				my $n = $1 * $2;
 				print "%%BeginNonPPDFeature: N-Up $n\n";
@@ -78,16 +108,15 @@ while(defined $line)
 		$page++;
 		}
 
-	# There are reports that Windows XP sometimes omits the "%%Page:" comments
-	# and all other comments up to "%%EndPageComments".  So, if we see 
-	# "%%EndPageComments" but haven't seen a cooresponding "%%Page:" comment
-	# yet, we insert one.
+	# This test will only be hit AND be true if the clause
+	# above failed to match and consume "%%EndPageComments".
+	# When that happens, we insert a "%%Page:" comment at the
+	# begining of the buffer and try again.
 	elsif($line eq "%%EndPageComments\r\n")
 		{
-		print "%%EndSetup\n\n" if($page == 0);	
-		$page++;
-		print "%%Page: $page $page\n";
-		print $line;
+		my $upcoming_page = $page + 1;
+		$line = "%%Page: $upcoming_page $upcoming_page\n$line";
+		next;
 		}
 
 	else

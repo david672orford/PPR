@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel_generic.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -85,6 +85,19 @@ void parallel_port_reset(int fd)
 int parallel_port_status(int fd)
 	{
 	return 0;
+	}
+
+/*
+ * This is the routine which is called on parallel port errors.  Customized 
+ * versions for particular operating systems should attempt to deduce the
+ * actual cause of the error from syscall[] and error_number.  The fd 
+ * parameter is provided in case it is desirable to perform tests
+ * on the printer port in order to determine the cause of the error.
+ */
+void parallel_port_error(const char syscall[], int fd, int error_number)
+	{
+	alert(int_cmdline.printer, TRUE, _("Parallel port communication failed during %s(), errno=%d (%s)."), syscall, error_number, gu_strerror(error_number));
+	int_exit(EXIT_PRNERR);
 	}
 
 /*

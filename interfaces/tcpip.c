@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/tcpip.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -108,9 +108,9 @@ struct OPTIONS
 
 /*
 ** Explain why reading from or writing to the TCP connnection to the printer
-** failed.
+** failed.  If we were to return (which we won't), the loop would continue.
 */
-static void explain_error_in_context(int error_number)
+static void explain_error_in_context(const char syscall[], int fd, int error_number)
 	{
 	switch(error_number)
 		{
@@ -358,7 +358,10 @@ int int_main(int argc, char *argv[])
 		}
 
 	/* If feedback is on, and control-d handshaking is on, turn on the ^T stuff. */
-	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
+	if(int_cmdline.feedback 
+			&& (int_cmdline.jobbreak == JOBBREAK_CONTROL_D 
+				|| int_cmdline.jobbreak == JOBBREAK_PJL)
+		)
 		options.idle_status_interval = 15;
 
 	if(strcmp(int_cmdline.int_basename, "jetdirect") == 0)
@@ -438,14 +441,12 @@ int int_main(int argc, char *argv[])
 		*/
 		else if(strcmp(name, "use_shutdown") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&(options.use_shutdown),value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
 				break;
 				}
-			options.use_shutdown = answer ? TRUE : FALSE;
 			}
 		/*
 		** The delay after closing connection, before exiting.

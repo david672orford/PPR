@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_ppd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 26 May 2004.
+** Last modified 16 February 2006.
 */
 
 #include "before_system.h"
@@ -921,7 +921,7 @@ int ppdlib_get(const char *argv[])
 			}
 		}
 	gu_Final {
-		ppdobj_delete(ppd);
+		ppdobj_free(ppd);
 		}
 	gu_Catch {
 		fprintf(errors, "%s: %s\n", myname, gu_exception);

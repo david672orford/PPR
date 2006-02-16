@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 January 2005.
+# Last modified 19 October 2005.
 #
 
 #
@@ -209,13 +209,14 @@ service ppradmin
 }
 
 # IPP server
-service ppradmin
+service ipp
 {
 		socket_type		= stream
 		port			= ipp
 		wait			= no
 		user			= $USER_PPRWWW
-		server			= $LIBDIR/ppr-httpd --ipp
+		server			= $LIBDIR/ppr-httpd
+		server args		= --ipp
 		instances		= 50
 		disable = yes
 }

@@ -385,7 +385,7 @@ static int do_command(int sockfd, char *argv[])
 				)
 				{
 				uprint_errno = UPE_DENIED;
-				uprint_error_callback(X_("%s(): bad command: ^%c%.*s"), function, command[0] + 'A' - 1, strcspn(command + 1, "\n"), command + 1);
+				uprint_error_callback(X_("%s(): bad command: ^%c%.*s"), function, command[0] + 'A' - 1, (int)strcspn(command + 1, "\n"), command + 1);
 				return -1;
 				}
 			}

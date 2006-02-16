@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/serial.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 June 2004.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -272,7 +272,10 @@ static void set_options(const char *printer_name, const char *printer_options, i
 	options->idle_status_interval = 0;
 
 	/* If feedback is on and control-d handshaking is on, turn on the ^T stuff. */
-	if(int_cmdline.feedback && int_cmdline.jobbreak == JOBBREAK_CONTROL_D)
+	if(int_cmdline.feedback 
+			&& (int_cmdline.jobbreak == JOBBREAK_CONTROL_D 
+				|| int_cmdline.jobbreak == JOBBREAK_PJL)
+		)
 		options->idle_status_interval = 15;
 
 	/* Parse the interface options. */
@@ -294,8 +297,8 @@ static void set_options(const char *printer_name, const char *printer_options, i
 			}
 		else if(strcmp(name, "xonxoff") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			gu_boolean answer;
+			if(gu_torf_setBOOL(&answer,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
@@ -303,13 +306,13 @@ static void set_options(const char *printer_name, const char *printer_options, i
 				}
 			if(answer)			/* on */
 				settings->c_iflag |= IXON | IXOFF;
-			else						/* off */
+			else				/* off */
 				settings->c_iflag &= ~(IXON | IXOFF);
 			}
 		else if(strcmp(name, "rtscts") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			gu_boolean answer;
+			if(gu_torf_setBOOL(&answer,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
@@ -400,19 +403,17 @@ static void set_options(const char *printer_name, const char *printer_options, i
 			}
 		else if(strcmp(name, "detect_hangups") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			if(gu_torf_setBOOL(&options->detect_hangups,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
 				break;
 				}
-			options->detect_hangups = answer ? TRUE : FALSE;
 			}
 		else if(strcmp(name, "hangup_on_close") == 0)
 			{
-			int answer;
-			if((answer = gu_torf(value)) == ANSWER_UNKNOWN)
+			gu_boolean answer;
+			if(gu_torf_setBOOL(&answer,value) == -1)
 				{
 				o.error = N_("Invalid boolean value");
 				retval = -1;
@@ -493,8 +494,9 @@ static void set_options(const char *printer_name, const char *printer_options, i
 
 /*
 ** Explain why reading from or writing to the printer port failed.
+** If we return (which we won't), then loop processing will continue.
 */
-static void printer_error(int error_number)
+static void printer_error(const char syscall[], int fd, int error_number)
 	{
 	switch(error_number)
 		{
@@ -588,7 +590,7 @@ int int_main(int argc, char *argv[])
 		for(x=0; x < 20; x++)
 			{
 			if(ioctl(portfd, TIOCMGET, &modem_status) < 0)
-				printer_error(errno);
+				printer_error("ioctl", portfd, errno);
 
 			DODEBUG(("modem status: %s %s %s",
 					modem_status & TIOCM_CD ? "CD" : "",

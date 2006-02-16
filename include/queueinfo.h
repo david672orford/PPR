@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/queueinfo.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,12 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 16 February 2006.
 */
 
 enum QUEUEINFO_TYPE { QUEUEINFO_SEARCH, QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
 void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
-void queueinfo_delete(void *p);
+void queueinfo_free(void *p);
 void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[]);
 void queueinfo_add_printer(void *p, const char name[]);
 void queueinfo_add_hypothetical_printer(void *p, const char name[], const char ppdfile[], const char installed_memory[]);
@@ -38,8 +38,12 @@ void queueinfo_add_hypothetical_printer(void *p, const char name[], const char p
 void queueinfo_set_warnings_file(void *p, FILE *errors);
 void queueinfo_set_debug_level(void *p, int debug_level);
 
+void *queueinfo_hoist_value(void *p, const void *value);
+
 const char *queueinfo_name(void *p);
+const char *queueinfo_device_uri(void *p, int printer_index);
 const char *queueinfo_comment(void *p);
+const char *queueinfo_location(void *p, int printer_index);
 gu_boolean  queueinfo_transparentMode(void *);
 gu_boolean queueinfo_psPassThru(void *p);
 gu_boolean  queueinfo_binaryOK(void *);
@@ -62,5 +66,6 @@ gu_boolean  queueinfo_fontExists(void *p, const char name[]);
 const char *queueinfo_optionValue(void *p, const char name[]);
 const char *queueinfo_computedMetaFontMode(void *p);
 const char *queueinfo_computedDefaultFilterOptions(void *p);
+const char *queueinfo_modelName(void *p);
 
 /* end of file */
