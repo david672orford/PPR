@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/libgu/gu_pca.c
+** mouse:~ppr/src/libgu/gu_pcs_join.c
 ** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,217 +25,45 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 September 2005.
+** Last modified 28 February 2005.
 */
 
-/*! \file
+/*! \file 
 
-Perl Compatible Array
-
-This module implements an array of strings.  In addition to indexing, the 
-shift, unshift, pop, and push operations familiar to Perl programers are 
-implemented.  Slicing is not.
-
+  This module joins a PCA into a PCS.
+  
 */
 
 #include "config.h"
 #include <string.h>
 #include "gu.h"
+#include "pcre.h"
 
-#define MAGIC 0x4202
-
-struct PCA {
-	int magic;
-	int removed_at_start;		/* number of elements shifted off the start */
-	int size_used;				/* number of slots used (including removed_at_start) */
-	int size_allocated;			/* number of members in storage[] */
-	int increment;				/* number of slots to expand by */
-	char **storage;
-	};
-
-/** Create a Perl compatible array object
- * initial_size slots are initially allocated
+/** Join array members into a string
  */
-void *gu_pca_new(int initial_size, int increment)
+char *gu_pca_join(const char separator[], void *array)
 	{
-	struct PCA *p;
-	if(initial_size < 0)
-		gu_Throw("gu_pca_new(): initial_size must not be negative");
-	if(increment < 0)
-		gu_Throw("gu_pca_new(): increement must not be negative");
-	p = gu_alloc(1, sizeof(struct PCA));
-	p->magic = MAGIC;
-	p->removed_at_start = 0;
-	p->size_used = 0;
-	p->size_allocated = initial_size;
-	p->increment = increment;
-	if(initial_size > 0)
-		p->storage = gu_alloc(p->size_allocated, sizeof(char*));
-	else
-		p->storage = NULL;
-	return (void*)p;
-	}
-
-/** Deallocate a PCA object.
- */
-void gu_pca_free(void *pca)
-	{
-	struct PCA *p = pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_free(): bad magic");
-	if(p->storage)
-		gu_free(p->storage);
-	gu_free(p);
-	}
-
-static void gu_pca_expand(void *pca)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->increment <= 0)
-		gu_Throw("gu_pca_expand(): array is not growable");
-	p->size_allocated += p->increment;
-	p->storage = gu_realloc(p->storage, p->size_allocated, sizeof(char*));
-	}
-
-/** Return the number of elements in the array
- */
-int gu_pca_size(void *pca)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_size(): bad magic");
-	return (p->size_used - p->removed_at_start);
-	}
-
-/** Return the string at a given index
- */
-void *gu_pca_index(void *pca, int index)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_index(): bad magic");
-	index += p->removed_at_start;
-	if(index >= 0 && index <= p->size_used)
-		return p->storage[index];
-	return NULL;
-	}
-
-/** Remove and return the last element
- */
-void *gu_pca_pop(void *pca) 
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_pop(): bad magic");
-	if(p->size_used > p->removed_at_start)
-		{
-		p->size_used--;
-		return p->storage[p->size_used];
-		}
-	return NULL;
-	}
-
-/** Add the given element to the end of the array 
- */
-void gu_pca_push(void *pca, void *item)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_push(): bad magic");
-	if(p->size_used == p->size_allocated)
-		{
-		if(p->removed_at_start > 0)		/* if we can slide the array down in storage, */
-			{
-			memmove(p->storage, &(p->storage[p->removed_at_start]), (p->size_used - p->removed_at_start) * sizeof(char*));
-			p->size_used -= p->removed_at_start;
-			p->removed_at_start = 0;
-			}
-		else
-			{
-			gu_pca_expand(pca);
-			}
-		}
-	p->storage[p->size_used++] = item;
-	}
-
-/** Remove and return the first element
- */
-void *gu_pca_shift(void *pca)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_shift(): bad magic");
-	if(p->size_used > p->removed_at_start)
-		{
-		return p->storage[p->removed_at_start++];
-		}
-	return NULL;	
-	}
-
-/** Add the provided element to the begining of the array
- */
-void gu_pca_unshift(void *pca, void *item)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	if(p->magic != MAGIC)
-		gu_Throw("gu_pca_unshift(): bad magic");
-	if(p->removed_at_start > 0)
-		{
-		p->removed_at_start--;
-		p->storage[p->removed_at_start] = item;
-		}
-	else
-		{
-		if(p->size_used == p->size_allocated)
-			gu_pca_expand(pca);
-		memmove(&p->storage[1], p->storage, p->size_used * sizeof(char*));
-		p->size_used++;
-		p->storage[0] = item;
-		}
-	}
-
-/** return a pointer to the C array or char*
- */
-char **gu_pca_ptr(void *pca)
-	{
-	struct PCA *p = (struct PCA *)pca;
-	return p->storage;
-	}
-
-/* gcc -Wall -I../include -DTEST -o gu_pca gu_pca.c ../libgu.a */
-#ifdef TEST
-#include <stdio.h>
-void print_array(void *a)
-	{
+	void *string = gu_pcs_new();
 	int iii;
-	printf("a[] = ");
-	for(iii=0; iii < gu_pca_size(a); iii++)
+	for(iii=0; iii < gu_pca_size(array); iii++)
 		{
 		if(iii > 0)
-			printf(", ");
-		printf("\"%s\"", (char*)gu_pca_index(a, iii));
+			gu_pcs_append_cstr(&string, separator);
+		gu_pcs_append_cstr(&string, gu_pca_index(array,iii));
 		}
-	printf("\n");
+	return gu_pcs_free_keep_cstr(&string);
 	}
+
+/* gcc -Wall -I../include -DTEST -o gu_pca_join gu_pca_join.c ../libgu.a */
+#ifdef TEST
+#include <stdio.h>
 int main(int argc, char *argv[])
 	{
-	int i;
-	void *array = gu_pca_new(10, 10);
-	gu_pca_push(array, "hello");
-	gu_pca_push(array, "world");
-	gu_pca_unshift(array, "well");
-	print_array(array);
-	gu_pca_pop(array);
-	print_array(array);
-	gu_pca_shift(array);
-	print_array(array);
-	for(i=0; i < 20; i++)
-		printf("\"%s\"\n", (char*)gu_pca_shift(array));
-	for(i=0; i < 20; i++)
-		gu_pca_unshift(array, "x");
-	print_array(array);
-	gu_pca_free(array);
-	printf("memory blocks = %d\n", gu_alloc_checkpoint());
+	void *list;
+	
+	list = gu_pcre_split("\\s", "Now is the TIME for all good men to come to the aid of the party.");
+	printf("\"%s\"\n", gu_pca_join(",", list));
+
 	return 0;
 	}
 #endif

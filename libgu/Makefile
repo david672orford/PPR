@@ -70,9 +70,9 @@ LIBOBJS=malloc.o \
 	gu_pcs.o \
 	gu_pch.o \
 	gu_pca.o \
+	gu_pca_join.o \
 	gu_pcre_match.o \
 	gu_pcre_split.o \
-	gu_pca_join.o \
 	gu_run.o \
 	gu_exceptions.o \
 	gu_uri.o \
