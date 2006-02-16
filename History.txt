@@ -5305,8 +5305,8 @@ line was being parsed twice.
 
   The "reset_before=" option does not perform its reset until the printer is
   found to be on-line, not out of paper, and not in a fault state.  This was
-  necessary, but doing a reset on an HP Deskjet 500 caused to it go on-line
-  even if it was off-line!
+  necessary, because doing a reset on an HP Deskjet 500 caused to it go 
+  on-line even if it was off-line!
 
 * Added "reset_on_cancel=" to the parallel interface and support for Linux.
 

@@ -28,6 +28,10 @@
 ** Last modified 15 February 2006.
 */
 
+/*! \file
+	\brief PPR interface copy routine
+*/
+
 #include "config.h"
 #include <sys/time.h>
 #include <sys/types.h>
@@ -60,74 +64,70 @@
 /* There is one of these for each data flow direction. */
 enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 
-/*
-**
-** int_copy_job()
-**
-** This function copies data from stdin to the printer (portfd) and from the 
-** printer to stdout.  It uses select() to allow it to copy in both directions
-** simultaniously.
-**
-** If the argument idle_status_interval is non-zero, then int_copy_job() will 
-** send a control-T to the printer if the send buffer is empty and nothing has
-** been sent for idle_status_interval seconds or more.
-**
-** If the select(), read(), or write() system call fails, then the function pointed 
-** to by prn_err is called.  The first parameter is the name of the system
-** call which failed.  If the error is fatal, it should abort the interface
-** program.  If it returns, the loop will continue.
-**
-** If the argument send_eof is not a NULL pointer, then the function it points 
-** to is called with the printer file descriptor as its lone argument once the
-** last data block has been written.
-**
-** If the argument status_function is not a NULL pointer, then the function it
-** points to is called every status_interval seconds.  It is passed the 
-** pointer status_address.
-**
-** Peter Benie <Peter.Benie@mvhi.com> has provided valuable advice concerning the
-** use of select() and non-blocking file descriptors.  He says that write()
-** and possible even read() can fail with errno set to EAGAIN even if select()
-** has stated that the file descriptor is open for writing.  In a private e-mail 
-** to PPR's author, he cited three of the possible reasons:
-**
-** >a) select can't tell how big the next write is going to be
-** >
-** >  With some file types (eg. pipes) select will mark the fd as ready
-** >  if one byte could be written, however, write(2) guarantees that
-** >  small writes ( <= PIPE_BUF, typically 512 bytes) are written
-** >  atomically, so write has to do the _entire_ write or return EAGAIN.
-** >
-** >  On Linux, this doesn't result in a loop because the fd is then marked
-** >  as not-ready until the state of the pipe changes for some other
-** >  reason, such as more space becoming available. I don't know how
-** >  other Unix systems handle this condition.
-** >
-** >b) select may not be able to tell if the device is ready
-** >
-** >  It may not be possible to determine whether a device is ready
-** >  without writing to it. For such devices, select will _always_ return
-** >  ready at least once when the device isn't ready. 
-** >
-** >c) select(2) and write(2) are separate system calls and are therefore not
-** >  atomic; the condition of the device may change between the two system
-** >  calls
-** >
-** >  Suppose that several devices share a common buffer area for writes.
-** >  When that buffer has space available, all devices can legitimately
-** >  return ready from select. By the time that write is called, that
-** >  buffer space may no longer be available. 
-** >
-** >  I doubt you'll ever see this condition from a printer, but you may
-** >  see it with network I/O under very high load.
-**
-** Most man pages for select(2) do a pretty poor job of describing its 
-** behavior and say almost nothing about proper use.  The vagueness of the 
-** origional 4.2BSD man page is probably why various implementations of 
-** select() display subtle differences in behavior.  Some of these differences
-** are described in the Linux select(2) man page and by W. Richard Stevens in
-** _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
-** 399-400.
+/** bidirectional copy routine for PPR printer interface programs
+*
+* This function copies data from stdin to the printer (portfd) and from the 
+* printer to stdout.  It uses select() to allow it to copy in both directions
+* simultaniously.
+*
+* If the argument idle_status_interval is non-zero, then int_copy_job() will 
+* send a control-T to the printer if the send buffer is empty and nothing has
+* been sent for idle_status_interval seconds or more.
+*
+* If a system call fails in an unexpected way, then the function pointed to
+* by fatal_prn_err is called.
+*
+* If the argument send_eof is not a NULL pointer, then the function it points 
+* to is called with the printer file descriptor as its lone argument once the
+* last data block has been written.
+*
+* If the argument status_function is not a NULL pointer, then the function it
+* points to is called every status_interval seconds.  It is passed the 
+* pointer status_address.
+*
+* Peter Benie <Peter.Benie@mvhi.com> has provided valuable advice concerning the
+* use of select() and non-blocking file descriptors.  He says that write()
+* and possible even read() can fail with errno set to EAGAIN even if select()
+* has stated that the file descriptor is open for writing.  In a private e-mail 
+* to PPR's author, he cited three of the possible reasons:
+*
+* >a) select can't tell how big the next write is going to be
+* >
+* >  With some file types (eg. pipes) select will mark the fd as ready
+* >  if one byte could be written, however, write(2) guarantees that
+* >  small writes ( <= PIPE_BUF, typically 512 bytes) are written
+* >  atomically, so write has to do the _entire_ write or return EAGAIN.
+* >
+* >  On Linux, this doesn't result in a loop because the fd is then marked
+* >  as not-ready until the state of the pipe changes for some other
+* >  reason, such as more space becoming available. I don't know how
+* >  other Unix systems handle this condition.
+* >
+* >b) select may not be able to tell if the device is ready
+* >
+* >  It may not be possible to determine whether a device is ready
+* >  without writing to it. For such devices, select will _always_ return
+* >  ready at least once when the device isn't ready. 
+* >
+* >c) select(2) and write(2) are separate system calls and are therefore not
+* >  atomic; the condition of the device may change between the two system
+* >  calls
+* >
+* >  Suppose that several devices share a common buffer area for writes.
+* >  When that buffer has space available, all devices can legitimately
+* >  return ready from select. By the time that write is called, that
+* >  buffer space may no longer be available. 
+* >
+* >  I doubt you'll ever see this condition from a printer, but you may
+* >  see it with network I/O under very high load.
+*
+* Most man pages for select(2) do a pretty poor job of describing its 
+* behavior and say almost nothing about proper use.  The vagueness of the 
+* origional 4.2BSD man page is probably why various implementations of 
+* select() display subtle differences in behavior.  Some of these differences
+* are described in the Linux select(2) man page and by W. Richard Stevens in
+* _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
+* 399-400.
 */
 void int_copy_job(int portfd,
 		int idle_status_interval,
@@ -202,7 +202,7 @@ void int_copy_job(int portfd,
 				|| (send_eoj_funct && !recv_eoj)
 				)
 		{
-		if(select_write_wrong > 10 || select_write_wrong > 10)
+		if(select_write_wrong > 10 || select_read_wrong > 10)
 			{
 			alert(int_cmdline.printer, TRUE,
 					_("Device driver for printer port \"%s\" is defective.  It may\n"
@@ -442,7 +442,7 @@ void int_copy_job(int portfd,
 			}
 		}
 
-	} /* end of int_copy_job() */
+	} /* int_copy_job() */
 
 /* end of file */
 

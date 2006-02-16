@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-09 16:21-0500\n"
+"POT-Creation-Date: 2006-02-15 19:40-0500\n"
 "PO-Revision-Date: 2005-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -323,7 +323,7 @@ msgid "Syntax error in printer address \"%s\"."
 msgstr ""
 
 #: ../interfaces/atalk_ali.c:749 ../interfaces/atalk_cap.c:491
-#: ../interfaces/pros.c:465 ../interfaces/serial.c:542
+#: ../interfaces/pros.c:465 ../interfaces/serial.c:543
 #, c-format
 msgid "The interface program \"%s\" does not support probing.\n"
 msgstr ""
@@ -352,27 +352,27 @@ msgstr "нада выбрать положительное целое число
 
 #: ../interfaces/atalk_ali.c:816 ../interfaces/atalk_cap.c:548
 #: ../interfaces/tcpip.c:403 ../interfaces/tcpip.c:415
-#: ../interfaces/tcpip.c:436 ../interfaces/tcpip.c:460 ../interfaces/usb.c:227
+#: ../interfaces/tcpip.c:436 ../interfaces/tcpip.c:460 ../interfaces/usb.c:238
 #: ../libppr/int_tcp_connect.c:76
 msgid "value must be a positive integer or zero"
 msgstr "нада выбрать или положительное целое число или нуль"
 
 #: ../interfaces/atalk_ali.c:832 ../interfaces/atalk_cap.c:555
-#: ../interfaces/lpr.c:1006 ../interfaces/parallel.c:295
+#: ../interfaces/lpr.c:1006 ../interfaces/parallel.c:271
 #: ../interfaces/pros.c:511 ../interfaces/serial.c:438
-#: ../interfaces/tcpip.c:470 ../interfaces/usb.c:238
+#: ../interfaces/tcpip.c:470 ../interfaces/usb.c:265
 msgid "unrecognized keyword"
 msgstr "низнакомое название"
 
-#: ../interfaces/atalk_ali.c:841 ../interfaces/usb.c:248
+#: ../interfaces/atalk_ali.c:841 ../interfaces/usb.c:275
 #, c-format
 msgid "Option parsing error: %s"
 msgstr ""
 
 #: ../interfaces/atalk_ali.c:843 ../interfaces/atalk_cap.c:566
-#: ../interfaces/lpr.c:1018 ../interfaces/parallel.c:307
+#: ../interfaces/lpr.c:1018 ../interfaces/parallel.c:283
 #: ../interfaces/pros.c:525 ../interfaces/serial.c:449
-#: ../interfaces/tcpip.c:482 ../interfaces/usb.c:250
+#: ../interfaces/tcpip.c:482 ../interfaces/usb.c:277
 msgid "right here"
 msgstr "здесь"
 
@@ -460,9 +460,9 @@ msgstr ""
 msgid "value must be \"o\" or \"f\""
 msgstr "нада выбрать или \"o\" или \"f\""
 
-#: ../interfaces/lpr.c:1036 ../interfaces/parallel.c:374
-#: ../interfaces/pros.c:473 ../interfaces/serial.c:550
-#: ../interfaces/tcpip.c:355 ../interfaces/usb.c:471
+#: ../interfaces/lpr.c:1036 ../interfaces/parallel.c:350
+#: ../interfaces/pros.c:473 ../interfaces/serial.c:551
+#: ../interfaces/tcpip.c:355 ../interfaces/usb.c:502
 #, c-format
 msgid ""
 "The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
@@ -488,29 +488,29 @@ msgstr ""
 msgid "Remote LPR/LPD system \"%s\" refuses to accept job for \"%s\"."
 msgstr ""
 
-#: ../interfaces/parallel.c:90 ../interfaces/usb.c:107
+#: ../interfaces/parallel.c:90 ../interfaces/usb.c:116
 #, c-format
 msgid "The file \"%s\" is not a tty."
 msgstr ""
 
 #: ../interfaces/parallel.c:118 ../interfaces/serial.c:161
-#: ../interfaces/usb.c:135
+#: ../interfaces/usb.c:144
 #, c-format
 msgid "Access to port \"%s\" is denied."
 msgstr "Доступ к порту \"%s\" отказут."
 
-#: ../interfaces/parallel.c:122 ../interfaces/usb.c:139
+#: ../interfaces/parallel.c:122 ../interfaces/usb.c:148
 #, c-format
 msgid "The port \"%s\" does not exist."
 msgstr "Порт \"%s\" не существует."
 
-#: ../interfaces/parallel.c:125 ../interfaces/usb.c:142
+#: ../interfaces/parallel.c:125 ../interfaces/usb.c:151
 #, c-format
 msgid "The device file \"%s\" exists, but the device doesn't."
 msgstr ""
 
 #: ../interfaces/parallel.c:128 ../interfaces/serial.c:174
-#: ../interfaces/usb.c:145
+#: ../interfaces/usb.c:154
 msgid "System open file table is full."
 msgstr ""
 
@@ -518,66 +518,70 @@ msgstr ""
 msgid "System is out of STREAMS."
 msgstr ""
 
-#: ../interfaces/parallel.c:136 ../interfaces/usb.c:148
+#: ../interfaces/parallel.c:136 ../interfaces/usb.c:157
 #: ../ppop/ppop_cmds_other.c:751
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)."
 msgstr "Не возмозно открыть \"%s\", errno=%d (%s)."
 
-#: ../interfaces/parallel.c:152
-#, c-format
-msgid "Port \"%s\" does not support 2-way communication."
-msgstr ""
-
-#: ../interfaces/parallel.c:160
-#, c-format
-msgid "Printer on \"%s\" does not support 2-way communication."
-msgstr ""
-
-#: ../interfaces/parallel.c:164
-#, c-format
-msgid "Parallel port communication failed, errno=%d (%s)."
-msgstr "Собещение через параллельного порта терпело неудачу, errno=%d (%s)."
-
-#: ../interfaces/parallel.c:261 ../interfaces/serial.c:431
-#: ../interfaces/usb.c:218
+#: ../interfaces/parallel.c:237 ../interfaces/serial.c:431
+#: ../interfaces/usb.c:229
 msgid "Negative value not allowed"
 msgstr "Негативный чесло не принимается"
 
-#: ../interfaces/parallel.c:270
+#: ../interfaces/parallel.c:246
 msgid "value must a positive integer or zero"
 msgstr "нада выбрать или положителное целое чесло или ноль"
 
-#: ../interfaces/parallel.c:279 ../interfaces/parallel.c:288
+#: ../interfaces/parallel.c:255 ../interfaces/parallel.c:264
 msgid "Value must be boolean"
 msgstr ""
 
-#: ../interfaces/parallel.c:354
+#: ../interfaces/parallel.c:330
 #, c-format
 msgid "Parallel port probing not implemented on this OS.\n"
 msgstr ""
 
-#: ../interfaces/parallel.c:357 ../interfaces/usb.c:451
+#: ../interfaces/parallel.c:333 ../interfaces/usb.c:482
 #, c-format
 msgid "Probing not implemented for port \"%s\".\n"
 msgstr ""
 
-#: ../interfaces/parallel.c:360 ../interfaces/usb.c:454
+#: ../interfaces/parallel.c:336 ../interfaces/usb.c:485
 #, c-format
 msgid "Port \"%s\" not found.\n"
 msgstr ""
 
-#: ../interfaces/parallel.c:364 ../interfaces/usb.c:461
+#: ../interfaces/parallel.c:340 ../interfaces/usb.c:492
 #, c-format
 msgid "Probe failed.\n"
 msgstr ""
 
-#: ../interfaces/parallel.c:383 ../interfaces/serial.c:559
-#: ../interfaces/usb.c:483
+#: ../interfaces/parallel.c:359 ../interfaces/serial.c:560
+#: ../interfaces/usb.c:514
 #, c-format
 msgid ""
 "The codes setting \"Binary\" is not compatible with the PPR interface\n"
 "program \"%s\"."
+msgstr ""
+
+#: ../interfaces/parallel_generic.c:102 ../interfaces/parallel_linux.c:172
+#, fuzzy, c-format
+msgid "Parallel port communication failed during %s(), errno=%d (%s)."
+msgstr "Собещение через параллельного порта терпело неудачу, errno=%d (%s)."
+
+#: ../interfaces/parallel_linux.c:142
+#, c-format
+msgid "Printer port \"%s\" does not support 2-way communication."
+msgstr ""
+
+#: ../interfaces/parallel_linux.c:143
+msgid "Check BIOS settings to see if 2-way communication is disabled."
+msgstr ""
+
+#: ../interfaces/parallel_linux.c:151
+#, c-format
+msgid "Printer connected to port \"%s\" does not support 2-way communication."
 msgstr ""
 
 #: ../interfaces/serial.c:171
@@ -625,11 +629,11 @@ msgstr ""
 msgid "%s interface: serial port driver does not support selected options"
 msgstr ""
 
-#: ../interfaces/serial.c:503 ../interfaces/tcpip.c:118
+#: ../interfaces/serial.c:504 ../interfaces/tcpip.c:118
 msgid "Connection to printer lost."
 msgstr "Связь с принтером потерена."
 
-#: ../interfaces/serial.c:506
+#: ../interfaces/serial.c:507
 #, c-format
 msgid "Serial communication failed, errno=%d (%s)."
 msgstr ""
@@ -651,31 +655,36 @@ msgid ""
 "interface option \"snmp_status_interval=0\"."
 msgstr ""
 
-#: ../interfaces/usb.c:165
+#: ../interfaces/usb.c:175
 msgid "Printer turned off or disconnected while printing."
 msgstr ""
 
-#: ../interfaces/usb.c:170
+#: ../interfaces/usb.c:181
 #, c-format
 msgid "USB port communication failed, errno=%d (%s)."
 msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
 
-#: ../interfaces/usb.c:307
+#: ../interfaces/usb.c:258
+#, fuzzy
+msgid "unrecognized init selection"
+msgstr "Неизвестный режим эмуляции."
+
+#: ../interfaces/usb.c:336
 #, c-format
 msgid "Unrecognized search key in address: %s"
 msgstr ""
 
-#: ../interfaces/usb.c:435
+#: ../interfaces/usb.c:466
 #, c-format
 msgid "No printer matching address \"%s\" is presently connected."
 msgstr ""
 
-#: ../interfaces/usb.c:448
+#: ../interfaces/usb.c:479
 #, c-format
 msgid "USB port probing not implemented on this OS.\n"
 msgstr ""
 
-#: ../interfaces/usb.c:457
+#: ../interfaces/usb.c:488
 #, c-format
 msgid "Access to port \"%s\" denied.\n"
 msgstr "Доступ к порту \"%s\" отказан.\n"
@@ -792,6 +801,14 @@ msgstr "%s(): нивозможно открыть файл \"%s\", errno=%d (%s)
 
 #: ../libppr/foptions.c:50
 msgid "Error in filter options:\n"
+msgstr ""
+
+#: ../libppr/int_copy_job.c:208
+#, c-format
+msgid ""
+"Device driver for printer port \"%s\" is defective.  It may\n"
+"operate with reduced function if you turn off two-way operation with the\n"
+"command \"ppad feedback %s false\".\n"
 msgstr ""
 
 #: ../libppr/int_tcp_connect.c:93
@@ -4914,33 +4931,14 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
-
-#, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
+#~ msgid "You must supply only the name of an existing printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "You must supply the name of a PPD file.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого файла PPD.\n"
+
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -4948,11 +4946,30 @@ msgstr ""
 #~ "a name for the new group.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
-
-#~ msgid "You must supply the name of a PPD file.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого файла PPD.\n"
-
-#~ msgid "You must supply only the name of an existing printer.\n"
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#, fuzzy
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"

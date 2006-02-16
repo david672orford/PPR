@@ -337,9 +337,10 @@ static const char *find_usb_printer(const char address[])
 		exit(EXIT_PRNERR_NORETRY_BAD_SETTINGS);
 		}
 
-	/* Try each of the ports in turn. */
+	/* Step through the possible ports. */
 	for(i=0; TRUE; i++)
 		{
+		/* Stop when we hit the first missing port.  (Could there be gaps?!!!) */
 		gu_snprintf(port_temp, sizeof(port_temp), port_pattern, i);
 		if(access(port_temp, F_OK) != 0)
 			break;
@@ -382,7 +383,7 @@ static const char *find_usb_printer(const char address[])
 		return gu_strdup(ret);
 	else
 		return NULL;
-	}
+	} /* find_usb_printer() */
 
 /*
 ** Implementation of the --probe option.
@@ -522,8 +523,8 @@ int int_main(int argc, char *argv[])
 
 	gu_write_string(1, "%%[ PPR connected ]%%\n");
 
-	/* Parse printer_options and set struct OPTIONS and
-	   printer port apropriately: */
+	/* Parse printer_options and act on them by setting members of
+	 * struct OPTIONS and performing ioctl() operations on portfd. */
 	parse_options(portfd, &options);
 
 	/* Read the job data from stdin and send it to portfd. */
