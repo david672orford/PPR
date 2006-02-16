@@ -127,7 +127,7 @@ enum COPYSTATE {COPYSTATE_WRITING, COPYSTATE_READING};
 * select() display subtle differences in behavior.  Some of these differences
 * are described in the Linux select(2) man page and by W. Richard Stevens in
 * _Advanced_Programming_in_the_Unix Environment_ (ISBN 0-201-56317-7) pages 
-* 399-400.
+* 399-400.  More information can be found in Linux's select_tut(2) manpage.
 */
 void int_copy_job(int portfd,
 		int idle_status_interval,
@@ -273,7 +273,8 @@ void int_copy_job(int portfd,
 		if((selret = select(portfd + 1, &rfds, &wfds, NULL, timeout)) < 0)
 			{
 			DODEBUG(("select() failed, errno=%d (%s)", errno, gu_strerror(errno)));
-			(*prn_err)("select", portfd, errno);
+			if(errno != EINTR)
+				(*prn_err)("select", portfd, errno);
 			continue;		/* if prn_err() didn't abort, restart loop */
 			}
 
@@ -320,25 +321,26 @@ void int_copy_job(int portfd,
 		if(FD_ISSET(0, &rfds))
 			{
 			DODEBUG(("data available on stdin"));
-			if((xmit_len = last_stdin_read = read(0, xmit_ptr = xmit_buffer, sizeof(xmit_buffer))) < 0)
+			while((xmit_len = last_stdin_read = read(0, xmit_ptr = xmit_buffer, sizeof(xmit_buffer))) < 0)
 				{
-				if(errno == EAGAIN)		/* may be possible under wacko circumstances */
-					{
-					xmit_len = 0;		/* this is ok, last_stdin_read will keep the loop alive */
-					}
-				else
-					{
+				DODEBUG(("read() set errno to %d (%s)", errno, strerror(errno)));
+				if(errno == EINTR)
+					continue;
+				if(errno != EAGAIN)		/* EAGAIN may be possible under wacko circumstances */
+					{					/* this is ok, last_stdin_read will keep the loop alive */
 					alert(int_cmdline.printer, TRUE, "%s interface: stdin read() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
 					int_exit(EXIT_PRNERR);
 					}
+				xmit_len = 0;
+				break;
 				}
 
 			DODEBUG(("read %d byte%s from stdin", xmit_len, xmit_len != 1 ? "s" : ""));
 
-			if(xmit_len > 0)
-				{
+			if(xmit_len > 0)						/* if we got something, */
+				{									/* switch to write-to-printer mode */
 				xmit_state = COPYSTATE_WRITING;
-				time_next_control_t = 0;				/* cancel control-T */
+				time_next_control_t = 0;			/* cancel control-T */
 				}
 			else if(send_eoj_funct)
 				{
@@ -352,14 +354,17 @@ void int_copy_job(int portfd,
 			{
 			int len;
 			DODEBUG(("space available on printer"));
-			if((len = write(portfd, xmit_ptr, xmit_len)) < 0)
+			while((len = write(portfd, xmit_ptr, xmit_len)) < 0)
 				{
 				DODEBUG(("write() failed, errno=%d (%s)", errno, gu_strerror(errno)));
+				if(errno == EINTR)
+					continue;
 				if(errno == EAGAIN)
 					select_write_wrong++;	/* demerit for being wrong */
 				else
 					(*prn_err)("write", portfd, errno);
 				len = 0;
+				break;
 				}
 
 			if(len > 0)
@@ -384,14 +389,17 @@ void int_copy_job(int portfd,
 		if(FD_ISSET(portfd, &rfds))
 			{
 			DODEBUG(("data available on printer"));
-			if((recv_len = read(portfd, recv_ptr = recv_buffer, sizeof(recv_buffer))) < 0)
+			while((recv_len = read(portfd, recv_ptr = recv_buffer, sizeof(recv_buffer))) < 0)
 				{
+				if(errno == EINTR)
+					continue;
 				DODEBUG(("read() failed, errno=%d (%s)", errno, gu_strerror(errno)));
 				if(errno == EAGAIN)
 					select_read_wrong++;	/* demerit for being wrong */
 				else
 					(*prn_err)("read", portfd, errno);
 				recv_len = 0;
+				break;
 				}
 
 			DODEBUG(("read %d byte%s from printer", recv_len, recv_len != 1 ? "s" : ""));
@@ -414,17 +422,18 @@ void int_copy_job(int portfd,
 			{
 			int len;
 			DODEBUG(("space available on stdout"));
-			if((len = write(1, recv_ptr, recv_len)) < 0)
+			while((len = write(1, recv_ptr, recv_len)) < 0)
 				{
-				if(errno == EAGAIN)		/* If available space is less than PIPE_BUF bytes, */
-					{
-					len = 0;
-					}
-				else
+				if(errno == EINTR)
+					continue;
+				/* EAGAIN if available space is less than PIPE_BUF bytes, */
+				if(errno != EAGAIN)
 					{
 					alert(int_cmdline.printer, TRUE, "%s interface: stdout write() failed, errno=%d (%s)", int_cmdline.int_basename, errno, gu_strerror(errno));
 					int_exit(EXIT_PRNERR);
 					}
+				len = 0;
+				break;
 				}
 
 			DODEBUG(("wrote %d byte%s to stdout", len, len != 1 ? "s" : ""));
@@ -443,7 +452,7 @@ void int_copy_job(int portfd,
 			}
 		}
 
-	} /* end of int_copy_job() */
+	} /* int_copy_job() */
 
 /* end of file */
 
