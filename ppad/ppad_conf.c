@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 January 2006.
+** Last modified 16 February 2006.
 */
 
 /*
@@ -410,7 +410,11 @@ int conf_copy(enum QUEUE_TYPE queue_type, const char from[], const char to[])
 			break;
 			}
 
-		if(!(to_obj = conf_open(queue_type, to, CONF_CREATE)))
+		/* Create a new configuration file for the copy.  CONF_RELOAD
+		 * does no harm if the thing copied is an alias since conf_open()
+		 * silently ignores it.
+		 */
+		if(!(to_obj = conf_open(queue_type, to, CONF_CREATE | CONF_RELOAD)))
 			{
 			retval = EXIT_BADDEST;
 			break;

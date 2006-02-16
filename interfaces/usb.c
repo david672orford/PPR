@@ -246,7 +246,7 @@ static void parse_options(int portfd, struct OPTIONS *options)
 			gu_boolean found = FALSE;
 			for(x=0; init_strings[x].name; x++)
 				{
-				if(strcmp(name, init_strings[x].name) == 0)
+				if(strcmp(value, init_strings[x].name) == 0)
 					{
 					options->init = init_strings[x].value;
 					found = TRUE;
