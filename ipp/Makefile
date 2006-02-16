@@ -46,7 +46,7 @@ ipp$(DOTEXE): ipp.o ../libppr.a ../libgu.a
 ppr-ipp-client$(DOTEXE): ppr-ipp-client.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) `xml2-config --libs` -o $@ $^
 
-ppr-ipp-client.o: ppr-ipp-client.c
+ppr-xml-ipp-client.o: ppr-xml-ipp-client.c
 	$(CC) $(CFLAGS) `xml2-config --cflags` -c ppr-ipp-client.c
 
 #=== Install ================================================================
