@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 February 2006.
+** Last modified 17 February 2006.
 */
 
 #include "config.h"
@@ -136,24 +136,24 @@ int dispatch(const char myname[], const char *argv[])
 	if(gu_strcasecmp(argv[0], "help") == 0)
 		return help(myname, &argv[1]);
 	
-	for(argv_index=table_index=0,cmd=commands; cmd[table_index].name; )
+	argv_index = table_index = 0;
+	cmd=commands;
+	while(cmd[table_index].name && argv[argv_index])
 		{
-		for(table_index=0; cmd[table_index].name; table_index++)
+		if(gu_strcasecmp(argv[argv_index], cmd[table_index].name) == 0)
 			{
-			if(gu_strcasecmp(argv[argv_index], cmd[table_index].name) == 0)
+			switch(cmd[table_index].type)
 				{
-				switch(cmd[table_index].type)
-					{
-					case COMMAND_NODE_BRANCH:
-						argv_index++;					/* move to next word */
-						cmd = cmd[table_index].value;	/* take this branch */
-						table_index = 0;				/* start at the start of this branch's table */
-						break;
-					case COMMAND_NODE_LEAF:
-						return invoke_command(myname, argv, argv_index+1, &cmd[table_index]);
-					}
+				case COMMAND_NODE_BRANCH:
+					argv_index++;					/* move to next word */
+					cmd = cmd[table_index].value;	/* take this branch */
+					table_index = 0;				/* start at the start of this branch's table */
+					continue;						/* skip table_index increment */
+				case COMMAND_NODE_LEAF:
+					return invoke_command(myname, argv, argv_index+1, &cmd[table_index]);
 				}
 			}
+		table_index++;
 		}
 		
 	/* command was not recognized, give help */
