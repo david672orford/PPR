@@ -43,7 +43,7 @@
 
 /* Examine the provided hostname and return it only if it does not
  * represent the local host.  If it does represent the local host
- * return NULL.
+ * return NULL. */
 static char *localhost_remove(char *host)
 	{
 	if(host == NULL)

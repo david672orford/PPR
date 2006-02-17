@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv_conf.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2005.
+** Last modified 17 February 2006.
 */
 
 #include "config.h"
@@ -35,6 +35,9 @@
 #include <ctype.h>
 #include <errno.h>
 #include <pwd.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #ifdef HAVE_INNETGROUP
 #include <netdb.h>
 #endif
