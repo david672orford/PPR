@@ -359,7 +359,7 @@ static const char *codes_description(int codes)
 	} /* end of codes_description() */
 
 /*
-<command helptopics="printers-new">
+<command helptopics="printer-new">
 	<name><word>new</word><word>alerts</word></name>
 	<desc>set default alerts settings for new printers</desc>
 	<args>

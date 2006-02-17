@@ -824,7 +824,7 @@ int command_ppdlib_query(const char *argv[])
 */
 int command_ppdlib_search(const char *argv[])
 	{
-	const char *pattern;
+	const char *pattern = argv[0];
 	gu_boolean wildcards;
 	char *pattern_lowered, *f_description_lowered;
 	FILE *f;
@@ -884,11 +884,11 @@ int command_ppdlib_search(const char *argv[])
 */
 int command_ppdlib_get(const char *argv[])
 	{
-	const char *name;
+	const char *modelname = argv[0];
 	void *ppd = NULL;;
 
 	gu_Try {
-		ppd = ppdobj_new(name);
+		ppd = ppdobj_new(modelname);
 		}
 	gu_Catch
 		{

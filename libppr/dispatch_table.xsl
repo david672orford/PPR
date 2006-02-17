@@ -101,8 +101,11 @@
 	<text>&amp;command</text><apply-templates select="name"/><text>_args, </text>
 	<text>0</text>
 	<for-each select="str:tokenize(@helptopics,', ')">
-		<!-- <text>|</text>
-		<value-of select="."/> -->
+		<!--
+		<text> |</text>
+		<value-of select="position(key('helptopics',.)[1])"/>
+		<text>/*</text><value-of select="."/><text>*/</text>
+		-->
 	</for-each>
 	<text>},&#10;</text>
 </template>

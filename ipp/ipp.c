@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 February 2006.
+** Last modified 17 February 2006.
 */
 
 #include "config.h"
@@ -50,7 +50,7 @@
 #include "ipp_utils.h"
 #include "queueinfo.h"
 
-#if 1
+#if 0
 #define DEBUG(a) debug a
 #else
 #define DEBUG(a)
