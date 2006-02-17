@@ -43,9 +43,10 @@ struct COMMAND_NODE
 	const char *name;
 	enum COMMAND_NODE_TYPE type;
 	const char *description;
-	int flags;
+	unsigned int flags;
 	int (*function)(const char *argv[]);
 	void *value;
+	unsigned int helptopics;
 	};
 
 struct COMMAND_HELP

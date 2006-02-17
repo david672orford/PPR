@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/browsers/usb.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 February 2005.
+** Last modified 16 February 2006.
 */
 
 #include "config.h"
@@ -40,6 +40,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "libppr_int.h"
 #include "util_exits.h"
 #include "version.h"
 
@@ -104,7 +105,7 @@ int main(int argc, char *argv[])
 		if(access(port_temp, F_OK) != 0)
 			break;
 
-		if(get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
+		if(lpioc_get_device_id(port_temp, device_id, sizeof(device_id)) == -1)
 			{
 			if(errno != ENODEV)
 				printf("; Can't get device ID for port %s, errno=%d (%s)\n", port_temp, errno, gu_strerror(errno));
@@ -115,7 +116,7 @@ int main(int argc, char *argv[])
 
 		/*printf("\"%s\"\n", device_id);*/
 		mfg = mdl = sern = NULL;
-		for(p = device_id; (item = gu_strsep(&p, ";")); )
+		for(p = (char*)device_id; (item = gu_strsep(&p, ";")); )
 			{
 			if((name = gu_strsep(&item, ":")) && (value = gu_strsep(&item, "")))
 				{

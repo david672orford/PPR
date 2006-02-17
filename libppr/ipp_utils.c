@@ -42,7 +42,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 
-#if 1
+#if 0
 #define DEBUG(a) debug a
 #else
 #define DEBUG(a)
