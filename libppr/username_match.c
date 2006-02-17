@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/templates/module.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 17 February 2006.
 */
 
 #include "config.h"
@@ -41,7 +41,10 @@
 
 */
 
-char *localhost_remove(char *host)
+/* Examine the provided hostname and return it only if it does not
+ * represent the local host.  If it does represent the local host
+ * return NULL.
+static char *localhost_remove(char *host)
 	{
 	if(host == NULL)
 		return NULL;
