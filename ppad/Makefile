@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 February 2006.
+# Last modified 21 February 2006.
 #
 
 include ../Makefile.conf
@@ -83,5 +83,8 @@ depend:
 
 clean:
 	$(RMF) *.o $(BACKUPS) $(BIN_PROGS)
+
+veryclean: clean
+	$(RMF) dispatch_table.c dispatch_table.h
 
 # end of file

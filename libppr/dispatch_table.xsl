@@ -3,8 +3,8 @@
 	xmlns="http://www.w3.org/1999/XSL/Transform"
 	version="1.0"
 	xmlns:str="http://exslt.org/strings"
-	xmlns:exsl="http://exslt.org/common"
-	extension-element-prefixes="exsl"
+	xmlns:xt="http://www.jclark.com/xt"
+	extension-element-prefixes="xt"
 	>
 <output method="text"/>
 
@@ -27,12 +27,12 @@
 	<text>#include "dispatch_table.h"&#10;</text>
 
 	<!-- Generate include file describing the command implementation functions. -->
-	<exsl:document href="dispatch_table.h" method="text">
+	<xt:document href="dispatch_table.h" method="text">
 		<call-template name="header_comments"/>
 		<for-each select="/dispatch/command">
 			<text>int command</text><apply-templates select="name"/><text>(const char *argv[]);&#10;</text>
 		</for-each>
-	</exsl:document>
+	</xt:document>
 
 	<!-- Generate the command argument lists. -->
 	<apply-templates select="/dispatch/command/args"/>
@@ -101,11 +101,9 @@
 	<text>&amp;command</text><apply-templates select="name"/><text>_args, </text>
 	<text>0</text>
 	<for-each select="str:tokenize(@helptopics,', ')">
-		<!--
-		<text> |</text>
-		<value-of select="position(key('helptopics',.)[1])"/>
-		<text>/*</text><value-of select="."/><text>*/</text>
-		-->
+		<text> |(2^</text>
+		<value-of select="count(key('helptopics', .)[1]/preceding-sibling::helptopic)"/>
+		<text>)/*</text><value-of select="."/><text>*/</text>
 	</for-each>
 	<text>},&#10;</text>
 </template>

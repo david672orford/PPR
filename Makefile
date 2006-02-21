@@ -119,16 +119,6 @@ install: symlinks-restore config.h
 		echo; \
 		done
 
-uprint-install:
-	@for i in z_install_begin libgu libuprint uprint; \
-		do \
-		echo "==========================================="; \
-		echo "    running $(MAKE) install in $$i"; \
-		echo "==========================================="; \
-		( cd $$i && $(MAKE) install ) || exit 1; \
-		echo; \
-		done
-
 #=== Configure  =============================================================
 
 # The script Configure calls this in order to pick up the old settings 
@@ -154,7 +144,7 @@ subst_tool$(DOTEXE): subst_tool.c
 
 #=== Distribution Archive Generation =======================================
 
-# Just the documents, built before making the distribution.
+# Just the documents, built before making the distribution .tar.gz file.
 dist-docs:
 	@echo "==========================================="
 	@echo "    Building Documentation"
@@ -222,8 +212,9 @@ clean:
 # This deletes difficult-to-generate files too.
 veryclean: clean unconfigure
 	( cd po; make veryclean )
-	( cd docs; make veryclean )
+	( cd ppad; make veryclean )
 	( cd www; make veryclean )
+	( cd docs; make veryclean )
 	@echo
 	@echo "All generated files removed."
 	@echo

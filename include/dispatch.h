@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 February 2006.
+** Last modified 21 February 2006.
 */
 
 int dispatch(const char myname[], const char *argv[]);
@@ -57,5 +57,6 @@ struct COMMAND_HELP
 
 /* root of the command dispatch table */
 extern struct COMMAND_NODE commands[];
+extern struct COMMAND_HELP commands_help_topics[];
 
 /* end of file */
