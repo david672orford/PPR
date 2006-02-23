@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 February 2006.
+** Last modified 22 February 2006.
 */
 
 /*==============================================================
@@ -359,7 +359,7 @@ static const char *codes_description(int codes)
 	} /* end of codes_description() */
 
 /*
-<command helptopics="printer-new">
+<command acl="ppad" helptopics="printer-new">
 	<name><word>new</word><word>alerts</word></name>
 	<desc>set default alerts settings for new printers</desc>
 	<args>
@@ -375,9 +375,6 @@ int command_new_alerts(const char *argv[])
 	const char *method;
 	const char *address;
 	FILE *newprn;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strspn(argv[0],"-0123456789") != strlen(argv[0]))
 		{
@@ -402,7 +399,7 @@ int command_new_alerts(const char *argv[])
 	} /* command_new_alerts() */
 
 /*
-<command helptopics="printer-basic">
+<command acl="ppad" helptopics="printer-basic">
 	<name><word>show</word></name>
 	<desc>show configuration of <arg>printer</arg></desc>
 	<args>
@@ -1110,7 +1107,7 @@ int command_show(const char *argv[])
 	} /* command_show() */
 
 /*
-<command helptopics="printer-basic">
+<command acl="ppad" helptopics="printer-basic">
 	<name><word>copy</word></name>
 	<desc>copy printer <arg>existing</arg> creating printer <arg>new</arg></desc>
 	<args>
@@ -1125,7 +1122,7 @@ int command_copy(const char *argv[])
 	}
 
 /*
-<command helptopics="printer-basic,printer-description">
+<command acl="ppad" helptopics="printer-basic,printer-description">
 	<name><word>comment</word></name>
 	<desc>modify a printer's comment field</desc>
 	<args>
@@ -1140,7 +1137,7 @@ int command_comment(const char *argv[])
 	} /* command_comment() */
 
 /*
-<command helptopics="printer-description">
+<command acl="ppad" helptopics="printer-description">
 	<name><word>location</word></name>
 	<desc>modify a printer's location field</desc>
 	<args>
@@ -1155,7 +1152,7 @@ int command_location(const char *argv[])
 	} /* command_location() */
 
 /*
-<command helptopics="printer-description">
+<command acl="ppad" helptopics="printer-description">
 	<name><word>department</word></name>
 	<desc>modify a printer's department field</desc>
 	<args>
@@ -1170,7 +1167,7 @@ int command_department(const char *argv[])
 	} /* command_department() */
 
 /*
-<command helptopics="printer-description">
+<command acl="ppad" helptopics="printer-description">
 	<name><word>contact</word></name>
 	<desc>modify a printer's contact field</desc>
 	<args>
@@ -1185,7 +1182,7 @@ int command_contact(const char *argv[])
 	} /* command_contact() */
 
 /*
-<command helptopics="printer-basic">
+<command acl="ppad" helptopics="printer-basic">
 	<name><word>interface</word></name>
 	<desc>set a printers interface program and address</desc>
 	<args>
@@ -1209,9 +1206,6 @@ int command_interface(const char *argv[])
 	const char *interface = argv[1];
 	const char *address = argv[2];
 	struct CONF_OBJ *obj;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strpbrk(printer, DEST_DISALLOWED))
 		{
@@ -1327,7 +1321,7 @@ int command_interface(const char *argv[])
 	} /* command_interface() */
 
 /*
-<command helptopics="printer-basic">
+<command acl="ppad" helptopics="printer-basic">
 	<name><word>options</word></name>
 	<desc>set a printer's interface options string</desc>
 	<args>
@@ -1341,9 +1335,6 @@ int command_options(const char *argv[])
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
 	char *line;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	/* make sure the printer exists */
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
@@ -1434,7 +1425,7 @@ static int printer_interface_param(const char printer[], const char param[], int
 	} /* printer_interface_param() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>jobbreak</word></name>
 	<desc>set a printer's jobbreak method</desc>
 	<args>
@@ -1449,9 +1440,6 @@ int command_jobbreak(const char *argv[])
 	const char *jobbreak = argv[1];
 	int new_value;
 
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
 	if((new_value = jobbreak_code(jobbreak)) == JOBBREAK_INVALID)
 		{
 		/* We omit "none" and "save/restore" from this list because
@@ -1465,7 +1453,7 @@ int command_jobbreak(const char *argv[])
 	} /* command_jobbreak() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>feedback</word></name>
 	<desc>set a printer's feedback flag</desc>
 	<args>
@@ -1480,9 +1468,6 @@ int command_feedback(const char *argv[])
 	const char *feedback = argv[1];
 	int new_value;
 
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
 	if((new_value = feedback_code(feedback)) == FEEDBACK_INVALID)
 		{
 		fputs(_("Valid feedback settings are \"true\", \"false\", or \"default\".\n"), stderr);
@@ -1493,7 +1478,7 @@ int command_feedback(const char *argv[])
 	} /* command_feedback() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>codes</word></name>
 	<desc>set a printer's passable codes info</desc>
 	<args>
@@ -1508,9 +1493,6 @@ int command_codes(const char *argv[])
 	const char *codes = argv[1];
 	int new_value;
 
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
 	if((new_value = codes_code(codes)) == CODES_INVALID)
 		{
 		fputs(_("Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
@@ -1522,7 +1504,7 @@ int command_codes(const char *argv[])
 	} /* command_codes() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>rip</word></name>
 	<desc>change external RIP settings for <arg>printer</arg></desc>
 	<args>
@@ -1562,7 +1544,7 @@ int command_rip(const char *argv[])
 	} /* command_rip() */
 
 /*
-<command helptopics="printer-basic,printer-ppad">
+<command acl="ppad" helptopics="printer-basic,printer-ppad">
 	<name><word>ppd</word></name>
 	<desc>set a printer's description (PPD) file</desc>
 	<args>
@@ -1585,9 +1567,6 @@ int command_ppd(const char *argv[])
 	struct CONF_OBJ *obj;
 	void *qobj = NULL;
 	const char *line, *p;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	/*
 	** Make sure the printer exists,
@@ -1665,7 +1644,7 @@ int command_ppd(const char *argv[])
 	} /* command_ppd() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>alerts</word></name>
 	<desc>set frequency and destination of printer alerts</desc>
 	<args>
@@ -1684,9 +1663,6 @@ int command_alerts(const char *argv[])
 	const char *address = argv[3];
 	struct CONF_OBJ *obj;
 	char *line;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strspn(argv[1], "-0123456789") != strlen(argv[1]))
 		{
@@ -1724,7 +1700,7 @@ int command_alerts(const char *argv[])
 	} /* command_alert() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>frequency</word></name>
 	<desc>alter frequency of printer alerts</desc>
 	<args>
@@ -1744,9 +1720,6 @@ int command_frequency(const char *argv[])
 	char *alert_address = (char*)NULL;
 	struct CONF_OBJ *obj;
 	char *line;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strspn(argv[1], "-0123456789") != strlen(argv[1]))
 		{
@@ -1801,7 +1774,7 @@ int command_frequency(const char *argv[])
 	} /* command_frequency() */
 
 /*
-<command helptopics="printer-flags">
+<command acl="ppad" helptopics="printer-flags">
 	<name><word>flags</word></name>
 	<desc>set rules for printing flag (banner and trailer) pages</desc>
 	<args>
@@ -1835,7 +1808,7 @@ int command_flags(const char *argv[])
 	} /* command_flags() */
 
 /*
-<command helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer-advanced,printer-ppd">
 	<name><word>outputorder</word></name>
 	<desc>set rules for printing flag (banner and trailer) pages</desc>
 	<args>
@@ -1868,7 +1841,7 @@ int command_outputorder(const char *argv[])
 	} /* command_direction() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>charge</word></name>
 	<desc>set or clear per-sheet charge (possibly 0.00)</desc>
 	<args>
@@ -1932,7 +1905,7 @@ int command_charge(const char *argv[])
 	} /* command_charge() */
 
 /*
-<command helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer-advanced,printer-ppd">
 	<name><word>bins</word><word>ppd</word></name>
 	<desc>set bins list from PPD file</desc>
 	<args>
@@ -1949,9 +1922,6 @@ int command_bins_ppd(const char *argv[])
 	char *ppdline;						/* a line read from the PPD file */
 	int x;
 	int ret;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(! (printer = argv[0]))
 		{
@@ -2026,9 +1996,6 @@ static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	int count = 0;				/* number of bins in conf file */
 	gu_boolean duplicate;
 
-	if(! am_administrator())
-		return EXIT_DENIED;
-
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_MODIFY)))
 		return EXIT_BADDEST;
 
@@ -2094,7 +2061,7 @@ static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	} /* command_bins_set_or_add() */
 
 /*
-<command helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer-advanced,printer-ppd">
 	<name><word>bins</word><word>set</word></name>
 	<desc>set bins list</desc>
 	<args>
@@ -2109,7 +2076,7 @@ int command_bins_set(const char *argv[])
 	} /* command_bins_set() */
 
 /*
-<command helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer-advanced,printer-ppd">
 	<name><word>bins</word><word>add</word></name>
 	<desc>add to bins list</desc>
 	<args>
@@ -2124,7 +2091,7 @@ int command_bins_add(const char *argv[])
 	} /* command_bins_add() */
 
 /*
-<command helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer-advanced,printer-ppd">
 	<name><word>bins</word><word>delete</word></name>
 	<desc>delete from bins list</desc>
 	<args>
@@ -2141,9 +2108,6 @@ int command_bins_delete(const char *argv[])
 	int idx;
 	int misses;
 	int found[MAX_BINS];
-
-	if(! am_administrator())
-		return EXIT_DENIED;
 
 	/* Set a checklist entry for each bin to be removed to no. */
 	for(idx=1; argv[idx]; idx++)
@@ -2229,7 +2193,7 @@ static void remove_directory(const char dirname[])
 	}
 
 /*
-<command helptopics="printer-basic">
+<command acl="ppad" helptopics="printer-basic">
 	<name><word>delete</word></name>
 	<desc>delete <arg>printer</arg></desc>
 	<args>
@@ -2248,9 +2212,6 @@ int command_delete(const char *argv[])
 	struct dirent *direntp;
 	int len;
 	int is_a_member;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(!printer)
 		{
@@ -2339,7 +2300,7 @@ int command_delete(const char *argv[])
 	} /* command_delete() */
 
 /*
-<command helptopics="">
+<command acl="ppad" helptopics="">
 	<name><word>touch</word></name>
 	<desc>instruct pprd to reload <arg>printer</arg></desc>
 	<args>
@@ -2352,9 +2313,6 @@ int command_touch(const char *argv[])
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
 
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
 	/* Just open it in read-only mode with CONF_RELOAD set and close it again. */
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
@@ -2364,7 +2322,7 @@ int command_touch(const char *argv[])
 	} /* command_touch() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>switchset</word></name>
 	<desc>attach a set of switches to a printer</desc>
 	<args>
@@ -2389,7 +2347,7 @@ int command_switchset(const char *argv[])
 	} /* command_switchset() */
 
 /*
-<command helptopics="">
+<command acl="ppad" helptopics="">
 	<name><word>deffiltopts</word></name>
 	<desc>update a printer's default filter options</desc>
 	<args>
@@ -2401,9 +2359,6 @@ int command_deffiltopts(const char *argv[])
 	{
 	const char *printer = argv[0];
 	struct CONF_OBJ *obj;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
@@ -2446,7 +2401,7 @@ int command_deffiltopts(const char *argv[])
 	} /* command_deffiltopts() */
 
 /*
-<command helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer-advanced">
 	<name><word>passthru</word></name>
 	<desc>set a printer's passthru language list</desc>
 	<args>
@@ -2477,7 +2432,7 @@ int command_passthru(const char *argv[])
 	} /* command_passthru() */
 
 /*
-<command helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer-advanced,printer-ppd">
 	<name><word>ppdopts</word></name>
 	<desc>choose optional printer features from PPD file</desc>
 	<args>
@@ -2507,10 +2462,6 @@ int command_ppdopts(const char *argv[])
 	unsigned int next_value;
 	int c;
 	char *values[100];					/* the list of possible values */
-
-	/* Make sure we have the necessary authority. */
-	if(!am_administrator())
-		return EXIT_DENIED;
 
 	/* Are there answers on the command line? */
 	if(argv[1])
@@ -2810,7 +2761,7 @@ int command_ppdopts(const char *argv[])
 	} /* command_ppdopts() */
 
 /*
-<command helptopics="printer-limit">
+<command acl="ppad" helptopics="printer-limit">
 	<name><word>limitpages</word></name>
 	<desc>set lower and upper bounds on pages printed</desc>
 	<args>
@@ -2841,7 +2792,7 @@ int command_limitpages(const char *argv[])
 	} /* command_limitpages() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>limitkilobytes</word></name>
 	<desc>set lower and upper bounds on job size in kilobytes</desc>
 	<args>
@@ -2872,7 +2823,7 @@ int command_limitkilobytes(const char *argv[])
 	} /* command_limitkilobytes() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>grayok</word></name>
 	<desc>allow or prohibit grayscale-only (non-color) documents</desc>
 	<args>
@@ -2900,7 +2851,7 @@ int command_grayok(const char *argv[])
 	} /* command_grayok() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>acls</word></name>
 	<desc>set list of ACLs listing those who can submit to <arg>printer</arg></desc>
 	<args>
@@ -2923,7 +2874,7 @@ int command_acls(const char *argv[])
 	} /* command_acls() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>userparams</word></name>
 	<desc>set PostScript userparam values</desc>
 	<args>
@@ -2944,7 +2895,7 @@ int command_userparams(const char *argv[])
 	} /* command_userparams() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>pagetimelimit</word></name>
 	<desc>set time limit on processing of each page</desc>
 	<args>
@@ -2974,7 +2925,7 @@ int command_pagetimelimit(const char *argv[])
 	} /* command_pagetimelimit() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>addon</word></name>
 	<desc>set printer parameters for use by a PPR extension</desc>
 	<args>
@@ -3008,7 +2959,7 @@ int command_addon(const char *argv[])
 	} /* command_addon() */
 
 /*
-<command>
+<command acl="ppad">
 	<name><word>ppdq</word></name>
 	<desc>send query to printer and produce list of suitable PPD files</desc>
 	<args>

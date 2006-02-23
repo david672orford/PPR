@@ -1,94 +1,98 @@
-acl.o: acl.c ../include/config.h ../include/gu.h ../include/global_defines.h
+acl.o: ./acl.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-alert.o: alert.c ../include/config.h ../include/gu.h ../include/global_defines.h
+alert.o: ./alert.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-ali_str.o: ali_str.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ali_str.o: ./ali_str.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-charge.o: charge.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+charge.o: ./charge.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-cs2enc.o: cs2enc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
+cs2enc.o: ./cs2enc.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
-datestamp.o: datestamp.c ../include/config.h ../include/gu.h ../include/global_defines.h
+datestamp.o: ./datestamp.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-destinfo.o: destinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h
+destinfo.o: ./destinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-dimens.o: dimens.c ../include/config.h ../include/gu.h ../include/global_defines.h
+dimens.o: ./dimens.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-enc2font.o: enc2font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
+dispatch.o: ./dispatch.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/dispatch.h
 
-findres.o: findres.c ../include/config.h ../include/gu.h ../include/global_defines.h
+enc2font.o: ./enc2font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
-font.o: font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
+findres.o: ./findres.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-foptions.o: foptions.c ../include/config.h ../include/gu.h ../include/global_defines.h
+font.o: ./font.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_font.h
 
-get_device_id.o: get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h
+foptions.o: ./foptions.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-int_acache.o: int_acache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
+int_acache.o: ./int_acache.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
-int_cmdline.o: int_cmdline.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+int_cmdline.o: ./int_cmdline.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_copy_job.o: int_copy_job.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+int_copy_job.o: ./int_copy_job.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_debug.o: int_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
+int_debug.o: ./int_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
-int_main.o: int_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+int_main.o: ./int_main.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_prpapst.o: int_prpapst.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
+int_prpapst.o: ./int_prpapst.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
-int_tcp_connect.o: int_tcp_connect.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+int_tcp_connect.o: ./int_tcp_connect.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-int_tcp_probe.o: int_tcp_probe.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+int_tcp_probe.o: ./int_tcp_probe.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-interfaces.o: interfaces.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
+interfaces.o: ./interfaces.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
 
-ipp_utils.o: ipp_utils.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+ipp_utils.o: ./ipp_utils.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
 
-jobid.o: jobid.c ../include/config.h ../include/gu.h ../include/global_defines.h
+jobid.o: ./jobid.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-money.o: money.c ../include/config.h ../include/gu.h ../include/global_defines.h
+lpioc_get_device_id.o: ./lpioc_get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-options.o: options.c ../include/config.h ../include/gu.h ../include/global_defines.h
+money.o: ./money.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-pagemask.o: pagemask.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+options.o: ./options.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-pagesize.o: pagesize.c ../include/config.h ../include/gu.h ../include/global_defines.h
+pagemask.o: ./pagemask.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-parse_qfname.o: parse_qfname.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+pagesize.o: ./pagesize.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-ppr_fnamef.o: ppr_fnamef.c ../include/config.h ../include/gu.h ../include/global_defines.h
+parse_qfname.o: ./parse_qfname.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-ppr_gcmd.o: ppr_gcmd.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ppr_fnamef.o: ./ppr_fnamef.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-protected.o: protected.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ppr_gcmd.o: ./ppr_gcmd.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-prune_env.o: prune_env.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
+protected.o: ./protected.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-qentryfile_clear.o: qentryfile_clear.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+prune_env.o: ./prune_env.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
 
-qentryfile_free.o: qentryfile_free.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+qentryfile_clear.o: ./qentryfile_clear.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-qentryfile_load.o: qentryfile_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
+qentryfile_free.o: ./qentryfile_free.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-qentryfile_save.o: qentryfile_save.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
+qentryfile_load.o: ./qentryfile_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
-query.o: query.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_query.h
+qentryfile_save.o: ./qentryfile_save.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 
-query_wrapper.o: query_wrapper.c ../include/config.h ../include/gu.h ../include/global_defines.h
+query.o: ./query.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_query.h
 
-queueinfo.o: queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h
+query_wrapper.o: ./query_wrapper.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-quote.o: quote.c ../include/config.h ../include/gu.h ../include/global_defines.h
+queueinfo.o: ./queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h
 
-readppd.o: readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
+quote.o: ./quote.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-snmp_messages.o: snmp_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h
+readppd.o: ./readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
-tail_status.o: tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h
+renounce_root_privs.o: ./renounce_root_privs.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-tokenize.o: tokenize.c ../include/config.h ../include/gu.h ../include/global_defines.h
+snmp_messages.o: ./snmp_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-unsafe.o: unsafe.c ../include/config.h ../include/gu.h ../include/global_defines.h
+tail_status.o: ./tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-username_match.o: username_match.c ../include/config.h ../include/gu.h ../include/global_defines.h
+tokenize.o: ./tokenize.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+unsafe.o: ./unsafe.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+username_match.o: ./username_match.c ../include/config.h ../include/gu.h ../include/global_defines.h
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 February 2006.
+** Last modified 22 February 2006.
 */
 
 /*
@@ -50,7 +50,7 @@
 #include "dispatch_table.h"
 
 /*
-<command>
+<command helptopics="group">
 	<name><word>group</word><word>show</word></name>
 	<desc>show configuration of <arg>group</arg></desc>
 	<args>
@@ -249,7 +249,7 @@ int command_group_show(const char *argv[])
 	} /* command_group_show() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>copy</word></name>
 	<desc>copy group <arg>existing</arg> creating group <arg>new</arg></desc>
 	<args>
@@ -264,7 +264,7 @@ int command_group_copy(const char *argv[])
 	} /* command_group_copy() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>comment</word></name>
 	<desc>modify a group's comment field</desc>
 	<args>
@@ -279,7 +279,7 @@ int command_group_comment(const char *argv[])
 	} /* group_comment() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>rotate</word></name>
 	<desc>enable or disable rotational printer use</desc>
 	<args>
@@ -292,9 +292,6 @@ int command_group_rotate(const char *argv[])
 	{
 	const char *group = argv[0];
 	gu_boolean newstate;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(gu_torf_setBOOL(&newstate,argv[1]) == -1)
 		{
@@ -314,9 +311,6 @@ static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 	char *ptr;
 	int count = 0;
 	void *qobj = NULL;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strpbrk(group, DEST_DISALLOWED))
 		{
@@ -427,7 +421,7 @@ static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 	} /* end of group_members_or_add_internal() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>add</word></name>
 	<desc>add <arg>members</arg> to a <arg>group</arg> (possibly creating <arg>group</arg>)</desc>
 	<args>
@@ -442,7 +436,7 @@ int command_group_add(const char *argv[])
 	} /* command_group_add() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>members</word></name>
 	<desc>set members list of <arg>group</arg> to <arg>members</arg> (possibly creating <arg>group</arg></desc>
 	<args>
@@ -534,7 +528,7 @@ int group_remove_internal(const char *group, const char *member)
 	} /* end of group_remove_internal() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>remove</word></name>
 	<desc>remove <arg>member</arg> from <arg>group</arg></desc>
 	<args>
@@ -548,9 +542,6 @@ int command_group_remove(const char *argv[])
 	const char function[] = "group_remove";
 	const char *group = argv[0];
 	int x;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	for(x=1; argv[x]; x++)
 		{
@@ -574,7 +565,7 @@ int command_group_remove(const char *argv[])
 	} /* end of group_remove() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>delete</word></name>
 	<desc>delete <arg>group</arg></desc>
 	<args>
@@ -586,9 +577,6 @@ int command_group_delete(const char *argv[])
 	{
 	const char *group = argv[0];
 	char fname[MAX_PPR_PATH];
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	/*
 	** Use ppop commands to accept no more jobs
@@ -619,7 +607,7 @@ int command_group_delete(const char *argv[])
 	} /* end of group_remove() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>touch</word></name>
 	<desc>instruct pprd to reload <arg>group</arg></desc>
 	<args>
@@ -632,9 +620,6 @@ int command_group_touch(const char *argv[])
 	const char *group = argv[0];
 	struct CONF_OBJ *obj;
 
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
 	if(!(obj = conf_open(QUEUE_TYPE_GROUP, group, CONF_ENOENT_PRINT | CONF_RELOAD)))
 		return EXIT_BADDEST;
 	conf_close(obj);
@@ -643,12 +628,12 @@ int command_group_touch(const char *argv[])
 	} /* end of group_touch() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>switchset</word></name>
 	<desc>attach a set of switches to a group</desc>
 	<args>
 		<arg><name>group</name><desc>name of group to be modified</desc></arg>
-		<arg flags="optional repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
+		<arg flags="optional,repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
 	</args>
 </command>
 */
@@ -720,7 +705,7 @@ int group_deffiltopts_internal(const char *group)
 	} /* end of group_deffiltopts_internal() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>deffiltopts</word></name>
 	<desc>update a group's default filter options</desc>
 	<args>
@@ -732,19 +717,16 @@ int command_group_deffiltopts(const char *argv[])
 	{
 	const char *group = argv[0];		/* name of group */
 
-	if( ! am_administrator() )
-		return EXIT_DENIED;
-
 	return group_deffiltopts_internal(group);
 	} /* end of group_deffiltopts() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>passthru</word></name>
 	<desc>set a group's passthru language list</desc>
 	<args>
 		<arg><name>group</name><desc>name of group to be modified</desc></arg>
-		<arg flags="optional repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
+		<arg flags="optional,repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
 	</args>
 </command>
 */
@@ -760,12 +742,12 @@ int command_group_passthru(const char *argv[])
 	} /* end of group_passthru() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>acls</word></name>
 	<desc>set list of ACLs listing those who can submit to <arg>group</arg></desc>
 	<args>
 		<arg><name>group</name><desc>name of group to be modified</desc></arg>
-		<arg flags="optional repeat"><name>acls</name><desc>list of ACLs (ommit to remove restrictions)</desc></arg>
+		<arg flags="optional,repeat"><name>acls</name><desc>list of ACLs (ommit to remove restrictions)</desc></arg>
 	</args>
 </command>
 */
@@ -782,7 +764,7 @@ int command_group_acls(const char *argv[])
 	} /* end of group_acls() */
 
 /*
-<command>
+<command acl="ppad" helptopics="group">
 	<name><word>group</word><word>addon</word></name>
 	<desc>set group parameters for use by a PPR extension</desc>
 	<args>

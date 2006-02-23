@@ -25,10 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2006.
+** Last modified 22 February 2006.
 */
 
 int dispatch(const char myname[], const char *argv[]);
+int dispatch_set_user(const char aclname[], const char new_username[]);
 
 enum COMMAND_NODE_TYPE { COMMAND_NODE_BRANCH, COMMAND_NODE_LEAF };
 
@@ -40,13 +41,13 @@ struct COMMAND_ARG {
 
 struct COMMAND_NODE
 	{
-	const char *name;
-	enum COMMAND_NODE_TYPE type;
-	const char *description;
-	unsigned int flags;
-	int (*function)(const char *argv[]);
-	void *value;
-	unsigned int helptopics;
+	const char *name;						/* command keyword */
+	enum COMMAND_NODE_TYPE type;			/* command or branch */
+	void *value;							/* arguments description or subcommand table */
+	const char *description;				/* human-readable description */
+	int (*function)(const char *argv[]);	/* command dispatch function */
+	unsigned int helptopics;				/* bitmap of helptopics which include this command */
+	char *acl;								/* ACL which controls access */
 	};
 
 struct COMMAND_HELP

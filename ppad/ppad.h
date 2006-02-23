@@ -37,8 +37,6 @@ void fatal(int exitval, const char *string, ...)
 __attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
-gu_boolean am_administrator(void);
-extern FILE *errors;
 extern int machine_readable;
 extern int debug_level;
 

@@ -945,16 +945,16 @@ static void help_switches(FILE *out)
 */
 static const char *option_chars = "MA:u:";
 static const struct gu_getopt_opt option_words[] =
-		{
-		{"machine-readable", 'M', FALSE},
-		{"arrest-interest-interval", 'A', TRUE},
-		{"user", 'u', TRUE},
-		{"help", 1000, FALSE},
-		{"version", 1001, FALSE},
-		{"verbose", 1003, FALSE},
-		{"magic-cookie", 1004, TRUE},
-		{(char*)NULL, 0, FALSE}
-		} ;
+	{
+	{"machine-readable", 'M', FALSE},
+	{"arrest-interest-interval", 'A', TRUE},
+	{"user", 'u', TRUE},
+	{"help", 1000, FALSE},
+	{"version", 1001, FALSE},
+	{"verbose", 1003, FALSE},
+	{"magic-cookie", 1004, TRUE},
+	{(char*)NULL, 0, FALSE}
+	} ;
 
 /*
 ** main function

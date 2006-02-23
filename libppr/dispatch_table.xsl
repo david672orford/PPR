@@ -3,8 +3,8 @@
 	xmlns="http://www.w3.org/1999/XSL/Transform"
 	version="1.0"
 	xmlns:str="http://exslt.org/strings"
-	xmlns:xt="http://www.jclark.com/xt"
-	extension-element-prefixes="xt"
+	xmlns:exsl="http://exslt.org/common"
+	extension-element-prefixes="exsl"
 	>
 <output method="text"/>
 
@@ -27,12 +27,12 @@
 	<text>#include "dispatch_table.h"&#10;</text>
 
 	<!-- Generate include file describing the command implementation functions. -->
-	<xt:document href="dispatch_table.h" method="text">
+	<exsl:document href="dispatch_table.h" method="text">
 		<call-template name="header_comments"/>
 		<for-each select="/dispatch/command">
 			<text>int command</text><apply-templates select="name"/><text>(const char *argv[]);&#10;</text>
 		</for-each>
-	</xt:document>
+	</exsl:document>
 
 	<!-- Generate the command argument lists. -->
 	<apply-templates select="/dispatch/command/args"/>
@@ -59,9 +59,6 @@
 			<when test="following-sibling::*">
 				<text> {"</text><value-of select="."/><text>", </text>
 				<text>COMMAND_NODE_BRANCH, </text>
-				<text>NULL, </text>
-				<text>0, </text>
-				<text>NULL, </text>
 				<text>&amp;command_</text><value-of select="."/>
 				<text>},&#10;</text>
 			</when>
@@ -95,17 +92,48 @@
 <template match="/dispatch/command">
 	<text> {"</text><value-of select="name/word[position()=last()]"/><text>", </text>
 	<text>COMMAND_NODE_LEAF, </text>
-	<text>N_("</text><value-of select="desc"/><text>"), </text>
-	<text>0, </text>
-	<text>command</text><apply-templates select="name"/><text>, </text>
 	<text>&amp;command</text><apply-templates select="name"/><text>_args, </text>
+	<text>N_("</text><value-of select="desc"/><text>"), </text>
+	<text>command</text><apply-templates select="name"/><text>, </text>
 	<text>0</text>
-	<for-each select="str:tokenize(@helptopics,', ')">
-		<text> |(2^</text>
-		<value-of select="count(key('helptopics', .)[1]/preceding-sibling::helptopic)"/>
-		<text>)/*</text><value-of select="."/><text>*/</text>
-	</for-each>
+	<if test="@helptopics">
+		<call-template name="split_helptopics">
+			<with-param name="string" select="@helptopics"/>
+		</call-template>
+	</if>
+	<text>, </text>
+	<choose>
+		<when test="@acl">
+			<text>"</text><value-of select="@acl"/><text>"</text>
+		</when>
+		<otherwise>
+			<text>NULL</text>
+		</otherwise>
+	</choose>
 	<text>},&#10;</text>
+</template>
+
+<!-- We have to go to all this trouble because str:split() is so deaply
+     flawed that it doesn't work in any but the most simple cases. -->
+<template name="split_helptopics">
+	<param name="string"/>
+	<choose>
+		<when test="contains($string,',')">
+			<call-template name="split_helptopics">
+				<with-param name="string" select="substring-before($string,',')"/>
+			</call-template>
+			<call-template name="split_helptopics">
+				<with-param name="string" select="substring-after($string,',')"/>
+			</call-template>
+		</when>
+		<otherwise>
+			<text>|(2^</text>
+			<if test="key('helptopics',$string)">
+				<value-of select="count(key('helptopics',$string)[1]/preceding-sibling::helptopic)"/>
+			</if>
+			<text>)/*</text><value-of select="$string"/><text>*/</text>
+		</otherwise>
+	</choose>	
 </template>
 
 <!-- Create an array of struct COMMAND_ARG which describes the arguments for this command -->
@@ -116,7 +144,7 @@
 			<!-- Convert a set of flag words into flag bits.  These values
 			     coorespond to the values in dispatch(). -->
 			<text>0</text>
-				<for-each select="str:tokenize(@flags,', ')">
+				<for-each select="str:split(@flags,',')">
 					<choose>
 						<when test=".='optional'"><text>|1</text></when>
 						<when test=".='repeat'"><text>|2</text></when>

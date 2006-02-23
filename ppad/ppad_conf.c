@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 February 2006.
+** Last modified 22 February 2006.
 */
 
 /*
@@ -69,6 +69,7 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 	{
 	const char function[] = "conf_open";
 	struct CONF_OBJ *obj = gu_alloc(1, sizeof(struct CONF_OBJ));
+	gu_boolean exists_error = FALSE;
 
 	obj->queue_type = queue_type;
 	obj->name = destname;
@@ -80,7 +81,7 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 
 	ppr_fnamef(obj->in_name, "%s/%s", conf_directory(queue_type), destname);
 
-	if(flags & CONF_MODIFY)				/* modify existing, possibly create */
+	if(flags & CONF_MODIFY)			/* modify existing, possibly create */
 		{
 		if(debug_level >= 1)
 			{
@@ -97,7 +98,7 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 				if(errno == ENOENT)		/* if open failed because doesn't exist, */
 					break;
 				else
-					fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r+", errno, gu_strerror(errno));
+					gu_Throw(_("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r+", errno, gu_strerror(errno));
 				}
 
 			if(gu_lock_exclusive(fileno(obj->in), FALSE))	/* if lock failed, */
@@ -109,12 +110,12 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 				}
 			} while(!obj->in);
 		}
-	else if(flags & CONF_CREATE)		/* create only, no modify existing */
+	else if(flags & CONF_CREATE)	/* create only, no modify existing */
 		{
 		struct stat statbuf;
 		if(debug_level >= 1)
 			printf("Opening \"%s\" (create new).\n", obj->in_name);
-		if(stat(obj->in_name, &statbuf) == 0)
+		if(stat(obj->in_name, &statbuf) == 0)	/* if exists, */
 			{
 			switch(obj->queue_type)
 				{
@@ -128,13 +129,12 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 					fprintf(stderr, _("The alias \"%s\" already exists.\n"), destname);
 					break;
 				}
-			gu_free(obj);
-			obj = NULL;
+			exists_error = TRUE;
 			}
 		}
-	else								/* read-only */
+	else							/* read-only */
 		{
-		if(flags & CONF_CREATE)
+		if(debug_level >= 1)
 			printf("Opening \"%s\" (read only).\n", obj->in_name);
 		if(!(obj->in = fopen(obj->in_name, "r")))
 			{
@@ -143,8 +143,9 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 			}
 		}
 
-	/* If we are modifying the file, we must create a temporary file for the new version. */
-	if(flags & CONF_MODIFY || flags & CONF_CREATE)
+	/* If we are modifying the file or creating a new one, we must create a 
+	 * temporary file for the new version. */
+	if(!exists_error && (flags & CONF_MODIFY || flags & CONF_CREATE))
 		{
 		/* Create temporary file in same dir, hidden (from pprd). */
 		ppr_fnamef(obj->out_name,"%s/.ppad%ld", conf_directory(queue_type), (long)getpid());
@@ -152,7 +153,9 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 			fatal(EXIT_INTERNAL, _("Can't open temporary file \"%s\" for write, errno=%d (%s)"), obj->out_name, errno, gu_strerror(errno));
 		}
 
-	/* If we didn't find it and it is not OK to create it, we have failed. */
+	/* If we tried to open the config file for read or for modify (in other
+	 * words, if it is not OK to create it), but didn't find it, we have 
+	 * failed. */
 	if(!obj->in && !(flags & CONF_CREATE))
 		{
 		if(flags & CONF_ENOENT_PRINT)
@@ -170,6 +173,10 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 					break;
 				}
 			}
+		}
+
+	if(!obj->in && !obj->out)
+		{
 		gu_free(obj);
 		obj = NULL;
 		}
@@ -335,7 +342,7 @@ int conf_abort(struct CONF_OBJ *obj)
 	gu_free(obj);
 
 	return 0;
-	} /* end of confabort() */
+	} /* conf_abort() */
 
 /*
 ** This function takes care of a common case.  In this case
@@ -352,9 +359,6 @@ int conf_set_name(enum QUEUE_TYPE queue_type, const char queue_name[], int extra
 	int name_len = strlen(name);
 	struct CONF_OBJ *obj;
 	char *line;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	/* Open the printer or group configuration file. */
 	if(!(obj = conf_open(queue_type, queue_name, CONF_MODIFY | CONF_ENOENT_PRINT | extra_flags)))

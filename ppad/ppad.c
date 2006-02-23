@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 February 2006.
+** Last modified 22 February 2006.
 */
 
 /*
@@ -55,7 +55,6 @@
 const char myname[] = "ppad";
 int machine_readable = FALSE;
 int debug_level = 0;
-static char *opt_user = NULL;
 
 /*
 ** Handle fatal errors.
@@ -73,70 +72,6 @@ void fatal(int exitval, const char *message, ...)
 
 	exit(exitval);
 	} /* end of fatal() */
-
-/*
-** Is the user privileged?  In other words, is the user in the ppad
-** access control list?  If the user identity has been changed
-** (by the --user switch) since last time this function was called,
-** the answer is found again, otherwise a cached answer is returned.
-*/
-static gu_boolean privileged(void)
-	{
-	static gu_boolean answer = FALSE;
-	static char *answer_username = NULL;
-
-	if(!answer_username || strcmp(opt_user, answer_username))
-		{
-		gu_free_if(answer_username);
-		answer_username = gu_strdup(opt_user);
-		answer = user_acl_allows(opt_user, "ppad");
-		}
-
-	return answer;
-	} /* end of privileged() */
-
-/*
-** Set the user who should be considered to be running this program.
-** Only privileged users may do this.  Thus, a privileged user may
-** become a different privileged user or become an unprivileged user.
-** Thus a privileged user can use this feature to drop privledge, but
-** not to gain additional access.
-**
-** Generally, this will be used by servers running under privileged
-** user identities.  They will use this so as not to exceed the privledge
-** of the user for whom they are acting.
-*/
-static int set_user(const char username[])
-	{
-	if(privileged())
-		{
-		gu_free(opt_user);
-		opt_user = gu_strdup(username);
-		return 0;
-		}
-	else
-		{
-		return -1;
-		}
-	}
-
-/*
-** Return TRUE if the user has PPR administrative privledges.
-** If not, print an error message and return FALSE.
-*/
-gu_boolean am_administrator(void)
-	{
-	if( privileged() )
-		{
-		return TRUE;
-		}
-	else
-		{
-		fputs("You are not allowed to perform the requested operation\n"
-				"because you are not a PPR administrator.\n", stderr);
-		return FALSE;
-		}
-	} /* am_administrator() */
 
 /*
 <command>
@@ -331,7 +266,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
-	opt_user = gu_strdup(pw->pw_name);
+	dispatch_set_user(NULL, pw->pw_name);
 	}
 
 	/*
@@ -369,7 +304,11 @@ int main(int argc, char *argv[])
 				exit(EXIT_OK);
 
 			case 1002:							/* --user */
-				set_user(getopt_state.optarg);
+				if(dispatch_set_user("ppad", getopt_state.optarg) == -1)
+					{
+					gu_utf8_fprintf(stderr, _("%s: you are not allowed to use --user\n"), myname);
+					exit(EXIT_DENIED);
+					}
 				break;
 
 			default:

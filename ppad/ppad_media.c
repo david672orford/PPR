@@ -129,7 +129,7 @@ static FILE *open_database(const char mode[])
 	}
 
 /*
-<command>
+<command acl="ppad" helptopic="media">
 	<name><word>media</word><word>put</word></name>
 	<desc>add or modify a media database record</desc>
 	<args>
@@ -150,9 +150,6 @@ int command_media_put(const char *argv[])
 	char padded[sizeof(media.medianame)];	/* space padded version of same */
 	int exists=0;							/* set true if already exists */
 	int index=0;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	/* get the name of the medium to be added or changed */
 	printf(_("Medium Name: "));
@@ -370,7 +367,7 @@ int command_media_put(const char *argv[])
 	} /* end of media_put() */
 
 /*
-<command>
+<command helptopics="media">
 	<name><word>media</word><word>show</word></name>
 	<desc>display a media database record</desc>
 	<args>
@@ -445,7 +442,7 @@ int command_media_show(const char *argv[])
 	} /* end of media_show() */
 
 /*
-<command>
+<command acl="ppad" helptopics="media">
 	<name><word>media</word><word>delete</word></name>
 	<desc>delete a media database record</desc>
 	<args>
@@ -495,7 +492,7 @@ int command_media_delete(const char *argv[])
 	} /* end of media_delete() */
 
 /*
-<command>
+<command helptopics="media">
 	<name><word>media</word><word>export</word></name>
 	<desc>emmit a shell script which can be used to recreate the media database</desc>
 	<args>
@@ -534,7 +531,7 @@ int command_media_export(const char *argv[])
 	} /* end of media_export() */
 
 /*
-<command>
+<command acl="ppad" helptopic="media">
 	<name><word>media</word><word>import</word></name>
 	<desc>emmit a shell script which can be used to recreate the media database</desc>
 	<args>
@@ -553,9 +550,6 @@ int command_media_import(const char *argv[])
 	const char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
 	char *p;							/* used to parse arguments */
 	int i;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strcmp(filename, "-") == 0)
 		{

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 February 2006.
+** Last modified 22 February 2006.
 */
 
 #include "config.h"
@@ -44,7 +44,7 @@
 #include "dispatch_table.h"
 
 /*
-<command>
+<command helptopic="group">
 	<name><word>alias</word><word>show</word></name>
 	<desc>show configuration of <arg>alias</arg></desc>
 	<args>
@@ -114,7 +114,7 @@ int command_alias_show(const char *argv[])
 	} /* command_alias_show() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>copy</word></name>
 	<desc>copy alias <arg>existing</arg> creating alias <arg>new</arg></desc>
 	<args>
@@ -129,7 +129,7 @@ int command_alias_copy(const char *argv[])
 	} /* command_alias_copy() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>forwhat</word></name>
 	<desc>modify the target of an alias or create a new alias</desc>
 	<args>
@@ -144,9 +144,6 @@ int command_alias_forwhat(const char *argv[])
 	const char *forwhat = argv[1];
 	struct CONF_OBJ *obj;
 	char *line;
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	if(strpbrk(alias, DEST_DISALLOWED))
 		{
@@ -188,7 +185,7 @@ int command_alias_forwhat(const char *argv[])
 	} /* command_alias_forwhat() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>delete</word></name>
 	<desc>delete an alias</desc>
 	<args>
@@ -200,9 +197,6 @@ int command_alias_delete(const char *argv[])
 	{
 	const char *alias = argv[0];
 	char fname[MAX_PPR_PATH];
-
-	if( ! am_administrator() )
-		return EXIT_DENIED;
 
 	ppr_fnamef(fname, "%s/%s", ALIASCONF, alias);
 	if(unlink(fname))
@@ -223,7 +217,7 @@ int command_alias_delete(const char *argv[])
 	} /* command_alias_delete() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>comment</word></name>
 	<desc>modify an alias's comment field</desc>
 	<args>
@@ -238,12 +232,12 @@ int command_alias_comment(const char *argv[])
 	} /* command_alias_comment() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>switchset</word></name>
 	<desc>attach a set of switches to an alias</desc>
 	<args>
 		<arg><name>alias</name><desc>name of alias to be modified</desc></arg>
-		<arg flags="optional repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
+		<arg flags="optional,repeat"><name>switchset</name><desc>switches to attach (ommit to delete list)</desc></arg>
 	</args>
 </command>
 */
@@ -263,12 +257,12 @@ int command_alias_switchset(const char *argv[])
 	} /* command_alias_switchset() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>passthru</word></name>
 	<desc>set an alias's passthru language list</desc>
 	<args>
 		<arg><name>alias</name><desc>name of alias to be modified</desc></arg>
-		<arg flags="optional repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
+		<arg flags="optional,repeat"><name>languages</name><desc>languages to pass thru (ommit to delete list)</desc></arg>
 	</args>
 </command>
 */
@@ -285,7 +279,7 @@ int command_alias_passthru(const char *argv[])
 	} /* command_alias_passthru() */
 
 /*
-<command>
+<command acl="ppad" helptopic="alias">
 	<name><word>alias</word><word>addon</word></name>
 	<desc>set alias parameters for use by a PPR extension</desc>
 	<args>

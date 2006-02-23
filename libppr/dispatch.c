@@ -25,10 +25,11 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 February 2006.
+** Last modified 22 February 2006.
 */
 
 #include "config.h"
+#include <string.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -36,6 +37,43 @@
 #include "global_defines.h"
 #include "util_exits.h"
 #include "dispatch.h"
+
+static char *username = NULL;
+
+/*
+** Is the last user set with dispatch_set_user() listed in the specified ACL?
+** Return TRUE if the operation is allowed.  The answer is cached.
+*/
+static gu_boolean acl_check(const char aclname[])
+	{
+	static gu_boolean answer = FALSE;
+	static char *answer_username = NULL;
+	static char *answer_aclname = NULL;
+
+	if(!answer_username || strcmp(username, answer_username) || strcmp(aclname, answer_aclname))
+		{
+		gu_free_if(answer_username);
+		gu_free_if(answer_aclname);
+		answer_username = gu_strdup(username);
+		answer_aclname = gu_strdup(aclname);
+		answer = user_acl_allows(username, aclname);
+		}
+
+	return answer;
+	} /* acl_check() */
+
+int dispatch_set_user(const char aclname[], const char new_username[])
+	{
+	/* If ACL checking is requested and the existing username
+	 * isn't in the ACL, refuse. */
+	if(aclname && !acl_check(aclname))
+		return -1;
+
+	/* It's ok.  Go ahead and accept the new username. */
+	gu_free_if(username);
+	username = gu_strdup(new_username);
+	return 0;
+	}
 
 /*
  * Locate a command in the command dispatch table.
@@ -208,9 +246,9 @@ static int help(const char myname[], const char *argv[])
 		gu_utf8_printf(_("Usage: %s help <topic>\n"), myname);
 		gu_utf8_printf(_("       %s help <command>\n"), myname);
 		gu_utf8_puts(_("Help topics:\n"));
-		gu_utf8_puts(_("    all -- show all commands\n"));
+		gu_utf8_printf(_("    %s -- %s\n"), _("all"), _("show all commands"));
 		for(iii=0; commands_help_topics[iii].name; iii++)
-			gu_utf8_printf("    %s -- %s\n", commands_help_topics[iii].name, commands_help_topics[iii].description);
+			gu_utf8_printf(_("    %s -- %s\n"), _(commands_help_topics[iii].name), _(commands_help_topics[iii].description));
 		return EXIT_OK;
 		}
 
@@ -238,7 +276,10 @@ static int help(const char myname[], const char *argv[])
 	struct COMMAND_NODE *cmd;
 	int num_words;
 	if((cmd = find_command(myname, argv, &num_words)))
+		{
 		help_describe_command(stdout, myname, argv, num_words, (struct COMMAND_ARG*)cmd->value);
+		return EXIT_OK;
+		}
 	}
 
 	gu_utf8_fprintf(stderr, _("%s: no such help topic or command\n"), myname);
@@ -262,6 +303,12 @@ int dispatch(const char myname[], const char *argv[])
 	if(!(cmd = find_command(myname, argv, &num_words)))
 		return EXIT_SYNTAX;
 
+	if(cmd->acl && !acl_check(cmd->acl))
+		{
+		gu_utf8_fprintf(stderr, _("%s: permission denied because user \"%s\" is not in PPR ACL \"%s\"\n"), myname, username, cmd->acl);
+		return EXIT_DENIED;
+		}
+	
 	return invoke_command(myname, argv, num_words, cmd);
 	} /* end of dispatch() */
 
