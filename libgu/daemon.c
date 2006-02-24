@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/daemon.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2005.
+** Last modified 23 February 2006.
 */
 
 /*! \file
@@ -62,7 +62,6 @@ such as closing all open files and setting the session id.
 */
 void gu_daemon(const char progname[], gu_boolean standalone, mode_t daemon_umask, const char lockfile[])
 	{
-	const char function[] = "gu_daemon";
 	int pid_fd;
 
 	/* Override inherited umask: */

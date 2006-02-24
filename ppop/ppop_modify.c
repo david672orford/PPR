@@ -91,13 +91,13 @@ static void read_addon(FILE *qf, struct JOB *job)
 
 		if(!(p = strchr(line, ':')))
 			{
-			fprintf(stderr, _("Invalid Addon line: %s\n"), line);
+			gu_utf8_fprintf(stderr, _("Invalid Addon line: %s\n"), line);
 			continue;
 			}
 
 		if(job->addon_count >= MAX_ADDON_LINES)
 			{
-			fprintf(stderr, X_("%s(): MAX_ADDON_LINES exceeded\n"), function);
+			gu_utf8_fprintf(stderr, X_("%s(): MAX_ADDON_LINES exceeded\n"), function);
 			continue;
 			}
 
@@ -210,7 +210,7 @@ static int modify_boolean(const char *name, const char *value, struct JOB *job, 
 	gu_boolean *p = (int*)JOB_OFFSET(job, offset);
 	if(gu_torf_setBOOL(p,value) == -1)
 		{
-		fprintf(stderr, _("The value \"%s\" is not boolean.\n"), value);
+		gu_utf8_fprintf(stderr, _("The value \"%s\" is not boolean.\n"), value);
 		return EXIT_SYNTAX;
 		}
 	return EXIT_OK;
@@ -220,7 +220,7 @@ static int modify_pagelist(const char *name, const char *value, struct JOB *job,
 	{
 	if(pagemask_encode(&job->qentry, value) == -1)
 		{
-		fprintf(stderr, _("The value \"%s\" is not a valid page list.\n"), value);
+		gu_utf8_fprintf(stderr, _("The value \"%s\" is not a valid page list.\n"), value);
 		return EXIT_SYNTAX;
 		}
 	return EXIT_OK;
@@ -243,7 +243,7 @@ static int modify_addon(const char *name, const char *value, struct JOB *job)
 
 	if(job->addon_count >= MAX_ADDON_LINES)
 		{
-		fprintf(stderr, X_("%s(): MAX_ADDON_LINES exceeded\n"), function);
+		gu_utf8_fprintf(stderr, X_("%s(): MAX_ADDON_LINES exceeded\n"), function);
 		return EXIT_INTERNAL;
 		}
 
@@ -290,7 +290,7 @@ static int dispatch(const char name[], const char value[], struct JOB *job)
 			}
 		}
 
-	fprintf(stderr, _("The job property \"%s\" does not exist or is not writable.\n"), name);
+	gu_utf8_fprintf(stderr, _("The job property \"%s\" does not exist or is not writable.\n"), name);
 	return EXIT_SYNTAX;
 	} /* end of dispatch() */
 
@@ -306,7 +306,7 @@ int ppop_modify(char *argv[])
 
 	if(!argv[0] || !argv[1])
 		{
-		fputs(_("Usage: ppop modify <jobname> <name>=<value> ...\n\n"
+		gu_utf8_fputs(_("Usage: ppop modify <jobname> <name>=<value> ...\n\n"
 				"This command sets the properties of an existing job.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
@@ -331,7 +331,7 @@ int ppop_modify(char *argv[])
 	/* Open that queue file. */
 	if(!(qf = fopen(job.qfname, "r")))
 		{
-		fprintf(stderr, _("Can't open \"%s\", errno=%d (%s).\n"), job.qfname, errno, gu_strerror(errno));
+		gu_utf8_fprintf(stderr, _("Can't open \"%s\", errno=%d (%s).\n"), job.qfname, errno, gu_strerror(errno));
 		return (errno == ENOENT) ? EXIT_NOTFOUND : EXIT_INTERNAL;
 		}
 
@@ -361,7 +361,7 @@ int ppop_modify(char *argv[])
 		/* Find the equals sign that separates the name and the value. */
 		if(!(ptr = strchr(argv[x], '=')))
 			{
-			fprintf(stderr, _("Parameter \"%s\" is not a name=value pair.\n"), argv[x]);
+			gu_utf8_fprintf(stderr, _("Parameter \"%s\" is not a name=value pair.\n"), argv[x]);
 			ret = EXIT_SYNTAX;
 			break;
 			}

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_utf8_printf.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 23 February 2006.
 */
 
 /*! \file
@@ -64,11 +64,13 @@ static int gu_utf8_wswidth(const char *string)
 union VALUE {
 	int integer;
 	char *character_pointer;
+	double floating_point;
 	};
 
 enum VALUE_TYPE {
 	VALUE_TYPE_INTEGER,
-	VALUE_TYPE_CHARACTER_POINTER
+	VALUE_TYPE_CHARACTER_POINTER,
+	VALUE_TYPE_FLOATING_POINT
 	};
 
 struct FSPEC {
@@ -263,6 +265,10 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					fspecs[findex].value_type = VALUE_TYPE_CHARACTER_POINTER;
 					aindex++;
 					break;
+				case 'f':
+					fspecs[findex].value_type = VALUE_TYPE_FLOATING_POINT;
+					aindex++;
+					break;
 				default:
 					gu_Throw("%s(): unrecognized format '%c' in \"%s\"", function, (char)wc, format);
 					break;
@@ -293,6 +299,9 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 						break;
 					case VALUE_TYPE_CHARACTER_POINTER:
 						fspecs[findex].value.character_pointer = va_arg(args, char*);
+						break;
+					case VALUE_TYPE_FLOATING_POINT:
+						fspecs[findex].value.floating_point = va_arg(args, double);
 						break;
 					}
 				break;
@@ -460,6 +469,20 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 						gu_fputwc(' ', f);
 						char_count++;
 						}
+					}
+					break;
+
+				/* floating point */
+				case 'f':
+					{
+					char format[32] = {'%', 0};
+					char buffer[32];
+					if(fspecs[findex].width > 0)
+						gu_snprintfcat(format, sizeof(format), "%d", fspecs[findex].width);
+					if(fspecs[findex].precision != -1)
+						gu_snprintfcat(format, sizeof(format), ".%d", fspecs[findex].precision);
+					gu_snprintfcat(format, sizeof(format), "d");
+					gu_snprintf(buffer, sizeof(buffer), format, fspecs[findex].value.floating_point);
 					}
 					break;
 				}

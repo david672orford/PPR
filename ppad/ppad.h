@@ -25,10 +25,22 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 February 2006.
+** Last modified 23 February 2006.
 */
 
 #include "libppr_query.h"
+
+/* break these functions since they don't do utf-8 to local charset conversion */
+#define printf() dont_printf()
+#define puts() dont_puts()
+#undef putc
+#define putc() dont_putc()
+#undef putline
+#define putline() dont_putline()
+
+#define fputc() dont_fputc()
+#define fputs() dont_fputs()
+#define fprintf() dont_fprintf()
 
 /* global functions and global variables in ppad.c */
 extern const char myname[];

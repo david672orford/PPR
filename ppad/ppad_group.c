@@ -25,13 +25,18 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2006.
+** Last modified 23 February 2006.
 */
 
-/*
-** This module is part of the administrators utility.  It contains the code
-** for those sub-commands which manipulate groups of printers.
-*/
+/*==============================================================
+** This module is part of the administrators utility.  It 
+** contains the code for those sub-commands which manipulate 
+** groups of printers.
+<helptopic>
+	<name>group</name>
+	<desc>all settings for groups</desc>
+</helptopic>
+==============================================================*/
 
 #include "config.h"
 #include <sys/stat.h>
@@ -87,7 +92,7 @@ int command_group_show(const char *argv[])
 		if((ptr = lmatchp(line, "Rotate:")))
 			{
 			if(gu_torf_setBOOL(&rotate,ptr) == -1)
-				fprintf(stderr, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
+				gu_utf8_fprintf(stderr, _("WARNING: invalid \"%s\" setting: %s\n"), "Rotate", ptr);
 			continue;
 			}
 		if(gu_sscanf(line, "Comment: %T", &ptr) == 1)
@@ -104,7 +109,7 @@ int command_group_show(const char *argv[])
 				}
 			else
 				{
-				fprintf(stderr, "%s(): too many members: %s\n", function, ptr);
+				gu_utf8_fprintf(stderr, "%s(): too many members: %s\n", function, ptr);
 				gu_free(ptr);
 				}
 			continue;
@@ -136,7 +141,7 @@ int command_group_show(const char *argv[])
 		if(line[0] >= 'a' && line[0] <= 'z')	/* if in addon name space */
 			{
 			if(addon_count >= MAX_ADDONS)
-				fprintf(stderr, "%s(): addon[] overflow\n", function);
+				gu_utf8_fprintf(stderr, "%s(): addon[] overflow\n", function);
 			else
 				addon[addon_count++] = gu_strdup(line);
 			continue;
@@ -149,51 +154,51 @@ int command_group_show(const char *argv[])
 
 	if(!machine_readable)
 		{
-		printf(_("Group name: %s\n"), group);
+		gu_utf8_printf(_("Group name: %s\n"), group);
 
-		printf(_("Comment: %s\n"), comment ? comment : "");
+		gu_utf8_printf(_("Comment: %s\n"), comment ? comment : "");
 
-		gu_puts(_("Members:"));
+		gu_utf8_puts(_("Members:"));
 		for(x=0;x<member_count;x++)		/* Show what printers are members. */
 			{
 			if(x==0)
-				printf(" %s", members[x]);
+				gu_utf8_printf(" %s", members[x]);
 			else
-				printf(", %s", members[x]);
+				gu_utf8_printf(", %s", members[x]);
 			}
 		putchar('\n');					/* End group members line. */
 
-		printf(_("Rotate: %s\n"), rotate ? _("True") : _("False"));
+		gu_utf8_printf(_("Rotate: %s\n"), rotate ? _("True") : _("False"));
 
 		{
 		const char *s = _("Default Filter Options: ");
-		gu_puts(s);
+		gu_utf8_puts(s);
 		if(deffiltopts)
 			print_wrapped(deffiltopts, strlen(s));
 		putchar('\n');
 		}
 
-		gu_puts(_("Switchset: "));
+		gu_utf8_puts(_("Switchset: "));
 		if(switchset)
 			print_switchset(switchset);
 		putchar('\n');
 
 		/* This rare parameter is shown only when it has a value. */
 		if(passthru)
-			printf(_("PassThru types: %s\n"), passthru);
+			gu_utf8_printf(_("PassThru types: %s\n"), passthru);
 
 		/* Only displayed if set. */
 		if(acls)
-			printf(_("ACLs: %s\n"), acls);
+			gu_utf8_printf(_("ACLs: %s\n"), acls);
 
 		/* Print the assembed addon settings. */
 		if(addon_count > 0)
 			{
 			int x;
-			gu_puts(_("Addon:"));
+			gu_utf8_puts(_("Addon:"));
 			for(x = 0; x < addon_count; x++)
 				{
-				printf("\t%s\n", addon[x]);
+				gu_utf8_printf("\t%s\n", addon[x]);
 				gu_free(addon[x]);
 				}
 			}
@@ -201,17 +206,17 @@ int command_group_show(const char *argv[])
 		}
 	else
 		{
-		printf("name\t%s\n", group);
-		printf("comment\t%s\n", comment ? comment : "");
-		gu_puts("members\t");
+		gu_utf8_printf("name\t%s\n", group);
+		gu_utf8_printf("comment\t%s\n", comment ? comment : "");
+		gu_utf8_puts("members\t");
 		for(x=0; x < member_count; x++)
-			printf("%s%s", x > 0 ? " " : "", members[x]);
-		gu_puts("\n");
-		printf("rotate\t%s\n", rotate ? "yes" : "no");
-		printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
-		gu_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
-		printf("passthru\t%s\n", passthru ? passthru : "");
-		printf("acls\t%s\n", acls ? acls : "");
+			gu_utf8_printf("%s%s", x > 0 ? " " : "", members[x]);
+		gu_utf8_puts("\n");
+		gu_utf8_printf("rotate\t%s\n", rotate ? "yes" : "no");
+		gu_utf8_printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
+		gu_utf8_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_utf8_printf("passthru\t%s\n", passthru ? passthru : "");
+		gu_utf8_printf("acls\t%s\n", acls ? acls : "");
 
 		/* Addon lines */
 		if(addon_count > 0)
@@ -225,11 +230,11 @@ int command_group_show(const char *argv[])
 					*p = '\0';
 					p++;
 					p += strspn(p, " \t");
-					printf("addon %s\t%s\n", addon[x], p);
+					gu_utf8_printf("addon %s\t%s\n", addon[x], p);
 					}
 				else
 					{
-					printf("addon\t%s\n", addon[x]);
+					gu_utf8_printf("addon\t%s\n", addon[x]);
 					}
 				gu_free(addon[x]);
 				}
@@ -295,7 +300,7 @@ int command_group_rotate(const char *argv[])
 
 	if(gu_torf_setBOOL(&newstate,argv[1]) == -1)
 		{
-		fputs(_("Value must be \"true\" or \"false\".\n"), stderr);
+		gu_utf8_fputs(_("Value must be \"true\" or \"false\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -314,13 +319,13 @@ static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 
 	if(strpbrk(group, DEST_DISALLOWED))
 		{
-		fputs(_("Group name contains a disallowed character.\n"), stderr);
+		gu_utf8_fputs(_("Group name contains a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)group[0]))
 		{
-		fputs(_("Group name begins with a disallowed character.\n"), stderr);
+		gu_utf8_fputs(_("Group name begins with a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -413,7 +418,7 @@ static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 	gu_Catch
 		{
 		conf_abort(obj);		/* roll back the changes */
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
@@ -517,7 +522,7 @@ int group_remove_internal(const char *group, const char *member)
 	gu_Catch
 		{
 		conf_abort(obj);
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 
@@ -550,13 +555,13 @@ int command_group_remove(const char *argv[])
 			case EXIT_OK:				/* continue if no error yet */
 				break;
 			case EXIT_BADDEST:
-				fprintf(stderr, _("The group \"%s\" does not exist.\n"), group);
+				gu_utf8_fprintf(stderr, _("The group \"%s\" does not exist.\n"), group);
 				return EXIT_BADDEST;
 			case EXIT_NOTFOUND:
-				fprintf(stderr, _("The group \"%s\" does not have a member called \"%s\".\n"), group, argv[x]);
+				gu_utf8_fprintf(stderr, _("The group \"%s\" does not have a member called \"%s\".\n"), group, argv[x]);
 				return EXIT_NOTFOUND;
 			default:
-				fprintf(stderr, "%s(): assertion failed\n", function);
+				gu_utf8_fprintf(stderr, "%s(): assertion failed\n", function);
 				return EXIT_INTERNAL;
 			}
 		}
@@ -590,12 +595,12 @@ int command_group_delete(const char *argv[])
 		{
 		if(errno==ENOENT)
 			{
-			fprintf(stderr, _("The group \"%s\" does not exist.\n"), group);
+			gu_utf8_fprintf(stderr, _("The group \"%s\" does not exist.\n"), group);
 			return EXIT_BADDEST;
 			}
 		else
 			{
-			fprintf(stderr, "unlink(\"%s\") failed, errno=%d\n",fname,errno);
+			gu_utf8_fprintf(stderr, "unlink(\"%s\") failed, errno=%d\n",fname,errno);
 			return EXIT_INTERNAL;
 			}
 		}
@@ -645,7 +650,7 @@ int command_group_switchset(const char *argv[])
 	/* convert the switch set to a line */
 	if(make_switchset_line(newset, &argv[1]))
 		{
-		fputs(_("Bad set of switches.\n"), stderr);
+		gu_utf8_fputs(_("Bad set of switches.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -696,7 +701,7 @@ int group_deffiltopts_internal(const char *group)
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -782,7 +787,7 @@ int command_group_addon(const char *argv[])
 
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
-		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
+		gu_utf8_fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 

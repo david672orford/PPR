@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_util.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2005.
+** Last modified 23 February 2006.
 */
 
 #include "config.h"
@@ -133,7 +133,7 @@ void write_fifo(const char string[], ... )
 	FIFO = fdopen(fifo, "w");
 
 	va_start(va, string);
-	vfprintf(FIFO, string, va);
+	gu_utf8_vfprintf(FIFO, string, va);
 	va_end(va);
 
 	fclose(FIFO);
@@ -231,24 +231,24 @@ void print_switchset(char *switchset)
 			{
 			char *p;
 			if((p = strchr(argument, '=')) && strcspn(p+1, " \t=*") != strlen(p+1))
-				printf("--%.*s='%s'", (int)strcspn(argument, "="), argument, p+1);
+				gu_utf8_printf("--%.*s='%s'", (int)strcspn(argument, "="), argument, p+1);
 			else
-				printf("--%s", argument);
+				gu_utf8_printf("--%s", argument);
 			}
 
 		/* short option with no argument */
 		else if(argument[0] == '\0')
 			{
-			printf("-%c", optchar);
+			gu_utf8_printf("-%c", optchar);
 			}
 
 		/* short option with argument, */
 		else
 			{
 			if(strcspn(argument, " \t=*") != strlen(argument))	/* if contains spaces, */
-				printf("-%c '%s'", optchar, argument);			/* embed optarg in quotes */
+				gu_utf8_printf("-%c '%s'", optchar, argument);	/* embed optarg in quotes */
 			else												/* not spaces, */
-				printf("-%c %s", optchar, argument);			/* no quotes */
+				gu_utf8_printf("-%c %s", optchar, argument);	/* no quotes */
 			}
 
 		x += strlen(argument);			/* move past this one */
@@ -267,20 +267,21 @@ int print_wrapped(const char *text, int starting_column)
 	int out_len = starting_column;
 	int word_len;
 
-	opts_len = strlen(text);					/* determine total length of options */
+	opts_len = strlen(text);						/* determine total length of options */
 
 	for(x=0; x < opts_len; x++)						/* while options remain */
 		{
-		word_len = strcspn(&text[x], " \t"); /* how long is this element? */
+		word_len = strcspn(&text[x], " \t");		/* how long is this element? */
 
 		if((out_len+word_len+1) >= 80)				/* If leading space and element */
 			{										/* will not fit, */
-			gu_puts("\n    ");							/* start a new line. */
+			gu_utf8_puts("\n    ");					/* start a new line. */
 			out_len = 4 + word_len;
 			}
 		else										/* Otherwise, */
 			{										/* add to this one */
-			if(x) putchar(' ');
+			if(x)
+				gu_putwc(' ');
 			out_len++;								/* a space */
 			out_len += word_len;					/* and the element. */
 			}

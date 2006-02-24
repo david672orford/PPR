@@ -208,7 +208,8 @@ else
 #===========================================================
 if(defined $ENV{TCPBIND_SOCKETS})
 	{
-	$SIG{CHLD} = "IGNORE";
+	# What was this for?  Whatever it was for, it doesn't seem to work right.
+	#$SIG{CHLD} = "IGNORE";
 
 	my %fds = ();
 	my $master_fdset = "";

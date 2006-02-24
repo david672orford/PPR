@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/lprsrv/lprsrv.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 20 October 2005.
+** Last modified 23 February 2006.
 */
 
 /*
@@ -160,7 +160,6 @@ static void help(FILE *outfile)
 */
 static int real_main(int argc,char *argv[])
 	{
-	const char function[] = "main";
 	char client_dns_name[MAX_HOSTNAME+1];
 	char client_ip[16];
 	int client_port;

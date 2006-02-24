@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/Makefile
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 September 2005.
+# Last modified 23 February 2006.
 #
 
 #
@@ -176,6 +176,9 @@ symlinks-save: clean
 
 #=== Housekeeping ===========================================================
 
+ctags:
+	ctags -R
+
 # Update the .depend file in each directory.
 depend:
 	@for i in $(SUBDIRS) $(SUBDIRS_CLEAN_ONLY); \
@@ -205,6 +208,7 @@ clean:
 	( cd nonppr_misc && $(RMF) $(BACKUPS) )
 	find . -name core -exec rm -f {} \; -print
 	find . -name .tedfilepos -exec rm -f {} \; -print
+	$(RMF) tags
 	@echo
 	@echo "All clean."
 	@echo

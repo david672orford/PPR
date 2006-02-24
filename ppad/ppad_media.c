@@ -25,13 +25,18 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 8 February 2006.
+** Last modified 23 February 2006.
 */
 
-/*
-** This module is part of ppad(8), PPR's administration program for PostScript
-** page printers.  This module contains the media database management routines.
-*/
+/*============================================================================
+** This module is part of ppad(8), PPR's administration program for
+** PostScript page printers.  This module contains the media database
+** management routines.
+<helptopic>
+	<name>media</name>
+	<desc>all settings for media list</desc>
+</helptopic>
+============================================================================*/
 
 #include "config.h"
 #include <unistd.h>
@@ -70,7 +75,7 @@ static void get_answer(char *buffer, int len, const char *argv[], int *index)
 			exit(1);							/* can't correct errors */
 		strncpy(buffer, argv[(*index)++], len-1);
 		buffer[len-1] = '\0';
-		printf("%s\n", buffer);
+		gu_utf8_printf("%s\n", buffer);
 		}
 	else
 		{
@@ -89,7 +94,7 @@ static double ppad_convert_dimension(const char *string)
 
 	if((answer = convert_dimension(string)) < 0)
 		{
-		fputs(_("Unknown unit specifier.\n"), stderr);
+		gu_utf8_fputs(_("Unknown unit specifier.\n"), stderr);
 		return -1;
 		}
 
@@ -111,7 +116,7 @@ static FILE *open_database(const char mode[])
 			if(errno == ENOENT && i-- > 0)
 				{
 				int fd;
-				printf(_("Creating media file \"%s\".\n"), MEDIAFILE);
+				gu_utf8_printf(_("Creating media file \"%s\".\n"), MEDIAFILE);
 				if((fd = open(MEDIAFILE, O_WRONLY | O_CREAT, UNIX_644)) == -1)
 					fatal(EXIT_INTERNAL, _("Can't create media file \"%s\", errno=%d (%s)"), MEDIAFILE, errno, gu_strerror(errno));
 				close(fd);
@@ -152,7 +157,7 @@ int command_media_put(const char *argv[])
 	int index=0;
 
 	/* get the name of the medium to be added or changed */
-	printf(_("Medium Name: "));
+	gu_utf8_printf(_("Medium Name: "));
 	get_answer(asciiz,sizeof(asciiz),argv,&index);
 	ASCIIZ_to_padded(padded,asciiz,sizeof(padded));
 
@@ -172,13 +177,13 @@ int command_media_put(const char *argv[])
 	ASCIIZ_to_padded(media.medianame,asciiz,sizeof(media.medianame));
 
 	/* width */
-	printf("\n");
-	printf(_("Accurate width is required.\n"));
+	gu_utf8_printf("\n");
+	gu_utf8_printf(_("Accurate width is required.\n"));
 	do	{
 		double x;
 		if(exists)
 			{
-			printf(_("Width: (%.2f in, %.1f pt, %.1f cm) "),
+			gu_utf8_printf(_("Width: (%.2f in, %.1f pt, %.1f cm) "),
 							media.width/72.0,
 							media.width,
 							media.width / 72.0 * 2.54 );
@@ -200,7 +205,7 @@ int command_media_put(const char *argv[])
 		else
 			{
 			do	{
-				printf(_("Width: "));
+				gu_utf8_printf(_("Width: "));
 				get_answer(asciiz,sizeof(asciiz),argv,&index);
 				} while(*asciiz == '\0');
 			x=ppad_convert_dimension(asciiz);
@@ -215,13 +220,13 @@ int command_media_put(const char *argv[])
 		} while(inerror);
 
 	/* height */
-	printf("\n");
-	printf(_("Accurate height is required.\n"));
+	gu_utf8_printf("\n");
+	gu_utf8_printf(_("Accurate height is required.\n"));
 	do	{
 		double x;
 		if(exists)
 			{
-			printf(_("Height: (%.2f in, %.1f pt, %.1f cm) "),
+			gu_utf8_printf(_("Height: (%.2f in, %.1f pt, %.1f cm) "),
 							media.height/72.0,
 							media.height,
 							media.height / 72.0 * 2.54 );
@@ -243,7 +248,7 @@ int command_media_put(const char *argv[])
 		else								/* does not already exist */
 			{
 			do	{							/* keep asking until answered */
-				printf(_("Height: "));
+				gu_utf8_printf(_("Height: "));
 				get_answer(asciiz,sizeof(asciiz),argv,&index);
 				} while(*asciiz == '\0');
 			x=ppad_convert_dimension(asciiz);	 /* convert to points */
@@ -258,11 +263,11 @@ int command_media_put(const char *argv[])
 		} while(inerror);
 
 	/* weight */
-	printf("\n");
-	printf(_("If weight is unknown, enter \"0\".\n"));
+	gu_utf8_printf("\n");
+	gu_utf8_printf(_("If weight is unknown, enter \"0\".\n"));
 	if(exists)
 		{
-		printf(_("Weight: (%.1f grams per square metre) "), media.weight);
+		gu_utf8_printf(_("Weight: (%.1f grams per square metre) "), media.weight);
 		get_answer(asciiz,sizeof(asciiz),argv,&index);
 		if(*asciiz)
 			media.weight = atoi(asciiz);
@@ -270,7 +275,7 @@ int command_media_put(const char *argv[])
 	else
 		{
 		do	{
-			printf(_("Weight (grams per square metre): "));
+			gu_utf8_printf(_("Weight (grams per square metre): "));
 			get_answer(asciiz,sizeof(asciiz), argv, &index);
 			inerror = -1;
 			} while(*asciiz == '\0');
@@ -279,12 +284,12 @@ int command_media_put(const char *argv[])
 	inerror=0;
 
 	/* Ask for the PostScript colour name. */
-	printf("\n");
-	printf(_("Colour must be specified.\n"));
+	gu_utf8_printf("\n");
+	gu_utf8_printf(_("Colour must be specified.\n"));
 	padded_to_ASCIIZ(asciiz, media.colour, sizeof(media.colour));
 	if(exists && *asciiz)
 		{
-		printf(_("Colour: (%s) "), asciiz);
+		gu_utf8_printf(_("Colour: (%s) "), asciiz);
 		get_answer(asciiz, sizeof(asciiz), argv, &index);
 		if(*asciiz)
 			{
@@ -294,15 +299,15 @@ int command_media_put(const char *argv[])
 	else			   /* If new entry */
 		{			   /* insist on an answer */
 		do	{
-			printf(_("Colour: "));
+			gu_utf8_printf(_("Colour: "));
 			get_answer(asciiz, sizeof(asciiz), argv, &index);
 			} while(*asciiz == '\0');
 		ASCIIZ_to_padded(media.colour,asciiz,sizeof(media.colour));
 		}
 
 	/* read the PostScript type */
-	printf("\n");
-	printf(_("Recomended types are:	 19HoleCerlox, 3Hole, 2Hole,\n"
+	gu_utf8_printf("\n");
+	gu_utf8_printf(_("Recomended types are:	 19HoleCerlox, 3Hole, 2Hole,\n"
 		"\tColorTransparency, CorpLetterHead, CorpLogo,\n"
 		"\tCustLetterHead, DeptLetterHead, Labels, Tabs\n"
 		"\tTransparency, and UserLetterHead\n"
@@ -311,7 +316,7 @@ int command_media_put(const char *argv[])
 	padded_to_ASCIIZ(asciiz, media.type, sizeof(media.type));
 	if( exists && *asciiz )
 		{
-		printf(_("Pre-printed Form Type: (%s) "), asciiz);
+		gu_utf8_printf(_("Pre-printed Form Type: (%s) "), asciiz);
 		get_answer(asciiz, sizeof(asciiz), argv, &index);
 		if(*asciiz)
 			{
@@ -323,14 +328,14 @@ int command_media_put(const char *argv[])
 		}
 	else
 		{
-		printf(_("Pre-printed Form Type: "));
+		gu_utf8_printf(_("Pre-printed Form Type: "));
 		get_answer(asciiz,sizeof(asciiz),argv,&index);
 		ASCIIZ_to_padded(media.type,asciiz,sizeof(media.type));
 		}
 
 	/* get suitability for banners and trailers */
-	printf("\n");
-	printf(_("Rank on a scale of 1 to 10, with 1 being entirely unsuitable.\n"));
+	gu_utf8_printf("\n");
+	gu_utf8_printf(_("Rank on a scale of 1 to 10, with 1 being entirely unsuitable.\n"));
 	if(exists)
 		{
 		#ifdef GNUC_HAPPY
@@ -339,7 +344,7 @@ int command_media_put(const char *argv[])
 		int t;
 		#endif
 		do	{
-			printf(_("Suitability for banners and trailers: (%d) "), media.flag_suitability);
+			gu_utf8_printf(_("Suitability for banners and trailers: (%d) "), media.flag_suitability);
 			get_answer(asciiz,sizeof(asciiz),argv,&index);
 			} while( *asciiz && (t=atoi(asciiz)) < 1 && t > 10 );
 		if(*asciiz)		/* if something entered */
@@ -349,7 +354,7 @@ int command_media_put(const char *argv[])
 		{
 		int t;
 		do	{
-			printf(_("Suitability for banners and trailers: "));
+			gu_utf8_printf(_("Suitability for banners and trailers: "));
 			get_answer(asciiz,sizeof(asciiz),argv,&index);
 			} while( (t=atoi(asciiz)) < 1 || t > 10 );
 		media.flag_suitability=t;
@@ -385,7 +390,7 @@ int command_media_show(const char *argv[])
 	int all;
 	int ret = EXIT_OK;
 
-	printf(_("Medium Name: "));
+	gu_utf8_printf(_("Medium Name: "));
 	get_answer(asciiz, sizeof(asciiz), argv, &index);
 
 	if(strcmp(asciiz, "all") == 0)
@@ -406,30 +411,30 @@ int command_media_show(const char *argv[])
 			{
 			if(! all)
 				{
-				fprintf(stderr, _("Medium \"%s\" not found.\n"), asciiz);
+				gu_utf8_fprintf(stderr, _("Medium \"%s\" not found.\n"), asciiz);
 				ret = EXIT_NOTFOUND;
 				}
 			break;
 			}
 		if( all || (memcmp(media.medianame,padded,sizeof(media.medianame))==0) )
 			{
-			printf("\n");
+			gu_utf8_printf("\n");
 
 			if(all)				/* if displaying all, the medium name is not obvious */
-				printf(_("Medium Name: %16.16s\n"), media.medianame);
+				gu_utf8_printf(_("Medium Name: %16.16s\n"), media.medianame);
 
-			printf(_("Width: %.2f inches, %.1f points, %.1f centimetres\n"),
+			gu_utf8_printf(_("Width: %.2f inches, %.1f points, %.1f centimetres\n"),
 									media.width/72.0,
 									media.width,
 									media.width/72.0*2.54 );
-			printf(_("Height: %.2f inches, %.1f points, %.1f centimetres\n"),
+			gu_utf8_printf(_("Height: %.2f inches, %.1f points, %.1f centimetres\n"),
 									media.height/72.0,
 									media.height,
 									media.height/72.0*2.54 );
-			printf(_("Weight: %.1f grams per square metre\n"), media.weight);
-			printf(_("Colour: %16.16s\n"), media.colour);
-			printf(_("Pre-printed Form Type: %16.16s\n"), media.type);
-			printf(_("Banner/Trailer suitability: %d\n"), media.flag_suitability);
+			gu_utf8_printf(_("Weight: %.1f grams per square metre\n"), media.weight);
+			gu_utf8_printf(_("Colour: %16.16s\n"), media.colour);
+			gu_utf8_printf(_("Pre-printed Form Type: %16.16s\n"), media.type);
+			gu_utf8_printf(_("Banner/Trailer suitability: %d\n"), media.flag_suitability);
 
 			if( ! all ) break;
 			}
@@ -458,7 +463,7 @@ int command_media_delete(const char *argv[])
 	char asciiz[sizeof(media.medianame)+2];
 	char padded[sizeof(media.medianame)];
 
-	printf(_("Media Name: "));
+	gu_utf8_printf(_("Media Name: "));
 	get_answer(asciiz,sizeof(asciiz),argv,&index);
 	ASCIIZ_to_padded(padded,asciiz,sizeof(padded));
 
@@ -469,7 +474,7 @@ int command_media_delete(const char *argv[])
 		if(fread(&media,sizeof(struct Media),1,ffile) == 0)
 			{
 			fclose(ffile);
-			fprintf(stderr, _("Medium \"%s\" not found.\n"), asciiz);
+			gu_utf8_fprintf(stderr, _("Medium \"%s\" not found.\n"), asciiz);
 			return EXIT_NOTFOUND;
 			}
 		if(memcmp(media.medianame,padded,sizeof(media.medianame))==0)
@@ -485,7 +490,7 @@ int command_media_delete(const char *argv[])
 
 			ftruncate(fileno(ffile), (long int)(ftell(ffile)-sizeof(struct Media)));
 			fclose(ffile);
-			printf(_("Medium deleted.\n"));
+			gu_utf8_printf(_("Medium deleted.\n"));
 			return EXIT_OK;
 			}
 		}
@@ -509,7 +514,7 @@ int command_media_export(const char *argv[])
 
 	ffile = open_database("rb");
 
-	puts("#! /bin/sh");
+	gu_utf8_putline("#! /bin/sh");
 
 	while(fread(&media,sizeof(struct Media),1,ffile) == 1 )
 		{
@@ -517,7 +522,7 @@ int command_media_export(const char *argv[])
 		padded_to_ASCIIZ(colour,media.colour,sizeof(media.colour));
 		padded_to_ASCIIZ(type,media.type,sizeof(media.type));
 
-		printf("ppad media put \"%s\" \"%.1f pt\" \"%.1f pt\" %.1f \"%s\" \"%s\" %d\n",
+		gu_utf8_printf("ppad media put \"%s\" \"%.1f pt\" \"%.1f pt\" %.1f \"%s\" \"%s\" %d\n",
 				name,
 				media.width,
 				media.height,
@@ -559,7 +564,7 @@ int command_media_import(const char *argv[])
 		{
 		if(!(f = fopen(filename, "r")))
 			{
-			fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), filename, errno, gu_strerror(errno));
+			gu_utf8_fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), filename, errno, gu_strerror(errno));
 			return EXIT_NOTFOUND;
 			}
 		}
@@ -575,7 +580,7 @@ int command_media_import(const char *argv[])
 			{
 			if(i == MAX_CMD_WORDS)
 				{
-				puts(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
+				gu_utf8_putline(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
 				ar[i] = NULL;
 				break;
 				}
@@ -592,7 +597,7 @@ int command_media_import(const char *argv[])
 			}
 		else
 			{
-			fprintf(stderr, _("Command on line %d is not ppad media put.\n"), linenum);
+			gu_utf8_fprintf(stderr, _("Command on line %d is not ppad media put.\n"), linenum);
 			break;
 			}
 		}

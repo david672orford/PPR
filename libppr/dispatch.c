@@ -204,7 +204,6 @@ static void help_topic_display(int index)
 	sp = 0;
 	while(TRUE)
 		{
-		/*printf("sp=%d, stack[sp].table_index=%d\n", sp, stack[sp].table_index);*/
 		if(!stack[sp].cmd[stack[sp].table_index].name)
 			{
 			sp--;
@@ -222,7 +221,7 @@ static void help_topic_display(int index)
 				stack[sp].table_index = 0;
 				continue;					/* skip table_index increment */
 			case COMMAND_NODE_LEAF:
-				if(index == -1 || stack[sp].cmd[stack[sp].table_index].helptopics & (2 ^ index))
+				if(index == -1 || stack[sp].cmd[stack[sp].table_index].helptopics & (1<<index))
 					{
 					int iii;
 					for(iii=0; iii <= sp; iii++)

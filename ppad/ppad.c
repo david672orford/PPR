@@ -25,14 +25,18 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2006.
+** Last modified 23 February 2006.
 */
 
-/*
+/*===========================================================================
 ** Administration program for PostScript page printers.  This program
-** edits the media database and edits printer and group configuration
+** edits the media list and edits printer and group configuration
 ** files.
-*/
+<helptopic>
+	<name>misc</name>
+	<desc>miscelanious command</desc>
+</helptopic>
+===========================================================================*/
 
 #include "config.h"
 #include <unistd.h>
@@ -65,16 +69,16 @@ void fatal(int exitval, const char *message, ...)
 	va_list va;
 
 	va_start(va,message);
-	fputs(_("Fatal: "), stderr);
-	vfprintf(stderr,message,va);
-	fputc('\n', stderr);
+	gu_utf8_fputs(_("Fatal: "), stderr);
+	gu_utf8_vfprintf(stderr,message,va);
+	gu_fputwc('\n', stderr);
 	va_end(va);
 
 	exit(exitval);
 	} /* end of fatal() */
 
 /*
-<command>
+<command helptopics="misc">
 	<name><word>remind</word></name>
 	<desc>send reminder e-mail about printer problems</desc>
 	<args>
@@ -105,23 +109,23 @@ static void help(void)
 		NULL
 		};
 
-	fputs(_("Valid switches:\n"), stdout);
+	gu_utf8_putline(_("Valid switches:\n"));
 	for(i = 0; switch_list[i]; i++)
 		{
 		const char *p = gettext(switch_list[i]);
 		int to_tab = strcspn(p, "\t");
-		printf("    %-20.*s %s\n", to_tab, p, p[to_tab] == '\t' ? &p[to_tab + 1] : "");
+		gu_utf8_printf("    %-20.*s %s\n", to_tab, p, p[to_tab] == '\t' ? &p[to_tab + 1] : "");
 		}
 
-	fputc('\n', stderr);
+	gu_fputwc('\n', stderr);
 
 	{
 	const char *args[] = {"help", NULL};
 	dispatch(myname, args);
 	}
 
-	fputc('\n', stderr);
-	printf(_("The %s manpage may be viewed by entering this command at a shell prompt:\n"
+	gu_fputwc('\n', stderr);
+	gu_utf8_printf(_("The %s manpage may be viewed by entering this command at a shell prompt:\n"
 		"    ppdoc %s\n"), "ppad(1)", "ppad");
 	} /* help() */
 
@@ -142,17 +146,17 @@ static int interactive_mode(void)
 
 	if( ! machine_readable )
 		{
-		puts(_("PPAD, Page Printer Administrator's utility"));
-		puts(VERSION);
-		puts(COPYRIGHT);
-		puts(AUTHOR);
-		puts("");
-		puts(_("Type \"help\" for command list, \"exit\" to quit."));
-		puts("");
+		gu_utf8_putline(_("PPAD, Page Printer Administrator's utility"));
+		gu_utf8_putline(VERSION);
+		gu_utf8_putline(COPYRIGHT);
+		gu_utf8_putline(AUTHOR);
+		gu_utf8_putline("");
+		gu_utf8_putline(_("Type \"help\" for command list, \"exit\" to quit."));
+		gu_utf8_putline("");
 		}
 	else				/* terse, machine readable banner */
 		{
-		puts("*READY\t"VERSION);
+		gu_utf8_putline("*READY\t"VERSION);
 		fflush(stdout);
 		}
 
@@ -173,7 +177,7 @@ static int interactive_mode(void)
 			{
 			if(x == MAX_CMD_WORDS)
 				{
-				puts(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
+				gu_utf8_putline(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
 				ar[x] = NULL;
 				break;
 				}
@@ -212,15 +216,15 @@ static int interactive_mode(void)
 		if((errorlevel = dispatch(myname, (const char **)&ar[x])) < 0)
 			{
 			if( ! machine_readable )					/* A human gets english */
-				puts("Try \"help\" or \"exit\".");
+				gu_utf8_putline("Try \"help\" or \"exit\".");
 			else										/* A program gets a code */
-				puts("*UNKNOWN");
+				gu_utf8_putline("*UNKNOWN");
 
 			errorlevel = EXIT_SYNTAX;
 			}
-		else if(machine_readable)				/* If a program is reading our output, */
-			{									/* say the command is done */
-			printf("*DONE\t%d\n ", errorlevel); /* and tell the exit code. */
+		else if(machine_readable)						/* If a program is reading our output, */
+			{											/* say the command is done */
+			gu_utf8_printf("*DONE\t%d\n ", errorlevel); /* and tell the exit code. */
 			}
 
 		if(machine_readable)					/* In machine readable mode output */
@@ -263,7 +267,7 @@ int main(int argc, char *argv[])
 	uid_t uid = getuid();
 	if((pw = getpwuid(uid)) == (struct passwd *)NULL)
 		{
-		fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
+		gu_utf8_fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 	dispatch_set_user(NULL, pw->pw_name);
@@ -293,13 +297,13 @@ int main(int argc, char *argv[])
 			case 1001:							/* --version */
 				if(machine_readable)
 					{
-					puts(SHORT_VERSION);
+					gu_utf8_putline(SHORT_VERSION);
 					}
 				else
 					{
-					puts(VERSION);
-					puts(COPYRIGHT);
-					puts(AUTHOR);
+					gu_utf8_putline(VERSION);
+					gu_utf8_putline(COPYRIGHT);
+					gu_utf8_putline(AUTHOR);
 					}
 				exit(EXIT_OK);
 

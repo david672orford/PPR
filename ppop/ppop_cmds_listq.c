@@ -258,15 +258,15 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 			break;
 
 		case STATUS_CANCEL:				/* <--- job is being canceled */
-			printf("being canceled\n");
+			gu_utf8_printf("being canceled\n");
 			break;
 
 		case STATUS_SEIZING:
-			printf("being seized\n");
+			gu_utf8_printf("being seized\n");
 			break;
 
 		case STATUS_FINISHED:
-			printf("finished\n");
+			gu_utf8_printf("finished\n");
 			break;
 
 		default:						/* <--- job is being printed */
@@ -277,7 +277,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 				int pages_started;
 				int pages_printed;
 
-				printf("printing on %s\n", onprinter);
+				gu_utf8_printf("printing on %s\n", onprinter);
 
 				/*
 				** If we are handed the open queue file, get the values
@@ -299,7 +299,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 					{
 					int x;
 					for(x=0; x < reason_indent; x++)			/* indent */
-						fputc(' ', stdout);
+						gu_putwc(' ');
 
 					/* Print percent of bytes sent. */
 					{
@@ -309,26 +309,26 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 								: qentryfile->attr.postscript_bytes;
 
 					if(total_bytes == 0)						/* !!! a bug somewhere !!! */
-						printf("bug%%");
+						gu_utf8_printf("bug%%");
 					else
-						printf("%d%%", (int)(((double)bytes_sent / (double)total_bytes) * 100.0 + 0.5));
+						gu_utf8_printf("%d%%", (int)(((double)bytes_sent / (double)total_bytes) * 100.0 + 0.5));
 					}
 
 					/* Print number of pages started. */
 					if(qentryfile->attr.pages > 0 || pages_started > 0 || pages_printed)
-						printf(", page %d", pages_started);
+						gu_utf8_printf(", page %d", pages_started);
 
 					/* How many pages does the printer report are completed? */
 					if(pages_printed > 0)
-						printf(" (%d)", pages_printed);
+						gu_utf8_printf(" (%d)", pages_printed);
 
-					fputc('\n', stdout);
+					gu_putwc('\n');
 					}
 
 				}
 			else		/* if hit default case but not a positive status */
 				{
-				fputs("unknown status\n", stdout);
+				gu_utf8_puts("unknown status\n");
 				}
 		} /* end of switch */
 
@@ -517,7 +517,7 @@ int custom_list(char *argv[],
 					&destname, &id, &subid,
 					&priority, &status, &onprinter, &never, &notnow, &pass, &arrest_time) < 6)
 				{
-				printf("Invalid response line: %s", line);
+				gu_utf8_printf("Invalid response line: %s", line);
 				if(destname)
 					gu_free(destname);
 				if(onprinter)
@@ -531,7 +531,7 @@ int custom_list(char *argv[],
 			*/
 			qentryfile_clear(&qentryfile);
 			if(qentryfile_load(&qentryfile, reply_file) == -1)
-				printf("Invalid queue entry:\n");
+				gu_utf8_printf("Invalid queue entry:\n");
 
 			/* Copy everything into a QEntry structure for easy parameter passing. */
 			qentry.id = id;
@@ -599,7 +599,7 @@ int custom_list(char *argv[],
 ================================================================*/
 static void ppop_list_help(void)
 	{
-	fputs(_("Usage: ppop list {all, <printer>, <group> , <job>} ...\n\n"
+	gu_utf8_fputs(_("Usage: ppop list {all, <printer>, <group> , <job>} ...\n\n"
 		"This command will print information about the specified jobs.\n"
 		"Jobs may be specified by job id, by queue, or \"all\" may\n"
 		"be specified.  Multiple specifications may be used with this\n"
@@ -703,7 +703,7 @@ static const char *count_suffix(int count)
 */
 static void ppop_lpq_help(void)
 	{
-	fputs(_("Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n\n"
+	gu_utf8_fputs(_("Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n\n"
 		"The \"ppop lpq\" subcommand prints a queue listing in a format\n"
 		"similiar to that of the Berkeley Unix \"lpq\" command.\n"), stderr);
 	}
@@ -777,12 +777,12 @@ static void ppop_lpq_banner_progress(const char *printer_job_destname, int print
 		if(bytes_tosend == 0)
 			fatal(EXIT_INTERNAL, "ppop_lpq_banner_progress(): assertion failed");
 
-		printf(" (%d%% sent", (int)((bytes_sent*(long)100) / bytes_tosend));
+		gu_utf8_printf(" (%d%% sent", (int)((bytes_sent*(long)100) / bytes_tosend));
 
 		if(pages_printed > 0 && pages > 0)
-			printf(", %d of %d pages completed", pages_printed, pages);
+			gu_utf8_printf(", %d of %d pages completed", pages_printed, pages);
 
-		fputc(')', stdout);
+		gu_putwc(')');
 
 		fclose(f);
 		}
@@ -829,7 +829,7 @@ static void ppop_lpq_banner(void)
 				&printer_job_destname, &printer_job_id, &printer_job_subid
 				) != 7)
 			{
-			printf("Malformed response: \"%s\"", line);
+			gu_utf8_printf("Malformed response: \"%s\"", line);
 			if(printer_name)
 				gu_free(printer_name);
 			if(printer_job_destname) 
@@ -842,7 +842,7 @@ static void ppop_lpq_banner(void)
 		** about each with its name.
 		*/
 		if(strcmp(lpqlist_destname, printer_name))
-			printf("%s: ", printer_name);
+			gu_utf8_printf("%s: ", printer_name);
 
 		/*
 		** Print the status of this printer.  These messages should
@@ -856,46 +856,46 @@ static void ppop_lpq_banner(void)
 		switch(printer_status)
 			{
 			case PRNSTATUS_IDLE:
-				printf("idle");
+				gu_utf8_printf("idle");
 				break;
 			case PRNSTATUS_PRINTING:
 				if(printer_next_retry)
-					printf("printing %s (%d%s retry)", jobid(printer_job_destname,printer_job_id,printer_job_subid), printer_next_retry, count_suffix(printer_next_retry));
+					gu_utf8_printf("printing %s (%d%s retry)", jobid(printer_job_destname,printer_job_id,printer_job_subid), printer_next_retry, count_suffix(printer_next_retry));
 				else
-					printf("printing %s", jobid(printer_job_destname,printer_job_id,printer_job_subid));
+					gu_utf8_printf("printing %s", jobid(printer_job_destname,printer_job_id,printer_job_subid));
 
 				ppop_lpq_banner_progress(printer_job_destname, printer_job_id, printer_job_subid);
 
 				break;
 			case PRNSTATUS_CANCELING:
-				fputs("canceling active job", stdout);
+				gu_utf8_puts("canceling active job");
 				break;
 			case PRNSTATUS_SEIZING:
-				fputs("seizing active job", stdout);
+				gu_utf8_puts("seizing active job");
 				break;
 			case PRNSTATUS_STOPPING:
-				printf("stopping (still printing %s)", jobid(printer_job_destname,printer_job_id,printer_job_subid));
+				gu_utf8_printf("stopping (still printing %s)", jobid(printer_job_destname,printer_job_id,printer_job_subid));
 				break;
 			case PRNSTATUS_STOPT:
-				printf("printing disabled");
+				gu_utf8_printf("printing disabled");
 				break;
 			case PRNSTATUS_HALTING:
-				printf("halting (still printing %s)", jobid(printer_job_destname,printer_job_id,printer_job_subid));
+				gu_utf8_printf("halting (still printing %s)", jobid(printer_job_destname,printer_job_id,printer_job_subid));
 				break;
 			case PRNSTATUS_FAULT:
 				if(printer_next_retry)
-					printf("error, %d%s retry in %d seconds", printer_next_retry, count_suffix(printer_next_retry), printer_countdown);
+					gu_utf8_printf("error, %d%s retry in %d seconds", printer_next_retry, count_suffix(printer_next_retry), printer_countdown);
 				else
-					printf("error, no auto retry");
+					gu_utf8_printf("error, no auto retry");
 				break;
 			case PRNSTATUS_ENGAGED:
-				printf("otherwise engaged or offline");
+				gu_utf8_printf("otherwise engaged or offline");
 				break;
 			case PRNSTATUS_STARVED:
-				printf("waiting for resource ration");
+				gu_utf8_printf("waiting for resource ration");
 				break;
 			default:
-				printf("unknown status\n");
+				gu_utf8_printf("unknown status\n");
 			}
 
 		while((line = gu_getline(line, &line_len, reply_file)) && strcmp(line, "."))
@@ -917,7 +917,7 @@ static void ppop_lpq_banner(void)
 	**                           1234567890123456789012345678901234567890
 	**    1st    chappell   8021 entropy.tex                           100801 bytes
 	*/
-	puts("Rank   Owner      Job  Files                                 Total Size");
+	gu_utf8_putline("Rank   Owner      Job  Files                                 Total Size");
 
 	/* Suppress "no entries": */
 	lpqlist_banner_called = TRUE;
@@ -1103,7 +1103,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 
 	}
 
-	printf("%-6.6s %-10.10s %-4d %-37.37s %s\n", rankstr, fixed_for, qentry->id, fixed_name, sizestr);
+	gu_utf8_printf("%-6.6s %-10.10s %-4d %-37.37s %s\n", rankstr, fixed_for, qentry->id, fixed_name, sizestr);
 
 	return FALSE;
 	} /* end of ppop_lpq_item() */
@@ -1131,7 +1131,7 @@ int ppop_lpq(char *argv[])
 	lpqlist_destname = job->destname;
 	lpqlist_argv = new_argv;
 
-	for(x=0; x < (new_argv_SIZE - 1) && argv[x+1] != (char*)NULL; x++)
+	for(x=0; x < (new_argv_SIZE - 1) && argv[x+1]; x++)
 		{
 		new_argv[x] = argv[x+1];
 		argv[x+1] = (char*)NULL;
@@ -1141,7 +1141,7 @@ int ppop_lpq(char *argv[])
 	retval = custom_list(argv, ppop_lpq_help, ppop_lpq_banner, ppop_lpq_item, TRUE, opt_arrest_interest_interval);
 
 	if( !lpqlist_banner_called && retval != EXIT_SYNTAX )
-		puts("no entries");
+		gu_utf8_putline(_("no entries"));
 
 	return retval;
 	} /* end of ppop_lpq() */
@@ -1154,7 +1154,7 @@ int ppop_lpq(char *argv[])
 ================================================================*/
 static void ppop_details_help(void)
 	{
-	fputs(_("Usage: ppop details {all, <group>, <printer>, <job>}\n\n"
+	gu_utf8_fputs(_("Usage: ppop details {all, <group>, <printer>, <job>}\n\n"
 		"This command displays a detailed description of all jobs,\n"
 		"the jobs queued for the indicated group, the jobs queued\n"
 		"for the indicated printer, or the indicated job.\n"), stderr);
@@ -1171,120 +1171,120 @@ static int ppop_details_item(const struct QEntry *qentry,
 		FILE *qstream)
 	{
 	/* print job name */
-	printf("Job ID: %s\n", jobid(qentryfile->destname,qentry->id,qentry->subid));
+	gu_utf8_printf(_("Job ID: %s\n"), jobid(qentryfile->destname,qentry->id,qentry->subid));
 
 	/* Say which part of the whole this is. */
 	if(qentryfile->attr.parts == 1)
-		printf("Part: 1 of 1\n");
+		gu_utf8_printf("Part: 1 of 1\n");
 	else
-		printf("Part: %d of %d\n", qentry->subid,qentryfile->attr.parts);
+		gu_utf8_printf("Part: %d of %d\n", qentry->subid,qentryfile->attr.parts);
 
 	/* Give the input filter chain description */
-	printf("Filters: %s\n", qentryfile->Filters ? qentryfile->Filters : "");
+	gu_utf8_printf(_("Filters: %s\n"), qentryfile->Filters ? qentryfile->Filters : "");
 
 	/* Print submitting user id. */
-	printf("User: %s\n", qentryfile->user);
+	gu_utf8_printf(_("User: %s\n"), qentryfile->user);
 
 	/* Who is it for? */
-	printf("For: %s\n",qentryfile->For ? qentryfile->For : "(unknown)" );
+	gu_utf8_printf(_("For: %s\n"),qentryfile->For ? qentryfile->For : "(unknown)" );
 
 	/* print the date it was submitted */
-	printf("Submission Time: %s", ctime((time_t*)&qentryfile->time) );
+	gu_utf8_printf(_("Submission Time: %s"), ctime((time_t*)&qentryfile->time) );
 
 	/* print priority */
-	printf("Current Priority: %d\n", qentry->priority);
-	printf("Origional Priority: %d\n", qentryfile->priority);
+	gu_utf8_printf(_("Current Priority: %d\n"), qentry->priority);
+	gu_utf8_printf(_("Origional Priority: %d\n"), qentryfile->priority);
 
 	/* What was the file name? */
-	printf("lpq filename: %s\n", qentryfile->lpqFileName ? qentryfile->lpqFileName : "");
+	gu_utf8_printf(_("lpq filename: %s\n"), qentryfile->lpqFileName ? qentryfile->lpqFileName : "");
 
 	/* What is the title? */
-	printf("Title: %s\n", qentryfile->Title ? qentryfile->Title : "");
+	gu_utf8_printf(_("Title: %s\n"), qentryfile->Title ? qentryfile->Title : "");
 
 	/* Who or what is the creator? */
-	printf("Creator: %s\n", qentryfile->Creator ? qentryfile->Creator : "");
+	gu_utf8_printf(_("Creator: %s\n"), qentryfile->Creator ? qentryfile->Creator : "");
 
 	/* what are the routing instructions */
-	printf("Routing: %s\n", qentryfile->Routing ? qentryfile->Routing : "");
+	gu_utf8_printf(_("Routing: %s\n"), qentryfile->Routing ? qentryfile->Routing : "");
 
 	/* Flag pages */
-	printf("Banner: %s\n",describe_flag_page_setting(qentryfile->do_banner));
-	printf("Trailer: %s\n",describe_flag_page_setting(qentryfile->do_trailer));
+	gu_utf8_printf(_("Banner: %s\n"), describe_flag_page_setting(qentryfile->do_banner));
+	gu_utf8_printf(_("Trailer: %s\n"), describe_flag_page_setting(qentryfile->do_trailer));
 
 	/* response methode and address */
-	printf("Respond by: %s \"%s\"\n", qentryfile->responder.name, qentryfile->responder.address);
+	gu_utf8_printf(_("Respond by: %s \"%s\"\n"), qentryfile->responder.name, qentryfile->responder.address);
 	if(qentryfile->responder.options)
-		printf("Responder options: %s\n", qentryfile->responder.options);
+		gu_utf8_printf(_("Responder options: %s\n"), qentryfile->responder.options);
 
 	if(qentryfile->commentary)
-		printf("Commentary: %d\n", qentryfile->commentary);
+		gu_utf8_printf(_("Commentary: %d\n"), qentryfile->commentary);
 
 	/* attributes */
-	printf("Required Language Level: %d\n", qentryfile->attr.langlevel);
-	printf("Required Extensions: %d\n", qentryfile->attr.extensions);
-	printf("DSC Level: %f\n", qentryfile->attr.DSClevel);
+	gu_utf8_printf(_("Required Language Level: %d\n"), qentryfile->attr.langlevel);
+	gu_utf8_printf(_("Required Extensions: %d\n"), qentryfile->attr.extensions);
+	gu_utf8_printf(_("DSC Level: %f\n"), qentryfile->attr.DSClevel);
 	if(qentryfile->attr.pages >= 0)
-		printf("Pages: %d\n", qentryfile->attr.pages);
+		gu_utf8_printf(_("Pages: %d\n"), qentryfile->attr.pages);
 	else
-		printf("Pages: ?\n");
-	printf("Page Order: %s\n", describe_pageorder(qentryfile->attr.pageorder));
-	gu_puts("Page List: ");
-	pagemask_print(qentryfile);
-	putchar('\n');
-	printf("Prolog Present: %s\n", qentryfile->attr.prolog ? "True" : "False");
-	printf("DocSetup Present: %s\n", qentryfile->attr.docsetup ? "True" : "False");
-	printf("Script Present: %s\n", qentryfile->attr.script ? "True" : "False");
-	printf("ProofMode: %s\n", describe_proofmode(qentryfile->attr.proofmode));
-	printf("Orientation: %s\n", describe_orientation(qentryfile->attr.orientation));
-	printf("Pages Per Sheet: %d\n", qentryfile->attr.pagefactor);
-	printf("Unfiltered Size: %ld\n", qentryfile->attr.input_bytes);
-	printf("PostScript Size: %ld\n", qentryfile->attr.postscript_bytes);
-	printf("DocumentData: ");
+		gu_utf8_printf(_("Pages: ?\n"));
+	gu_utf8_printf(_("Page Order: %s\n"), describe_pageorder(qentryfile->attr.pageorder));
+	gu_utf8_puts("Page List: ");
+		pagemask_print(qentryfile);
+		gu_putwc('\n');
+	gu_utf8_printf(_("Prolog Present: %s\n"), qentryfile->attr.prolog ? "True" : "False");
+	gu_utf8_printf(_("DocSetup Present: %s\n"), qentryfile->attr.docsetup ? "True" : "False");
+	gu_utf8_printf(_("Script Present: %s\n"), qentryfile->attr.script ? "True" : "False");
+	gu_utf8_printf(_("ProofMode: %s\n"), describe_proofmode(qentryfile->attr.proofmode));
+	gu_utf8_printf(_("Orientation: %s\n"), describe_orientation(qentryfile->attr.orientation));
+	gu_utf8_printf(_("Pages Per Sheet: %d\n"), qentryfile->attr.pagefactor);
+	gu_utf8_printf(_("Unfiltered Size: %ld\n"), qentryfile->attr.input_bytes);
+	gu_utf8_printf(_("PostScript Size: %ld\n"), qentryfile->attr.postscript_bytes);
+	gu_utf8_printf(_("DocumentData: "));
 	switch(qentryfile->attr.docdata)
 		{
 		case CODES_UNKNOWN:
-			printf("UNKNOWN");
+			gu_utf8_printf("UNKNOWN");
 			break;
 		case CODES_Clean7Bit:
-			printf("Clean7Bit");
+			gu_utf8_printf("Clean7Bit");
 			break;
 		case CODES_Clean8Bit:
-			printf("Clean8Bit");
+			gu_utf8_printf("Clean8Bit");
 			break;
 		case CODES_Binary:
-			printf("Binary");
+			gu_utf8_printf("Binary");
 			break;
 		default:
-			printf("<invalid>");
+			gu_utf8_printf("<invalid>");
 			break;
 		}
-	printf("\n");
+	gu_utf8_printf("\n");
 
 	/* N-Up */
-	printf("N-Up N: %d\n", qentryfile->N_Up.N);
-	printf("N-Up Borders: %s\n", qentryfile->N_Up.borders ? "True" : "False");
-	printf("Signiture Sheets: %d\n", qentryfile->N_Up.sigsheets);
-	printf("Signiture Part: %s\n", describe_sigpart(qentryfile->N_Up.sigpart));
+	gu_utf8_printf(_("N-Up N: %d\n"), qentryfile->N_Up.N);
+	gu_utf8_printf(_("N-Up Borders: %s\n"), qentryfile->N_Up.borders ? "True" : "False");
+	gu_utf8_printf(_("Signiture Sheets: %d\n"), qentryfile->N_Up.sigsheets);
+	gu_utf8_printf(_("Signiture Part: %s\n"), describe_sigpart(qentryfile->N_Up.sigpart));
 
 	/* options */
 	if(qentryfile->opts.copies < 0)
-		fputs("Copies: ?\n", stdout);
+		gu_utf8_puts(_("Copies: ?\n"));
 	else
-		printf("Copies: %d\n", qentryfile->opts.copies);
-	printf("Collate: %s\n", qentryfile->opts.collate ? "True" : "False");
-	printf("Auto Bin Select: %s\n", qentryfile->opts.binselect ? "True" : "False");
-	printf("Keep Bad Features: %s\n", qentryfile->opts.keep_badfeatures ? "True" : "False");
+		gu_utf8_printf(_("Copies: %d\n"), qentryfile->opts.copies);
+	gu_utf8_printf(_("Collate: %s\n"), qentryfile->opts.collate ? _("Yes") : _("No"));
+	gu_utf8_printf(_("Auto Bin Select: %s\n"), qentryfile->opts.binselect ? _("Yes") : _("No"));
+	gu_utf8_printf(_("Keep Bad Features: %s\n"), qentryfile->opts.keep_badfeatures ? _("Yes") : _("No"));
 
 	/* "Draft" notice */
-	printf("Draft Notice: %s\n", qentryfile->draft_notice ? qentryfile->draft_notice : "");
+	gu_utf8_printf(_("Draft Notice: %s\n"), qentryfile->draft_notice ? qentryfile->draft_notice : "");
 
 	/* Print the job status */
-	printf("Status: ");
+	gu_utf8_puts(_("Status: "));
 	job_status(qentry, qentryfile, onprinter, (FILE*)NULL, 8, 8);
 
 	/* show the never and notnow masks */
-	printf("Never mask: %d\n", qentry->never);
-	printf("NotNow mask: %d\n", qentry->notnow);
+	gu_utf8_printf(_("Never mask: %d\n"), qentry->never);
+	gu_utf8_printf(_("NotNow mask: %d\n"), qentry->notnow);
 
 	/* Copy the tail end of the queue file to stdout. */
 	{
@@ -1295,7 +1295,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 		{
 		if(strncmp(line, "End", 3) == 0)		/* skip delimiters */
 			continue;
-		printf("%s\n", line);
+		gu_utf8_printf("%s\n", line);
 		}
 
 	if(line) gu_free(line);
@@ -1334,7 +1334,7 @@ static int addon_count;
 
 static void ppop_qquery_help(void)
 	{
-	fputs("Wrong syntax!\n",stderr);
+	gu_utf8_fputs(_("Wrong syntax!\n"), stderr);
 	} /* end of ppop_qquery_help() */
 
 static void ppop_qquery_banner(void)
@@ -1366,7 +1366,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		{
 		if(!(p = strchr(line, ':')))
 			{
-			fprintf(stderr, _("Invalid Addon line: %s\n"), line);
+			gu_utf8_fprintf(stderr, _("Invalid Addon line: %s\n"), line);
 			continue;
 			}
 
@@ -1488,12 +1488,12 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 	for(x=0; x < qquery_query_count; x++)
 		{
 		if(x)
-			fputc('\t', stdout);
+			gu_putwc('\t');
 
 		switch(qquery_query[x])
 			{
 			case 0:						/* jobname */
-				gu_puts(jobid(qentryfile->destname,qentryfile->id,qentryfile->subid));
+				gu_utf8_puts(jobid(qentryfile->destname,qentryfile->id,qentryfile->subid));
 				break;
 			case 1:						/* for */
 				puts_detabbed(qentryfile->For ? qentryfile->For : "?");
@@ -1502,23 +1502,23 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				puts_detabbed(qentryfile->Title ? qentryfile->Title : "");
 				break;
 			case 3:						/* status */
-				gu_puts(status);
+				gu_utf8_puts(status);
 				break;
 			case 4:						/* explain */
 				puts_detabbed(explain);
 				break;
 			case 5:						/* copies */
 				if(qentryfile->opts.copies >= 0)
-					printf("%d", qentryfile->opts.copies);
+					gu_utf8_printf("%d", qentryfile->opts.copies);
 				break;
 			case 6:						/* copiescollate */
 				if(qentryfile->opts.collate)
-					gu_puts("true");
+					gu_utf8_puts("true");		/* don't internationalize */
 				else
-					gu_puts("false");
+					gu_utf8_puts("false");
 				break;
 			case 7:						/* pagefactor */
-				printf("%d", qentryfile->attr.pagefactor);
+				gu_utf8_printf("%d", qentryfile->attr.pagefactor);
 				break;
 			case 8:						/* routing */
 				if(qentryfile->Routing)
@@ -1529,59 +1529,59 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 					puts_detabbed(qentryfile->Creator);
 				break;
 			case 10:					/* nupn */
-				printf("%d", qentryfile->N_Up.N);
+				gu_utf8_printf("%d", qentryfile->N_Up.N);
 				break;
 			case 11:					/* nupborders */
-				fputs( qentryfile->N_Up.borders ? "true" : "false", stdout);
+				gu_utf8_puts(qentryfile->N_Up.borders ? "true" : "false");	/* don't internationalize */
 				break;
 			case 12:					/* sigsheets */
-				printf("%d", qentryfile->N_Up.sigsheets);
+				gu_utf8_printf("%d", qentryfile->N_Up.sigsheets);
 				break;
 			case 13:					/* sigpart */
-				fputs(describe_sigpart(qentryfile->N_Up.sigpart), stdout);
+				gu_utf8_puts(describe_sigpart(qentryfile->N_Up.sigpart));
 				break;
 			case 14:					/* pageorder */
-				fputs(describe_pageorder(qentryfile->attr.pageorder), stdout);
+				gu_utf8_puts(describe_pageorder(qentryfile->attr.pageorder));
 				break;
 			case 15:					/* proofmode */
-				fputs(describe_proofmode(qentryfile->attr.proofmode), stdout);
+				gu_utf8_puts(describe_proofmode(qentryfile->attr.proofmode));
 				break;
 			case 16:					/* priority */
-				printf("%d", qentry->priority);
+				gu_utf8_printf("%d", qentry->priority);
 				break;
 			case 17:					/* opriority */
-				printf("%d", qentryfile->priority);
+				gu_utf8_printf("%d", qentryfile->priority);
 				break;
 			case 18:					/* banner */
-				fputs(describe_flag_page_setting(qentryfile->do_banner), stdout);
+				gu_utf8_puts(describe_flag_page_setting(qentryfile->do_banner));
 				break;
 			case 19:					/* trailer */
-				fputs(describe_flag_page_setting(qentryfile->do_trailer), stdout);
+				gu_utf8_puts(describe_flag_page_setting(qentryfile->do_trailer));
 				break;
 			case 20:					/* inputbytes */
-				printf("%ld", qentryfile->attr.input_bytes);
+				gu_utf8_printf("%ld", qentryfile->attr.input_bytes);
 				break;
 			case 21:					/* postscriptbytes */
-				printf("%ld", qentryfile->attr.postscript_bytes);
+				gu_utf8_printf("%ld", qentryfile->attr.postscript_bytes);
 				break;
 			case 22:					/* prolog */
-				fputs( (qentryfile->attr.prolog ? "yes" : "no"), stdout);
+				gu_utf8_puts( (qentryfile->attr.prolog ? "yes" : "no"));	/* don't internationalize */
 				break;
 			case 23:					/* docsetup */
-				fputs( (qentryfile->attr.docsetup ? "yes" : "no"), stdout);
+				gu_utf8_puts( (qentryfile->attr.docsetup ? "yes" : "no"));	/* don't internationalize */
 				break;
 			case 24:					/* script */
-				fputs( (qentryfile->attr.script ? "yes" : "no"), stdout);
+				gu_utf8_puts( (qentryfile->attr.script ? "yes" : "no"));	/* don't internationalize */
 				break;
 			case 25:					/* orientation */
-				fputs( describe_orientation(qentryfile->attr.orientation), stdout);
+				gu_utf8_puts( describe_orientation(qentryfile->attr.orientation));
 				break;
 			case 26:					/* draft-notice */
 				if(qentryfile->draft_notice)
 					puts_detabbed(qentryfile->draft_notice);
 				break;
 			case 27:					/* username */
-				fputs(qentryfile->user, stdout);
+				gu_utf8_puts(qentryfile->user);
 				break;
 			case 28:					/* userid */
 				/* removed */
@@ -1592,20 +1592,20 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 			case 30:					/* longsubtime */
 				{
 				const char *t = ctime((time_t*)&qentryfile->time);
-				printf("%.*s", (int)strcspn(t, "\n"), t);
+				gu_utf8_printf("%.*s", (int)strcspn(t, "\n"), t);
 				}
 				break;
 			case 31:					/* subtime */
 				{
 				char timestr[64];		/* 9 chars expected, but large buffer for utf-8 */
-				fputs(format_time(timestr, sizeof(timestr), (time_t)qentryfile->time), stdout);
+				gu_utf8_puts(format_time(timestr, sizeof(timestr), (time_t)qentryfile->time));
 				}
 				break;
 			case 32:					/* pages */
 				if(qentryfile->attr.pages >= 0)
-					printf("%d", pagemask_count(qentryfile));
+					gu_utf8_printf("%d", pagemask_count(qentryfile));
 				else
-					fputs("?", stdout);
+					gu_utf8_puts("?");
 				break;
 			case 33:					/* lpqfilename */
 				if(qentryfile->lpqFileName)
@@ -1618,9 +1618,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				int total = qentryfile->attr.pages;
 				if(qentryfile->opts.copies > 1) total *= qentryfile->opts.copies;
 				if(total >= 0)
-					printf("%d", total);
+					gu_utf8_printf("%d", total);
 				else
-					fputs("?", stdout);
+					gu_utf8_puts("?");
 				}
 				break;
 			case 35:					/* totalsides */
@@ -1630,9 +1630,9 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 					total *= qentryfile->opts.copies;
 				total = (total + qentryfile->N_Up.N - 1) / qentryfile->N_Up.N;
 				if(total >= 0)
-					printf("%d", total);
+					gu_utf8_printf("%d", total);
 				else
-					fputs("?", stdout);
+					gu_utf8_puts("?");
 				}
 				break;
 			case 36:					/* totalsheets */
@@ -1642,53 +1642,53 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 					total *= qentryfile->opts.copies;
 				total = (total + qentryfile->attr.pagefactor - 1) / qentryfile->attr.pagefactor;
 				if(total >= 0)
-					printf("%d", total);
+					gu_utf8_printf("%d", total);
 				else
-					gu_puts("?");
+					gu_utf8_puts("?");
 				}
 				break;
 			case 37:					/* fulljobname */
-				printf("%s-%d.%d", qentryfile->destname, qentryfile->id, qentryfile->subid);
+				gu_utf8_printf("%s-%d.%d", qentryfile->destname, qentryfile->id, qentryfile->subid);
 				break;
 			case 38:					/* intype */
 				if(qentryfile->Filters)
-					gu_puts(qentryfile->Filters);
+					gu_utf8_puts(qentryfile->Filters);
 				break;
 			case 39:					/* commentary */
-				printf("%d", qentryfile->commentary);
+				gu_utf8_printf("%d", qentryfile->commentary);
 				break;
 
 			case 43:					/* destname */
-				gu_puts(qentryfile->destname);
+				gu_utf8_puts(qentryfile->destname);
 				break;
 			case 44:					/* responder */
 				if(qentryfile->responder.name)
-					gu_puts(qentryfile->responder.name);
+					gu_utf8_puts(qentryfile->responder.name);
 				break;
 			case 45:					/* responder-address */
 				if(qentryfile->responder.address);
-					gu_puts(qentryfile->responder.address);
+					gu_utf8_puts(qentryfile->responder.address);
 				break;
 			case 46:					/* responder-options */
 				if(qentryfile->responder.options)
-					gu_puts(qentryfile->responder.options);
+					gu_utf8_puts(qentryfile->responder.options);
 				break;
 			case 47:					/* status/explain */
-				gu_puts(status);
+				gu_utf8_puts(status);
 				if(explain[0])
 					{
-					gu_puts(" (");
+					gu_utf8_puts(" (");
 					puts_detabbed(explain);
-					gu_puts(")");
+					gu_utf8_puts(")");
 					}
 				break;
 			case 48:					/* pagesxcopies */
 				if(qentryfile->attr.pages >= 0)
-					printf("%d", qentryfile->attr.pages);
+					gu_utf8_printf("%d", qentryfile->attr.pages);
 				else
-					printf("?");
+					gu_utf8_printf("?");
 				if(qentryfile->opts.copies > 1)
-					printf("x%d", qentryfile->opts.copies);
+					gu_utf8_printf("x%d", qentryfile->opts.copies);
 				break;
 			case 49:					/* page-list */
 				pagemask_print(qentryfile);
@@ -1739,7 +1739,7 @@ int ppop_qquery(char *argv[])
 
 		if(x >= MAX_QQUERY_ITEMS)
 			{
-			fprintf(stderr, X_("%s(): MAX_QQUERY_ITEMS exceeded\n"), function);
+			gu_utf8_fprintf(stderr, X_("%s(): MAX_QQUERY_ITEMS exceeded\n"), function);
 			return EXIT_SYNTAX;
 			}
 
@@ -1747,7 +1747,7 @@ int ppop_qquery(char *argv[])
 			{
 			if(addon_count >= MAX_QQUERY_ADDON_ITEMS)
 				{
-				fprintf(stderr, X_("%s(): MAX_QQUERY_ADDON_ITEMS exceeded\n"), function);
+				gu_utf8_fprintf(stderr, X_("%s(): MAX_QQUERY_ADDON_ITEMS exceeded\n"), function);
 				return EXIT_SYNTAX;
 				}
 			addon[addon_count].name = (ptr + 6);
@@ -1856,7 +1856,7 @@ int ppop_qquery(char *argv[])
 
 		else
 			{
-			fprintf(stderr, "Name of field number %d unrecognized: \"%s\"\n", x+1, ptr);
+			gu_utf8_fprintf(stderr, X_("Name of field number %d unrecognized: \"%s\"\n"), x+1, ptr);
 			return EXIT_SYNTAX;
 			}
 		}
@@ -1891,10 +1891,10 @@ static void ppop_progress_help(void)
 
 static void ppop_progress_banner(void)
 	{
-	printf("Job									 |Bytes					   |Pages\n");
-	printf("----------------+--------------------+----------+----------+---+----+----+----\n");
-	printf("Queue ID		|Submitter			 |Sent		|Total	   |%%	|Std |Done|Tot\n");
-	printf("----------------+--------------------+----------+----------+---+----+----+----\n");
+	gu_utf8_printf("Job									 |Bytes					   |Pages\n");
+	gu_utf8_printf("----------------+--------------------+----------+----------+---+----+----+----\n");
+	gu_utf8_printf("Queue ID		|Submitter			 |Sent		|Total	   |%%	|Std |Done|Tot\n");
+	gu_utf8_printf("----------------+--------------------+----------+----------+---+----+----+----\n");
 	}
 
 static int ppop_progress_item(const struct QEntry *qentry,
@@ -1949,7 +1949,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	/* Print our assembled results. */
 	if(opt_machine_readable)
 		{
-		printf("%s\t%s\t%ld\t%ld\t%d\t%d\t%d\t%d\n",
+		gu_utf8_printf("%s\t%s\t%ld\t%ld\t%d\t%d\t%d\t%d\n",
 				jobname,
 				qentryfile->For ? qentryfile->For : "",
 				bytes_sent,
@@ -1961,7 +1961,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 		}
 	else
 		{
-		printf("%-16s|%-20s|%10ld|%10ld|%3d|%4d|%4d|%4d\n",
+		gu_utf8_printf("%-16s|%-20s|%10ld|%10ld|%3d|%4d|%4d|%4d\n",
 				jobname, qentryfile->For ? qentryfile->For : "",
 				bytes_sent,
 				bytes_total,

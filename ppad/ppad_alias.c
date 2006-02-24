@@ -25,9 +25,18 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2006.
+** Last modified 23 February 2006.
 */
 
+/*==============================================================
+** This module is part of the administrators utility.  It 
+** contains the code for those sub-commands which manipulate 
+** printer aliases.
+<helptopic>
+	<name>alias</name>
+	<desc>all settings for aliases</desc>
+</helptopic>
+==============================================================*/
 #include "config.h"
 #include <stdio.h>
 #include <errno.h>
@@ -44,7 +53,7 @@
 #include "dispatch_table.h"
 
 /*
-<command helptopic="group">
+<command helptopics="alias">
 	<name><word>alias</word><word>show</word></name>
 	<desc>show configuration of <arg>alias</arg></desc>
 	<args>
@@ -90,19 +99,19 @@ int command_alias_show(const char *argv[])
 
 	if(! machine_readable)
 		{
-		printf(_("Alias name: %s\n"), alias);
-		printf(_("Comment: %s\n"), comment ? comment : "");
-		printf(_("For what: %s\n"), forwhat ? forwhat : "<missing>");
-		gu_puts(_("Switchset: ")); if(switchset) print_switchset(switchset); putchar('\n');
-		printf(_("PassThru types: %s\n"), passthru ? passthru : "");
+		gu_utf8_printf(_("Alias name: %s\n"), alias);
+		gu_utf8_printf(_("Comment: %s\n"), comment ? comment : "");
+		gu_utf8_printf(_("For what: %s\n"), forwhat ? forwhat : "<missing>");
+		gu_utf8_puts(_("Switchset: ")); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_utf8_printf(_("PassThru types: %s\n"), passthru ? passthru : "");
 		}
 	else
 		{
-		printf("name\t%s\n", alias);
-		printf("comment\t%s\n", comment ? comment : "");
-		printf("forwhat\t%s\n", forwhat ? forwhat : "");
-		gu_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
-		printf("passthru\t%s\n", passthru ? passthru : "");
+		gu_utf8_printf("name\t%s\n", alias);
+		gu_utf8_printf("comment\t%s\n", comment ? comment : "");
+		gu_utf8_printf("forwhat\t%s\n", forwhat ? forwhat : "");
+		gu_utf8_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_utf8_printf("passthru\t%s\n", passthru ? passthru : "");
 		}
 
 	gu_free_if(comment);
@@ -114,7 +123,7 @@ int command_alias_show(const char *argv[])
 	} /* command_alias_show() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>copy</word></name>
 	<desc>copy alias <arg>existing</arg> creating alias <arg>new</arg></desc>
 	<args>
@@ -129,7 +138,7 @@ int command_alias_copy(const char *argv[])
 	} /* command_alias_copy() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>forwhat</word></name>
 	<desc>modify the target of an alias or create a new alias</desc>
 	<args>
@@ -147,20 +156,20 @@ int command_alias_forwhat(const char *argv[])
 
 	if(strpbrk(alias, DEST_DISALLOWED))
 		{
-		fputs(_("Alias name contains a disallowed character.\n"), stderr);
+		gu_utf8_fputs(_("Alias name contains a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)alias[0]))
 		{
-		fputs(_("Alias name begins with a disallowed character.\n"), stderr);
+		gu_utf8_fputs(_("Alias name begins with a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	/* Make sure the preposed forwhat exists. */
 	if(!(obj = conf_open(QUEUE_TYPE_GROUP, forwhat, 0)) && !(obj = conf_open(QUEUE_TYPE_PRINTER, forwhat, 0)))
 		{
-		fprintf(stderr, _("The name \"%s\" is not that of an existing group or printer.\n"), forwhat);
+		gu_utf8_fprintf(stderr, _("The name \"%s\" is not that of an existing group or printer.\n"), forwhat);
 		return EXIT_BADDEST;
 		}
 	conf_close(obj);
@@ -185,7 +194,7 @@ int command_alias_forwhat(const char *argv[])
 	} /* command_alias_forwhat() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>delete</word></name>
 	<desc>delete an alias</desc>
 	<args>
@@ -203,12 +212,12 @@ int command_alias_delete(const char *argv[])
 		{
 		if(errno==ENOENT)
 			{
-			fprintf(stderr, _("The alias \"%s\" does not exist.\n"), alias);
+			gu_utf8_fprintf(stderr, _("The alias \"%s\" does not exist.\n"), alias);
 			return EXIT_BADDEST;
 			}
 		else
 			{
-			fprintf(stderr, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
+			gu_utf8_fprintf(stderr, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
 			return EXIT_INTERNAL;
 			}
 		}
@@ -217,7 +226,7 @@ int command_alias_delete(const char *argv[])
 	} /* command_alias_delete() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>comment</word></name>
 	<desc>modify an alias's comment field</desc>
 	<args>
@@ -232,7 +241,7 @@ int command_alias_comment(const char *argv[])
 	} /* command_alias_comment() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>switchset</word></name>
 	<desc>attach a set of switches to an alias</desc>
 	<args>
@@ -249,7 +258,7 @@ int command_alias_switchset(const char *argv[])
 	/* convert the switch set to a line */
 	if(make_switchset_line(newset, &argv[1]))
 		{
-		fputs(_("Bad set of switches.\n"), stderr);
+		gu_utf8_fputs(_("Bad set of switches.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -257,7 +266,7 @@ int command_alias_switchset(const char *argv[])
 	} /* command_alias_switchset() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>passthru</word></name>
 	<desc>set an alias's passthru language list</desc>
 	<args>
@@ -279,7 +288,7 @@ int command_alias_passthru(const char *argv[])
 	} /* command_alias_passthru() */
 
 /*
-<command acl="ppad" helptopic="alias">
+<command acl="ppad" helptopics="alias">
 	<name><word>alias</word><word>addon</word></name>
 	<desc>set alias parameters for use by a PPR extension</desc>
 	<args>
@@ -297,7 +306,7 @@ int command_alias_addon(const char *argv[])
 
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
-		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
+		gu_utf8_fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 

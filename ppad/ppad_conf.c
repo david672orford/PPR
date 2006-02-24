@@ -86,9 +86,9 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 		if(debug_level >= 1)
 			{
 			if(flags & CONF_CREATE)
-				printf("Opening \"%s\" (create new or modify existing).\n", obj->in_name);
+				gu_utf8_printf("Opening \"%s\" (create new or modify existing).\n", obj->in_name);
 			else
-				printf("Opening \"%s\" (modify existing).\n", obj->in_name);
+				gu_utf8_printf("Opening \"%s\" (modify existing).\n", obj->in_name);
 			}
 
 		do	{
@@ -105,7 +105,7 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 				{
 				fclose(obj->in);
 				obj->in = NULL;
-				printf(_("Waiting for lock to clear.\n"));
+				gu_utf8_printf(_("Waiting for lock to clear.\n"));
 				sleep(1);
 				}
 			} while(!obj->in);
@@ -114,19 +114,19 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 		{
 		struct stat statbuf;
 		if(debug_level >= 1)
-			printf("Opening \"%s\" (create new).\n", obj->in_name);
+			gu_utf8_printf("Opening \"%s\" (create new).\n", obj->in_name);
 		if(stat(obj->in_name, &statbuf) == 0)	/* if exists, */
 			{
 			switch(obj->queue_type)
 				{
 				case QUEUE_TYPE_PRINTER:
-					fprintf(stderr, _("The printer \"%s\" already exists.\n"), destname);
+					gu_utf8_fprintf(stderr, _("The printer \"%s\" already exists.\n"), destname);
 					break;
 				case QUEUE_TYPE_GROUP:
-					fprintf(stderr, _("The group \"%s\" already exists.\n"), destname);
+					gu_utf8_fprintf(stderr, _("The group \"%s\" already exists.\n"), destname);
 					break;
 				case QUEUE_TYPE_ALIAS:
-					fprintf(stderr, _("The alias \"%s\" already exists.\n"), destname);
+					gu_utf8_fprintf(stderr, _("The alias \"%s\" already exists.\n"), destname);
 					break;
 				}
 			exists_error = TRUE;
@@ -135,7 +135,7 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 	else							/* read-only */
 		{
 		if(debug_level >= 1)
-			printf("Opening \"%s\" (read only).\n", obj->in_name);
+			gu_utf8_printf("Opening \"%s\" (read only).\n", obj->in_name);
 		if(!(obj->in = fopen(obj->in_name, "r")))
 			{
 			if(errno != ENOENT)
@@ -163,13 +163,13 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 			switch(queue_type)
 				{
 				case QUEUE_TYPE_PRINTER:
-					fprintf(stderr, _("The printer \"%s\" does not exist.\n"), destname);
+					gu_utf8_fprintf(stderr, _("The printer \"%s\" does not exist.\n"), destname);
 					break;
 				case QUEUE_TYPE_GROUP:
-					fprintf(stderr, _("The group \"%s\" does not exist.\n"), destname);
+					gu_utf8_fprintf(stderr, _("The group \"%s\" does not exist.\n"), destname);
 					break;
 				case QUEUE_TYPE_ALIAS:
-					fprintf(stderr, _("The alias \"%s\" does not exist.\n"), destname);
+					gu_utf8_fprintf(stderr, _("The alias \"%s\" does not exist.\n"), destname);
 					break;
 				}
 			}
@@ -197,7 +197,7 @@ char *conf_getline(struct CONF_OBJ *obj)
 		return NULL;
 
 	if(debug_level >= 3)
-		printf("<%s\n", obj->line);
+		gu_utf8_printf("<%s\n", obj->line);
 
 	return obj->line;
 	} /* end of confread() */
@@ -224,8 +224,8 @@ int conf_vprintf(struct CONF_OBJ *obj, const char format_str[], va_list va)
 		{
 		va_list our_copy;
 		va_copy(our_copy, va);
-		fputc('>', stdout);
-		vfprintf(stdout, format_str, our_copy);
+		gu_putwc('>');
+		gu_utf8_vfprintf(stdout, format_str, our_copy);
 		va_end(our_copy);
 		}
 
@@ -257,7 +257,7 @@ int conf_close(struct CONF_OBJ *obj)
 		{
 		struct stat statbuf;
 		if(debug_level >= 1)
-			printf("Saving new \"%s\".\n", obj->in_name);
+			gu_utf8_printf("Saving new \"%s\".\n", obj->in_name);
 
 		/* Reduce race condition time!	(See below.) */
 		fflush(obj->out);
@@ -292,7 +292,7 @@ int conf_close(struct CONF_OBJ *obj)
 	else
 		{
 		if(debug_level >= 1)
-			printf("Closing \"%s\".\n", obj->in_name);
+			gu_utf8_printf("Closing \"%s\".\n", obj->in_name);
 		fclose(obj->in);
 		}
 
@@ -332,7 +332,7 @@ int conf_abort(struct CONF_OBJ *obj)
 	if(obj->out)
 		{
 		if(debug_level >= 1)
-			printf("Discarding changes to \"%s\".\n", obj->in_name);
+			gu_utf8_printf("Discarding changes to \"%s\".\n", obj->in_name);
 		fclose(obj->in);
 		fclose(obj->out);
 		unlink(obj->out_name);

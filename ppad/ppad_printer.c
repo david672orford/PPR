@@ -25,13 +25,17 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2006.
+** Last modified 23 February 2006.
 */
 
 /*==============================================================
 ** This module is part of the printer administrator's utility.
 ** It contains the code to implement those sub-commands which
 ** manipulate printers.
+<helptopic>
+	<name>printer</name>
+	<desc>all settings for printers</desc>
+</helptopic>
 <helptopic>
 	<name>printer-new</name>
 	<desc>default settings for new printers</desc>
@@ -42,7 +46,7 @@
 </helptopic>
 <helptopic>
 	<name>printer-advanced</name>
-	<desc>commands related to PostScript Printer Descriptions</desc>
+	<desc>expert-level printer commands</desc>
 </helptopic>
 <helptopic>
 	<name>printer-ppd</name>
@@ -50,11 +54,15 @@
 </helptopic>
 <helptopic>
 	<name>printer-description</name>
-	<desc>printer description fields</desc>
+	<desc>setting printer description fields</desc>
+</helptopic>
+<helptopic>
+	<name>printer-flags</name>
+	<desc>setting options for banner and trailer pages</desc>
 </helptopic>
 <helptopic>
 	<name>printer-limits</name>
-	<desc>limits on print jobs</desc>
+	<desc>limits consumption (of time, pages, etc.) by print jobs</desc>
 </helptopic>
 ==============================================================*/
 
@@ -96,11 +104,11 @@ static int update_groups_deffiltopts(const char *printer)
 	int is_a_member;
 
 	if(debug_level > 0)
-		printf("Updating \"DefFiltOpts:\" for groups of which \"%s\" is a member.\n", printer);
+		gu_utf8_printf("Updating \"DefFiltOpts:\" for groups of which \"%s\" is a member.\n", printer);
 
 	if(!(dir = opendir(GRCONF)))
 		{
-		fprintf(stderr, _("%s(): %s() failed, errno=%d (%s)\n"), function, "opendir", errno, strerror(errno));
+		gu_utf8_fprintf(stderr, _("%s(): %s() failed, errno=%d (%s)\n"), function, "opendir", errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -140,7 +148,7 @@ static int update_groups_deffiltopts(const char *printer)
 		if(is_a_member)
 			{
 			if(debug_level > 0)
-				printf("  Updating \"DefFiltOpts:\" for group \"%s\".\n", direntp->d_name);
+				gu_utf8_printf("  Updating \"DefFiltOpts:\" for group \"%s\".\n", direntp->d_name);
 			group_deffiltopts_internal(direntp->d_name);
 			}
 		}
@@ -359,7 +367,7 @@ static const char *codes_description(int codes)
 	} /* end of codes_description() */
 
 /*
-<command acl="ppad" helptopics="printer-new">
+<command acl="ppad" helptopics="printer,printer-new">
 	<name><word>new</word><word>alerts</word></name>
 	<desc>set default alerts settings for new printers</desc>
 	<args>
@@ -378,7 +386,7 @@ int command_new_alerts(const char *argv[])
 
 	if(strspn(argv[0],"-0123456789") != strlen(argv[0]))
 		{
-		fprintf(stderr, _("Alerts interval must be an integer.\n"));
+		gu_utf8_fprintf(stderr, _("Alerts interval must be an integer.\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -388,18 +396,18 @@ int command_new_alerts(const char *argv[])
 
 	if(!(newprn = fopen(NEWPRN_CONFIG,"w")))
 		{
-		fprintf(stderr, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
+		gu_utf8_fprintf(stderr, _("Unable to create \"%s\", errno=%d (%s).\n"), NEWPRN_CONFIG, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
-	fprintf(newprn, "Alert: %d %s %s\n", frequency, method, address);
+	gu_utf8_fprintf(newprn, "Alert: %d %s %s\n", frequency, method, address);
 
 	fclose(newprn);
 	return EXIT_OK;
 	} /* command_new_alerts() */
 
 /*
-<command acl="ppad" helptopics="printer-basic">
+<command acl="ppad" helptopics="printer,printer-basic">
 	<name><word>show</word></name>
 	<desc>show configuration of <arg>printer</arg></desc>
 	<args>
@@ -471,7 +479,7 @@ int command_show(const char *argv[])
 
 	if(! printer)
 		{
-		fputs(_("You must specify a printer.\n"), stderr);
+		gu_utf8_fputs(_("You must specify a printer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -594,7 +602,7 @@ int command_show(const char *argv[])
 			{
 			if(ppdopts_count >= (sizeof(ppdopts) / sizeof(ppdopts[0])))
 				{
-				fprintf(stderr, "%s(): PPDOpts overflow\n", function);
+				gu_utf8_fprintf(stderr, "%s(): PPDOpts overflow\n", function);
 				}
 			else
 				{
@@ -616,7 +624,7 @@ int command_show(const char *argv[])
 		else if((p = lmatchp(line, "GrayOK:")))
 			{
 			if(gu_torf_setBOOL(&grayok,p) == -1)
-				fprintf(stderr, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", p);
+				gu_utf8_fprintf(stderr, _("WARNING: invalid \"%s\" setting: %s\n"), "GrayOK", p);
 			}
 		else if(gu_sscanf(line, "ACLs: %T", &p) == 1)
 			{
@@ -634,7 +642,7 @@ int command_show(const char *argv[])
 			{
 			if(addon_count >= MAX_ADDONS)
 				{
-				fprintf(stderr, "%s(): addon[] overflow\n", function);
+				gu_utf8_fprintf(stderr, "%s(): addon[] overflow\n", function);
 				}
 			else
 				{
@@ -694,7 +702,7 @@ int command_show(const char *argv[])
 						}
 					else
 						{
-						fprintf(stderr, _("WARNING: can't parse RIP information in PPD file\n"));
+						gu_utf8_fprintf(stderr, _("WARNING: can't parse RIP information in PPD file\n"));
 						}
 					continue;
 					} /* "*pprRIP:" */
@@ -733,7 +741,7 @@ int command_show(const char *argv[])
 				ppdobj_free(ppdobj);
 			}
 		gu_Catch {
-			fprintf(stderr, "%s: %s\n", myname, gu_exception);
+			gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 			}
 
 		} /* if(PPDFile) */
@@ -779,69 +787,69 @@ int command_show(const char *argv[])
 	*/
 	if( ! machine_readable )
 		{
-		printf(_("Printer name: %s\n"), printer);
-		gu_puts("  ");
-			printf(_("Comment: %s\n"), comment ? comment : "");
+		gu_utf8_printf(_("Printer name: %s\n"), printer);
+		gu_utf8_puts("  ");
+			gu_utf8_printf(_("Comment: %s\n"), comment ? comment : "");
 		if(location)
 			{
-			gu_puts("  ");
-			printf(_("Location: %s\n"), location);
+			gu_utf8_puts("  ");
+			gu_utf8_printf(_("Location: %s\n"), location);
 			}
 		if(department)
 			{
-			gu_puts("  ");
-			printf(_("Department: %s\n"), department);
+			gu_utf8_puts("  ");
+			gu_utf8_printf(_("Department: %s\n"), department);
 			}
 		if(contact)
 			{
-			gu_puts("  ");
-			printf(_("Contact: %s\n"), contact);
+			gu_utf8_puts("  ");
+			gu_utf8_printf(_("Contact: %s\n"), contact);
 			}
 
 		/*-------------------------------------
 		** Communication related things
 		-------------------------------------*/
-		printf(_("Interface: %s\n"), interface ? interface : _("<undefined>"));
+		gu_utf8_printf(_("Interface: %s\n"), interface ? interface : _("<undefined>"));
 
-		gu_puts("  ");
-			printf(_("Address: \"%s\"\n"), address ? address : _("<undefined>"));
+		gu_utf8_puts("  ");
+			gu_utf8_printf(_("Address: \"%s\"\n"), address ? address : _("<undefined>"));
 
-		gu_puts("  ");
-			printf(_("Options: %s\n"), options ? options : "");
+		gu_utf8_puts("  ");
+			gu_utf8_printf(_("Options: %s\n"), options ? options : "");
 
-		gu_puts("  ");
-			gu_puts(_("JobBreak: "));
+		gu_utf8_puts("  ");
+			gu_utf8_puts(_("JobBreak: "));
 			if(jobbreak == JOBBREAK_DEFAULT)
-				printf(_("%s (by default)"), jobbreak_description(jobbreak_default));
+				gu_utf8_printf(_("%s (by default)"), jobbreak_description(jobbreak_default));
 			else
-				gu_puts(jobbreak_description(jobbreak));
+				gu_utf8_puts(jobbreak_description(jobbreak));
 		putchar('\n');
 
-		gu_puts("  ");
-			gu_puts(_("Feedback: "));
+		gu_utf8_puts("  ");
+			gu_utf8_puts(_("Feedback: "));
 			if(feedback == FEEDBACK_DEFAULT)
-				printf(_("%s (by default)"), feedback_description(feedback_default));
+				gu_utf8_printf(_("%s (by default)"), feedback_description(feedback_default));
 			else
-				gu_puts(feedback_description(feedback));
+				gu_utf8_puts(feedback_description(feedback));
 			putchar('\n');
 
-		gu_puts("  ");
-			gu_puts(_("Codes: "));
+		gu_utf8_puts("  ");
+			gu_utf8_puts(_("Codes: "));
 			if(codes == CODES_DEFAULT)
-				printf(_("%s (by default)"), codes_description(codes_default));
+				gu_utf8_printf(_("%s (by default)"), codes_description(codes_default));
 			else
-				gu_puts(codes_description(codes));
+				gu_utf8_puts(codes_description(codes));
 			putchar('\n');
 
 		/*-------------------------------------
 		** PPD File Related Things
 		-------------------------------------*/
-		printf(_("PPDFile: %s\n"), PPDFile ? PPDFile : _("<undefined>"));
+		gu_utf8_printf(_("PPDFile: %s\n"), PPDFile ? PPDFile : _("<undefined>"));
 
-		gu_puts("  ");
+		gu_utf8_puts("  ");
 		{
 		const char *s = _("Default Filter Options: ");
-		gu_puts(s);
+		gu_utf8_puts(s);
 		if(deffiltopts)
 			print_wrapped(deffiltopts, strlen(s));
 		putchar('\n');
@@ -850,8 +858,8 @@ int command_show(const char *argv[])
 		/* RIP */
 		if(rip_name)
 			{
-			gu_puts("  ");
-			printf(rip_name==rip_ppd_name ? _("RIP: %s %s \"%s\" (from PPD)\n") : _("RIP: %s %s \"%s\"\n"),
+			gu_utf8_puts("  ");
+			gu_utf8_printf(rip_name==rip_ppd_name ? _("RIP: %s %s \"%s\" (from PPD)\n") : _("RIP: %s %s \"%s\"\n"),
 				rip_name,
 				rip_output_language ? rip_output_language : "?",
 				rip_options ? rip_options : "");
@@ -862,71 +870,71 @@ int command_show(const char *argv[])
 		int x;
 		for(x=0; x < ppdopts_count; x++)
 			{
-			gu_puts("  ");
-			printf(_("PPDOpts: %s\n"), ppdopts[x]);
+			gu_utf8_puts("  ");
+			gu_utf8_printf(_("PPDOpts: %s\n"), ppdopts[x]);
 			}
 		}
 
-		gu_puts("  ");
-		gu_puts(_("Bins: "));				/* print a list of all */
+		gu_utf8_puts("  ");
+		gu_utf8_puts(_("Bins: "));		/* print a list of all */
 		{
 		int x;
 		for(x=0; x < bincount; x++)		/* the bins we found */
 			{
 			if(x==0)
-				printf("%s", bins[x]);
+				gu_utf8_printf("%s", bins[x]);
 			else
-				printf(", %s", bins[x]);
+				gu_utf8_printf(", %s", bins[x]);
 			}
 		putchar('\n');
 		}
 
-		gu_puts("  ");
-		printf(_("OutputOrder: %s\n"), outputorder_description(outputorder));
+		gu_utf8_puts("  ");
+		gu_utf8_printf(_("OutputOrder: %s\n"), outputorder_description(outputorder));
 
 		/*---------------------------------
 		** Alerts
 		---------------------------------*/
-		printf(_("Alert frequency: %d "), alerts_frequency);
+		gu_utf8_printf(_("Alert frequency: %d "), alerts_frequency);
 		switch(alerts_frequency)
 			{
 			case 0:
-				fputs(_("(never send alerts)"), stdout);
+				gu_utf8_puts(_("(never send alerts)"));
 				break;
 			case 1:
-				fputs(_("(send alert on every error)"), stdout);
+				gu_utf8_puts(_("(send alert on every error)"));
 				break;
 			case -1:
-				fputs(_("(send alert on first error, send notice on recovery)"), stdout);
+				gu_utf8_puts(_("(send alert on first error, send notice on recovery)"));
 				break;
 			default:
 				if(alerts_frequency > 0)
-					printf(_("(send alert every %d errors)"), alerts_frequency);
+					gu_utf8_printf(_("(send alert every %d errors)"), alerts_frequency);
 				else
-					printf(_("(send alert after %d errors, send notice on recovery)"), (alerts_frequency * -1));
+					gu_utf8_printf(_("(send alert after %d errors, send notice on recovery)"), (alerts_frequency * -1));
 				break;
 			}
 		putchar('\n');
-		gu_puts("  "); printf(_("Alert method: %s\n"), alerts_method ? alerts_method : _("none"));
-		gu_puts("  "); printf(_("Alert address: %s\n"), alerts_address ? alerts_address : _("none"));
+		gu_utf8_puts("  "); gu_utf8_printf(_("Alert method: %s\n"), alerts_method ? alerts_method : _("none"));
+		gu_utf8_puts("  "); gu_utf8_printf(_("Alert address: %s\n"), alerts_address ? alerts_address : _("none"));
 
 		/*---------------------------------
 		** Accounting things
 		---------------------------------*/
-		printf(_("Flags: %s %s (banners %s, trailers %s)\n"),
+		gu_utf8_printf(_("Flags: %s %s (banners %s, trailers %s)\n"),
 			flag_description(banner),
 			flag_description(trailer),
 			long_flag_description(banner),
 			long_flag_description(trailer));
-		printf(_("Charge: "));
+		gu_utf8_printf(_("Charge: "));
 		if(charge_duplex_sheet == -1)
 			{
-			printf(_("no charge\n"));
+			gu_utf8_printf(_("no charge\n"));
 			}
 		else
 			{		/* money() uses static array for result */
-			printf(_("%s per duplex sheet, "), money(charge_duplex_sheet));
-			printf(_("%s per simplex sheet\n"), money(charge_simplex_sheet));
+			gu_utf8_printf(_("%s per duplex sheet, "), money(charge_duplex_sheet));
+			gu_utf8_printf(_("%s per simplex sheet\n"), money(charge_simplex_sheet));
 			}
 
 		/*--------------------------------------------
@@ -934,47 +942,47 @@ int command_show(const char *argv[])
 		---------------------------------------------*/
 
 		/* Uncompress and print the switchset. */
-		gu_puts(_("Switchset: "));
+		gu_utf8_puts(_("Switchset: "));
 		if(switchset)
 			print_switchset(switchset);
 		putchar('\n');
 
 		/* Rare option is not show unless set. */
 		if(passthru)
-			printf(_("PassThru types: %s\n"), passthru);
+			gu_utf8_printf(_("PassThru types: %s\n"), passthru);
 
 		/* Rare option is not show unless set. */
 		if(limitpages_lower > 0 || limitpages_upper > 0)
-			printf(_("LimitPages: %d %d\n"), limitpages_lower, limitpages_upper);
+			gu_utf8_printf(_("LimitPages: %d %d\n"), limitpages_lower, limitpages_upper);
 
 		/* Rare option is not show unless set. */
 		if(limitkilobytes_lower > 0 || limitkilobytes_upper > 0)
-			printf(_("LimitKilobytes: %d %d\n"), limitkilobytes_lower, limitkilobytes_upper);
+			gu_utf8_printf(_("LimitKilobytes: %d %d\n"), limitkilobytes_lower, limitkilobytes_upper);
 
 		/* Another rare option. */
 		if(!grayok)
-			printf(_("GrayOK: %s\n"), grayok ? _("yes") : _("no"));
+			gu_utf8_printf(_("GrayOK: %s\n"), grayok ? _("yes") : _("no"));
 
 		/* This rare option is not show until set. */
 		if(acls)
-			printf(_("ACLs: %s\n"), acls);
+			gu_utf8_printf(_("ACLs: %s\n"), acls);
 
 		/* Another rare option */
 		if(pagetimelimit > 0)
-			printf(_("PageTimeLimit: %d\n"), pagetimelimit);
+			gu_utf8_printf(_("PageTimeLimit: %d\n"), pagetimelimit);
 
 		/* Another rare option */
 		if(userparams)
-			printf(_("Userparams: %s\n"), userparams);
+			gu_utf8_printf(_("Userparams: %s\n"), userparams);
 
 		/* Print the assembed addon settings. */
 		if(addon_count > 0)
 			{
 			int x;
-			gu_puts(_("Addon:"));
+			gu_utf8_puts(_("Addon:"));
 			for(x = 0; x < addon_count; x++)
 				{
-				printf("\t%s\n", addon[x]);
+				gu_utf8_printf("\t%s\n", addon[x]);
 				}
 			}
 		}
@@ -982,46 +990,46 @@ int command_show(const char *argv[])
 	/* Machine readable output. */
 	else
 		{
-		printf("name\t%s\n", printer);
-		printf("comment\t%s\n", comment ? comment : "");
-		printf("location\t%s\n", location ? location : "");
-		printf("department\t%s\n", department ? department : "");
-		printf("contact\t%s\n", contact ? contact : "");
+		gu_utf8_printf("name\t%s\n", printer);
+		gu_utf8_printf("comment\t%s\n", comment ? comment : "");
+		gu_utf8_printf("location\t%s\n", location ? location : "");
+		gu_utf8_printf("department\t%s\n", department ? department : "");
+		gu_utf8_printf("contact\t%s\n", contact ? contact : "");
 
 		/* Communications related things */
-		printf("interface\t%s\n", interface ? interface : "");
-		printf("address\t%s\n", address ? address : "");
-		printf("options\t%s\n", options ? options : "");
-		printf("jobbreak\t%s %s\n",jobbreak_description(jobbreak), jobbreak_description(jobbreak_default));
-		printf("feedback\t%s %s\n", feedback_description(feedback), feedback_description(feedback_default));
-		printf("codes\t%s %s\n", codes_description(codes), codes_description(codes_default));
+		gu_utf8_printf("interface\t%s\n", interface ? interface : "");
+		gu_utf8_printf("address\t%s\n", address ? address : "");
+		gu_utf8_printf("options\t%s\n", options ? options : "");
+		gu_utf8_printf("jobbreak\t%s %s\n",jobbreak_description(jobbreak), jobbreak_description(jobbreak_default));
+		gu_utf8_printf("feedback\t%s %s\n", feedback_description(feedback), feedback_description(feedback_default));
+		gu_utf8_printf("codes\t%s %s\n", codes_description(codes), codes_description(codes_default));
 
 		/* RIP */
-		printf("rip\t%s\t%s\t%s\n",
+		gu_utf8_printf("rip\t%s\t%s\t%s\n",
 				rip_name ? rip_name : "",
 				rip_output_language ? rip_output_language : "",
 				rip_options ? rip_options : "");
-		printf("rip_ppd\t%s\t%s\t%s\n",
+		gu_utf8_printf("rip_ppd\t%s\t%s\t%s\n",
 				rip_ppd_name ? rip_ppd_name : "",
 				rip_ppd_output_language ? rip_ppd_output_language : "",
 				rip_ppd_options ? rip_ppd_options : "");
-		printf("rip_which\t%s\n",
+		gu_utf8_printf("rip_which\t%s\n",
 				rip_name==rip_ppd_name ? "PPD" : "CONFIG");
 
 		/* Alerts */
-		printf("alerts\t%d %s %s\n",
+		gu_utf8_printf("alerts\t%d %s %s\n",
 				alerts_frequency,
 				alerts_method ? alerts_method : "",
 				alerts_address ? alerts_address : "");
 
 		/* Accounting related things */
-		printf("flags\t%s %s\n", flag_description(banner), flag_description(trailer));
-		gu_puts("charge\t");
+		gu_utf8_printf("flags\t%s %s\n", flag_description(banner), flag_description(trailer));
+		gu_utf8_puts("charge\t");
 		if(charge_duplex_sheet != -1)
 			{			/* money() returns pointer to static array! */
-			gu_puts(money(charge_duplex_sheet));
+			gu_utf8_puts(money(charge_duplex_sheet));
 			putchar(' ');
-			gu_puts(money(charge_simplex_sheet));
+			gu_utf8_puts(money(charge_simplex_sheet));
 			}
 		else
 			{
@@ -1030,9 +1038,9 @@ int command_show(const char *argv[])
 		putchar('\n');
 
 		/* PPD file related things */
-		printf("ppd\t%s\n", PPDFile ? PPDFile : "");
+		gu_utf8_printf("ppd\t%s\n", PPDFile ? PPDFile : "");
 
-		gu_puts("ppdopts\t");
+		gu_utf8_puts("ppdopts\t");
 		{
 		int x;
 		for(x=0; x < ppdopts_count; x++)
@@ -1047,37 +1055,37 @@ int command_show(const char *argv[])
 			len2 = strcspn(p2, "/ \t");
 			if(x)
 				putchar(' ');
-			printf("%.*s %.*s", len1, p1, len2, p2);
+			gu_utf8_printf("%.*s %.*s", len1, p1, len2, p2);
 			}
 		}
 		putchar('\n');
 
-		gu_puts("bins\t");
+		gu_utf8_puts("bins\t");
 		{
 		int x;
 		for(x=0; x < bincount; x++)
 			{
 			if(x==0)
-				printf("%s", bins[x]);
+				gu_utf8_puts(bins[x]);
 			else
-				printf(" %s", bins[x]);
+				gu_utf8_puts(bins[x]);
 			}
 		}
 		putchar('\n');
 
-		printf("outputorder\t%s\n", outputorder_description(outputorder));
+		gu_utf8_printf("outputorder\t%s\n", outputorder_description(outputorder));
 
-		printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
+		gu_utf8_printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
 
 		/* Other things */
-		gu_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
-		printf("passthru\t%s\n", passthru ? passthru : "");
-		printf("limitpages\t%d %d\n", limitpages_lower, limitpages_upper);
-		printf("limitkilobytes\t%d %d\n", limitkilobytes_lower, limitkilobytes_upper);
-		printf("grayok\t%s\n", grayok ? "yes" : "no");
-		printf("acls\t%s\n", acls ? acls : "");
-		printf("pagetimelimit\t%d\n", pagetimelimit);
-		printf("userparams\t%s\n", userparams ? userparams : "");
+		gu_utf8_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_utf8_printf("passthru\t%s\n", passthru ? passthru : "");
+		gu_utf8_printf("limitpages\t%d %d\n", limitpages_lower, limitpages_upper);
+		gu_utf8_printf("limitkilobytes\t%d %d\n", limitkilobytes_lower, limitkilobytes_upper);
+		gu_utf8_printf("grayok\t%s\n", grayok ? "yes" : "no");
+		gu_utf8_printf("acls\t%s\n", acls ? acls : "");
+		gu_utf8_printf("pagetimelimit\t%d\n", pagetimelimit);
+		gu_utf8_printf("userparams\t%s\n", userparams ? userparams : "");
 
 		/* Addon lines */
 		if(addon_count > 0)
@@ -1091,11 +1099,11 @@ int command_show(const char *argv[])
 					*p = '\0';
 					p++;
 					p += strspn(p, " \t");
-					printf("addon %s\t%s\n", addon[x], p);
+					gu_utf8_printf("addon %s\t%s\n", addon[x], p);
 					}
 				else
 					{
-					printf("addon\t%s\n", addon[x]);
+					gu_utf8_printf("addon\t%s\n", addon[x]);
 					}
 				}
 			}
@@ -1107,7 +1115,7 @@ int command_show(const char *argv[])
 	} /* command_show() */
 
 /*
-<command acl="ppad" helptopics="printer-basic">
+<command acl="ppad" helptopics="printer,printer-basic">
 	<name><word>copy</word></name>
 	<desc>copy printer <arg>existing</arg> creating printer <arg>new</arg></desc>
 	<args>
@@ -1122,7 +1130,7 @@ int command_copy(const char *argv[])
 	}
 
 /*
-<command acl="ppad" helptopics="printer-basic,printer-description">
+<command acl="ppad" helptopics="printer,printer-basic,printer-description">
 	<name><word>comment</word></name>
 	<desc>modify a printer's comment field</desc>
 	<args>
@@ -1137,7 +1145,7 @@ int command_comment(const char *argv[])
 	} /* command_comment() */
 
 /*
-<command acl="ppad" helptopics="printer-description">
+<command acl="ppad" helptopics="printer,printer-description">
 	<name><word>location</word></name>
 	<desc>modify a printer's location field</desc>
 	<args>
@@ -1152,7 +1160,7 @@ int command_location(const char *argv[])
 	} /* command_location() */
 
 /*
-<command acl="ppad" helptopics="printer-description">
+<command acl="ppad" helptopics="printer,printer-description">
 	<name><word>department</word></name>
 	<desc>modify a printer's department field</desc>
 	<args>
@@ -1167,7 +1175,7 @@ int command_department(const char *argv[])
 	} /* command_department() */
 
 /*
-<command acl="ppad" helptopics="printer-description">
+<command acl="ppad" helptopics="printer,printer-description">
 	<name><word>contact</word></name>
 	<desc>modify a printer's contact field</desc>
 	<args>
@@ -1182,7 +1190,7 @@ int command_contact(const char *argv[])
 	} /* command_contact() */
 
 /*
-<command acl="ppad" helptopics="printer-basic">
+<command acl="ppad" helptopics="printer,printer-basic">
 	<name><word>interface</word></name>
 	<desc>set a printers interface program and address</desc>
 	<args>
@@ -1209,13 +1217,13 @@ int command_interface(const char *argv[])
 
 	if(strpbrk(printer, DEST_DISALLOWED))
 		{
-		fputs(_("The printer name contains a disallowed character.\n"), stderr);
+		gu_utf8_fputs(_("The printer name contains a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(strchr(DEST_DISALLOWED_LEADING, (int)printer[0]))
 		{
-		fputs(_("The printer name begins with a disallowed character.\n"), stderr);
+		gu_utf8_fputs(_("The printer name begins with a disallowed character.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1237,12 +1245,12 @@ int command_interface(const char *argv[])
 
 	if(stat(p, &statbuf) < 0)
 		{
-		fprintf(stderr, _("The interface \"%s\" does not exist.\n"), interface);
+		gu_utf8_fprintf(stderr, _("The interface \"%s\" does not exist.\n"), interface);
 		return EXIT_NOTFOUND;
 		}
 	if(! (statbuf.st_mode & S_IXUSR) )
 		{
-		fprintf(stderr, _("The interface \"%s\" not executable.\n"), interface);
+		gu_utf8_fprintf(stderr, _("The interface \"%s\" not executable.\n"), interface);
 		return EXIT_NOTFOUND;
 		}
 	}
@@ -1321,7 +1329,7 @@ int command_interface(const char *argv[])
 	} /* command_interface() */
 
 /*
-<command acl="ppad" helptopics="printer-basic">
+<command acl="ppad" helptopics="printer,printer-basic">
 	<name><word>options</word></name>
 	<desc>set a printer's interface options string</desc>
 	<args>
@@ -1359,7 +1367,7 @@ int command_options(const char *argv[])
 	if(p)
 		{
 		if(strcmp(p, "none") == 0)
-			fprintf(stderr, X_("Warning: setting options to \"none\" is deprecated\n"));
+			gu_utf8_fprintf(stderr, X_("Warning: setting options to \"none\" is deprecated\n"));
 		else
 			conf_printf(obj, "Options: %s\n", p);
 		gu_free(p);
@@ -1425,7 +1433,7 @@ static int printer_interface_param(const char printer[], const char param[], int
 	} /* printer_interface_param() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>jobbreak</word></name>
 	<desc>set a printer's jobbreak method</desc>
 	<args>
@@ -1444,7 +1452,7 @@ int command_jobbreak(const char *argv[])
 		{
 		/* We omit "none" and "save/restore" from this list because
 		 * we want to remove them. */
-		fputs(_("Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
+		gu_utf8_fputs(_("Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
 			"\"newinterface\", and \"default\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
@@ -1453,7 +1461,7 @@ int command_jobbreak(const char *argv[])
 	} /* command_jobbreak() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>feedback</word></name>
 	<desc>set a printer's feedback flag</desc>
 	<args>
@@ -1470,7 +1478,7 @@ int command_feedback(const char *argv[])
 
 	if((new_value = feedback_code(feedback)) == FEEDBACK_INVALID)
 		{
-		fputs(_("Valid feedback settings are \"true\", \"false\", or \"default\".\n"), stderr);
+		gu_utf8_fputs(_("Valid feedback settings are \"true\", \"false\", or \"default\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1478,7 +1486,7 @@ int command_feedback(const char *argv[])
 	} /* command_feedback() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>codes</word></name>
 	<desc>set a printer's passable codes info</desc>
 	<args>
@@ -1495,7 +1503,7 @@ int command_codes(const char *argv[])
 
 	if((new_value = codes_code(codes)) == CODES_INVALID)
 		{
-		fputs(_("Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
+		gu_utf8_fputs(_("Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
 			"\"UNKNOWN\", and \"default\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
@@ -1504,7 +1512,7 @@ int command_codes(const char *argv[])
 	} /* command_codes() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>rip</word></name>
 	<desc>change external RIP settings for <arg>printer</arg></desc>
 	<args>
@@ -1524,19 +1532,19 @@ int command_rip(const char *argv[])
 
 	if(rip && !output_language)
 		{
-		fputs(_("If you set a RIP, you must specify the output language.\n"), stderr);
+		gu_utf8_fputs(_("If you set a RIP, you must specify the output language.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(rip && strlen(rip) == 0)
 		{
-		fputs(_("The RIP name may not be an empty string.\n"), stderr);
+		gu_utf8_fputs(_("The RIP name may not be an empty string.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(output_language && strlen(output_language) == 0)
 		{
-		fputs(_("The RIP output language may not be an empty string.\n"), stderr);
+		gu_utf8_fputs(_("The RIP output language may not be an empty string.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1544,7 +1552,7 @@ int command_rip(const char *argv[])
 	} /* command_rip() */
 
 /*
-<command acl="ppad" helptopics="printer-basic,printer-ppad">
+<command acl="ppad" helptopics="printer,printer-basic,printer-ppd">
 	<name><word>ppd</word></name>
 	<desc>set a printer's description (PPD) file</desc>
 	<args>
@@ -1635,7 +1643,7 @@ int command_ppd(const char *argv[])
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	
@@ -1644,7 +1652,7 @@ int command_ppd(const char *argv[])
 	} /* command_ppd() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>alerts</word></name>
 	<desc>set frequency and destination of printer alerts</desc>
 	<args>
@@ -1666,7 +1674,7 @@ int command_alerts(const char *argv[])
 
 	if(strspn(argv[1], "-0123456789") != strlen(argv[1]))
 		{
-		fprintf(stderr, _("Alerts interval must be an integer.\n"));
+		gu_utf8_fprintf(stderr, _("Alerts interval must be an integer.\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -1700,7 +1708,7 @@ int command_alerts(const char *argv[])
 	} /* command_alert() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>frequency</word></name>
 	<desc>alter frequency of printer alerts</desc>
 	<args>
@@ -1723,7 +1731,7 @@ int command_frequency(const char *argv[])
 
 	if(strspn(argv[1], "-0123456789") != strlen(argv[1]))
 		{
-		fprintf(stderr, _("Alerts interval must be an integer.\n"));
+		gu_utf8_fprintf(stderr, _("Alerts interval must be an integer.\n"));
 		return EXIT_SYNTAX;
 		}
 
@@ -1751,7 +1759,7 @@ int command_frequency(const char *argv[])
 
 	if(! alert_method || ! alert_address)
 		{
-		fputs(_("No alert method and address defined, use \"ppad alerts\".\n"), stderr);
+		gu_utf8_fputs(_("No alert method and address defined, use \"ppad alerts\".\n"), stderr);
 		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
@@ -1774,7 +1782,7 @@ int command_frequency(const char *argv[])
 	} /* command_frequency() */
 
 /*
-<command acl="ppad" helptopics="printer-flags">
+<command acl="ppad" helptopics="printer,printer-flags">
 	<name><word>flags</word></name>
 	<desc>set rules for printing flag (banner and trailer) pages</desc>
 	<args>
@@ -1799,7 +1807,7 @@ int command_flags(const char *argv[])
 		(trailer = flag_code(argv[2])) == BANNER_INVALID
 		)
 		{
-		fputs(_("Banner and trailer must be set to \"never\", \"no\",\n"
+		gu_utf8_fputs(_("Banner and trailer must be set to \"never\", \"no\",\n"
 				"\"yes\", or \"always\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
@@ -1808,7 +1816,7 @@ int command_flags(const char *argv[])
 	} /* command_flags() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer,printer-advanced,printer-ppd">
 	<name><word>outputorder</word></name>
 	<desc>set rules for printing flag (banner and trailer) pages</desc>
 	<args>
@@ -1833,7 +1841,7 @@ int command_outputorder(const char *argv[])
 		newstate = NULL;
 	else
 		{
-		fputs(_("Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"), stderr);
+		gu_utf8_fputs(_("Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1841,7 +1849,7 @@ int command_outputorder(const char *argv[])
 	} /* command_direction() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>charge</word></name>
 	<desc>set or clear per-sheet charge (possibly 0.00)</desc>
 	<args>
@@ -1865,7 +1873,7 @@ int command_charge(const char *argv[])
 		{
 		if(argv[2] && strlen(argv[2]) > 0)
 			{
-			fprintf(stderr, _("A second parameter is not allowed because first is \"%s\"."), argv[1]);
+			gu_utf8_fprintf(stderr, _("A second parameter is not allowed because first is \"%s\"."), argv[1]);
 			return EXIT_SYNTAX;
 			}
 		retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, CONF_RELOAD, "Charge", NULL);
@@ -1877,12 +1885,12 @@ int command_charge(const char *argv[])
 		/* Check for proper syntax of values.  This check isn't really rigorous enough!!! */
 		if(strspn(argv[1], "0123456789.") != strlen(argv[1]))
 			{
-			fprintf(stderr, _("The value \"%s\" is not in the correct format for decimal currency."), argv[1]);
+			gu_utf8_fprintf(stderr, _("The value \"%s\" is not in the correct format for decimal currency."), argv[1]);
 			return EXIT_SYNTAX;
 			}
 		if(argv[2] && strspn(argv[2], "0123456789.") != strlen(argv[2]))
 			{
-			fprintf(stderr, _("The value \"%s\" is not in the correct format for decimal currency."), argv[2]);
+			gu_utf8_fprintf(stderr, _("The value \"%s\" is not in the correct format for decimal currency."), argv[2]);
 			return EXIT_SYNTAX;
 			}
 
@@ -1905,7 +1913,7 @@ int command_charge(const char *argv[])
 	} /* command_charge() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer,printer-advanced,printer-ppd">
 	<name><word>bins</word><word>ppd</word></name>
 	<desc>set bins list from PPD file</desc>
 	<args>
@@ -1925,13 +1933,13 @@ int command_bins_ppd(const char *argv[])
 
 	if(! (printer = argv[0]))
 		{
-		fputs(_("You must supply the name of an existing printer.\n"), stderr);
+		gu_utf8_fputs(_("You must supply the name of an existing printer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if(argv[1])
 		{
-		fputs(_("Too many parameters.\n"), stderr);
+		gu_utf8_fputs(_("Too many parameters.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1955,7 +1963,7 @@ int command_bins_ppd(const char *argv[])
 
 	if(! ppdname)
 		{
-		fputs(_("Printer configuration file does not have a \"PPDFile:\" line.\n"), stderr);
+		gu_utf8_fputs(_("Printer configuration file does not have a \"PPDFile:\" line.\n"), stderr);
 		conf_abort(obj);
 		return EXIT_NOTFOUND;
 		}
@@ -2019,7 +2027,7 @@ static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 				{
 				if(strcmp(bin, argv[idx]) == 0)
 					{
-					fprintf(stderr, _("Printer \"%s\" already has a bin called \"%s\".\n"), printer, argv[idx]);
+					gu_utf8_fprintf(stderr, _("Printer \"%s\" already has a bin called \"%s\".\n"), printer, argv[idx]);
 					duplicate = TRUE;
 					}
 				}
@@ -2042,7 +2050,7 @@ static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	/* If this would make for too many bins, abort the changes. */
 	if(count > MAX_BINS)
 		{
-		fprintf(stderr, _("Can't add these %d bin%s to \"%s\" because then the printer would\n"
+		gu_utf8_fprintf(stderr, _("Can't add these %d bin%s to \"%s\" because then the printer would\n"
 				"have %d bins and the %d bin limit would be exceeded.\n"),
 				idx - 1, idx == 2 ? "" : "s",
 				printer, count, MAX_BINS);
@@ -2061,7 +2069,7 @@ static int printer_bins_set_or_add(gu_boolean add, const char *argv[])
 	} /* command_bins_set_or_add() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer,printer-advanced,printer-ppd">
 	<name><word>bins</word><word>set</word></name>
 	<desc>set bins list</desc>
 	<args>
@@ -2076,7 +2084,7 @@ int command_bins_set(const char *argv[])
 	} /* command_bins_set() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer,printer-advanced,printer-ppd">
 	<name><word>bins</word><word>add</word></name>
 	<desc>add to bins list</desc>
 	<args>
@@ -2091,7 +2099,7 @@ int command_bins_add(const char *argv[])
 	} /* command_bins_add() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer,printer-advanced,printer-ppd">
 	<name><word>bins</word><word>delete</word></name>
 	<desc>delete from bins list</desc>
 	<args>
@@ -2114,7 +2122,7 @@ int command_bins_delete(const char *argv[])
 		{
 		if(idx > MAX_BINS)
 			{
-			fprintf(stderr, _("You can't delete more than %d bins at a time.\n"), MAX_BINS);
+			gu_utf8_fprintf(stderr, _("You can't delete more than %d bins at a time.\n"), MAX_BINS);
 			return EXIT_SYNTAX;
 			}
 		found[idx - 1] = FALSE;
@@ -2152,7 +2160,7 @@ int command_bins_delete(const char *argv[])
 		{
 		if(! found[idx - 1])
 			{
-			fprintf(stderr, _("The printer \"%s\" does not have a bin called \"%s\".\n"), printer, argv[idx]);
+			gu_utf8_fprintf(stderr, _("The printer \"%s\" does not have a bin called \"%s\".\n"), printer, argv[idx]);
 			misses++;
 			}
 		}
@@ -2193,7 +2201,7 @@ static void remove_directory(const char dirname[])
 	}
 
 /*
-<command acl="ppad" helptopics="printer-basic">
+<command acl="ppad" helptopics="printer,printer-basic">
 	<name><word>delete</word></name>
 	<desc>delete <arg>printer</arg></desc>
 	<args>
@@ -2215,7 +2223,7 @@ int command_delete(const char *argv[])
 
 	if(!printer)
 		{
-		fputs(_("You must specify a printer to delete.\n"), stderr);
+		gu_utf8_fputs(_("You must specify a printer to delete.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2229,7 +2237,7 @@ int command_delete(const char *argv[])
 	 */
 	if(!(dir = opendir(GRCONF)))
 		{
-		fprintf(stderr, _("%s(): %s(\"%s\") failed, errno=%d (%s)\n"), function, "opendir", GRCONF, errno, strerror(errno));
+		gu_utf8_fprintf(stderr, _("%s(): %s(\"%s\") failed, errno=%d (%s)\n"), function, "opendir", GRCONF, errno, strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -2246,7 +2254,7 @@ int command_delete(const char *argv[])
 
 		if(!(obj = conf_open(QUEUE_TYPE_GROUP, direntp->d_name, 0)))
 			{
-			fprintf(stderr, "%s(): conf_open(QUEUE_TYPE_GROUP, \"%s\", 0) failed", function, direntp->d_name);
+			gu_utf8_fprintf(stderr, "%s(): conf_open(QUEUE_TYPE_GROUP, \"%s\", 0) failed", function, direntp->d_name);
 			closedir(dir);
 			return EXIT_INTERNAL;
 			}
@@ -2277,12 +2285,12 @@ int command_delete(const char *argv[])
 		{
 		if(errno==ENOENT)
 			{
-			fprintf(stderr, _("The printer \"%s\" does not exist.\n"), printer);
+			gu_utf8_fprintf(stderr, _("The printer \"%s\" does not exist.\n"), printer);
 			return EXIT_BADDEST;
 			}
 		else
 			{
-			fprintf(stderr, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
+			gu_utf8_fprintf(stderr, "unlink(\"%s\") failed, errno=%d (%s)\n", fname, errno, gu_strerror(errno));
 			return EXIT_INTERNAL;
 			}
 		}
@@ -2300,7 +2308,7 @@ int command_delete(const char *argv[])
 	} /* command_delete() */
 
 /*
-<command acl="ppad" helptopics="">
+<command acl="ppad" helptopics="printer">
 	<name><word>touch</word></name>
 	<desc>instruct pprd to reload <arg>printer</arg></desc>
 	<args>
@@ -2322,7 +2330,7 @@ int command_touch(const char *argv[])
 	} /* command_touch() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>switchset</word></name>
 	<desc>attach a set of switches to a printer</desc>
 	<args>
@@ -2339,7 +2347,7 @@ int command_switchset(const char *argv[])
 	/* convert the switch set to a line */
 	if(make_switchset_line(newset, &argv[1]))
 		{
-		fputs(_("Bad set of switches.\n"), stderr);
+		gu_utf8_fputs(_("Bad set of switches.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2347,7 +2355,7 @@ int command_switchset(const char *argv[])
 	} /* command_switchset() */
 
 /*
-<command acl="ppad" helptopics="">
+<command acl="ppad" helptopics="printer">
 	<name><word>deffiltopts</word></name>
 	<desc>update a printer's default filter options</desc>
 	<args>
@@ -2392,7 +2400,7 @@ int command_deffiltopts(const char *argv[])
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -2401,7 +2409,7 @@ int command_deffiltopts(const char *argv[])
 	} /* command_deffiltopts() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced">
+<command acl="ppad" helptopics="printer,printer-advanced">
 	<name><word>passthru</word></name>
 	<desc>set a printer's passthru language list</desc>
 	<args>
@@ -2418,7 +2426,7 @@ int command_passthru(const char *argv[])
 
 	if(!printer)
 		{
-		fputs(_("You must specify a printer and a (possibly empty) list\n"
+		gu_utf8_fputs(_("You must specify a printer and a (possibly empty) list\n"
 				"of file types.  These file types should be the same as\n"
 				"those used with the \"ppr -T\" option.\n"), stderr);
 		return EXIT_SYNTAX;
@@ -2432,7 +2440,7 @@ int command_passthru(const char *argv[])
 	} /* command_passthru() */
 
 /*
-<command acl="ppad" helptopics="printer-advanced,printer-ppd">
+<command acl="ppad" helptopics="printer,printer-advanced,printer-ppd">
 	<name><word>ppdopts</word></name>
 	<desc>choose optional printer features from PPD file</desc>
 	<args>
@@ -2557,7 +2565,7 @@ int command_ppdopts(const char *argv[])
 				*/
 				if(ui_open)
 					{
-					fprintf(stderr, _("WARNING: Unclosed UI block \"%s\" in PPD file.\n"), ui_open);
+					gu_utf8_fprintf(stderr, _("WARNING: Unclosed UI block \"%s\" in PPD file.\n"), ui_open);
 					gu_free(ui_open);
 					ui_open = (char*)NULL;
 					}
@@ -2567,7 +2575,7 @@ int command_ppdopts(const char *argv[])
 	
 				/* Print the option name and its translation string. */
 				if(!answers)
-					printf("%s\n", p);
+					gu_utf8_printf("%s\n", p);
 	
 				/* Save the option name and translation string. */
 				ui_open = gu_strdup(p);
@@ -2590,11 +2598,11 @@ int command_ppdopts(const char *argv[])
 				p[strcspn(p, ":")] = '\0';
 	
 				if(!answers)
-					printf("%d) %s\n", next_value, p);
+					gu_utf8_printf("%d) %s\n", next_value, p);
 	
 				if(next_value >= (sizeof(values) / sizeof(char*)))
 					{
-					fprintf(stderr, "%s(): values[] overflow\n", function);
+					gu_utf8_fprintf(stderr, "%s(): values[] overflow\n", function);
 					conf_abort(obj);
 					return EXIT_INTERNAL;
 					}
@@ -2610,8 +2618,8 @@ int command_ppdopts(const char *argv[])
 				{
 				if( strncmp(p, ui_open, strcspn(ui_open, "/")) )
 					{
-					fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), stderr);
-					fprintf(stderr, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(p,"/\n"), p);
+					gu_utf8_fputs(_("WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"), stderr);
+					gu_utf8_fprintf(stderr, "(\"%s\" closed by \"%.*s\".)\n", ui_open, (int)strcspn(p,"/\n"), p);
 					}
 	
 				/* If there are answers on the command line, */
@@ -2627,8 +2635,8 @@ int command_ppdopts(const char *argv[])
 						for(y=1; y < next_value; y++)
 							{
 							#if 0
-							printf("x=%d, y=%d\n", x, y);
-							printf("answers[x]=\"%s\", answers[x+1]=\"%s\", ui_open=\"%s\", ui_open_mrlen=%d, values[y]=\"%s\"\n", answers[x], answers[x+1], ui_open, ui_open_mrlen, values[y]);
+							gu_utf8_printf("x=%d, y=%d\n", x, y);
+							gu_utf8_printf("answers[x]=\"%s\", answers[x+1]=\"%s\", ui_open=\"%s\", ui_open_mrlen=%d, values[y]=\"%s\"\n", answers[x], answers[x+1], ui_open, ui_open_mrlen, values[y]);
 							#endif
 							if(strlen(answers[x]) == ui_open_mrlen && strncmp(answers[x], ui_open, ui_open_mrlen) == 0)
 								{
@@ -2643,11 +2651,11 @@ int command_ppdopts(const char *argv[])
 						}
 					if(!found)
 						{
-						fprintf(stderr, _("Warning:	 No value provided for \"%s\".\n"), ui_open);
+						gu_utf8_fprintf(stderr, _("Warning:	 No value provided for \"%s\".\n"), ui_open);
 						}
 					else if(!valid)
 						{
-						fprintf(stderr, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
+						gu_utf8_fprintf(stderr, _("Value provided for \"%s\" is not among the possible values.\n"), ui_open);
 						conf_abort(obj);
 						return EXIT_SYNTAX;
 						}
@@ -2658,7 +2666,7 @@ int command_ppdopts(const char *argv[])
 					{
 					char temp[10];
 					do	{
-						printf(_("Choose 1 thru %d or 0 if unknown> "), next_value-1);
+						gu_utf8_printf(_("Choose 1 thru %d or 0 if unknown> "), next_value-1);
 						fflush(stdout);
 						if(fgets(temp, sizeof(temp), stdin) == (char*)NULL)
 							{
@@ -2668,7 +2676,7 @@ int command_ppdopts(const char *argv[])
 						c = atoi(temp);
 						} while( ! isdigit( temp[strspn(temp," \t")] ) || c >= next_value );
 	
-					fputc('\n', stdout);
+					gu_putwc('\n');
 					}
 	
 				/*
@@ -2684,7 +2692,7 @@ int command_ppdopts(const char *argv[])
 					/* If translation strings are provided for both the category and the
 					   selected option, print them afterward so that they can later
 					   be shown in the "ppad show" output. */
-					if( strchr(ui_open, '/') && strchr(values[c],'/'))
+					if(strchr(ui_open, '/') && strchr(values[c],'/'))
 						conf_printf(obj, " (%s %s)", (strchr(ui_open, '/') + 1), (strchr(values[c], '/') + 1));
 	
 					/* End the configuration file line. */
@@ -2705,7 +2713,7 @@ int command_ppdopts(const char *argv[])
 		/* Sanity check. */
 		if(ui_open)
 			{
-			fprintf(stderr, _("WARNING: Unclosed UI block in PPD file: \"%s\".\n"), ui_open);
+			gu_utf8_fprintf(stderr, _("WARNING: Unclosed UI block in PPD file: \"%s\".\n"), ui_open);
 			gu_free(ui_open);
 			}
 	
@@ -2740,7 +2748,7 @@ int command_ppdopts(const char *argv[])
 		}
 	gu_Catch {
 		conf_abort(obj);
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return exception_to_exitcode(gu_exception_code);
 		}
 	}
@@ -2761,7 +2769,7 @@ int command_ppdopts(const char *argv[])
 	} /* command_ppdopts() */
 
 /*
-<command acl="ppad" helptopics="printer-limit">
+<command acl="ppad" helptopics="printer,printer-limits">
 	<name><word>limitpages</word></name>
 	<desc>set lower and upper bounds on pages printed</desc>
 	<args>
@@ -2778,13 +2786,13 @@ int command_limitpages(const char *argv[])
 
 	if((limit_lower = atoi(argv[1])) < 0)
 		{
-		fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), stderr);
+		gu_utf8_fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if((limit_upper = atoi(argv[2])) < 0)
 		{
-		fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), stderr);
+		gu_utf8_fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2809,13 +2817,13 @@ int command_limitkilobytes(const char *argv[])
 
 	if((limit_lower = atoi(argv[1])) < 0)
 		{
-		fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), stderr);
+		gu_utf8_fputs(_("The lower limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
 	if((limit_upper = atoi(argv[2])) < 0)
 		{
-		fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), stderr);
+		gu_utf8_fputs(_("The upper limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2839,7 +2847,7 @@ int command_grayok(const char *argv[])
 
 	if(gu_torf_setBOOL(&grayok, argv[1]) == -1)
 		{
-		fputs(_("Value is not boolean.\n"), stderr);
+		gu_utf8_fputs(_("Value is not boolean.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2915,7 +2923,7 @@ int command_pagetimelimit(const char *argv[])
 
 	if((limit = atoi(argv[1])) < 0)
 		{
-		fputs(_("The limit must be 0 (unlimited) or a positive integer.\n"), stderr);
+		gu_utf8_fputs(_("The limit must be 0 (unlimited) or a positive integer.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2943,7 +2951,7 @@ int command_addon(const char *argv[])
 
 	if(!printer || !name || (value && argv[3]))
 		{
-		fputs(_("You must supply the name of an existing printer, the name of an addon\n"
+		gu_utf8_fputs(_("You must supply the name of an existing printer, the name of an addon\n"
 				"parameter.  A value for the parameter is optional.  If you do not\n"
 				"supply a value, the parameter will be unset.\n"), stderr);
 		return EXIT_SYNTAX;
@@ -2951,7 +2959,7 @@ int command_addon(const char *argv[])
 
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
-		fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
+		gu_utf8_fputs(_("Addon parameter names must begin with a lower-case ASCII letter.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -2985,7 +2993,7 @@ int command_ppdq(const char *argv[])
 		}
 	gu_Catch
 		{
-		fprintf(stderr, _("%s: query failed: %s\n"), myname, gu_exception);
+		gu_utf8_fprintf(stderr, _("%s: query failed: %s\n"), myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 

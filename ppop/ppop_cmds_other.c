@@ -602,7 +602,7 @@ int ppop_message(char *argv[])
 
 	if(!argv[0] || argv[1])
 		{
-		fputs(_("Usage: ppop message <printer>\n"), stderr);
+		gu_utf8_fputs(_("Usage: ppop message <printer>\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -813,12 +813,12 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 		switch(variation)
 			{
 			case 0:
-				fputs(_("Usage: ppop start <printer> ...\n\n"
+				gu_utf8_fputs(_("Usage: ppop start <printer> ...\n\n"
 						"This command starts a previously stopt printer.\n"), stderr);
 				break;
 			case 1:
 			case 2:
-				fputs(_("Usage: ppop stop <printer> ...\n"
+				gu_utf8_fputs(_("Usage: ppop stop <printer> ...\n"
 						"Usage: ppop wstop {printer}\n\n"
 						"This command stops a printer from printing.  If a job is being\n"
 						"printed when this command is issued, the printer does not\n"
@@ -827,7 +827,7 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 						"has actually stopt.\n"), stderr);
 				break;
 			case 3:
-				fputs(_("Usage: ppop halt <printer> ...\n\n"
+				gu_utf8_fputs(_("Usage: ppop halt <printer> ...\n\n"
 						"This command stops the printer immediately.  If a job is printing,\n"
 						"the job is returned to the queue for later printing.\n"), stderr);
 				break;
@@ -892,7 +892,9 @@ static int ppop_cancel_byuser_total;
 static int ppop_cancel_byuser_inform;
 
 static void ppop_cancel_byuser_help(void)
-	{ fputs("Syntax error.\n", stderr); }
+	{
+	gu_utf8_fputs(_("Syntax error.\n"), stderr);
+	}
 
 static void ppop_cancel_byuser_banner(void)
 	{ }
@@ -955,7 +957,7 @@ int ppop_cancel(char *argv[], int inform)
 
 	if(!argv[0])
 		{
-		fputs(_("Usage: ppop cancel {<job>, <destination>}\n\n"
+		gu_utf8_fputs(_("Usage: ppop cancel {<job>, <destination>}\n\n"
 			  "This command cancels a job or all of your jobs queued for the\n"
 			  "specified destination.\n"), stderr);
 
@@ -1015,7 +1017,7 @@ int ppop_purge(char *argv[], int inform)
 
 	if(argv[0] == (char*)NULL)
 		{
-		fputs(_("Usage: ppop purge <destination> ...\n\n"
+		gu_utf8_fputs(_("Usage: ppop purge <destination> ...\n\n"
 				"This command cancels all jobs queued for a particular destination.\n"
 				"Only an operator may use this command.  Extra arguments are\n"
 				"interpreted as the names of extra destinations to purge.\n"), stderr);
@@ -1057,7 +1059,7 @@ static int ppop_clean_total;
 
 static void ppop_clean_help(void)
 	{
-	fputs(_("Syntax error.\n"), stderr);
+	gu_utf8_fputs(_("Syntax error.\n"), stderr);
 	}
 
 static void ppop_clean_banner(void)
@@ -1104,7 +1106,7 @@ int ppop_clean(char *argv[])
 
 	if(argv[0] == (char*)NULL)
 		{
-		fputs(_("Usage: ppop clean <destination> ...\n\n"
+		gu_utf8_fputs(_("Usage: ppop clean <destination> ...\n\n"
 				"This command will delete all of the arrested jobs\n"
 				"queued for the indicated destination or destinations\n"), stderr);
 		exit(EXIT_SYNTAX);
@@ -1135,7 +1137,7 @@ static int ppop_cancel_active_inform;
 
 static void ppop_cancel_active_help(void)
 	{
-	fputs("Syntax error.\n", stderr);
+	gu_utf8_fputs("Syntax error.\n", stderr);
 	}
 
 static void ppop_cancel_active_banner(void)
@@ -1229,7 +1231,7 @@ int ppop_move(char *argv[])
 
 	if(!argv[0] || !argv[1])
 		{
-		fputs(_("Usage: ppop move <job> <destination>\n"
+		gu_utf8_fputs(_("Usage: ppop move <job> <destination>\n"
 			  "     ppop move <old_destionation> <new_destination>\n\n"
 			  "This command moves a job or jobs to a different queue.\n"), stderr);
 		return EXIT_SYNTAX;
@@ -1280,12 +1282,12 @@ int ppop_rush(char *argv[], int newpos)
 		{
 		if(newpos == 0)
 			{
-			fputs(_("Usage: ppop rush <job> ...\n\n"
+			gu_utf8_fputs(_("Usage: ppop rush <job> ...\n\n"
 				"This command moves the specified jobs to the head of the queue.\n"), stderr);
 			}
 		else
 			{
-			fputs(_("Usage: ppop last <job> ...\n\n"
+			gu_utf8_fputs(_("Usage: ppop last <job> ...\n\n"
 				"This command moves the specified jobs to the end of the queue.\n"), stderr);
 			}
 
@@ -1334,13 +1336,13 @@ int ppop_hold_release(char *argv[], int release)
 		{
 		if(! release)
 			{
-			fputs(_("Usage: ppop hold <job> ...\n\n"
+			gu_utf8_fputs(_("Usage: ppop hold <job> ...\n\n"
 				"This causes jobs to be placed in the held state.  A job\n"
 				"which is held will not be printed until it is released.\n"), stderr);
 			}
 		else
 			{
-			fputs(_("Usage: ppop release <job> ...\n\n"
+			gu_utf8_fputs(_("Usage: ppop release <job> ...\n\n"
 				"This command releases previously held or arrested jobs.\n"), stderr);
 			}
 		return EXIT_SYNTAX;
@@ -1353,7 +1355,7 @@ int ppop_hold_release(char *argv[], int release)
 
 		if(job->id == WILDCARD_JOBID)
 			{
-			fputs(_("You must indicate a specific job.\n"), stderr);
+			gu_utf8_fputs(_("You must indicate a specific job.\n"), stderr);
 			return EXIT_SYNTAX;
 			}
 
@@ -1387,11 +1389,11 @@ int ppop_accept_reject(char *argv[], int reject)
 	if(!argv[0])
 		{
 		if(! reject)
-			fputs(_("Usage: ppop accept <destionation>\n"), stderr);
+			gu_utf8_fputs(_("Usage: ppop accept <destionation>\n"), stderr);
 		else
-			fputs(_("Usage: ppop reject <destination>\n"), stderr);
+			gu_utf8_fputs(_("Usage: ppop reject <destination>\n"), stderr);
 
-		fputs(_("\n\tThis command sets the status of a destination.\n"
+		gu_utf8_fputs(_("\n\tThis command sets the status of a destination.\n"
 				"\tThe status of a destination may be displayed with\n"
 				"\tthe \"ppop destination\" command.\n"), stderr);
 
@@ -1436,7 +1438,7 @@ int ppop_destination(char *argv[], int info_level)
 
 	if(!argv[0])
 		{
-		fputs(_("Usage: ppop dest[ination] {<destionation>, all}\n"
+		gu_utf8_fputs(_("Usage: ppop dest[ination] {<destionation>, all}\n"
 				"       ppop ldest {<destionation>, all}\n"
 				"       ppop dest-comment-address {<destination>, all}\n"
 				"\n"
@@ -1624,7 +1626,7 @@ int ppop_alerts(char *argv[])
 
 	if(! argv[0])
 		{
-		fputs(_("Usage: ppop alerts _printer_\n"), stderr);
+		gu_utf8_fputs(_("Usage: ppop alerts _printer_\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1681,7 +1683,7 @@ int ppop_log(char *argv[])
 
 	if(!argv[0])
 		{
-		fputs(_("Usage: ppop log <job>\n"), stderr);
+		gu_utf8_fputs(_("Usage: ppop log <job>\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 
@@ -1693,7 +1695,7 @@ int ppop_log(char *argv[])
 
 	if(job->id == WILDCARD_JOBID)
 		{
-		fputs(_("You must indicate a specific job.\n"), stderr);
+		gu_utf8_fputs(_("You must indicate a specific job.\n"), stderr);
 		return EXIT_SYNTAX;
 		}
 

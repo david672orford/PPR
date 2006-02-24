@@ -94,14 +94,24 @@
 	<text>COMMAND_NODE_LEAF, </text>
 	<text>&amp;command</text><apply-templates select="name"/><text>_args, </text>
 	<text>N_("</text><value-of select="desc"/><text>"), </text>
-	<text>command</text><apply-templates select="name"/><text>, </text>
+	<text>command</text><apply-templates select="name"/>
+
+	<text>, </text>
+
+	<!-- Generate helptopics bitmap.  We make the C compiler do the low-
+	     level bit operations.  We start with a zero so we can lead
+	     off each bit with a bitwise or operator. -->
 	<text>0</text>
 	<if test="@helptopics">
 		<call-template name="split_helptopics">
 			<with-param name="string" select="@helptopics"/>
 		</call-template>
 	</if>
+
 	<text>, </text>
+
+	<!-- If an ACL controls access to this command, emmit its name
+	     as a string.  Otherwise, emmit NULL. -->
 	<choose>
 		<when test="@acl">
 			<text>"</text><value-of select="@acl"/><text>"</text>
@@ -110,6 +120,7 @@
 			<text>NULL</text>
 		</otherwise>
 	</choose>
+
 	<text>},&#10;</text>
 </template>
 
@@ -127,10 +138,15 @@
 			</call-template>
 		</when>
 		<otherwise>
-			<text>|(2^</text>
-			<if test="key('helptopics',$string)">
-				<value-of select="count(key('helptopics',$string)[1]/preceding-sibling::helptopic)"/>
-			</if>
+			<text>|(1&lt;&lt;</text>
+			<choose>
+				<when test="key('helptopics',$string)">
+					<value-of select="count(key('helptopics',$string)[1]/preceding-sibling::helptopic)"/>
+				</when>
+				<otherwise>	<!-- provoke error during compile -->
+					<text>undefined</text>
+				</otherwise>
+			</choose>
 			<text>)/*</text><value-of select="$string"/><text>*/</text>
 		</otherwise>
 	</choose>	

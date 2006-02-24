@@ -88,6 +88,40 @@ defined($PPR2SAMBA_PATH) || die;
 	"pros" => "int_pros"
 	);
 
+# This table explains how to suggest printer queue names
+# based on the interface and the the interface address.
+%suggestion_rules = (
+	"tcpip" =>		['^([^\.:]+)'],		# host:port, go with host
+	"socketapi" =>	['^([^\.:]+)'],		# ditto
+	"appsocket" =>	['^([^\.:]+)'],		# ditto
+	"jetdirect" =>	['^([^\.:]+)'],		# ditto
+	"pros" =>		['\@([^\@]+)$'],	# queue@host, go with hostname
+	"lpr" =>		['([^\@]+)\@(.+)$',	# queue@host, go with queue name
+					sub {
+						my($queue, $host) = @_;
+						if($queue =~ /^raw$/i || $queue =~ /^lpt/i)
+							{ return $server }
+						else
+							{ return $host }
+						}],
+	"atalk" =>		['^([^:]+):',		# queue:type@host, go with queue name
+					sub {
+						# Hack to remove noise in Canon AppleTalk names
+						my($name)= @_;
+						$name =~ s/_[^_]+_((Direct)|(Print)|(Hold))$//;
+						return $name;
+						}],
+	"smb" =>		['^\\\\([^\\]+)\\([^\\]+)$',	# \\host\queue
+					sub {
+						my($server, $share) = @_;
+						$share =~ tr/[A-Z]/[a-z]/;
+						if($share eq "print" || $share eq "direct" || $share eq "hold" || $share =~ /^lpt/)
+							{ return $server }
+						else
+							{ return $share }
+						}]
+	);
+
 #===========================================
 # This is the table for this wizard:
 #===========================================
@@ -884,72 +918,45 @@ exit 0;
 
 #====================================================================
 # On the basis of the interface name and printer address, take a
-# wild guess as to what would make a good queue name.  If we can't
-# even guess, we just return an empty string.
+# educated guess as to what would make a good queue name.  If we 
+# can't even guess, we just return an empty string.
 #====================================================================
 sub suggest_queue_name
 	{
 	my($interface, $address) = @_;
 	my $name = "";
 
-	# AppleTalk is pretty easy.  We just remove noise.
-	if($interface eq "atalk" && $address =~ /^([^:]+):/)
+	# Get the list of rules for making suggestions which coorespond to
+	# this interface program.
+	if(defined(my $rules = $suggestion_rules{$interface}))
 		{
-		$name = $1;
-		$name =~ s/_[^_]+_((Direct)|(Print)|(Hold))$//;			# Hack for Canon
-		}
-
-	# SocketAPI/AppSocket/JetDirect is used for embedded print servers,
-	# so we go with the hostname.
-	elsif(defined($interface_pages{$interface}) 
-			&& ($interface_pages{$interface} eq "int_tcpip"
-				|| $interface_pages{$interface} eq "int_jetdirect"
-				)
-			&& $address =~ /^([^\.:]+)/)
-		{
-		$name = $1;
-		}
-
-	# If this looks like an embedded print server SMB sharename, go with
-	# the server name, otherwise, go with the share name.
-	elsif($interface eq "smb" && $address =~ /^\\\\([^\\]+)\\([^\\]+)$/)
-		{
-		my($server, $share) = ($1, $2);
-		$share =~ tr/[A-Z]/[a-z]/;
-		if($share eq "print" || $share eq "direct" || $share eq "hold" || $share =~ /^lpt/)
+		print STDERR "XXX: $rules\n";
+		# If the address matches the regular expression for addresses
+		# cooresponding to this interface program,
+		if($address =~ /$rules->[0]/)
 			{
-			$name = $server;
-			}
-		else
-			{
-			$name = $share;
+			# If there is a function for furthur processing of the address,
+			# pass the matches to it and take the result as the suggestion.
+			if(defined($rules->[1]))
+				{
+				$name = &{$rules->[1]}($1,$2,$3,$4,$5,$6,$7,$8,$9);
+				}
+			# If not, just take the first match substring.
+			else
+				{
+				$name = $1;
+				}
 			}
 		}
 
-	# Assuming this is a real host and not an embedded print server,
-	# the queue name is the most meaningful part.
-	elsif($interface eq "lpr" && $address =~ /^([^\@]+)\@/)
-		{
-		$name = $1;
-		}
-
-	# Since most PROS servers generall one port jobs, assume the
-	# hostname is the most meaningful thing.
-	elsif($interface eq "pros" && $address =~ /\@([^\@]+)$/)
-		{
-		$name = $1;
-		}
-
-	# Convert to lower case.  Sure PPR on Unix can distinguish queue names
-	# that differ only in case, but not all operating systems can, it
-	# confuses users, and it is harder to type.	 So there!
+	# Convert the result (which may still be an empty string) to lower case.
+	# Sure PPR on Unix can distinguish queue names that differ only in case,
+	# but not all operating systems can, it confuses users, and it is harder 
+	# to type.  So there!
 	$name =~ tr/[A-Z]/[a-z]/;
 
-	# Remove characters that Unix shell users won't like.
+	# Remove characters that Unix shell users won't enjoy having to type.
 	$name =~ s/[^[a-z0-9_-]//g;
-
-	# Truncate to 16 characters (which is PPR's current limit).
-	$name =~ s/^(.{1,16}).*$/$1/;
 
 	return $name;
 	}

@@ -28,6 +28,16 @@
 ** Last modified 8 February 2006.
 */
 
+/*==============================================================
+** This module is part of the printer administrator's utility.
+** It contains the code to implement those sub-commands which
+** manipulate ppd files.
+<helptopic>
+	<name>ppdlib</name>
+	<desc>PPD file commands</desc>
+</helptopic>
+==============================================================*/
+
 #include "config.h"
 #include <string.h>
 #include <errno.h>
@@ -77,7 +87,7 @@ struct MATCH
 static gu_boolean very_fuzzy(char *a, char *b)
 	{
 	#ifdef DEBUG
-	printf("very_fuzzy(\"%s\", \"%s\")\n", a, b);
+	gu_utf8_printf("very_fuzzy(\"%s\", \"%s\")\n", a, b);
 	#endif
 	{
 	int alen = strlen(a);
@@ -156,7 +166,7 @@ static int ppd_choices(struct THE_FACTS *facts, struct MATCH **matches, int matc
 				)
 			{
 			if(!machine_readable)
-				fprintf(stderr, "Too few fields at line %d in \"%s\".\n", linenum, PPD_INDEX);
+				gu_utf8_fprintf(stderr, "Too few fields at line %d in \"%s\".\n", linenum, PPD_INDEX);
 			continue;
 			}
 		
@@ -178,9 +188,9 @@ static int ppd_choices(struct THE_FACTS *facts, struct MATCH **matches, int matc
 		{
 		#define defined_and_match(a,b) (a && b && strcmp(a,b)==0)
 		#ifdef DEBUG
-		#define debug(a) printf("Match:\n\tDescription: \"%s\"\n\tMatched Field: %s\n\n", f_description, a);
-		#define debug2(a,b) printf("Match:\n\tDescription: \"%s\"\n\tMatching Condition: %s =~ %s\n\n", f_description, a, b);
-		#define debug3(a,b) printf("Match:\n\tDescription: \"%s\"\n\tMatching Condition: %s =~ %s (initial substring)\n\n", f_description, a, b);
+		#define debug(a) gu_utf8_printf("Match:\n\tDescription: \"%s\"\n\tMatched Field: %s\n\n", f_description, a);
+		#define debug2(a,b) gu_utf8_printf("Match:\n\tDescription: \"%s\"\n\tMatching Condition: %s =~ %s\n\n", f_description, a, b);
+		#define debug3(a,b) gu_utf8_printf("Match:\n\tDescription: \"%s\"\n\tMatching Condition: %s =~ %s (initial substring)\n\n", f_description, a, b);
 		#else
 		#define debug(a)
 		#define debug2(a,b)
@@ -368,7 +378,7 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 	gu_Try
 		{
 		if(!machine_readable)
-			printf("Connecting for interface program probe...\n");
+			gu_utf8_printf("Connecting for interface program probe...\n");
 		query_connect(q, TRUE);
 
 		gu_Try
@@ -378,7 +388,7 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 			int timeout = 10;
 
 			if(!machine_readable)
-				printf("Reading response...\n");
+				gu_utf8_printf("Reading response...\n");
 			while((line = query_getline(q, &is_stderr, timeout)))
 				{
 				if(!is_stderr && (p = lmatchp(line, "PROBE:")))
@@ -388,7 +398,7 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 					if((f1 = gu_strsep(&p, "=")) && (f2 = gu_strsep(&p, "")))
 						{
 						if(!machine_readable)
-							printf("    %s=\"%s\"", f1, f2);
+							gu_utf8_printf("    %s=\"%s\"", f1, f2);
 
 						if(strcmp(f1, "SNMP sysDescr") == 0)
 							{
@@ -463,11 +473,11 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 						else
 							{
 							if(!machine_readable)
-								printf(" (not recognized)");
+								gu_utf8_printf(" (not recognized)");
 							}
 
 						if(!machine_readable)
-							printf("\n");
+							gu_utf8_printf("\n");
 						}
 
 					timeout = 60;
@@ -476,13 +486,13 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 
 				/* Not a MODEL: line, but probably of interest. */
 				if(!machine_readable)
-					printf("    %s\n", line);
+					gu_utf8_printf("    %s\n", line);
 				}
 			}
 		gu_Final
 			{
 			if(!machine_readable)
-				printf("Disconnecting...\n");
+				gu_utf8_printf("Disconnecting...\n");
 			query_disconnect(q);
 			}
 		gu_Catch
@@ -492,12 +502,12 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
 		retval = 0;
 		}
 
 	if(!machine_readable)
-		gu_puts("\n"); 
+		gu_utf8_puts("\n"); 
 
 	return retval;
 	} /* end of ppd_query_interface_probe() */
@@ -515,7 +525,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 	gu_Try
 		{
 		if(!machine_readable)
-			printf("Connecting for PostScript query...\n");
+			gu_utf8_printf("Connecting for PostScript query...\n");
 		query_connect(q, FALSE);
 
 		gu_Try
@@ -524,7 +534,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 			gu_boolean is_stderr;
 
 			if(!machine_readable)
-				printf("Sending PostScript query...\n");
+				gu_utf8_printf("Sending PostScript query...\n");
 			query_sendquery(q,
 				"Printer",			/* DSC defined name (NULL if not defined in DSC) */
 				NULL,				/* Ad-hoc name if above is NULL */
@@ -533,10 +543,10 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 				);
 
 			if(!machine_readable)
-				printf("Reading response...\n");
+				gu_utf8_printf("Reading response...\n");
 			for(i=0; i < 3 && (p = query_getline(q, &is_stderr, 30)); )
 				{
-				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
+				/*gu_utf8_printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
 
 				if(is_stderr)
 					continue;
@@ -555,7 +565,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 			if(!machine_readable)
 				{
 				for(i=0; i < 3; i++)
-					printf("    %s: %s\n", result_labels[i], results[i]);
+					gu_utf8_printf("    %s: %s\n", result_labels[i], results[i]);
 				}
 
 			p = results[2];
@@ -575,7 +585,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 		gu_Final
 			{
 			if(!machine_readable)
-				printf("Disconnecting...\n");
+				gu_utf8_printf("Disconnecting...\n");
 			query_disconnect(q);
 			}
 		gu_Catch
@@ -591,12 +601,12 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
 		retval = 0;
 		}
 
 	if(!machine_readable)
-		gu_puts("\n");
+		gu_utf8_puts("\n");
 		
 	return retval;
 	} /* end of ppd_query_postscript() */
@@ -611,7 +621,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 	gu_Try
 		{
 		if(!machine_readable)
-			printf("Connecting for PJL query...\n");
+			gu_utf8_printf("Connecting for PJL query...\n");
 		query_connect(q, FALSE);
 
 		gu_Try
@@ -621,13 +631,13 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 			int timeout = 10;
 
 			if(!machine_readable)
-				printf("Sending PJL query...\n");
+				gu_utf8_printf("Sending PJL query...\n");
 			query_puts(q,	"\033%-12345X"
 					"@PJL PJL Query to determine printer type\r\n"
 					"@PJL INFO ID\r\n");
 
 			if(!machine_readable)
-				printf("Reading response...\n");
+				gu_utf8_printf("Reading response...\n");
 			while((p = query_getline(q, &is_stderr, timeout)))
 				{
 				timeout = 60;
@@ -635,7 +645,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 				if(strcmp(p, "\f") == 0)
 					break;
 
-				/*printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
+				/*gu_utf8_printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
 
 				if(p[0] == '"' && !facts->pjl_id)
 					{
@@ -643,7 +653,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 					facts->pjl_id = gu_strndup(p, strcspn(p, "\""));
 
 					if(!machine_readable)
-						printf("    PJL ID: \"%s\"\n", facts->pjl_id);
+						gu_utf8_printf("    PJL ID: \"%s\"\n", facts->pjl_id);
 
 					retval = 1;
 					}
@@ -652,7 +662,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 		gu_Final
 			{
 			if(!machine_readable)
-				printf("Disconnecting...\n");
+				gu_utf8_printf("Disconnecting...\n");
 
 			/* This is PCL Universal Exit Langauge. */
 			query_puts(q,	"\033%-12345X");
@@ -666,12 +676,12 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
 		retval = 0;
 		}
 
 	if(!machine_readable)
-		gu_puts("\n");
+		gu_utf8_puts("\n");
 		
 	return retval;
 	} /* end of ppd_query_pjl() */
@@ -716,7 +726,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 		int i;
 
 		if(!machine_readable)
-			printf("Run one of these commands to select the corresponding PPD file:\n");
+			gu_utf8_printf("Run one of these commands to select the corresponding PPD file:\n");
 
 		/* First pass.  Decide if we should print the fuzzy matches. */
 		if(!testmode)
@@ -738,12 +748,12 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 
 			if(machine_readable)	/* for the web front end */
 				{
-				printf("%s:%s:%s\n", matches[i].manufacturer, matches[i].description, matches[i].fuzzy ? "1" : "0");
+				gu_utf8_printf("%s:%s:%s\n", matches[i].manufacturer, matches[i].description, matches[i].fuzzy ? "1" : "0");
 				}
 			else					/* for human beings */
 				{
-				printf("    # %s\n", matches[i].fuzzy ? "fuzzy match" : "exact match");
-				printf("    ppad ppd %s \"%s\"\n", printer, matches[i].description);
+				gu_utf8_printf("    # %s\n", matches[i].fuzzy ? "fuzzy match" : "exact match");
+				gu_utf8_printf("    ppad ppd %s \"%s\"\n", printer, matches[i].description);
 				}
 
 			gu_free(matches[i].manufacturer);
@@ -768,7 +778,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	if(matches_count < 1)
 		{
 		if(!machine_readable)
-			printf("No matching PPD files found.\n");
+			gu_utf8_printf("No matching PPD files found.\n");
 		return EXIT_NOTFOUND;
 		}
 
@@ -776,7 +786,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	} /* end of ppd_query_core() */
 
 /*
-<command>
+<command helptopics="ppdlib">
 	<name><word>ppdlib</word><word>query</word></name>
 	<desc>query a printer specified by interface and address and produce list of suitable PPD files</desc>
 	<args>
@@ -806,7 +816,7 @@ int command_ppdlib_query(const char *argv[])
 		}
 	gu_Catch
 		{
-		fprintf(stderr, _("%s: query failed: %s\n"), myname, gu_exception);
+		gu_utf8_fprintf(stderr, _("%s: query failed: %s\n"), myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 
@@ -814,7 +824,7 @@ int command_ppdlib_query(const char *argv[])
 	} /* end of ppd_query */
 
 /*
-<command>
+<command helptopics="ppdlib">
 	<name><word>ppdlib</word><word>search</word></name>
 	<desc>list PPD files matching a pattern</desc>
 	<args>
@@ -835,7 +845,7 @@ int command_ppdlib_search(const char *argv[])
 
 	if(!(f = fopen(PPD_INDEX, "r")))
 		{
-		fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), PPD_INDEX, errno, gu_strerror(errno));
+		gu_utf8_fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), PPD_INDEX, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
 		}
 
@@ -862,7 +872,7 @@ int command_ppdlib_search(const char *argv[])
 			(!wildcards && strstr(f_description_lowered, pattern_lowered))
 			)
 			{
-			printf("\"%s\"\n", f_description);
+			gu_utf8_printf("\"%s\"\n", f_description);
 			}
 
 		gu_free(f_description_lowered);
@@ -874,7 +884,7 @@ int command_ppdlib_search(const char *argv[])
 	} /* end of ppdlib_search() */
 
 /*
-<command>
+<command helptopics="ppdlib">
 	<name><word>ppdlib</word><word>get</word></name>
 	<desc>display the text of a PPD file</desc>
 	<args>
@@ -892,7 +902,7 @@ int command_ppdlib_get(const char *argv[])
 		}
 	gu_Catch
 		{
-		fprintf(stderr, "%s: %s", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s", myname, gu_exception);
 		return EXIT_NOTFOUND;	/* a guess */
 		}
 
@@ -900,14 +910,14 @@ int command_ppdlib_get(const char *argv[])
 		const char *p;
 		while((p = ppdobj_readline(ppd)))
 			{
-			printf("%s\n", p);
+			gu_utf8_printf("%s\n", p);
 			}
 		}
 	gu_Final {
 		ppdobj_free(ppd);
 		}
 	gu_Catch {
-		fprintf(stderr, "%s: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, "%s: %s\n", myname, gu_exception);
 		return EXIT_INTERNAL;
 		}
 	

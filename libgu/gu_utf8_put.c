@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/libgu/gu_utf8_printf.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** mouse:~ppr/src/libgu/gu_utf8_put.c
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 September 2005.
+** Last modified 23 February 2006.
 */
 
 /*! \file
@@ -66,6 +66,13 @@ int gu_utf8_fputs(const char *string, FILE *f)
 		count++;
 		}
 	return count;
+	}
+
+/** Write a wchar_t to stdout as a multibyte sequence
+ */
+wchar_t gu_putwc(wchar_t wc)
+	{
+	return gu_fputwc(wc, stdout);
 	}
 
 /** Write a UTF-8 string to stdout as a multibyte sequence in the current locale

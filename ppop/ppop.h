@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,12 +25,24 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 October 2005.
+** Last modified 23 February 2006.
 */
 
 /*
 ** This is the include file for all the modules in the ppop utility.
 */
+
+/* break these functions since they don't do utf-8 to local charset conversion */
+#define printf() dont_printf()
+#define puts() dont_puts()
+#undef putc
+#define putc() dont_putc()
+#undef putline
+#define putline() dont_putline()
+
+/*#define fputc() dont_fputc()*/
+#define fputs() dont_fputs()
+/* #define fprintf() dont_fprintf() */
 
 /* ========================== Things in ppop.c ================================= */
 

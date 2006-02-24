@@ -73,7 +73,7 @@ void fatal(int exitval, const char message[], ... )
 	va_list va;
 
 	if(opt_machine_readable)
-		fputs("*FATAL\t", stderr);
+		gu_utf8_fputs("*FATAL\t", stderr);
 	else
 		gu_utf8_fputs(_("Fatal: "), stderr);
 
@@ -108,12 +108,14 @@ void error(const char message[], ... )
 */
 void puts_detabbed(const char *string)
 	{
-	for( ; *string; string++)
+	const char *p = string;
+	wchar_t wc;
+	while((wc = gu_utf8_sgetwc(&p)))
 		{
-		if(*string != '\t')
-			putchar(*string);
+		if(wc != '\t')
+			gu_putwc(wc);
 		else
-			putchar(' ');
+			gu_putwc(' ');
 		}
 	}
 
@@ -250,13 +252,14 @@ FILE *wait_for_pprd(int do_timeout)
 	} /* end of wait_for_pprd() */
 
 /*
-** Print a plain text reply from pprd.
-** Return the value at the start of the plain text reply.
+** Print a plain text reply from pprd.  Returns the value at the start of the 
+** plain text reply (which we get from a module-scope variable).
 ** If an internal error occurs, return -1.
 */
 int print_reply(void)
 	{
-	int c;				/* one character from reply file */
+	char *line = NULL;
+	int line_len = 80;
 
 	/* reply_file will probably only be NULL if we
 	   caught an error in wait_for_pprd(). */
@@ -264,8 +267,10 @@ int print_reply(void)
 		return EXIT_INTERNAL;
 
 	/* print the rest of the text */
-	while((c = fgetc(reply_file)) != EOF)
-		fputc(c, stdout);
+	while((line = gu_getline(line, &line_len, reply_file)))
+		{
+		gu_utf8_putline(line);
+		}
 
 	fclose(reply_file);
 
@@ -671,7 +676,7 @@ static int main_help(FILE *out)
 		if(!lmatch(p, "ppop "))		/* if is a heading, */
 			{
 			if(i == 0)
-				fputc('\n', out);
+				gu_fputwc('\n', out);
 			gu_utf8_fprintf(out, "%s\n", pxlate);
 			}
 		else
@@ -803,7 +808,7 @@ static int interactive_mode(void)
 		}
 	else						/* If a machine will be reading our output, */
 		{
-		puts("*READY\t"SHORT_VERSION);
+		gu_utf8_putline("*READY\t"SHORT_VERSION);
 		fflush(stdout);
 		}
 
@@ -825,7 +830,7 @@ static int interactive_mode(void)
 			{
 			if(x == MAX_CMD_WORDS)
 				{
-				puts("Warning: command buffer overflow!");		/* temporary code, don't internationalize */
+				gu_utf8_putline("Warning: command buffer overflow!");	/* temporary code, don't internationalize */
 				ar[x] = NULL;
 				break;
 				}
@@ -866,13 +871,13 @@ static int interactive_mode(void)
 			if( ! opt_machine_readable )					/* A human gets english */
 				gu_utf8_putline(_("Try \"help\" or \"exit\"."));
 			else										/* A program gets a code */
-				puts("*UNKNOWN");
+				gu_utf8_putline("*UNKNOWN");
 
 			errorlevel = EXIT_SYNTAX;
 			}
-		else if(opt_machine_readable)				/* If a program is reading our output, */
-			{									/* say the command is done */
-			printf("*DONE\t%d\n", errorlevel);	/* and tell the exit code. */
+		else if(opt_machine_readable)					/* If a program is reading our output, */
+			{											/* say the command is done */
+			gu_utf8_printf("*DONE\t%d\n", errorlevel);	/* and disclose the exit code. */
 			}
 
 		if(opt_machine_readable)					/* If stdout is a pipe as seems likely */
@@ -927,7 +932,7 @@ static void help_switches(FILE *out)
 			);
 		}
 
-	fputc('\n', out);
+	gu_fputwc('\n', out);
 
 	gu_utf8_fputs(_("Try \"ppop help\" for help with subcommands.\n"), out);
 	gu_utf8_fputs("\n", out);
@@ -977,7 +982,7 @@ int main(int argc, char *argv[])
 	{
 	struct passwd *pw;
 	uid_t uid = getuid();
-	if((pw = getpwuid(uid)) == (struct passwd *)NULL)
+	if(!(pw = getpwuid(uid)))
 		{
 		gu_utf8_fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		exit(EXIT_INTERNAL);
@@ -1015,13 +1020,13 @@ int main(int argc, char *argv[])
 			case 1001:					/* --version */
 				if(opt_machine_readable)
 					{
-					puts(SHORT_VERSION);
+					gu_utf8_putline(SHORT_VERSION);
 					}
 				else
 					{
-					puts(VERSION);
-					puts(COPYRIGHT);
-					puts(AUTHOR);
+					gu_utf8_putline(VERSION);
+					gu_utf8_putline(COPYRIGHT);
+					gu_utf8_putline(AUTHOR);
 					}
 				exit(EXIT_OK);
 
