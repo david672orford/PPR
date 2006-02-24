@@ -362,7 +362,7 @@ static int readline_normal(void)
  * A UTF-* version of readline_normal().  Presently 
  * it differs from readline_normal() only in that it
  * calls fgetc_utf_8() instead of fgetc(), but that
- * will change.
+ * must change to support BIDI and character composition.
  */
 static int readline_utf_8(void)
 	{
