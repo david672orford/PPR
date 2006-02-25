@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-23 17:16-0500\n"
+"POT-Creation-Date: 2006-02-24 20:28-0500\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -76,14 +76,14 @@ msgstr "Das Alias \"%s\" existiert bereits!"
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
 #: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
-#: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:118
-#: ../www/prn_addwiz.cgi.perl:819 ../www/prn_testpage.cgi.perl:112
+#: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:152
+#: ../www/prn_addwiz.cgi.perl:853 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "_Abbrechen"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:344
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
-#: ../www/prn_addwiz.cgi.perl:118
+#: ../www/prn_addwiz.cgi.perl:152
 msgid "_Next"
 msgstr "_Weiter"
 
@@ -118,23 +118,23 @@ msgstr ""
 "\"%s\" an."
 
 #: ../www/alias_addwiz.cgi.perl:137 ../www/grp_addwiz.cgi.perl:135
-#: ../www/prn_addwiz.cgi.perl:780
+#: ../www/prn_addwiz.cgi.perl:814
 msgid "Description:"
 msgstr "Beschreibung:"
 
 #: ../www/alias_addwiz.cgi.perl:143 ../www/grp_addwiz.cgi.perl:141
-#: ../www/prn_addwiz.cgi.perl:786
+#: ../www/prn_addwiz.cgi.perl:820
 msgid "You must supply a description!"
 msgstr "Sie müssen eine Bechreibung angeben!"
 
 #: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:344
-#: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:819
+#: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:853
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"
 msgstr "_Zurück"
 
 #: ../www/alias_addwiz.cgi.perl:146 ../www/grp_addwiz.cgi.perl:144
-#: ../www/prn_addwiz.cgi.perl:819
+#: ../www/prn_addwiz.cgi.perl:853
 msgid "_Finish"
 msgstr "_Fertigstellen"
 
@@ -146,20 +146,20 @@ msgstr "Alias speichern"
 msgid "Saving new alias:"
 msgstr "Speichere neuen Alias:"
 
-#: ../www/alias_addwiz.cgi.perl:172 ../www/prn_addwiz.cgi.perl:856
+#: ../www/alias_addwiz.cgi.perl:172 ../www/prn_addwiz.cgi.perl:890
 #, fuzzy
 msgid "The print queue has been created."
 msgstr "Der Drucker wurde gelöscht."
 
 #: ../www/alias_addwiz.cgi.perl:176 ../www/grp_addwiz.cgi.perl:174
-#: ../www/prn_addwiz.cgi.perl:860
+#: ../www/prn_addwiz.cgi.perl:894
 msgid "Due to the problem indicated above, the queue was not created."
 msgstr "Wegen des oben angegebenen Problems wurde die Warteschlange nicht erzeugt."
 
 #: ../www/alias_addwiz.cgi.perl:183 ../www/cgi_tabbed.pl:371
 #: ../www/cliconf.cgi.perl:95 ../www/cliconf.cgi.perl:112
 #: ../www/cliconf.cgi.perl:195 ../www/delete_queue.cgi.perl:152
-#: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:867
+#: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:901
 #: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
@@ -974,35 +974,35 @@ msgstr "Netzwerk über LPD"
 msgid "Network via LAN Manager/MS-Windows"
 msgstr "Netzwerk über LAN Manager/MS-Windows"
 
-#: ../www/prn_addwiz.cgi.perl:99
+#: ../www/prn_addwiz.cgi.perl:133
 msgid "PPR: Add a Printer"
 msgstr "PPR: Einen Drucker hinzufügen"
 
-#: ../www/prn_addwiz.cgi.perl:102
+#: ../www/prn_addwiz.cgi.perl:136
 msgid "PPR Printer Queue Creation"
 msgstr "PPR Druckererstellung"
 
-#: ../www/prn_addwiz.cgi.perl:103
+#: ../www/prn_addwiz.cgi.perl:137
 msgid "This program will guide you through the process of setting up a printer in PPR."
 msgstr "Dieses Programm wird Sie durch den Prozeß der Erstellung eines Druckers in PPR führen"
 
-#: ../www/prn_addwiz.cgi.perl:106
+#: ../www/prn_addwiz.cgi.perl:140
 msgid "I already know the printer's exact address."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:108
+#: ../www/prn_addwiz.cgi.perl:142
 msgid "I would like to select the printer from a list."
 msgstr ""
 
-#: ../www/prn_addwiz.cgi.perl:112 ../www/prn_addwiz.cgi.perl:169
+#: ../www/prn_addwiz.cgi.perl:146 ../www/prn_addwiz.cgi.perl:203
 msgid "You must make a selection!"
 msgstr "Sie müssen etwas auswählen!"
 
-#: ../www/prn_addwiz.cgi.perl:126
+#: ../www/prn_addwiz.cgi.perl:160
 msgid "PPR: Add a Printer: Select an Interface Program"
 msgstr "PPR: Einen Drucker hinzufügen: Ein Interface wählen"
 
-#: ../www/prn_addwiz.cgi.perl:139
+#: ../www/prn_addwiz.cgi.perl:173
 #, fuzzy
 msgid ""
 "Please select an interface program.  PPR uses an interface\n"
@@ -1015,15 +1015,15 @@ msgstr ""
 "Namen mit \"gs\" beginnen, leiten PostScript Aufträge\n"
 "durch Ghostscript, bevor sie an den Drucker gesendet werden."
 
-#: ../www/prn_addwiz.cgi.perl:143
+#: ../www/prn_addwiz.cgi.perl:177
 msgid "Interface Program:"
 msgstr "Interface:"
 
-#: ../www/prn_addwiz.cgi.perl:189
+#: ../www/prn_addwiz.cgi.perl:223
 msgid "PPR: Add a Printer: Raw TCP/IP Interface: Choose an Address"
 msgstr "PPR: Einen Drucker hinzufügen: Einfaces TCP/IP-Interface: Eine Adresse wählen"
 
-#: ../www/prn_addwiz.cgi.perl:192 ../www/prn_addwiz.cgi.perl:249
+#: ../www/prn_addwiz.cgi.perl:226 ../www/prn_addwiz.cgi.perl:283
 msgid ""
 "It is necessary to know the IP address of the printer,\n"
 "or preferably a DNS name which represents that address.\n"
@@ -1035,12 +1035,12 @@ msgstr ""
 "Ein Beispiel für einen DNS Namen ist \"myprn.prn.myorg.org\". Ein\n"
 "Beispiel für eine IP-Adresse ist \"157.252.200.22\"."
 
-#: ../www/prn_addwiz.cgi.perl:197 ../www/prn_addwiz.cgi.perl:254
-#: ../www/prn_addwiz.cgi.perl:312 ../www/prn_addwiz.cgi.perl:361
+#: ../www/prn_addwiz.cgi.perl:231 ../www/prn_addwiz.cgi.perl:288
+#: ../www/prn_addwiz.cgi.perl:346 ../www/prn_addwiz.cgi.perl:395
 msgid "DNS Name or IP Address:"
 msgstr "DNS Name oder IP-Adresse:"
 
-#: ../www/prn_addwiz.cgi.perl:201
+#: ../www/prn_addwiz.cgi.perl:235
 msgid ""
 "HP JetDirect cards accept jobs on TCP port 9100.\n"
 "For AXIS print servers it is 9900.  For other brands,\n"
@@ -1050,11 +1050,11 @@ msgstr ""
 "Für AXIS Druckerserver ist dieser  9900. Für andere Produkte,\n"
 "entnehmen Sie den Wert dem jeweiligen Handbuch."
 
-#: ../www/prn_addwiz.cgi.perl:205 ../www/prn_addwiz.cgi.perl:260
+#: ../www/prn_addwiz.cgi.perl:239 ../www/prn_addwiz.cgi.perl:294
 msgid "TCP Port Number:"
 msgstr "TCP Port:"
 
-#: ../www/prn_addwiz.cgi.perl:210
+#: ../www/prn_addwiz.cgi.perl:244
 msgid ""
 "Bidirectional communication is highly desirable, however many devices don't\n"
 "support it.  If you say Yes here and the correct answer is No, the queue will\n"
@@ -1064,27 +1064,27 @@ msgstr ""
 "Geräte dies nicht. Wenn Sie hier Ja sagen, die korrekte Antwort aber Nein ist, wird die\n"
 "Warteschleife nach Ende des ersten Auftrages hängenbleiben."
 
-#: ../www/prn_addwiz.cgi.perl:214 ../www/prn_addwiz.cgi.perl:271
+#: ../www/prn_addwiz.cgi.perl:248 ../www/prn_addwiz.cgi.perl:305
 msgid "Bidirectional:"
 msgstr "Bidirektional:"
 
-#: ../www/prn_addwiz.cgi.perl:227 ../www/prn_addwiz.cgi.perl:284
+#: ../www/prn_addwiz.cgi.perl:261 ../www/prn_addwiz.cgi.perl:318
 msgid "You must fill in the printer's DNS name or IP address!"
 msgstr "Sie müssen den DNS Namen oder die IP-Adresse des Druckers angeben!"
 
-#: ../www/prn_addwiz.cgi.perl:229 ../www/prn_addwiz.cgi.perl:286
+#: ../www/prn_addwiz.cgi.perl:263 ../www/prn_addwiz.cgi.perl:320
 msgid "You must fill in the TCP port number!"
 msgstr "Sie müssen den TCP Port angeben!"
 
-#: ../www/prn_addwiz.cgi.perl:246
+#: ../www/prn_addwiz.cgi.perl:280
 msgid "PPR: Add a Printer: JetDirect Interface: Choose an Address"
 msgstr "PPR: Einen Drucker hinzufügen: JetDirect Interface: Eine Adresse wählen"
 
-#: ../www/prn_addwiz.cgi.perl:258
+#: ../www/prn_addwiz.cgi.perl:292
 msgid "Most HP JetDirect cards accept jobs on TCP port 9100.\n"
 msgstr "Die meisen HP JetDirect Karten akzepieren Aufträge auf dem TCP Port 9100.\n"
 
-#: ../www/prn_addwiz.cgi.perl:265
+#: ../www/prn_addwiz.cgi.perl:299
 msgid ""
 "Internal JetDirect cards support bidirectional communication.  External print\n"
 "servers will only support bidirectional communication if they communicate with\n"
@@ -1098,11 +1098,11 @@ msgstr ""
 "Sie hier Ja sagen, die korrekte Antwort aber Nein ist, wird die\n"
 "Warteschleife nach Ende des ersten Auftrages hängenbleiben."
 
-#: ../www/prn_addwiz.cgi.perl:303 ../www/prn_addwiz.cgi.perl:352
+#: ../www/prn_addwiz.cgi.perl:337 ../www/prn_addwiz.cgi.perl:386
 msgid "PPR: Add a Printer: LPR Interface: Choose an Address"
 msgstr "PPR: Einen Drucker hinzufügen: Eine Adresse wählen"
 
-#: ../www/prn_addwiz.cgi.perl:307 ../www/prn_addwiz.cgi.perl:356
+#: ../www/prn_addwiz.cgi.perl:341 ../www/prn_addwiz.cgi.perl:390
 msgid ""
 "PPR needs to know the name or IP address of the printer or of the print server\n"
 "to which it is attached.  An example of a DNS name is \"myhost.myorg.org\".  An\n"
@@ -1112,47 +1112,47 @@ msgstr ""
 "der angeschlossen ist.  Ein Beispiel für einen DNS Namen ist \"myhost.myorg.org\".  Ein\n"
 "Beispiel für eine IP-Adresse ist \"157.252.200.52\".  Ein Name wird bevorzugt."
 
-#: ../www/prn_addwiz.cgi.perl:316
+#: ../www/prn_addwiz.cgi.perl:350
 msgid "What is the name of the printer on the remote print server?\n"
 msgstr "Wie ist der name des Druckers oder des entfernten Druckservers?\n"
 
-#: ../www/prn_addwiz.cgi.perl:317
+#: ../www/prn_addwiz.cgi.perl:351
 msgid "See the table below."
 msgstr "Schauen Sie in die Tabelle unten."
 
-#: ../www/prn_addwiz.cgi.perl:321 ../www/prn_addwiz.cgi.perl:367
+#: ../www/prn_addwiz.cgi.perl:355 ../www/prn_addwiz.cgi.perl:401
 msgid "Remote Queue Name:"
 msgstr "Entfernte Warteschlange:"
 
-#: ../www/prn_addwiz.cgi.perl:325
+#: ../www/prn_addwiz.cgi.perl:359
 msgid "Brand"
 msgstr "Handelsmarke"
 
-#: ../www/prn_addwiz.cgi.perl:325
+#: ../www/prn_addwiz.cgi.perl:359
 msgid "Product"
 msgstr "Produkt"
 
-#: ../www/prn_addwiz.cgi.perl:325
+#: ../www/prn_addwiz.cgi.perl:359
 msgid "Remote Queue Name"
 msgstr "Entfernte Warteschlange"
 
-#: ../www/prn_addwiz.cgi.perl:334 ../www/prn_addwiz.cgi.perl:372
+#: ../www/prn_addwiz.cgi.perl:368 ../www/prn_addwiz.cgi.perl:406
 msgid "You must fill in the remote host's DNS name or IP address!"
 msgstr "Sie müssen den DNS Namen oder die IP-Adresse des entfernten Rechners angeben!"
 
-#: ../www/prn_addwiz.cgi.perl:336 ../www/prn_addwiz.cgi.perl:374
+#: ../www/prn_addwiz.cgi.perl:370 ../www/prn_addwiz.cgi.perl:408
 msgid "You must fill in the remote queue name!"
 msgstr "Sie müssen die entfernte Warteschlange angeben!"
 
-#: ../www/prn_addwiz.cgi.perl:364
+#: ../www/prn_addwiz.cgi.perl:398
 msgid "What is the name of the printer on the remote print server?"
 msgstr "Wie ist der Name des Druckers auf dem entfernten Druckserver?"
 
-#: ../www/prn_addwiz.cgi.perl:391
+#: ../www/prn_addwiz.cgi.perl:425
 msgid "PPR: Add a Printer: Interface Setup"
 msgstr "PPR: Einen Drucker hinzufügen: Interface Setup"
 
-#: ../www/prn_addwiz.cgi.perl:394
+#: ../www/prn_addwiz.cgi.perl:428
 #, perl-format
 msgid ""
 "No special help is available for the interface called\n"
@@ -1167,66 +1167,66 @@ msgstr ""
 "die ppad(1) Manualseite aufrufen, um das korrekte Format\n"
 "für die Werte in den Feldern zu erfragen."
 
-#: ../www/prn_addwiz.cgi.perl:400
+#: ../www/prn_addwiz.cgi.perl:434
 msgid "Enter Printer Address:"
 msgstr "Geben Sie die Druckeradresse ein:"
 
-#: ../www/prn_addwiz.cgi.perl:404
+#: ../www/prn_addwiz.cgi.perl:438
 msgid "Enter Interface Options:"
 msgstr "Geben Sie Interfaceoptionen ein:"
 
-#: ../www/prn_addwiz.cgi.perl:408
+#: ../www/prn_addwiz.cgi.perl:442
 msgid "Do the Interface and Printer Support 2-Way Communication?"
 msgstr "Unterstützen das Interface und der Drucker bidirektionale Kommunikation?"
 
-#: ../www/prn_addwiz.cgi.perl:418
+#: ../www/prn_addwiz.cgi.perl:452
 msgid "Choose a Jobbreak Method:"
 msgstr "Wählen Sie eine Abbruchmethode:"
 
-#: ../www/prn_addwiz.cgi.perl:432
+#: ../www/prn_addwiz.cgi.perl:466
 msgid "You must enter an address for the printer!"
 msgstr "Sie müssen eine Adresse für den Drucker angeben!"
 
-#: ../www/prn_addwiz.cgi.perl:450 ../www/prn_addwiz.cgi.perl:499
+#: ../www/prn_addwiz.cgi.perl:484 ../www/prn_addwiz.cgi.perl:533
 msgid "PPR: Add a Printer: Browse Printers"
 msgstr "PPR: Einen Drucker hinzufügen: verfügbare Drucker"
 
-#: ../www/prn_addwiz.cgi.perl:457
+#: ../www/prn_addwiz.cgi.perl:491
 msgid "Zones Available for Browsing"
 msgstr "Verfügbare Zonen zum Suchen"
 
-#: ../www/prn_addwiz.cgi.perl:486
+#: ../www/prn_addwiz.cgi.perl:520
 msgid "Up to a minute may be required to search some zones."
 msgstr "Es kann bis zu einer Minute dauern, um eine Zone zu durchsuchen."
 
-#: ../www/prn_addwiz.cgi.perl:490
+#: ../www/prn_addwiz.cgi.perl:524
 msgid "You must choose a zone!"
 msgstr "Sie müssen eine Zone wählen!"
 
-#: ../www/prn_addwiz.cgi.perl:575
+#: ../www/prn_addwiz.cgi.perl:609
 #, perl-format
 msgid "Printers Available in Zone %s %s"
 msgstr "Verfügbare Drucker in Zone %s %s"
 
-#: ../www/prn_addwiz.cgi.perl:583
+#: ../www/prn_addwiz.cgi.perl:617
 #, perl-format
 msgid ", Model: %s"
 msgstr "Modell: %s"
 
-#: ../www/prn_addwiz.cgi.perl:587
+#: ../www/prn_addwiz.cgi.perl:621
 #, perl-format
 msgid ", Location: %s"
 msgstr "Ort: %s"
 
-#: ../www/prn_addwiz.cgi.perl:618
+#: ../www/prn_addwiz.cgi.perl:652
 msgid "You must choose a printer!"
 msgstr "Sie müssen einen Drucker wählen!"
 
-#: ../www/prn_addwiz.cgi.perl:637
+#: ../www/prn_addwiz.cgi.perl:671
 msgid "PPR: Add a Printer: Choose a PPD File"
 msgstr "PPR: Einen Drucker hinzufügen: Eine PPD Datei wählen"
 
-#: ../www/prn_addwiz.cgi.perl:646
+#: ../www/prn_addwiz.cgi.perl:680
 msgid ""
 "Please select a appropriate PostScript Printer\n"
 "Description (PPD) file for this printer."
@@ -1234,39 +1234,39 @@ msgstr ""
 "Bitte wählen Sie eine passende PostScript Printer\n"
 "Description (PPD) Datei für diesen Drucker aus."
 
-#: ../www/prn_addwiz.cgi.perl:660 ../www/prn_properties.cgi.perl:188
+#: ../www/prn_addwiz.cgi.perl:694 ../www/prn_properties.cgi.perl:188
 msgid "Auto detection failed."
 msgstr "Automatische Detektierung fehlgeschlagen."
 
-#: ../www/prn_addwiz.cgi.perl:672 ../www/prn_properties.cgi.perl:201
+#: ../www/prn_addwiz.cgi.perl:706 ../www/prn_properties.cgi.perl:201
 msgid "Suitable PPD Files:"
 msgstr "Passende PPD Dateien:"
 
-#: ../www/prn_addwiz.cgi.perl:676 ../www/prn_properties.cgi.perl:205
+#: ../www/prn_addwiz.cgi.perl:710 ../www/prn_properties.cgi.perl:205
 msgid "All Available PPD Files:"
 msgstr "Alle verfügbaren PPD Dateien:"
 
-#: ../www/prn_addwiz.cgi.perl:712 ../www/prn_properties.cgi.perl:238
+#: ../www/prn_addwiz.cgi.perl:746 ../www/prn_properties.cgi.perl:238
 msgid "Auto Detect"
 msgstr "Automatische Detektierung"
 
-#: ../www/prn_addwiz.cgi.perl:712 ../www/prn_properties.cgi.perl:238
+#: ../www/prn_addwiz.cgi.perl:746 ../www/prn_properties.cgi.perl:238
 msgid "Automatically detect printer type and propose suitable PPD files."
 msgstr "Detektiere Drucker automatisch und schlage passende PPD Dateien vor."
 
-#: ../www/prn_addwiz.cgi.perl:716
+#: ../www/prn_addwiz.cgi.perl:750
 msgid "Show all PPD Files"
 msgstr "Zeige alle PPD Dateien"
 
-#: ../www/prn_addwiz.cgi.perl:726
+#: ../www/prn_addwiz.cgi.perl:760
 msgid "You must choose a PPD file first!"
 msgstr "Sie müssen erst eine PPD Datei wählen!"
 
-#: ../www/prn_addwiz.cgi.perl:735
+#: ../www/prn_addwiz.cgi.perl:769
 msgid "PPR: Add a Printer: Name the Printer"
 msgstr "PPR: Einen Drucker hinzufügen: Den Drucker benennen"
 
-#: ../www/prn_addwiz.cgi.perl:738
+#: ../www/prn_addwiz.cgi.perl:772
 msgid ""
 "The printer must have a name.  The name may be up\n"
 "to 16 characters long.  Control codes, tildes, and spaces\n"
@@ -1278,24 +1278,24 @@ msgstr ""
 "sind nicht erlaubt. Desweiteren darf das erste Zeichen weder\n"
 "eine Punkt noch ein Bindestrich sein."
 
-#: ../www/prn_addwiz.cgi.perl:749 ../www/prn_properties.cgi.perl:52
+#: ../www/prn_addwiz.cgi.perl:783 ../www/prn_properties.cgi.perl:52
 msgid "Printer Name:"
 msgstr "Druckername:"
 
-#: ../www/prn_addwiz.cgi.perl:755
+#: ../www/prn_addwiz.cgi.perl:789
 msgid "You must enter a name for the printer!"
 msgstr "Sie müssen einen Namen für den Drucker eingeben!"
 
-#: ../www/prn_addwiz.cgi.perl:757
+#: ../www/prn_addwiz.cgi.perl:791
 #, perl-format
 msgid "The printer \"%s\" already exists!"
 msgstr "Der Drucker \"%s\" existiert bereits!"
 
-#: ../www/prn_addwiz.cgi.perl:766
+#: ../www/prn_addwiz.cgi.perl:800
 msgid "PPR: Add a Printer: Describe the Printer"
 msgstr "PPR: Einen Drucker hinzufügen: Den Drucker beschreiben"
 
-#: ../www/prn_addwiz.cgi.perl:769
+#: ../www/prn_addwiz.cgi.perl:803
 #, perl-format
 msgid ""
 "While short printer names are convenient in certain contexts,\n"
@@ -1308,11 +1308,11 @@ msgstr ""
 "Beschreibung zu haben. Bitte geben Sie unten eine Beschreibung für\n"
 "\"%s\" an."
 
-#: ../www/prn_addwiz.cgi.perl:795
+#: ../www/prn_addwiz.cgi.perl:829
 msgid "PPR: Add a Printer: Additional Information"
 msgstr "PPR: Einen Drucker hinzufügen: Weitere Informationen"
 
-#: ../www/prn_addwiz.cgi.perl:798
+#: ../www/prn_addwiz.cgi.perl:832
 msgid ""
 "On this screen you may record additional information\n"
 "about the printer for future reference."
@@ -1320,36 +1320,36 @@ msgstr ""
 "In diesem Fenster können Sie weitere Informationen\n"
 "über den Drucker für spätere Referenzen angeben."
 
-#: ../www/prn_addwiz.cgi.perl:801
+#: ../www/prn_addwiz.cgi.perl:835
 msgid "Where is the printer located?"
 msgstr "Wo steht der Drucker?"
 
-#: ../www/prn_addwiz.cgi.perl:803 ../www/prn_properties.cgi.perl:58
+#: ../www/prn_addwiz.cgi.perl:837 ../www/prn_properties.cgi.perl:58
 msgid "Location:"
 msgstr "Ort:"
 
-#: ../www/prn_addwiz.cgi.perl:807
+#: ../www/prn_addwiz.cgi.perl:841
 msgid "Which department within your organization uses this printer?"
 msgstr "Welche Abteilung in Ihrer Organisation nutzt den Drucker?"
 
-#: ../www/prn_addwiz.cgi.perl:809 ../www/prn_properties.cgi.perl:61
+#: ../www/prn_addwiz.cgi.perl:843 ../www/prn_properties.cgi.perl:61
 msgid "Department:"
 msgstr "Abteilung:"
 
-#: ../www/prn_addwiz.cgi.perl:813
+#: ../www/prn_addwiz.cgi.perl:847
 #, fuzzy
 msgid "What is the name of a user with whom system administrator should discuss problems with the printer?"
 msgstr "Wen soll der Druckserveradministrator kontaktieren, wenn es Probleme mit dem Drucker gibt?"
 
-#: ../www/prn_addwiz.cgi.perl:815
+#: ../www/prn_addwiz.cgi.perl:849
 msgid "On Site Contact:"
 msgstr "Vor-Ort Kontakt:"
 
-#: ../www/prn_addwiz.cgi.perl:826
+#: ../www/prn_addwiz.cgi.perl:860
 msgid "Save New Printer"
 msgstr "Neuen Drucker speichern"
 
-#: ../www/prn_addwiz.cgi.perl:830
+#: ../www/prn_addwiz.cgi.perl:864
 msgid "Saving new printer:"
 msgstr "Speichere neuen Drucker:"
 
@@ -2550,18 +2550,18 @@ msgstr "Rolle"
 msgid "Source Download"
 msgstr "Quellen herunterladen"
 
-#~ msgid "Unix User"
-#~ msgstr "Unix Nutzer"
-
-#~ msgid "Proxy For"
-#~ msgstr "Proxy für"
-
-#~ msgid "Submitted by Unix user:"
-#~ msgstr "Übermittelt von Unix-Nutzer:"
+#, fuzzy
+#~ msgid "For Whom is the Submitter Acting as Proxy?"
+#~ msgstr "Für wen arbeitet der Überträger als Proxy?"
 
 #~ msgid "As proxy for:"
 #~ msgstr "Als Proxy für:"
 
-#, fuzzy
-#~ msgid "For Whom is the Submitter Acting as Proxy?"
-#~ msgstr "Für wen arbeitet der Überträger als Proxy?"
+#~ msgid "Submitted by Unix user:"
+#~ msgstr "Übermittelt von Unix-Nutzer:"
+
+#~ msgid "Proxy For"
+#~ msgstr "Proxy für"
+
+#~ msgid "Unix User"
+#~ msgstr "Unix Nutzer"

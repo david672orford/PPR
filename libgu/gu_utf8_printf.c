@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2006.
+** Last modified 24 February 2006.
 */
 
 /*! \file
@@ -230,6 +230,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 			arguments_store(arguments, position, findex, ARG_FSPEC_FIELD_VALUE);
 
 			/* Look for parameter size modifiers. */
+			/* We don't support any of them yet, so this code is commented out. */
 			#if 0
 			while(strchr("hlL", wc))
 				{
@@ -476,13 +477,21 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				case 'f':
 					{
 					char format[32] = {'%', 0};
-					char buffer[32];
+					gu_snprintfcat(format, sizeof(format), "%s%s%s%s",
+						fspecs[findex].flag_left_justify ? "-" : "",
+						fspecs[findex].flag_show_sign ? "+" : "",
+						fspecs[findex].flag_blank ? " " : "",
+						fspecs[findex].flag_leading_zeros ? "0" : ""
+						);
 					if(fspecs[findex].width > 0)
 						gu_snprintfcat(format, sizeof(format), "%d", fspecs[findex].width);
 					if(fspecs[findex].precision != -1)
 						gu_snprintfcat(format, sizeof(format), ".%d", fspecs[findex].precision);
-					gu_snprintfcat(format, sizeof(format), "d");
-					gu_snprintf(buffer, sizeof(buffer), format, fspecs[findex].value.floating_point);
+					gu_snprintfcat(format, sizeof(format), "f");
+					/* Since fprintf() will generate output in the proper output encoding,
+					 * we don't need an intermediate conversion to UTF-8. */
+					/*printf(">%s<", format);*/
+					fprintf(f, format, fspecs[findex].value.floating_point);
 					}
 					break;
 				}
