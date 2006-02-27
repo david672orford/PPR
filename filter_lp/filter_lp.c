@@ -56,6 +56,9 @@ const char myname[] = "filter_lp";
 /* Set to TRUE if the option "noisy=true" is used. */
 int noisy = FALSE;
 
+/* Is it OK to include character codes higher than 127 in the PostScript text? */
+gu_boolean eighth_bit_ok = TRUE;
+
 /* global input line buffer */
 wchar_t *line;				/* the line itself */
 unsigned char *line_attr;	/* bold and underline flags for each character */
@@ -910,26 +913,30 @@ static void our_procset(void)
 /*
 ** write the prolog to standard output
 */
-static void prolog(void)
+static gu_boolean prolog(void)
 	{
 	const char *newencoding, *newencoding_normal, *newencoding_bold;
 	struct ENCODING_INFO encoding;
-
-	newencoding = newencoding_normal = newencoding_bold = NULL;
 
 	/* Look up the selected charset: */
 	if(charset_to_encoding(charset, &encoding) < 0)
 		fatal(10, "charset \"%s\" is unknown", charset);
 
-	/*
-	** Select a normal (non-bold) font which supports the necessary
-	** encoding and is in the requested font family.
-	**
-	** Note that if the user has already selected the font we will
-	** make the unwarranted assumption that he knew what he was doing. :)
-	** If the user has selected the font, then we make no assumptions
-	** about its encoding and reencode it to our satisfaction.
-	*/
+	/* Which PostScript encoding will we use for normal-weight and bold text?
+	 * The choices are the fonts default encoding (represented by NULL) and
+	 * encoding.encoding determined above.  If we set either to 
+	 * encoding.encoding we set newencoding too so that we will know to
+	 * load the needed resources. */
+	newencoding = newencoding_normal = newencoding_bold = NULL;
+
+	/* Select a normal (non-bold) font which supports the necessary
+	 * encoding and is in the requested font family.
+	 *
+	 * Note that if the user has already selected the font we will
+	 * make the unwarranted assumption that he knew what he was doing. :)
+	 * If the user has selected the font, then we make no assumptions
+	 * about its encoding and reencode it to our satisfaction.
+	 */
 	if(font_normal.font_psname)
 		{
 		newencoding = newencoding_normal = encoding.encoding;
@@ -992,7 +999,8 @@ static void prolog(void)
 	/* Start the PostScript output. */
 	fputs("%!PS-Adobe-3.0\n", stdout);
 	fputs("%%Creator: PPR Line Printer Emulator\n", stdout);
-	fputs("%%DocumentData: Clean7Bit\n", stdout);
+	gu_psprintf("%%DocumentData: %s\n", ((uses_nonascii_normal || uses_nonascii_bold) && eighth_bit_ok) ? "Clean8Bit" : "Clean7Bit");
+	gu_psprintf("%%%%LanguageLevel: %d\n", (newencoding && strcmp(newencoding, "UNICODE") == 0) ? 2 : 1);	
 	fputs("%%Pages: (atend)\n", stdout);
 
 	/*
@@ -1010,8 +1018,15 @@ static void prolog(void)
 	*/
 	if(newencoding)
 		{
-		fputs("%%+ procset (TrinColl-PPR-ReEncode) 1.1 0\n", stdout);
-		gu_psprintf("%%%%+ encoding %s\n", newencoding);
+		if(strcmp(newencoding, "UNICODE") == 0)
+			{
+			fputs("%%+ procset (TrinColl-PPR-UNICODE) 1.0 0\n", stdout);
+			}
+		else
+			{
+			fputs("%%+ procset (TrinColl-PPR-ReEncode) 1.1 0\n", stdout);
+			gu_psprintf("%%%%+ encoding %s\n", newencoding);
+			}
 		}
 
 	/*
@@ -1063,8 +1078,15 @@ static void prolog(void)
 	*/
 	if(newencoding)
 		{
-		fputs("%%IncludeResource: procset (TrinColl-PPR-ReEncode) 1.1 0\n", stdout);
-		gu_psprintf("%%%%IncludeResource: encoding %s\n", newencoding);
+		if(strcmp(newencoding, "UNICODE") == 0)
+			{
+			fputs("%%IncludeResource: procset (TrinColl-PPR-UNICODE) 1.0 0\n", stdout);
+			}
+		else
+			{
+			fputs("%%IncludeResource: procset (TrinColl-PPR-ReEncode) 1.1 0\n", stdout);
+			gu_psprintf("%%%%IncludeResource: encoding %s\n", newencoding);
+			}
 		}
 
 	fputs("%%EndProlog\n\n", stdout);
@@ -1102,10 +1124,13 @@ static void prolog(void)
 		gu_psprintf("%%%%IncludeResource: font %s\n", font_bold.font_psname);
 
 	/* Re-encode those we must. */
-	if(newencoding_normal)
-		gu_psprintf("/%s /%s /%s ReEncode\n", font_normal.font_psname, font_normal.font_psname, newencoding_normal);
-	if(newencoding_bold)
-		gu_psprintf("/%s /%s /%s ReEncode\n", font_bold.font_psname, font_bold.font_psname, newencoding_bold);
+	if(newencoding && strcmp(newencoding, "UNICODE") != 0)
+		{
+		if(newencoding_normal)
+			gu_psprintf("/%s /%s /%s ReEncode\n", font_normal.font_psname, font_normal.font_psname, newencoding_normal);
+		if(newencoding_bold)
+			gu_psprintf("/%s /%s /%s ReEncode\n", font_bold.font_psname, font_bold.font_psname, newencoding_bold);
+		}
 
 	/*
 	** We must set the point size variable before we can
@@ -1138,14 +1163,18 @@ static void prolog(void)
 	fputs("ptsize 35 div setlinewidth\n", stdout);
 	fputs("%%EndSetup\n\n", stdout);
 
+	if(newencoding && strcmp(newencoding, "UNICODE") == 0)
+		return TRUE;
+	else
+		return FALSE;
 	} /* end of prolog() */
 
 /*
 ** a few globals for the next few routines
 */
-int font;				/* 0=roman, 1=bold */
-int changed;			/* true if font changed at start of this segment */
-int indent;				/* spaces to indent next line */
+int font;					/* 0=roman, 1=bold */
+gu_boolean font_changed;	/* true if font changed at start of this segment */
+int indent;					/* spaces to indent next line */
 
 /*
 ** start a page
@@ -1237,7 +1266,7 @@ static int underline(int skip)
 ** Send a line, properly formated to stdout.
 ** This routine should not be called with a blank line.
 */
-static void outline(int skip)
+static void output_line(int skip, gu_boolean unicode)
 	{
 	wchar_t *cptr=&line[skip];
 	unsigned char *aptr = &line_attr[skip];
@@ -1246,29 +1275,30 @@ static void outline(int skip)
 	int newindent=0;
 	int c;
 
-	if((len = wcsspn(cptr, L" ")) != indent)	/* if number of leading spaces */
-		{									/* is not equal to the current */
-		gu_psprintf("%d i", len);			/* indent, then change current */
-		indent=len;							/* indent */
-		newindent=-1;						/* set flag so space can be */
-		}									/* added if "b" or "r" used */
-	cptr+=len;								/* now that that is done, */
-	aptr+=len;								/* eat up the indent spaces */
+	if((len = wcsspn(cptr, L" ")) != indent)	/* If number of leading spaces */
+		{										/* is not equal to the current */
+		gu_psprintf("%d i", len);				/* indent, then change current */
+		indent=len;								/* indent */
+		newindent=-1;							/* set flag so space can be */
+		}										/* added if "b" or "r" used */
+	cptr+=len;									/* now that that is done, */
+	aptr+=len;									/* eat up the indent spaces */
 
 	started=0;
-	while((c = *cptr))
+	while((c = *cptr))							/* Take the next character. */
 		{
-		if((len = wcsspn(cptr, L" ")) > 3)
+		if((len = wcsspn(cptr, L" ")) > 3)		/* If it begins a run of more than 3 spaces, */
 			{
-			if(len>29)							/* if too long to abreviate, */
-				gu_psprintf(")%d t(", len);		/* then writ it out long */
+			if(len>29)							/* If too long to abreviate, */
+				gu_psprintf(")%d t(", len);		/* then write it out long */
 			else								/* if short enough */
-				gu_psprintf(")%c(", len-4+'A');	/* abreviate with single letter */
+				gu_psprintf(")%c(", len-4+'A');	/* abreviate to a single letter. */
 			cptr+=len;
 			aptr+=len;
 			continue;
 			}
 
+		/* Does the font change from bold to regular or vice-verse? */
 		if(c != ' ')					/* spaces have no font */
 			{
 			if(*aptr & ATTR_BOLD)		/* if this character is bold */
@@ -1276,7 +1306,7 @@ static void outline(int skip)
 				if(font==0)				/* if font is currently roman, */
 					{
 					font=1;				/* change it to bold */
-					changed=1;
+					font_changed=TRUE;
 					}
 				}
 			else						/* if this character is roman */
@@ -1284,12 +1314,12 @@ static void outline(int skip)
 				if(font==1)				/* if font is currently bold, */
 					{
 					font=0;				/* change it to roman */
-					changed=1;
+					font_changed=TRUE;
 					}
 				}
 			}
 
-		if(changed)						/* if font was changed */
+		if(font_changed)
 			{
 			if(started)					/* if we are in a string */
 				{
@@ -1307,9 +1337,9 @@ static void outline(int skip)
 				else
 					fputs("r",stdout);
 				}
-			changed=0;
+			font_changed=FALSE;
 			}
-		newindent=0;		   /* after started, newident is meaningless */
+		newindent=0;		  			 /* after started, newident is meaningless */
 
 		if(!started)
 			{
@@ -1321,15 +1351,28 @@ static void outline(int skip)
 			{
 			case '(':					/* proceed (, ), and \ with \ */
 			case ')':
-			case 92:
-				fputc(92,stdout);
-				fputc(c,stdout);
+			case '\\':
+				fputc('\\', stdout);
+				fputc(c, stdout);
 				break;
-			default:					/* just print everything else */
-				if(c<' ' || c>'~')		/* possibly in octal */
+			default:
+				if(c < ' ' || c == 127)			/* ASCII control characters */
 					gu_psprintf("\\%o", c);
-				else
+				else if(c < 127)				/* ASCII printing characters */
 					fputc(c, stdout);
+				else
+					{
+					if(unicode)
+						{
+						}
+					else
+						{
+						if(eighth_bit_ok)
+							fputc(c, stdout);
+						else
+							gu_psprintf("\\%o", c);
+						}
+					}
 				break;
 			}
 
@@ -1338,7 +1381,7 @@ static void outline(int skip)
 
 	if(started)							/* this if probably is not necessary */
 		fputs(")p\n",stdout);
-	} /* end of outline() */
+	} /* end of output_line() */
 
 /*
 ** Write the document trailer to standard output.
@@ -1360,8 +1403,9 @@ static void pass2(void)
 	int nlpend = 0;				/* count of newlines pending */
 	char writ = FALSE;			/* true if anything written on this page */
 	int len = 0;
+	gu_boolean unicode;
 
-	prolog();					/* emmit the PostScript prolog */
+	unicode = prolog();			/* emmit the PostScript prolog */
 
 	/* the main loop */
 	while(len >= 0)				/* until end of file */
@@ -1398,10 +1442,10 @@ static void pass2(void)
 					nlpend = 0;
 					}
 
-				if(underline(left_skip))		/* underline it if needed */
-					outline(left_skip);			/* if line has characters, print them */
-				else							/* otherwise, */
-					nlpend++;					/* write it up as a blank line */
+				if(underline(left_skip))				/* underline it if needed */
+					output_line(left_skip, unicode);	/* if line has characters, print them */
+				else									/* otherwise, */
+					nlpend++;							/* write it up as a blank line */
 				}
 
 			if(linen2 == lines_per_page)		/* end page */

@@ -2484,7 +2484,7 @@ msgstr "Название пакета в Redhat"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Role"
-msgstr ""
+msgstr "Роль"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Source Download"
