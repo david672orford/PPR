@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_lp/filter_lp.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 September 2005.
+** Last modified 28 February 2006.
 */
 
 /*
@@ -996,11 +996,15 @@ static gu_boolean prolog(void)
 		fprintf(stderr, "Encoding = \"%s\"\n", encoding.encoding);
 		}
 
+	/* We haven't implemented a Clean7Bit encoding for UNICODE. */
+	if(newencoding && strcmp(newencoding, "PPR-UNICODE") == 0 && !eighth_bit_ok)
+		fatal(10, "No 7 bit encoding for UNICODE implemented.");
+	
 	/* Start the PostScript output. */
 	fputs("%!PS-Adobe-3.0\n", stdout);
 	fputs("%%Creator: PPR Line Printer Emulator\n", stdout);
-	gu_psprintf("%%DocumentData: %s\n", ((uses_nonascii_normal || uses_nonascii_bold) && eighth_bit_ok) ? "Clean8Bit" : "Clean7Bit");
-	gu_psprintf("%%%%LanguageLevel: %d\n", (newencoding && strcmp(newencoding, "UNICODE") == 0) ? 2 : 1);	
+	gu_psprintf("%%%%DocumentData: %s\n", ((uses_nonascii_normal || uses_nonascii_bold) && eighth_bit_ok) ? "Clean8Bit" : "Clean7Bit");
+	gu_psprintf("%%%%LanguageLevel: %d\n", (newencoding && strcmp(newencoding, "PPR-UNICODE") == 0) ? 2 : 1);	
 	fputs("%%Pages: (atend)\n", stdout);
 
 	/*
@@ -1018,7 +1022,7 @@ static gu_boolean prolog(void)
 	*/
 	if(newencoding)
 		{
-		if(strcmp(newencoding, "UNICODE") == 0)
+		if(strcmp(newencoding, "PPR-UNICODE") == 0)
 			{
 			fputs("%%+ procset (TrinColl-PPR-UNICODE) 1.0 0\n", stdout);
 			}
@@ -1069,16 +1073,13 @@ static gu_boolean prolog(void)
 	---------------------------------------------*/
 	fputs("%%BeginProlog\n", stdout);
 
-	/* Send the filter_lp procedure set. */
-	our_procset();
-
 	/*
 	** If we are not using StandardEncoding (which every PostScript
 	** interpreter has) we have to download an re-encoding routine.
 	*/
 	if(newencoding)
 		{
-		if(strcmp(newencoding, "UNICODE") == 0)
+		if(strcmp(newencoding, "PPR-UNICODE") == 0)
 			{
 			fputs("%%IncludeResource: procset (TrinColl-PPR-UNICODE) 1.0 0\n", stdout);
 			}
@@ -1088,6 +1089,9 @@ static gu_boolean prolog(void)
 			gu_psprintf("%%%%IncludeResource: encoding %s\n", newencoding);
 			}
 		}
+
+	/* Send the filter_lp procedure set. */
+	our_procset();
 
 	fputs("%%EndProlog\n\n", stdout);
 
@@ -1124,7 +1128,7 @@ static gu_boolean prolog(void)
 		gu_psprintf("%%%%IncludeResource: font %s\n", font_bold.font_psname);
 
 	/* Re-encode those we must. */
-	if(newencoding && strcmp(newencoding, "UNICODE") != 0)
+	if(newencoding && strcmp(newencoding, "PPR-UNICODE") != 0)
 		{
 		if(newencoding_normal)
 			gu_psprintf("/%s /%s /%s ReEncode\n", font_normal.font_psname, font_normal.font_psname, newencoding_normal);
@@ -1163,7 +1167,7 @@ static gu_boolean prolog(void)
 	fputs("ptsize 35 div setlinewidth\n", stdout);
 	fputs("%%EndSetup\n\n", stdout);
 
-	if(newencoding && strcmp(newencoding, "UNICODE") == 0)
+	if(newencoding && strcmp(newencoding, "PPR-UNICODE") == 0)
 		return TRUE;
 	else
 		return FALSE;
@@ -1364,6 +1368,44 @@ static void output_line(int skip, gu_boolean unicode)
 					{
 					if(unicode)
 						{
+						/* This may not be the most compact code, but it should involve 
+						 * fewer instructions for the lower code points.
+						 */
+						if(c < 0x00000800)
+							{
+							fputc((c >> 6)   | 0xC0, stdout);
+							fputc((c & 0x3F) | 0x80, stdout);
+							}
+						else if(c < 0x00010000)
+							{
+							fputc( (c >> 12)         | 0xE0, stdout);
+							fputc(((c >>  6) & 0x3F) | 0x80, stdout);
+							fputc( (c        & 0x3F) | 0x80, stdout);
+							}
+						else if(c < 0x00200000)
+							{
+							fputc(( c >> 18)         | 0xF0, stdout);
+							fputc(((c >> 12) & 0x3F) | 0x80, stdout);
+							fputc(((c >>  6) & 0x3F) | 0x80, stdout);
+							fputc(( c        & 0x3F) | 0x80, stdout);
+							}
+						else if(c < 0x04000000)
+							{
+							fputc(( c >> 24)         | 0xF8, stdout);
+							fputc(((c >> 18) & 0x3F) | 0x80, stdout);
+							fputc(((c >> 12) & 0x3F) | 0x80, stdout);
+							fputc(((c >>  6) & 0x3F) | 0x80, stdout);
+							fputc(( c        & 0x3F) | 0x80, stdout);
+							}
+						else /* actually < 0x80000000 */
+							{
+							fputc((c >> 30)          | 0xFC, stdout);
+							fputc(((c >> 24) & 0x3F) | 0x80, stdout);
+							fputc(((c >> 18) & 0x3F) | 0x80, stdout);
+							fputc(((c >> 12) & 0x3F) | 0x80, stdout);
+							fputc(((c >>  6) & 0x3F) | 0x80, stdout);
+							fputc(( c        & 0x3F) | 0x80, stdout);
+							}
 						}
 					else
 						{

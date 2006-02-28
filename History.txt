@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--24 February 2006
+2.00a1, 11 December 2004--28 February 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9726,8 +9726,10 @@ no final tarball was released.
 * papd/papd.c: added missing error() function.
 
 * ppr/ppr_infile.c: added automatic filter option charset= based on the value
-  returned by setlocale(LC_MESSAGES, NULL).  This will cause problems because
-  we don't have utf-8 support yet.
+  returned by setlocale(LC_MESSAGES, NULL).  This will cause problems for 
+  filters which are not prepared to handle a charset of UTF-8.  Note that not 
+  all filters will be expected to accept UTF-8 files.  For example, this would
+  not make sense for filter_epson since Epson printers don't accept UTF-8.
 
 * ppr/ppr_features.c: added code to ignore empty translation strings.
 
@@ -9980,5 +9982,11 @@ no final tarball was released.
 * www/prn_addwiz.cgi.perl:suggest_queue_name(): rewrote function which 
   suggests a queue name based on the interface and interface address so 
   that it is table-driven.
+
+* filter_lp/filter_lp.c: added UTF-8 support;
+  procsets/TrinColl-PPR-UNICODE-1-1 added; switched 8-bit character encoding
+  from Clean7Bit to Clean8Bit since that seems safe for almost all printers.
+
+
 
 

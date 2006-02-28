@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/templates/module.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** mouse:~ppr/src/libgu/gu_utf8_decode.c
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 September 2005.
+** Last modified 28 February 2006.
 */
 
 /*! \file
@@ -124,7 +124,7 @@ static wchar_t gu_utf8_getwc(CHAR_READER_FUNCT f_ptr, void *ptr)
 			}
 	
 		/* UTF-16 surrogates are not allowed */
-		if(c >= 0xD8000 && c <= 0xDFFF)
+		if(c >= 0xD800 && c <= 0xDFFF)
 			return INVALID_CHAR;
 	
 		/* These values are also forbidden */

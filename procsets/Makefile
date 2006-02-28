@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/procsets/Makefile
-# Copyright 1995--2002, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 7 January 2002.
+# Last modified 28 February 2006.
 #
 
 include ../Makefile.conf
@@ -38,7 +38,8 @@ SQUEEZEME=\
 	TrinColl-PPR-dmm-nup-3-6 \
 	TrinColl-PPR-dmm-nup-3-7 \
 	TrinColl-PPR-ReEncode-1.1-0 \
-	TrinColl-PPR-NewMetrics-1-0
+	TrinColl-PPR-NewMetrics-1-0 \
+	TrinColl-PPR-UNICODE-1-0
 
 #=== Build ==================================================================
 
