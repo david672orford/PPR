@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr-filters.1.pod
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 May 2005.
+# Last modified 28 February 2006.
 #
 
 =head1 NAME
@@ -142,7 +142,7 @@ will work with this filter as well.
 =item B<-T text>
 
 indicates that the input file is plain text.  The way in which files of this
-type are printed is a system which may be made by the system administrator.
+type are to be printed is determined by the system administrator.
 When you first install PPR, F</usr/lib/ppr/filters/filter_text> is a link to
 F</usr/lib/ppr/filters/filter_lp>.  The system administrator may choose to
 substitute a script which invokes a different text-to-PostScript filters
@@ -588,9 +588,10 @@ the lines should be verticaly.
 
 =item B<charset=>I<name>
 
-sets the character set.  The options include "ASCII", "AdobeStandard",
-"ISOLatin1", "CP437", and "KOI8-R".  For a complete list see
-F</usr/share/ppr/lib/charsets.conf>.
+sets the character set.  Possible character sets include "ASCII", "Latin1", "CP437"
+(the default character set on the IBM-PC, includes line-drawing characters),
+"KOI8-R", and "UTF-8" (a UNICODE encoding).  For a complete list of character set
+names that will work, see F</usr/share/ppr/lib/charsets.conf>.
 
 If PPR is compiled with locale support, then the default value of B<charset=>
 depends on the current locale.  To see the value which is passed to the
