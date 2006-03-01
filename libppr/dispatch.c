@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2006.
+** Last modified 1 March 2006.
 */
 
 #include "config.h"
@@ -292,7 +292,7 @@ int dispatch(const char myname[], const char *argv[])
 
 	if(!argv[0])
 		{
-		gu_utf8_fprintf(stderr, _("%s: no sub-command, try \"ppad help\"\n"), myname);
+		gu_utf8_fprintf(stderr, _("%s: no sub-command, try \"%s help\"\n"), myname, myname);
 		return EXIT_SYNTAX;
 		}
 

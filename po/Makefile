@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/po/Makefile
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 3 November 2005.
+# Last modified 1 March 2006.
 #
 
 include ../Makefile.conf
@@ -66,7 +66,7 @@ pot:
 		../interfaces/*.c \
 		../lib*/*.c \
 		../lprsrv/*.c \
-		../ppad/ppad*.c \
+		../ppad/ppad*.c ../ppad/dispatch_table.c \
 		../ppop/ppop*.c \
 		../ppr/ppr*.c \
 		../ppuser/*.c \

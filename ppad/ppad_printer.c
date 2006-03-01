@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2006.
+** Last modified 1 March 2006.
 */
 
 /*==============================================================
@@ -476,12 +476,6 @@ int command_show(const char *argv[])
 	#define MAX_ADDONS 32
 	char *addon[MAX_ADDONS];
 	int addon_count = 0;
-
-	if(! printer)
-		{
-		gu_utf8_fputs(_("You must specify a printer.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_ENOENT_PRINT)))
 		return EXIT_BADDEST;
@@ -1923,25 +1917,13 @@ int command_charge(const char *argv[])
 */
 int command_bins_ppd(const char *argv[])
 	{
-	const char *printer;				/* name of printer whose configuration should be changed */
+	const char *printer = argv[0];		/* name of printer whose configuration should be changed */
 	struct CONF_OBJ *obj;
 	char *line;
 	char *ppdname = NULL;
 	char *ppdline;						/* a line read from the PPD file */
 	int x;
 	int ret;
-
-	if(! (printer = argv[0]))
-		{
-		gu_utf8_fputs(_("You must supply the name of an existing printer.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
-
-	if(argv[1])
-		{
-		gu_utf8_fputs(_("Too many parameters.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	/* make sure the printer exists */
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
@@ -2221,12 +2203,6 @@ int command_delete(const char *argv[])
 	int len;
 	int is_a_member;
 
-	if(!printer)
-		{
-		gu_utf8_fputs(_("You must specify a printer to delete.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
-
 	ppop2("halt", printer);				/* halt printer */
 	ppop2("reject", printer);			/* accept no more jobs */
 	ppop2("purge", printer);			/* cancel all existing jobs */
@@ -2423,14 +2399,6 @@ int command_passthru(const char *argv[])
 	const char *printer = argv[0];
 	char *passthru;
 	int retval;
-
-	if(!printer)
-		{
-		gu_utf8_fputs(_("You must specify a printer and a (possibly empty) list\n"
-				"of file types.  These file types should be the same as\n"
-				"those used with the \"ppr -T\" option.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	passthru = list_to_string(&argv[1]);
 	retval = conf_set_name(QUEUE_TYPE_PRINTER, printer, 0, "PassThru", passthru ? "%s" : NULL, passthru);
@@ -2948,14 +2916,6 @@ int command_addon(const char *argv[])
 	const char *printer = argv[0];
 	const char *name = argv[1];
 	const char *value = argv[2];
-
-	if(!printer || !name || (value && argv[3]))
-		{
-		gu_utf8_fputs(_("You must supply the name of an existing printer, the name of an addon\n"
-				"parameter.  A value for the parameter is optional.  If you do not\n"
-				"supply a value, the parameter will be unset.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(name[0] >= 'a' && name[0] <= 'z'))
 		{
