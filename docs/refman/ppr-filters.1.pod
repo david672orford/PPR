@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 28 February 2006.
+# Last modified 1 March 2006.
 #
 
 =head1 NAME
@@ -101,6 +101,11 @@ If the orientation is to be decided automatically, then the descision is
 based upon the parameters B<landscape_lentrigger=> and
 B<landscape_asptrigger=>.  These parameters are described in detail in the
 section for the B<-o> switch.
+
+If B<charset=> is set to UTF-8 either explicitly or by a locale environment
+variable, and the input file contains characters outside the ASCII range, then
+the resulting PostScript code will print only on PostScript level 2 printers 
+and PPR will decline to print it on level 1 printers.
 
 =item B<-T lp_autolf>
 
@@ -547,19 +552,6 @@ B<landscape_asptrigger> is about 1.75.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
-=item B<fontnormal=>I<fontname>
-
-=item B<fontbold>=I<fontname>
-
-The PostScript name of the font to be used for printing normal and bold
-text.  For example, "C<ppr -o 'fontnormal=Times-Roman fontbold=Times-Bold>".
-As a general rule only fixed width fonts will yield satisfactory results.
-
-If the font you want is listed in F</usr/share/ppr/lib/fonts.conf> it is easier to specify
-its family with the B<fontfamily=> option.
-
-(Supported by:  lp, lp_autolf, pr, fortran)
-
 =item B<fontfamily=>I<family>
 
 This option is used to select a different set of fonts.  The default value
@@ -572,26 +564,25 @@ families which are listed in F<fonts.conf> for the character set you are using.
 
 =item B<charheight=>I<real>
 
-These options inform the filter of the proportions of the fonts selected.  These
-will never be needed if the B<fontfamily=> or B<fontnormal=> and B<fontbold=>
-options are not used.
+These options inform the filter of the proportions of the fonts selected.
+These will never be needed if the B<fontfamily=> option is not used.
 
-The dimensions are expressed as a decimal fraction of the point size.  For example,
-the default setting is C<-o 'charwidth=0.6 charheight=1.0'>, which is appropriate
-for Courier.
+The dimensions are expressed as a decimal fraction of the point size.  For
+example, the default setting is C<-o 'charwidth=0.6 charheight=1.0'>, which is
+appropriate for Courier.
 
-Note that these parameters do not change the point size.  Instead, they allow the filter 
-to figure out how many letters will fit on a long at any given point size and how far apart 
-the lines should be verticaly.
+Note that these parameters do not change the point size.  Instead, they allow
+the filter to figure out how many letters will fit on a long at any given point
+size and how far apart the lines should be verticaly.
 
 (Supported by:  lp, lp_autolf, pr, fortran)
 
 =item B<charset=>I<name>
 
-sets the character set.  Possible character sets include "ASCII", "Latin1", "CP437"
-(the default character set on the IBM-PC, includes line-drawing characters),
-"KOI8-R", and "UTF-8" (a UNICODE encoding).  For a complete list of character set
-names that will work, see F</usr/share/ppr/lib/charsets.conf>.
+sets the character set.  Possible character sets include "ASCII", "Latin1",
+"CP437" (the default character set on the IBM-PC, includes line-drawing
+characters), "KOI8-R", and "UTF-8" (a UNICODE encoding).  For a complete list
+of character set names that will work, see F</usr/share/ppr/lib/charsets.conf>.
 
 If PPR is compiled with locale support, then the default value of B<charset=>
 depends on the current locale.  To see the value which is passed to the

@@ -212,8 +212,6 @@ int TAB_WIDTH = DEFAULT_TAB_WIDTH;
 ** height.  The default value is 0.60.
 */
 char *font_family = "monospace";
-struct FONT_INFO font_normal;
-struct FONT_INFO font_bold;
 double char_width = DEFAULT_CHAR_WIDTH;
 double char_height = DEFAULT_CHAR_HEIGHT;
 
@@ -915,6 +913,8 @@ static void our_procset(void)
 */
 static gu_boolean prolog(void)
 	{
+	struct FONT_INFO font_normal;
+	struct FONT_INFO font_bold;
 	const char *newencoding, *newencoding_normal, *newencoding_bold;
 	struct ENCODING_INFO encoding;
 
@@ -931,47 +931,31 @@ static gu_boolean prolog(void)
 
 	/* Select a normal (non-bold) font which supports the necessary
 	 * encoding and is in the requested font family.
-	 *
-	 * Note that if the user has already selected the font we will
-	 * make the unwarranted assumption that he knew what he was doing. :)
-	 * If the user has selected the font, then we make no assumptions
-	 * about its encoding and reencode it to our satisfaction.
 	 */
-	if(font_normal.font_psname)
+	if(encoding_to_font(encoding.encoding, font_family, "normal", "normal", "normal", &font_normal) < 0)
 		{
-		newencoding = newencoding_normal = encoding.encoding;
+		fatal(10, "Can't find normal style font in family \"%s\"\n"
+			"\tfor charset \"%s\".", font_family, charset);
 		}
-	else
-		{
-		if(encoding_to_font(encoding.encoding, font_family, "normal", "normal", "normal", &font_normal) < 0)
-			{
-			fatal(10, "Can't find normal style font in family \"%s\"\n"
-				"\tfor charset \"%s\".", font_family, charset);
-			}
 
-		/* If ASCII won't do, */
-		if(uses_nonascii_normal || !encoding.encoding_ascii_compatible)
-			{
-			/* If font's default encoding isn't correct, */
-			if(strcmp(encoding.encoding, font_normal.font_encoding))
-				newencoding = newencoding_normal = encoding.encoding;
-			}
-		/* If ASCII encoding ok and there is a substitute font
-		   for this case, use it in stead. */
-		else if(font_normal.ascii_subst_font)
-			{
-			font_normal.font_psname = font_normal.ascii_subst_font;
-			}
+	/* If ASCII won't do, */
+	if(uses_nonascii_normal || !encoding.encoding_ascii_compatible)
+		{
+		/* If font's default encoding isn't correct, */
+		if(strcmp(encoding.encoding, font_normal.font_encoding))
+			newencoding = newencoding_normal = encoding.encoding;
+		}
+	/* If ASCII encoding ok and there is a substitute font
+	   for this case, use it in stead. */
+	else if(font_normal.ascii_subst_font)
+		{
+		font_normal.font_psname = font_normal.ascii_subst_font;
 		}
 
 	/*
 	** Do the same for the bold font.
 	*/
-	if(font_bold.font_psname)
-		{
-		newencoding = newencoding_normal = encoding.encoding;
-		}
-	else if(uses_bold)
+	if(uses_bold)
 		{
 		if(encoding_to_font(encoding.encoding, font_family, "bold", "normal", "normal", &font_bold) < 0)
 			{
@@ -1540,17 +1524,6 @@ int main(int argc, char *argv[])
 		auto_lf = TRUE;
 
 	/*
-	** Set to NULL so we will know of fontnormal= or
-	** fontbold= option is used.
-	*/
-	font_normal.font_psname = NULL;
-	font_normal.font_encoding = "";
-	font_normal.ascii_subst_font = "";
-	font_bold.font_psname = NULL;
-	font_bold.font_encoding = "";
-	font_bold.ascii_subst_font = "";
-
-	/*
 	** Read the default pagesize from the PPR config file.
 	*/
 	{
@@ -1650,24 +1623,6 @@ int main(int argc, char *argv[])
 			else if(strcmp(name, "fontfamily") == 0)
 				{
 				font_family = gu_strdup(value);
-				}
-
-			/* font for printing normal text */
-			else if(strcmp(name, "fontnormal") == 0)
-				{
-				if( is_unsafe_ps_name(value) )
-					filter_options_error(1, &o, _("Value of option \"%s=\" contains illegal characters."), "fontnormal");
-
-				font_normal.font_psname = gu_strdup(value);
-				}
-
-			/* font for printing bold text */
-			else if(strcmp(name, "fontbold") == 0)
-				{
-				if(is_unsafe_ps_name(value))
-					filter_options_error(1, &o, _("Value of option \"%s=\" contains illegal characters."), "fontbold");
-
-				font_bold.font_psname = gu_strdup(value);
 				}
 
 			/* The font width as a fraction of the point size */

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-23 17:15-0500\n"
+"POT-Creation-Date: 2006-03-01 14:49-0500\n"
 "PO-Revision-Date: 2005-09-02 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -47,7 +47,7 @@ msgstr "%s: конец файла в изобразении\n"
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)"
 
-#: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1487
+#: ../filter_dotmatrix/main.c:599 ../filter_lp/filter_lp.c:1573
 #: ../filters_misc/filter_hexdump.c:192 ../filters_misc/make_dvips_conf.c:94
 #: ../pprdrv/pprdrv_flag.c:331
 #, c-format
@@ -95,7 +95,7 @@ msgstr "Значение должно быть или 9 или 24."
 msgid "Value must be a positive integer."
 msgstr "Значение должно быть положительным целым числом."
 
-#: ../filter_dotmatrix/main.c:816 ../filter_lp/filter_lp.c:1717
+#: ../filter_dotmatrix/main.c:816 ../filter_lp/filter_lp.c:1803
 #, c-format
 msgid "Ignoring option \"%s=%s\".\n"
 msgstr ""
@@ -110,183 +110,183 @@ msgstr "кодировка \"%s\" неизвестная"
 msgid "no font available for charset %s, weight %s, slant %s"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:658
+#: ../filter_lp/filter_lp.c:661
 #, c-format
 msgid "Longest line is %d columns wide, shortest leading whitespace is %d columns wide.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:661
+#: ../filter_lp/filter_lp.c:664
 #, c-format
 msgid "Constraints force columns from %d to %d.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:665
+#: ../filter_lp/filter_lp.c:668
 #, c-format
 msgid "Longest page is %d lines long.\n"
 msgstr "Самая длиная страница длиная в %d строчек.\n"
 
-#: ../filter_lp/filter_lp.c:666
+#: ../filter_lp/filter_lp.c:669
 #, c-format
 msgid "Input file's aspect ratio: %.2f (landscape_asptrigger=%.2f)\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:674
+#: ../filter_lp/filter_lp.c:677
 msgid "Not one FF found, page length and asp[ect ratio] unknown\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:680
+#: ../filter_lp/filter_lp.c:683
 msgid "Input file is probably landscape.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:682
+#: ../filter_lp/filter_lp.c:685
 msgid "Input file is probably portrait.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:685
+#: ../filter_lp/filter_lp.c:688
 msgid "User has forced landscape mode.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:688
+#: ../filter_lp/filter_lp.c:691
 msgid "User has forced portrait mode.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:710
+#: ../filter_lp/filter_lp.c:713
 msgid "Landscape mode selected.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:726
+#: ../filter_lp/filter_lp.c:729
 msgid "Portrait mode selected.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1514
+#: ../filter_lp/filter_lp.c:1600
 #, c-format
 msgid "Value for option \"%s=\" must be boolean."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1527
+#: ../filter_lp/filter_lp.c:1613
 #, c-format
 msgid "Value for option \"%s=\" is invalid."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1534 ../filter_lp/filter_lp.c:1541
-#: ../filter_lp/filter_lp.c:1554 ../filter_lp/filter_lp.c:1591
-#: ../filter_lp/filter_lp.c:1598 ../filter_lp/filter_lp.c:1647
-#: ../filter_lp/filter_lp.c:1654 ../filter_lp/filter_lp.c:1659
-#: ../filter_lp/filter_lp.c:1666 ../filter_lp/filter_lp.c:1671
+#: ../filter_lp/filter_lp.c:1620 ../filter_lp/filter_lp.c:1627
+#: ../filter_lp/filter_lp.c:1640 ../filter_lp/filter_lp.c:1677
+#: ../filter_lp/filter_lp.c:1684 ../filter_lp/filter_lp.c:1733
+#: ../filter_lp/filter_lp.c:1740 ../filter_lp/filter_lp.c:1745
+#: ../filter_lp/filter_lp.c:1752 ../filter_lp/filter_lp.c:1757
 #, c-format
 msgid "Unreasonable value for option \"%s=\"."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1573 ../filter_lp/filter_lp.c:1582
-#: ../filter_lp/filter_lp.c:1605 ../filter_lp/filter_lp.c:1615
+#: ../filter_lp/filter_lp.c:1659 ../filter_lp/filter_lp.c:1668
+#: ../filter_lp/filter_lp.c:1691 ../filter_lp/filter_lp.c:1701
 #, c-format
 msgid "Value of option \"%s=\" contains illegal characters."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1640
+#: ../filter_lp/filter_lp.c:1726
 msgid "Valid \"duplex=\" values are \"none\", \"undef\", \"tumble\", and \"notumble\"."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1692
+#: ../filter_lp/filter_lp.c:1778
 msgid "Valid values for orientation are \"portrait\", \"landscape\", and \"auto\"."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1707
+#: ../filter_lp/filter_lp.c:1793
 #, c-format
 msgid "Value for dimension \"%s\" is invalid."
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1855
+#: ../filter_lp/filter_lp.c:1941
 #, c-format
 msgid "Portrait printable area: %.2fpsu x %.2fpsu\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1856
+#: ../filter_lp/filter_lp.c:1942
 #, c-format
 msgid "Landscape printable area: %.2fpsu x %.2fpsu\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1857
+#: ../filter_lp/filter_lp.c:1943
 #, c-format
 msgid "Portrait ideal asp (columns/lines): %.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1858
+#: ../filter_lp/filter_lp.c:1944
 #, c-format
 msgid "Landscape ideal asp (columns/lines): %.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1859
+#: ../filter_lp/filter_lp.c:1945
 #, c-format
 msgid "Average: default_landscape_asptrigger=%.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1860
+#: ../filter_lp/filter_lp.c:1946
 #, c-format
 msgid "Portrait ideal len for pdeflines=%d: %.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1861
+#: ../filter_lp/filter_lp.c:1947
 #, c-format
 msgid "Landscape ideal len for ldeflines=%d: %.2f\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1862
+#: ../filter_lp/filter_lp.c:1948
 #, c-format
 msgid "Average: default_landscape_lentrigger=%d\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1880
+#: ../filter_lp/filter_lp.c:1966
 msgid "maxlines is less than minlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1882
+#: ../filter_lp/filter_lp.c:1968
 msgid "pdeflines is less than minlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1884
+#: ../filter_lp/filter_lp.c:1970
 msgid "pdeflines is greater than maxlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1886
+#: ../filter_lp/filter_lp.c:1972
 msgid "ldeflines is less than minlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1888
+#: ../filter_lp/filter_lp.c:1974
 msgid "ldeflines is greater than maxlines"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1890
+#: ../filter_lp/filter_lp.c:1976
 msgid "pmlm, pmrm, gutter, and current pagesize leave no space for text"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1892
+#: ../filter_lp/filter_lp.c:1978
 msgid "pmtm, pmbm, and current pagesize leave no space for text"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1894
+#: ../filter_lp/filter_lp.c:1980
 msgid "lmlm, lmrm, and current pagesize leave no space for text"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1896
+#: ../filter_lp/filter_lp.c:1982
 msgid "lmtm, lmbm, gutter, and current pagesize leave no space for text"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1903
+#: ../filter_lp/filter_lp.c:1989
 #, c-format
 msgid ""
 "Warning:\t mincolumns is greater than landscape_lentrigger,\n"
 "\t\t files w/out FF will always be printed in landscape.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1908
+#: ../filter_lp/filter_lp.c:1994
 #, c-format
 msgid ""
 "Warning:\t maxwidth is less than lanscape_lentrigger,\n"
 "\t\t files w/out FF will never be printed in landscape.\n"
 msgstr ""
 
-#: ../filter_lp/filter_lp.c:1913
+#: ../filter_lp/filter_lp.c:1999
 #, c-format
 msgid "Warning:\t maxlines equals minlines, therefore page length is fixed.\n"
 msgstr ""
@@ -5195,33 +5195,17 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
 
-#, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
+#~ msgid "You must supply only the name of an existing printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "You must supply the name of a PPD file.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого файла PPD.\n"
+
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -5229,14 +5213,30 @@ msgstr ""
 #~ "a name for the new group.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
-
-#~ msgid "You must supply the name of a PPD file.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого файла PPD.\n"
-
-#~ msgid "You must supply only the name of an existing printer.\n"
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#, fuzzy
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"
