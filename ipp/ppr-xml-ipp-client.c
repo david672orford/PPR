@@ -15,33 +15,64 @@
 
 int main(int argc, char *argv[])
 	{
-	xmlDocPtr doc;
-	xmlNodePtr cur;
-	http_t *http;
-	ipp_t *request, *response;
-
-	if(!(doc = xmlParseFile("request.xml")))
-		gu_Throw("failed to parse request XML");
+	xmlDocPtr doc = NULL;		/* XML encoded request */
+	http_t *http = NULL;
+	ipp_t *request = NULL;
+	ipp_t *response = NULL;
 
 	gu_Try
 		{
+		xmlNodePtr cur;
+		xmlChar *version_number = NULL;
+		xmlChar *operation_id = NULL;
+		xmlNodePtr operation_attributes = NULL;
+
+		if(!(doc = xmlParseFile("request.xml")))
+			gu_Throw("failed to parse request XML");
+
 		if(!(cur = xmlDocGetRootElement(doc)))
 			gu_Throw("request XML document is empty");
 
 		if(xmlStrcmp(cur->name, (const xmlChar*)"ipp"))
-			gu_Throw("root element of request XML document is not \"ipp\"");
+			gu_Throw("root element of IPP request XML document is not \"ipp\"");
+
+		for(cur = cur->xmlChildrenNode; cur; cur = cur->next)
+			{
+			if(xmlStrcmp(cur->name, (const xmlChar*)"version-number") == 0)
+				{
+				version_number = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+				printf("version: %s\n", version_number);
+				continue;
+				}
+			if(xmlStrcmp(cur->name, (const xmlChar*)"operation-id") == 0)
+				{
+				operation_id = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+				printf("operation-id: %s\n", operation_id);
+				continue;
+				}
+			if(xmlStrcmp(cur->name, (const xmlChar*)"operation-attributes") == 0)
+				{
+				operation_attributes = cur;
+				continue;
+				}
+			}
+		
+		request = ippNew();
 
 		if(!(http = httpConnect(cupsServer(), ippPort())))
 			gu_Throw("can not connect: %s %s", cupsServer(), strerror(errno));
 
-		request = ippNew();
-
-
-		
 		}
 	gu_Final
 		{
-		xmlFreeDoc(doc);
+		if(doc)
+			xmlFreeDoc(doc);
+		if(request)
+			ippDelete(request);
+		if(response)
+			ippDelete(response);
+		if(http)
+			httpClose(http);
 		}
 	gu_Catch
 		{
@@ -49,3 +80,5 @@ int main(int argc, char *argv[])
 		}	
 
 	}
+
+/* end of file */
