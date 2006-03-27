@@ -1,7 +1,7 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/misc/prn_addwiz.cgi.perl
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 6 December 2005.
+# Last modified 21 March 2006.
 #
 
 #
@@ -930,7 +930,6 @@ sub suggest_queue_name
 	# this interface program.
 	if(defined(my $rules = $suggestion_rules{$interface}))
 		{
-		print STDERR "XXX: $rules\n";
 		# If the address matches the regular expression for addresses
 		# cooresponding to this interface program,
 		if($address =~ /$rules->[0]/)

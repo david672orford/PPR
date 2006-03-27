@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 February 2006.
+# Last modified 27 March 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -45,7 +45,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 0;
+my $DEBUG = 1;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.
@@ -208,9 +208,11 @@ else
 #===========================================================
 if(defined $ENV{TCPBIND_SOCKETS})
 	{
-	# What was this for?  Whatever it was for, it doesn't seem to work right.
-	#$SIG{CHLD} = "IGNORE";
+	use POSIX ":sys_wait_h";
 
+	# Create a file descriptor set for use with select()
+	# which includes the file descriptors of all of our
+	# listening sockets.
 	my %fds = ();
 	my $master_fdset = "";
 	my $fdset;
@@ -224,10 +226,15 @@ if(defined $ENV{TCPBIND_SOCKETS})
 		$fds{$fd} = [$port, $file];
 		vec($master_fdset, $fd, 1) = 1;
 		}
+
 	CONWAIT:
 	while(1)
 		{
 		my $nfound = select($fdset=$master_fdset, undef, undef, undef);	
+		
+		# Reap zombies
+		1 until(waitpid(-1, WNOHANG) == -1);
+
 		#print STDERR "select() reports $nfound ready file descriptors\n";
 		foreach my $fd (keys %fds)
 			{

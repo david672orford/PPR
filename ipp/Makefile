@@ -32,9 +32,11 @@ include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
+BIN_PROGS=ppr-xml-ipp-client$(DOTEXE)
+
 CGI_PROGS=ipp$(DOTEXE)
 
-PROGS=$(CGI_PROGS)
+PROGS=$(BIN_PROGS) $(CGI_PROGS)
 
 #=== Build ==================================================================
 
@@ -43,11 +45,11 @@ all: $(PROGS)
 ipp$(DOTEXE): ipp.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ZLIBLIBS)
 
-ppr-ipp-client$(DOTEXE): ppr-ipp-client.o ../libppr.a ../libgu.a
-	$(LD) $(LDFLAGS) `xml2-config --libs` -o $@ $^
+ppr-xml-ipp-client$(DOTEXE): ppr-xml-ipp-client.o ../libppr.a ../libgu.a
+	$(LD) $(LDFLAGS) `xml2-config --libs` -l cups -o $@ $^
 
 ppr-xml-ipp-client.o: ppr-xml-ipp-client.c
-	$(CC) $(CFLAGS) `xml2-config --cflags` -c ppr-ipp-client.c
+	$(CC) $(CFLAGS) `xml2-config --cflags` -c ppr-xml-ipp-client.c
 
 #=== Install ================================================================
 

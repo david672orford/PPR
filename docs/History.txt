@@ -575,9 +575,11 @@ more information about RIPs and *pprRIP:.
 * refman/: removed documentation for removed commands such as ppr-lpr
   and ppr-xfm.
 
-* misc/tcl_cross_platform.html: removed
+* misc/tcl_cross_platform.html: removed because we no longer use the 
+  tecniques described.
 
-* Makefile: dropt pprlibs/ from list of directories which are built automatically.
+* Makefile: dropt pprlibs/ from list of directories which are built 
+  automatically.
 
 * refman/ppr.1.pod: removed references to -a, -A, and the old -u
 

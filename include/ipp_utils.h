@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 October 2005.
+** Last modified 24 March 2006.
 */
 
 /*! \file
@@ -65,6 +65,31 @@ Here is a partial example of using the IPP object from a CGI "script":
 Fuller examples can be found in ../ipp/ipp.c and ../pprd/pprd_ipp.c.
 
 */
+
+#if 0
+#define DEBUG(a) debug a
+#else
+#define DEBUG(a)
+#endif
+
+void debug(const char message[], ...)
+	#ifdef __GNUC__
+	__attribute__ (( format (printf, 1, 2) ))
+	#endif
+	;
+
+/*=========================== ipp_util.c ==============================*/
+
+const char *ipp_operation_to_str(int op);
+const char *ipp_tag_to_str(int tag);
+int ipp_tag_simplify(int value_tag);
+
+/*=========================== ipp_util2.c =============================*/
+
+int ipp_str_to_operation(const char str[]);
+int ipp_str_to_tag(const char str[]);
+
+/*=========================== ipp_obj.c ===============================*/
 
 /* This union holds any kind of IPP value. */
 typedef union
@@ -176,13 +201,7 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
 
-/* Other functions */
-void debug(const char message[], ...)
-	#ifdef __GNUC__
-	__attribute__ (( format (printf, 1, 2) ))
-	#endif
-	;
-const char *ipp_operation_to_str(int op);
+/*==================== ipp_req_attrs.c ========================*/
 
 /* Operation attributes handling class */
 struct REQUEST_ATTRS {

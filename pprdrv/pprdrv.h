@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 21 March 2006.
 */
 
 /*
@@ -34,7 +34,7 @@
 ** these defines will control the definition
 ** of a macro at the end of this file.
 */
-#if 1
+#if 0
 #define DEBUG 1							/* include function debug() */
 #define DEBUG_MAIN 1					/* main() */
 #define DEBUG_INTERFACE 1				/* show opening, closing, etc. */

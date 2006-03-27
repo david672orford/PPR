@@ -28,6 +28,10 @@
 ** Last modified 17 February 2006.
 */
 
+/*
+ * This is PPR's IPP (Internet Printer Protocol) server.
+ */
+
 #include "config.h"
 #include <stdio.h>
 #include <sys/types.h>
