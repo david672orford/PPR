@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-27 15:54-0500\n"
+"POT-Creation-Date: 2006-03-27 22:36-0500\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -41,7 +41,7 @@ msgstr "%s: Dateiende in Graphik\n"
 #: ../ppad/ppad_conf.c:281 ../ppad/ppad_conf.c:285 ../ppad/ppad_conf.c:289
 #: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
 #: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:428
-#: ../pprdrv/pprdrv_custom_hook.c:64 ../pprdrv/pprdrv_interface.c:318
+#: ../pprdrv/pprdrv_custom_hook.c:67 ../pprdrv/pprdrv_interface.c:318
 #: ../pprdrv/pprdrv_interface.c:322 ../pprdrv/pprdrv_progress.c:221
 #: ../pprdrv/pprdrv_progress.c:251
 #, c-format
@@ -3105,11 +3105,12 @@ msgstr ""
 "Es können mehrere Angeben in diesem Befehl verwendet\n"
 "werden.\n"
 
-#: ../ppop/ppop_cmds_listq.c:612
-msgid "Queue ID        For                      Time      Pgs Status\n"
+#: ../ppop/ppop_cmds_listq.c:613
+#, fuzzy
+msgid "Queue ID        For                      Time       Pgs Status\n"
 msgstr "Warteschlange    Für                      Zeit      Seiten Status\n"
 
-#: ../ppop/ppop_cmds_listq.c:706
+#: ../ppop/ppop_cmds_listq.c:707
 msgid ""
 "Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
 "\n"
@@ -3121,11 +3122,11 @@ msgstr ""
 "Der Befehl \"ppop lpq\" zeigt eine Warteschlangenliste\n"
 "ähnlich der des Berkeley Unix \"lpq\" Befehls.\n"
 
-#: ../ppop/ppop_cmds_listq.c:1144
+#: ../ppop/ppop_cmds_listq.c:1145
 msgid "no entries"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1157
+#: ../ppop/ppop_cmds_listq.c:1158
 msgid ""
 "Usage: ppop details {all, <group>, <printer>, <job>}\n"
 "\n"
@@ -3139,246 +3140,246 @@ msgstr ""
 "aller Aufträge der angegebenen Gruppe, aller Auftrage des\n"
 "angegebenen Drucker oder des angegebenen Auftrages.\n"
 
-#: ../ppop/ppop_cmds_listq.c:1174
+#: ../ppop/ppop_cmds_listq.c:1175
 #, fuzzy, c-format
 msgid "Job ID: %s\n"
 msgstr "Auftrags ID: %s:%s-%d"
 
-#: ../ppop/ppop_cmds_listq.c:1183
+#: ../ppop/ppop_cmds_listq.c:1184
 #, fuzzy, c-format
 msgid "Filters: %s\n"
 msgstr "PPD-Datei: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1186
+#: ../ppop/ppop_cmds_listq.c:1187
 #, fuzzy, c-format
 msgid "User: %s\n"
 msgstr "Benutzung: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1189
+#: ../ppop/ppop_cmds_listq.c:1190
 #, fuzzy, c-format
 msgid "For: %s\n"
 msgstr "Für was: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1192
+#: ../ppop/ppop_cmds_listq.c:1193
 #, c-format
 msgid "Submission Time: %s"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1195
+#: ../ppop/ppop_cmds_listq.c:1196
 #, c-format
 msgid "Current Priority: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1196
+#: ../ppop/ppop_cmds_listq.c:1197
 #, c-format
 msgid "Origional Priority: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1199
+#: ../ppop/ppop_cmds_listq.c:1200
 #, fuzzy, c-format
 msgid "lpq filename: %s\n"
 msgstr "Vollständiger Name: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1202
+#: ../ppop/ppop_cmds_listq.c:1203
 #, fuzzy, c-format
 msgid "Title: %s\n"
 msgstr "Titel: %s"
 
-#: ../ppop/ppop_cmds_listq.c:1205
+#: ../ppop/ppop_cmds_listq.c:1206
 #, fuzzy, c-format
 msgid "Creator: %s\n"
 msgstr "Ersteller: %s"
 
-#: ../ppop/ppop_cmds_listq.c:1208
+#: ../ppop/ppop_cmds_listq.c:1209
 #, fuzzy, c-format
 msgid "Routing: %s\n"
 msgstr "Route: %s"
 
-#: ../ppop/ppop_cmds_listq.c:1211
+#: ../ppop/ppop_cmds_listq.c:1212
 #, fuzzy, c-format
 msgid "Banner: %s\n"
 msgstr "Verfügbarer Betrag: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1212
+#: ../ppop/ppop_cmds_listq.c:1213
 #, fuzzy, c-format
 msgid "Trailer: %s\n"
 msgstr "Titel: %s"
 
-#: ../ppop/ppop_cmds_listq.c:1215
+#: ../ppop/ppop_cmds_listq.c:1216
 #, fuzzy, c-format
 msgid "Respond by: %s \"%s\"\n"
 msgstr "RIP: %s %s \"%s\"\n"
 
-#: ../ppop/ppop_cmds_listq.c:1217
+#: ../ppop/ppop_cmds_listq.c:1218
 #, fuzzy, c-format
 msgid "Responder options: %s\n"
 msgstr "Optionen: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1220
+#: ../ppop/ppop_cmds_listq.c:1221
 #, fuzzy, c-format
 msgid "Commentary: %d\n"
 msgstr "Kommentar: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1223
+#: ../ppop/ppop_cmds_listq.c:1224
 #, c-format
 msgid "Required Language Level: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1224
+#: ../ppop/ppop_cmds_listq.c:1225
 #, c-format
 msgid "Required Extensions: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1225
+#: ../ppop/ppop_cmds_listq.c:1226
 #, c-format
 msgid "DSC Level: %f\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1227
+#: ../ppop/ppop_cmds_listq.c:1228
 #, fuzzy, c-format
 msgid "Pages: %d\n"
 msgstr "Seiten: %d"
 
-#: ../ppop/ppop_cmds_listq.c:1229
+#: ../ppop/ppop_cmds_listq.c:1230
 #, fuzzy
 msgid "Pages: ?\n"
 msgstr "Seiten: %d"
 
-#: ../ppop/ppop_cmds_listq.c:1230
+#: ../ppop/ppop_cmds_listq.c:1231
 #, fuzzy, c-format
 msgid "Page Order: %s\n"
 msgstr "Reihenfolge der Ausgabe: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1234
+#: ../ppop/ppop_cmds_listq.c:1235
 #, c-format
 msgid "Prolog Present: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1235
+#: ../ppop/ppop_cmds_listq.c:1236
 #, fuzzy, c-format
 msgid "DocSetup Present: %s\n"
 msgstr "Abteilung: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1236
+#: ../ppop/ppop_cmds_listq.c:1237
 #, fuzzy, c-format
 msgid "Script Present: %s\n"
 msgstr "Kredit abgelaufen: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1237
+#: ../ppop/ppop_cmds_listq.c:1238
 #, fuzzy, c-format
 msgid "ProofMode: %s\n"
 msgstr "Test fehlgeschlagen: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1238
+#: ../ppop/ppop_cmds_listq.c:1239
 #, fuzzy, c-format
 msgid "Orientation: %s\n"
 msgstr "Optionen: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1239
+#: ../ppop/ppop_cmds_listq.c:1240
 #, fuzzy, c-format
 msgid "Pages Per Sheet: %d\n"
 msgstr "Seiten: %d"
 
-#: ../ppop/ppop_cmds_listq.c:1240
+#: ../ppop/ppop_cmds_listq.c:1241
 #, c-format
 msgid "Unfiltered Size: %ld\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1241
+#: ../ppop/ppop_cmds_listq.c:1242
 #, c-format
 msgid "PostScript Size: %ld\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1242
+#: ../ppop/ppop_cmds_listq.c:1243
 msgid "DocumentData: "
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1264
+#: ../ppop/ppop_cmds_listq.c:1265
 #, c-format
 msgid "N-Up N: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1265
+#: ../ppop/ppop_cmds_listq.c:1266
 #, fuzzy, c-format
 msgid "N-Up Borders: %s\n"
 msgstr "Reihenfolge der Ausgabe: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1266
+#: ../ppop/ppop_cmds_listq.c:1267
 #, fuzzy, c-format
 msgid "Signiture Sheets: %d\n"
 msgstr "Blätter: %d"
 
-#: ../ppop/ppop_cmds_listq.c:1267
+#: ../ppop/ppop_cmds_listq.c:1268
 #, fuzzy, c-format
 msgid "Signiture Part: %s\n"
 msgstr "Name des Druckers: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1271
+#: ../ppop/ppop_cmds_listq.c:1272
 #, fuzzy
 msgid "Copies: ?\n"
 msgstr "Kopien: %d"
 
-#: ../ppop/ppop_cmds_listq.c:1273
+#: ../ppop/ppop_cmds_listq.c:1274
 #, fuzzy, c-format
 msgid "Copies: %d\n"
 msgstr "Kopien: %d"
 
-#: ../ppop/ppop_cmds_listq.c:1274
+#: ../ppop/ppop_cmds_listq.c:1275
 #, fuzzy, c-format
 msgid "Collate: %s\n"
 msgstr "Rotieren: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1274 ../ppop/ppop_cmds_listq.c:1275
-#: ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1275 ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1277
 msgid "No"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1274 ../ppop/ppop_cmds_listq.c:1275
-#: ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1275 ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1277
 #, fuzzy
 msgid "Yes"
 msgstr "ja"
 
-#: ../ppop/ppop_cmds_listq.c:1275
+#: ../ppop/ppop_cmds_listq.c:1276
 #, fuzzy, c-format
 msgid "Auto Bin Select: %s\n"
 msgstr "Ablaufsumme: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1277
 #, c-format
 msgid "Keep Bad Features: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1279
+#: ../ppop/ppop_cmds_listq.c:1280
 #, fuzzy, c-format
 msgid "Draft Notice: %s\n"
 msgstr "Zuletzt geändert: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1282
+#: ../ppop/ppop_cmds_listq.c:1283
 #, fuzzy
 msgid "Status: "
 msgstr "Status"
 
-#: ../ppop/ppop_cmds_listq.c:1286
+#: ../ppop/ppop_cmds_listq.c:1287
 #, c-format
 msgid "Never mask: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1287
+#: ../ppop/ppop_cmds_listq.c:1288
 #, c-format
 msgid "NotNow mask: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1337
+#: ../ppop/ppop_cmds_listq.c:1338
 msgid "Wrong syntax!\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1369 ../ppop/ppop_modify.c:94
+#: ../ppop/ppop_cmds_listq.c:1370 ../ppop/ppop_modify.c:94
 #, c-format
 msgid "Invalid Addon line: %s\n"
 msgstr "Ungültige Zusatzzeile: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1887
+#: ../ppop/ppop_cmds_listq.c:1888
 msgid ""
 "Usage: ppop progress <job>\n"
 "\n"

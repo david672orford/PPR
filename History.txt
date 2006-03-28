@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--23 March 2006
+2.00a1, 11 December 2004--27 March 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9989,6 +9989,9 @@ no final tarball was released.
 
 * filter_lp/filter_lp.c: removed fontnormal= and fontbold= options since
   the fontfamily= option long ago made them obsolete.
+
+* libppr/: split ipp_util.c into ipp_util.c, ipp_util2.c, ipp_obj.c,
+  and ipp_req_attrs.c.
 
 
 

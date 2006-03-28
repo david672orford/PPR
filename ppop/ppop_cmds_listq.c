@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 September 2005.
+** Last modified 27 March 2006.
 */
 
 /*
@@ -608,14 +608,15 @@ static void ppop_list_help(void)
 
 static void ppop_list_banner(void)
 	{
-/*		123456789012345678901234567890123456789012345678901234567890 */
-gu_utf8_puts(_("Queue ID        For                      Time      Pgs Status\n"));
+/*              0        1         2         3         4         5         6         7         8
+                12345678901234567890123456789012345678901234567890123456789012345678901234567890 */
+gu_utf8_puts(_("Queue ID        For                      Time       Pgs Status\n"));
 gu_utf8_puts(  "----------------------------------------------------------------------------\n");
-/*		  12345678-xxxx.y David Chappell           21 May 79 999 waiting for printer
-		  glunkish-1004   Joseph Smith             11:31pm   ??? printing on glunkish
-		  melab_deskjet-1004
-		  Joseph Andrews                           11:35pm   001 waiting for media
-		                                                         letterhead
+/*              12345678-xxxx.y David Chappell           21 May 79  999 waiting for printer
+				glunkish-1004   Joseph Smith             11:31pm    ??? printing on glunkish
+                melab_deskjet-1004
+                Joseph Andrews                           11:35pm    001 waiting for media
+                                                                        letterhead
 */
 	}
 
@@ -624,7 +625,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 		const char *onprinter,
 		FILE *qstream)
 	{
-	char timestr[64];		/* 9 chars expected, but large buffer for utf-8 */
+	char timestr[64];		/* 10 chars expected, but large buffer for utf-8 bloating */
 	char pagesstr[4];
 	const char *jobname;
 
@@ -645,7 +646,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 	else
 		snprintf(pagesstr, sizeof(pagesstr), "%03d", qentryfile->attr.pages);
 
-	gu_utf8_printf(" %-24.24s %-9.9s %s ",
+	gu_utf8_printf(" %-24.24s %-10.10s %s ",
 		qentryfile->For ? qentryfile->For : "???",
 		format_time(timestr, sizeof(timestr), (time_t)qentryfile->time),
 		pagesstr
