@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 		{
 		xmlNodePtr cur;
 		xmlChar *version_number = NULL;
-		xmlChar *operation_id = NULL;
+		int operation_id = -1;
 		xmlNodePtr operation_attributes = NULL;
 
 		if(!(doc = xmlParseFile("request.xml")))
@@ -46,8 +46,9 @@ int main(int argc, char *argv[])
 				}
 			if(xmlStrcmp(cur->name, (const xmlChar*)"operation-id") == 0)
 				{
-				operation_id = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-				printf("operation-id: %s\n", operation_id);
+				xmlChar *temp = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+				printf("operation-id: %s\n", temp);
+				operation_id = ipp_str_to_operation_id(temp);
 				continue;
 				}
 			if(xmlStrcmp(cur->name, (const xmlChar*)"operation-attributes") == 0)
@@ -58,6 +59,14 @@ int main(int argc, char *argv[])
 			}
 		
 		request = ippNew();
+
+		request->request.op.operation_id = operation_id;
+		request->request.op.request_id = 42;
+
+		for(cur=operation_attributes; cur; cur = cur->next)
+			{
+			
+			}
 
 		if(!(http = httpConnect(cupsServer(), ippPort())))
 			gu_Throw("can not connect: %s %s", cupsServer(), strerror(errno));

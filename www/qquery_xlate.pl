@@ -53,7 +53,6 @@ require 'cgi_intl.pl';
 '-' => undef,
 'for' =>				[N_('For Whom'),		N_("Whose Job is This?")],
 'username' =>			[N_('Username'),		N_("Unix Username of Job Submitter")],
-'userid' =>				[N_('UID'),				N_("Numberic Unix Userid of Job Submitter")],
 '-' => undef,
 'lpqfilename' =>		[N_('File Name'),		N_("What Was the Name of the Input File?")],
 'title' =>				[N_('Title'),			N_("Descriptive Job Title"), 20],

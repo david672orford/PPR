@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-27 22:23-0500\n"
+"POT-Creation-Date: 2006-03-28 17:35-0500\n"
 "PO-Revision-Date: 2006-03-01 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -2985,11 +2985,28 @@ msgid ""
 "command.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:612
-msgid "Queue ID        For                      Time       Pgs Status\n"
-msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
+#: ../ppop/ppop_cmds_listq.c:621
+msgid "Queue ID"
+msgstr "Идентификатор"
 
-#: ../ppop/ppop_cmds_listq.c:706
+#: ../ppop/ppop_cmds_listq.c:622
+msgid "For"
+msgstr "Для"
+
+#: ../ppop/ppop_cmds_listq.c:623
+msgid "Time"
+msgstr "Время"
+
+#: ../ppop/ppop_cmds_listq.c:624
+msgid "Pgs"
+msgstr "#Ст"
+
+#: ../ppop/ppop_cmds_listq.c:625 ../ppop/ppop_cmds_other.c:453
+#: ../ppop/ppop_cmds_other.c:1507
+msgid "Status"
+msgstr "Состояние"
+
+#: ../ppop/ppop_cmds_listq.c:714
 msgid ""
 "Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
 "\n"
@@ -2997,11 +3014,11 @@ msgid ""
 "similiar to that of the Berkeley Unix \"lpq\" command.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1144
+#: ../ppop/ppop_cmds_listq.c:1152
 msgid "no entries"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1157
+#: ../ppop/ppop_cmds_listq.c:1165
 msgid ""
 "Usage: ppop details {all, <group>, <printer>, <job>}\n"
 "\n"
@@ -3010,245 +3027,242 @@ msgid ""
 "for the indicated printer, or the indicated job.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1174
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1182
+#, c-format
 msgid "Job ID: %s\n"
-msgstr "Идентефикатор задания: %s-%d"
+msgstr "Идентефикатор задания: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1183
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1191
+#, c-format
 msgid "Filters: %s\n"
-msgstr "PPD файл: %s\n"
+msgstr "Филтры: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1186
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1194
+#, c-format
 msgid "User: %s\n"
-msgstr "Название: %s\n"
+msgstr "Ползователь: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1189
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1197
+#, c-format
 msgid "For: %s\n"
-msgstr "Чего: %s\n"
+msgstr "Для: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1192
+#: ../ppop/ppop_cmds_listq.c:1200
 #, c-format
 msgid "Submission Time: %s"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1195
+#: ../ppop/ppop_cmds_listq.c:1203
 #, c-format
 msgid "Current Priority: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1196
+#: ../ppop/ppop_cmds_listq.c:1204
 #, c-format
 msgid "Origional Priority: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1199
+#: ../ppop/ppop_cmds_listq.c:1207
 #, fuzzy, c-format
 msgid "lpq filename: %s\n"
 msgstr "ФИО: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1202
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1210
+#, c-format
 msgid "Title: %s\n"
-msgstr "PPD файл: %s\n"
+msgstr "Название: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1205
+#: ../ppop/ppop_cmds_listq.c:1213
 #, fuzzy, c-format
 msgid "Creator: %s\n"
 msgstr "Заметки: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1208
+#: ../ppop/ppop_cmds_listq.c:1216
 #, fuzzy, c-format
 msgid "Routing: %s\n"
 msgstr "печатает %s"
 
-#: ../ppop/ppop_cmds_listq.c:1211
+#: ../ppop/ppop_cmds_listq.c:1219
 #, fuzzy, c-format
 msgid "Banner: %s\n"
 msgstr "Сум в счете: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1212
+#: ../ppop/ppop_cmds_listq.c:1220
 #, fuzzy, c-format
 msgid "Trailer: %s\n"
 msgstr "PPD файл: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1215
+#: ../ppop/ppop_cmds_listq.c:1223
 #, c-format
 msgid "Respond by: %s \"%s\"\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1217
+#: ../ppop/ppop_cmds_listq.c:1225
 #, c-format
 msgid "Responder options: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1220
+#: ../ppop/ppop_cmds_listq.c:1228
 #, fuzzy, c-format
 msgid "Commentary: %d\n"
 msgstr "Заметки: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1223
+#: ../ppop/ppop_cmds_listq.c:1231
 #, c-format
 msgid "Required Language Level: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1224
+#: ../ppop/ppop_cmds_listq.c:1232
 #, c-format
 msgid "Required Extensions: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1225
+#: ../ppop/ppop_cmds_listq.c:1233
 #, c-format
 msgid "DSC Level: %f\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1227
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1235
+#, c-format
 msgid "Pages: %d\n"
-msgstr "Название: %s\n"
+msgstr "Страниц: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1229
+#: ../ppop/ppop_cmds_listq.c:1237
 msgid "Pages: ?\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1230
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1238
+#, c-format
 msgid "Page Order: %s\n"
-msgstr "Очеред страниц (outputorder): %s\n"
+msgstr "Очеред страниц: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1234
+#: ../ppop/ppop_cmds_listq.c:1242
 #, c-format
 msgid "Prolog Present: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1235
+#: ../ppop/ppop_cmds_listq.c:1243
 #, fuzzy, c-format
 msgid "DocSetup Present: %s\n"
 msgstr "Удел: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1236
+#: ../ppop/ppop_cmds_listq.c:1244
 #, c-format
 msgid "Script Present: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1237
+#: ../ppop/ppop_cmds_listq.c:1245
 #, c-format
 msgid "ProofMode: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1238
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1246
+#, c-format
 msgid "Orientation: %s\n"
-msgstr "Операция: "
+msgstr "Операция: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1239
+#: ../ppop/ppop_cmds_listq.c:1247
 #, c-format
 msgid "Pages Per Sheet: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1240
+#: ../ppop/ppop_cmds_listq.c:1248
 #, c-format
 msgid "Unfiltered Size: %ld\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1241
+#: ../ppop/ppop_cmds_listq.c:1249
 #, c-format
 msgid "PostScript Size: %ld\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1242
+#: ../ppop/ppop_cmds_listq.c:1250
 msgid "DocumentData: "
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1264
+#: ../ppop/ppop_cmds_listq.c:1272
 #, c-format
 msgid "N-Up N: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1265
+#: ../ppop/ppop_cmds_listq.c:1273
 #, fuzzy, c-format
 msgid "N-Up Borders: %s\n"
 msgstr "Очеред страниц (outputorder): %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1266
+#: ../ppop/ppop_cmds_listq.c:1274
 #, c-format
 msgid "Signiture Sheets: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1267
+#: ../ppop/ppop_cmds_listq.c:1275
 #, fuzzy, c-format
 msgid "Signiture Part: %s\n"
 msgstr "Название принтера: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1271
-#, fuzzy
+#: ../ppop/ppop_cmds_listq.c:1279
 msgid "Copies: ?\n"
-msgstr "Экземпларов: %d"
+msgstr "Экземпларов: ?\n"
 
-#: ../ppop/ppop_cmds_listq.c:1273
-#, fuzzy, c-format
+#: ../ppop/ppop_cmds_listq.c:1281
+#, c-format
 msgid "Copies: %d\n"
-msgstr "Экземпларов: %d"
+msgstr "Экземпларов: %d\n"
 
-#: ../ppop/ppop_cmds_listq.c:1274
+#: ../ppop/ppop_cmds_listq.c:1282
 #, fuzzy, c-format
 msgid "Collate: %s\n"
 msgstr "Контактное лицо: %s\n"
 
-#: ../ppop/ppop_cmds_listq.c:1274 ../ppop/ppop_cmds_listq.c:1275
-#: ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1282 ../ppop/ppop_cmds_listq.c:1283
+#: ../ppop/ppop_cmds_listq.c:1284
 msgid "No"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1274 ../ppop/ppop_cmds_listq.c:1275
-#: ../ppop/ppop_cmds_listq.c:1276
-#, fuzzy
+#: ../ppop/ppop_cmds_listq.c:1282 ../ppop/ppop_cmds_listq.c:1283
+#: ../ppop/ppop_cmds_listq.c:1284
 msgid "Yes"
-msgstr "да"
+msgstr "Да"
 
-#: ../ppop/ppop_cmds_listq.c:1275
+#: ../ppop/ppop_cmds_listq.c:1283
 #, c-format
 msgid "Auto Bin Select: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1276
+#: ../ppop/ppop_cmds_listq.c:1284
 #, c-format
 msgid "Keep Bad Features: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1279
+#: ../ppop/ppop_cmds_listq.c:1287
 #, c-format
 msgid "Draft Notice: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1282
-#, fuzzy
+#: ../ppop/ppop_cmds_listq.c:1290
 msgid "Status: "
-msgstr "Состояние"
+msgstr "Состояние: "
 
-#: ../ppop/ppop_cmds_listq.c:1286
+#: ../ppop/ppop_cmds_listq.c:1294
 #, c-format
 msgid "Never mask: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1287
+#: ../ppop/ppop_cmds_listq.c:1295
 #, c-format
 msgid "NotNow mask: %d\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1337
+#: ../ppop/ppop_cmds_listq.c:1345
 msgid "Wrong syntax!\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1369 ../ppop/ppop_modify.c:94
+#: ../ppop/ppop_cmds_listq.c:1377 ../ppop/ppop_modify.c:94
 #, c-format
 msgid "Invalid Addon line: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_listq.c:1887
+#: ../ppop/ppop_cmds_listq.c:1895
 msgid ""
 "Usage: ppop progress <job>\n"
 "\n"
@@ -3438,10 +3452,6 @@ msgstr "Използования: ppop status {<принтер>, <группа>,
 #: ../ppop/ppop_cmds_other.c:453
 msgid "Printer"
 msgstr "Принтер"
-
-#: ../ppop/ppop_cmds_other.c:453 ../ppop/ppop_cmds_other.c:1507
-msgid "Status"
-msgstr "Состояние"
 
 #: ../ppop/ppop_cmds_other.c:469
 #, c-format
@@ -5832,20 +5842,27 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
-
-#~ msgid "You must supply only the name of an existing printer.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
-
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"
 
 #, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group and\n"
-#~ "a name for the new group.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
 #, fuzzy
 #~ msgid ""
@@ -5853,24 +5870,20 @@ msgstr ""
 #~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
 #, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid ""
+#~ "You must supply the name of an existing group and\n"
+#~ "a name for the new group.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
+
+#~ msgid "You must supply only the name of an existing printer.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"

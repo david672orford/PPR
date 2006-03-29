@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-27 22:36-0500\n"
+"POT-Creation-Date: 2006-03-28 17:45-0500\n"
 "PO-Revision-Date: 2005-10-15 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -1773,35 +1773,32 @@ msgid "Elaborate, Fully Qualified Form of the Job ID"
 msgstr ""
 
 #: ../www/qquery_xlate.pl:45
-#, fuzzy
 msgid "Full Job ID"
-msgstr "Все задач"
+msgstr "Польный иденцификатор задания"
 
 #: ../www/qquery_xlate.pl:47
-#, fuzzy
 msgid "Status"
-msgstr "Состояние:"
+msgstr "Состояние"
 
 #: ../www/qquery_xlate.pl:47
 msgid "Status of the Job"
-msgstr ""
+msgstr "Состояние задания"
 
 #: ../www/qquery_xlate.pl:48
 msgid "Elaboration on Status of the Job"
-msgstr ""
+msgstr "Обяснение состояния задания"
 
 #: ../www/qquery_xlate.pl:48
 msgid "Explain"
 msgstr ""
 
 #: ../www/qquery_xlate.pl:49
-#, fuzzy
 msgid "Job Status"
-msgstr "Состояние:"
+msgstr "Состояние задания"
 
 #: ../www/qquery_xlate.pl:49
 msgid "Status of the Job with Elaboration"
-msgstr ""
+msgstr "Состояние задания с обяснением"
 
 #: ../www/qquery_xlate.pl:51
 msgid "Job Submission Time, Compact"
@@ -1821,9 +1818,8 @@ msgid "Job Submission Time, Full"
 msgstr ""
 
 #: ../www/qquery_xlate.pl:54
-#, fuzzy
 msgid "For Whom"
-msgstr "Для Чего"
+msgstr "Для кого"
 
 #: ../www/qquery_xlate.pl:54
 msgid "Whose Job is This?"
@@ -1834,252 +1830,243 @@ msgid "Unix Username of Job Submitter"
 msgstr ""
 
 #: ../www/qquery_xlate.pl:55 ../www/show_printlog.cgi.perl:171
-#, fuzzy
 msgid "Username"
-msgstr "Пользователь:"
+msgstr "Имя пользователя"
 
-#: ../www/qquery_xlate.pl:56
-msgid "Numberic Unix Userid of Job Submitter"
-msgstr ""
-
-#: ../www/qquery_xlate.pl:56
-msgid "UID"
-msgstr ""
-
-#: ../www/qquery_xlate.pl:58
+#: ../www/qquery_xlate.pl:57
 #, fuzzy
 msgid "File Name"
 msgstr "Название принтера:"
 
-#: ../www/qquery_xlate.pl:58
+#: ../www/qquery_xlate.pl:57
 msgid "What Was the Name of the Input File?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:59
+#: ../www/qquery_xlate.pl:58
 msgid "Descriptive Job Title"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:59
+#: ../www/qquery_xlate.pl:58
 #, fuzzy
 msgid "Title"
 msgstr "Время"
 
-#: ../www/qquery_xlate.pl:60
+#: ../www/qquery_xlate.pl:59
 msgid "Creator"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:60
+#: ../www/qquery_xlate.pl:59
 msgid "Person or Application that Created the Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:61
+#: ../www/qquery_xlate.pl:60
 msgid "Instructions to a Human Operator for Delivery of the Output"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:61
+#: ../www/qquery_xlate.pl:60
 msgid "Routing Instructions"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:63
+#: ../www/qquery_xlate.pl:62
 msgid "Number of PostScript Page Descriptions"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:63 ../www/qquery_xlate.pl:64
+#: ../www/qquery_xlate.pl:62 ../www/qquery_xlate.pl:63
 #: ../www/show_printlog.cgi.perl:172
 msgid "Pages"
 msgstr "Сколько Страниц"
 
-#: ../www/qquery_xlate.pl:64
+#: ../www/qquery_xlate.pl:63
 msgid "Pages x Copies"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:65
+#: ../www/qquery_xlate.pl:64
 msgid "Copies"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:65
+#: ../www/qquery_xlate.pl:64
 msgid "Number of Copies to be Printed"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:66
+#: ../www/qquery_xlate.pl:65
 msgid "Collate?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:66
+#: ../www/qquery_xlate.pl:65
 msgid "Will the Copies be Collated?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:67
+#: ../www/qquery_xlate.pl:66
 #, fuzzy
 msgid "Page Factor"
 msgstr "Страничные часы:"
 
-#: ../www/qquery_xlate.pl:67
+#: ../www/qquery_xlate.pl:66
 msgid "PostScript Page Descriptions Per Sheet"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:68
+#: ../www/qquery_xlate.pl:67
 msgid "N-Up"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:68
+#: ../www/qquery_xlate.pl:67
 msgid "Number of Logical Pages Per Physical Page"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:69
+#: ../www/qquery_xlate.pl:68
 msgid "Borders?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:69
+#: ../www/qquery_xlate.pl:68
 msgid "Print Borders Around Logical Pages in N-Up Mode?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:70
+#: ../www/qquery_xlate.pl:69
 msgid "How Many Sheets Per Signiture?  (For Booklet Printing.)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:70
+#: ../www/qquery_xlate.pl:69
 msgid "Sig. Sheets"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:71
+#: ../www/qquery_xlate.pl:70
 msgid "Sig. Part"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:71
+#: ../www/qquery_xlate.pl:70
 msgid "The Fronts, the Backs, or Both"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:72
+#: ../www/qquery_xlate.pl:71
 msgid "Total Page Descriptions for All Copies"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:72
+#: ../www/qquery_xlate.pl:71
 #, fuzzy
 msgid "Total Pages"
 msgstr "Печатать пробную страницу"
 
-#: ../www/qquery_xlate.pl:73
+#: ../www/qquery_xlate.pl:72
 msgid "Total Medium Sides to be Marked (after N-Up)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:73 ../www/show_printlog.cgi.perl:172
+#: ../www/qquery_xlate.pl:72 ../www/show_printlog.cgi.perl:172
 msgid "Total Sides"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:74
+#: ../www/qquery_xlate.pl:73
 msgid "Total Medium Sheets to be Used"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:74 ../www/show_printlog.cgi.perl:172
+#: ../www/qquery_xlate.pl:73 ../www/show_printlog.cgi.perl:172
 msgid "Total Sheets"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:76
+#: ../www/qquery_xlate.pl:75
 msgid "Current Queue Priority of this Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:76
+#: ../www/qquery_xlate.pl:75
 msgid "Priority"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:77
+#: ../www/qquery_xlate.pl:76
 msgid "Orig. Priority"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:77
+#: ../www/qquery_xlate.pl:76
 msgid "Original Queue Priority of this Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:79
+#: ../www/qquery_xlate.pl:78
 msgid "Banner?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:79
+#: ../www/qquery_xlate.pl:78
 msgid "Was a Banner Page Requested?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:80
+#: ../www/qquery_xlate.pl:79
 msgid "Trailer?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:80
+#: ../www/qquery_xlate.pl:79
 msgid "Was a Trailer Page Requested?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:82
+#: ../www/qquery_xlate.pl:81
 msgid "Size (input bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:82
+#: ../www/qquery_xlate.pl:81
 msgid "Size of Input File Before Conversion to PostScript"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:83
+#: ../www/qquery_xlate.pl:82
 msgid "Size (PS bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:83
+#: ../www/qquery_xlate.pl:82
 msgid "Size of Input File After Conversion to PostScript"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:85
+#: ../www/qquery_xlate.pl:84
 msgid "Does this Document have a DSC Prolog?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:85
+#: ../www/qquery_xlate.pl:84
 #, fuzzy
 msgid "Prolog Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 #, fuzzy
 msgid "Docsetup Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 msgid "Does this Document have a DSC Document Setup Section?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:87
+#: ../www/qquery_xlate.pl:86
 msgid "Does this Document have a DSC Script?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:87
+#: ../www/qquery_xlate.pl:86
 #, fuzzy
 msgid "Script Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:89
+#: ../www/qquery_xlate.pl:88
 msgid "DSC Proofmode Setting"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:89
+#: ../www/qquery_xlate.pl:88
 msgid "Proofmode"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 #, fuzzy
 msgid "Orientation"
 msgstr "Операция:"
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "Portrait or Landscape"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 msgid "Draft Notice"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 msgid "Message to Print Diagonally Across Each Page"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:92
+#: ../www/qquery_xlate.pl:91
 msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:92
+#: ../www/qquery_xlate.pl:91
 #, fuzzy
 msgid "Page Order"
 msgstr "Размир Страницы:"

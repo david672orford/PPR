@@ -9993,6 +9993,9 @@ no final tarball was released.
 * libppr/: split ipp_util.c into ipp_util.c, ipp_util2.c, ipp_obj.c,
   and ipp_req_attrs.c.
 
-
+* ppop/ppop_cmds_listq.c: widened the "ppop list" date field to 10 columns
+  in order to accomodate dates such as 24-03-2006 and broke up "ppop list"
+  banner into separate translatable strings so that future changes to
+  column widths won't break translations again.
 
 

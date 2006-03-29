@@ -104,7 +104,7 @@ pot:
 			rm $$division.tmp; \
 			else \
 			echo "Changes found in $$division."; \
-			mv $$division.tmp $$division.pot; \
+			mv -f $$division.tmp $$division.pot; \
 			fi \
 		done
 
