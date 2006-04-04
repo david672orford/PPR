@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ipp>
+	<version-number>1.0</version-number>
+	<operation-id>Print-Job</operation-id>
+	<request-id>17</request-id>
+	<operation-attributes>
+		<charset><name>attributes-charset</name><value>US-ASCII</value></charset>
+		<naturalLanguage><name>attributes-natural-language</name><value>en-US</value></naturalLanguage>
+		<uri><name>printer-uri</name><param-value>uri</param-value></uri>
+		<nameWithoutLanguage><name>job-name</name><value>test job</value></nameWithoutLanguage>
+		<boolean><name>ipp-attribute-fidelity</name><value>true</value></boolean>
+	</operation-attributes>
+	<job-attributes>
+		<!-- <integer><name>copies</name><value>20</value></integer> -->
+		<keyword><name>sides</name><value>two-sided-long-edge</value></keyword>
+	</job-attributes>
+</ipp>

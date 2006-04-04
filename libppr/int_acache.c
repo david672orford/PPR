@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_acache.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 3 April 2006.
 */
 
 #include "config.h"
@@ -58,7 +58,7 @@ void int_addrcache_save(const char printer[], const char interface[], const char
 	if(strcmp(printer, "-") == 0)
 		return;
 
-	ppr_fnamef(fname, "%s/%s/address", PRINTERS_CACHEDIR, printer);
+	ppr_fnamef(fname, "%s/%s/resolved_device_address", PRINTERS_PURGABLE_STATEDIR, printer);
 	if((fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC, UNIX_644)) == -1)
 		{
 		alert(printer, TRUE, "%s interface: can't open \"%s\" for write, errno=%d (%s)", interface, fname, errno, gu_strerror(errno));
@@ -92,10 +92,10 @@ char *int_addrcache_load(const char printer[], const char interface[], const cha
 	if(strcmp(printer, "-") == 0)
 		return NULL;
 
-	/* Try to open the cache file.  If we fail because it is not there,
+	/* Try to open the address cache file.  If we fail because it is not there,
 	   that is ok, we will create it later so we fail silently.  For other
 	   errors we put a warning in the printer's alert log. */
-	ppr_fnamef(fname, "%s/%s/address", PRINTERS_CACHEDIR, printer);
+	ppr_fnamef(fname, "%s/%s/resolved_device_address", PRINTERS_PURGABLE_STATEDIR, printer);
 	if((fd = open(fname, O_RDONLY)) == -1)
 		{
 		if(errno != ENOENT)

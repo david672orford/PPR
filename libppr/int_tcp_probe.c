@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/int_tcp_probe.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 November 2003.
+** Last modified 31 March 2006.
 */
 
 #include "config.h"
@@ -80,7 +80,6 @@ int int_tcp_probe(const struct sockaddr_in *printer_address, const char snmp_com
 		{
 		struct gu_snmp *snmp_obj;
 
-		gu_write_string(1, "%%[ PPR connecting ]%%\n");
 		snmp_obj = gu_snmp_open(printer_address->sin_addr.s_addr, snmp_community);
 
 		gu_Try

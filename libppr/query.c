@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/query.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 31 March 2006.
 */
 
 #include "config.h"
@@ -37,6 +37,7 @@
 #include <sys/time.h>
 #include <time.h>
 #include <sys/wait.h>
+#include <ctype.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"
@@ -428,11 +429,29 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr, int timeout)
 				}
 			else if((p = memchr(q->buf_stdout, '\n', q->buf_stdout_len)) || (p = memchr(q->buf_stdout, '\r', q->buf_stdout_len)))
 				{
+				/* If the first rule matched, give the second one a chance to match sooner. */
+				if(*p == '\n')
+					{
+					char *p2;
+					if((p2 = memchr(q->buf_stdout, '\r', q->buf_stdout_len)) && p2 < p)
+						p = p2;
+					}
+				
+				/* How many bytes of the input buffer does this line occupy? */
+				q->buf_stdout_eaten = ((p - q->buf_stdout) + 1);
+
+				/* If the \r or the \n was at the begining of the line and the last
+				 * line terminator was the other one, then this isn't a blank line,
+				 * just the second half of the line terminator for the previous
+				 * line.
+				 */
+				{
 				int prev = q->last_stdout_crlf;
 				q->last_stdout_crlf = *p;
-				q->buf_stdout_eaten = ((p - q->buf_stdout) + 1);
 				if(q->buf_stdout_eaten == 1 && *p != prev)
 					continue;
+				}
+
 				if(is_stderr)
 					*is_stderr = FALSE;
 				*p = '\0';
@@ -523,6 +542,16 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr, int timeout)
 			if(len < 0)
 				gu_Throw("%d < 0", errno);
 
+			/* debug */
+			#if 0
+			{
+			int iii;
+			for(iii=0; iii < len; iii++)
+				fprintf(stderr, " %02X", q->buf_stdout[q->buf_stdout_len + iii]);
+			fprintf(stderr, "\n");
+			}
+			#endif
+			
 			/* If the read size was zero, that means that the interface closed its end. */
 			if(len == 0)
 				q->eof_stdout = TRUE;
@@ -602,7 +631,16 @@ void query_disconnect(struct QUERY *q)
 	/* Wait for the interface program to exit.*/
 	while((line = query_getline(q, NULL, 10)))
 		{
-		fprintf(stderr, "Trailing garbage (%d characters): \"%s\"\n", (int)strlen(line), line);
+		int i1, i2;
+		fprintf(stderr, "Trailing garbage:\n");
+		for(i1=0; i1 < strlen(line); i1 += 16)
+			{
+			for(i2=i1; i2 < strlen(line); i2++)
+				fprintf(stderr, "%02X ", line[i2]);
+			for(i2=i1; i2 < strlen(line); i2++)
+				fprintf(stderr, "%c", isprint(line[i2]) ? line[i2] : '.');
+			fprintf(stderr, "\n");
+			}
 		}
 
 	/* The pipes from the interface can go now.

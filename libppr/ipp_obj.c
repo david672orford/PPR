@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2006.
+** Last modified 30 March 2006.
 */
 
 /*! \file */
@@ -41,6 +41,12 @@
 #include "global_defines.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
+
+#if 0
+#define DEBUG(a) debug a
+#else
+#define DEBUG(a)
+#endif
 
 /*! create IPP request handling object
 

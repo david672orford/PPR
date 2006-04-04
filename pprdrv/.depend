@@ -1,66 +1,66 @@
-ppr-gs.o: ppr-gs.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ppr-gs.o: ./ppr-gs.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-pprdrv.o: pprdrv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
+pprdrv.o: ./pprdrv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
 
-pprdrv_buf.o: pprdrv_buf.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_buf.o: ./pprdrv_buf.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_capable.o: pprdrv_capable.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
+pprdrv_capable.o: ./pprdrv_capable.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
 
-pprdrv_commentary.o: pprdrv_commentary.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/respond.h
+pprdrv_commentary.o: ./pprdrv_commentary.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/respond.h
 
-pprdrv_custom_hook.o: pprdrv_custom_hook.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_custom_hook.o: ./pprdrv_custom_hook.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_fault_debug.o: pprdrv_fault_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_fault_debug.o: ./pprdrv_fault_debug.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_feedback.o: pprdrv_feedback.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_feedback.o: ./pprdrv_feedback.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
-pprdrv_flag.o: pprdrv_flag.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
+pprdrv_flag.o: ./pprdrv_flag.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/userdb.h ../include/version.h
 
-pprdrv_interface.o: pprdrv_interface.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_interface.o: ./pprdrv_interface.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
-pprdrv_log.o: pprdrv_log.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_log.o: ./pprdrv_log.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_lw_messages.o: pprdrv_lw_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_lw_messages.o: ./pprdrv_lw_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_mactt.o: pprdrv_mactt.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
+pprdrv_mactt.o: ./pprdrv_mactt.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
 
-pprdrv_media.o: pprdrv_media.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_media.o: ./pprdrv_media.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_notppd.o: pprdrv_notppd.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_notppd.o: ./pprdrv_notppd.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_nup.o: pprdrv_nup.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_nup.o: ./pprdrv_nup.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
-pprdrv_pagecount.o: pprdrv_pagecount.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_pagecount.o: ./pprdrv_pagecount.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_patch.o: pprdrv_patch.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_patch.o: ./pprdrv_patch.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_persistent.o: pprdrv_persistent.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_persistent.o: ./pprdrv_persistent.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_pfb.o: pprdrv_pfb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
+pprdrv_pfb.o: ./pprdrv_pfb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h
 
-pprdrv_pjl_messages.o: pprdrv_pjl_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_pjl_messages.o: ./pprdrv_pjl_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_ppd.o: pprdrv_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h pprdrv_ppd.h ../include/util_exits.h
+pprdrv_ppd.o: ./pprdrv_ppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h ../include/util_exits.h
 
-pprdrv_ppop_status.o: pprdrv_ppop_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/respond.h
+pprdrv_ppop_status.o: ./pprdrv_ppop_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h pprdrv.h ../include/respond.h
 
-pprdrv_progress.o: pprdrv_progress.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_progress.o: ./pprdrv_progress.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
-pprdrv_reason.o: pprdrv_reason.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
+pprdrv_reason.o: ./pprdrv_reason.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h
 
-pprdrv_req.o: pprdrv_req.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h
+pprdrv_req.o: ./pprdrv_req.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h
 
-pprdrv_res.o: pprdrv_res.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
+pprdrv_res.o: ./pprdrv_res.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h pprdrv.h
 
-pprdrv_rip.o: pprdrv_rip.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_rip.o: ./pprdrv_rip.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
-pprdrv_signature.o: pprdrv_signature.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
+pprdrv_signature.o: ./pprdrv_signature.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprdrv.h ../include/interface.h
 
-pprdrv_snmp.o: pprdrv_snmp.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_snmp.o: ./pprdrv_snmp.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_tt.o: pprdrv_tt.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/libttf.h
+pprdrv_tt.o: ./pprdrv_tt.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/libttf.h
 
-pprdrv_userparams.o: pprdrv_userparams.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
+pprdrv_userparams.o: ./pprdrv_userparams.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h
 
-pprdrv_writemon.o: pprdrv_writemon.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/respond.h
+pprdrv_writemon.o: ./pprdrv_writemon.c ../include/config.h ../include/gu.h ../include/global_defines.h pprdrv.h ../include/interface.h ../include/respond.h
 

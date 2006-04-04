@@ -391,6 +391,15 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 				gu_utf8_printf("Reading response...\n");
 			while((line = query_getline(q, &is_stderr, timeout)))
 				{
+				if(debug_level >= 3)
+					gu_utf8_printf("    >%s%s\n", is_stderr ? "stderr: " : "", line);
+
+				/* Some interfaces may generate these messages even
+				 * in probe mode.  Since they aren't required to,
+				 * query_connect() doesn't wait for them and swallow them. */
+				if(!is_stderr && lmatch(line, "%%[ PPR "))
+					continue;
+				
 				if(!is_stderr && (p = lmatchp(line, "PROBE:")))
 					{
 					char *f1, *f2;
@@ -517,7 +526,11 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 */
 static int ppd_query_postscript(const char printer[], struct QUERY *q, struct THE_FACTS *facts)
 	{
-	const char *result_labels[] = {"Revision", "Version", "Product"};
+	const char *result_labels[] = {
+		N_("Revision"),
+		N_("Version"),
+		N_("Product")
+		};
 	char *results[] = {NULL, NULL, NULL};
 	char *p;
 	int retval = 0;
@@ -546,7 +559,8 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 				gu_utf8_printf("Reading response...\n");
 			for(i=0; i < 3 && (p = query_getline(q, &is_stderr, 30)); )
 				{
-				/*gu_utf8_printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
+				if(debug_level >= 3)
+					gu_utf8_printf("    >%s%s\n", is_stderr ? "stderr: " : "", p);
 
 				if(is_stderr)
 					continue;
@@ -565,7 +579,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 			if(!machine_readable)
 				{
 				for(i=0; i < 3; i++)
-					gu_utf8_printf("    %s: %s\n", result_labels[i], results[i]);
+					gu_utf8_printf("    %s: %s\n", gettext(result_labels[i]), results[i]);
 				}
 
 			p = results[2];
@@ -629,6 +643,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 			char *p;
 			gu_boolean is_stderr;
 			int timeout = 10;
+			gu_boolean pjl_info_id = FALSE;
 
 			if(!machine_readable)
 				gu_utf8_printf("Sending PJL query...\n");
@@ -645,19 +660,35 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 				if(strcmp(p, "\f") == 0)
 					break;
 
-				/*gu_utf8_printf("%s%s\n", is_stderr ? "stderr: " : "", p);*/
+				if(debug_level >= 3)
+					gu_utf8_printf("    >%s%s\n", is_stderr ? "stderr: " : "", p);
 
-				if(p[0] == '"' && !facts->pjl_id)
+				if(strcmp(p, "@PJL INFO ID") == 0)
 					{
-					p++;
-					facts->pjl_id = gu_strndup(p, strcspn(p, "\""));
+					pjl_info_id = TRUE;
+					continue;
+					}
 
-					if(!machine_readable)
-						gu_utf8_printf("    PJL ID: \"%s\"\n", facts->pjl_id);
-
-					retval = 1;
+				/* Take the first non-blank line after "@PJL INFO ID". */
+				if(pjl_info_id && !facts->pjl_id)
+					{
+					if(p[0] == '"')		/* HP */
+						{
+						p++;
+						facts->pjl_id = gu_strndup(p, strcspn(p, "\""));
+						retval = 1;
+						continue;
+						}
+					if(strlen(p) > 0)	/* Canon */
+						{
+						facts->pjl_id = gu_strdup(p);
+						retval = 1;
+						continue;
+						}	
 					}
 				}
+			if(retval > 0 && !machine_readable)
+				gu_utf8_printf(_("    PJL ID: \"%s\"\n"), facts->pjl_id);
 			}
 		gu_Final
 			{
@@ -665,7 +696,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 				gu_utf8_printf("Disconnecting...\n");
 
 			/* This is PCL Universal Exit Langauge. */
-			query_puts(q,	"\033%-12345X");
+			query_puts(q, "\033%-12345X");
 
 			query_disconnect(q);
 			}
@@ -693,9 +724,10 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	{
 	struct THE_FACTS facts;
 	struct MATCH *matches = NULL;
+	int info_count = 0;
 	int matches_count = 0;
-	gu_boolean testmode = FALSE;		/* for debugging, will try all probe methods */
-
+	gu_boolean testmode = FALSE;	 /* for debugging, will try all probe methods */
+	
 	facts.product = NULL;
 	facts.version = 0.0;
 	facts.revision = 0;
@@ -705,20 +737,35 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 	facts.SNMP_sysDescr = NULL;
 	facts.SNMP_hrDeviceDescr = NULL;
 
+	if(debug_level >= 3)
+		{
+		gu_utf8_fprintf(stderr, _("Test mode enabled, will try all methods.\n"));
+		testmode = TRUE;
+		}
+
 	/* First we ask the interface program to do the job. */
 	if(ppd_query_interface_probe(printer, q, &facts) > 0)
+		{
+		info_count++;
 		matches_count += ppd_choices(&facts, &matches, matches_count);
+		}
 
 	/* Now we connect and try to send a PostScript query. */
 	if(matches_count < 1 || testmode)
 		if(ppd_query_postscript(printer, q, &facts) > 0)
+			{
+			info_count++;
 			matches_count += ppd_choices(&facts, &matches, matches_count);
+			}
 
 	/* Now we connect and try to send a PJL query. */
 	if(matches_count < 1 || testmode)
 		if(ppd_query_pjl(printer, q, &facts) > 0)
+			{
+			info_count++;
 			matches_count += ppd_choices(&facts, &matches, matches_count);
-
+			}
+	
 	/* If there are any results, print them. */
 	if(matches_count > 0)
 		{
@@ -752,7 +799,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 				}
 			else					/* for human beings */
 				{
-				gu_utf8_printf("    # %s\n", matches[i].fuzzy ? "fuzzy match" : "exact match");
+				gu_utf8_printf("    # %s\n", matches[i].fuzzy ? _("fuzzy match") : _("exact match"));
 				gu_utf8_printf("    ppad ppd %s \"%s\"\n", printer, matches[i].description);
 				}
 
@@ -761,6 +808,28 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 			}
 
 		gu_free(matches);
+		}
+
+	if(matches_count < 1 && !machine_readable)
+		{
+		if(info_count == 0)
+			{
+			gu_utf8_printf(_("Failed to determine printer make and model.\n"));
+			}
+		else
+			{
+			gu_utf8_printf(_("No matching PPD files found for printer with these characteristics:\n"));
+			if(facts.SNMP_hrDeviceDescr)
+				gu_utf8_printf(_("SNMP Device Description: %s\n"), facts.SNMP_hrDeviceDescr);
+			if(facts.product)
+				gu_utf8_printf(_("PostScript Product Name: %s\n"), facts.product);
+			if(facts.pjl_id)
+				gu_utf8_printf(_("PJL ID String: %s\n"), facts.pjl_id);
+			if(facts.deviceid_manufacturer)
+				gu_utf8_printf(_("IEEE 1284 DeviceID Manufacturer: %s\n"), facts.deviceid_manufacturer);
+			if(facts.deviceid_model)
+				gu_utf8_printf(_("IEEE 1284 DeviceID Model: %s\n"), facts.deviceid_model);
+			}
 		}
 
 	/* Deallocate the storage of the facts about the printer which we collected above. */
@@ -776,11 +845,7 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 		gu_free(facts.deviceid_model);
 
 	if(matches_count < 1)
-		{
-		if(!machine_readable)
-			gu_utf8_printf("No matching PPD files found.\n");
 		return EXIT_NOTFOUND;
-		}
 
 	return EXIT_OK;
 	} /* end of ppd_query_core() */

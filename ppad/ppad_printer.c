@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 March 2006.
+** Last modified 3 April 2006.
 */
 
 /*==============================================================
@@ -1921,9 +1921,9 @@ int command_bins_ppd(const char *argv[])
 	struct CONF_OBJ *obj;
 	char *line;
 	char *ppdname = NULL;
+	void *ppdobj = NULL;				/* initialized so GCC won't complain */
 	char *ppdline;						/* a line read from the PPD file */
 	int x;
-	int ret;
 
 	/* make sure the printer exists */
 	if(!(obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_ENOENT_PRINT | CONF_RELOAD)))
@@ -1950,13 +1950,17 @@ int command_bins_ppd(const char *argv[])
 		return EXIT_NOTFOUND;
 		}
 
-	if((ret = ppd_open(ppdname, stderr)))
+	gu_Try
+		{
+		ppdobj = ppdobj_new(ppdname);
+		}
+	gu_Catch
 		{
 		conf_abort(obj);
-		return ret;
+		gu_ReThrow();
 		}
 
-	while((ppdline = ppd_readline()))
+	while((ppdline = ppdobj_readline(ppdobj)))
 		{
 		if(lmatch(ppdline, "*InputSlot"))		/* Use only "*InputSlot" */
 			{
@@ -1969,6 +1973,8 @@ int command_bins_ppd(const char *argv[])
 			}
 		}
 
+	ppdobj_free(ppdobj);
+	
 	conf_close(obj);
 
 	return EXIT_OK;
@@ -2271,10 +2277,12 @@ int command_delete(const char *argv[])
 			}
 		}
 
-	/* The printer was deleted.  Now remove the alerts, status, mounted, etc. files. */
-	ppr_fnamef(fname, "%s/%s", PRINTERS_STATEDIR, printer);
+	/* Remove mounted, stop, etc. */
+	ppr_fnamef(fname, "%s/%s", PRINTERS_PERSISTENT_STATEDIR, printer);
 	remove_directory(fname);
-	ppr_fnamef(fname, "%s/%s", PRINTERS_CACHEDIR, printer);
+
+	/* Remove status, address cache, etc. */
+	ppr_fnamef(fname, "%s/%s", PRINTERS_PURGABLE_STATEDIR, printer);
 	remove_directory(fname);
 
 	/* Send a printer-touch command to pprd. */

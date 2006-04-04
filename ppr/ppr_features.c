@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_features.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 May 2005.
+** Last modified 3 April 2006.
 */
 
 #include "config.h"
@@ -47,6 +47,7 @@
 int option_features(const char destname[])
 	{
 	const char *ppdfile;
+	void *ppdobj;
 	char *line;
 	char *p;
 	int len;
@@ -60,10 +61,9 @@ int option_features(const char destname[])
 		return PPREXIT_OTHERERR;
 		}
 
-	if(ppd_open(ppdfile, stderr) == -1)
-		return PPREXIT_OTHERERR;
+	ppdobj = ppdobj_new(ppdfile);
 
-	while((line = ppd_readline()))
+	while((line = ppdobj_readline(ppdobj)))
 		{
 		/*printf("line[]: %s\n", line);*/
 		if((p = lmatchp(line, "*OpenGroup:")))
@@ -151,6 +151,8 @@ int option_features(const char destname[])
 			}
 
 		}
+
+	ppdobj_free(ppdobj);
 
 	if(ui)
 		gu_free(ui);

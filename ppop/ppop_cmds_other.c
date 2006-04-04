@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_other.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 December 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -609,7 +609,7 @@ int ppop_message(char *argv[])
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
-	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destname);
+	ppr_fnamef(fname, "%s/%s/device_status", PRINTERS_PURGABLE_STATEDIR, destname);
 	if((statfile = fopen(fname, "r")))
 		{
 		char *line = NULL; int line_len = 40;
@@ -1642,7 +1642,7 @@ int ppop_alerts(char *argv[])
 		}
 
 	/* Try to open the alerts file. */
-	ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, destname);
+	ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_PURGABLE_STATEDIR, destname);
 	if(!(f = fopen(fname, "r")))
 		{
 		if(errno == ENOENT)

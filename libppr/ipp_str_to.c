@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ipp/ipp_utils2.c
+** mouse:~ppr/src/ipp/ipp_str_to.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2006.
+** Last modified 30 March 2006.
 */
 
 /*! \file */
@@ -40,7 +40,6 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
-#include "ipp_utils.h"
 
 struct TABLE {
 	const char *name;
@@ -109,7 +108,7 @@ struct TABLE tags[] =
 
 /** Convert a string to an operation code
 */
-int ipp_str_to_operation(const char str[])
+int ipp_str_to_operation_id(const char str[])
 	{
 	int iii;
 	for(iii=0; operations[iii].name; iii++)

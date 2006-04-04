@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprdrv/pprdrv_ppd.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -49,7 +49,6 @@
 #include "global_structs.h"
 #include "pprdrv.h"
 #include "interface.h"
-#include "pprdrv_ppd.h"
 #include "util_exits.h"
 
 static struct PPDSTR **ppdstr;			/* PPD strings hash table */
@@ -60,10 +59,6 @@ static char *ppdname;					/* name of next PPD string */
 static char *ppdtext;					/* text of next PPD string */
 static int tindex;						/* index of next free byte in ppdtext */
 static gu_boolean instring = FALSE;
-
-/* This is for handling included PPD files. */
-char *ppd_nest_fname[MAX_PPD_NEST];		/* names of all nested PPD files */
-int ppd_nest_level;						/* number of PPD files now open */
 
 /* */
 struct FEATURES Features;
@@ -131,7 +126,7 @@ static int hash2(const char *s1, const char *s2, int tabsize)
 ** a new string.  The argument is cleaned up and stored in
 ** ppdname[] until we are ready to use it.
 */
-void ppd_callback_new_string(const char name[])
+static void ppd_callback_new_string(const char name[])
 	{
 	FUNCTION4DEBUG("ppd_callback_new_string")
 	int c;								/* next character */
@@ -167,7 +162,7 @@ void ppd_callback_new_string(const char name[])
 **
 ** The argument is the line of string data that has been read.
 */
-void ppd_callback_string_line(char *string)
+static void ppd_callback_string_line(char *string)
 	{
 	const char function[] = "ppd_callback_string_line";
 	int string_len;
@@ -191,7 +186,7 @@ void ppd_callback_string_line(char *string)
 /*
 ** All of the string is found, put it in the hash table.
 */
-void ppd_callback_end_string(void)
+static void ppd_callback_end_string(void)
 	{
 	FUNCTION4DEBUG("ppd_callback_end_string")
 	struct PPDSTR *s;
@@ -218,7 +213,7 @@ void ppd_callback_end_string(void)
 /*
 ** Move the paper size array index.
 */
-void ppd_callback_papersize_moveto(char *nameline)
+static void ppd_callback_papersize_moveto(char *nameline)
 	{
 	struct PAPERSIZE *p;
 	char name[32];
@@ -284,7 +279,7 @@ void read_PPD_file(const char *ppd_file_name)
 	** this code was inserted in the early days of PPR.)  If printer has no PPD file, then stop things right here before we
 	** get to fopen(), which might cause a core dump.
 	*/
-	if(ppd_file_name == (const char *)NULL)
+	if(!ppd_file_name)
 		return;
 
 	/*
@@ -295,13 +290,23 @@ void read_PPD_file(const char *ppd_file_name)
 	ppdtext = (char*)gu_alloc(MAX_PPDTEXT, sizeof(char));
 
 	{
+	void *ppdobj;
 	char *line, *p;
 
 	/* open the PPD file */
-	if(ppd_open(ppd_file_name, NULL) != EXIT_OK)
+	/*if(ppd_open(ppd_file_name, NULL) != EXIT_OK)
+		fatal(EXIT_PRNERR_NORETRY, "%s(): can't open \"%s\", errno=%d (%s)", function, ppd_file_name, errno, gu_strerror(errno));*/
+	gu_Try
+		{
+		ppdobj = ppdobj_new(ppd_file_name);
+		}
+	gu_Catch
+		{
 		fatal(EXIT_PRNERR_NORETRY, "%s(): can't open \"%s\", errno=%d (%s)", function, ppd_file_name, errno, gu_strerror(errno));
+		}
 
-	while((line = ppd_readline()))
+	/*while((line = ppd_readline()))*/
+	while((line = ppdobj_readline(ppdobj)))
 		{
 		if(instring)
 			{
@@ -595,6 +600,7 @@ void read_PPD_file(const char *ppd_file_name)
 
 			}
 		}
+	ppdobj_free(ppdobj);
 	}
 
 	/* Free the scratch spaces: */

@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ipp/ipp_utils.c
+** mouse:~ppr/src/ipp/ipp_to_str.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2006.
+** Last modified 30 March 2006.
 */
 
 /*! \file */
@@ -40,11 +40,10 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
-#include "ipp_utils.h"
 
-/** Convert an operation code to a string
+/** Convert an operation id code to a string
 */
-const char *ipp_operation_to_str(int op)
+const char *ipp_operation_id_to_str(int op)
 	{
 	switch(op)
 		{
@@ -125,15 +124,15 @@ const char *ipp_tag_to_str(int tag)
 	switch(tag)
 		{
 		case IPP_TAG_OPERATION:
-			return "operation-attributes-tag";
+			return "operation-attributes";
 		case IPP_TAG_JOB:
-			return "job-attributes-tag";
+			return "job-attributes";
 		case IPP_TAG_END:
-			return "end-of-attributes-tag";
+			return "end-of-attributes";
 		case IPP_TAG_PRINTER:
-			return "printer-attributes-tag";
+			return "printer-attributes";
 		case IPP_TAG_UNSUPPORTED:
-			return "unsupported-attributes-tag";
+			return "unsupported-attributes";
 
 		case IPP_TAG_INTEGER:
 			return "integer";

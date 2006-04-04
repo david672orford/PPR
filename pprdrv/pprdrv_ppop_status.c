@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2006.
+** Last modified 3 April 2006.
 */
 
 #include "config.h"
@@ -261,7 +261,7 @@ void ppop_status_init(void)
 	{
 	char fname[MAX_PPR_PATH];
 	FILE *f;
-	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, printer.Name);
+	ppr_fnamef(fname, "%s/%s/device_status", PRINTERS_PURGABLE_STATEDIR, printer.Name);
 	if((f = fopen(fname, "r")))
 		{
 		char *line = NULL;
@@ -445,7 +445,7 @@ static void ppop_status_write(void)
 		if(statfile == -1)
 			{
 			char fname[MAX_PPR_PATH];
-			ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, printer.Name);
+			ppr_fnamef(fname, "%s/%s/device_status", PRINTERS_PURGABLE_STATEDIR, printer.Name);
 			if((statfile = open(fname, O_WRONLY | O_CREAT | O_TRUNC, UNIX_644)) == -1)
 				fatal(EXIT_PRNERR, "%s(): failed to open \"%s\" for write, errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 			gu_set_cloexec(statfile);

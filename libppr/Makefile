@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 March 2006.
+# Last modified 30 March 2006.
 #
 
 include ../Makefile.conf
@@ -64,7 +64,7 @@ LIBOBJS=\
 	queueinfo.o \
 	pagemask.o \
 	destinfo.o \
-	ipp_utils.o ipp_obj.o ipp_req_attrs.o \
+	ipp_obj.o ipp_req_attrs.o ipp_to_str.o ipp_str_to.o \
 	snmp_messages.o \
 	dispatch.o
 

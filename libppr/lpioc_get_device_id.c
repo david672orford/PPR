@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 February 2006.
+** Last modified 3 April 2006.
 */
 
 #include "config.h"
@@ -41,6 +41,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "libppr_int.h"
 
 /** get IEEE 1284 printer device ID
  *
