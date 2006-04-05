@@ -1,7 +1,7 @@
 #! /usr/bin/perl -wT
 #
 # mouse:~ppr/src/misc/prn_addwiz.cgi.perl
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 December 2004.
+# Last modified 24 February 2006.
 #
 
 #
@@ -900,7 +900,8 @@ sub suggest_queue_name
 
 	# SocketAPI/AppSocket/JetDirect are embedded, go with the hostname.
 	elsif(defined($interface_pages{$interface}) 
-			&& $interface_pages{$interface} eq "int_tcpip"
+			&& ($interface_pages{$interface} eq "int_tcpip"
+				|| $interface_pages{$interface} eq "int_jetdirect")
 			&& $address =~ /^([^\.:]+)/)
 		{
 		$name = $1;
