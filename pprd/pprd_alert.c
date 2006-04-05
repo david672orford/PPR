@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_alert.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -150,7 +150,7 @@ void alert_printer_failed(char *prn, int frequency, char *method, char *address,
 				fputc('\n', sendmail);
 
 				/* Append the alerts file as the body. */
-				ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_CACHEDIR, prn);		  /* open */
+				ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_PURGABLE_STATEDIR, prn);		  /* open */
 				if((logfile = fopen(fname, "r")))
 					{
 					while((c = fgetc(logfile)) != -1)

@@ -72,7 +72,6 @@ int printer_count = 0;			/* how many printers do we have? */
 struct Group *groups;			/* array of group structures */
 int group_count = 0;			/* how many groups? */
 
-int upgrade_countdown = UPGRADE_INTERVAL;
 int active_printers = 0;		/* number of printers currently active */
 int starving_printers = 0;		/* printers currently waiting for rations */
 

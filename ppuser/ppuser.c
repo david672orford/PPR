@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppuser/ppuser.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 September 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -297,7 +297,6 @@ static int ppuser_show(char *argv[])
 			struct tm *t;
 			char temp[64];
 			t = localtime(&entry.last_mod);
-			#warning Expect dubious y2k warning in the next line
 			strftime(temp, sizeof(temp), "%c", t);
 			printf(_("Last Modified: %s\n"), temp);
 			}

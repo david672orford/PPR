@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 February 2006.
+** Last modified 30 March 2006.
 */
 
 /*
@@ -767,7 +767,7 @@ void ipp_dispatch(const char command[])
 		
 		if(ipp_validate_request(ipp))
 			{
-			DODEBUG_IPP(("%s(): dispatching operation 0x%.4x (%s)", function, ipp->operation_id, ipp_operation_to_str(ipp->operation_id)));
+			DODEBUG_IPP(("%s(): dispatching operation 0x%.4x (%s)", function, ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id)));
 			switch(ipp->operation_id)
 				{
 				case IPP_GET_JOBS:
@@ -786,7 +786,7 @@ void ipp_dispatch(const char command[])
 					cups_get_printers(ipp);
 					break;
 				default:
-					gu_Throw("unsupported operation: 0x%.2x (%s)", ipp->operation_id, ipp_operation_to_str(ipp->operation_id));
+					gu_Throw("unsupported operation: 0x%.2x (%s)", ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id));
 					break;
 				}
 			}

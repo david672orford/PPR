@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/cgi_wizard.pl
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 June 2005.
+# Last modified 5 April 2006.
 #
 
 use 5.004;
@@ -113,6 +113,24 @@ if($action ne "")
 	{
 	my $wizpage = $wizard_table->[$page];
 
+	# If the user pressed enter in the last form field, some browsers
+	# will imagine that he pressed the first submit button.  Our first
+	# submit button is a transparent image with the value "enter".
+	if($action eq "enter")
+		{
+		# If custom button list, replace with name of last button.
+		if(defined(my $buttons = $wizpage->{buttons}))
+			{
+			$action = pop @$buttons;	# last button untranslated
+			$action =~ s/_//g;			# remove hotkey marker
+			}
+		# Otherwise replace name of last button in default set.
+		else
+			{
+			$action = "Next";
+			}
+		}
+
 	# If the user has pressed the "Next" button
 	# or the "Finish" button which is equivelent,
 	if($action eq 'Next' || $action eq 'Finish')
@@ -180,9 +198,8 @@ if($action ne "")
 # Form a pointer to the current page.
 $wizpage = $wizard_table->[$page];
 
-# Find the title for this page and the
-# image which decorates its left hand
-# side.
+# Find the title for this page and the image which decorates
+# its left hand side.
 my $title = H_($wizpage->{title});
 my $picture = $wizpage->{picture};
 my $picture_alt = $wizpage->{picture_alt};
@@ -299,10 +316,9 @@ if($options->{debug} > 1)
 	print "</tr>\n";
 	}
 
-# Close the table which holds the picture and
-# the main page text and start another to hold
-# the error text (if any) and the submit buttons
-# labeled "Back" and "Next".
+# Close the table which holds the picture and the main page text and start
+# another to hold the error text (if any) and the submit buttons labeled 
+# "Back" and "Next".
 print <<"EndOfText2";
 </table>
 <table border=$border width="100%" colls=4 cellpadding=5 cellspacing=0>
@@ -329,22 +345,22 @@ elsif($dopage_retval ne "")
 	print $dopage_retval;
 	}
 
-# Now the submit buttons, then we close the table.	Note that we
-# call the subroutine isubmit() to create the buttons.	It internationalizes
-# the buttons if called for.
+# Now create the submit buttons, then we close the table.  Note that we
+# call the subroutine isubmit() to create the buttons.	It is capable
+# of internationalizing the buttons.
 print <<"EndOfText6";
 </td>
 <td nowrap align="right" valign="bottom">
-<!-- This is for IE bug -->
-<input type="image" border="0" name="buggy" src="$options->{wiz_imgdir}pixel-clear.png" alt="">
+<!-- Catch enter in last field. -->
+<input type="image" name="wiz_action" value="enter" border="0" src="$options->{wiz_imgdir}pixel-clear.png" alt="">
 EndOfText6
 
 {
 my $buttons = $wizpage->{buttons};
-if(!defined($buttons)) { $buttons = [ N_("_Cancel"), N_("_Back"), N_("_Next") ] }
-my $b;
+if(!defined($buttons))
+	{ $buttons = [ N_("_Cancel"), N_("_Back"), N_("_Next") ] }
 my $tabindex = 1000;
-foreach $b (@$buttons)
+foreach my $b (@$buttons)
 	{
 	my $onclick = undef;
 	if($b eq "_Cancel" || $b eq "_Close")

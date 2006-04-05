@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filters_misc/make_dvips_conf.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 2 April 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	ppr_fnamef(fname, "%s/%s/config.%s-%s-%s", PRINTERS_CACHEDIR, argv[1], argv[2], argv[3], argv[4]);
+	ppr_fnamef(fname, "%s/%s/config.%s-%s-%s", PRINTERS_PURGABLE_STATEDIR, argv[1], argv[2], argv[3], argv[4]);
 
 	if(!(f = fopen(fname, "w")))
 		{

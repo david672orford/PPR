@@ -3,6 +3,8 @@
 %%Copyright: Copyright 2006, Trinity College Computing Center
 %%EndComments
 
+% Last modified 31 March 2006
+
 /UNICODE 1051 dict dup begin
 16#0020	/space def
 16#0021	/exclam def
@@ -1064,38 +1066,38 @@ end def
 % of the string, just printing it.  If people want to express code points
 % as overlong sequences, let them have fun.
 /show {
- /str exch def			% string to be printed
- /ls str length def		% length of string
- /i 0 def				% index into string
+ /u_str exch def			% string to be printed
+ /u_len u_str length def	% length of string
+ /u_i 0 def					% index into string
 
  {
-	i ls ge { exit } if
-	/byte str i get def	% first byte
-	/i i 1 add def
+	u_i u_len ge { exit } if
+	/u_byte u_str u_i get def	% first byte
+	/u_i u_i 1 add def
 
-	byte 16#80 and 0 eq {				% 1 byte
-		/c byte def
-		/additional 0 def
+	u_byte 16#80 and 0 eq {				% 1 byte
+		/u_c u_byte def
+		/u_additional 0 def
 		} {
-		byte 16#e0 and 16#c0 eq {		% 2 bytes
-			/c byte 16#1f and def
-			/additional 1 def
+		u_byte 16#e0 and 16#c0 eq {		% 2 bytes
+			/u_c u_byte 16#1f and def
+			/u_additional 1 def
 			} {
-			byte 16#f0 and 16#e0 eq { 	% 3 bytes
-				/c byte 16#0f and def
-				/additional 2 def
+			u_byte 16#f0 and 16#e0 eq { % 3 bytes
+				/u_c u_byte 16#0f and def
+				/u_additional 2 def
 				} {
-				byte 16#f8 and 16#f0 eq {	% 4 bytes
-					/c byte 16#07 and def
-					/additional 3 def
+				u_byte 16#f8 and 16#f0 eq {	% 4 bytes
+					/u_c u_byte 16#07 and def
+					/u_additional 3 def
 					} {
-					byte 16#fc and 16#f8 eq {	% 5 bytes
-						/c byte 16#03 and def
-						/additional 4 def
+					u_byte 16#fc and 16#f8 eq {	% 5 bytes
+						/u_c u_byte 16#03 and def
+						/u_additional 4 def
 						} {
-						byte 16#fe and 16#fc eq {	% 6 bytes
-							/c byte 16#01 and def
-							/additional 5 def
+						u_byte 16#fe and 16#fc eq {	% 6 bytes
+							/u_c u_byte 16#01 and def
+							/u_additional 5 def
 							} {
 							invalid_character	% provoke error
 							} ifelse
@@ -1105,16 +1107,17 @@ end def
 			} ifelse
 		} ifelse
 
-	additional {
-		/c c 6 bitshift str i get 16#3f and or def
-		/i i 1 add def
+	u_additional {
+		/u_c u_c 6 bitshift u_str u_i get 16#3f and or def
+		/u_i u_i 1 add def
 		} repeat
 
-	UNICODE c known {
-		UNICODE c get glyphshow
-		} {
+	UNICODE u_c known {				% if character is in our UNICODE table,
+		UNICODE u_c get glyphshow
+		} {							% if not,
 		/.notdef glyphshow		
 		} ifelse
+
 	} loop
 
  } bind def

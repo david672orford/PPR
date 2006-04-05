@@ -1,7 +1,7 @@
 #! @PERL_PATH@
 #
 # mouse:~ppr/src/cron/ppr-clean.perl
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 18 August 2005.
+# Last modified 3 April 2006.
 #
 
 #
@@ -40,7 +40,7 @@ $LIBDIR="@LIBDIR@";
 $VAR_SPOOL_PPR="@VAR_SPOOL_PPR@";
 $CONFDIR="@CONFDIR@";
 $TEMPDIR="@TEMPDIR@";
-$PRINTERS_CACHEDIR="@PRINTERS_CACHEDIR@";
+$PRINTERS_PURGABLE_STATEDIR="@PRINTERS_PURGABLE_STATEDIR@";
 
 $opt_debug = 1;
 $opt_all_removable = 0;
@@ -154,11 +154,11 @@ sweepdir("$VAR_SPOOL_PPR/sambaspool", undef, 0.5);
 sweepdir("$VAR_SPOOL_PPR/pprclipr", undef, 0.5);
 sweepdir("$VAR_SPOOL_PPR/followme.db", undef, 90.0);
 
-opendir(DIR, $PRINTERS_CACHEDIR) || die $!;
+opendir(DIR, $PRINTERS_PURGABLE_STATEDIR) || die $!;
 while(my $dir = readdir(DIR))
 	{
 	next if($dir =~ /^\./);
-	sweepdir("$PRINTERS_CACHEDIR/$dir", undef, 7.0);
+	sweepdir("$PRINTERS_PURGABLE_STATEDIR/$dir", undef, 7.0);
 	}
 closedir(DIR) || die $!;
 

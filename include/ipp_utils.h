@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2006.
+** Last modified 30 March 2006.
 */
 
 /*! \file
@@ -66,28 +66,11 @@ Fuller examples can be found in ../ipp/ipp.c and ../pprd/pprd_ipp.c.
 
 */
 
-#if 0
-#define DEBUG(a) debug a
-#else
-#define DEBUG(a)
-#endif
-
 void debug(const char message[], ...)
 	#ifdef __GNUC__
 	__attribute__ (( format (printf, 1, 2) ))
 	#endif
 	;
-
-/*=========================== ipp_util.c ==============================*/
-
-const char *ipp_operation_to_str(int op);
-const char *ipp_tag_to_str(int tag);
-int ipp_tag_simplify(int value_tag);
-
-/*=========================== ipp_util2.c =============================*/
-
-int ipp_str_to_operation(const char str[]);
-int ipp_str_to_tag(const char str[]);
 
 /*=========================== ipp_obj.c ===============================*/
 

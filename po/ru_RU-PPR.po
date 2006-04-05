@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-28 17:35-0500\n"
+"POT-Creation-Date: 2006-04-03 12:44-0400\n"
 "PO-Revision-Date: 2006-03-01 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -884,12 +884,12 @@ msgstr ""
 msgid "Printer at \"%s\" has refused connection."
 msgstr ""
 
-#: ../libppr/int_tcp_probe.c:105
+#: ../libppr/int_tcp_probe.c:104
 #, c-format
 msgid "SNMP %s not found\n"
 msgstr ""
 
-#: ../libppr/int_tcp_probe.c:125
+#: ../libppr/int_tcp_probe.c:124
 #, c-format
 msgid "Probe failed: %s\n"
 msgstr ""
@@ -1278,55 +1278,55 @@ msgstr "%s(): возникла ошибка при запуски функции
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\", ...), errno=%d (%s)\n"
 
-#: ../ppad/dispatch_table.c:14
+#: ../ppad/dispatch_table.c:11
 msgid "alias to show"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:18
+#: ../ppad/dispatch_table.c:15
 msgid "name of existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:19
+#: ../ppad/dispatch_table.c:16
 msgid "name of new alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:23
+#: ../ppad/dispatch_table.c:20
 msgid "name of new or existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:24
+#: ../ppad/dispatch_table.c:21
 msgid "new target of alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:28
+#: ../ppad/dispatch_table.c:25
 msgid "name of alias to be deleted"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:32 ../ppad/dispatch_table.c:37
-#: ../ppad/dispatch_table.c:42 ../ppad/dispatch_table.c:47
+#: ../ppad/dispatch_table.c:29 ../ppad/dispatch_table.c:34
+#: ../ppad/dispatch_table.c:39 ../ppad/dispatch_table.c:44
 msgid "name of alias to be modified"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:33 ../ppad/dispatch_table.c:174
+#: ../ppad/dispatch_table.c:30 ../ppad/dispatch_table.c:174
 msgid "comment to attach (ommit to delete)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:38 ../ppad/dispatch_table.c:96
+#: ../ppad/dispatch_table.c:35 ../ppad/dispatch_table.c:96
 #: ../ppad/dispatch_table.c:288
 msgid "switches to attach (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:43 ../ppad/dispatch_table.c:105
+#: ../ppad/dispatch_table.c:40 ../ppad/dispatch_table.c:105
 #: ../ppad/dispatch_table.c:297
 msgid "languages to pass thru (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:48 ../ppad/dispatch_table.c:115
+#: ../ppad/dispatch_table.c:45 ../ppad/dispatch_table.c:115
 #: ../ppad/dispatch_table.c:340
 msgid "addon parameter to modify"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:49 ../ppad/dispatch_table.c:116
+#: ../ppad/dispatch_table.c:46 ../ppad/dispatch_table.c:116
 #: ../ppad/dispatch_table.c:341
 msgid "new value for param (ommit to delete)"
 msgstr ""
@@ -1760,7 +1760,7 @@ msgstr ""
 msgid "delete from bins list"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:402
+#: ../ppad/dispatch_table.c:403
 msgid "send reminder e-mail about printer problems"
 msgstr ""
 
@@ -1891,11 +1891,11 @@ msgid "send query to printer and produce list of suitable PPD files"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:444
-msgid "miscelanious command"
+msgid "all settings for aliases"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:445
-msgid "all settings for aliases"
+msgid "miscelanious command"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:446
@@ -2317,7 +2317,7 @@ msgstr ""
 msgid "Medium deleted.\n"
 msgstr "Носитель удален.\n"
 
-#: ../ppad/ppad_media.c:567 ../ppad/ppad_ppd.c:848 ../samba/ppr2samba.c:117
+#: ../ppad/ppad_media.c:567 ../ppad/ppad_ppd.c:913 ../samba/ppr2samba.c:117
 #: ../samba/ppr2samba.c:323
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)\n"
@@ -2328,7 +2328,69 @@ msgstr "Не возмозно открыть \"%s\", errno=%d (%s)\n"
 msgid "Command on line %d is not ppad media put.\n"
 msgstr ""
 
-#: ../ppad/ppad_ppd.c:819 ../ppad/ppad_printer.c:2956
+#: ../ppad/ppad_ppd.c:530
+msgid "Revision"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:531
+msgid "Version"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:532
+msgid "Product"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:691
+#, fuzzy, c-format
+msgid "    PJL ID: \"%s\"\n"
+msgstr "Идентефикатор задания: %s\n"
+
+#: ../ppad/ppad_ppd.c:742
+msgid "Test mode enabled, will try all methods.\n"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:802
+msgid "exact match"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:802
+msgid "fuzzy match"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:817
+msgid "Failed to determine printer make and model.\n"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:821
+msgid "No matching PPD files found for printer with these characteristics:\n"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:823
+#, c-format
+msgid "SNMP Device Description: %s\n"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:825
+#, fuzzy, c-format
+msgid "PostScript Product Name: %s\n"
+msgstr "Название принтера: %s\n"
+
+#: ../ppad/ppad_ppd.c:827
+#, fuzzy, c-format
+msgid "PJL ID String: %s\n"
+msgstr "Идентефикатор задания: %s\n"
+
+#: ../ppad/ppad_ppd.c:829
+#, c-format
+msgid "IEEE 1284 DeviceID Manufacturer: %s\n"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:831
+#, c-format
+msgid "IEEE 1284 DeviceID Model: %s\n"
+msgstr ""
+
+#: ../ppad/ppad_ppd.c:884 ../ppad/ppad_printer.c:2956
 #, c-format
 msgid "%s: query failed: %s\n"
 msgstr "%s: запрос остаётся без ответа: %s\n"
@@ -5842,33 +5904,17 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
 
-#, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
 
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
+#~ msgid "You must supply only the name of an existing printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -5876,14 +5922,30 @@ msgstr ""
 #~ "a name for the new group.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
-
-#~ msgid "You must supply only the name of an existing printer.\n"
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#, fuzzy
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"

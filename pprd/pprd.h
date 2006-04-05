@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/pprd.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2005.
+** Last modified 5 April 2006.
 */
 
 /*
@@ -37,7 +37,6 @@
 
 /* This you might want to change */
 #define TICK_INTERVAL 5					/* seconds between calls to tick() */
-#define UPGRADE_INTERVAL 20				/* number of ticks to gain one pri point */
 #define RETRY_MULTIPLIER 30				/* extra seconds per retry */
 #define MIN_RETRY 600					/* retry at least this often (seconds) */
 #define ENGAGED_RETRY 60				/* interval to retry ``otherwise engaged'' printers */

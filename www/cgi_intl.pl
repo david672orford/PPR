@@ -52,7 +52,7 @@ my $debug = 0;
 
 #
 # This function should be called near the begining of the CGI script.  It
-# returns the character set and the language code.	It makes its
+# returns the character set and the language code.  It makes its
 # determination by parsing the "Accept-Language:" header and selecting
 # one of the available languages.
 #

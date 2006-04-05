@@ -101,12 +101,15 @@ static struct QEntry *queue_insert(const char qfname[], struct QEntry *newentry,
 	for(x=0; x < queue_entries; x++)	/* Find or make a space in the queue array. */
 		{
 		/*
-		** Lower priority number mean more urgent jobs.  If we have found
-		** a job with a higher priority number than the job we are inserting,
+		** A higher priority number means a more urgent job.  If we have found
+		** a job with a lower priority number than the job we are inserting,
+		** or a job with an equal priority number but a later priority time,
 		** move all the jobs from here on one slot furthur toward the end
 		** of the queue and break out of the loop.
 		*/
-		if(newentry->priority < queue[x].priority)
+		if(newentry->priority > queue[x].priority ||
+				(newentry->priority == queue[x].priority && newentry->priority_time < queue[x].priority_time)
+				)
 			{
 			int y;
 
@@ -167,7 +170,7 @@ static void queue_unlink_job_2(const char *queuename, int id, int subid)
 	} /* end of queue_unlink_job_2() */
 
 /*================================================================
-** Unlink a job and remove an entry from the queue array.
+** Unlink a job and remove its entry from the queue array.
 ================================================================*/
 void queue_dequeue_job(int destid, int id, int subid)
 	{
@@ -208,74 +211,44 @@ void queue_dequeue_job(int destid, int id, int subid)
 	} /* end of queue_dequeue_job() */
 
 /*=========================================================================
-** Edit the "Status-and-Flags: XX XXXX\n" in the queue file.
+** Edit the "Status-and-Flags: XX XXXX\n" line in the queue file.
 =========================================================================*/
 void queue_write_status_and_flags(struct QEntry *job)
 	{
 	const char function[] = "queue_write_status_and_flags";
-	/* start of exception handling block */
-	do
-		{
-		#define STATUS_BLOCK_SIZE 50
-		int fd;
-		char buf[STATUS_BLOCK_SIZE + 1];
-		ssize_t read_size;
-		size_t to_write_size, written_size;
-		char *p;
+	int fd;
+	char buf[65];
+	size_t written_size;
 
+	{
+	char filename[MAX_PPR_PATH];
+	ppr_fnamef(filename, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(job->destid), job->id, job->subid);
+	if((fd = open(filename, O_RDWR)) == -1)
 		{
-		char filename[MAX_PPR_PATH];
-		ppr_fnamef(filename, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(job->destid), job->id, job->subid);
-		if((fd = open(filename, O_RDWR)) == -1)
-			{
-			error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, strerror(errno));
-			break;
-			}
+		error("%s(): can't open \"%s\", errno=%d (%s)", function, filename, errno, strerror(errno));
+		return;
+		}
+	}
+
+	/* Write the new line.  If the job is printing, substitute 0 for the actual printer index. */
+	if(snprintf(buf, sizeof(buf), "PPRD: %02X %08X %02X %04X                                      \n",
+			job->priority,
+			(unsigned int)job->priority_time,
+			job->status >= 0 ? 0 : (job->status * -1),
+			job->flags) != 64
+			)
+		gu_Throw("Length of PPRD line is not 64 bytes!");
+
+	if((written_size = write(fd, buf, 64)) == -1)
+		{
+		error("%s(): write() failed, errno=%d (%s)", function, errno, strerror(errno));
+		}
+	else if(written_size != 64)
+		{
+		error("%s(): tried to write %d bytes but wrote %d instead", function, 64, (int)written_size);
 		}
 
-		/* start of inner exception handling block */
-		do	{
-			if((read_size = read(fd, buf, STATUS_BLOCK_SIZE)) == -1)
-				{
-				error("%s(): read() failed, errno=%d (%s)", function, errno, strerror(errno));
-				break;
-				}
-			if(read_size != STATUS_BLOCK_SIZE)
-				{
-				error("%s(): expected %d bytes, get %d", function, (int)STATUS_BLOCK_SIZE, (int)read_size);
-				break;
-				}
-			buf[STATUS_BLOCK_SIZE] = '\0';
-			if(!(p = strstr(buf, "Status-and-Flags: ")))
-				{
-				error("%s(): can't find Status-and-Flags line", function);
-				break;
-				}
-			if(lseek(fd, (p - buf), SEEK_SET) == -1)
-				{
-				error("%s(): lseek() failed, errno=%d (%s)", function, errno, strerror(errno));
-				break;
-				}
-
-			/* Write the new line.  If the job is printing, substitute 0 for the actual printer index. */
-			snprintf(buf, sizeof(buf), "Status-and-Flags: %02d %04X\n", job->status >= 0 ? 0 : (job->status * -1), job->flags);
-
-			to_write_size = strlen(buf);
-			if((written_size = write(fd, buf, to_write_size)) == -1)
-				{
-				error("%s(): write() failed, errno=%d (%s)", function, errno, strerror(errno));
-				break;
-				}
-			if(written_size != to_write_size)
-				{
-				error("%s(): tried to write %d bytes but wrote %d instead", function, (int)to_write_size, (int)written_size);
-				}
-
-			} while(FALSE);		/* end of inner exception handling block */
-
-		close(fd);
-
-		} while(FALSE);					/* end of exception handling block */
+	close(fd);
 	} /* end of queue_write_status_and_flags() */
 
 /*========================================================================
@@ -330,8 +303,6 @@ static void queue_send_state_update(struct QEntry *job)
 /*========================================================================
 ** Change the status of a job.
 **
-** We will update the execute bits on the queue file if required.
-**
 ** The version p_job_new_status() takes a pointer to the job structure.
 ** The version job_new_status() takes the id and subid and finds the
 ** job in the queue.
@@ -339,10 +310,6 @@ static void queue_send_state_update(struct QEntry *job)
 ** Notice that p_job_new_status() must be called
 ** with the queue locked but job_new_status() need not be since
 ** it locks the queue itself.
-**
-** Probably obsolete comment:  This routine is sometimes called from
-** within a signal handler, so it must not call routines which are not
-** reentrant.
 ========================================================================*/
 
 struct QEntry *queue_p_job_new_status(struct QEntry *job, int newstat)
@@ -444,8 +411,8 @@ int queue_read_queuefile(const char qfname[], struct QEntry *newentry)
 /*===========================================================================
 ** Receive a new job into the queue.
 **
-** The job is entered in the queue, then the
-** pprd_printer.c module is informed of its arrival.
+** The job is entered in the queue, then the pprd_printer.c module is
+** informed of its arrival.
 **
 ** For jobs sucessfully entering the queue, this function calls
 ** state_update() in order to inform queue display programs that there
@@ -565,8 +532,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 			error("%s(): %s", function, gu_exception);
 		}
 
-	if(scratch)
-		gu_free(scratch);
+	gu_free_if(scratch);
 
 	} /* end of queue_accept_queuefile() */
 
@@ -579,16 +545,13 @@ void queue_new_job(char *command)
 	{
 	const char function[] = "queue_new_job";
 	char *qfname;
-
 	if(gu_sscanf(command, "j %S", &qfname) != 1)
 		{
 		error("%s(): bad j command: %s", function, command);
+		return;
 		}
-	else
-		{
-		queue_accept_queuefile(qfname, TRUE);
-		gu_free(qfname);
-		}
+	queue_accept_queuefile(qfname, TRUE);
+	gu_free(qfname);
 	} /* end of queue_new_job() */
 
 /* end of file */

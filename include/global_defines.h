@@ -120,12 +120,6 @@
 #define MAX_GROUPSIZE 8				/* no more than 8 printers per group */
 #define MAX_ALIASES 150				/* no more than 150 queue aliases */
 
-#define MAX_STATUS_MESSAGE 80		/* maximum length of last message from printer */
-
-#define MAX_PPD_NEST 10				/* maximum PPD file include levels */
-#define MAX_PPD_LINE 255			/* maximum line length for PPD files */
-#define MAX_VMOPTIONS 50			/* maximun number of *VMOption lines in PPD file */
-
 #define STATE_UPDATE_MAXLINES 1000
 #define STATE_UPDATE_PPRDRV_MAXBYTES 30000
 
@@ -149,8 +143,9 @@ typedef short int SHORT_INT;
 #define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
 #endif
 
-/* uClibc and dietlibc don't support NIS.  We have to put this in global_defines.h
-   no uClibc headers have been read in config.h */
+/* uClibc and dietlibc don't support NIS.  We have to put this here in 
+ * global_defines.h since no uClibc headers have been read at the
+ * time config.h is included. */
 #ifdef __UCLIBC__
 #undef HAVE_INNETGRP
 #endif
@@ -240,13 +235,6 @@ typedef short int SHORT_INT;
 #ifdef __GNUC__
 #define GNUC_HAPPY 1
 #endif
-
-/*
-** Allow Apple's non-standard quote mark quoting.  (Apple LaserWriter
-** drivers may enclose a procset name in ASCII double quotes with the
-** PostScript () quotes inside.
-*/
-#define APPLE_QUOTE 1
 
 /*
 ** Characters which are not allowed in printer

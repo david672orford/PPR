@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_printer.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 February 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -35,10 +35,12 @@
 */
 
 #include "config.h"
+#include <stdio.h>
 #include <signal.h>
+#include <errno.h>
+#include <unistd.h>
 #include "gu.h"
 #include "global_defines.h"
-
 #include "global_structs.h"
 #include "pprd.h"
 #include "pprd.auto_h"
@@ -226,9 +228,8 @@ void printer_try_start_suitable_4_this_job(struct QEntry *job)
 /*
 ** Change the status of a printer.  This is done in a function so that we
 ** can keep track of the previous status, inform queue display programs 
-** of the change, and set the proper execute bits on the printer's
-** configuration file so that the new status will stick across
-** pprd restarts.
+** of the change, and create the files from which we load the printer's
+** status after a restart.
 */
 void printer_new_status(struct Printer *printer, int newstatus)
 	{
@@ -243,41 +244,18 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		return;
 		}
 
-	/*
-	** Modify the user execute bits of the printer's configuration
-	** file as necessary to indicate the new state.
-	*/
-	if(newstatus == PRNSTATUS_STOPT)
-		{
-		char filename[MAX_PPR_PATH];
-		struct stat prncf_stat;
-		ppr_fnamef(filename, "%s/%s", PRCONF, printer->name);
-		stat(filename, &prncf_stat);			 /* turn on user execute */
-		chmod(filename, prncf_stat.st_mode | S_IXUSR);
-		}
-	else if(printer->status == PRNSTATUS_STOPT)
-		{
-		char filename[MAX_PPR_PATH];
-		struct stat prncf_stat;
-		ppr_fnamef(filename, "%s/%s", PRCONF, printer->name);
-		stat(filename, &prncf_stat);			 /* turn off user execute */
-		chmod(filename, prncf_stat.st_mode & 0677);
-		}
+	printer->previous_status = printer->status;		/* used by pprdrv_start() */
+	printer->status = newstatus;
+
+	/* Write out the status for use during restarts and by ppop. */
+	spool_state_save(printer);
 
 	/* If ppop is waiting (ppop wstop), inform it that printer has stopt. */
-	if(newstatus == PRNSTATUS_STOPT && printer->ppop_pid)
+	if(printer->status == PRNSTATUS_STOPT && printer->ppop_pid)
 		{
 		kill(printer->ppop_pid, SIGUSR1);
 		printer->ppop_pid = (pid_t)0;
 		}
-
-	/* Save previous state for reference in pprdrv_start(). */
-	printer->previous_status = printer->status;
-
-	/* Adopt the new status. */
-	printer->status = newstatus;
-
-	unlock();
 
 	/*
 	** Inform queue display programs of the new printer status.
@@ -287,8 +265,7 @@ void printer_new_status(struct Printer *printer, int newstatus)
 	** effect, otherwise, the retry count and retry interval will
 	** not yet be correct.
 	*/
-	{
-	switch(newstatus)
+	switch(printer->status)
 		{
 		case PRNSTATUS_PRINTING:
 			state_update("PST %s printing %s %d",
@@ -338,7 +315,8 @@ void printer_new_status(struct Printer *printer, int newstatus)
 				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
 			break;
 		}
-	}
+
+	unlock();
 	} /* end of printer_new_status() */
 
 /*
@@ -371,22 +349,6 @@ void printer_tick(void)
 				printer_look_for_work(x);
 				}
 			}
-		}
-
-	/*
-	** Every UPGRADE_INTERVAL ticks, raise the priority of each job
-	** by one point until a job has achieved a priority of zero.
-	*/
-	if(--upgrade_countdown == 0)
-		{
-		/* lock(); */							/* lock() not appropriate */
-		for(x=0; x < queue_entries; x++)		/* in this signal handler */
-			{
-			if(queue[x].priority)
-				queue[x].priority-=1;
-			}
-		/* unlock(); */							/* unlock() not appropriate */
-		upgrade_countdown = UPGRADE_INTERVAL;
 		}
 
 	/*

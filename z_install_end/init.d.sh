@@ -1,7 +1,7 @@
 #! @SHELL@
 #
 # mouse:~ppr/src/z_install_end/ppr.sh
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 October 2005.
+# Last modified 5 April 2006.
 #
 
 #
@@ -55,6 +55,7 @@ BINDIR="@BINDIR@"
 RUNDIR="@RUNDIR@"
 EECHO="@EECHO@"
 USER_PPR="@USER_PPR@"
+GROUP_PPR="@GROUP_PPR@"
 USER_PPRWWW="@USER_PPRWWW@"
 
 # Bail out if PPR isn't installed.  (On Debian systems, this initscript is
@@ -81,6 +82,15 @@ do_start ()
 		$EECHO -n "(language is $lang) \c"
 		LANG=$lang
 		export LANG
+		fi
+
+	# Ubuntu deletes our run directory!
+	if [ ! -d $RUNDIR ]
+		then
+		mkdir $RUNDIR
+		chown $USER_PPR $RUNDIR
+		chgrp $GROUP_PPR $RUNDIR
+		chmod 775 $RUNDIR
 		fi
 
 	# This is the spooler daemon.

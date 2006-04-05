@@ -62,12 +62,11 @@ if(strncmp(line, name, sizeof(name)-1) == 0) \
 */
 int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 	{
-	const char function[] = "read_struct_QEntryFile";
+	const char function[] = "qentryfile_load";
 	gu_boolean found_time = FALSE;
 	gu_boolean found_opts = FALSE;
 	gu_boolean found_user = FALSE;
 	gu_boolean found_for = FALSE;
-	gu_boolean found_priority = FALSE;
 	gu_boolean found_response = FALSE;
 	gu_boolean found_nup = FALSE;
 	gu_boolean found_banners = FALSE;
@@ -226,7 +225,16 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'P':
-				MATCH("Priority: ", _2("%d", &job->priority), !=1, found_priority)
+				if(gu_sscanf(line, "PPRD: %hx %x %hx %hx",
+						&job->priority,
+						&job->priority_time,
+						&job->status,
+						&job->flags
+						) == 4)
+					{
+					job->status *= -1;
+					continue;
+					}
 				if(gu_sscanf(line, "PPRVersion: %f", &job->PPRVersion) == 1)
 					continue;
 				MATCH("PassThruPDL: ", _2("%T", &job->PassThruPDL), !=1, found_other)
@@ -248,11 +256,6 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				if(gu_sscanf(line, "StripPrinter: %d", &tempint) == 1)
 					{
 					job->StripPrinter = tempint ? TRUE : FALSE;
-					continue;
-					}
-				if(gu_sscanf(line, "Status-and-Flags: %hd %hx", &job->status, &job->flags) == 2)
-					{
-					job->status *= -1;
 					continue;
 					}
 				break;
@@ -292,12 +295,6 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 	if(! found_for)
 		{
 		error("%s: missing \"%s\" line", function, "For: ");
-		retcode = -1;
-		}
-
-	if(! found_priority)
-		{
-		error("%s: missing \"%s\" line", function, "Priority: ");
 		retcode = -1;
 		}
 

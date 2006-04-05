@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/config.h.in
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 October 2005.
+** Last modified 3 April 2006.
 */
 
 /*
@@ -68,8 +68,9 @@
 #define GRCONF "@GRCONF@"
 #define ALIASCONF "@ALIASCONF@"
 #define ACLDIR "@ACLDIR@"
-#define PRINTERS_CACHEDIR "@PRINTERS_CACHEDIR@"
-#define PRINTERS_STATEDIR "@PRINTERS_STATEDIR@"
+#define PRINTERS_PERSISTENT_STATEDIR "@PRINTERS_PERSISTENT_STATEDIR@"
+#define PRINTERS_PURGABLE_STATEDIR "@PRINTERS_PURGABLE_STATEDIR@"
+#define GROUPS_PERSISTENT_STATEDIR "@GROUPS_PERSISTENT_STATEDIR@"
 #define MISCDIR "@MISCDIR@"
 #define PPR_CONF "@PPR_CONF@"
 #define DBNAME "@DBNAME@"

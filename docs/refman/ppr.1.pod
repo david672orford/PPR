@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppr.1.pod
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 24 August 2005.
+# Last modified 5 April 2006.
 #
 
 =head1 NAME
@@ -988,8 +988,15 @@ will be used.
 
 =item B<-q> I<integer>
 
-Sets the priority of the print job.  Default priority is 20, range is 0 (most
-urgent) to 39 (least urgent).
+Sets the priority of the print job.  Default priority is 20, range is 39 (least
+urgent) to 0 (most urgent).  This priority scheme is taken from in B<lp>
+commadn in System V Unix.
+
+=item B<--ipp-priority>
+
+Sets the priority of the print job.  Default priority is 50, range is 1 (least
+urgent) to 100 (most urgent).  This priority scheme is take from the
+Internet Printing Protocol.
 
 =item B<--hold>
 

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/global_structs.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 5 April 2006.
 */
 
 /* =================== for pprd queue entries =====================*/
@@ -34,21 +34,23 @@
    Notice that this is shorter than struct QEntryFile. */
 struct QEntry
 	{
-	SHORT_INT destnode_id;				/* destination node by key number */
+	/* encoded in queue file name */
 	SHORT_INT destid;					/* destination key number */
 	SHORT_INT id;						/* queue id */
 	SHORT_INT subid;					/* fractional queue id */
-	SHORT_INT homenode_id;				/* id of node job come from */
 
+	/* encoding in mini header */
+	SHORT_INT priority;					/* priority number (1=lowest, 100=highest) */
+	time_t priority_time;
 	SHORT_INT status;					/* printer id if printing, < 0 for other status */
+	
 	unsigned short int flags;			/* --keep, responding, etc. */
 	time_t resend_message_at;			/* time at which to retry responder to questioner */
 
-	SHORT_INT priority;					/* priority number (0=highest, 39=lowest) */
-	unsigned char never;				/* bitmap of group member which can't print */
-	unsigned char notnow;				/* bitmap of group members without media mntd */
 	SHORT_INT media[MAX_DOCMEDIA];		/* list of id numbers of media types req. */
 	SHORT_INT pass;						/* number of current pass thru printers in group */
+	unsigned char never;				/* bitmap of group member which can't print */
+	unsigned char notnow;				/* bitmap of group members without required media mounted */
 	} ;
 
 /*
@@ -94,7 +96,9 @@ struct QEntryFile
 	short unsigned int flags;			/* job flags */
 	const char *magic_cookie;			/* secret about this job */
 
-	int priority;						/* priority number (0-39) */
+	int priority;						/* priority number (1--100) */
+	long priority_time;
+	
 	long time;							/* time job was submitted (don't use time_t) */
 	const char *user;					/* username or username@host */
 	const char *For;					/* %%For: line for PostScript header */

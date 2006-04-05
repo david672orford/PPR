@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_media.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 3 April 2006.
 */
 
 #include "config.h"
@@ -64,7 +64,7 @@ void media_mounted_save(int prnid)
 	int x;
 	struct Printer *p;
 
-	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_STATEDIR, destid_to_name(prnid));
+	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_PERSISTENT_STATEDIR, destid_to_name(prnid));
 	if((sf = fopen(fname, "w")) == (FILE*)NULL)
 		fatal(ERROR_DIE, "%s(): can't open \"%s\"", function, fname);
 
@@ -98,7 +98,7 @@ void media_mounted_recover(int prnid)
 	debug("media_mounted_recover(%d): \"%s\"", prnid, destid_to_name(prnid));
 	#endif
 
-	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_STATEDIR, destid_to_name(prnid));
+	ppr_fnamef(fname, "%s/%s/mounted", PRINTERS_PERSISTENT_STATEDIR, destid_to_name(prnid));
 	if((rf = fopen(fname, "r")) == (FILE*)NULL)
 		return;				/* missing file means nothing mounted */
 

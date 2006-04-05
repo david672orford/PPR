@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ppop.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 3 April 2006.
 */
 
 /** \file
@@ -245,9 +245,10 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 	char fname[MAX_PPR_PATH];
 	FILE *statusfile;
 
-	ppr_fnamef(fname, "%s/%s/status", PRINTERS_CACHEDIR, destid_to_name(prnid));
+	ppr_fnamef(fname, "%s/%s/device_status", PRINTERS_PURGABLE_STATEDIR, destid_to_name(prnid));
 	if((statusfile = fopen(fname, "r")))
 		{
+		#define MAX_STATUS_MESSAGE 80
 		char message[MAX_STATUS_MESSAGE+1];
 		while(fgets(message, sizeof(message), statusfile))
 			{
@@ -929,8 +930,6 @@ static void ppop_accept_reject(const char command[], int action)
 	const char function[] = "ppop_accept_reject";
 	char *destname;
 	int destid;
-	char conffile[MAX_PPR_PATH];
-	struct stat st;
 
 	#ifdef DEBUG_PPOPINT
 	debug("%s(command=\"%s\", action=%d)", function, command, action);
@@ -958,20 +957,13 @@ static void ppop_accept_reject(const char command[], int action)
 	if(!destid_is_group(destid))
 		{								/* printer: */
 		printers[destid].accepting = action;
-		ppr_fnamef(conffile, "%s/%s", PRCONF, destname);
-		stat(conffile, &st);			/* modify group execute bit */
+		set_file_boolean(PRINTERS_PERSISTENT_STATEDIR, destname, "reject", action==0);
 		}
 	else								/* group: */
 		{
 		groups[destid_to_gindex(destid)].accepting = action;
-		ppr_fnamef(conffile, "%s/%s", GRCONF, destname);
-		stat(conffile, &st);			/* modify group execute bit */
+		set_file_boolean(GROUPS_PERSISTENT_STATEDIR, destname, "reject", action==0);
 		}
-
-	if(action==0)						/* reject */
-		chmod(conffile, st.st_mode | S_IXGRP );
-	else								/* accept */
-		chmod(conffile, st.st_mode & (0777 ^ S_IXGRP) );
 
 	fprintf(reply_file, "%d\n", EXIT_OK);
 	} /* end of ppop_accept_reject() */
@@ -1291,27 +1283,30 @@ static void ppop_rush(const char command[])
 			/* Inform queue display programs. */
 			state_update("RSH %s", jobid(destname, queue[x].id, queue[x].subid));
 
+			/* Make a temporary copy */
 			memcpy(&t, &queue[x], sizeof(struct QEntry));
+			
 			if(newpos == 0)
 				{
 				/* rush job */
-				while(x)					/* and slide the others up. */
+				while(x)					/* slide the ones before it up. */
 					{
 					memcpy(&queue[x], &queue[x-1], sizeof(struct QEntry));
 					x--;
 					}
 				memcpy(&queue[0], &t, sizeof(struct QEntry));
-				queue[0].priority = 0;	/* highest priority */
+				queue[0].priority = 101;	/* highest priority */
 				}
 			else
 				{
 				/* last job */
-				while(x<(queue_entries-1))	 /* and slide the others down */
+				while(x<(queue_entries-1))	/* slide the ones after it down */
 					{
 					memcpy(&queue[x],&queue[x+1],sizeof(struct QEntry));
 					x++;
 					}
 				memcpy(&queue[x],&t,sizeof(struct QEntry));
+				queue[x].priority = 1;		/* lowest priority */
 				}
 			break;
 			}
@@ -1410,7 +1405,7 @@ void ppop_dispatch(const char command[])
 	ppr_fnamef(reply_fname, "%s/ppr-ppop-%ld", TEMPDIR, reply_pid);
 	{
 	int fd;
-	if((fd = open(reply_fname, O_WRONLY | O_EXCL | O_CREAT, S_IRUSR | S_IWUSR, UNIX_600)) == -1)
+	if((fd = open(reply_fname, O_WRONLY | O_EXCL | O_CREAT, UNIX_600)) == -1)
 		{
 		error("%s(): can't open \"%s\", errno=%d (%s)", function, reply_fname, errno, gu_strerror(errno));
 		return;

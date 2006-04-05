@@ -42,15 +42,20 @@
  */
 int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	{
-	/* This line will be useful once distributed printing is implemented. */
+	/* This line must remain at the begining of the file where
+	 * pprd can easily modify it. */
+	if(fprintf(Qfile, "PPRD: %02X %08X %02X %04X                                      \n",
+			qentry->priority,
+			(unsigned int)qentry->priority_time,
+			(qentry->status * -1),
+			qentry->flags) != 64)
+		gu_Throw("PPRD line is not 64 bytes long!");
+
+	/* We don't really use this, but it could solve arguments. */
 	fprintf(Qfile, "PPRVersion: %s\n", SHORT_VERSION);
-
-	/* This is at the begining of the file so that it will be easy to modify. 
-	 * Do not put anything but PPRVersion before it, otherwise it may be
-	 * to far in to be found by pprd.
-	 */
-	fprintf(Qfile, "Status-and-Flags: %02d %04X\n", (qentry->status * -1), qentry->flags);
-
+	
+	/* Human language in which to communicate with the submitter
+	 * about this job. */
 	if(qentry->lc_messages)
 		fprintf(Qfile, "LC_MESSAGES: %s\n", qentry->lc_messages);
 
@@ -64,8 +69,6 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	fprintf(Qfile, "For: %s\n", qentry->For ? qentry->For : "???");
 	if(qentry->charge_to)
 		fprintf(Qfile, "Charge-To: %s\n", qentry->charge_to);
-
-	fprintf(Qfile, "Priority: %d\n", qentry->priority);
 
 	/* It is permissible to use --title "" to make the title an empty string 
 	   and thereby prevent a temporary file name from becoming the title by 

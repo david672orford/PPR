@@ -829,6 +829,7 @@ static const struct gu_getopt_opt option_words[] =
 		{"file-type",			'T', TRUE},
 		{"features",			1000, FALSE},
 		{"print-id-to-fd",		1001, TRUE},
+		{"ipp-priority",		1002, TRUE},
 		{"lpq-filename",		1003, TRUE},
 		{"hold",				1004, FALSE},
 		{"responder-options",	1005, TRUE},
@@ -1011,7 +1012,9 @@ HELP(_(
 "\t--save                     job should be saved after printing\n"));
 
 HELP(_(
-"\t-q <integer>               sets priority of print job\n"));
+"\t-q <integer>               job priority on scale 39--0\n"));
+HELP(_(
+"\t--ipp-priority <integer>   job priority on scale 1--100\n"));
 
 HELP(_(
 "\t-U                         unlink job file after queuing it\n"));
@@ -1393,8 +1396,13 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 'q':								/* queue priority */
-			if((qentry.priority = atoi(optarg)) < 0 || qentry.priority > 39)
+			{
+			int sysv_priority;
+			if((sysv_priority = atoi(optarg)) < 0 || sysv_priority > 39)
 				fatal(PPREXIT_SYNTAX, _("%s option must be between 0 and 39"), true_option);
+			/* Scale to IPP priority range of 1--100 inclusive. */
+			qentry.priority = (100 - (int)(sysv_priority * 2.55));
+			}
 			break;
 
 		case 'B':								/* disable or enable automatic bin selects */
@@ -1657,6 +1665,11 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			option_print_id_to_fd = atoi(optarg);
 			break;
 
+		case 1002:								/* --ipp-priority */
+			if((qentry.priority = atoi(optarg)) < 1 || qentry.priority > 100)
+				fatal(PPREXIT_SYNTAX, _("%s option must be between 1 and 100"), true_option);
+			break;
+
 		case 1003:								/* --lpq-filename */
 			qentry.lpqFileName = optarg;
 			break;
@@ -1841,7 +1854,7 @@ int main(int argc, char *argv[])
 	qentry.status = STATUS_WAITING;
 	qentry.flags = 0;
 	qentry.time = time((time_t*)NULL);					/* job submission time */
-	qentry.priority = 20;								/* default priority */
+	qentry.priority = 50;								/* default priority */
 	qentry.user = NULL;
 	qentry.For = NULL;
 	qentry.charge_to = NULL;

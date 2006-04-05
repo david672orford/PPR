@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_begin/install_create_dirs.sh
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 October 2005.
+# Last modified 3 April 2006.
 #
 
 #=============================================================================
@@ -99,8 +99,9 @@ directory $PRCONF 755
 directory $GRCONF 755
 directory $ALIASCONF 755
 directory $ACLDIR 755
-directory $PRINTERS_STATEDIR 755
-directory $PRINTERS_CACHEDIR 755
+directory $PRINTERS_PERSISTENT_STATEDIR 755
+directory $PRINTERS_PURGABLE_STATEDIR 755
+directory $GROUPS_PERSISTENT_STATEDIR 755
 
 # Make the directories for the resource store.  Notice
 # that we do not make a directory for fonts since they

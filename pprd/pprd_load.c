@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_load.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 5 April 2006.
 */
 
 /*
@@ -38,7 +38,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <ctype.h>
@@ -63,8 +62,6 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	FILE *prncf;
 	char *line = NULL;
 	int line_space = 128;
-	mode_t newmode;						/* new file mode */
-	struct stat pstat;
 	int count; float x1, x2;
 
 	{
@@ -80,28 +77,37 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	printer->alert_method = (char*)NULL;		/* (At least not until we */
 	printer->alert_address = (char*)NULL;		/* read an "Alert:" line.) */
 
-	printer->next_error_retry = 0;				/* Not in fault state */
-	printer->next_engaged_retry = 0;
-
+	printer->accepting = TRUE;					/* is accepting */
 	printer->protect = FALSE;					/* not protected that we know of yet */
-	printer->charge_per_duplex = 0;
+	printer->charge_per_duplex = 0;				/* we don't charge any money to use it */
 	printer->charge_per_simplex = 0;
 
 	printer->nbins = 0;							/* start with zero bins */
 	printer->AutoSelect_exists = FALSE;			/* start with no "AutoSelect" bin */
-	printer->ppop_pid = (pid_t)0;				/* nobody waiting for stop */
-	printer->previous_status = PRNSTATUS_IDLE;
-	printer->status = PRNSTATUS_IDLE;			/* it is idle now */
-	printer->accepting = TRUE;					/* is accepting */
 
+	printer->ppop_pid = (pid_t)0;				/* nobody waiting for stop */
 	printer->cancel_job = FALSE;				/* don't cancel a job on next pprdrv exit */
 	printer->hold_job = FALSE;					/* don't hold job on next pprdrv exit */
 
-	fstat(fileno(prncf), &pstat);
-	if(pstat.st_mode & S_IXUSR)					/* if user execute set, */
-		printer->status = PRNSTATUS_STOPT;		/* printer is stop */
-	if(pstat.st_mode & S_IXGRP)					/* if group execute is set, */
-		printer->accepting = FALSE;				/* printer not accepting */
+	/* Is the printer accepting jobs? */
+	if(get_file_boolean(PRINTERS_PERSISTENT_STATEDIR, prnname, "rejecting"))	
+		printer->accepting = FALSE;
+
+	/* Is the printer stopt or in fault state? */
+	spool_state_load(printer);
+		
+	/* Handle state transitions brought about by killing pprd. */
+	switch(printer->status)
+		{
+		case PRNSTATUS_PRINTING:
+		case PRNSTATUS_CANCELING:
+		case PRNSTATUS_SEIZING:
+			printer_new_status(printer, PRNSTATUS_IDLE);
+			break;
+		case PRNSTATUS_HALTING:
+			printer_new_status(printer, PRNSTATUS_STOPT);
+			break;
+		}
 
 	while((line = gu_getline(line, &line_space, prncf)))
 		{
@@ -167,30 +173,26 @@ static void load_printer(struct Printer *printer, const char prnname[])
 
 		} /* end of while(), unknown lines are ignored */
 
-	/*
-	** If printer is protected, turn on ``other'' execute bit,
-	** otherwise, turn it off.  We do this for the convienence of ppr.
-	*/
-	if(printer->protect)
-		newmode = pstat.st_mode | S_IXOTH;
-	else
-		newmode = pstat.st_mode & (~ S_IXOTH);
-
-	if(newmode != pstat.st_mode)
-		fchmod(fileno(prncf), newmode);
-
 	/* Close that configuration file! */
 	fclose(prncf);
 
-	/* Create the directories this printers state and cache information. */
+	/* If printer is protected, create the "protected" file, otherwise
+	 * delete it.  We do this for the convienence of ppr.
+	*/
+	set_file_boolean(PRINTERS_PERSISTENT_STATEDIR, prnname, "protected", printer->protect);
+
+	/* Create the directories which will hold this printer's dynamic 
+	   state information. */
 	{
 	char fname[MAX_PPR_PATH];
-	ppr_fnamef(fname, "%s/%s", PRINTERS_CACHEDIR, prnname);
+	ppr_fnamef(fname, "%s/%s", PRINTERS_PERSISTENT_STATEDIR, prnname);
 	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
 		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
-	ppr_fnamef(fname, "%s/%s", PRINTERS_STATEDIR, prnname);
+
+	ppr_fnamef(fname, "%s/%s", PRINTERS_PURGABLE_STATEDIR, prnname);
 	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
 		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
+
 	}
 	} /* end of load_printer() */
 
@@ -384,44 +386,33 @@ void new_printer_config(char *printer)
 ** This routine is called with a pointer to a group array entry and
 ** the name of the group to put in it.
 */
-static void load_group(struct Group *cl, const char filename[])
+static void load_group(struct Group *cl, const char grpname[])
 	{
 	const char function[] = "load_group";
-	FILE *clcf;				/* class (group) config file */
-	char fname[MAX_PPR_PATH];
+	char conf_fname[MAX_PPR_PATH];
+	FILE *f;				/* group config file */
 	char *line = NULL;		/* for reading lines */
 	int line_space = 128;
 	char *extract;
 	int y;
-	struct stat cstat;
-	mode_t newmod;
 	int linenum = 0;
 
-	ppr_fnamef(fname, "%s/%s", GRCONF, filename);
-	if((clcf = fopen(fname, "r")) == (FILE*)NULL)
-		fatal(0, "%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
+	ppr_fnamef(conf_fname, "%s/%s", GRCONF, grpname);
+	if(!(f = fopen(conf_fname, "r")))
+		fatal(0, "%s(): can't open \"%s\", errno=%d (%s)", function, conf_fname, errno, gu_strerror(errno));
 
-	cl->name = gu_strdup(filename);		/* store the group name */
-	cl->last = -1;						/* initialize last value */
+	cl->name = gu_strdup(grpname);		/* store the group name */
+	cl->last = -1;						/* initialize last used member value */
 
-	fstat(fileno(clcf), &cstat);
-
-	if(cstat.st_mode & S_IXGRP)			/* if group execute is set, */
-		cl->accepting = FALSE;			/* group not accepting */
-	else
-		cl->accepting = TRUE;			/* is accepting */
-
-	if(cstat.st_mode & S_IXUSR)			/* if user execute bit is set, */
-		cl->held = TRUE;				/* group is held */
-	else
-		cl->held = FALSE;
+	cl->held = get_file_boolean(GROUPS_PERSISTENT_STATEDIR, grpname, "held");
+	cl->accepting = !get_file_boolean(GROUPS_PERSISTENT_STATEDIR, grpname, "rejecting");
 
 	cl->protect = FALSE;				/* don't protect by default */
 	cl->deleted = FALSE;				/* it is not a deleted group! */
 	cl->rotate = TRUE;					/* rotate is default */
 
 	y=0;
-	while((line = gu_getline(line, &line_space, clcf)))
+	while((line = gu_getline(line, &line_space, f)))
 		{
 		linenum++;
 
@@ -451,24 +442,18 @@ static void load_group(struct Group *cl, const char filename[])
 		if((extract = lmatchp(line, "Rotate:")))
 			{
 			if(gu_torf_setBOOL(&cl->rotate, extract) == -1)
-				fatal(0, "Invalid Rotate option (%s, line %d)", fname, linenum);
+				fatal(0, "Invalid Rotate option (%s, line %d)", conf_fname, linenum);
 			continue;
 			}
 		}
 
-	/*
-	** If group is protected, turn on user execute bit,
-	** otherwise, turn it off.  This bit is read by ppr.
+	fclose(f);
+
+	/* If group is protected, create the "protected" file, otherwise
+	 * delete it.  We do this for the convienence of ppr.
 	*/
-	if(cl->protect)
-		newmod = cstat.st_mode | S_IXOTH;
-	else
-		newmod = cstat.st_mode & (~ S_IXOTH);
+	set_file_boolean(GROUPS_PERSISTENT_STATEDIR, grpname, "protected", cl->protect);
 
-	if(newmod != cstat.st_mode)			/* (only act if new mode is different) */
-		fchmod(fileno(clcf),newmod);
-
-	fclose(clcf);			/* close the group configuration file */
 	cl->members=y;			/* set the members count */
 	} /* end of load_group() */
 

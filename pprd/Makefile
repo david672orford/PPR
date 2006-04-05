@@ -42,7 +42,8 @@ pprd$(DOTEXE): \
 		pprd.o pprd_log.o pprd_queue.o \
 		pprd_respond.o pprd_alert.o pprd_ppop.o \
 		pprd_remind.o pprd_destid.o \
-		pprd_mainsup.o pprd_load.o pprd_pprdrv.o \
+		pprd_mainsup.o pprd_load.o pprd_statedirs.o \
+		pprd_pprdrv.o \
 		pprd_media.o pprd_printer.o pprd_state.o \
 		pprd_question.o pprd_ipp.o \
 		../libppr.a ../libgu.a 

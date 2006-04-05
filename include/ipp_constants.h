@@ -1,7 +1,6 @@
 /*
 ** mouse:~ppr/src/ipp_constants.h
-**
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -26,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 October 2005.
+** Last modified 30 March 2006.
 */
 
 /*! \file
@@ -35,6 +34,17 @@ These IPP constant names are from the CUPS documentation.  The values are from
 RFC 2565.  The RFC 2565 names are noted in the comments.
 
 */
+
+/*=========================== ipp_to_str.c ==============================*/
+
+const char *ipp_operation_id_to_str(int op);
+const char *ipp_tag_to_str(int tag);
+int ipp_tag_simplify(int value_tag);
+
+/*=========================== ipp_str_to.c =============================*/
+
+int ipp_str_to_operation_id(const char str[]);
+int ipp_str_to_tag(const char str[]);
 
 /* RFC 2565 section 3.7.1 Delimiter Tags */
 #define IPP_TAG_ZERO 0x00				/** reserved */

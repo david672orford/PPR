@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_state.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 3 April 2006.
 */
 
 #include "config.h"
@@ -67,7 +67,10 @@ void state_update(const char *string, ... )
 
 		if(countdown <= 0)				/* If this file is full, */
 			{
+			/* tail_status watches the user execute bit in order to
+			 * know when the file has been cut loose. */
 			fchmod(handle, UNIX_644 | S_IXOTH);
+
 			close(handle);
 			handle = -1;
 			unlink(STATE_UPDATE_FILE);

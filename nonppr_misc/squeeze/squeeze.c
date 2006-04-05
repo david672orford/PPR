@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/procsets/squeeze.c
+** mouse:~ppr/src/makeprogs/squeeze.c
 ** Copyright 1988 by Radical Eye Software.
 **
 ** This utility program reduces the size of a PostScript code file by removing
@@ -10,7 +10,7 @@
 ** space before names (which change slightly increases the compression ratio)
 ** and so that it will not produce warnings when compiled with gcc -Wall
 **
-** Last modified 5 April 2003.
+** Last modified 31 March 2006.
 */
 
 #include <stdio.h>
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 					linepos = 0;
 					}
 
-				putchar('%'); putchar('%');
+				putchar('%'); putchar(c);
 
 				while( (c=getc(in)) != EOF && c != '\n' )
 					putchar(c);

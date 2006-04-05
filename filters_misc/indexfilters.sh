@@ -38,7 +38,7 @@
 # System configuration information:
 LIBDIR="@LIBDIR@"
 CONFDIR="@CONFDIR@"
-PRINTERS_CACHEDIR="@PRINTERS_CACHEDIR@"
+PRINTERS_PURGABLE_STATEDIR="@PRINTERS_PURGABLE_STATEDIR@"
 TEMPDIR="@TEMPDIR@"
 USER_PPR=@USER_PPR@
 GROUP_PPR=@GROUP_PPR@
@@ -113,7 +113,7 @@ sedit ()
 		-e "s#^\\(\$*\\)LIBDIR=\"[^\"]*\"#\\1LIBDIR=\"$LIBDIR\"#" \
 		-e "s#^\\(\$*\\)FILTDIR=\"[^\"]*\"#\\1FILTDIR=\"$FILTDIR\"#" \
 		-e "s#^\\(\$*\\)CONFDIR=\"[^\"]*\"#\\1CONFDIR=\"$CONFDIR\"#" \
-		-e "s#^\\(\$*\\)PRINTERS_CACHEDIR=\"[^\"]*\"#\\1PRINTERS_CACHEDIR=\"$PRINTERS_CACHEDIR\"#" \
+		-e "s#^\\(\$*\\)PRINTERS_PURGABLE_STATEDIR=\"[^\"]*\"#\\1PRINTERS_PURGABLE_STATEDIR=\"$PRINTERS_PURGABLE_STATEDIR\"#" \
 		-e "s#^\\(\$*\\)TEMPDIR=\"[^\"]*\"#\\1TEMPDIR=\"$TEMPDIR\"#" \
 		$1 >$2 || exit 1 # infile, outfile
 
