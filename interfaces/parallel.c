@@ -164,8 +164,8 @@ static int describe_status(int s)
 	** active, it probably indicates that we are reading the status from
 	** a turned-off printer or a dangling parallel cable.
 	**
-	** Note that this code doesn't may fail to detect an absent printer since
-	** it depends on hard-to-predict electrical factors.
+	** Note that this code may fail an absent printer since the parallel 
+	** port line states depend on hard-to-predict electrical factors.
 	*/
 	else if(s & PARALLEL_PORT_BUSY && s & PARALLEL_DISABLED)
 		{

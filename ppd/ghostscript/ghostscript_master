@@ -98,7 +98,8 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c62
+*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c62
+*pprRIP: ppr-gs escp ijs=ijsgutenprint,EPSON,escp2-c62
 #endif
 
 *% ===== General Information =====
