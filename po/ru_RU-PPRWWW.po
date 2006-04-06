@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-03 12:44-0400\n"
+"POT-Creation-Date: 2006-04-06 11:06-0400\n"
 "PO-Revision-Date: 2005-10-15 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -73,14 +73,14 @@ msgid "The alias \"%s\" already exists!"
 msgstr "Псевдоним \"%s\" уже существует!"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
-#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:344
+#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:361
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:152
 #: ../www/prn_addwiz.cgi.perl:853 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "Отмена"
 
-#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:344
+#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:361
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:152
 msgid "_Next"
@@ -125,7 +125,7 @@ msgstr "Описание:"
 msgid "You must supply a description!"
 msgstr "Надо вводить описиваное!"
 
-#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:344
+#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:361
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:853
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"

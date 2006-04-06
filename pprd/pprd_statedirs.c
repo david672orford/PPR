@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2006.
+** Last modified 6 April 2006.
 */
 
 #include "config.h"
@@ -104,6 +104,7 @@ void spool_state_load(struct Printer *printer)
 				&(printer->next_error_retry),
 				&(printer->next_engaged_retry),
 				&(printer->countdown)
+				/* don't load job_count, administrator might have manually delete jobs */
 			) != 4)
 			{
 			error("corrupt \"%s\"", spool_state_data);
@@ -121,11 +122,28 @@ void spool_state_save(struct Printer *printer)
 	ppr_fnamef(fname, "%s/%s/spool_state", PRINTERS_PERSISTENT_STATEDIR, printer->name);
 	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
-	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d\n",
+	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d\n",
 		printer->status,
 		printer->next_error_retry,
 		printer->next_engaged_retry,
-		printer->countdown
+		printer->countdown,
+		printer->job_count
+		);
+	write(fd, temp, len);
+	close(fd);
+	}
+
+void group_spool_state_save(struct Group *group)
+	{
+	char fname[MAX_PPR_PATH];
+	int fd;
+	char temp[128];
+	int len;
+	ppr_fnamef(fname, "%s/%s/spool_state", GROUPS_PERSISTENT_STATEDIR, group->name);
+	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
+		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
+	len = gu_snprintf(temp, sizeof(temp), "%d\n",
+		group->job_count
 		);
 	write(fd, temp, len);
 	close(fd);

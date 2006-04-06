@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-03 12:44-0400\n"
+"POT-Creation-Date: 2006-04-06 11:06-0400\n"
 "PO-Revision-Date: 2004-10-21 18:17+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -63,7 +63,7 @@ msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht
 msgid "waiting for resource ration"
 msgstr ""
 
-#: ../pprd/pprd_load.c:190 ../pprd/pprd_load.c:193
+#: ../pprd/pprd_load.c:190 ../pprd/pprd_load.c:194
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
@@ -103,58 +103,58 @@ msgstr "Beendet.\n"
 msgid "Destination \"%s\" does not exist.\n"
 msgstr "Ziel \"%s\" existiert nicht.\n"
 
-#: ../pprd/pprd_ppop.c:293 ../pprd/pprd_ppop.c:521 ../pprd/pprd_ppop.c:681
-#: ../pprd/pprd_ppop.c:823
+#: ../pprd/pprd_ppop.c:294 ../pprd/pprd_ppop.c:522 ../pprd/pprd_ppop.c:682
+#: ../pprd/pprd_ppop.c:824
 #, c-format
 msgid "The destination \"%s\" does not exist.\n"
 msgstr "Ziel \"%s\" existiert nicht.\n"
 
-#: ../pprd/pprd_ppop.c:349
+#: ../pprd/pprd_ppop.c:350
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../pprd/pprd_ppop.c:356
+#: ../pprd/pprd_ppop.c:357
 #, c-format
 msgid "\"%s\" is a group of printers, not a printer.\n"
 msgstr "\"%s\" ist eine Gruppe von Druckern, kein einzelner Drucker.\n"
 
-#: ../pprd/pprd_ppop.c:372
+#: ../pprd/pprd_ppop.c:373
 #, c-format
 msgid "The printer \"%s\" is not stopt.\n"
 msgstr "Der Drucker \"%\" ist  nicht angehalten.\n"
 
-#: ../pprd/pprd_ppop.c:377
+#: ../pprd/pprd_ppop.c:378
 #, c-format
 msgid "The printer \"%s\" is already printing.\n"
 msgstr "Der Drucker \"%s\" druckt bereits.\n"
 
-#: ../pprd/pprd_ppop.c:390
+#: ../pprd/pprd_ppop.c:391
 #, c-format
 msgid "There is an outstanding halt command for the printer \"%s\".\n"
 msgstr "Es gibt einen noch ausstehenden Stopbefehl für den Drucker \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:406 ../pprd/pprd_ppop.c:464
+#: ../pprd/pprd_ppop.c:407 ../pprd/pprd_ppop.c:465
 #, c-format
 msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
 msgstr "Interner pprd Fehler: Der Drucker \"%s\" befindet sich in einem undefinierten Status.\n"
 
-#: ../pprd/pprd_ppop.c:425
+#: ../pprd/pprd_ppop.c:426
 #, c-format
 msgid "The printer \"%s\" is already halting.\n"
 msgstr "Der Drucker \"%s\" hält bereits an.\n"
 
-#: ../pprd/pprd_ppop.c:430
+#: ../pprd/pprd_ppop.c:431
 #, c-format
 msgid "The printer \"%s\" is already stopt.\n"
 msgstr "Der Drucker \"%s\" ist bereits angehalten.\n"
 
-#: ../pprd/pprd_ppop.c:444
+#: ../pprd/pprd_ppop.c:445
 #, c-format
 msgid "The printer \"%s\" is already stopping.\n"
 msgstr "Der Drucker \"%s\" hält gerade an.\n"
 
-#: ../pprd/pprd_ppop.c:477
+#: ../pprd/pprd_ppop.c:478
 #, c-format
 msgid ""
 "Another process is already using the notify\n"
@@ -163,17 +163,17 @@ msgstr ""
 "Ein anderer Prozeß nutzt bereits das\n"
 "Benachrichtigungskommando für den Drucker \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:549
+#: ../pprd/pprd_ppop.c:550
 #, c-format
 msgid "The print job \"%s\" is already held.\n"
 msgstr "Der Druckauftrag \"%s\" ist bereits angehalten.\n"
 
-#: ../pprd/pprd_ppop.c:553
+#: ../pprd/pprd_ppop.c:554
 #, c-format
 msgid "The print job \"%s\" is arrested.\n"
 msgstr "Der Druckauftrag \"%s\" wurde gesperrt.\n"
 
-#: ../pprd/pprd_ppop.c:558
+#: ../pprd/pprd_ppop.c:559
 #, c-format
 msgid ""
 "The print job \"%s\" is already undergoing a\n"
@@ -182,7 +182,7 @@ msgstr ""
 "Der Druckauftrag \"%s\" wird gerade\n"
 "in den Status gehalten verstzt.\n"
 
-#: ../pprd/pprd_ppop.c:565
+#: ../pprd/pprd_ppop.c:566
 #, c-format
 msgid ""
 "Converting outstanding cancel order for\n"
@@ -191,17 +191,17 @@ msgstr ""
 "Wandele einen cancel Befehl für Auftrag\n"
 "\"%s\" in einen gehalten Befehl um.\n"
 
-#: ../pprd/pprd_ppop.c:580
+#: ../pprd/pprd_ppop.c:581
 #, c-format
 msgid "Seizing job \"%s\" which is printing on \"%s\".\n"
 msgstr "Erfasse Auftrag \"%s\", der auf \"%s\" gedruckt wird.\n"
 
-#: ../pprd/pprd_ppop.c:602
+#: ../pprd/pprd_ppop.c:603
 #, c-format
 msgid "Internal pprd error: job \"%s\" has unknown status %d.\n"
 msgstr "Interner pprd Fehler: Auftrag \"%s\" hat den unbekannten Status %d.\n"
 
-#: ../pprd/pprd_ppop.c:624
+#: ../pprd/pprd_ppop.c:625
 #, c-format
 msgid ""
 "The print job \"%s\" can't be released until an\n"
@@ -210,73 +210,73 @@ msgstr ""
 "Der Druckauftrag \"%s\" kann nicht freigegeben werden, bis ein noch\n"
 "ausstehender anhalten Befehl vollständig ausgeführt worden ist.\n"
 
-#: ../pprd/pprd_ppop.c:633
+#: ../pprd/pprd_ppop.c:634
 #, c-format
 msgid "The print job \"%s\" is not being held.\n"
 msgstr "Der Druckauftrag \"%s\" wird nicht angehalten.\n"
 
-#: ../pprd/pprd_ppop.c:647 ../pprd/pprd_ppop.c:782
+#: ../pprd/pprd_ppop.c:648 ../pprd/pprd_ppop.c:783
 #, c-format
 msgid "The print job \"%s\" does not exist.\n"
 msgstr "Der Druckauftrag \"%s\" existiert nicht.\n"
 
-#: ../pprd/pprd_ppop.c:879
+#: ../pprd/pprd_ppop.c:880
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../pprd/pprd_ppop.c:886
+#: ../pprd/pprd_ppop.c:887
 #, c-format
 msgid "\"%s\" is not a printer.\n"
 msgstr "\"%s\" ist kein Drucker.\n"
 
-#: ../pprd/pprd_ppop.c:900
+#: ../pprd/pprd_ppop.c:901
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" hat keinen Einzug mit Namen \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:954 ../pprd/pprd_ppop.c:1034
+#: ../pprd/pprd_ppop.c:953 ../pprd/pprd_ppop.c:1026
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" ist kein gültiges Ziel.\n"
 
-#: ../pprd/pprd_ppop.c:1075 ../pprd/pprd_ppop.c:1082 ../pprd/pprd_ppop.c:1276
-#: ../pprd/pprd_ppop.c:1358
+#: ../pprd/pprd_ppop.c:1067 ../pprd/pprd_ppop.c:1074 ../pprd/pprd_ppop.c:1268
+#: ../pprd/pprd_ppop.c:1353
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Kein Drucker oder Gruppe hat den Namen \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1215
+#: ../pprd/pprd_ppop.c:1207
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Für \"%s\" sind keine Aufträge in der Warteschlange.\n"
 
-#: ../pprd/pprd_ppop.c:1224
+#: ../pprd/pprd_ppop.c:1216
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Der Auftrag \"%s\" existiert nicht.\n"
 
-#: ../pprd/pprd_ppop.c:1229
+#: ../pprd/pprd_ppop.c:1221
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 Datei wurde verschoben.\n"
 
-#: ../pprd/pprd_ppop.c:1233
+#: ../pprd/pprd_ppop.c:1225
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d Dateien wurden verschoben.\n"
 
-#: ../pprd/pprd_ppop.c:1241
+#: ../pprd/pprd_ppop.c:1233
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 Datei wurde nicht verschoben, da sie gerade gedruckt wurde.\n"
 
-#: ../pprd/pprd_ppop.c:1243
+#: ../pprd/pprd_ppop.c:1235
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d Dateien wurden nicht verschoben, da sie gerade gedruckt wurden.\n"
 
-#: ../pprd/pprd_ppop.c:1325 ../pprd/pprd_ppop.c:1382
+#: ../pprd/pprd_ppop.c:1320 ../pprd/pprd_ppop.c:1377
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "Warteschlangeneintrag \"%s\" existiert nicht.\n"
@@ -350,21 +350,26 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
 
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s: Der Nutzer \"%s\" existiert nicht.\n"
+#~ msgid "%s: setuid(0) did not fail!\n"
+#~ msgstr "%s: setuid(0) nicht fehlgeschlagen!\n"
 
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s: Die Gruppe \"%s\" existiert nicht.\n"
+#~ msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
+#~ msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#~ msgid ""
-#~ "%s: Security problem: euid = %ld\n"
-#~ "(This program should be setuid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s: Sicherheitsproblem: euid = %ld\n"
-#~ "(Dieses Programm muß setuid %ld (%s) sein.)\n"
+#~ msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s: setgid(%ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setgid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s: Nur \"%s\" oder \"root\" dürfen %s sterten.\n"
 
 #~ msgid ""
 #~ "%s: Security problem: egid = %ld\n"
@@ -373,23 +378,18 @@ msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht
 #~ "%s: Sicherheitsproblem: egid = %ld\n"
 #~ "(Dieses Programm muß setgid %ld (%s) sein.)\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s: Nur \"%s\" oder \"root\" dürfen %s sterten.\n"
+#~ msgid ""
+#~ "%s: Security problem: euid = %ld\n"
+#~ "(This program should be setuid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s: Sicherheitsproblem: euid = %ld\n"
+#~ "(Dieses Programm muß setuid %ld (%s) sein.)\n"
 
-#~ msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
 
-#~ msgid "%s: setgid(%ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setgid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s: Die Gruppe \"%s\" existiert nicht.\n"
 
-#~ msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s: setuid(0) did not fail!\n"
-#~ msgstr "%s: setuid(0) nicht fehlgeschlagen!\n"
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s: Der Nutzer \"%s\" existiert nicht.\n"

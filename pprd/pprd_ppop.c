@@ -223,9 +223,9 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 				printers[prnid].status,						/* printer status */
 				printers[prnid].next_error_retry + printers[prnid].next_engaged_retry,	/* retry number of next retry */
 				printers[prnid].countdown,					/* seconds until next retry */
-				destid_to_name(printers[prnid].jobdestid),	/* destination of job being printed */
-				printers[prnid].id,
-				printers[prnid].subid
+				destid_to_name(printers[prnid].job_destid),	/* destination of job being printed */
+				printers[prnid].job_id,
+				printers[prnid].job_subid
 				);
 		}
 	else		/* not printing */
@@ -586,10 +586,10 @@ static void ppop_hold_release(const char command[], int action)
 							printer_new_status(&printers[prnid], PRNSTATUS_SEIZING);
 							printers[prnid].hold_job = TRUE;
 
-							DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_to_name(prnid), (long)printers[prnid].pid));
-							if(printers[prnid].pid <= 0)
+							DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_to_name(prnid), (long)printers[prnid].job_pid));
+							if(printers[prnid].job_pid <= 0)
 								{
-								error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].pid);
+								error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].job_pid);
 								}
 							else
 								{
@@ -736,9 +736,9 @@ static void ppop_cancel_purge(const char command[])
 					{
 					for(prnid = 0; prnid < printer_count; prnid++)
 						{
-						if(printers[prnid].jobdestid == queue[x].destid
-								&& printers[prnid].id == queue[x].id
-								&& printers[prnid].subid == queue[x].subid
+						if(printers[prnid].job_destid == queue[x].destid
+								&& printers[prnid].job_id == queue[x].id
+								&& printers[prnid].job_subid == queue[x].subid
 								)
 							{
 							if(printers[prnid].status == PRNSTATUS_SEIZING)

@@ -270,8 +270,9 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_PRINTING:
 			state_update("PST %s printing %s %d",
 				printer,
-				jobid(destid_to_name(printer->jobdestid), printer->id, printer->subid),
-				printer->next_error_retry);
+				jobid(destid_to_name(printer->job_destid), printer->job_id, printer->job_subid),
+				printer->next_error_retry
+				);
 			break;
 		case PRNSTATUS_IDLE:
 			state_update("PST %s idle", printer);
@@ -279,24 +280,28 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_CANCELING:
 			state_update("PST %s canceling %s",
 				printer,
-				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
+				jobid(destid_to_name(printer->job_destid), printer->job_id, printer->job_subid)
+				);
 			break;
 		case PRNSTATUS_SEIZING:
 			state_update("PST %s seizing %s",
 				printer,
-				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
+				jobid(destid_to_name(printer->job_destid), printer->job_id, printer->job_subid)
+				);
 			break;
 		case PRNSTATUS_FAULT:
 			state_update("PST %s fault %d %d",
 				printer,
 				printer->next_error_retry,
-				printer->countdown);
+				printer->countdown
+				);
 			break;
 		case PRNSTATUS_ENGAGED:
 			state_update("PST %s engaged %d %d",
 				printer,
 				printer->next_engaged_retry,
-				printer->countdown);
+				printer->countdown
+				);
 			break;
 		case PRNSTATUS_STARVED:
 			state_update("PST %s starved", printer);
@@ -307,12 +312,14 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_STOPPING:
 			state_update("PST %s stopping (printing %s)",
 				printer,
-				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
+				jobid(destid_to_name(printer->job_destid), printer->job_id, printer->job_subid)
+				);
 			break;
 		case PRNSTATUS_HALTING:
 			state_update("PST %s halting (printing %s)",
 				printer,
-				jobid(destid_to_name(printer->jobdestid),printer->id,printer->subid));
+				jobid(destid_to_name(printer->job_destid), printer->job_id, printer->job_subid)
+				);
 			break;
 		}
 

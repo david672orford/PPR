@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/subst_tool.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 January 2005.
+** Last modified 6 April 2006.
 */
 
 /*
@@ -103,6 +103,9 @@ int main(int argc, char *argv[])
 						if(!(value = getenv(p+1)))
 							{
 							fprintf(stderr, "%s: no %s in environment\n", argv[0], p+1);
+							fprintf(stderr, "This may mean that your Makefile.conf is out-of-date and you\n"
+											"should run ./Configure to regenerate it.\n");
+
 							return 1;
 							}
 						fputs(value, stdout);

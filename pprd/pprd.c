@@ -385,6 +385,10 @@ static int real_main(int argc, char *argv[])
 	/* Initialize other subsystems. */
 	question_init();
 
+	/* Set up the FIFO. */
+	DODEBUG_STARTUP(("opening FIFO"));
+	FIFO = open_fifo();
+
 	/* Load the printers database. */
 	DODEBUG_STARTUP(("loading printers database"));
 	load_printers();
@@ -393,11 +397,7 @@ static int real_main(int argc, char *argv[])
 	DODEBUG_STARTUP(("loading groups database"));
 	load_groups();
 
-	/* Set up the FIFO. */
-	DODEBUG_STARTUP(("opening FIFO"));
-	FIFO = open_fifo();
-
-	/* Initialize the queue.  This is likely to start printers. */
+	/* Load any pre-existing jobs into the queue and start the printers. */
 	DODEBUG_STARTUP(("initializing the queue"));
 	initialize_queue();
 

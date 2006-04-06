@@ -10024,5 +10024,14 @@ no final tarball was released.
 
 * renamed PRINTERS_PURGABLE_STATEDIR/<printer>/status to "device_status".
 
+* ppr/ppr_main.c: switched to IPP priority scheme; added --ipp-priority, 
+  changed -q to translate System V priority levels to IPP priority levels.
+
+* pprd/: changed priority levels from 39--0 (System V) to IPP (1--100)
+  and changed the semantics from the old PPR semantics (each priority 
+  point changes the job print time by 100 seconds) to the IPP semantics
+  (all jobs of a given priority are printed before any jobs of a lower
+  priority are printed).
+
 
 

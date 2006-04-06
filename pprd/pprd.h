@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2006.
+** Last modified 6 April 2006.
 */
 
 /*
@@ -126,26 +126,26 @@ struct Printer
 	char *alert_method;					/* means of communicating with operator */
 	char *alert_address;				/* address of operator */
 	gu_boolean protect;					/* TRUE if "Charge:" line in conf file */
+	gu_boolean accepting;				/* TRUE if is accepting as destination */
 	int charge_per_duplex;				/* per-sheet charge */
 	int charge_per_simplex;				/* half-sheet charge */
-	gu_boolean accepting;				/* TRUE if is accepting as destination */
 	int nbins;							/* number of bins */
 	const char *bins[MAX_BINS];			/* binname of each bin */
 	gu_boolean AutoSelect_exists;		/* TRUE if any bin is named "AutoSelect" */
 	int media[MAX_BINS];				/* media id of media in each bin */
 	int previous_status;				/* saved previous status */
 	int status;							/* idle, disabled, etc */
-	gu_boolean cancel_job;				/* cancel the job at pprdrv exit */
-	gu_boolean hold_job;				/* hold the job at pprdrv exit */
 	int next_error_retry;				/* number of next retry */
 	int next_engaged_retry;				/* number of times otherwise engaged or off-line */
 	int countdown;						/* seconds till next retry */
-	pid_t pid;							/* pid of process driving the printer */
-	int jobdestid;						/* dest id of the job we are printing */
-	int id;								/* queue id of job being printed */
-	int subid;							/* queue subid of job being printed */
-	int homenode_id;					/* id number of node which submitted the job */
+	gu_boolean cancel_job;				/* cancel the job at pprdrv exit */
+	gu_boolean hold_job;				/* hold the job at pprdrv exit */
+	pid_t job_pid;						/* pid of process driving the printer */
+	int job_destid;						/* dest id of the job we are printing */
+	int job_id;							/* queue id of job being printed */
+	int job_subid;						/* queue subid of job being printed */
 	pid_t ppop_pid;						/* send SIGUSR1 to this process when stopt */
+	int job_count;						/* how many jobs in printer's own queue? */
 	} ;
 
 /* a group */
@@ -160,6 +160,7 @@ struct Group
 	gu_boolean rotate;					/* TRUE if we should use in rotation */
 	gu_boolean protect;					/* TRUE if we should restrict use */
 	gu_boolean deleted;					/* TRUE if group has been deleted */
+	int job_count;						/* how many jobs queued for this group? */
 	} ;
 
 /*

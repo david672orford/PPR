@@ -88,6 +88,7 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	printer->ppop_pid = (pid_t)0;				/* nobody waiting for stop */
 	printer->cancel_job = FALSE;				/* don't cancel a job on next pprdrv exit */
 	printer->hold_job = FALSE;					/* don't hold job on next pprdrv exit */
+	printer->job_count = 0;						/* no jobs that we know of (yet) */
 
 	/* Is the printer accepting jobs? */
 	if(get_file_boolean(PRINTERS_PERSISTENT_STATEDIR, prnname, "rejecting"))	
@@ -410,6 +411,7 @@ static void load_group(struct Group *cl, const char grpname[])
 	cl->protect = FALSE;				/* don't protect by default */
 	cl->deleted = FALSE;				/* it is not a deleted group! */
 	cl->rotate = TRUE;					/* rotate is default */
+	cl->job_count = 0;					/* no jobs that we know of (yet) */
 
 	y=0;
 	while((line = gu_getline(line, &line_space, f)))
@@ -604,6 +606,7 @@ void initialize_queue(void)
 	const char function[] = "initialize_queue";
 	DIR *dir;					/* the open queue directory */
 	struct dirent *direntp;		/* pointer to the current queue entry */
+	int iii;
 
 	DODEBUG_RECOVER(("%s()", function));
 
@@ -612,7 +615,7 @@ void initialize_queue(void)
 	queue = (struct QEntry *)gu_alloc(queue_size, sizeof(struct QEntry));
 
 	/* Open the queue directory. */
-	if((dir = opendir(QUEUEDIR)) == (DIR*)NULL)
+	if(!(dir = opendir(QUEUEDIR)))
 		fatal(0, "%s(): can't open directory \"%s\", errno=%d (%s)", function, QUEUEDIR, errno, gu_strerror(errno));
 
 	/* loop to read file names */
@@ -628,6 +631,19 @@ void initialize_queue(void)
 
 	/* We are done.  Close the queue directory. */
 	closedir(dir);
+
+	/* Flush out queue job counts. */
+	for(iii=0; iii < printer_count; iii++)
+		spool_state_save(&printers[iii]);
+	for(iii=0; iii < group_count; iii++)
+		group_spool_state_save(&groups[iii]);
+
+	/* Give each idle printer a chance to start. */
+	for(iii=0; iii < printer_count; iii++)
+		{
+		if(printers[iii].status == PRNSTATUS_IDLE)
+			printer_look_for_work(iii);
+		}
 
 	DODEBUG_RECOVER(("%s(): done", function));
 	} /* end of initialize_queue() */

@@ -96,7 +96,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("printing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+					"printer-state-message", _("printing %s"), jobid(destid_to_name(prnid), printers[prnid].job_id, printers[prnid].job_subid));
 				}
 			break;
 		case PRNSTATUS_CANCELING:
@@ -108,7 +108,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("canceling %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+					"printer-state-message", _("canceling %s"), jobid(destid_to_name(prnid), printers[prnid].job_id, printers[prnid].job_subid));
 				}
 			break;
 		case PRNSTATUS_SEIZING:
@@ -120,7 +120,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("seizing %s"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+					"printer-state-message", _("seizing %s"), jobid(destid_to_name(prnid), printers[prnid].job_id, printers[prnid].job_subid));
 				}
 			break;
 		case PRNSTATUS_STOPPING:
@@ -132,7 +132,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("stopping (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+					"printer-state-message", _("stopping (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].job_id, printers[prnid].job_subid));
 				}
 			break;
 		case PRNSTATUS_HALTING:
@@ -144,7 +144,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("halting (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].id, printers[prnid].subid));
+					"printer-state-message", _("halting (printing %s)"), jobid(destid_to_name(prnid), printers[prnid].job_id, printers[prnid].job_subid));
 				}
 			break;
 		case PRNSTATUS_STOPT:
@@ -394,9 +394,9 @@ static void ipp_cancel_job(struct IPP *ipp)
 				{
 				for(prnid = 0; prnid < printer_count; prnid++)
 					{
-					if(printers[prnid].jobdestid == queue[i].destid
-							&& printers[prnid].id == queue[i].id
-							&& printers[prnid].subid == queue[i].subid
+					if(printers[prnid].job_destid == queue[i].destid
+							&& printers[prnid].job_id == queue[i].id
+							&& printers[prnid].job_subid == queue[i].subid
 							)
 						{
 						if(printers[prnid].status == PRNSTATUS_SEIZING)
