@@ -205,7 +205,7 @@ void load_printers(void)
 
 	printers = (struct Printer*)gu_alloc(MAX_PRINTERS, sizeof(struct Printer));
 
-	if((dir = opendir(PRCONF)) == (DIR*)NULL)
+	if(!(dir = opendir(PRCONF)))
 		fatal(0, "%s(): can't open directory \"%s\", errno=%d (%s)", function, PRCONF, errno, gu_strerror(errno));
 
 	x=0; printer_count=0;
@@ -463,7 +463,7 @@ void load_groups(void)
 	if((groups = (struct Group*)calloc(MAX_GROUPS, sizeof(struct Group))) == (struct Group*)NULL)
 		fatal(0, "%s(): out of memory", function);
 
-	if((dir = opendir(GRCONF)) == (DIR*)NULL)
+	if(!(dir = opendir(GRCONF)))
 		fatal(0, "%s(): can't open directory \"%s\", errno=%d (%s)", function, GRCONF, errno, gu_strerror(errno));
 
 	x = 0;

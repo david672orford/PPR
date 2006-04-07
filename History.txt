@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--3 April 2006
+2.00a1, 11 December 2004--7 April 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10032,6 +10032,9 @@ no final tarball was released.
   point changes the job print time by 100 seconds) to the IPP semantics
   (all jobs of a given priority are printed before any jobs of a lower
   priority are printed).
+
+* libppr/queueinfo.c: messed up or non-existent PPD files no longer 
+  prevent object creation.
 
 
 

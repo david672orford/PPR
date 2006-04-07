@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/queueinfo.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 25 October 2005.
+** Last modified 7 April 2006.
 */
 
 /*+ \file
@@ -183,250 +183,253 @@ static struct PRINTER_INFO *do_printer_new_obj(struct QUEUE_INFO *qip, const cha
  */
 static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	{
-	if(pip->ppdFile)
-		{
-		void *ppd = ppdobj_new(pip->ppdFile);
+	void *ppd;
+
+	if(!pip->ppdFile)		/* PPD files are not mandatory in PPR */
+		return;
+
+	if(qip->debug_level > 1)
+		printf(_("Extracting information about printer \"%s\" from PPD file \"%s\".\n"), pip->name, pip->ppdFile);
+
+	gu_Try {
+		char *line;
+		char *p;
 
 		/* These flags are used to ensure that we heed only the first instance. */
 		gu_boolean saw_ColorDevice = FALSE;
 		gu_boolean saw_LanguageLevel = FALSE;
 
-		if(qip->debug_level > 1)
-			printf(_("Extracting information about printer \"%s\" from PPD file \"%s\".\n"), pip->name, pip->ppdFile);
+		ppd = ppdobj_new(pip->ppdFile);
 
-		gu_Try {
-			char *line;
-			char *p;
-
-			while((line = ppdobj_readline(ppd)))
-				{
-				if(qip->debug_level > 5)
-					printf("PPD: %s\n", line);
-				if(line[0] == '*')
-					{
-					switch(line[1])
-						{
-						case 'C':
-							if((p = lmatchp(line, "*ColorDevice:")))
-								{
-								if(!saw_ColorDevice)
-									{
-									if(strcmp(p, "True") == 0)
-										pip->colorDevice = TRUE;
-									else if(strcmp(p, "False") == 0)
-										pip->colorDevice = FALSE;
-									else if(qip->warnings)
-										fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid ColorDevice value of \"%s\".\n"), pip->ppdFile, p);
-
-									saw_ColorDevice = TRUE;
-									}
-								}
-						case 'D':
-							if((p = lmatchp(line, "*DefaultResolution:")) || (p = lmatchp(line, "*DefaultJCLResolution:")))
-								{
-								/* if not seen yet and looks reasonable */
-								if(!pip->resolution)
-									{
-									if(*p < '0' || *p > '9')
-										{
-										if(qip->warnings)
-											{
-											if(lmatch(line, "*DefaultResolution:"))
-												fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"), pip->ppdFile, "DefaultResolution", p);
-											else
-												fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"), pip->ppdFile, "DefaultJCLResolution", p);
-											}
-										}
-									else
-										{
-										/* Replace resolution variants like "600x600dpi" with things like "600dpi". */
-										char *p2;
-										if((p2 = strchr(p, 'x')))
-											{
-											int nlen = (p2 - p);
-											if(strncmp(p, p + nlen + 1, nlen) == 0 && strcmp(p + nlen + nlen + 1, "dpi") == 0)
-												{
-												p = p + nlen + 1;
-												}
-											}
-										pip->resolution = gu_strdup(p);
-										}
-									}
-								continue;
-								}
-						case 'F':
-							if((p = lmatchp(line, "*FaxSupport:")))
-								{
-								if(!pip->faxSupport)
-									{
-									pip->faxSupport = gu_strdup(p);
-									}
-								continue;
-								}
-							if((p = lmatchp(line, "*Font")))
-								{
-								p = gu_strndup(p, strcspn(p, ":"));
-								gu_pch_set(pip->fonts, p, "");	
-								continue;
-								}
-							if((p = lmatchp(line, "*FreeVM:")))
-								{
-								if(*p == '"' && pip->psFreeVM == 0)
-									{
-									pip->psFreeVM = atoi(p+1);
-									}
-								continue;
-								}
-							break;
-						case 'L':
-							if((p = lmatchp(line, "*LanguageLevel:")))
-								{
-								if(*p == '"' && !saw_LanguageLevel)
-									{
-									pip->psLanguageLevel = atoi(p+1);
-									saw_LanguageLevel = TRUE;
-									}
-								continue;
-								}
-							break;
-						case 'M':
-							if((p = lmatchp(line, "*ModelName:")))
-								{
-								if(*p == '"' && !pip->modelName)
-									pip->modelName = ppd_finish_QuotedValue(ppd, p+1);
-								continue;
-								}
-							break;
-						case 'N':
-							if((p = lmatchp(line, "*NickName:")))
-								{
-								if(*p == '"' && !pip->nickName)
-									{
-									pip->nickName = ppd_finish_QuotedValue(ppd, p+1);
-
-									/* special parsing rule */
-									if(!pip->shortNickName)
-										pip->shortNickName = pip->nickName;
-									}
-								continue;
-								}
-							break;
-						case 'P':
-							if((p = lmatchp(line, "*Product:")))
-								{
-								if(*p == '"' && !pip->product)
-									{
-									pip->product = ppd_finish_QuotedValue(ppd, p+1);
-									}
-								continue;
-								}
-							if((p = lmatchp(line, "*PSVersion:")))
-								{
-								if(*p == '"' && !pip->psVersionStr)
-									{
-									float version;
-									int revision;
-									p++;
-									p[strcspn(p, "\"")] = '\0';
-									if(gu_sscanf(p, "(%f) %d", &version, &revision) == 2)
-										{
-										pip->psVersionStr = gu_strdup(p);
-										pip->psVersion = version;
-										pip->psRevision = revision;
-										}
-									}
-								continue;
-								}
-							if((p = lmatchp(line, "*Protocols:")))
-								{
-								char *f;
-								while((f = gu_strsep(&p, " \t")))
-									{
-									if(strcmp(f, "TBCP") == 0)
-										pip->protocols.TBCP = TRUE;
-									if(strcmp(f, "PJL") == 0)
-										pip->protocols.PJL = TRUE;
-									}
-								continue;
-								}
-							break;
-						case 'S':
-							if((p = lmatchp(line, "*ShortNickName:")))
-								{
-								if(*p == '"' && !pip->shortNickName)
-									{
-									pip->shortNickName = ppd_finish_QuotedValue(ppd, p+1);
-									}
-								continue;
-								}
-							break;
-						case 'T':
-							if((p = lmatchp(line, "*TTRasterizer:")))
-								{
-								if(!pip->ttRasterizer)
-									{
-									pip->ttRasterizer = gu_strdup(p);
-									}
-								continue;
-								}
-							break;
-						case 'V':
-							if((p = lmatchp(line, "*VMOption ")))
-								{
-								char *name = gu_strndup(p, strcspn(p, "/:"));
-								p += strcspn(p, ":");
-								if(*p == ':')
-									{
-									p++;
-									p += strspn(p, " \t");
-									if(*p == '"')
-										{
-										p++;
-										gu_pch_set(pip->VMOptions, name, gu_strndup(p, strcspn(p, "\"")));	
-										}
-									}
-								continue;
-								}
-							break;
-						}
-					}
-				}
-
-			/* If these wern't specified in the configuration file, choose defaults based 
-			 * on the interface and supported protocols as indicated in the PPD file.
-			 */
-			if(pip->feedback == -1)
-				pip->codes = interface_default_codes(pip->interface, &pip->protocols);
-			if(pip->jobbreak == JOBBREAK_DEFAULT)
-				pip->codes = interface_default_codes(pip->interface, &pip->protocols);
-			if(pip->codes == CODES_DEFAULT)
-				pip->codes = interface_default_codes(pip->interface, &pip->protocols);
-
-			/* These two codes settings mean that any 8 bit value can be passed to the
-			 * PostScript interpreter without being interpreted as a control code.
-			 */
-			if(pip->codes == CODES_Binary || pip->codes == CODES_TBCP)
-				pip->binaryOK = TRUE;
-		
-			/* Is a memory expansion module installed? */
+		while((line = ppdobj_readline(ppd)))
 			{
-			const char *name;
-			if((name = gu_pch_get(pip->options, "*InstalledMemory")))
+			if(qip->debug_level > 5)
+				printf("PPD: %s\n", line);
+			if(line[0] == '*')
 				{
-				const char *value_string;
-				if((value_string = gu_pch_get(pip->VMOptions, name)))
+				switch(line[1])
 					{
-					pip->psFreeVM = atoi(value_string);
+					case 'C':
+						if((p = lmatchp(line, "*ColorDevice:")))
+							{
+							if(!saw_ColorDevice)
+								{
+								if(strcmp(p, "True") == 0)
+									pip->colorDevice = TRUE;
+								else if(strcmp(p, "False") == 0)
+									pip->colorDevice = FALSE;
+								else if(qip->warnings)
+									fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid ColorDevice value of \"%s\".\n"), pip->ppdFile, p);
+
+								saw_ColorDevice = TRUE;
+								}
+							}
+					case 'D':
+						if((p = lmatchp(line, "*DefaultResolution:")) || (p = lmatchp(line, "*DefaultJCLResolution:")))
+							{
+							/* if not seen yet and looks reasonable */
+							if(!pip->resolution)
+								{
+								if(*p < '0' || *p > '9')
+									{
+									if(qip->warnings)
+										{
+										if(lmatch(line, "*DefaultResolution:"))
+											fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"), pip->ppdFile, "DefaultResolution", p);
+										else
+											fprintf(qip->warnings, _("Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"), pip->ppdFile, "DefaultJCLResolution", p);
+										}
+									}
+								else
+									{
+									/* Replace resolution variants like "600x600dpi" with things like "600dpi". */
+									char *p2;
+									if((p2 = strchr(p, 'x')))
+										{
+										int nlen = (p2 - p);
+										if(strncmp(p, p + nlen + 1, nlen) == 0 && strcmp(p + nlen + nlen + 1, "dpi") == 0)
+											{
+											p = p + nlen + 1;
+											}
+										}
+									pip->resolution = gu_strdup(p);
+									}
+								}
+							continue;
+							}
+					case 'F':
+						if((p = lmatchp(line, "*FaxSupport:")))
+							{
+							if(!pip->faxSupport)
+								{
+								pip->faxSupport = gu_strdup(p);
+								}
+							continue;
+							}
+						if((p = lmatchp(line, "*Font")))
+							{
+							p = gu_strndup(p, strcspn(p, ":"));
+							gu_pch_set(pip->fonts, p, "");	
+							continue;
+							}
+						if((p = lmatchp(line, "*FreeVM:")))
+							{
+							if(*p == '"' && pip->psFreeVM == 0)
+								{
+								pip->psFreeVM = atoi(p+1);
+								}
+							continue;
+							}
+						break;
+					case 'L':
+						if((p = lmatchp(line, "*LanguageLevel:")))
+							{
+							if(*p == '"' && !saw_LanguageLevel)
+								{
+								pip->psLanguageLevel = atoi(p+1);
+								saw_LanguageLevel = TRUE;
+								}
+							continue;
+							}
+						break;
+					case 'M':
+						if((p = lmatchp(line, "*ModelName:")))
+							{
+							if(*p == '"' && !pip->modelName)
+								pip->modelName = ppd_finish_QuotedValue(ppd, p+1);
+							continue;
+							}
+						break;
+					case 'N':
+						if((p = lmatchp(line, "*NickName:")))
+							{
+							if(*p == '"' && !pip->nickName)
+								{
+								pip->nickName = ppd_finish_QuotedValue(ppd, p+1);
+
+								/* special parsing rule */
+								if(!pip->shortNickName)
+									pip->shortNickName = pip->nickName;
+								}
+							continue;
+							}
+						break;
+					case 'P':
+						if((p = lmatchp(line, "*Product:")))
+							{
+							if(*p == '"' && !pip->product)
+								{
+								pip->product = ppd_finish_QuotedValue(ppd, p+1);
+								}
+							continue;
+							}
+						if((p = lmatchp(line, "*PSVersion:")))
+							{
+							if(*p == '"' && !pip->psVersionStr)
+								{
+								float version;
+								int revision;
+								p++;
+								p[strcspn(p, "\"")] = '\0';
+								if(gu_sscanf(p, "(%f) %d", &version, &revision) == 2)
+									{
+									pip->psVersionStr = gu_strdup(p);
+									pip->psVersion = version;
+									pip->psRevision = revision;
+									}
+								}
+							continue;
+							}
+						if((p = lmatchp(line, "*Protocols:")))
+							{
+							char *f;
+							while((f = gu_strsep(&p, " \t")))
+								{
+								if(strcmp(f, "TBCP") == 0)
+									pip->protocols.TBCP = TRUE;
+								if(strcmp(f, "PJL") == 0)
+									pip->protocols.PJL = TRUE;
+								}
+							continue;
+							}
+						break;
+					case 'S':
+						if((p = lmatchp(line, "*ShortNickName:")))
+							{
+							if(*p == '"' && !pip->shortNickName)
+								{
+								pip->shortNickName = ppd_finish_QuotedValue(ppd, p+1);
+								}
+							continue;
+							}
+						break;
+					case 'T':
+						if((p = lmatchp(line, "*TTRasterizer:")))
+							{
+							if(!pip->ttRasterizer)
+								{
+								pip->ttRasterizer = gu_strdup(p);
+								}
+							continue;
+							}
+						break;
+					case 'V':
+						if((p = lmatchp(line, "*VMOption ")))
+							{
+							char *name = gu_strndup(p, strcspn(p, "/:"));
+							p += strcspn(p, ":");
+							if(*p == ':')
+								{
+								p++;
+								p += strspn(p, " \t");
+								if(*p == '"')
+									{
+									p++;
+									gu_pch_set(pip->VMOptions, name, gu_strndup(p, strcspn(p, "\"")));	
+									}
+								}
+							continue;
+							}
+						break;
 					}
 				}
 			}
+
+		/* If these wern't specified in the configuration file, choose defaults based 
+		 * on the interface and supported protocols as indicated in the PPD file.
+		 */
+		if(pip->feedback == -1)
+			pip->codes = interface_default_codes(pip->interface, &pip->protocols);
+		if(pip->jobbreak == JOBBREAK_DEFAULT)
+			pip->codes = interface_default_codes(pip->interface, &pip->protocols);
+		if(pip->codes == CODES_DEFAULT)
+			pip->codes = interface_default_codes(pip->interface, &pip->protocols);
+
+		/* These two codes settings mean that any 8 bit value can be passed to the
+		 * PostScript interpreter without being interpreted as a control code.
+		 */
+		if(pip->codes == CODES_Binary || pip->codes == CODES_TBCP)
+			pip->binaryOK = TRUE;
+	
+		/* Is a memory expansion module installed? */
+		{
+		const char *name;
+		if((name = gu_pch_get(pip->options, "*InstalledMemory")))
+			{
+			const char *value_string;
+			if((value_string = gu_pch_get(pip->VMOptions, name)))
+				{
+				pip->psFreeVM = atoi(value_string);
+				}
 			}
-		gu_Final {
+		}
+		}
+	gu_Final {
+		if(ppd)
 			ppdobj_free(ppd);
-			}
-		gu_Catch {
-			gu_ReThrow();
-			}
+		}
+	gu_Catch {
+		/* Messed up PPD files shouldn't prevent us from describing the printer. */
 		}
 	} /* end of do_printer_ppd() */
 

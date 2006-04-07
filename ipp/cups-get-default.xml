@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<ipp>
+<request>
+	<version-number>1.0</version-number>
+	<operation-id>CUPS-Get-Default</operation-id>
+	<request-id>36</request-id>
+	<operation-attributes>
+		<charset><name>attributes-charset</name><value>US-ASCII</value></charset>
+		<naturalLanguage><name>attributes-natural-language</name><value>en-US</value></naturalLanguage>
+	</operation-attributes>
+</request>
+</ipp>
