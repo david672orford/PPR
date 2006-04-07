@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -86,15 +86,15 @@ static void job_count_adjust(int destid, int increment, gu_boolean flush)
 	if(destid_is_group(destid))
 		{
 		int gindex = destid_to_gindex(destid);
-		groups[gindex].job_count += increment;
+		groups[gindex].spool_state.job_count += increment;
 		if(flush)
-			group_spool_state_save(&groups[gindex]);
+			group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
 		}
 	else
 		{
-		printers[destid].job_count += increment;
+		printers[destid].spool_state.job_count += increment;
 		if(flush)
-			spool_state_save(&printers[destid]);
+			printer_spool_state_save(&(printers[destid].spool_state), printers[destid].name);
 		}
 	}
 

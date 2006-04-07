@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/qentryfile_load.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 7 April 2006.
 */
 
 /*! \file */
@@ -226,13 +226,13 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 
 			case 'P':
 				if(gu_sscanf(line, "PPRD: %hx %x %hx %hx",
-						&job->priority,
-						&job->priority_time,
-						&job->status,
-						&job->flags
+						&job->spool_state.priority,
+						&job->spool_state.priority_time,
+						&job->spool_state.status,
+						&job->spool_state.flags
 						) == 4)
 					{
-					job->status *= -1;
+					job->spool_state.status *= -1;
 					continue;
 					}
 				if(gu_sscanf(line, "PPRVersion: %f", &job->PPRVersion) == 1)

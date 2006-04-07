@@ -287,6 +287,11 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'd':							/* debug */
+				if(strspn(getopt_state.optarg, "0123456789") != strlen(getopt_state.optarg))
+					{
+					gu_utf8_fprintf(stderr, _("%s: debug level must be a positive integer\n"), myname);
+					exit(EXIT_SYNTAX);
+					}
 				debug_level = atoi(getopt_state.optarg);
 				break;
 

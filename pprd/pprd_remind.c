@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_remind.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 September 2005.
+** Last modified 7 April 2006.
 */
 
 #include "config.h"
@@ -63,10 +63,10 @@ void ppad_remind(void)
 	/* Quickly scan the list to see if there is anything we should nag about. */
 	for(x=0; x < printer_count; x++)
 		{
-		status = printers[x].status;
-		next_error_retry = printers[x].next_error_retry;
-		next_engaged_retry = printers[x].next_engaged_retry;
-		interval = abs(printers[x].alert_interval);
+		status = printers[x].spool_state.status;
+		next_error_retry = printers[x].spool_state.next_error_retry;
+		next_engaged_retry = printers[x].spool_state.next_engaged_retry;
+		interval = abs(printers[x].alert.interval);
 
 		if( (status == PRNSTATUS_FAULT && (next_engaged_retry > interval || next_error_retry == 0))
 				|| (status == PRNSTATUS_ENGAGED && (next_engaged_retry * ENGAGED_RETRY / 60) > 20) )
@@ -124,10 +124,10 @@ void ppad_remind(void)
 
 			for(x=0; x < printer_count; x++)
 				{
-				status = printers[x].status;
-				next_error_retry = printers[x].next_error_retry;
-				next_engaged_retry = printers[x].next_engaged_retry;
-				interval = abs(printers[x].alert_interval);
+				status = printers[x].spool_state.status;
+				next_error_retry = printers[x].spool_state.next_error_retry;
+				next_engaged_retry = printers[x].spool_state.next_engaged_retry;
+				interval = abs(printers[x].alert.interval);
 
 				/*
 				** If it is a fault which has persisted long enough to have

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_destid.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 November 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -61,7 +61,7 @@ const char *destid_to_name(int destid)
 		}
 	else
 		{
-		if(destid < printer_count && printers[destid].status != PRNSTATUS_DELETED)
+		if(destid < printer_count && printers[destid].spool_state.status != PRNSTATUS_DELETED)
 			return printers[destid].name;
 		else
 			return "<invalid>";
@@ -78,7 +78,7 @@ int destid_by_printer(const char name[])
 
 	for(x=0; x < printer_count; x++)
 		{
-		if(printers[x].status != PRNSTATUS_DELETED && strcmp(printers[x].name, name) == 0)
+		if(printers[x].spool_state.status != PRNSTATUS_DELETED && strcmp(printers[x].name, name) == 0)
 			return x;
 		}
 
@@ -243,9 +243,9 @@ int destid_by_gindex(int gindex)
 gu_boolean destid_accepting(int destid)
 	{
 	if(destid_is_group(destid))
-		return groups[destid_to_gindex(destid)].accepting;
+		return groups[destid_to_gindex(destid)].spool_state.accepting;
 	else
-		return printers[destid].accepting;
+		return printers[destid].spool_state.accepting;
 	} /* end of destid_accepting() */
 
 /* end of file */

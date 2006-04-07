@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 January 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -280,7 +280,7 @@ void warning(int level, const char *message, ... )
 	char wfname[MAX_PPR_PATH];
 	FILE *wfile;
 
-	if(!qentry.destname)
+	if(!qentry.jobname.destname)
 		fatal(PPREXIT_OTHERERR, "%s(): assertion failed", function);
 
 	if(level < warning_level)	/* if warning level too low */
@@ -288,7 +288,7 @@ void warning(int level, const char *message, ... )
 
 	if(warning_log)				/* if warnings are to go to log file, */
 		{						/* open this job's log file */
-		ppr_fnamef(wfname, "%s/%s-%d.0-log", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(wfname, "%s/%s-%d.0-log", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		if(!(wfile = fopen(wfname, "a")))
 			{
 			fprintf(stderr, _("Failed to open log file, using stderr.\n"));
@@ -419,7 +419,7 @@ int write_queue_file(struct QEntryFile *qentry)
 	qentry->magic_cookie = magic_cookie;
 
 	/* Construct the queue file name. */
-	ppr_fnamef(qfname, "%s/%s-%d.%d", QUEUEDIR, qentry->destname, qentry->id, qentry->subid);
+	ppr_fnamef(qfname, "%s/%s-%d.%d", QUEUEDIR, qentry->jobname.destname, qentry->jobname.id, qentry->jobname.subid);
 
 	/* Very carefully open the queue file. */
 	if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, (S_IRUSR | S_IWUSR))) < 0)
@@ -434,15 +434,15 @@ int write_queue_file(struct QEntryFile *qentry)
 	fprintf(Qfile, "EndAddon\n");
 
 	/* Add "Media:" lines which indicate what kind of media the job requires. */
-	write_media_lines(Qfile, qentry->subid);
+	write_media_lines(Qfile, qentry->jobname.subid);
 	fprintf(Qfile, "EndMedia\n");
 
 	/* Add "Res:" lines which indicate which fonts, procedure sets, etc. the job requires. */
-	write_resource_lines(Qfile, qentry->subid);
+	write_resource_lines(Qfile, qentry->jobname.subid);
 	fprintf(Qfile, "EndRes\n");
 
 	/* Add "Req:" lines which indicate what printer features are required. */
-	write_requirement_lines(Qfile, qentry->subid);
+	write_requirement_lines(Qfile, qentry->jobname.subid);
 	fprintf(Qfile, "EndReq\n");
 
 	/* Write "@PJL" lines which preserve certain PJL commands from the input file. */
@@ -522,7 +522,7 @@ static FILE *open_fifo(const char name[])
 */
 void submit_job(struct QEntryFile *qe, int subid)
 	{
-	fprintf(FIFO, "j %s-%d.%d\n", qe->destname, qe->id, subid);
+	fprintf(FIFO, "j %s-%d.%d\n", qe->jobname.destname, qe->jobname.id, subid);
 
 	/*
 	** If --show-jobid has been used, display the id of the 
@@ -534,9 +534,9 @@ void submit_job(struct QEntryFile *qe, int subid)
 	if(option_show_jobid)
 		{
 		if(subid == 0)
-			printf(_("request id is %s-%d (1 file)\n"), qentry.destname, qentry.id);
+			printf(_("request id is %s-%d (1 file)\n"), qentry.jobname.destname, qentry.jobname.id);
 		else
-			printf(_("Request id: %s-%d.%d\n"), qentry.destname, qentry.id, subid);
+			printf(_("Request id: %s-%d.%d\n"), qentry.jobname.destname, qentry.jobname.id, subid);
 		}
 	} /* end of submit_job() */
 
@@ -551,7 +551,7 @@ void submit_job(struct QEntryFile *qe, int subid)
 */
 static void authorization_charge(void)
 	{
-	if(destination_protected(qentry.destname))
+	if(destination_protected(qentry.jobname.destname))
 		{
 		struct userdb user;
 		int ret;
@@ -639,19 +639,19 @@ void file_cleanup(void)
 		{
 		char fname[MAX_PPR_PATH];
 
-		ppr_fnamef(fname, "%s/%s-%d.0", QUEUEDIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0", QUEUEDIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s-%d.0-comments", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0-comments", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s-%d.0-text", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0-text", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s-%d.0-pages", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0-pages", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 
-		ppr_fnamef(fname, "%s/%s-%d.0-log", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0-log", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 		}
 
@@ -1322,7 +1322,7 @@ static void doopt_pass1(int optchar, const char *optarg, const char *true_option
 	switch(optchar)
 		{
 		case 'd':								/* destination queue */
-			qentry.destname = optarg;
+			qentry.jobname.destname = optarg;
 			break;
 		}
 	} /* end of doopt_pass1() */
@@ -1401,7 +1401,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			if((sysv_priority = atoi(optarg)) < 0 || sysv_priority > 39)
 				fatal(PPREXIT_SYNTAX, _("%s option must be between 0 and 39"), true_option);
 			/* Scale to IPP priority range of 1--100 inclusive. */
-			qentry.priority = (100 - (int)(sysv_priority * 2.55));
+			qentry.spool_state.priority = (100 - (int)(sysv_priority * 2.55));
 			}
 			break;
 
@@ -1659,14 +1659,14 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1000:								/* --features */
-			exit(option_features(qentry.destname));
+			exit(option_features(qentry.jobname.destname));
 
 		case 1001:								/* --print-id-to-fd */
 			option_print_id_to_fd = atoi(optarg);
 			break;
 
 		case 1002:								/* --ipp-priority */
-			if((qentry.priority = atoi(optarg)) < 1 || qentry.priority > 100)
+			if((qentry.spool_state.priority = atoi(optarg)) < 1 || qentry.spool_state.priority > 100)
 				fatal(PPREXIT_SYNTAX, _("%s option must be between 1 and 100"), true_option);
 			break;
 
@@ -1675,7 +1675,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1004:								/* --hold */
-			qentry.status = STATUS_HELD;
+			qentry.spool_state.status = STATUS_HELD;
 			break;
 
 		case 1005:								/* --responder-options */
@@ -1740,12 +1740,12 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			break;
 
 		case 1017:								/* --save */
-			qentry.flags |= JOB_FLAG_SAVE;
+			qentry.spool_state.flags |= JOB_FLAG_SAVE;
 			break;
 
 		case 1018:								/* --question */
 			qentry.question = optarg;
-			qentry.flags |= JOB_FLAG_QUESTION_UNANSWERED;
+			qentry.spool_state.flags |= JOB_FLAG_QUESTION_UNANSWERED;
 			break;
 
 		case 1019:								/* --ripopts */
@@ -1848,13 +1848,14 @@ int main(int argc, char *argv[])
 	** elsewhere.  It is important that we do this right away
 	** since one of the things we do is get our queue id.
 	*/
-	qentry.destname = NULL;								/* name of printer or group */
-	qentry.id = 0;										/* not assigned yet */
-	qentry.subid = 0;									/* job fragment number (unused) */
-	qentry.status = STATUS_WAITING;
-	qentry.flags = 0;
 	qentry.time = time((time_t*)NULL);					/* job submission time */
-	qentry.priority = 50;								/* default priority */
+	qentry.jobname.destname = NULL;						/* name of printer or group */
+	qentry.jobname.id = 0;								/* not assigned yet */
+	qentry.jobname.subid = 0;							/* job fragment number (unused) */
+	qentry.spool_state.priority = 50;					/* default priority */
+	qentry.spool_state.priority_time = qentry.time;
+	qentry.spool_state.status = STATUS_WAITING;
+	qentry.spool_state.flags = 0;
 	qentry.user = NULL;
 	qentry.For = NULL;
 	qentry.charge_to = NULL;
@@ -2007,13 +2008,13 @@ int main(int argc, char *argv[])
 	** (We want to do this as soon as possible so that
 	** messages which refer to the job id will look right.)
 	*/
-	if(!qentry.destname)
+	if(!qentry.jobname.destname)
 		{
 		const char *ptr;
 		if(!(ptr = getenv("PPRDEST")))
 			if(!(ptr = getenv("PRINTER")))
 				ptr = "default";
-		qentry.destname = ptr;
+		qentry.jobname.destname = ptr;
 		}
 
 	/*
@@ -2022,7 +2023,7 @@ int main(int argc, char *argv[])
 	{
 	const char *ptr;
 	if((ptr = extract_forwhat()))
-		qentry.destname = ptr;
+		qentry.jobname.destname = ptr;
 	}
 
 	/*
@@ -2053,11 +2054,11 @@ int main(int argc, char *argv[])
 	** can cause real problems later, therefor, try to
 	** detect it now.
 	*/
-	if(qentry.destname[0] == '\0')
+	if(qentry.jobname.destname[0] == '\0')
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name is empty"));
-	if(strpbrk(qentry.destname, DEST_DISALLOWED))
+	if(strpbrk(qentry.jobname.destname, DEST_DISALLOWED))
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name contains a disallowed character"));
-	if(strchr(DEST_DISALLOWED_LEADING, (int)qentry.destname[0]))
+	if(strchr(DEST_DISALLOWED_LEADING, (int)qentry.jobname.destname[0]))
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name starts with a disallowed character"));
 
 	/*
@@ -2182,7 +2183,7 @@ int main(int argc, char *argv[])
 	** a "-infile" file.  That is why we test to see
 	** if it has been assigned yet.
 	*/
-	if(qentry.id == 0)
+	if(qentry.jobname.id == 0)
 		get_next_id(&qentry);
 
 	/* ================== Input PostScript Processing Starts ===================== */
@@ -2525,7 +2526,7 @@ int main(int argc, char *argv[])
 	if(option_print_id_to_fd != -1)
 		{
 		char temp[10];
-		snprintf(temp, sizeof(temp), "%d\n", qentry.id);
+		snprintf(temp, sizeof(temp), "%d\n", qentry.jobname.id);
 		write(option_print_id_to_fd, temp, strlen(temp));
 		}
 

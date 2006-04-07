@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 March 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -78,7 +78,7 @@
 static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int prnid)
 	{
 	const char function[] = "printer_add_status";
-	switch(printers[prnid].status)
+	switch(printers[prnid].spool_state.status)
 		{
 		case PRNSTATUS_IDLE:
 			if(request_attrs_attr_requested(req, "printer-state"))
@@ -167,10 +167,10 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 				}
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
-				if(printers[prnid].next_error_retry)
+				if(printers[prnid].spool_state.next_error_retry)
 					{
 					ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-						"printer-state-message", _("fault, retry %d in %d seconds"), printers[prnid].next_error_retry, printers[prnid].countdown);
+						"printer-state-message", _("fault, retry %d in %d seconds"), printers[prnid].spool_state.next_error_retry, printers[prnid].spool_state.countdown);
 					}
 				else
 					{
@@ -188,7 +188,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			if(request_attrs_attr_requested(req, "printer-state-message"))
 				{
 				ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-					"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), printers[prnid].next_engaged_retry, printers[prnid].countdown);
+					"printer-state-message", _("otherwise engaged or off-line, retry %d in %d seconds"), printers[prnid].spool_state.next_engaged_retry, printers[prnid].spool_state.countdown);
 				}
 			break;
 		case PRNSTATUS_STARVED:
@@ -205,7 +205,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, int p
 			break;
 
 		default:
-			error("%s(): invalid printer_status %d", function, printers[prnid].status);
+			error("%s(): invalid printer_status %d", function, printers[prnid].spool_state.status);
 			break;
 		}
 
@@ -367,7 +367,7 @@ static void ipp_cancel_job(struct IPP *ipp)
 				   if it is halting or stopping we don't want to mess with
 				   that.
 				   */
-				if(printers[prnid].status == PRNSTATUS_PRINTING)
+				if(printers[prnid].spool_state.status == PRNSTATUS_PRINTING)
 					printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
 
 				/* Set flag so that job will be deleted when pprdrv dies. */
@@ -399,7 +399,7 @@ static void ipp_cancel_job(struct IPP *ipp)
 							&& printers[prnid].job_subid == queue[i].subid
 							)
 						{
-						if(printers[prnid].status == PRNSTATUS_SEIZING)
+						if(printers[prnid].spool_state.status == PRNSTATUS_SEIZING)
 							printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
 						printers[prnid].hold_job = FALSE;
 						printers[prnid].cancel_job = TRUE;
@@ -461,8 +461,8 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, int
 		ipp_add_boolean(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN,
 			"printer-is-accepting-jobs",
 			destid_is_group(destid)
-				? groups[destid_to_gindex(destid)].accepting
-				: printers[destid].accepting
+				? groups[destid_to_gindex(destid)].spool_state.accepting
+				: printers[destid].spool_state.accepting
 			);
 		}
 
@@ -664,7 +664,7 @@ static void cups_get_printers(struct IPP *ipp)
 	lock();
 	for(i=0; i < printer_count; i++)
 		{
-		if(printers[i].status == PRNSTATUS_DELETED)
+		if(printers[i].spool_state.status == PRNSTATUS_DELETED)
 			continue;
 		add_queue_attributes(ipp, req, i);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);

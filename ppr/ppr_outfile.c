@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_outfile.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -100,10 +100,10 @@ void get_next_id(struct QEntryFile *q)
 
 		/* Perform a crude test to alieviate the problems of ID wraparound.
 		   If a job exists with which we would collide, then skip this id. */
-		ppr_fnamef(tempqfname, "%s/%s-%d.%d", QUEUEDIR, qentry.destname, tid, 0);
+		ppr_fnamef(tempqfname, "%s/%s-%d.%d", QUEUEDIR, qentry.jobname.destname, tid, 0);
 		} while(stat(tempqfname, &statbuf) == 0);
 
-	q->id = tid;
+	q->jobname.id = tid;
 	} /* end of get_next_id() */
 
 /*
@@ -116,17 +116,17 @@ void open_output(void)
 	char temp[MAX_PPR_PATH];
 
 	/* file for header and trailer comments */
-	ppr_fnamef(temp, "%s/%s-%d.%d-comments", DATADIR, qentry.destname, qentry.id, qentry.subid);
+	ppr_fnamef(temp, "%s/%s-%d.%d-comments", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
 	if(!(comments = fopen(temp, "wb")))
 		fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
 
 	/* file for page comments */
-	ppr_fnamef(temp, "%s/%s-%d.%d-pages", DATADIR, qentry.destname, qentry.id, qentry.subid);
+	ppr_fnamef(temp, "%s/%s-%d.%d-pages", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
 	if(!(page_comments = fopen(temp, "wb")))
 		fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
 
 	/* file for the PostScript text */
-	ppr_fnamef(temp,"%s/%s-%d.%d-text", DATADIR, qentry.destname, qentry.id, qentry.subid);
+	ppr_fnamef(temp,"%s/%s-%d.%d-text", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
 	if(!(text = fopen(temp, "wb")))
 		fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
 	} /* end of open_output() */

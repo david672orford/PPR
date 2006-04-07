@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-06 11:06-0400\n"
+"POT-Creation-Date: 2006-04-07 12:41-0400\n"
 "PO-Revision-Date: 2005-10-15 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -1963,110 +1963,102 @@ msgid "Total Sheets"
 msgstr ""
 
 #: ../www/qquery_xlate.pl:75
-msgid "Current Queue Priority of this Job"
-msgstr ""
-
-#: ../www/qquery_xlate.pl:75
 msgid "Priority"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:76
-msgid "Orig. Priority"
+#: ../www/qquery_xlate.pl:75
+msgid "Queue Priority of this Job"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:76
-msgid "Original Queue Priority of this Job"
-msgstr ""
-
-#: ../www/qquery_xlate.pl:78
+#: ../www/qquery_xlate.pl:77
 msgid "Banner?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:78
+#: ../www/qquery_xlate.pl:77
 msgid "Was a Banner Page Requested?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:79
+#: ../www/qquery_xlate.pl:78
 msgid "Trailer?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:79
+#: ../www/qquery_xlate.pl:78
 msgid "Was a Trailer Page Requested?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:81
+#: ../www/qquery_xlate.pl:80
 msgid "Size (input bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:81
+#: ../www/qquery_xlate.pl:80
 msgid "Size of Input File Before Conversion to PostScript"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:82
+#: ../www/qquery_xlate.pl:81
 msgid "Size (PS bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:82
+#: ../www/qquery_xlate.pl:81
 msgid "Size of Input File After Conversion to PostScript"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:84
+#: ../www/qquery_xlate.pl:83
 msgid "Does this Document have a DSC Prolog?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:84
+#: ../www/qquery_xlate.pl:83
 #, fuzzy
 msgid "Prolog Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:85
+#: ../www/qquery_xlate.pl:84
 #, fuzzy
 msgid "Docsetup Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:85
+#: ../www/qquery_xlate.pl:84
 msgid "Does this Document have a DSC Document Setup Section?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 msgid "Does this Document have a DSC Script?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 #, fuzzy
 msgid "Script Present?"
 msgstr "Есть?"
 
-#: ../www/qquery_xlate.pl:88
+#: ../www/qquery_xlate.pl:87
 msgid "DSC Proofmode Setting"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:88
+#: ../www/qquery_xlate.pl:87
 msgid "Proofmode"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:89
+#: ../www/qquery_xlate.pl:88
 #, fuzzy
 msgid "Orientation"
 msgstr "Операция:"
 
-#: ../www/qquery_xlate.pl:89
+#: ../www/qquery_xlate.pl:88
 msgid "Portrait or Landscape"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "Draft Notice"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "Message to Print Diagonally Across Each Page"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 #, fuzzy
 msgid "Page Order"
 msgstr "Размир Страницы:"

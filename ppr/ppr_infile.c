@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_infile.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 27 May 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -1851,7 +1851,7 @@ static void exec_tops_filter(const char filter_path[], const char filter_name[],
 	if(option_gab_mask & GAB_INFILE_FILTER)
 		printf("Final filter options: \"%s\"\n", gu_pcs_get_cstr(&clean_options));
 
-	exec_filter(filter_path, filter_name, gu_pcs_get_cstr(&clean_options), qentry.destname, title, (char*)NULL);
+	exec_filter(filter_path, filter_name, gu_pcs_get_cstr(&clean_options), qentry.jobname.destname, title, (char*)NULL);
 
 	gu_pcs_free(&clean_options);
 	} /* end of exec_tops_filter() */
@@ -1922,7 +1922,7 @@ static void no_filter(const char *file_type_str)
 		qentry.do_banner = BANNER_YESPLEASE;
 
 		/* Try to add a message to the log file. */
-		ppr_fnamef(lfname, "%s/%s-%d.0-log", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(lfname, "%s/%s-%d.0-log", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		if((lfile = fopen(lfname, "a")))
 			{
 			fprintf(lfile, _("Can't print %s.\n"), xlated_file_type_str);
@@ -2116,13 +2116,13 @@ static void save_infile(void)
 	** will see that we have assingned the id and will
 	** not do it again.
 	*/
-	if(qentry.id == 0)
+	if(qentry.jobname.id == 0)
 		get_next_id(&qentry);
 
 	/*
 	** The input file will be copied into a file in the jobs directory.
 	*/
-	ppr_fnamef(fname, DATADIR"/%s-%d.%d-infile", qentry.destname,qentry.id, qentry.subid);
+	ppr_fnamef(fname, DATADIR"/%s-%d.%d-infile", qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
 
 	if((out_handle = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) == -1)
 		fatal(PPREXIT_OTHERERR, "%s(): can't create \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
@@ -2218,13 +2218,13 @@ static void do_passthru(const struct FILTER *f)
 	int out_handle;
 	int bytes_written;
 
-	if(qentry.id == 0)
+	if(qentry.jobname.id == 0)
 		get_next_id(&qentry);
 
 	/* The input file will be copied into a "-barbar" file in the
 	   jobs directory.  Create the "-barbar" file.  We will use this
 	   fname[] value again later. */
-	ppr_fnamef(fname, DATADIR"/%s-%d.%d-barbar", qentry.destname,qentry.id, qentry.subid);
+	ppr_fnamef(fname, DATADIR"/%s-%d.%d-barbar", qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
 	if((out_handle = open(fname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR)) < 0)
 		fatal(PPREXIT_OTHERERR, "%s(): can't create \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno));
 	barbar_file_created = TRUE;
@@ -2524,14 +2524,14 @@ void infile_file_cleanup(void)
 
 	if(keepinfile_file_created)
 		{
-		ppr_fnamef(fname, "%s/%s-%d.0-infile", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0-infile", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 		keepinfile_file_created = FALSE;
 		}
 
 	if(barbar_file_created)
 		{
-		ppr_fnamef(fname, "%s/%s-%d.0-barbar", DATADIR, qentry.destname, qentry.id);
+		ppr_fnamef(fname, "%s/%s-%d.0-barbar", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 		barbar_file_created = FALSE;
 		}

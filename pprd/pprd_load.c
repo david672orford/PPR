@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -73,32 +73,32 @@ static void load_printer(struct Printer *printer, const char prnname[])
 
 	printer->name = gu_strdup(prnname);
 
-	printer->alert_interval = 0;				/* no alerts */
-	printer->alert_method = (char*)NULL;		/* (At least not until we */
-	printer->alert_address = (char*)NULL;		/* read an "Alert:" line.) */
+	printer->alert.interval = 0;		/* no alerts */
+	printer->alert.method = NULL;		/* (At least not until we */
+	printer->alert.address = NULL;		/* read an "Alert:" line.) */
 
-	printer->accepting = TRUE;					/* is accepting */
-	printer->protect = FALSE;					/* not protected that we know of yet */
-	printer->charge_per_duplex = 0;				/* we don't charge any money to use it */
+	printer->charge_per_duplex = 0;		/* we don't charge any money to use it */
 	printer->charge_per_simplex = 0;
 
-	printer->nbins = 0;							/* start with zero bins */
-	printer->AutoSelect_exists = FALSE;			/* start with no "AutoSelect" bin */
+	printer->nbins = 0;					/* start with zero bins */
+	printer->AutoSelect_exists = FALSE;	/* start with no "AutoSelect" bin */
 
-	printer->ppop_pid = (pid_t)0;				/* nobody waiting for stop */
-	printer->cancel_job = FALSE;				/* don't cancel a job on next pprdrv exit */
-	printer->hold_job = FALSE;					/* don't hold job on next pprdrv exit */
-	printer->job_count = 0;						/* no jobs that we know of (yet) */
+	printer->ppop_pid = (pid_t)0;		/* nobody waiting for stop */
+	printer->cancel_job = FALSE;		/* don't cancel a job on next pprdrv exit */
+	printer->hold_job = FALSE;			/* don't hold job on next pprdrv exit */
 
-	/* Is the printer accepting jobs? */
-	if(get_file_boolean(PRINTERS_PERSISTENT_STATEDIR, prnname, "rejecting"))	
-		printer->accepting = FALSE;
-
-	/* Is the printer stopt or in fault state? */
-	spool_state_load(printer);
+	/* Load the saved state of the printer but zero out the job
+	 * count since the system administrator may have deleted jobs
+	 * manually while pprd was down.
+	 *
+	 * This must come before the code which reads the "Charge:"
+	 * line from the config file.
+	 */
+	printer_spool_state_load(&(printer->spool_state), printer->name);
+	printer->spool_state.job_count = 0;
 		
 	/* Handle state transitions brought about by killing pprd. */
-	switch(printer->status)
+	switch(printer->spool_state.status)
 		{
 		case PRNSTATUS_PRINTING:
 		case PRNSTATUS_CANCELING:
@@ -110,6 +110,7 @@ static void load_printer(struct Printer *printer, const char prnname[])
 			break;
 		}
 
+	/* Pull what we need out of the printer's configuration file. */
 	while((line = gu_getline(line, &line_space, prncf)))
 		{
 		if(*line==';' || *line=='#')
@@ -118,17 +119,17 @@ static void load_printer(struct Printer *printer, const char prnname[])
 		/* For "Alert:" lines, read the interval, method, and address. */
 		else if(lmatch(line, "Alert:"))
 			{
-			if(printer->alert_method)
+			if(printer->alert.method)
 				{
-				gu_free(printer->alert_method);
-				printer->alert_method = NULL;
+				gu_free(printer->alert.method);
+				printer->alert.method = NULL;
 				}
-			if(printer->alert_address)
+			if(printer->alert.address)
 				{
-				gu_free(printer->alert_address);
-				printer->alert_address = NULL;
+				gu_free(printer->alert.address);
+				printer->alert.address = NULL;
 				}
-			gu_sscanf(line, "Alert: %d %S %S", &printer->alert_interval, &printer->alert_method, &printer->alert_address);
+			gu_sscanf(line, "Alert: %d %S %S", &printer->alert.interval, &printer->alert.method, &printer->alert.address);
 			}
 
 		/* For each "Bin:" line, add the bin to the list */
@@ -169,18 +170,13 @@ static void load_printer(struct Printer *printer, const char prnname[])
 			else
 				printer->charge_per_simplex = printer->charge_per_duplex;
 
-			printer->protect = TRUE;
+			printer->spool_state.protected = TRUE;
 			}
 
 		} /* end of while(), unknown lines are ignored */
 
 	/* Close that configuration file! */
 	fclose(prncf);
-
-	/* If printer is protected, create the "protected" file, otherwise
-	 * delete it.  We do this for the convienence of ppr.
-	*/
-	set_file_boolean(PRINTERS_PERSISTENT_STATEDIR, prnname, "protected", printer->protect);
 
 	/* Create the directories which will hold this printer's dynamic 
 	   state information. */
@@ -189,11 +185,9 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	ppr_fnamef(fname, "%s/%s", PRINTERS_PERSISTENT_STATEDIR, prnname);
 	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
 		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
-
 	ppr_fnamef(fname, "%s/%s", PRINTERS_PURGABLE_STATEDIR, prnname);
 	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
 		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
-
 	}
 	} /* end of load_printer() */
 
@@ -272,18 +266,20 @@ void new_printer_config(char *printer)
 	*/
 	for(prnid = 0; prnid < printer_count; prnid++)
 		{
-		if(printers[prnid].status == PRNSTATUS_DELETED) /* take note */
+		/* Take note if there are any deleted slots which we can reuse. */
+		if(printers[prnid].spool_state.status == PRNSTATUS_DELETED)
 			{
-			if(first_deleted == -1)						/* if there are any */
-				first_deleted = prnid;					/* deleted slots we can use */
+			if(first_deleted == -1)
+				first_deleted = prnid;
 			continue;
 			}
-		if(strcmp(printers[prnid].name, printer) == 0)	/* If the name matches the one we are looking for, */
+		/* If the name matches the one we are looking for, */
+		if(strcmp(printers[prnid].name, printer) == 0)
 			{
 			gu_free(printers[prnid].name);
 			printers[prnid].name = NULL;
-			gu_free_if(printers[prnid].alert_method);
-			gu_free_if(printers[prnid].alert_address);
+			gu_free_if(printers[prnid].alert.method);
+			gu_free_if(printers[prnid].alert.address);
 			break;
 			}
 		}
@@ -321,8 +317,10 @@ void new_printer_config(char *printer)
 			}
 		else
 			{
-			state_update("PRNDELETE %s", printer);		/* inform queue display programs */
-			printers[prnid].status = PRNSTATUS_DELETED; /* mark as deleted */
+			/* inform queue display programs */
+			state_update("PRNDELETE %s", printer);
+			/* mark printer as deleted */
+			printers[prnid].spool_state.status = PRNSTATUS_DELETED;
 			}
 		}
 
@@ -332,7 +330,7 @@ void new_printer_config(char *printer)
 	
 		state_update("PRNRELOAD %s", printer);		/* Inform queue display programs. */
 	
-		saved_status = printers[prnid].status;		/* We will use these in a moment */
+		saved_status = printers[prnid].spool_state.status;		/* We will use these in a moment */
 		saved_ppop_pid = printers[prnid].ppop_pid;	/* if the printer is not new. */
 	
 		load_printer(&printers[prnid], printer);	/* load printer configuration */
@@ -343,7 +341,7 @@ void new_printer_config(char *printer)
 		if( ! is_new)
 			{
 			/* restore its status */
-			printers[prnid].status = saved_status;
+			printers[prnid].spool_state.status = saved_status;
 			printers[prnid].ppop_pid = saved_ppop_pid;
 	
 			/* Since the configuration is new, this printer may be able to print
@@ -374,7 +372,7 @@ void new_printer_config(char *printer)
 			   Questions: why is this necessary?
 			   Possible answer: because the bins may have changed.
 			   */
-			if(printers[prnid].status == PRNSTATUS_IDLE)
+			if(printers[prnid].spool_state.status == PRNSTATUS_IDLE)
 				printer_look_for_work(prnid);
 			}
 		} /* end if if printer still exists */
@@ -404,14 +402,11 @@ static void load_group(struct Group *cl, const char grpname[])
 
 	cl->name = gu_strdup(grpname);		/* store the group name */
 	cl->last = -1;						/* initialize last used member value */
-
-	cl->held = get_file_boolean(GROUPS_PERSISTENT_STATEDIR, grpname, "held");
-	cl->accepting = !get_file_boolean(GROUPS_PERSISTENT_STATEDIR, grpname, "rejecting");
-
-	cl->protect = FALSE;				/* don't protect by default */
 	cl->deleted = FALSE;				/* it is not a deleted group! */
 	cl->rotate = TRUE;					/* rotate is default */
-	cl->job_count = 0;					/* no jobs that we know of (yet) */
+	
+	group_spool_state_load(&(cl->spool_state), cl->name);
+	cl->spool_state.job_count = 0;
 
 	y=0;
 	while((line = gu_getline(line, &line_space, f)))
@@ -431,9 +426,9 @@ static void load_group(struct Group *cl, const char grpname[])
 				}
 			else
 				{
-				if(printers[cl->printers[y]].protect)
-										/* if this printer is protected, */
-					cl->protect = TRUE; /* protect the group */
+				/* If this printer is protected, protect the group. */
+				if(printers[cl->printers[y]].spool_state.protected)
+					cl->spool_state.protected = TRUE;
 				y++;					/* increment members index */
 				}
 			gu_free(extract);
@@ -450,11 +445,6 @@ static void load_group(struct Group *cl, const char grpname[])
 		}
 
 	fclose(f);
-
-	/* If group is protected, create the "protected" file, otherwise
-	 * delete it.  We do this for the convienence of ppr.
-	*/
-	set_file_boolean(GROUPS_PERSISTENT_STATEDIR, grpname, "protected", cl->protect);
 
 	cl->members=y;			/* set the members count */
 	} /* end of load_group() */
@@ -590,7 +580,7 @@ void new_group_config(char *group)
 		/* look for work for any group members which are idle */
 		for(y=0; y<groups[x].members; y++)
 			{
-			if(printers[groups[x].printers[y]].status == PRNSTATUS_IDLE)
+			if(printers[groups[x].printers[y]].spool_state.status == PRNSTATUS_IDLE)
 				printer_look_for_work(groups[x].printers[y]);
 			}
 		}
@@ -634,14 +624,14 @@ void initialize_queue(void)
 
 	/* Flush out queue job counts. */
 	for(iii=0; iii < printer_count; iii++)
-		spool_state_save(&printers[iii]);
+		printer_spool_state_save(&(printers[iii].spool_state), printers[iii].name);
 	for(iii=0; iii < group_count; iii++)
-		group_spool_state_save(&groups[iii]);
+		group_spool_state_save(&(groups[iii].spool_state), groups[iii].name);
 
 	/* Give each idle printer a chance to start. */
 	for(iii=0; iii < printer_count; iii++)
 		{
-		if(printers[iii].status == PRNSTATUS_IDLE)
+		if(printers[iii].spool_state.status == PRNSTATUS_IDLE)
 			printer_look_for_work(iii);
 		}
 

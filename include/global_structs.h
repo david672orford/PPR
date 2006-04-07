@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 5 April 2006.
+** Last modified 7 April 2006.
 */
 
 /* =================== for pprd queue entries =====================*/
@@ -71,6 +71,21 @@ struct QEntry
 
 /* =================== for disk queue entries =====================*/
 
+struct Jobname
+	{
+	const char *destname;
+	SHORT_INT id;
+	SHORT_INT subid;
+	} ;
+
+struct JOB_SPOOL_STATE
+	{
+	int priority;						/* priority number (1--100) */
+	long priority_time;
+	SHORT_INT status;					/* job status */
+	short unsigned int flags;			/* job flags */
+	} ;
+	
 struct RESPONDER {
 	const char *name;		/* program for sending messages to user */
 	const char *address;	/* address for errors, possibly NULL */
@@ -88,19 +103,13 @@ struct QEntryFile
 	float PPRVersion;					/* version number of PPR that created queue entry */
 	const char *lc_messages;			/* language setting for messages */
 
-	const char *destname;				/* destination (group or printer) */
-	short int id;						/* queue id number */
-	short int subid;					/* fractional part of id number */
+	struct Jobname jobname;				/* destname-id.subid */
 
-	SHORT_INT status;					/* job status */
-	short unsigned int flags;			/* job flags */
-	const char *magic_cookie;			/* secret about this job */
+	struct JOB_SPOOL_STATE spool_state;
 
-	int priority;						/* priority number (1--100) */
-	long priority_time;
-	
 	long time;							/* time job was submitted (don't use time_t) */
 	const char *user;					/* username or username@host */
+	const char *magic_cookie;			/* secret about this job */
 	const char *For;					/* %%For: line for PostScript header */
 	const char *charge_to;				/* charge account to debit */
 	const char *Routing;				/* %%Routing: line for PostScript header */
@@ -222,6 +231,35 @@ int pagemask_encode(struct QEntryFile *job, const char pages[]);
 void  pagemask_print(const struct QEntryFile *job);
 int pagemask_get_bit(const struct QEntryFile *job, int page);
 int pagemask_count(const struct QEntryFile *job);
+
+/* ======================== Destinations ================================ */
+
+struct PRINTER_SPOOL_STATE {
+	gu_boolean accepting;				/* TRUE if is accepting as destination */
+	gu_boolean protected;				/* TRUE if "Charge:" line in conf file */
+	int previous_status;				/* saved previous status */
+	int status;							/* idle, disabled, etc */
+	int next_error_retry;				/* number of next retry */
+	int next_engaged_retry;				/* number of times otherwise engaged or off-line */
+	int countdown;						/* seconds till next retry */
+	int job_count;						/* how many jobs in printer's own queue? */
+	} ;
+
+struct GROUP_SPOOL_STATE {
+	gu_boolean accepting;				/* TRUE if accepting new jobs */
+	gu_boolean protected;				/* TRUE if we should restrict use */
+	gu_boolean held;					/* is the queue held? */
+	int job_count;						/* how many jobs queued for this group? */
+	} ;
+
+struct ALERT {
+	int interval;
+	char *method;
+	char *address;
+	} ;
+
+void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[]);
+void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[]);
 
 /* ======================== Media file format =========================== */
 struct Media

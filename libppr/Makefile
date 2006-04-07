@@ -45,8 +45,9 @@ LIBOBJS=\
 	parse_qfname.o \
 	quote.o \
 	findres.o \
-	protected.o money.o \
-	charge.o jobid.o pagesize.o \
+	spool_state.o protected.o \
+	money.o charge.o \
+	jobid.o pagesize.o \
 	options.o \
 	dimens.o foptions.o ali_str.o \
 	ppr_gcmd.o readppd.o \

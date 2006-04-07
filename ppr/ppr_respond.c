@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_respond.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 1 April 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -144,7 +144,7 @@ int respond(int response_code, const char extra[])
 			gu_name_str_value("responder_name", qentry.responder.name),
 			gu_name_str_value("responder_address", qentry.responder.address),
 			gu_name_str_value("responder_options", qentry.responder.options),
-			gu_name_str_value("destination", qentry.destname),
+			gu_name_str_value("destination", qentry.jobname.destname),
 			gu_name_int_value("response_code", response_code),
 			gu_name_str_value("extra", extra),
 			gu_name_str_value("for", qentry.For),

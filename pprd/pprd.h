@@ -122,22 +122,14 @@ __attribute__ (( format (printf, 1, 2) ))
 struct Printer
 	{
 	char *name;							/* name of the printer */
-	int alert_interval;					/* every this many retries */
-	char *alert_method;					/* means of communicating with operator */
-	char *alert_address;				/* address of operator */
-	gu_boolean protect;					/* TRUE if "Charge:" line in conf file */
-	gu_boolean accepting;				/* TRUE if is accepting as destination */
+	struct PRINTER_SPOOL_STATE spool_state;
+	struct ALERT alert;					/* printer alert settings */
 	int charge_per_duplex;				/* per-sheet charge */
 	int charge_per_simplex;				/* half-sheet charge */
 	int nbins;							/* number of bins */
 	const char *bins[MAX_BINS];			/* binname of each bin */
 	gu_boolean AutoSelect_exists;		/* TRUE if any bin is named "AutoSelect" */
 	int media[MAX_BINS];				/* media id of media in each bin */
-	int previous_status;				/* saved previous status */
-	int status;							/* idle, disabled, etc */
-	int next_error_retry;				/* number of next retry */
-	int next_engaged_retry;				/* number of times otherwise engaged or off-line */
-	int countdown;						/* seconds till next retry */
 	gu_boolean cancel_job;				/* cancel the job at pprdrv exit */
 	gu_boolean hold_job;				/* hold the job at pprdrv exit */
 	pid_t job_pid;						/* pid of process driving the printer */
@@ -145,22 +137,18 @@ struct Printer
 	int job_id;							/* queue id of job being printed */
 	int job_subid;						/* queue subid of job being printed */
 	pid_t ppop_pid;						/* send SIGUSR1 to this process when stopt */
-	int job_count;						/* how many jobs in printer's own queue? */
 	} ;
 
 /* a group */
 struct Group
 	{
 	char *name;							/* name of group */
+	struct GROUP_SPOOL_STATE spool_state;
 	int printers[MAX_GROUPSIZE];		/* printer id's of members */
 	int members;						/* number of members */
 	int last;							/* member offset of member last used */
-	gu_boolean accepting;				/* TRUE if accepting new jobs */
-	gu_boolean held;					/* TRUE if jobs for group held */
 	gu_boolean rotate;					/* TRUE if we should use in rotation */
-	gu_boolean protect;					/* TRUE if we should restrict use */
 	gu_boolean deleted;					/* TRUE if group has been deleted */
-	int job_count;						/* how many jobs queued for this group? */
 	} ;
 
 /*

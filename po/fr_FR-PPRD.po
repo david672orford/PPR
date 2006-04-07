@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-06 11:06-0400\n"
+"POT-Creation-Date: 2006-04-07 12:41-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -61,7 +61,7 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 msgid "waiting for resource ration"
 msgstr ""
 
-#: ../pprd/pprd_load.c:190 ../pprd/pprd_load.c:194
+#: ../pprd/pprd_load.c:187 ../pprd/pprd_load.c:190
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
@@ -278,48 +278,48 @@ msgstr "\"%s\" n'est pas une imprimante.\n"
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:953 ../pprd/pprd_ppop.c:1026
+#: ../pprd/pprd_ppop.c:953 ../pprd/pprd_ppop.c:1029
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1067 ../pprd/pprd_ppop.c:1074 ../pprd/pprd_ppop.c:1268
-#: ../pprd/pprd_ppop.c:1353
+#: ../pprd/pprd_ppop.c:1070 ../pprd/pprd_ppop.c:1077 ../pprd/pprd_ppop.c:1271
+#: ../pprd/pprd_ppop.c:1356
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1207
+#: ../pprd/pprd_ppop.c:1210
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1216
+#: ../pprd/pprd_ppop.c:1219
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1221
+#: ../pprd/pprd_ppop.c:1224
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1225
+#: ../pprd/pprd_ppop.c:1228
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_ppop.c:1233
+#: ../pprd/pprd_ppop.c:1236
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1235
+#: ../pprd/pprd_ppop.c:1238
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1320 ../pprd/pprd_ppop.c:1377
+#: ../pprd/pprd_ppop.c:1323 ../pprd/pprd_ppop.c:1380
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"
@@ -390,16 +390,14 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
 
-#, fuzzy
-#~ msgid ""
-#~ "%s: Security problem: egid = %ld\n"
-#~ "(This program should be setgid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s : problème de sécurité : egid = %u\n"
-#~ "(Ce programme devrait être setgid \"%s\".)\n"
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
+
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
 
 #, fuzzy
 #~ msgid ""
@@ -409,11 +407,13 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "%s : problème de sécurité : euid = %u\n"
 #~ "(Ce programme devrait être setuid \"%s\".)\n"
 
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
+#, fuzzy
+#~ msgid ""
+#~ "%s: Security problem: egid = %ld\n"
+#~ "(This program should be setgid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s : problème de sécurité : egid = %u\n"
+#~ "(Ce programme devrait être setgid \"%s\".)\n"
 
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
-
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -69,7 +69,7 @@ static int printer_start(int prnid, struct QEntry *job)
 	/*
 	** Don't start try to start the printer if it is already printing.
 	*/
-	if(printers[prnid].status != PRNSTATUS_IDLE)
+	if(printers[prnid].spool_state.status != PRNSTATUS_IDLE)
 		{
 		DODEBUG_PRNSTART(("%s(): printer \"%s\" is not idle", function, destid_to_name(prnid)));
 		return -1;
@@ -78,7 +78,7 @@ static int printer_start(int prnid, struct QEntry *job)
 	/*
 	** Don't start it if the destination is a group and it is held.
 	*/
-	if(destid_is_group(job->destid) && groups[destid_to_gindex(job->destid)].held)
+	if(destid_is_group(job->destid) && groups[destid_to_gindex(job->destid)].spool_state.held)
 		{
 		DODEBUG_PRNSTART(("%s(): destination \"%s\" is held", function, destid_to_name(job->destid)));
 		return -2;
@@ -132,7 +132,7 @@ void printer_look_for_work(int prnid)
 
 	lock();						/* lock out others while we modify */
 
-	if(printers[prnid].status != PRNSTATUS_IDLE)
+	if(printers[prnid].spool_state.status != PRNSTATUS_IDLE)
 		fatal(0, "%s(): assertion failed: printer is not idle", function);
 
 	for(x=0; x < queue_entries; x++)
@@ -237,21 +237,22 @@ void printer_new_status(struct Printer *printer, int newstatus)
 
 	lock();										/* lock the queue and printer list */
 
-	if(printer->status==PRNSTATUS_DELETED)		/* deleted printers */
-		{										/* can't change state */
+	/* Deleted printers can't change state. */
+	if(printer->spool_state.status==PRNSTATUS_DELETED)
+		{
 		error("%s(): attempt to change state of deleted printer", function);
 		unlock();
 		return;
 		}
 
-	printer->previous_status = printer->status;		/* used by pprdrv_start() */
-	printer->status = newstatus;
+	printer->spool_state.previous_status = printer->spool_state.status;		/* used by pprdrv_start() */
+	printer->spool_state.status = newstatus;
 
 	/* Write out the status for use during restarts and by ppop. */
-	spool_state_save(printer);
+	printer_spool_state_save(&(printer->spool_state), printer->name);
 
 	/* If ppop is waiting (ppop wstop), inform it that printer has stopt. */
-	if(printer->status == PRNSTATUS_STOPT && printer->ppop_pid)
+	if(printer->spool_state.status == PRNSTATUS_STOPT && printer->ppop_pid)
 		{
 		kill(printer->ppop_pid, SIGUSR1);
 		printer->ppop_pid = (pid_t)0;
@@ -265,13 +266,13 @@ void printer_new_status(struct Printer *printer, int newstatus)
 	** effect, otherwise, the retry count and retry interval will
 	** not yet be correct.
 	*/
-	switch(printer->status)
+	switch(printer->spool_state.status)
 		{
 		case PRNSTATUS_PRINTING:
 			state_update("PST %s printing %s %d",
 				printer,
 				jobid(destid_to_name(printer->job_destid), printer->job_id, printer->job_subid),
-				printer->next_error_retry
+				printer->spool_state.next_error_retry
 				);
 			break;
 		case PRNSTATUS_IDLE:
@@ -292,15 +293,15 @@ void printer_new_status(struct Printer *printer, int newstatus)
 		case PRNSTATUS_FAULT:
 			state_update("PST %s fault %d %d",
 				printer,
-				printer->next_error_retry,
-				printer->countdown
+				printer->spool_state.next_error_retry,
+				printer->spool_state.countdown
 				);
 			break;
 		case PRNSTATUS_ENGAGED:
 			state_update("PST %s engaged %d %d",
 				printer,
-				printer->next_engaged_retry,
-				printer->countdown
+				printer->spool_state.next_engaged_retry,
+				printer->spool_state.countdown
 				);
 			break;
 		case PRNSTATUS_STARVED:
@@ -347,10 +348,10 @@ void printer_tick(void)
 	*/
 	for(x=0; x < printer_count; x++)
 		{
-		if( (printers[x].status==PRNSTATUS_FAULT && printers[x].next_error_retry )
-				|| printers[x].status==PRNSTATUS_ENGAGED )
+		if((printers[x].spool_state.status==PRNSTATUS_FAULT && printers[x].spool_state.next_error_retry )
+				|| printers[x].spool_state.status==PRNSTATUS_ENGAGED)
 			{						/* if faulted and retry allowed, */
-			if((printers[x].countdown -= TICK_INTERVAL) <= 0)
+			if((printers[x].spool_state.countdown -= TICK_INTERVAL) <= 0)
 				{
 				printer_new_status(&printers[x], PRNSTATUS_IDLE);
 				printer_look_for_work(x);
@@ -372,7 +373,7 @@ void printer_tick(void)
 			if(hungry_x >= printer_count)		/* wrap around if necessary */
 				hungry_x = 0;
 
-			if(printers[hungry_x].status == PRNSTATUS_STARVED)
+			if(printers[hungry_x].spool_state.status == PRNSTATUS_STARVED)
 				{
 				printer_new_status(&printers[hungry_x], PRNSTATUS_IDLE);
 				starving_printers--;			/* now considered fed */

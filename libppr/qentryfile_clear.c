@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/qentryfile_clear.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 August 2005.
+** Last modified 7 April 2006.
 */
 
 /*! \file */
@@ -46,13 +46,17 @@ void qentryfile_clear(struct QEntryFile *job)
 	{
 	/* Clear the job id variables because we won't read them.
 	   (They are encoded in the queue file name.) */
-	job->destname = (char*)NULL;
-	job->id = 0;
-	job->subid = 0;
+	job->jobname.destname = (char*)NULL;
+	job->jobname.id = 0;
+	job->jobname.subid = 0;
+
+	job->spool_state.priority = 1;
+	job->spool_state.priority_time = 0;
+	job->spool_state.status = 0;
+	job->spool_state.flags = 0;
 
 	/* Some more defaults */
 	job->PPRVersion = 0.0;
-	job->priority = 20;
 	job->time = 0;
 	job->commentary = 0;						/* optional */
 	job->StripPrinter = TRUE;

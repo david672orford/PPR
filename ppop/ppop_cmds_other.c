@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -911,7 +911,7 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 		return FALSE;	/* don't stop */
 
 	FIFO = get_ready();
-	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->destname, qentry->id, qentry->subid, ppop_cancel_byuser_inform);
+	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid, ppop_cancel_byuser_inform);
 	fflush(FIFO);
 
 	if(!(reply_file = wait_for_pprd(TRUE)))
@@ -1083,7 +1083,7 @@ static int ppop_clean_item(const struct QEntry *qentry,
 	** of the deletion of arrested jobs.
 	*/
 	FIFO = get_ready();
-	fprintf(FIFO, "c %s %d %d 1\n", qentryfile->destname, qentry->id, qentry->subid);
+	fprintf(FIFO, "c %s %d %d 1\n", qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)
@@ -1159,7 +1159,7 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 		return TRUE;
 
 	FIFO = get_ready();
-	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->destname, qentry->id, qentry->subid, ppop_cancel_active_inform);
+	fprintf(FIFO, "c %s %d %d %d\n", qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid, ppop_cancel_active_inform);
 	fflush(FIFO);
 
 	if((reply_file = wait_for_pprd(TRUE)) == (FILE*)NULL)

@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/qentryfile_free.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 August 2005.
+** Last modified 7 April 2006.
 */
 
 /*! \file */
@@ -50,7 +50,7 @@ static void free_and_zero(void **p)
 */
 void qentryfile_free(struct QEntryFile *job)
 	{
-	free_and_zero((void**)&job->destname);
+	free_and_zero((void**)&job->jobname.destname);
 
 	free_and_zero((void**)&job->attr.DSC_job_type);
 	free_and_zero((void**)&job->user);

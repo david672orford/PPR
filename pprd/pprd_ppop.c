@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2006.
+** Last modified 7 April 2006.
 */
 
 /** \file
@@ -209,7 +209,7 @@ static void ppop_list(const char command[])
 ============================================================================*/
 static void ppop_status_do_printer(FILE *outfile, int prnid)
 	{
-	int status = printers[prnid].status;
+	int status = printers[prnid].spool_state.status;
 
 	/*
 	** The first line is a dump of the printers[] entry.
@@ -220,9 +220,9 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 		{
 		fprintf(outfile, "%s %d %d %d %s %d %d\n",
 				destid_to_name(prnid),						/* printer name */
-				printers[prnid].status,						/* printer status */
-				printers[prnid].next_error_retry + printers[prnid].next_engaged_retry,	/* retry number of next retry */
-				printers[prnid].countdown,					/* seconds until next retry */
+				printers[prnid].spool_state.status,			/* printer status */
+				printers[prnid].spool_state.next_error_retry + printers[prnid].spool_state.next_engaged_retry,	/* retry number of next retry */
+				printers[prnid].spool_state.countdown,		/* seconds until next retry */
 				destid_to_name(printers[prnid].job_destid),	/* destination of job being printed */
 				printers[prnid].job_id,
 				printers[prnid].job_subid
@@ -232,9 +232,9 @@ static void ppop_status_do_printer(FILE *outfile, int prnid)
 		{
 		fprintf(outfile, "%s %d %d %d ? 0 0 ?\n",
 				destid_to_name(prnid),
-				printers[prnid].status,
-				printers[prnid].status == PRNSTATUS_ENGAGED ? printers[prnid].next_engaged_retry : printers[prnid].next_error_retry,
-				printers[prnid].countdown);
+				printers[prnid].spool_state.status,
+				printers[prnid].spool_state.status == PRNSTATUS_ENGAGED ? printers[prnid].spool_state.next_engaged_retry : printers[prnid].spool_state.next_error_retry,
+				printers[prnid].spool_state.countdown);
 		}
 
 	/*
@@ -283,7 +283,7 @@ static void ppop_status(const char command[])
 		lock();
 		for(x=0; x < printer_count; x++)		/* thru all the printers */
 			{
-			if(printers[x].status != PRNSTATUS_DELETED)
+			if(printers[x].spool_state.status != PRNSTATUS_DELETED)
 				ppop_status_do_printer(reply_file, x);
 			}
 		unlock();
@@ -358,12 +358,12 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 		return;
 		}
 
-	lock();								/* lock the printers database */
+	lock();						/* lock the printers database */
 
-	if( (action&3) == 0 )				/* If should start the printer */
-		{								/* (action 0), */
-		switch(printers[prnid].status)	/* act according to current */
-			{							/* printer state. */
+	if((action&3) == 0)			/* If should start the printer */
+		{						/* (action 0), act according to current printer state. */
+		switch(printers[prnid].spool_state.status)
+			{
 			case PRNSTATUS_IDLE:
 			case PRNSTATUS_CANCELING:
 			case PRNSTATUS_SEIZING:
@@ -410,7 +410,7 @@ static void ppop_start_stop_wstop_halt(const char command[], int action)
 		}
 	else						/* action = 1 or 2, stop or halt */
 		{						/* stop may be with or without wait (128) */
-		switch(printers[prnid].status)
+		switch(printers[prnid].spool_state.status)
 			{
 			case PRNSTATUS_FAULT:	/* If not printing now, */
 			case PRNSTATUS_IDLE:	/* we may go directly to stopt. */
@@ -709,7 +709,7 @@ static void ppop_cancel_purge(const char command[])
 					   if it is halting or stopping we don't want to mess with
 					   that.
 					   */
-					if(printers[prnid].status == PRNSTATUS_PRINTING)
+					if(printers[prnid].spool_state.status == PRNSTATUS_PRINTING)
 						printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
 
 					/* Set flag so that job will die when pprdrv dies. */
@@ -741,7 +741,7 @@ static void ppop_cancel_purge(const char command[])
 								&& printers[prnid].job_subid == queue[x].subid
 								)
 							{
-							if(printers[prnid].status == PRNSTATUS_SEIZING)
+							if(printers[prnid].spool_state.status == PRNSTATUS_SEIZING)
 								printer_new_status(&printers[prnid], PRNSTATUS_CANCELING);
 							printers[prnid].hold_job = FALSE;
 							printers[prnid].cancel_job = TRUE;
@@ -911,7 +911,7 @@ static void ppop_mount(const char command[])
 
 	/* if printer idle,
 	   see if anything to do (needn't lock). */
-	if(printers[printer_id].status == PRNSTATUS_IDLE)
+	if(printers[printer_id].spool_state.status == PRNSTATUS_IDLE)
 		printer_look_for_work(printer_id);
 
 	media_mounted_save(printer_id);				/* save for restart */
@@ -954,15 +954,16 @@ static void ppop_accept_reject(const char command[], int action)
 		return;
 		}
 
-	if(!destid_is_group(destid))
-		{								/* printer: */
-		printers[destid].accepting = action;
-		set_file_boolean(PRINTERS_PERSISTENT_STATEDIR, destname, "reject", action==0);
-		}
-	else								/* group: */
+	if(destid_is_group(destid))
 		{
-		groups[destid_to_gindex(destid)].accepting = action;
-		set_file_boolean(GROUPS_PERSISTENT_STATEDIR, destname, "reject", action==0);
+		int gindex = destid_to_gindex(destid);
+		groups[gindex].spool_state.accepting = action;
+		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
+		}
+	else
+		{
+		printers[destid].spool_state.accepting = action;
+		printer_spool_state_save(&(printers[destid].spool_state), printers[destid].name);
 		}
 
 	fprintf(reply_file, "%d\n", EXIT_OK);
@@ -974,17 +975,19 @@ static void ppop_accept_reject(const char command[], int action)
 static void ppop_dest_show_printer(FILE *outfile, int prnid)
 	{
 	fprintf(outfile, "%s 0 %d %d\n",
-			printers[prnid].name,
-			printers[prnid].accepting,
-			printers[prnid].protect);
+		printers[prnid].name,
+		printers[prnid].spool_state.accepting,
+		printers[prnid].spool_state.protected
+		);
 	}
 
 static void ppop_dest_show_group(FILE *outfile, int groupnum)
 	{
 	fprintf(outfile, "%s 1 %d %d\n",
-			groups[groupnum].name,
-			groups[groupnum].accepting,
-			groups[groupnum].protect);
+		groups[groupnum].name,
+		groups[groupnum].spool_state.accepting,
+		groups[groupnum].spool_state.protected
+		);
 	}
 
 static void ppop_dest(const char command[])
@@ -1008,7 +1011,7 @@ static void ppop_dest(const char command[])
 
 		for(x=0; x < printer_count; x++)
 			{
-			if(printers[x].status != PRNSTATUS_DELETED)
+			if(printers[x].spool_state.status != PRNSTATUS_DELETED)
 				ppop_dest_show_printer(reply_file, x);
 			}
 

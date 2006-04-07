@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_pprdrv.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 February 2003.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -84,7 +84,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	if(job->status != STATUS_WAITING)
 		fatal(0, "%s(): assertion failed: job->status != STATUS_WAITING", function);
 
-	if(printers[prnid].status != PRNSTATUS_IDLE)
+	if(printers[prnid].spool_state.status != PRNSTATUS_IDLE)
 		fatal(0, "%s(): assertion failed: printer not idle", function);
 
 	if(lock_level == 0)
@@ -107,7 +107,7 @@ int pprdrv_start(int prnid, struct QEntry *job)
 	** has been waiting for rations.
 	** If we yield, we become a starving printer.
 	*/
-	if(printers[prnid].previous_status != PRNSTATUS_STARVED && (active_printers+starving_printers) >= MAX_ACTIVE)
+	if(printers[prnid].spool_state.previous_status != PRNSTATUS_STARVED && (active_printers+starving_printers) >= MAX_ACTIVE)
 		{
 		DODEBUG_PRNSTART(("%s(): \"%s\" yielding to a starving printer", function, destid_to_name(prnid)));
 		printer_new_status(&printers[prnid], PRNSTATUS_STARVED);
@@ -303,15 +303,15 @@ static void pprdrv_exited(int prnid, int wstat)
 			/* If the operator was informed that the printer was in a fault state, this call
 			   will inform the operator that it has recovered. */
 			alert_printer_working(printers[prnid].name,
-					printers[prnid].alert_interval,
-					printers[prnid].alert_method,
-					printers[prnid].alert_address,
-					printers[prnid].next_error_retry);
+					printers[prnid].alert.interval,
+					printers[prnid].alert.method,
+					printers[prnid].alert.address,
+					printers[prnid].spool_state.next_error_retry);
 
 			/* Since the printer suceeded, reset the error retry and
 			   engaged retry counts. */
-			printers[prnid].next_error_retry = 0;
-			printers[prnid].next_engaged_retry = 0;
+			printers[prnid].spool_state.next_error_retry = 0;
+			printers[prnid].spool_state.next_engaged_retry = 0;
 
 			break;
 
@@ -327,14 +327,14 @@ static void pprdrv_exited(int prnid, int wstat)
 			/* If the printer was in a fault state, this function will inform the
 			   operator that it has recovered. */
 			alert_printer_working(printers[prnid].name,
-					printers[prnid].alert_interval,
-					printers[prnid].alert_method,
-					printers[prnid].alert_address,
-					printers[prnid].next_error_retry);
+					printers[prnid].alert.interval,
+					printers[prnid].alert.method,
+					printers[prnid].alert.address,
+					printers[prnid].spool_state.next_error_retry);
 
 			/* Reset error counters. */
-			printers[prnid].next_error_retry = 0;
-			printers[prnid].next_engaged_retry = 0;
+			printers[prnid].spool_state.next_error_retry = 0;
+			printers[prnid].spool_state.next_engaged_retry = 0;
 
 			break;
 
@@ -417,8 +417,8 @@ static void pprdrv_exited(int prnid, int wstat)
 
 		case EXIT_ENGAGED:
 			DODEBUG_PRNSTOP(("(otherwise engaged or off-line)"));
-			printers[prnid].next_engaged_retry++;				/* increment retry count */
-			printers[prnid].countdown = ENGAGED_RETRY;			/* and set time for retry */
+			printers[prnid].spool_state.next_engaged_retry++;		/* increment retry count */
+			printers[prnid].spool_state.countdown = ENGAGED_RETRY;	/* and set time for retry */
 			prn_status = PRNSTATUS_ENGAGED;
 			break;
 
@@ -431,13 +431,13 @@ static void pprdrv_exited(int prnid, int wstat)
 		case EXIT_SIGNAL:			/* clean shutdown after receiving a signal */
 			DODEBUG_PRNSTOP(("(aborted due to signal)"));
 
-			if(printers[prnid].status == PRNSTATUS_HALTING)
+			if(printers[prnid].spool_state.status == PRNSTATUS_HALTING)
 				break;
 
-			if(printers[prnid].status == PRNSTATUS_SEIZING)
+			if(printers[prnid].spool_state.status == PRNSTATUS_SEIZING)
 				break;
 
-			if(printers[prnid].status == PRNSTATUS_CANCELING)
+			if(printers[prnid].spool_state.status == PRNSTATUS_CANCELING)
 				break;
 
 			if(WIFSIGNALED(wstat))		/* if it was a real signal, */
@@ -494,18 +494,18 @@ static void pprdrv_exited(int prnid, int wstat)
 		case EXIT_PRNERR_NORETRY:
 			DODEBUG_PRNSTOP(("(fault, no retry)"));
 			alert(printers[prnid].name, FALSE, _("Printer placed in fault mode, no auto-retry."));
-			printers[prnid].next_error_retry = 0;
-			printers[prnid].countdown = 0;
+			printers[prnid].spool_state.next_error_retry = 0;
+			printers[prnid].spool_state.countdown = 0;
 			prn_status = PRNSTATUS_FAULT;
 			break;
 
 		case EXIT_PRNERR:
 			DODEBUG_PRNSTOP(("(fault)"));
 			alert(printers[prnid].name, FALSE, _("Printer placed in auto-retry mode."));
-			printers[prnid].next_error_retry++;
-			printers[prnid].countdown = printers[prnid].next_error_retry * RETRY_MULTIPLIER;
-			if(printers[prnid].countdown > MIN_RETRY)
-				printers[prnid].countdown = MIN_RETRY;
+			printers[prnid].spool_state.next_error_retry++;
+			printers[prnid].spool_state.countdown = printers[prnid].spool_state.next_error_retry * RETRY_MULTIPLIER;
+			if(printers[prnid].spool_state.countdown > MIN_RETRY)
+				printers[prnid].spool_state.countdown = MIN_RETRY;
 			prn_status = PRNSTATUS_FAULT;
 			break;
 		}
@@ -516,8 +516,8 @@ static void pprdrv_exited(int prnid, int wstat)
 	if(prn_status == PRNSTATUS_FAULT)
 		{
 		alert_printer_failed(printers[prnid].name,
-				printers[prnid].alert_interval, printers[prnid].alert_method, printers[prnid].alert_address,
-				printers[prnid].next_error_retry);
+				printers[prnid].alert.interval, printers[prnid].alert.method, printers[prnid].alert.address,
+				printers[prnid].spool_state.next_error_retry);
 		}
 
 	/* If there is an outstanding hold request, prepare to set job
@@ -553,14 +553,14 @@ static void pprdrv_exited(int prnid, int wstat)
 		}
 
 	/* Stopping printers can only become stopt. */
-	if(printers[prnid].status == PRNSTATUS_STOPPING || printers[prnid].status == PRNSTATUS_HALTING)
+	if(printers[prnid].spool_state.status == PRNSTATUS_STOPPING || printers[prnid].spool_state.status == PRNSTATUS_HALTING)
 		prn_status = PRNSTATUS_STOPT;
 
 	/* Actualy set the printer to its new state. */
 	printer_new_status(&printers[prnid], prn_status);
 
 	/* If the printer is now idle, look for something for it to do. */
-	if(printers[prnid].status == PRNSTATUS_IDLE)
+	if(printers[prnid].spool_state.status == PRNSTATUS_IDLE)
 		printer_look_for_work(prnid);
 
 	} /* end of pprdrv_exited() */

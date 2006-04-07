@@ -48,13 +48,6 @@
 
 const char *parse_destname(const char *destname, gu_boolean resolve_aliases);
 
-struct Jobname
-	{
-	const char *destname;
-	int id;
-	int subid;
-	} ;
-
 const struct Jobname *parse_jobname(const char jobname[]);
 
 extern gu_boolean	opt_verbose;

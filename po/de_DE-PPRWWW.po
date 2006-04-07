@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-06 11:06-0400\n"
+"POT-Creation-Date: 2006-04-07 12:41-0400\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -2024,112 +2024,105 @@ msgid "Total Sheets"
 msgstr "Gesamtzahl Blätter"
 
 #: ../www/qquery_xlate.pl:75
-msgid "Current Queue Priority of this Job"
-msgstr "Derzeitige Warteschlangenpriorität des Auftrages"
-
-#: ../www/qquery_xlate.pl:75
 msgid "Priority"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:76
-msgid "Orig. Priority"
-msgstr ""
+#: ../www/qquery_xlate.pl:75
+#, fuzzy
+msgid "Queue Priority of this Job"
+msgstr "Derzeitige Warteschlangenpriorität des Auftrages"
 
-#: ../www/qquery_xlate.pl:76
-msgid "Original Queue Priority of this Job"
-msgstr "Originale Warteschlangenpriorität des Auftrages"
-
-#: ../www/qquery_xlate.pl:78
+#: ../www/qquery_xlate.pl:77
 msgid "Banner?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:78
+#: ../www/qquery_xlate.pl:77
 msgid "Was a Banner Page Requested?"
 msgstr "War eine Startseite angefortert?"
 
-#: ../www/qquery_xlate.pl:79
+#: ../www/qquery_xlate.pl:78
 msgid "Trailer?"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:79
+#: ../www/qquery_xlate.pl:78
 msgid "Was a Trailer Page Requested?"
 msgstr "War eine Endseite angefortert?"
 
-#: ../www/qquery_xlate.pl:81
+#: ../www/qquery_xlate.pl:80
 msgid "Size (input bytes)"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:81
+#: ../www/qquery_xlate.pl:80
 msgid "Size of Input File Before Conversion to PostScript"
 msgstr "Größe der Eingabedatei vor der Konvertierung nach PostScript"
 
-#: ../www/qquery_xlate.pl:82
+#: ../www/qquery_xlate.pl:81
 #, fuzzy
 msgid "Size (PS bytes)"
 msgstr "PS Bytes"
 
-#: ../www/qquery_xlate.pl:82
+#: ../www/qquery_xlate.pl:81
 msgid "Size of Input File After Conversion to PostScript"
 msgstr "Größe der Eingabedatei nach der Konvertierung nach PostScript"
 
-#: ../www/qquery_xlate.pl:84
+#: ../www/qquery_xlate.pl:83
 msgid "Does this Document have a DSC Prolog?"
 msgstr "Hat dieses Dokument einen DSC Prolog?"
 
-#: ../www/qquery_xlate.pl:84
+#: ../www/qquery_xlate.pl:83
 #, fuzzy
 msgid "Prolog Present?"
 msgstr "Vorhanden?"
 
-#: ../www/qquery_xlate.pl:85
+#: ../www/qquery_xlate.pl:84
 #, fuzzy
 msgid "Docsetup Present?"
 msgstr "Vorhanden?"
 
-#: ../www/qquery_xlate.pl:85
+#: ../www/qquery_xlate.pl:84
 msgid "Does this Document have a DSC Document Setup Section?"
 msgstr "Hat dieses Dokument einen DSC Document Setup Abschnitt?"
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 msgid "Does this Document have a DSC Script?"
 msgstr "Hat dieses Dokument ein DSC Script?"
 
-#: ../www/qquery_xlate.pl:86
+#: ../www/qquery_xlate.pl:85
 #, fuzzy
 msgid "Script Present?"
 msgstr "Vorhanden?"
 
-#: ../www/qquery_xlate.pl:88
+#: ../www/qquery_xlate.pl:87
 msgid "DSC Proofmode Setting"
 msgstr "DSC Proofmode Einstellung"
 
-#: ../www/qquery_xlate.pl:88
+#: ../www/qquery_xlate.pl:87
 #, fuzzy
 msgid "Proofmode"
 msgstr "DSC Proofmode Einstellung"
 
-#: ../www/qquery_xlate.pl:89
+#: ../www/qquery_xlate.pl:88
 #, fuzzy
 msgid "Orientation"
 msgstr "Funktion:"
 
-#: ../www/qquery_xlate.pl:89
+#: ../www/qquery_xlate.pl:88
 msgid "Portrait or Landscape"
 msgstr "Hochformat oder Querformat"
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "Draft Notice"
 msgstr ""
 
-#: ../www/qquery_xlate.pl:90
+#: ../www/qquery_xlate.pl:89
 msgid "Message to Print Diagonally Across Each Page"
 msgstr "Nachricht, um diagonal über jede Seite zu drucken"
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 msgid "Are the Pages in Ascending or Descending Order in the Input File?"
 msgstr "Sind die Seiten in aufsteigender oder absteigender Ordnung in der Eingabedatei?"
 
-#: ../www/qquery_xlate.pl:91
+#: ../www/qquery_xlate.pl:90
 #, fuzzy
 msgid "Page Order"
 msgstr "Begonnene Seiten"
@@ -2542,21 +2535,24 @@ msgstr "Rolle"
 msgid "Source Download"
 msgstr "Quellen herunterladen"
 
-#, fuzzy
-#~ msgid "For Whom is the Submitter Acting as Proxy?"
-#~ msgstr "Für wen arbeitet der Überträger als Proxy?"
-
-#~ msgid "As proxy for:"
-#~ msgstr "Als Proxy für:"
-
-#~ msgid "Submitted by Unix user:"
-#~ msgstr "Übermittelt von Unix-Nutzer:"
-
-#~ msgid "Proxy For"
-#~ msgstr "Proxy für"
+#~ msgid "Numberic Unix Userid of Job Submitter"
+#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
 
 #~ msgid "Unix User"
 #~ msgstr "Unix Nutzer"
 
-#~ msgid "Numberic Unix Userid of Job Submitter"
-#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
+#~ msgid "Proxy For"
+#~ msgstr "Proxy für"
+
+#~ msgid "Submitted by Unix user:"
+#~ msgstr "Übermittelt von Unix-Nutzer:"
+
+#~ msgid "As proxy for:"
+#~ msgstr "Als Proxy für:"
+
+#, fuzzy
+#~ msgid "For Whom is the Submitter Acting as Proxy?"
+#~ msgstr "Für wen arbeitet der Überträger als Proxy?"
+
+#~ msgid "Original Queue Priority of this Job"
+#~ msgstr "Originale Warteschlangenpriorität des Auftrages"

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 April 2006.
+** Last modified 7 April 2006.
 */
 
 #include "config.h"
@@ -41,113 +41,45 @@
 #include "pprd.h"
 #include "pprd.auto_h"
 
-void set_file_boolean(const char statedir[], const char destname[], const char variable[], gu_boolean value)
-	{
-	char fname[MAX_PPR_PATH];
-	ppr_fnamef(fname, "%s/%s/%s", statedir, destname, variable);
-	if(value)
-		{
-		int fd;
-		if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_660)) == -1)
-			error("can't create \"%s\", errno=%d (%s)", fname, errno, strerror(errno));
-		else
-			close(fd);
-		}
-	else
-		{
-		if(unlink(fname) == -1)
-			error("%s(\"%s\") failed, errno=%d (%s)", "unlink", fname, errno, strerror(errno));
-		}
-	}
-
-gu_boolean get_file_boolean(const char statedir[], const char destname[], const char variable[])
-	{
-	char fname[MAX_PPR_PATH];
-	struct stat statbuf;
-	ppr_fnamef(fname, "%s/%s/%s", statedir, destname, variable);
-	if(stat(fname, &statbuf) == 0)
-		return TRUE;
-	else
-		return FALSE;
-	}
-
-void spool_state_load(struct Printer *printer)
-	{
-	char fname[MAX_PPR_PATH];
-	int fd;
-	char spool_state_data[128];
-	int len;
-
-	printer->previous_status = PRNSTATUS_IDLE;
-	printer->status = PRNSTATUS_IDLE;
-	printer->next_error_retry = 0;
-	printer->next_engaged_retry = 0;
-	printer->countdown = 0;
-
-	ppr_fnamef(fname, "%s/%s/spool_state", PRINTERS_PERSISTENT_STATEDIR, printer->name);
-	do	{
-		if((fd = open(fname, O_RDONLY)) == -1)
-			break;
-		if((len = read(fd, spool_state_data, sizeof(spool_state_data))) == -1)
-			{
-			error("failed to read \"%s\", errno=%d (%s)", fname, errno, strerror(errno));
-			break;
-			}
-		if(len == sizeof(spool_state_data))
-			{
-			error("to much data in \"%s\"", fname);
-			break;
-			}
-		spool_state_data[len] = '\0';
-		if(gu_sscanf(spool_state_data, "%d %d %d %d",	/* fifth field */
-				&(printer->status),
-				&(printer->next_error_retry),
-				&(printer->next_engaged_retry),
-				&(printer->countdown)
-				/* don't load job_count, administrator might have manually delete jobs */
-			) != 4)
-			{
-			error("corrupt \"%s\"", spool_state_data);
-			}
-		} while(FALSE);
-
-	}
-
-void spool_state_save(struct Printer *printer)
+void printer_spool_state_save(struct PRINTER_SPOOL_STATE *pstate, const char prnname[])
 	{
 	char fname[MAX_PPR_PATH];
 	int fd;
 	char temp[128];
 	int len;
-	ppr_fnamef(fname, "%s/%s/spool_state", PRINTERS_PERSISTENT_STATEDIR, printer->name);
+	ppr_fnamef(fname, "%s/%s/spool_state", PRINTERS_PERSISTENT_STATEDIR, prnname);
 	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
-	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d\n",
-		printer->status,
-		printer->next_error_retry,
-		printer->next_engaged_retry,
-		printer->countdown,
-		printer->job_count
+	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d %d %d\n",
+		pstate->accepting,
+		pstate->protected,
+		pstate->status,
+		pstate->next_error_retry,
+		pstate->next_engaged_retry,
+		pstate->countdown,
+		pstate->job_count
 		);
 	write(fd, temp, len);
 	close(fd);
-	}
+	} /* printer_spool_state_save() */
 
-void group_spool_state_save(struct Group *group)
+void group_spool_state_save(struct GROUP_SPOOL_STATE *gstate, const char grpname[])
 	{
 	char fname[MAX_PPR_PATH];
 	int fd;
 	char temp[128];
 	int len;
-	ppr_fnamef(fname, "%s/%s/spool_state", GROUPS_PERSISTENT_STATEDIR, group->name);
+	ppr_fnamef(fname, "%s/%s/spool_state", GROUPS_PERSISTENT_STATEDIR, grpname);
 	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
-	len = gu_snprintf(temp, sizeof(temp), "%d\n",
-		group->job_count
+	len = gu_snprintf(temp, sizeof(temp), "%d %d %d\n",
+		gstate->accepting,
+		gstate->protected,
+		gstate->job_count
 		);
 	write(fd, temp, len);
 	close(fd);
-	}
+	} /* group_spool_state_save() */
 
 /* end of file */
 

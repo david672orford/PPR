@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_conffile.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -80,7 +80,7 @@ static void cache_info(void)
 	switchset = deffiltopts = passthru = forwhat = acls = NULL;
 
 	/* If  this is an alias, resolve it first. */
-	ppr_fnamef(fname, "%s/%s", ALIASCONF, qentry.destname);
+	ppr_fnamef(fname, "%s/%s", ALIASCONF, qentry.jobname.destname);
 	if((f = fopen(fname, "r")))
 		{
 		while((line = gu_getline(line, &len, f)))
@@ -104,12 +104,12 @@ static void cache_info(void)
 		fclose(f);
 
 		if(!forwhat)
-			fatal(PPREXIT_OTHERERR, "The alias \"%s\" has no \"ForWhat:\" line", qentry.destname);
+			fatal(PPREXIT_OTHERERR, "The alias \"%s\" has no \"ForWhat:\" line", qentry.jobname.destname);
 		}
 
 	/* If we found an alias, look for the group or printer it points to.  Otherwise
 	   look for a group printer with the name which the user specified. */
-	look_for_name = forwhat ? forwhat : qentry.destname;
+	look_for_name = forwhat ? forwhat : qentry.jobname.destname;
 
 	/* try a group */
 	ppr_fnamef(fname, "%s/%s", GRCONF, look_for_name);

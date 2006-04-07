@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/www/qquery_xlate.pl
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 October 2005.
+# Last modified 7 April 2006.
 #
 
 require 'cgi_intl.pl';
@@ -72,8 +72,7 @@ require 'cgi_intl.pl';
 'totalsides' =>			[N_('Total Sides'),		N_("Total Medium Sides to be Marked (after N-Up)")],
 'totalsheets' =>		[N_('Total Sheets'),	N_("Total Medium Sheets to be Used")],
 '-' => undef,
-'priority' =>			[N_('Priority'),		N_("Current Queue Priority of this Job")],
-'opriority' =>			[N_('Orig. Priority'),	N_("Original Queue Priority of this Job")],
+'priority' =>			[N_('Priority'),		N_("Queue Priority of this Job")],
 '-' => undef,
 'banner' =>				[N_('Banner?'),			N_("Was a Banner Page Requested?")],
 'trailer' =>			[N_('Trailer?'),		N_("Was a Trailer Page Requested?")],

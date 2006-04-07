@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/qentryfile_save.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 7 April 2006.
 */
 
 /*! \file */
@@ -45,10 +45,10 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	/* This line must remain at the begining of the file where
 	 * pprd can easily modify it. */
 	if(fprintf(Qfile, "PPRD: %02X %08X %02X %04X                                      \n",
-			qentry->priority,
-			(unsigned int)qentry->priority_time,
-			(qentry->status * -1),
-			qentry->flags) != 64)
+			qentry->spool_state.priority,
+			(unsigned int)qentry->spool_state.priority_time,
+			(qentry->spool_state.status * -1),
+			qentry->spool_state.flags) != 64)
 		gu_Throw("PPRD line is not 64 bytes long!");
 
 	/* We don't really use this, but it could solve arguments. */

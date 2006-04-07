@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libppr/protected.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 August 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -39,9 +39,10 @@
 #include <string.h>
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 
 /*
-** Return true if we must verify that the user is in the users database.
+** Return true if we must verify that the user is in the users' database.
 */
 gu_boolean destination_protected(const char destname[])
 	{
@@ -52,19 +53,18 @@ gu_boolean destination_protected(const char destname[])
 	ppr_fnamef(fname, "%s/%s", GRCONF, destname);
 	if(stat(fname, &statbuf) == 0)				/* if file found, */
 		{
-		if(statbuf.st_mode & S_IXOTH)			/* if ``other'' execute bit set, */
-			return TRUE;						/* it is protected */
+		struct GROUP_SPOOL_STATE gstate;
+		group_spool_state_load(&gstate, destname);
+		return gstate.protected;
 		}
 
 	/* A printer? */
-	else
+	ppr_fnamef(fname, "%s/%s", PRCONF, destname);
+	if( stat(fname, &statbuf) == 0 )		/* if it exists, */
 		{
-		ppr_fnamef(fname, "%s/%s", PRCONF, destname);
-		if( stat(fname, &statbuf) == 0 )		/* if it exists, */
-			{									/* and other execute set, */
-			if(statbuf.st_mode & S_IXOTH)
-				return TRUE;					/* it is protected */
-			}
+		struct PRINTER_SPOOL_STATE pstate;
+		printer_spool_state_load(&pstate, destname);
+		return pstate.protected;
 		}
 
 	return FALSE;	/* if it doen't exist, sombody else will notice */

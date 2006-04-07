@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_split.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 24 March 2005.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -218,7 +218,7 @@ int split_job(struct QEntryFile *qentry)
 		{
 		FILE *log;
 
-		ppr_fnamef(fname, DATADIR"/%s-%d.0", qentry->destname, qentry->id);
+		ppr_fnamef(fname, DATADIR"/%s-%d.0", qentry->jobname.destname, qentry->jobname.id);
 
 		if((log = fopen(fname, "ab")) == (FILE*)NULL)
 			fatal(PPREXIT_OTHERERR, "ppr_split.c: split_job(): failed to open \"%s\" for append, errno=%d (%s)", fname, errno, gu_strerror(errno) );
@@ -238,7 +238,7 @@ int split_job(struct QEntryFile *qentry)
 		/* Open the -pages file. */
 		ppr_fnamef(fname, "%s/%s-%d.0-pages",
 				DATADIR,
-				qentry->destname,qentry->id);
+				qentry->jobname.destname, qentry->jobname.id);
 		if((pages = fopen(fname, "rb")) == (FILE*)NULL)
 			fatal(PPREXIT_OTHERERR, _("Failed to open \"%s\" for read, errno=%d (%s)"), fname, errno, gu_strerror(errno) );
 
@@ -250,7 +250,7 @@ int split_job(struct QEntryFile *qentry)
 			{
 			ppr_fnamef(fname,"%s/%s-%d.%d-pages",
 				DATADIR,
-				qentry->destname,qentry->id,(x+1));
+				qentry->jobname.destname,qentry->jobname.id,(x+1));
 			#ifdef DEBUG_SPLIT
 			printf("Creating \"%s\"\n",fname);
 			#endif
@@ -335,18 +335,18 @@ int split_job(struct QEntryFile *qentry)
 		char fname_text[MAX_PPR_PATH];
 		char fname_log[MAX_PPR_PATH];
 
-		ppr_fnamef(fname_text, "%s/%s-%d.0-text", DATADIR, qentry->destname, qentry->id);
-		ppr_fnamef(fname_log,"%s/%s-%d.0-log", DATADIR, qentry->destname,qentry->id);
+		ppr_fnamef(fname_text, "%s/%s-%d.0-text", DATADIR, qentry->jobname.destname, qentry->jobname.id);
+		ppr_fnamef(fname_log,"%s/%s-%d.0-log", DATADIR, qentry->jobname.destname,qentry->jobname.id);
 
 		for(x=1; x <= segments_created; x++)
 			{
-			ppr_fnamef(fname, "%s/%s-%d.%d-text", DATADIR, qentry->destname, qentry->id, x);
+			ppr_fnamef(fname, "%s/%s-%d.%d-text", DATADIR, qentry->jobname.destname, qentry->jobname.id, x);
 			link(fname_text, fname);
 			#ifdef DEBUG_SPLIT
 			printf("link(\"%s\",\"%s\")\n", fname_text, fname);
 			#endif
 
-			ppr_fnamef(fname, "%s/%s-%d.%d-log", DATADIR, qentry->destname,qentry->id,x);
+			ppr_fnamef(fname, "%s/%s-%d.%d-log", DATADIR, qentry->jobname.destname,qentry->jobname.id,x);
 			link(fname_log, fname);
 			#ifdef DEBUG_SPLIT
 			printf("link(\"%s\",\"%s\")\n", fname_log, fname);
@@ -360,13 +360,13 @@ int split_job(struct QEntryFile *qentry)
 		{
 		FILE *cfile, *ncfile;
 
-		ppr_fnamef(fname,"%s/%s-%d.0-comments", DATADIR, qentry->destname,qentry->id);
+		ppr_fnamef(fname,"%s/%s-%d.0-comments", DATADIR, qentry->jobname.destname,qentry->jobname.id);
 		if(!(cfile = fopen(fname,"rb")))
 			fatal(PPREXIT_OTHERERR, "ppr: ppr_split.c: split_job(): failed to open \"%s\" for read, errno=%d (%s)", fname, errno, gu_strerror(errno) );
 
 		for(x=1; x <= segments_created; x++)
 			{
-			ppr_fnamef(fname, "%s/%s-%d.%d-comments", DATADIR, qentry->destname, qentry->id, x);
+			ppr_fnamef(fname, "%s/%s-%d.%d-comments", DATADIR, qentry->jobname.destname, qentry->jobname.id, x);
 			if(!(ncfile = fopen(fname,"wb")))
 				fatal(PPREXIT_OTHERERR, "ppr: ppr_split.c: split_job(): failed to open \"%s\" for write, errno=%d (%s)", fname, errno, gu_strerror(errno) );
 
@@ -395,7 +395,7 @@ int split_job(struct QEntryFile *qentry)
 			printf("calling: write_queue_file(): segment=%d, pages=%d)\n", (x+1), page_counts[x]);
 			#endif
 			qentry->attr.pages = page_counts[x];
-			qentry->subid = (x + 1);
+			qentry->jobname.subid = (x + 1);
 			write_queue_file(qentry);
 			}
 
@@ -405,7 +405,7 @@ int split_job(struct QEntryFile *qentry)
 		for(x=1; x <= segments_created; x++)
 			{
 			#ifdef DEBUG_SPLIT
-			printf("submitting job %s-%d.%d\n", qentry->destname,qentry->id, x);
+			printf("submitting job %s-%d.%d\n", qentry->jobname.destname,qentry->jobname.id, x);
 			#endif
 			submit_job(qentry, x);
 			}

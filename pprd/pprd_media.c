@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2006.
+** Last modified 7 April 2006.
 */
 
 #include "config.h"
@@ -418,7 +418,7 @@ static int stoptmask(int destid)
 
 	if(!destid_is_group(destid))
 		{
-		if(printers[destid].status < PRNSTATUS_DELIBERATELY_DOWN)
+		if(printers[destid].spool_state.status < PRNSTATUS_DELIBERATELY_DOWN)
 			return 0;
 		else
 			return 1;
@@ -428,7 +428,7 @@ static int stoptmask(int destid)
 
 	for(x=0; x<g->members; x++)
 		{
-		if(printers[g->printers[x]].status >= PRNSTATUS_DELIBERATELY_DOWN)
+		if(printers[g->printers[x]].spool_state.status >= PRNSTATUS_DELIBERATELY_DOWN)
 			mask |= (1 << x);
 		}
 

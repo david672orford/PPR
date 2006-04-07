@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 28 March 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -169,7 +169,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 					_("%*s(Not all \"%s\"\n"
 					  "%*s members are suitable))\n"),
 					indent, "",
-					qentryfile->destname,
+					qentryfile->jobname.destname,
 					indent, ""
 					);
 				}
@@ -482,7 +482,7 @@ int custom_list(char *argv[],
 
 	if(!suppress)						/* If we should always print header, */
 		{								/* print it now */
-		if( ! opt_machine_readable )		/* unless a program is reading our output. */
+		if(!opt_machine_readable)		/* unless a program is reading our output. */
 			(*banner)();
 		header_printed = TRUE;
 		}
@@ -543,9 +543,9 @@ int custom_list(char *argv[],
 			qentry.pass = pass;
 
 			/* And into the QEntryFile structure too, this will take care of deallocation. */
-			qentryfile.destname = destname;
-			qentryfile.id = id;
-			qentryfile.subid = subid;
+			qentryfile.jobname.destname = destname;
+			qentryfile.jobname.id = id;
+			qentryfile.jobname.subid = subid;
 
 			/*
 			** Normally we print the column headings if they have not
@@ -637,7 +637,7 @@ static int ppop_list_item(const struct QEntry *qentry,
 	const char *jobname;
 
 	/* Print the job name with line wrapping if it overflows its column. */
-	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
+	jobname = jobid(qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid);
 	if(strlen(jobname) > 15)
 		gu_utf8_printf("%s\n               ", jobname);
 	else
@@ -979,7 +979,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 		for(x=0; lpqlist_argv[x]; x++)
 			{
 			if( (strlen(lpqlist_argv[x]) == user_len && strncmp(lpqlist_argv[x], user, user_len) == 0)
-						|| qentry->id == atoi(lpqlist_argv[x]) )
+						|| qentryfile->jobname.id == atoi(lpqlist_argv[x]) )
 				{
 				ok = TRUE;
 				break;
@@ -1111,7 +1111,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 
 	}
 
-	gu_utf8_printf("%-6.6s %-10.10s %-4d %-37.37s %s\n", rankstr, fixed_for, qentry->id, fixed_name, sizestr);
+	gu_utf8_printf("%-6.6s %-10.10s %-4d %-37.37s %s\n", rankstr, fixed_for, qentryfile->jobname.id, fixed_name, sizestr);
 
 	return FALSE;
 	} /* end of ppop_lpq_item() */
@@ -1128,7 +1128,7 @@ int ppop_lpq(char *argv[])
 	argv = allow_PPRDEST(argv);
 
 	/* If first parameter is empty or it is a job id rather than a destination id, */
-	if(argv[0] == (char*)NULL || (job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
+	if(!argv[0] || (job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
 		{
 		ppop_lpq_help();
 		exit(EXIT_SYNTAX);
@@ -1179,7 +1179,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 		FILE *qstream)
 	{
 	/* print job name */
-	gu_utf8_printf(_("Job ID: %s\n"), jobid(qentryfile->destname,qentry->id,qentry->subid));
+	gu_utf8_printf(_("Job ID: %s\n"), jobid(qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid));
 
 	/* Say which part of the whole this is. */
 	if(qentryfile->attr.parts == 1)
@@ -1200,8 +1200,7 @@ static int ppop_details_item(const struct QEntry *qentry,
 	gu_utf8_printf(_("Submission Time: %s"), ctime((time_t*)&qentryfile->time) );
 
 	/* print priority */
-	gu_utf8_printf(_("Current Priority: %d\n"), qentry->priority);
-	gu_utf8_printf(_("Origional Priority: %d\n"), qentryfile->priority);
+	gu_utf8_printf(_("Priority: %d\n"), qentryfile->spool_state.priority);
 
 	/* What was the file name? */
 	gu_utf8_printf(_("lpq filename: %s\n"), qentryfile->lpqFileName ? qentryfile->lpqFileName : "");
@@ -1455,7 +1454,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		case STATUS_WAITING:			/* <--- waiting for printer */
 			status = "waiting for printer";
 			if(qentry->never)			/* If one or more counted out, */
-				snprintf(explain, sizeof(explain), "Not all \"%s\" members are suitable", qentryfile->destname);
+				snprintf(explain, sizeof(explain), "Not all \"%s\" members are suitable", qentryfile->jobname.destname);
 			else
 				explain[0] = '\0';
 			break;
@@ -1501,7 +1500,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 		switch(qquery_query[x])
 			{
 			case 0:						/* jobname */
-				gu_utf8_puts(jobid(qentryfile->destname,qentryfile->id,qentryfile->subid));
+				gu_utf8_puts(jobid(qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid));
 				break;
 			case 1:						/* for */
 				puts_detabbed(qentryfile->For ? qentryfile->For : "?");
@@ -1555,10 +1554,10 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				gu_utf8_puts(describe_proofmode(qentryfile->attr.proofmode));
 				break;
 			case 16:					/* priority */
-				gu_utf8_printf("%d", qentry->priority);
+				gu_utf8_printf("%d", qentryfile->spool_state.priority);
 				break;
 			case 17:					/* opriority */
-				gu_utf8_printf("%d", qentryfile->priority);
+				/* removed */
 				break;
 			case 18:					/* banner */
 				gu_utf8_puts(describe_flag_page_setting(qentryfile->do_banner));
@@ -1656,7 +1655,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				}
 				break;
 			case 37:					/* fulljobname */
-				gu_utf8_printf("%s-%d.%d", qentryfile->destname, qentryfile->id, qentryfile->subid);
+				gu_utf8_printf("%s-%d.%d", qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid);
 				break;
 			case 38:					/* intype */
 				if(qentryfile->Filters)
@@ -1667,7 +1666,7 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 				break;
 
 			case 43:					/* destname */
-				gu_utf8_puts(qentryfile->destname);
+				gu_utf8_puts(qentryfile->jobname.destname);
 				break;
 			case 44:					/* responder */
 				if(qentryfile->responder.name)
@@ -1802,8 +1801,7 @@ int ppop_qquery(char *argv[])
 			qquery_query[x] = 15;
 		else if(strcmp(ptr,"priority")==0)
 			qquery_query[x] = 16;
-		else if(strcmp(ptr,"opriority")==0)
-			qquery_query[x] = 17;
+		/* 17 unused */
 		else if(strcmp(ptr,"banner")==0)
 			qquery_query[x] = 18;
 		else if(strcmp(ptr,"trailer")==0)
@@ -1933,7 +1931,7 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	}
 
 	/* Format the job name. */
-	jobname = jobid(qentryfile->destname, qentry->id, qentry->subid);
+	jobname = jobid(qentryfile->jobname.destname, qentryfile->jobname.id, qentryfile->jobname.subid);
 
 	/* Compute the percentage of progress.  We do this by figuring out
 	   how many bytes have to be sent and the comparing it to the

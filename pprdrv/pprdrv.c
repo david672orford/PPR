@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2006.
+** Last modified 7 April 2006.
 */
 
 /*
@@ -2078,9 +2078,9 @@ int real_main(int argc, char *argv[])
 	*/
 	{
 	char *p = gu_strdup(QueueFile);
-	if(parse_qfname(p, &job.destname, &job.id, &job.subid) == -1)
+	if(parse_qfname(p, &job.jobname.destname, &job.jobname.id, &job.jobname.subid) == -1)
 		fatal(EXIT_JOBERR, "parse_qfname() failed");
-	job.destname = gu_strdup(job.destname);
+	job.jobname.destname = gu_strdup(job.jobname.destname);
 	gu_free(p);
 	}
 
