@@ -162,9 +162,9 @@ umask(002);
 # If there are command line arguments, pull in Getopt::Long
 # to process them.
 #===========================================================
-my $root_xlate = undef;
+#my $root_xlate = undef;
 my $port = 15010;
-my $ipp = undef;
+#my $ipp = undef;
 
 if(scalar @ARGV >= 1)
 	{
@@ -175,21 +175,22 @@ if(scalar @ARGV >= 1)
 			"ipp" => \$ipp
 			))
 		{
-		print STDERR "Usage: ppr-httpd [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
+		#print STDERR "Usage: ppr-httpd [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
+		print STDERR "Usage: ppr-httpd [--inetd-port=<port>]\n";
 		exit 1;
 		}
 	}
 
-if(defined $ipp)
-	{
-	$root_xlate = "cgi-bin/ipp";
-	$port = 631;
-	}
+#if(defined $ipp)
+#	{
+#	$root_xlate = "cgi-bin/ipp";
+#	$port = 631;
+#	}
 
 #===========================================================
 # If we are running in the foreground, leave STDERR alone.
 # Otherwise, if we have access, send STDERR to a debugging
-# file, otherwise throw it away.	We must do something
+# file, otherwise throw it away.  We must do something
 # with it so it doesn't corrupt the HTTP transaction.
 #===========================================================
 if(defined $ENV{TCPBIND_FOREGROUND})
@@ -206,71 +207,71 @@ else
 # TCPBIND_SOCKETS contains a list of listening socket FD's
 # and the port numbers that go with them.
 #===========================================================
-if(defined $ENV{TCPBIND_SOCKETS})
-	{
-	use POSIX ":sys_wait_h";
-
-	# Create a file descriptor set for use with select()
-	# which includes the file descriptors of all of our
-	# listening sockets.
-	my %fds = ();
-	my $master_fdset = "";
-	my $fdset;
-	foreach my $item (split(',', $ENV{TCPBIND_SOCKETS}))
-		{
-		$item =~ /^(\d+)=(\d+)$/ || die;
-		my($fd, $port) = ($1, $2);
-		#print STDERR "\$fd=$fd, \$port=$port\n";
-		my $file;
-		open($file, "+<&=$fd") || die;
-		$fds{$fd} = [$port, $file];
-		vec($master_fdset, $fd, 1) = 1;
-		}
-
-	CONWAIT:
-	while(1)
-		{
-		my $nfound = select($fdset=$master_fdset, undef, undef, undef);	
-		
-		# Reap zombies
-		1 until(waitpid(-1, WNOHANG) == -1);
-
-		#print STDERR "select() reports $nfound ready file descriptors\n";
-		foreach my $fd (keys %fds)
-			{
-			last if($nfound <= 0);		# save time
-			if(vec($fdset, $fd, 1))
-				{
-				#print STDERR "descriptor $fd is ready\n";
-				if(accept(CONN, $fds{$fd}->[1]))
-					{
-					#print STDERR "connexion accepted, fd=", fileno(STDIN), "\n";
-					if((my $pid = fork()) != 0)
-						{
-						#print STDERR "child is $pid\n";
-						close(CONN) || die $!;
-						}
-					else
-						{
-						# child setup
-						foreach my $fd (keys %fds)
-							{ close($fds{$fd}->[1]) || die $!; }
-						if(fileno(CONN) != 0)
-							{ open(STDIN, "<&CONN") || die $!; }
-						if(fileno(CONN) != 1)
-							{ open(STDOUT, ">&STDIN") || die $!; }
-						if(fileno(CONN) > 2)
-							{ close(CONN) || die $!; }
-						$port = $fds{$fd}->[0];
-						#kill 'STOP', $$;
-						last CONWAIT;
-						}
-					}
-				$nfound--;
-				}
-			}
-		}
-	}
+#if(defined $ENV{TCPBIND_SOCKETS})
+#	{
+#	use POSIX ":sys_wait_h";
+#
+#	# Create a file descriptor set for use with select()
+#	# which includes the file descriptors of all of our
+#	# listening sockets.
+#	my %fds = ();
+#	my $master_fdset = "";
+#	my $fdset;
+#	foreach my $item (split(',', $ENV{TCPBIND_SOCKETS}))
+#		{
+#		$item =~ /^(\d+)=(\d+)$/ || die;
+#		my($fd, $port) = ($1, $2);
+#		#print STDERR "\$fd=$fd, \$port=$port\n";
+#		my $file;
+#		open($file, "+<&=$fd") || die;
+#		$fds{$fd} = [$port, $file];
+#		vec($master_fdset, $fd, 1) = 1;
+#		}
+#
+#	CONWAIT:
+#	while(1)
+#		{
+#		my $nfound = select($fdset=$master_fdset, undef, undef, undef);	
+#		
+#		# Reap zombies
+#		1 until(waitpid(-1, WNOHANG) == -1);
+#
+#		#print STDERR "select() reports $nfound ready file descriptors\n";
+#		foreach my $fd (keys %fds)
+#			{
+#			last if($nfound <= 0);		# save time
+#			if(vec($fdset, $fd, 1))
+#				{
+#				#print STDERR "descriptor $fd is ready\n";
+#				if(accept(CONN, $fds{$fd}->[1]))
+#					{
+#					#print STDERR "connexion accepted, fd=", fileno(STDIN), "\n";
+#					if((my $pid = fork()) != 0)
+#						{
+#						#print STDERR "child is $pid\n";
+#						close(CONN) || die $!;
+#						}
+#					else
+#						{
+#						# child setup
+#						foreach my $fd (keys %fds)
+#							{ close($fds{$fd}->[1]) || die $!; }
+#						if(fileno(CONN) != 0)
+#							{ open(STDIN, "<&CONN") || die $!; }
+#						if(fileno(CONN) != 1)
+#							{ open(STDOUT, ">&STDIN") || die $!; }
+#						if(fileno(CONN) > 2)
+#							{ close(CONN) || die $!; }
+#						$port = $fds{$fd}->[0];
+#						#kill 'STOP', $$;
+#						last CONWAIT;
+#						}
+#					}
+#				$nfound--;
+#				}
+#			}
+#		}
+#	}
 
 #===========================================================
 # Start of connection handling code.

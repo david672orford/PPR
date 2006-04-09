@@ -1,5 +1,5 @@
 mouse:~ppr/src/nonppr_vendors/README.txt
-3 June 2004
+8 April 2006
 
 This subdirectory contains files on which are not covered by the PPR license
 terms.  None of them are essential to the operation of PPR, though they may
@@ -12,7 +12,7 @@ ppd_hp/
 ppd_kyocera/
 ppd_lexmark/
 ppd_ricoh/
-	PPD files which may be redistributed only if not modifications are made.
+	PPD files which may be redistributed only if no modifications are made.
 	In other words, they are not free software.
 
 ppd_hp_mit/
