@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_job_submit.sgml
-Last Modified: 30 October 2003
+Last Modified: 10 April 2006
 Last Proofread:
 -->
 
@@ -8,9 +8,8 @@ Last Proofread:
 <title>Submitting Jobs to PPR</title>
 
 <para>All jobs enter <application>PPR</application>'s queue through the program
-<command>ppr</command>.  The LANMAN/X print processor script invokes
-<command>ppr</command> as do the Macintosh print server,
-<command>papd</command>, <ulink
+<command>ppr</command>.  The Macintosh print server <command>papd</command> invokes 
+<command>ppr</command> as do, <ulink
 url="http://www.samba.org"><application>Samba</application></ulink> and the
 LPR/LPD compatible server <command>lprsrv</command>.</para>
 

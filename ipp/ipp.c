@@ -953,12 +953,24 @@ int main(int argc, char *argv[])
 	/* This is for CUPS PPD downloading. */
 	{
 	const char *p;
-	if((p = getenv("REQUEST_METHOD")) && strcmp(p, "GET") == 0
-			&& (p = getenv("PATH_INFO")) && (p = lmatchp(p, "/printers/"))
-			&& gu_rmatch(p, ".ppd"))
+	if((p = getenv("REQUEST_METHOD")) && strcmp(p, "GET") == 0)
 		{
-		send_ppd(p);
-		return 0;
+		const char *path_info;
+		if((path_info = getenv("PATH_INFO")))
+		   	{
+			if(strcmp(path_info, "/") == 0)
+				{
+				fputs("Location: /index.html\n"
+				      "Content-Length: 0\n"
+				      "\n", stdout);
+				return 0;
+				}
+			if((p = lmatchp(path_info, "/printers/")) && gu_rmatch(p, ".ppd"))
+				{
+				send_ppd(p);
+				return 0;
+				}
+			}
 		}
 	}
 

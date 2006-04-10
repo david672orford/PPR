@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/misc/Makefile
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 October 2005.
+# Last modified 10 April 2006.
 #
 
 include ../Makefile.conf
@@ -36,8 +36,7 @@ PROGS=ppr-sync \
 	ppd2macosdrv \
 	custom_hook_docutech \
 	xmessage \
-	ppr-testpage \
-	tcpbind
+	ppr-testpage
 
 #=== Build ==================================================================
 

@@ -9894,10 +9894,6 @@ no final tarball was released.
   since long language and charset names were pushing it more than 50 bytes in
   where pprd couldn't find it anymore.
 
-* z_install_end/init.d.sh: added startup for ppr-httpd in standalone mode as 
-  an IPP and an admin server.  This is enabled and disabled by defining values 
-  in /etc/default/ppr.
-
 * www/ppr-web.tcl: added Mozilla Firefox to list of browsers to look for.  It is before
   the old Mozilla Browser.
 
@@ -9929,10 +9925,6 @@ no final tarball was released.
 * libgu/daemon.c: split out the closing of FD's 3 and higher into a separate 
   function as we may want to do it and open some of our own before forking
   into the background.
-
-* libscript/tcpserver.pl: removed; misc/tcpbind.c: added; lprsrv/: changed
-  standalone mode to use tcpbind; www/ppr-httpd.perl: changed standalone mode
-  to use tcpbind rather than tcpserver.pl.
 
 * cron/ppr-index.c: changed to use renounce_root_privs() rather than makeing
   the program setuid ppr.
@@ -10035,6 +10027,19 @@ no final tarball was released.
 
 * libppr/queueinfo.c: messed up or non-existent PPD files no longer 
   prevent object creation.
+
+* pprd/: added listeners for LPD and IPP.
+
+* libscript/tcpserver.pl: removed
+
+* lprsrv: removed standalone mode
+
+* www/ppr-httpd.perl: removed standalone mode, removed --ipp and --root-xlate
+  options; added hard-coded path translations for the root URL and for the
+  sub-directories /admin/, /printers/, and /jobs/ (for CUPS compatibility).
+
+* z_install_end/: removed install_inetd_conf.sh and getservbyname.c since 
+  listening is not handled by pprd.
 
 
 

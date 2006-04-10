@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/lprsrv/Makefile
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 August 2005.
+# Last modified 10 April 2006.
 #
 
 include ../Makefile.conf
@@ -45,7 +45,6 @@ all: $(PROGS)
 lprsrv$(DOTEXE): \
 		lprsrv.o lprsrv_client_info.o lprsrv_conf.o \
 		lprsrv_print.o lprsrv_list.o lprsrv_cancel.o \
-		lprsrv_standalone.o \
 		uprint_claim_ppr.o \
 		uprint_obj.o \
 		uprint_sysv.o \

@@ -234,7 +234,7 @@ static void tick(void)
 /*========================================================================
 ** Handle a command on the pipe.
 ========================================================================*/
-static void do_command(int FIFO)
+static void do_command(int fifo)
 	{
 	const char function[] = "do_command";
 	char buffer[256];			/* buffer for received command */
@@ -247,13 +247,13 @@ static void do_command(int FIFO)
 	** Cygnus-Win32 which doesn't implement mkfifo() yet.
 	*/
 	#ifdef HAVE_MKFIFO
-	while((len = read(FIFO, buffer, sizeof(buffer))) < 0)
+	while((len = read(fifo, buffer, sizeof(buffer))) < 0)
 		{
 		if(errno != EINTR)		/* <-- exception for OSF/1 3.2 */
 			fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		}
 	#else
-	while((len = read(FIFO, buffer, sizeof(buffer))) <= 0)
+	while((len = read(fifo, buffer, sizeof(buffer))) <= 0)
 		{
 		if(len < -1)
 			fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
@@ -319,9 +319,9 @@ static void do_command(int FIFO)
 static int real_main(int argc, char *argv[])
 	{
 	const char function[] = "real_main";
-	int FIFO;					/* First-in-first-out which feeds us requests */
+	int fifo;					/* first-in-first-out which feeds us requests */
 	sigset_t lock_set;
-	struct timeval next_tick;
+	struct timeval next_tick;	/* time of next call to tick() */
 
 	time(&daemon_start_time);
 
@@ -344,6 +344,22 @@ static int real_main(int argc, char *argv[])
 
 	parse_command_line(argc, argv, &option_foreground, &option_debug);
 
+	/* Close file descriptors higher than stderr. */
+	gu_daemon_close_fds();
+
+	if(geteuid() == 0)
+		{
+		/* Start listening for IPP connexions. */
+		listener_bind(":ipp", LIBDIR"/ppr-httpd");
+	
+		/* Start listening for BSD LPD connexions. */
+		listener_bind(":printer", LIBDIR"/lprsrv");
+		}
+	else
+		{
+		debug("skipping TCP port binds because not running as root");
+		}
+	
 	/* Switch all UIDs to USER_PPR, all GIDS to GROUP_PPR;
 	 * set supplemental group IDs. */
 	{
@@ -356,7 +372,6 @@ static int real_main(int argc, char *argv[])
 	chdir(LIBDIR);
 	
 	/* If the --forground switch wasn't used, then dropt into background. */
-	gu_daemon_close_fds();
 	gu_daemon(myname, option_foreground, PPR_PPRD_UMASK, PPRD_LOCKFILE);
 	lockfile_created = TRUE;
 
@@ -387,7 +402,7 @@ static int real_main(int argc, char *argv[])
 
 	/* Set up the FIFO. */
 	DODEBUG_STARTUP(("opening FIFO"));
-	FIFO = open_fifo();
+	fifo = open_fifo();
 
 	/* Load the printers database. */
 	DODEBUG_STARTUP(("loading printers database"));
@@ -436,28 +451,33 @@ static int real_main(int argc, char *argv[])
 		/* If it is not time for the next tick yet, */
 		else
 			{
+			int lastfd;
+
 			/* Set the select() timeout so that it will return in time for the
 			   next tick(). */
 			gu_timeval_cpy(&select_tv, &next_tick);
 			gu_timeval_sub(&select_tv, &time_now);
 
-			/* Create a file descriptor list which contains only the descriptor
-			   of the FIFO. */
+			/* Listen for activity on FIFO or on any listening sockets. */
 			FD_ZERO(&rfds);
-			FD_SET(FIFO, &rfds);
+			FD_SET(fifo, &rfds);
+			lastfd = listener_fd_set(fifo, &rfds);
 
 			/* Call select() with SIGCHLD unblocked. */
 			sigprocmask(SIG_UNBLOCK, &lock_set, (sigset_t*)NULL);
-			readyfds = select(FIFO + 1, &rfds, NULL, NULL, &select_tv);
+			readyfds = select(lastfd + 1, &rfds, NULL, NULL, &select_tv);
 			sigprocmask(SIG_BLOCK, &lock_set, (sigset_t*)NULL);
 			}
 
 		/* If there is something to read, */
 		if(readyfds > 0)
 			{
-			if(!FD_ISSET(FIFO, &rfds))
-				fatal(0, "%s(): assertion failed: select() returned but FIFO not ready", function);
-			do_command(FIFO);
+			if(FD_ISSET(fifo, &rfds))
+				do_command(fifo);
+			else if(listener_hook(readyfds, &rfds))
+				;
+			else
+				fatal(0, "%s(): assertion failed: select() returned but no file descriptor ready", function);
 			continue;
 			}
 

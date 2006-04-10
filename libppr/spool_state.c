@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2006.
+** Last modified 10 April 2006.
 */
 
 #include "config.h"
@@ -42,7 +42,7 @@
 void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[])
 	{
 	char fname[MAX_PPR_PATH];
-	int fd;
+	int fd = -1;
 	char spool_state_data[128];
 	int len;
 
@@ -83,12 +83,15 @@ void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prn
 			error("corrupt \"%s\"", spool_state_data);
 			}
 		} while(FALSE);
+
+	if(fd != -1)
+		close(fd);
 	} /* printer_spool_state_load() */
 
 void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[])
 	{
 	char fname[MAX_PPR_PATH];
-	int fd;
+	int fd = -1;
 	char spool_state_data[128];
 	int len;
 
@@ -122,6 +125,9 @@ void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname
 			error("corrupt \"%s\"", spool_state_data);
 			}
 		} while(FALSE);
+
+	if(fd != -1)
+		close(fd);
 	} /* group_spool_state_load() */
 
 /* end of file */

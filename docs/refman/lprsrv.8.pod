@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/lprsrv.8.pod
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 20 October 2005.
+# Last modified 10 April 2006.
 #
 
 =head1 NAME
@@ -111,121 +111,27 @@ or, if your B<kill> command doesn't support the modern syntax:
 
     kill -1 123
 
+=head3 CUPS
 
-=head2 Setup With Inetd
+[Information missing.]
 
-If Inetd was installed on your system when you installed PPR, PPR will have
-added the necessary line to F</etc/services> to define the "printer" port.  It
-will also have put an entry in F</etc/inetd.conf> but left it commented out.
-If that was done, just skim through this section and make sure the
-required lines are present and remove the comment character from in front of
-the line in F</etc/inetd.conf>.
 
-First, make sure a line like this is in F</etc/services>:
+=head2 Recommended Setup
 
-    printer		515/tcp		spooler
+By default B<pprd> will listen on port 515 and launch B<lprsrv> whenever a
+new connexion comes in.  This feature will be enabled only if port 515 is
+free and B<pprd> is started as root.
 
-Then look in F</etc/inetd.conf>.  For basic versions of B<inetd>, such as
-those distributed with Solaris, the line should read something like:
+
+=head2 Alternative Setup With Inetd
+
+If you are hacking PPR, you may want to be able to start and stop B<pprd> 
+without having root access.  In that case, you should configure 
+B<inetd> to launch B<lprsrv> as user B<ppr>.  The configuration 
+line to insert in F</etc/inetd.conf>.
 
     printer stream tcp nowait ppr /usr/lib/ppr/lprsrv lprsrv
 
-If Tcpwrappers was installed on your system when you installed PPR, it will
-read:
-
-    printer stream tcp nowait ppr /usr/local/sbin/tcpd /usr/lib/ppr/lprsrv
-
-On Linux systems with TCP wrappers it will read something like:
-
-    printer stream tcp nowait.400 ppr /usr/sbin/tcpd /usr/lib/ppr/lib/lprsrv
-
-If the line is already present, make sure there is no "#" in front of it. 
-
-The Linux version of Inetd allows us to specify how how many requests per
-minute the server should be allowed to receive.  In the Linux
-F</etc/inetd.conf> example above, the "400" specifies that the B<lprsrv> should
-be allowed to handle up to 400 connections per minute.  If more than 400
-requests are received during one minute, then B<inetd> will disable B<lprsrv>
-for a little while.
-
-Other versions of Inetd may not have any provision for changing the maximum
-allowed number of connections.  Often they will limit all servers to 60
-connections per minute.  If this is the case with you, you may want to run
-B<lprsrv> in standalone mode.
-
-Before your changes to F<inetd.conf> will take effect, B<inetd> must be
-instructed to reload F<inetd.conf> by sending it the HUP signal.  If
-B<inetd> has the process id 123, then the command for reloading
-F<inetd.conf> is:
-
-    kill -HUP 123
-
-or, if your B<kill> command doesn't support the modern syntax:
-
-    kill -1 123
-
-
-=head2 Setup With Xinetd
-
-A comparatively new alternative to Inetd is Xinetd.  It is designed to be
-more flexible and to better manage the connection load.  Xinetd is used
-instead of Inetd in some Linux distributions such as Mandrake.  You can
-download the Xinetd source code from http://www.xinetd.org/.
-
-Xinetd uses a configuration file format that is different from that of
-Inetd.  Generally, the configuration file is F</etc/xinetd.conf> which
-contains an instruction to include configuration file fragments stored
-in F</etc/xinetd.d/>.  This setup makes it easy for package installers to
-add and remove Xinetd configuration information from the system.  All they
-have to do is add files to F</etc/xinetd.d> when installing the package and
-delete them when removing the package.
-
-If Xinetd was installed on your system when PPR was installed, PPR will set it
-up instead of Inetd.  PPR will create a file called F</etc/xinetd.d/ppr> which
-will read in part:
-
-    # RFC 1179 (LPR/LPD) server
-    service printer
-    {
-        socket_type     = stream
-        wait            = no
-        user            = ppr
-        server          = /usr/lib/ppr/lprsrv
-        cps             = 400 30
-        instances       = 50
-        disabled        = yes
-    }
-
-Notice the line that says "disabled = yes".  You must change this to
-"disabled = no" in order to enable B<lprsrv>.
-
-After you make a change to Xinetd's configuration, you must send it the USR2
-signal.  For example, if Xinetd's process id is 123:
-
-    kill -USR2 123
-
-
-=head2 Standalone Server Operation
-
-Running B<lprsrv> through B<inetd> usually yields acceptable performance.  But
-if you want to, you can run B<lprsrv> in standalone mode.  This is done by
-using a small wrapper program called B<tcpbind> which creates the necessary
-TCP listening sockets.  It then sets the user ID to the one you specify
-and creats a .pid file recording the process ID.  Finally it executes
-B<lprsrv>.  In turn B<lprsrv> recognizes that it is running in standalone mode
-and accepts connections on the listening sockets which B<tcpbind> has provided.
-
-The command for starting B<lprsrv> in standalone mode is:
-
-	/usr/lib/ppr/tcpbind :printer ppr lprsrv /usr/lib/ppr/lprsrv
-
-The parameters are respectively the IP address (empty) and port, the username
-under which to run B<lprsrv>, the basename of the .pid file, and the path
-to B<lprsrv>.
-
-The PPR Init script will start B<lprsrv> in standalone mode if the variable
-LPRSRV_STANDALONE_LISTEN is set to a list of addresses and ports on which to 
-listen.
 
 =head2 Queue Listing Options
 

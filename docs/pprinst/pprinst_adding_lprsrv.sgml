@@ -1,3 +1,9 @@
+<!--
+Filename: pprinst_adding_lprsrv.sgml
+Last Modified: 10 April 2006
+Last Proofread:
+-->
+
 <sect2 id="adding-lprsrv">
 <title><application>PPR</application>'s LPD (RFC 1179) Server</title>
 
@@ -9,17 +15,14 @@ When this server receives a job for a PPR printer, it invokes
 is not defined in PPR, it passes the job to the system's normal print
 spooler. </para>
 
-<para><application>PPR</application>'s LPD server is relatively easy to set
-up since it simply shares all of your <application>PPR</application>
+<para><application>PPR</application>'s LPD server doesn't require much
+set up since it simply shares all of your <application>PPR</application>
 printers and all of the native spooling system's printers. </para>
 
 <para>Before using <application>PPR</application>'s LPD server, it is
-necessary to disable any LPD server you are currently using. </para>
-
-<para>Once any pre-existing LPD server is disabled, the
-<command>inetd</command> configuration file may then be changed so that
-<command>inetd</command> will call <command>lprsrv</command> whenever a
-print request comes in. The setup procedure is described in the lprsrv(8)
-man page. </para>
+necessary to disable any LPD server you are currently using.  
+Once any pre-existing LPD server is disabled, restart <command>pprd</command>
+so that it can start accepting connexions on port 515 and launching
+<command>lprsrv</command> to handle them.</para>
 
 </sect2>

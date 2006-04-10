@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_installation.sgml
-Last Modified: 11 September 2003
+Last Modified: 10 April 2006
 Last Proofread: 14 February 2003
 -->
 
@@ -100,17 +100,6 @@ scripts to automatically convert input files to PostScript.</para>
 If you later add or remove programs which PPR uses or could use as filters,
 you should re-run <filename>ppr-index filters</filename>.
 </para>
-
-</sect2>
-
-<!-- ===================================================================== -->
-<sect2 id="install-web-interface">
-<title>Web Interface Setup</title>
-
-<para>PPR has a web interface which one can use to manage queues and
-printers.  This is not yet adequately documented here.  Please see
-<filename>www/README.txt</filename> in the PPR source distribution for
-instructions on setting this up.</para>
 
 </sect2>
 

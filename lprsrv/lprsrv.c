@@ -226,16 +226,6 @@ static int real_main(int argc,char *argv[])
 		}
 	} /* end of command line parsing context */
 
-	/* Are we running under tcpbind?  If so, then this function
-	 * will accept connexions and fork() returning in each 
-	 * child with the connexion on fd 0.  The parent process
-	 * will never return from this function. */
-	{
-	char *p;
-	if((p = getenv("TCPBIND_SOCKETS")))
-		standalone_accept(p, getenv("TCPBIND_PIDFILE"));
-	}
-
 	DODEBUG_MAIN(("connexion received"));
 
 	/*
