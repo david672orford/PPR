@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <ipp>
 <request>
-	<version-number>1.0</version-number>
+	<version-number>1.1</version-number>
 	<operation-id>CUPS-Get-Default</operation-id>
 	<request-id>36</request-id>
 	<operation-attributes>

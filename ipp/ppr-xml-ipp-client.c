@@ -320,7 +320,7 @@ int main(int argc, char *argv[])
 			gu_Throw("can not connect to %s port %d: %s", uri->node, uri->port, strerror(errno));
 
 		/* Send the IPP request which we assembled above. */
-		response = cupsDoFileRequest(http, request, uri->path, opt_filename);
+		response = cupsDoFileRequest(http, request, uri->path ? uri->path : "/", opt_filename);
 		request = NULL;		/* cupsDoFileRequest() freed request.  Ouch! */
 		if(!response)
 			gu_Throw("request failed: 0x%04x", cupsLastError());
@@ -387,11 +387,15 @@ int main(int argc, char *argv[])
 					case IPP_TAG_BOOLEAN:
 						printf("    <value>%s</value>\n", attr->values[iii].boolean ? "true" : "false");
 						break;
+					case IPP_TAG_TEXTLANG:
+					case IPP_TAG_NAMELANG:
+						printf("    <lang>%s</lang>\n", attr->values[iii].string.charset);
+						/* fall thru */
 					case IPP_TAG_STRING:
 						printf("    <value>%s</value>\n", attr->values[iii].string.text);
 						break;
 					default:
-						gu_Throw("missing case");
+						gu_Throw("no handler for values of type 0x%02X", tag_class);
 					}
 				}
 			printf("    </%s>\n", tag);		/* close entity which represents data item */

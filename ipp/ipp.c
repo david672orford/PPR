@@ -716,15 +716,10 @@ static void cups_get_printers(struct IPP *ipp)
 		{
 		if(direntp->d_name[0] == '.')
 			continue;
-		DEBUG(("printer: %s", direntp->d_name));
 		qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, direntp->d_name);
-		DEBUG(("a"));
 		add_queue_attributes(ipp, req, qip);
-		DEBUG(("b"));
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
-		DEBUG(("c"));
 		queueinfo_free(qip);
-		DEBUG(("d"));
 		}
 
 	closedir(dir);
@@ -979,16 +974,6 @@ int main(int argc, char *argv[])
 		char *p, *path_info;
 		int content_length;
 
-		/*
-		** This program is setuid ppr.  It would be better if it inherited all 
-		** of its privledges from ppr-httpd (which runs as pprwww:ppr), but 
-		** pprd can't send it SIGUSR1 from pprd unless at least the saved UID 
-		** is ppr.  So it is setuid ppr, but we restore the EUID here so that
-		** it can't open the pprd FIFO if an ordinary user runs it.
-		*/
-		if(seteuid(getuid()) == -1)
-			gu_Throw("seteuid() failed");
-	
 		/* Do basic input validation */
 		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
 			gu_Throw("REQUEST_METHOD is not POST");

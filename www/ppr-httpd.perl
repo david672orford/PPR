@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 27 March 2006.
+# Last modified 10 April 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -162,30 +162,19 @@ umask(002);
 # If there are command line arguments, pull in Getopt::Long
 # to process them.
 #===========================================================
-#my $root_xlate = undef;
-my $port = 15010;
-#my $ipp = undef;
+my $port = 631;
 
 if(scalar @ARGV >= 1)
 	{
 	require Getopt::Long;
 	if(!Getopt::Long::GetOptions(
-			"root-xlate=s" => \$root_xlate,
-			"inetd-port=s" => \$port,
-			"ipp" => \$ipp
+			"inetd-port=s" => \$port
 			))
 		{
-		#print STDERR "Usage: ppr-httpd [--root-xlate=<path>] [--inetd-port=<port>] [--ipp]\n";
 		print STDERR "Usage: ppr-httpd [--inetd-port=<port>]\n";
 		exit 1;
 		}
 	}
-
-#if(defined $ipp)
-#	{
-#	$root_xlate = "cgi-bin/ipp";
-#	$port = 631;
-#	}
 
 #===========================================================
 # If we are running in the foreground, leave STDERR alone.
@@ -201,77 +190,6 @@ else
 	{
 	open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
 	}
-
-#===========================================================
-# Was ppr-httpd launched from tcpbind?  If it was, then
-# TCPBIND_SOCKETS contains a list of listening socket FD's
-# and the port numbers that go with them.
-#===========================================================
-#if(defined $ENV{TCPBIND_SOCKETS})
-#	{
-#	use POSIX ":sys_wait_h";
-#
-#	# Create a file descriptor set for use with select()
-#	# which includes the file descriptors of all of our
-#	# listening sockets.
-#	my %fds = ();
-#	my $master_fdset = "";
-#	my $fdset;
-#	foreach my $item (split(',', $ENV{TCPBIND_SOCKETS}))
-#		{
-#		$item =~ /^(\d+)=(\d+)$/ || die;
-#		my($fd, $port) = ($1, $2);
-#		#print STDERR "\$fd=$fd, \$port=$port\n";
-#		my $file;
-#		open($file, "+<&=$fd") || die;
-#		$fds{$fd} = [$port, $file];
-#		vec($master_fdset, $fd, 1) = 1;
-#		}
-#
-#	CONWAIT:
-#	while(1)
-#		{
-#		my $nfound = select($fdset=$master_fdset, undef, undef, undef);	
-#		
-#		# Reap zombies
-#		1 until(waitpid(-1, WNOHANG) == -1);
-#
-#		#print STDERR "select() reports $nfound ready file descriptors\n";
-#		foreach my $fd (keys %fds)
-#			{
-#			last if($nfound <= 0);		# save time
-#			if(vec($fdset, $fd, 1))
-#				{
-#				#print STDERR "descriptor $fd is ready\n";
-#				if(accept(CONN, $fds{$fd}->[1]))
-#					{
-#					#print STDERR "connexion accepted, fd=", fileno(STDIN), "\n";
-#					if((my $pid = fork()) != 0)
-#						{
-#						#print STDERR "child is $pid\n";
-#						close(CONN) || die $!;
-#						}
-#					else
-#						{
-#						# child setup
-#						foreach my $fd (keys %fds)
-#							{ close($fds{$fd}->[1]) || die $!; }
-#						if(fileno(CONN) != 0)
-#							{ open(STDIN, "<&CONN") || die $!; }
-#						if(fileno(CONN) != 1)
-#							{ open(STDOUT, ">&STDIN") || die $!; }
-#						if(fileno(CONN) > 2)
-#							{ close(CONN) || die $!; }
-#						$port = $fds{$fd}->[0];
-#						#kill 'STOP', $$;
-#						last CONWAIT;
-#						}
-#					}
-#				$nfound--;
-#				}
-#			}
-#		}
-#	}
 
 #===========================================================
 # Start of connection handling code.
@@ -558,53 +476,47 @@ while(1)
 			die "501 The only request methods that this server can accept are GET and POST.\n";
 			}
 
-		#
-		# If the --root-xlate option was used, translate the root to somewhere deaper.
-		#
-		if(defined $root_xlate)
+		# Set these to trigger CGI execution.
+		my($script_name, $script_exe, $path_info) = ($path, undef, "");
+
+		# Recognize CUPS-compatibility paths and route them to the
+		# ipp CGI program.
+		if($path eq "")
 			{
-			my $xlated_path = "$root_xlate/$path";
-			print STDERR "Translating /$path to /$xlated_path\n" if($DEBUG > 0);
-			$path = $xlated_path;
+			$script_exe = "$CGI_BIN/ipp";
+			$path_info = "/";
+			}
+		if($path =~ m#^(printers|admin|jobs)(/.*)$#)
+			{
+			$script_exe = "$CGI_BIN/ipp";
+			$path_info = $2;
+			}
+
+		# Recognize /cgi-bin/ and route to programs in $CGI_BIN.
+		if($path =~ m#^(cgi-bin/([^/]+))(.*)#)
+			{
+			($script_name, $script_exe, $path_info) = ($1, $2, $3);
+			$script_exe = "$CGI_BIN/$script_exe";
 			}
 
 		#
 		# If the request is for a CGI script,
 		#
-		if($path =~ /^cgi-bin\/([^\/]+)(.*)$/)
+		if(defined($script_exe))
 			{
-			if($request_method eq "GET" || $request_method eq "POST")
-				{
-				my($script_basename, $path_info) = ($1, $2);
-
-				my $script_name;
-				if(defined $root_xlate)
-					{
-					$script_name = "/";
-					}
-				else
-					{
-					$script_name = "/cgi-bin/$script_basename";
-					}
-
-				$resp_header_connection =
-					do_cgi($request_method, $request_uri, \%request_headers,
-						$script_name, $script_basename, $path_info, $query,
-						$resp_header_connection, $resp_headers_general,
-						$request_time,
-						$request_version_major, $request_version_minor);
-				}
-			else
-				{
-				$resp_headers_general .= "Allow: GET, POST\r\n";
-				die "405 The only request methods that this server can accept for CGI scripts are GET and POST.\n";
-				}
+			$resp_header_connection =
+				do_cgi($request_method, $request_uri, \%request_headers,
+					$script_name, $script_exe, $path_info, $query,
+					$resp_header_connection, $resp_headers_general,
+					$request_time,
+					$request_version_major, $request_version_minor
+					);
 			}
 
 		#
 		# Is the request for ppr-push-httpd?
 		#
-		elsif($path =~ /^push\//)
+		elsif($path =~ m#^push/#)
 			{
 			print STDERR "Launching push server...\n" if($DEBUG > 0);
 			do_push($path, $request_method, $request_uri, \%request_headers,
@@ -982,15 +894,15 @@ sub do_get
 #=========================================================================
 sub do_cgi
 	{
-	my($method, $request_uri, $request_headers, $script_name, $script_basename, $path_info, $query, $resp_header_connection, $resp_headers_general, $request_time, $request_version_major, $request_version_minor) = @_;
+	my($method, $request_uri, $request_headers, $script_name, $script_exe, $path_info, $query, $resp_header_connection, $resp_headers_general, $request_time, $request_version_major, $request_version_minor) = @_;
 	my $protection_domain = "http://$request_headers->{HOST}/cgi-bin/";
 	my $stale = 0;
 	my $auth_info = undef;
 
-	if(! -f "$CGI_BIN/$script_basename")
-		{ die("404 The CGI program \"$script_basename\" is not found.\n") }
+	if(! -f $script_exe)
+		{ die("404 The CGI program \"$script_exe\" is not found.\n") }
 	if(! -x _)
-		{ die("403 The CGI program \"$script_basename\" is not executable.\n") }
+		{ die("403 The CGI program \"$script_exe\" is not executable.\n") }
 
 	$ENV{REMOTE_USER} = "";
 
@@ -1026,7 +938,7 @@ sub do_cgi
 	#	($ENV{AUTH_TYPE}, $ENV{REMOTE_USER}) = ("None", "ppranon");
 	#	}
 
-	print STDERR "Executing CGI program \"$CGI_BIN/$script_basename\".\n" if($DEBUG > 0);
+	print STDERR "Executing CGI program \"$script_exe\".\n" if($DEBUG > 0);
 
 	# Create two anonymous pipes, one to send data to the CGI script,
 	# the other to receive data.
@@ -1099,7 +1011,7 @@ sub do_cgi
 				}
 
 			# Run the CGI script.
-			exec("$CGI_BIN/$script_basename") || die;
+			exec($script_exe) || die;
 			} ;
 
 		# Catch exceptions
@@ -1232,9 +1144,9 @@ sub do_cgi
 		# defined until HTTP 1.1.  Therefor, for HTTP 1.0 we will use
 		# "Temporary Redirect".
 		$status = ($request_version_minor >= 1) ? 303 : 302;
-		if($location =~ /^\//)
+		if($location =~ m#^/(.*)#)
 			{
-			$location = "http://$request_headers->{HOST}/$location";
+			$location = "http://$request_headers->{HOST}/$1";
 			}
 		}
 

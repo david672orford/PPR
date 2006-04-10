@@ -54,7 +54,8 @@ ppr-xml-ipp-client.o: ppr-xml-ipp-client.c
 #=== Install ================================================================
 
 install: $(PROGS)
-	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(CGI_BIN) $(CGI_PROGS)
+	#$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 4755 $(CGI_BIN) $(CGI_PROGS)
+	$(INSTALLPROGS) $(USER_PPR) $(GROUP_PPR) 755 $(CGI_BIN) $(CGI_PROGS)
 
 #=== Housekeeping ===========================================================
 

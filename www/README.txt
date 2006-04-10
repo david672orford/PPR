@@ -1,13 +1,14 @@
 ==========================================================================
  mouse:~ppr/src/www/README.txt
- 20 October 2005.
+ 10 April 2006
 ==========================================================================
 
 This directory contains HTML pages, CGI scripts, and images which together
 form an interface for managing and monitoring PPR from a web browser.
 
 Most of the programs in this directory require Perl 5 to run.  Rebuilding
-the images requires Perl5, Transfig, Ghostscript, and NetPBM.
+the icons and other image files requires Perl5, Transfig, Ghostscript, and 
+NetPBM.
 
 ==========================================================================
  Status of the PPR WWW Interface
@@ -27,52 +28,23 @@ complete.  So far you can:
 * monitor, stop, and start printers
 
 ==========================================================================
- Setting up the PPR WWW Interface with ppr-httpd
+ Setting up the PPR WWW Interface
 ==========================================================================
 
-PPR has a mini web server called ppr-httpd which runs out of Inetd.  That way
-it will put no load the system when it is not being used.
-
-To enable ppr-httpd, add this line to /etc/services:
-
-ppradmin	15010/tcp
-
-and one like this to /etc/inetd.conf:
-
-ppradmin stream tcp	nowait.400	pprwww	/usr/sbin/tcpd /usr/ppr/lib/ppr-httpd
-
-These lines are added when you run "make install", but they are left commented
-out.  After uncommenting the line, send Inetd the the HUP signal to tell it to 
-reload inetd.conf.
-
-If Xinetd was installed when you did "make install", it will have created the
-file /etc/xinetd.d/ppr which will contain configuration sections for ppr-httpd
-as well as lprsrv.  Both will be disabled.  In order to enable ppr-httpd, you
-will have to change the line which says:
-
-	disable = yes
-
-to
-	disable = no
-
-You must send xinetd the HUP signal to tell it to reload its configuration
-file.  (If it doesn't seem to work, check the xinetd(8) man page.  Some 
-versions may require a different signal.)
-
-Since the PPR WWW interface may contain security flaws, it is suggested that
-you limited its use to specific networks.  That is why the inetd.conf line
-will use TCP Wrappers if available.  Be sure that you set /etc/hosts.deny
-and /etc/hosts.allow to limit access appropriately.
+The PPR web interface runs on the same port as PPR's IPP server, so
+if you can't connect to it, make sure there aren't any other IPP
+servers (such as CUPS) running.  Shut them down or move them to different
+ports or IP addresses and restart pprd.
 
 ==========================================================================
  Connecting
 ==========================================================================
 
-As you may have noticed while reading the previous session, connexions for
-ppr-httpd are accepted on port 15010.  If the browser is running on the 
+As as noted in the previous section, connexions to the web interface
+are accepted on the IPP port which is.  If the browser is running on the 
 same machine as PPR, enter this URL to connect to the PPR web interface:
 
-	http://localhost:15010
+	http://localhost:631
 
 This will open a page of links.  The most important ones are the links to
 the PPR documentation and to the PPR control panel.  The PPR control panel

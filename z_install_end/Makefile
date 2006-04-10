@@ -57,9 +57,6 @@ install: $(ALL)
 # rather than actually installing the program.
 install-real:
 	#
-	# Configure Inetd to launch our HTTP and LPR servers
-	./install_inetd_conf.sh
-	#
 	# Create PPR's crontab.
 	./install_crontab.sh
 	#

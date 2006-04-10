@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 5 April 2006.
+# Last modified 10 April 2006.
 #
 
 #
@@ -103,30 +103,6 @@ do_start ()
 		$BINDIR/papd && $EECHO "papd \c"
 		fi
 
-	# To run lprsrv in standalone mode, set LPRSRV_STANDALONE_LISTEN in
-	# /etc/default/ppr to a list of addresses to listen on.  The list
-	# should be comma-separated.  Each item is in the form <ip>:<port>.
-	# <ip> can be left blank.
-	if [ -n "$LPRSRV_STANDALONE_LISTEN" ]
-		then
-		$LIBDIR/tcpbind $LPRSRV_STANDALONE_LISTEN $USER_PPR lprsrv \
-			$LIBDIR/lprsrv && $EECHO "lprsrv \c"
-		fi
-
-	# Same for ppr-httpd for the web interface.
-	if [ -n "$ADMIN_STANDALONE_LISTEN" ]
-		then
-		$LIBDIR/tcpbind $ADMIN_STANDALONE_LISTEN $USER_PPRWWW ppr-httpd-admin \
-			$LIBDIR/ppr-httpd && $EECHO "ppr-httpd-admin \c"
-		fi
-
-	# Same for ppr-httpd for IPP.
-	if [ -n "$IPP_STANDALONE_LISTEN" ]
-		then
-		$LIBDIR/tcpbind $IPP_STANDALONE_LISTEN $USER_PPRWWW ppr-httpd-ipp \
-			$LIBDIR/ppr-httpd --ipp && $EECHO "ppr-httpd-ipp \c"
-		fi
-
 	echo
 
 	# Extra code for RedHat Linux:
@@ -145,21 +121,6 @@ do_stop ()
 		then
 		kill `cat $RUNDIR/papd.pid` && $EECHO "papd \c"
 		rm -f $RUNDIR/papd.pid
-		fi
-	if [ -r $RUNDIR/lprsrv.pid ]
-		then
-		kill `cat $RUNDIR/lprsrv.pid` && $EECHO "lprsrv \c"
-		rm -f $RUNDIR/lprsrv.pid
-		fi
-	if [ -r $RUNDIR/ppr-httpd-ipp.pid ]
-		then
-		kill `cat $RUNDIR/ppr-httpd-ipp.pid` && $EECHO "ppr-httpd-ipp \c"
-		rm -f $RUNDIR/ppr-httpd-ipp.pid
-		fi
-	if [ -r $RUNDIR/ppr-httpd-admin.pid ]
-		then
-		kill `cat $RUNDIR/ppr-httpd-admin.pid` && $EECHO "ppr-httpd-admin \c"
-		rm -f $RUNDIR/ppr-httpd-admin.pid
 		fi
 	echo
 
@@ -191,24 +152,6 @@ do_status()
 	{
 	do_status_1 pprd 1
 	do_status_1 papd 0
-	if [ -n "$LPRSRV_STANDALONE_PORT" ]
-		then
-		do_status_1 lprsrv 1
-		else
-		do_status_1 lprsrv 0
-		fi
-	if [ -n "$IPP_STANDALONE_LISTEN" ]
-		then
-		do_status_1 ppr-httpd-ipp 1
-		else
-		do_status_1 ppr-httpd-ipp 0
-		fi
-	if [ -n "$ADMIN_STANDALONE_LISTEN" ]
-		then
-		do_status_1 ppr-httpd-admin 1
-		else
-		do_status_1 ppr-httpd-admin 0
-		fi
 	}
 
 case "$1" in
