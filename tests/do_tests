@@ -1,8 +1,10 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/tests/do_tests
-# Last modified 17 November 2002.
+# Last modified 11 April 2006.
 #
+
+use Cwd;
 
 #
 # This program is used to run PPR regression tests.  It should be invoked
@@ -75,7 +77,7 @@ delete $ENV{LC_MESSAGES};
 
 # We pass this to our children so that they can find this nice directory
 # of utilities handy for building tests.
-$ENV{TESTBIN} = "$ENV{HOMEDIR}/src/tests/tools";
+$ENV{TESTBIN} = getcwd() . "/tools";
 
 # This is where the output of the simulated printer will appear.
 $ENV{REGTEST_INTERFACE_OUTPUT} = "$ENV{TEMPDIR}/regtest_interface_output";

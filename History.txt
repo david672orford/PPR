@@ -9466,7 +9466,7 @@ no final tarball was released.
 * pprd/pprd_ppop.c: ppop_move(): fixed bug which caused the message about
   the job being moved to go into the -barbar file instead of the -log file.
 
-* Configure: fixed so that processor flags for GCC are once again included.
+* Configure: fixed so that preprocessor flags for GCC are once again included.
 
 * libscript/Makefile: added code to build interfaces.tcl.
 
@@ -9478,8 +9478,6 @@ no final tarball was released.
 
 * filter_dotmatrix/prop.c: fixed spurious declaration of global variable
   as static.
-
-* z_install_end/install_inetd_conf.sh: fixed Xinetd config file
 
 * libppr/readppd.c: wasn't closing ppdindex.db.
 
