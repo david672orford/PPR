@@ -8786,7 +8786,7 @@ Misc. Enhancements
 * z_install_end/install_inetd_conf.sh: for Xinetd, add /etc/xinetd.d  and
   the reference to it in /etc/xinetd.conf if it doesn't already exist.
 
-* makeproge/installconf.sh: change to allow specifying of the owner, group,
+* makeprogs/installconf.sh: change to allow specifying of the owner, group,
   and permissions.  This means that it can now be used to register the PPR
   init script.
 
@@ -10028,18 +10028,21 @@ no final tarball was released.
 * libppr/queueinfo.c: messed up or non-existent PPD files no longer 
   prevent object creation.
 
-* pprd/: added listeners for LPD and IPP.
+* pprd/: added TCP listeners for LPD and IPP.
 
-* libscript/tcpserver.pl: removed
+* followup to previous item: libscript/tcpserver.pl: removed; lprsrv: removed
+  standalone mode; www/ppr-httpd.perl: removed standalone mode, removed --ipp
+  and --root-xlate options; 
 
-* lprsrv: removed standalone mode
-
-* www/ppr-httpd.perl: removed standalone mode, removed --ipp and --root-xlate
-  options; added hard-coded path translations for the root URL and for the
-  sub-directories /admin/, /printers/, and /jobs/ (for CUPS compatibility).
+* www/ppr-httpd.perl: added hard-coded path translations for the root URL and
+  for the sub-directories /admin/, /printers/, and /jobs/ (for CUPS
+  compatibility).
 
 * z_install_end/: removed install_inetd_conf.sh and getservbyname.c since 
-  listening is not handled by pprd.
+  listening is not handled by pprd; removed ppr-httpd and lprsrv standalone
+  start-up and shut-down code.
 
+* z_install_end/init.d.sh: added code to create our rundir (for when
+  /var/run is a tmpfs).
 
 

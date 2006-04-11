@@ -84,7 +84,8 @@ do_start ()
 		export LANG
 		fi
 
-	# Ubuntu deletes our run directory!
+	# If /var/run is a tmpfs, we must create our run directory
+	# at every system restart.
 	if [ ! -d $RUNDIR ]
 		then
 		mkdir $RUNDIR
