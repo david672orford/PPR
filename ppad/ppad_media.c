@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_media.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 June 2004.
+** Last modified 22 February 2006.
 */
 
 /*
@@ -433,6 +433,9 @@ int media_delete(const char *argv[])
 	struct Media media;
 	char asciiz[sizeof(media.medianame)+2];
 	char padded[sizeof(media.medianame)];
+
+	if( ! am_administrator() )
+		return EXIT_DENIED;
 
 	printf(_("Media Name: "));
 	get_answer(asciiz,sizeof(asciiz),argv,&index);

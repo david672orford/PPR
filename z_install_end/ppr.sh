@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/ppr.sh
-# Copyright 1995--2004, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 8 October 2004.
+# Last modified 11 April 2006.
 #
 
 #
@@ -77,6 +77,16 @@ do_start ()
 		$EECHO -n "(language is $lang) \c"
 		LANG=$lang
 		export LANG
+		fi
+
+	# If /var/run is a tmpfs, we must create our run directory
+	# at every system restart.
+	if [ ! -d $RUNDIR ]
+		then
+		mkdir $RUNDIR
+		chown $USER_PPR $RUNDIR
+		chgrp $GROUP_PPR $RUNDIR
+		chmod 775 $RUNDIR
 		fi
 
 	# This is the spooler daemon.

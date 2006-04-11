@@ -9437,7 +9437,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-1.54, 11 December 2004--16 February 2006
+1.54, 11 December 2004--11 April 2006
 
 * samba/ppd2win95drv.perl: removed
 
@@ -9447,8 +9447,8 @@ no final tarball was released.
 
 * z_install_end/install_inetd_conf.sh: fixed broken Xinetd config file
 
-* browsers/usb.c: fixed discrepancy between the name of the single "zone" listed
-  and the zone name accepted for browsing.
+* browsers/usb.c: fixed discrepancy between the name of the single "zone" 
+  listed and the zone name accepted for browsing.
 
 * misc/ppr-sync.sh: changed papsrv_kill to papsrv --stop.
 
@@ -9496,4 +9496,9 @@ no final tarball was released.
 
 * interfaces/usb.c: added a table of init strings. (backport from 2.XX branch)
 
+* ppad/ppad_media.c: access check was missing from "media delete".  (Bug
+  was discovered during code overhaul in 2.XX branch.)
+
+* z_install_end/ppr.sh: added code to create our rundir (for when
+  /var/run is a tmpfs).  (backport from 2.XX branch)
 
