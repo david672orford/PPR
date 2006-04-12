@@ -252,7 +252,9 @@ int main(int argc, char *argv[])
 			else
 				{
 				DEBUG(("dispatching"));
-				kill(getpid(), SIGSTOP);
+				#ifdef DEBUG
+				/*kill(getpid(), SIGSTOP);*/
+				#endif
 				(*p_handler)(ipp);
 				if(ipp->response_code == IPP_OK)
 					{
