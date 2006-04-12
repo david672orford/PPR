@@ -489,7 +489,7 @@ while(1)
 		if($path =~ m#^((printers|admin|jobs)/.*)$#)
 			{
 			$script_exe = "$CGI_BIN/ipp";
-			$path_info = $1;
+			$path_info = "/$1";
 			}
 
 		# Recognize /cgi-bin/ and route to programs in $CGI_BIN.
