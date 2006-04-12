@@ -376,13 +376,16 @@ const char *pap_look_string(int n);
 char *ppr_get_command(const char *prompt, int machine_input);
 
 char *ppd_find_file(const char ppdname[]);
+typedef struct PPDOBJ *PPDOBJ;
+#if 0
 int ppd_open(const char name[], FILE *errors);
 char *ppd_readline(void);
-void *ppdobj_new(const char ppdname[]);
-void ppdobj_free(void *p);
-char *ppdobj_readline(void *p);
-void *ppd_finish_quoted_string(void *obj, char *initial_segment);
-char *ppd_finish_QuotedValue(void *obj, char *initial_segment);
+#endif
+PPDOBJ ppdobj_new(const char ppdname[]);
+void ppdobj_free(PPDOBJ self);
+char *ppdobj_readline(PPDOBJ self);
+void *ppd_finish_quoted_string(PPDOBJ self, char *initial_segment);
+char *ppd_finish_QuotedValue(PPDOBJ self, char *initial_segment);
 int ppd_decode_QuotedValue(char *p);
 
 int renounce_root_privs(const char progname[], const char username[], const char groupname[]);

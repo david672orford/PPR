@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/z_install_end/Makefile
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,14 +25,14 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 17 August 2005.
+# Last modified 11 April 2006.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-ALL=ppr.conf.sample getservbyname$(DOTEXE) puts$(DOTEXE) cron.d init.d
+ALL=ppr.conf.sample puts$(DOTEXE) cron.d init.d
 
 #=== Build ==================================================================
 
@@ -40,9 +40,6 @@ all: $(ALL)
 
 ppr.conf.sample: make_ppr_conf_sample.sh
 	./make_ppr_conf_sample.sh
-
-getservbyname$(DOTEXE): getservbyname.o
-	$(LD) $(LDFLAGS) -o $@ $^ $(SOCKLIBS)
 
 #=== Install ================================================================
 

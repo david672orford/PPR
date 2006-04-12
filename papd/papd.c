@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 January 2006.
+** Last modified 11 April 2006.
 */
 
 /*
@@ -50,6 +50,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "queueinfo.h"
 #include "papd.h"
 #include "ppr_exits.h"
 #include "util_exits.h"
@@ -114,7 +115,7 @@ void debug(const char string[], ... )
 	va_end(va);
 	} /* end of debug() */
 
-/* This is needed by try_fontindex() */
+/* What uses this? */
 void error(const char string[], ... )
 	{
 	va_list va;
@@ -123,7 +124,7 @@ void error(const char string[], ... )
 	vsnprintf(temp, sizeof(temp), string, va);
 	write_logline("ERROR", temp);
 	va_end(va);
-	} /* end of debug() */
+	} /* end of error() */
 
 /*
 ** Return a copy of a string with control characters

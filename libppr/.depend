@@ -42,11 +42,17 @@ int_tcp_probe.o: ./int_tcp_probe.c ../include/config.h ../include/gu.h ../includ
 
 interfaces.o: ./interfaces.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
 
-ipp_utils.o: ./ipp_utils.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+ipp_obj.o: ./ipp_obj.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+
+ipp_req_attrs.o: ./ipp_req_attrs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h
+
+ipp_str_to.o: ./ipp_str_to.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h
+
+ipp_to_str.o: ./ipp_to_str.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h
 
 jobid.o: ./jobid.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-lpioc_get_device_id.o: ./lpioc_get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h
+lpioc_get_device_id.o: ./lpioc_get_device_id.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h
 
 money.o: ./money.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
@@ -62,7 +68,7 @@ ppr_fnamef.o: ./ppr_fnamef.c ../include/config.h ../include/gu.h ../include/glob
 
 ppr_gcmd.o: ./ppr_gcmd.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-protected.o: ./protected.c ../include/config.h ../include/gu.h ../include/global_defines.h
+protected.o: ./protected.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
 prune_env.o: ./prune_env.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
 
@@ -78,15 +84,17 @@ query.o: ./query.c ../include/config.h ../include/gu.h ../include/global_defines
 
 query_wrapper.o: ./query_wrapper.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-queueinfo.o: ./queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/queueinfo.h
+queueinfo.o: ./queueinfo.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/interface.h ../include/queueinfo.h
 
 quote.o: ./quote.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-readppd.o: ./readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
+readppd.o: ./readppd.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 renounce_root_privs.o: ./renounce_root_privs.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
 snmp_messages.o: ./snmp_messages.c ../include/config.h ../include/gu.h ../include/global_defines.h
+
+spool_state.o: ./spool_state.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h
 
 tail_status.o: ./tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h
 

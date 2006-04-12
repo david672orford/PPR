@@ -53,6 +53,7 @@ files.  Includes are handled automatically.
 #define MAX_PPD_LINE 256
 
 struct PPDOBJ {
+	int magic;
 	int nest;						/* current nesting level */
 	char *fname[MAX_PPD_NEST];		/* list of names of open PPD files */
 	char line[MAX_PPD_LINE+2];		/* storage for the current line */
@@ -157,9 +158,10 @@ static void ppdobj_open(struct PPDOBJ *self, const char ppdname[])
 		}
 	} /* ppdobj_open() */
 
-void *ppdobj_new(const char ppdname[])
+PPDOBJ ppdobj_new(const char ppdname[])
 	{
 	struct PPDOBJ *self = gu_alloc(1, sizeof(struct PPDOBJ));
+	self->magic = 0x4210;
 	self->nest = -1;
 	gu_Try {
 		ppdobj_open(self, ppdname);
@@ -168,12 +170,13 @@ void *ppdobj_new(const char ppdname[])
 		ppdobj_free(self);
 		gu_ReThrow();
 		}
-	return (void*)self;
+	return self;
 	}
 
-void ppdobj_free(void *p)
+void ppdobj_free(PPDOBJ self)
 	{
-	struct PPDOBJ *self = p;
+	if(self->magic != 0x4210)
+		gu_Throw("not a PPDOBJ");
 
 	/* close any files which may still be open */
 	while(self->nest >= 0)
@@ -190,14 +193,16 @@ void ppdobj_free(void *p)
 		self->nest--;
 		}
 
-	gu_free(p);
+	gu_free(self);
 	}
 
-char *ppdobj_readline(void *p)
+char *ppdobj_readline(PPDOBJ self)
 	{
-	struct PPDOBJ *self = p;
 	int len;
 	char *ptr;
+
+	if(self->magic != 0x4210)
+		gu_Throw("not a PPDOBJ");
 
 	while(self->nest >= 0)
 		{
@@ -253,7 +258,7 @@ char *ppdobj_readline(void *p)
  * Take initial_segment and possibly subsequent lines readable with ppd_readline()
  * (until one of them ends with a quote) and assemble them into a PCS.
  */
-void *ppd_finish_quoted_string(void *obj, char *initial_segment)
+void *ppd_finish_quoted_string(PPDOBJ self, char *initial_segment)
 	{
 	char *p = initial_segment;
 	gu_boolean end_quote = FALSE;
@@ -270,15 +275,15 @@ void *ppd_finish_quoted_string(void *obj, char *initial_segment)
 		if(gu_pcs_length(&text) > 0)
 			gu_pcs_append_char(&text, '\n');
 		gu_pcs_append_cstr(&text, p);
-		} while(!end_quote && (p = ppdobj_readline(obj)));
+		} while(!end_quote && (p = ppdobj_readline(self)));
 	return text;
 	} /* end of ppd_finish_quoted_string() */
 
 /** read in a PPD file QuotedValue and decode it
 */
-char *ppd_finish_QuotedValue(void *obj, char *initial_segment)
+char *ppd_finish_QuotedValue(PPDOBJ self, char *initial_segment)
 	{
-	void *pcs = ppd_finish_quoted_string(obj, initial_segment);
+	void *pcs = ppd_finish_quoted_string(self, initial_segment);
 	char *p = gu_pcs_get_editable_cstr(&pcs);
 	gu_pcs_truncate(&pcs, ppd_decode_QuotedValue(p));
 	return gu_pcs_free_keep_cstr(&pcs);

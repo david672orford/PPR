@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_printjob.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 19 August 2005.
+** Last modified 11 April 2006.
 */
 
 #include "config.h"
@@ -42,6 +42,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "queueinfo.h"
 #include "ppr_exits.h"
 #include "papd.h"
 
@@ -55,7 +56,7 @@ static pid_t ppr_pid = (pid_t)0;
 ** at_printjob_copy() to copy the printjob from the AppleTalk PAP socket
 ** to the pipe connected to ppr.
 ===========================================================================*/
-void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const struct USER *user, const char log_file_name[])
+void printjob(int sesfd, struct ADV *adv, QUEUE_INFO qc, int net, int node, const struct USER *user, const char log_file_name[])
 	{
 	const char function[] = "printjob";
 	int pipefds[2];				/* a set of file descriptors for pipe to ppr */

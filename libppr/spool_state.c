@@ -41,6 +41,7 @@
 
 void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[])
 	{
+	const char function[] = "printer_spool_state_load";
 	char fname[MAX_PPR_PATH];
 	int fd = -1;
 	char spool_state_data[128];
@@ -61,12 +62,12 @@ void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prn
 			break;
 		if((len = read(fd, spool_state_data, sizeof(spool_state_data))) == -1)
 			{
-			error("failed to read \"%s\", errno=%d (%s)", fname, errno, strerror(errno));
+			error("%s(): failed to read \"%s\", errno=%d (%s)", function, fname, errno, strerror(errno));
 			break;
 			}
 		if(len == sizeof(spool_state_data))
 			{
-			error("to much data in \"%s\"", fname);
+			error("%s(): to much data in \"%s\"", function, fname);
 			break;
 			}
 		spool_state_data[len] = '\0';
@@ -80,7 +81,7 @@ void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prn
 				&(pstate->job_count)
 				) != 7)
 			{
-			error("corrupt \"%s\"", spool_state_data);
+			error("%s(): corrupt \"%s\"", function, spool_state_data);
 			}
 		} while(FALSE);
 
@@ -90,6 +91,7 @@ void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prn
 
 void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[])
 	{
+	const char function[] = "group_spool_state_load";
 	char fname[MAX_PPR_PATH];
 	int fd = -1;
 	char spool_state_data[128];
@@ -106,12 +108,12 @@ void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname
 			break;
 		if((len = read(fd, spool_state_data, sizeof(spool_state_data))) == -1)
 			{
-			error("failed to read \"%s\", errno=%d (%s)", fname, errno, strerror(errno));
+			error("%s(): failed to read \"%s\", errno=%d (%s)", function, fname, errno, strerror(errno));
 			break;
 			}
 		if(len == sizeof(spool_state_data))
 			{
-			error("to much data in \"%s\"", fname);
+			error("%s(): to much data in \"%s\"", function, fname);
 			break;
 			}
 		spool_state_data[len] = '\0';
@@ -122,7 +124,7 @@ void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname
 				&(gstate->job_count)
 				) != 4)
 			{
-			error("corrupt \"%s\"", spool_state_data);
+			error("%s(): corrupt \"%s\"", function, spool_state_data);
 			}
 		} while(FALSE);
 

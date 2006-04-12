@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_login_rbi.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 29 September 2005.
+** Last modified 11 April 2006.
 */
 
 /*
@@ -42,6 +42,7 @@
 #include <pwd.h>
 #include "gu.h"
 #include "global_defines.h"
+#include "queueinfo.h"
 #include "userdb.h"
 #include "papd.h"
 #include "version.h"
@@ -56,7 +57,7 @@ static char user_fullname[64];
  * %%?BeginQuery: RBILogin
  * %%?BeginQuery: RBILoginCont
 */
-int rbi_query(int sesfd, void *qc)
+int rbi_query(int sesfd, QUEUE_INFO qc)
 	{
 	DODEBUG_AUTHORIZE(("rbi_query(), line=\"%s\"", line));
 

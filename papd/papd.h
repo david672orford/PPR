@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppr-papd.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,10 +25,8 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 November 2004.
+** Last modified 11 April 2006.
 */
-
-#include "queueinfo.h"
 
 #define PIDFILE RUNDIR"/papd.pid"
 #define LOGFILE LOGDIR"/papd"
@@ -167,12 +165,12 @@ int	 at_add_name(const char papname[]);
 void at_remove_name(const char papname[], int fd);
 
 /* routines in papd_printjob.c */
-void printjob(int sesfd, struct ADV *adv, void *qc, int net, int node, const struct USER *user, const char log_file_name[]);
+void printjob(int sesfd, struct ADV *adv, QUEUE_INFO qc, int net, int node, const struct USER *user, const char log_file_name[]);
 void printjob_abort(void);
 
 /* routines in papd_query.c */
 extern int query_trace;
-void answer_query(int sesfd, void *qc);
+void answer_query(int sesfd, QUEUE_INFO qc);
 void sigusr1_handler(int sig);
 void REPLY(int sesfd, const char *string);
 
@@ -183,7 +181,7 @@ struct ADV *conf_load(struct ADV *old_config);
 void login_aufs(int net, int node, struct USER *user);
 
 /* routines in papd_login_rbi.c */
-int rbi_query(int sesfd, void *qc);
+int rbi_query(int sesfd, QUEUE_INFO qc);
 void login_rbi(struct USER *user);
 gu_boolean login_rbi_active(void);
 

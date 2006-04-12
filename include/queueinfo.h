@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/queueinfo.h
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,47 +25,59 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 October 2005.
+** Last modified 11 April 2006.
 */
 
+/* An opaque type declaration */
+typedef struct QUEUE_INFO *QUEUE_INFO;
+
 enum QUEUEINFO_TYPE { QUEUEINFO_SEARCH, QUEUEINFO_ALIAS, QUEUEINFO_GROUP, QUEUEINFO_PRINTER };
-void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
-void queueinfo_free(void *p);
-void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[]);
-void queueinfo_add_printer(void *p, const char name[]);
-void queueinfo_add_hypothetical_printer(void *p, const char name[], const char ppdfile[], const char installed_memory[]);
+QUEUE_INFO queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[]);
+void queueinfo_free(QUEUE_INFO qip);
+QUEUE_INFO queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[]);
+void queueinfo_add_printer(QUEUE_INFO qip, const char name[]);
+void queueinfo_add_hypothetical_printer(QUEUE_INFO qip, const char name[], const char ppdfile[], const char installed_memory[]);
 
-void queueinfo_set_warnings_file(void *p, FILE *errors);
-void queueinfo_set_debug_level(void *p, int debug_level);
+void queueinfo_set_warnings_file(QUEUE_INFO qip, FILE *errors);
+void queueinfo_set_debug_level(QUEUE_INFO qip, int debug_level);
 
-void *queueinfo_hoist_value(void *p, const void *value);
+void *queueinfo_hoist_value(QUEUE_INFO qip, const void *value);
 
-const char *queueinfo_name(void *p);
-const char *queueinfo_device_uri(void *p, int printer_index);
-const char *queueinfo_comment(void *p);
-const char *queueinfo_location(void *p, int printer_index);
-gu_boolean  queueinfo_transparentMode(void *);
-gu_boolean queueinfo_psPassThru(void *p);
-gu_boolean  queueinfo_binaryOK(void *);
-const char *queueinfo_ppdFile(void *p);
-const char *queueinfo_product(void *p);
-int         queueinfo_psLanguageLevel(void *p);
-const char *queueinfo_shortNickName(void *p);
-const char *queueinfo_psVersionStr(void *p);
-double      queueinfo_psVersion(void *p);
-int         queueinfo_psRevision(void *p);
-int         queueinfo_psFreeVM(void *p);
-const char *queueinfo_resolution(void *p);				/* "300dpi", "600x300dpi" */
-gu_boolean  queueinfo_colorDevice(void *p);
-const char *queueinfo_faxSupport(void *p);				/* "Base" */
-const char *queueinfo_ttRasterizer(void *p);			/* "None", "Type42", "Accept68K" */
-gu_boolean  queueinfo_chargeExists(void *p);
-int         queueinfo_fontCount(void *p);
-const char *queueinfo_font(void *p, int index);
-gu_boolean  queueinfo_fontExists(void *p, const char name[]);
-const char *queueinfo_optionValue(void *p, const char name[]);
-const char *queueinfo_computedMetaFontMode(void *p);
-const char *queueinfo_computedDefaultFilterOptions(void *p);
-const char *queueinfo_modelName(void *p);
+/* basic */
+const char *queueinfo_name(QUEUE_INFO qip);
+const char *queueinfo_comment(QUEUE_INFO qip);
+const char *queueinfo_location(QUEUE_INFO qip, int printer_index);
+
+/* IPP */
+const char *queueinfo_device_uri(QUEUE_INFO qip, int printer_index);
+int queueinfo_queued_job_count(QUEUE_INFO qip);
+const char *queueinfo_modelName(QUEUE_INFO qip);
+int queueinfo_accepting(QUEUE_INFO qip);
+
+/* papd */
+gu_boolean  queueinfo_transparentMode(QUEUE_INFO qip);
+gu_boolean queueinfo_psPassThru(QUEUE_INFO qip);
+gu_boolean  queueinfo_binaryOK(QUEUE_INFO qip);
+const char *queueinfo_ppdFile(QUEUE_INFO qip);
+const char *queueinfo_product(QUEUE_INFO qip);
+int         queueinfo_psLanguageLevel(QUEUE_INFO qip);
+const char *queueinfo_shortNickName(QUEUE_INFO qip);
+const char *queueinfo_psVersionStr(QUEUE_INFO qip);
+double      queueinfo_psVersion(QUEUE_INFO qip);
+int         queueinfo_psRevision(QUEUE_INFO qip);
+int         queueinfo_psFreeVM(QUEUE_INFO qip);
+const char *queueinfo_resolution(QUEUE_INFO qip);			/* "300dpi", "600x300dpi" */
+gu_boolean  queueinfo_colorDevice(QUEUE_INFO qip);
+const char *queueinfo_faxSupport(QUEUE_INFO qip);			/* "Base" */
+const char *queueinfo_ttRasterizer(QUEUE_INFO qip);			/* "None", "Type42", "Accept68K" */
+gu_boolean  queueinfo_chargeExists(QUEUE_INFO qip);
+int         queueinfo_fontCount(QUEUE_INFO qip);
+const char *queueinfo_font(QUEUE_INFO qip, int index);
+gu_boolean  queueinfo_fontExists(QUEUE_INFO qip, const char name[]);
+const char *queueinfo_optionValue(QUEUE_INFO qip, const char name[]);
+
+/* ppad */
+const char *queueinfo_computedMetaFontMode(QUEUE_INFO qip);
+const char *queueinfo_computedDefaultFilterOptions(QUEUE_INFO qip);
 
 /* end of file */

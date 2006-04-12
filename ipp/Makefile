@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 9 February 2006.
+# Last modified 12 April 2006.
 #
 
 include ../Makefile.conf
@@ -42,7 +42,7 @@ PROGS=$(BIN_PROGS) $(CGI_PROGS)
 
 all: $(PROGS)
 
-ipp$(DOTEXE): ipp.o ../libppr.a ../libgu.a
+ipp$(DOTEXE): ipp.o ipp_print.o ipp_destinations.o ipp_cups_admin.o ipp_run.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ZLIBLIBS)
 
 ppr-xml-ipp-client$(DOTEXE): ppr-xml-ipp-client.o ../libppr.a ../libgu.a

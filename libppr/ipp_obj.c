@@ -58,36 +58,40 @@ member functions.
 */
 struct IPP *ipp_new(const char root[], const char path_info[], int content_length, int in_fd, int out_fd)
 	{
-	struct IPP *p = gu_alloc(1, sizeof(struct IPP));
+	struct IPP *ipp;
+	void *pool;
 
-	p->magic = 0xAABB;
+	GU_OBJECT_POOL_PUSH((pool = gu_pool_new()));
+	ipp = gu_alloc(1, sizeof(struct IPP));
+	ipp->magic = 0xAABB;
+	ipp->pool = pool;
 
-	p->root = root;
-	p->path_info = path_info;
-	p->bytes_left = content_length;
-	p->in_fd = in_fd;
-	p->out_fd = out_fd;
-	p->subst_reply_fd = -1;
+	ipp->root = root;
+	ipp->path_info = path_info;
+	ipp->bytes_left = content_length;
+	ipp->in_fd = in_fd;
+	ipp->out_fd = out_fd;
 
-	p->remote_user = NULL;
-	p->remote_addr = NULL;
+	ipp->remote_user = NULL;
+	ipp->remote_addr = NULL;
 
-	p->readbuf_i = 0;
-	p->readbuf_remaining = 0;
-	p->readbuf_guard = 42;
+	ipp->readbuf_i = 0;
+	ipp->readbuf_remaining = 0;
+	ipp->readbuf_guard = 42;
 
-	p->writebuf_i = 0;
-	p->writebuf_remaining = sizeof(p->writebuf);
-	p->writebuf_guard = 42;
+	ipp->writebuf_i = 0;
+	ipp->writebuf_remaining = sizeof(ipp->writebuf);
+	ipp->writebuf_guard = 42;
 
-	p->request_attrs = NULL;
-	p->response_attrs_operation = NULL;
-	p->response_attrs_printer = NULL;
-	p->response_attrs_job = NULL;
-	p->response_attrs_unsupported = NULL;
+	ipp->request_attrs = NULL;
+	ipp->response_attrs_operation = NULL;
+	ipp->response_attrs_printer = NULL;
+	ipp->response_attrs_job = NULL;
+	ipp->response_attrs_unsupported = NULL;
 
-	return p;
-	}
+	GU_OBJECT_POOL_POP(ipp->pool);
+	return ipp;
+	} /* ipp_new() */
 
 /*
 ** Read a bufferful of an IPP request from stdin.
@@ -137,162 +141,45 @@ in the The response output buffer are sent on their way.  Finally, the IPP
 service object is destroyed.
 
 */
-void ipp_delete(struct IPP *p)
+void ipp_delete(struct IPP *ipp)
 	{
 	DEBUG(("ipp_delete(): %d leftover bytes", p->bytes_left + p->readbuf_remaining));
 
-	if(p->magic != 0xAABB)
+	if(ipp->magic != 0xAABB)
 		gu_Throw("ipp_delete(): not an IPP object");
-	if(p->readbuf_guard != 42)
+	if(ipp->readbuf_guard != 42)
 		gu_Throw("ipp_delete(): readbuf overflow");
-	if(p->writebuf_guard != 42)
+	if(ipp->writebuf_guard != 42)
 		gu_Throw("ipp_delete(): writebuf overflow");
 	
-	while(p->bytes_left > 0)
-		{
-		ipp_readbuf_load(p);
-		}
+	while(ipp->bytes_left > 0)
+		ipp_readbuf_load(ipp);
 
-	ipp_writebuf_flush(p);
+	ipp_writebuf_flush(ipp);
 
-	/* This complicated code deletes all of the attributes.  Should we
-	 * have used a pool?  Maybe.  We did uncover some interesting
-	 * bugs though when we were writing this.
-	 */
-	{
-	ipp_attribute_t *attribs[] = {
-		p->request_attrs,
-		p->response_attrs_operation,
-		p->response_attrs_printer,
-		p->response_attrs_job,
-		p->response_attrs_unsupported
-		};
-	int x, y;
-	for(x=0; x<5; x++)
-		{
-		ipp_attribute_t *at, *next_at;
-		at = attribs[x];
-		while(at)
-			{
-			if(at->free_name)
-				gu_free(at->name);
-			if(at->free_values)
-				{
-				switch(ipp_tag_simplify(at->value_tag))
-					{
-					case IPP_TAG_END:
-						break;
-					case IPP_TAG_INTEGER:
-						break;
-					case IPP_TAG_STRING:
-						for(y=0; y < at->num_values; y++)
-							{
-							gu_free(at->values[y].string.text);
-							}
-						break;
-					default:
-						for(y=0; y < at->num_values; y++)
-							gu_free(at->values[y].unknown.data);
-						break;
-					}
-				}
-			next_at = at->next;
-			gu_free(at);
-			at = next_at;
-			}
-		}
-	}
-
-	p->magic = 0;
-	gu_free(p);
-	}
+	ipp->magic = 0;		/* render object unrecognizable as an IPP object */
+	gu_pool_free(ipp->pool);
+	} /* ipp_delete() */
 
 /** set REMOTE_USER from CGI environment
+ *
+ * This IPP server should call this function with remote_user[]
+ * set to the value of the REMOTE_USER environment variable.
 */
-void ipp_set_remote_user(struct IPP *p, const char remote_user[])
+void ipp_set_remote_user(struct IPP *ipp, const char remote_user[])
 	{
-	p->remote_user = remote_user;
+	ipp->remote_user = remote_user;
 	}
 
 /** set REMOTE_ADDR from CGI environment
+ *
+ * This IPP server should call this function with remote_addr[]
+ * set to the value of the REMOTE_ADDR environment variable.
 */
-void ipp_set_remote_addr(struct IPP *p, const char remote_addr[])
+void ipp_set_remote_addr(struct IPP *ipp, const char remote_addr[])
 	{
-	p->remote_addr = remote_addr;
+	ipp->remote_addr = remote_addr;
 	}
-
-/** Save the IPP request to a file
- *
- * Write the IPP request to a file in preparation for passing it through
- * to another process for handling.  Once you have done this, it is gone,
- * you can't parse any more of it using this object.
- */
-void ipp_request_to_fd(struct IPP *p, int fd)
-	{
-	int writelen;
-	DEBUG(("ipp_request_to_fd(): p->readbuf_remaining=%d, p->readbuf_i=%d, p->bytes_left=%d", p->readbuf_remaining, p->readbuf_i, p->bytes_left));
-	p->readbuf_remaining += p->readbuf_i;	/* rewind */
-	p->readbuf_i = 0;
-	while(p->readbuf_remaining > 0)
-		{
-		while(p->readbuf_remaining > 0)
-			{
-			if((writelen = write(fd, p->readbuf + p->readbuf_i, p->readbuf_remaining)) == -1)
-				gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-			p->readbuf_remaining -= writelen;
-			p->readbuf_i += writelen;
-			}
-		if(p->bytes_left <= 0)
-			break;
-		ipp_readbuf_load(p);
-		}
-	}
-
-/** Provide IPP object with an open file descriptor containing a substitute reply
- *
- * If you open a file and pass the descriptor to this function, ipp_send_reply()
- * will send the content of the file in the stead of whatever it would have sent.
- */
-void ipp_reply_from_fd(struct IPP *p, int fd)
-	{
-	p->subst_reply_fd = fd;
-	}
-
-/* This gets called if ipp_reply_from_fd() was called. */
-static void send_subst_reply(struct IPP *p, gu_boolean header)
-	{
-	struct stat statbuf;
-	int bytes_left;
-
-	DEBUG(("sending substitute reply to fd %d", p->subst_reply_fd));
-	
-	if(fstat(p->subst_reply_fd, &statbuf) == -1)
-		gu_Throw("fstat() failed, errno=%d (%s)", errno, gu_strerror(errno));
-	bytes_left = statbuf.st_size;
-
-	DEBUG(("substitute reply is %d bytes long", bytes_left));
-	
-	if(header)
-		{
-		gu_snprintf(p->writebuf, sizeof(p->writebuf),
-			"Content-Type: application/ipp\r\n"
-			"Content-Length: %d\r\n\r\n",
-			bytes_left
-			);
-		p->writebuf_i = strlen(p->writebuf);
-		ipp_writebuf_flush(p);
-		}
-
-	while(bytes_left > 0)
-		{
-		if((p->writebuf_i = read(p->subst_reply_fd, p->writebuf, bytes_left < sizeof(p->writebuf) ? bytes_left : sizeof(p->writebuf))) == -1)
-			gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
-		bytes_left -= p->writebuf_i;
-		ipp_writebuf_flush(p);
-		}
-
-	DEBUG(("done sending substitute reply"));
-	} /* send_subst_reply() */
 
 /** fetch a block from the IPP request
 
@@ -301,23 +188,23 @@ block of the file.  The length of the block is returned.  This is used
 to read the print file data.
 
 */
-int ipp_get_block(struct IPP *p, char **pptr)
+int ipp_get_block(struct IPP *ipp, char **pptr)
 	{
 	int len = 0;
 	
-	if(p->readbuf_remaining <= 0)
+	if(ipp->readbuf_remaining <= 0)
 		{
-		if(p->bytes_left <= 0)
+		if(ipp->bytes_left <= 0)
 			return 0;
-		ipp_readbuf_load(p);
+		ipp_readbuf_load(ipp);
 		}
 
-	if(p->readbuf_remaining > 0)
+	if(ipp->readbuf_remaining > 0)
 		{
-		*pptr = &p->readbuf[p->readbuf_i];
-		len = p->readbuf_remaining;
-		p->readbuf_i += len;
-		p->readbuf_remaining = 0;
+		*pptr = &ipp->readbuf[ipp->readbuf_i];
+		len = ipp->readbuf_remaining;
+		ipp->readbuf_i += len;
+		ipp->readbuf_remaining = 0;
 		}
 
 	return len;
@@ -328,14 +215,14 @@ int ipp_get_block(struct IPP *p, char **pptr)
 This is used to read tags.
 
 */
-char ipp_get_byte(struct IPP *p)
+char ipp_get_byte(struct IPP *ipp)
 	{
-	if(p->readbuf_remaining < 1)
-		ipp_readbuf_load(p);
-	if(p->readbuf_remaining < 1)
+	if(ipp->readbuf_remaining < 1)
+		ipp_readbuf_load(ipp);
+	if(ipp->readbuf_remaining < 1)
 		gu_Throw("Data runoff!");
-	p->readbuf_remaining--;
-	return p->readbuf[p->readbuf_i++];
+	ipp->readbuf_remaining--;
+	return ipp->readbuf[ipp->readbuf_i++];
 	}
 
 /** append an unsigned byte to the IPP response
@@ -353,71 +240,72 @@ void ipp_put_byte(struct IPP *ipp, char val)
 
 /** fetch a signed byte from the IPP request
 */
-int ipp_get_sb(struct IPP *p)
+int ipp_get_sb(struct IPP *ipp)
 	{
-	return (int)(signed char)ipp_get_byte(p);
+	return (int)(signed char)ipp_get_byte(ipp);
 	}
 
 /** fetch a signed short from the IPP request
 */
-int ipp_get_ss(struct IPP *p)
+int ipp_get_ss(struct IPP *ipp)
 	{
 	unsigned char a, b;
-	a = ipp_get_byte(p);
-	b = ipp_get_byte(p);
+	a = ipp_get_byte(ipp);
+	b = ipp_get_byte(ipp);
 	return (int)(!0xFFFF | a << 8 | b);
 	}
 
 /** fetch a signed integer from the IPP request
 */
-int ipp_get_si(struct IPP *p)
+int ipp_get_si(struct IPP *ipp)
 	{
 	unsigned char a, b, c, d;
-	a = ipp_get_byte(p);
-	b = ipp_get_byte(p);
-	c = ipp_get_byte(p);
-	d = ipp_get_byte(p);
+	a = ipp_get_byte(ipp);
+	b = ipp_get_byte(ipp);
+	c = ipp_get_byte(ipp);
+	d = ipp_get_byte(ipp);
 	return (int)(!0xFFFFFFFF | a << 24 | b << 16 | c << 8 | d);
 	}
 
 /** append a signed byte to the IPP response
 */
-void ipp_put_sb(struct IPP *p, int val)
+void ipp_put_sb(struct IPP *ipp, int val)
 	{
-	ipp_put_byte(p, (unsigned char)val);
+	ipp_put_byte(ipp, (unsigned char)val);
 	}
 
 /** append a signed short to the IPP response
 */
-void ipp_put_ss(struct IPP *p, int val)
+void ipp_put_ss(struct IPP *ipp, int val)
 	{
 	unsigned int temp = (unsigned int)val;
-	ipp_put_byte(p, (temp & 0xFF00) >> 8);
-	ipp_put_byte(p, (temp & 0X00FF));
+	ipp_put_byte(ipp, (temp & 0xFF00) >> 8);
+	ipp_put_byte(ipp, (temp & 0X00FF));
 	}
 
 /** append a signed integer to the IPP response
 */
-void ipp_put_si(struct IPP *p, int val)
+void ipp_put_si(struct IPP *ipp, int val)
 	{
 	unsigned int temp = (unsigned int)val;
-	ipp_put_byte(p, (temp & 0xFF000000) >> 24);
-	ipp_put_byte(p, (temp & 0x00FF0000) >> 16);
-	ipp_put_byte(p, (temp & 0x0000FF00) >> 8);
-	ipp_put_byte(p, (temp & 0x000000FF));
+	ipp_put_byte(ipp, (temp & 0xFF000000) >> 24);
+	ipp_put_byte(ipp, (temp & 0x00FF0000) >> 16);
+	ipp_put_byte(ipp, (temp & 0x0000FF00) >> 8);
+	ipp_put_byte(ipp, (temp & 0x000000FF));
 	}
 
 /** fetch a byte array of specified length
 */
-char *ipp_get_bytes(struct IPP *p, int len)
+char *ipp_get_bytes(struct IPP *ipp, int len)
     {
-	char *ptr = gu_alloc(len + 1, sizeof(char));
+	char *ptr;
+	GU_OBJECT_POOL_PUSH(ipp->pool);
+	ptr = gu_alloc(len + 1, sizeof(char));
 	int i;
 	for(i=0; i<len; i++)
-		{
-		ptr[i] = ipp_get_byte(p);
-		}
+		ptr[i] = ipp_get_byte(ipp);
 	ptr[len] = '\0';
+	GU_OBJECT_POOL_POP(ipp->pool);
 	return ptr;
     }
 
@@ -465,7 +353,7 @@ void ipp_parse_request_header(struct IPP *ipp)
 		ipp->operation_id, ipp_operation_to_str(ipp->operation_id),
 		ipp->request_id
 		));
-	}
+	} /* ipp_parse_request_header() */
 
 /** read more of the IPP request
  *
@@ -479,6 +367,8 @@ void ipp_parse_request_body(struct IPP *ipp)
 	char *name = NULL;
 	ipp_attribute_t *ap = NULL, **ap_resize = NULL;
 	int ap_i = 0;
+
+	GU_OBJECT_POOL_PUSH(ipp->pool);
 
 	while((tag = ipp_get_byte(ipp)) != IPP_TAG_END)
 		{
@@ -524,8 +414,6 @@ void ipp_parse_request_body(struct IPP *ipp)
 				ap->group_tag = delimiter_tag;
 				ap->value_tag = value_tag;
 				ap->name = name;
-				ap->free_name = TRUE;
-				ap->free_values = TRUE;
 				ap->num_values = 1;					/* only one value (for now) */
 
 				ap_i = 0;
@@ -576,23 +464,8 @@ void ipp_parse_request_body(struct IPP *ipp)
 	/* This will be the default. */
     ipp->response_code = IPP_OK;
 
+	GU_OBJECT_POOL_POP(ipp->pool);
 	} /* end of ipp_parse_request() */
-
-/** validate a request, set an error if it is bad
-*/
-gu_boolean ipp_validate_request(struct IPP *ipp)
-	{
-	/* ipp_attribute_t *attr; */
-
-	/* For now, English is all we are capable of. */
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset", "utf-8", FALSE);
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE, "attributes-natural-language", "en", FALSE);
-
-/*	if(!(attr = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset")))
-*/		
-
-	return TRUE;
-	}
 
 /** append an attribute to the IPP response
 */
@@ -687,12 +560,6 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	
 	DEBUG(("ipp_send_reply()"));
 
-	if(ipp->subst_reply_fd != -1)
-		{
-		send_subst_reply(ipp, header);
-		return;
-		}
-
 	if(header)
 		ipp_put_string(ipp, "Content-Type: application/ipp\r\n\r\n");
 
@@ -769,18 +636,22 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 
 /*
 ** add an attribute to the IPP response
+** This is an internal function.  Other functions call it in order
+** to add an empty attribute which they procede to fill in.
 */
 static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, const char name[], int num_values)
 	{
 	ipp_attribute_t **ap1;
-	ipp_attribute_t	*ap = gu_alloc(1, sizeof(ipp_attribute_t) + sizeof(ipp_value_t) * (num_values - 1));
+	ipp_attribute_t	*ap;
+
+	GU_OBJECT_POOL_PUSH(ipp->pool);
+
+	ap = gu_alloc(1, sizeof(ipp_attribute_t) + sizeof(ipp_value_t) * (num_values - 1));
 	ap->next = NULL;
 	ap->group_tag = 0;				/* consider this unused */
 	ap->value_tag = tag;
 	ap->name = (char*)name;
 	ap->template = NULL;
-	ap->free_name = FALSE;			/* we are probably only borrowing the name */
-	ap->free_values = FALSE;		/* we are probably borrowing these too */
 	ap->num_values = num_values;
 
 	switch(group)
@@ -810,6 +681,8 @@ static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, c
 	/* update the next pointer to point to this new one. */
 	*ap1 = ap;
 
+	GU_OBJECT_POOL_POP(ipp->pool);
+
 	return ap;
 	} /* end of ipp_add_attr() */
 
@@ -829,6 +702,8 @@ void ipp_add_end(struct IPP *ipp, int group)
 	}
 
 /** add an integer to the IPP response
+ *
+ * This keeps a pointer to name[], so it had better not change!
 */
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value)
 	{
@@ -840,6 +715,8 @@ void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int
 	}
 
 /** add a list of integers to the IPP response
+ *
+ * This keeps a pointer to name[], so it had better not change!
 */
 void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], int num_values, int values[])
 	{
@@ -855,24 +732,23 @@ void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], in
 /** add a string to the IPP response
  *
  * This function keeps a pointer to name[] and value[], so they had better not
- * change!
+ * change before the IPP object is destroyed!
 */
-void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[], gu_boolean free_value)
+void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[])
 	{
 	ipp_attribute_t *ap;
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_string(): %s is a %s", name, ipp_tag_to_str(tag));
 	ap = ipp_add_attribute(ipp, group, tag, name, 1);
 	ap->values[0].string.text = (char*)value;
-	ap->free_values = free_value;
 	}
 
 /** add a list of strings to the IPP response
  *
  * This function keeps a pointer to name[] and all of the values[], so they 
- * had better not change!
+ * had better not change before the IPP object is destroyed!
 */
-void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[], gu_boolean free_values)
+void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[])
 	{
 	ipp_attribute_t *ap;
 	int i;
@@ -881,10 +757,14 @@ void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int
 	ap = ipp_add_attribute(ipp, group, tag, name, num_values);
 	for(i=0; i<num_values; i++)
 		ap->values[i].string.text = (char*)values[i];
-	ap->free_values = free_values;
 	}
 
 /** add a formatted string to the IPP response
+ *
+ * This keeps a pointer to name[], so it had better not change!
+ *
+ * The formatting is done immediately, so the values can be destroyed
+ * as soon as the call returns.
 */
 void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
 	{
@@ -892,20 +772,29 @@ void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], cons
 	va_list va;
 	char *p;
 
+	/* String formatting only makes sense for IPP types which are encoded
+	 * as byte strings.
+	 */
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_printf(): %s is a %s", name, ipp_tag_to_str(tag));
 
 	ap = ipp_add_attribute(ipp, group, tag, name, 1);
 
+	GU_OBJECT_POOL_PUSH(ipp->pool);
 	va_start(va, value);
 	gu_vasprintf(&p, value, va);
 	ap->values[0].string.text = p;
 	va_end(va);
-
-	ap->free_values = TRUE;		/* copy belongs to object */
+	GU_OBJECT_POOL_POP(ipp->pool);
 	}
 
 /** add a very basic formatted string to the IPP response
+ *
+ * This keeps a pointer to name[], so it had better not change!
+ *
+ * Only one format specifier is allowed.  It can be either
+ * %%d or %%s.  If it is %%s, then the value should not be
+ * destroyed until after the IPP object has been destroyed.
 */
 void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], const char template[], ...)
 	{
@@ -928,6 +817,8 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	}
 
 /** add a boolean  to the IPP response 
+ *
+ * This keeps a pointer to name[], so it had better not change!
 */
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value)
 	{
@@ -939,6 +830,9 @@ void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_
 	}
 
 /** find an attribute in the IPP request
+ *
+ * A pointer to the first attribute which matches group, tag, and name[]
+ * is returned.
 */
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[])
 	{
@@ -951,6 +845,6 @@ ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const c
 		}
 		
 	return p;
-	}
+	} /* ipp_find_attribute() */
 
 /* end of file */

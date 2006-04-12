@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/papd/papd_conf.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 6 May 2004.
+** Last modified 11 April 2006.
 */
 
 #include "config.h"
@@ -40,6 +40,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "queueinfo.h"
 #include "papd.h"
 
 /*============================================================================

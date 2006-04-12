@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2006.
+** Last modified 11 April 2006.
 */
 
 /*+ \file
@@ -47,6 +47,7 @@ PPR queue.
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "interface.h"
 #include "queueinfo.h"
 
@@ -87,22 +88,25 @@ struct PRINTER_INFO {
 	void *fonts;				/* hash with empty values */
 	void *options;				/* hash */
 	void *VMOptions;			/* hash */
+	struct PRINTER_SPOOL_STATE spool_state;
 	};
 
 /* queue information */
 struct QUEUE_INFO {
-	void *pool;					/* pool to hold allocated memory */
+	void *pool;						/* pool to hold allocated memory */
 	int debug_level;
 	FILE *warnings;
-	enum QUEUEINFO_TYPE type;
+	enum QUEUEINFO_TYPE type;		/* alias, group, or printer */
 	char *name;
 	char *comment;
 	gu_boolean transparentMode;
 	gu_boolean psPassThru;
 	void *printers;
 	gu_boolean common_fonts_found;
-	void *fontlist;		/* fonts held in common */
+	void *fontlist;					/* fonts held in common */
 	gu_boolean chargeExists;
+	struct GROUP_SPOOL_STATE group_spool_state;
+	gu_boolean group_spool_state_valid;
 	};
 
 /*
@@ -178,12 +182,12 @@ static struct PRINTER_INFO *do_printer_new_obj(struct QUEUE_INFO *qip, const cha
 	} /* end of do_printer_new_obj() */
 
 /*
- * This function opens a printer's specified PPD file and notes anything we are
- * interested in.
+ * This function opens a printer's specified PPD file and notes anything which 
+ * might interest us.
  */
 static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	{
-	void *ppd;
+	void *ppd = NULL;
 
 	if(!pip->ppdFile)		/* PPD files are not mandatory in PPR */
 		return;
@@ -565,6 +569,9 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 	/* Parse the PPD file and load info into this PRINTER_INFO structure. */
 	do_printer_ppd(qip, pip);
 
+	/* Load the spool_state file (if there is one) into PRINTER_INFO. */
+	printer_spool_state_load(&pip->spool_state, qip->name);
+	
 	return TRUE;
 	} /* end of do_printer() */
 
@@ -617,6 +624,10 @@ static gu_boolean do_group(struct QUEUE_INFO *qip, const char name[], int depth)
 		}
 
 	fclose(conf);
+
+	group_spool_state_load(&qip->group_spool_state, qip->name);
+	qip->group_spool_state_valid = TRUE;
+	
 	return TRUE;
 	} /* end of do_group() */
 
@@ -677,7 +688,7 @@ static gu_boolean do_alias(struct QUEUE_INFO *qip)
 
 /** create a queueinfo object
 */
-void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
+QUEUE_INFO queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	{
 	void *pool = gu_pool_new();
 	struct QUEUE_INFO *qip;
@@ -696,6 +707,7 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 	qip->common_fonts_found = FALSE;
 	qip->fontlist = gu_pca_new(50, 50);
 	qip->chargeExists = FALSE;
+	qip->group_spool_state_valid = FALSE;
 	GU_OBJECT_POOL_POP(qip->pool);
 
 	return (void*)qip;
@@ -703,17 +715,15 @@ void *queueinfo_new(enum QUEUEINFO_TYPE qit, const char name[])
 
 /** discard a queueinfo object
 */
-void queueinfo_free(void *p)
+void queueinfo_free(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	gu_pool_free(qip->pool);
 	}
 
 /** ensure a heap-allocated value will survive the object
  */
-void *queueinfo_hoist_value(void *p, const void *value)
+void *queueinfo_hoist_value(QUEUE_INFO qip, const void *value)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	void *free_value = (void *)value;	 /* cast is ok, since caller should free */
 
 	if(free_value)
@@ -728,7 +738,7 @@ void *queueinfo_hoist_value(void *p, const void *value)
 
 /** create a queueinfo object and load a queue's information into it
 */
-void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
+QUEUE_INFO queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 	{
 	struct QUEUE_INFO *qip = queueinfo_new(qit, name);
 	gu_pool_push(qip->pool);
@@ -777,9 +787,8 @@ void *queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
  * This is used to load information about printers which are about to be 
  * added to a group.
 */
-void queueinfo_add_printer(void *p, const char name[])
+void queueinfo_add_printer(QUEUE_INFO qip, const char name[])
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	GU_OBJECT_POOL_PUSH(qip->pool);
 	if(!do_printer(qip, name, 0))
 		gu_CodeThrow(EEXIST, _("no printer called \"%s\""), name);
@@ -792,9 +801,8 @@ void queueinfo_add_printer(void *p, const char name[])
  * member printers of this object.  This capability is used to build queueinfo
  * objects for printers and group which haven't been created yet.
 */
-void queueinfo_add_hypothetical_printer(void *p, const char name[], const char ppdfile[], const char installed_memory[])
+void queueinfo_add_hypothetical_printer(QUEUE_INFO qip, const char name[], const char ppdfile[], const char installed_memory[])
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	GU_OBJECT_POOL_PUSH(qip->pool);
 	pip = do_printer_new_obj(qip, name);
@@ -812,9 +820,8 @@ void queueinfo_add_hypothetical_printer(void *p, const char name[], const char p
  * turn them on by supplying a FILE object (such as stderr) to 
  * which to send them.  This feature is used by ppad(1).
  */
-void queueinfo_set_warnings_file(void *p, FILE *warnings)
+void queueinfo_set_warnings_file(QUEUE_INFO qip, FILE *warnings)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	qip->warnings = warnings;
 	}
 
@@ -825,25 +832,71 @@ void queueinfo_set_warnings_file(void *p, FILE *warnings)
  * should only do this if there is a stdout to write to.  In other
  * words, you probably don't want to do this in a daemon.
  */
-void queueinfo_set_debug_level(void *p, int debug_level)
+void queueinfo_set_debug_level(QUEUE_INFO qip, int debug_level)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	qip->debug_level = debug_level;
 	}
 
+/*=== General ===========================================================*/
+
 /** return the name of the queue
 */
-const char *queueinfo_name(void *p)
+const char *queueinfo_name(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	return qip->name;
+	}
+
+/** return the description of the queue
+ *
+ * The description is the one set with "ppad (group, alias) comment".
+*/
+const char *queueinfo_comment(QUEUE_INFO qip)
+	{
+	return qip->comment;
+	}
+
+/** return the location of the indicated printer
+*/
+const char *queueinfo_location(QUEUE_INFO qip, int printer_index)
+	{
+	struct PRINTER_INFO *pip;
+	if(printer_index >= gu_pca_size(qip->printers))
+		return NULL;
+	pip = gu_pca_index(qip->printers, printer_index);
+	return pip->location;
+	}
+
+/*=== IPP =================================================================*/
+
+/** read the PostScript ModelName string of the queue's printer(s)
+ *
+ * If these is more than one printer and not all have the same ModelName string, then
+ * this function returns NULL.
+*/
+const char *queueinfo_modelName(QUEUE_INFO qip)
+	{
+	struct PRINTER_INFO *pip;
+	int i;
+	const char *answer = NULL;
+
+	for(i=0; i < gu_pca_size(qip->printers); i++)
+		{
+		pip = gu_pca_index(qip->printers, i);
+		if(!pip->modelName)
+			return NULL;
+		if(!answer)
+			answer = pip->modelName;
+		else if(strcmp(answer, pip->modelName))
+			return NULL;
+		}
+
+	return answer;
 	}
 
 /** Create a CUPS-style URI for a printer's device
  */
-const char *queueinfo_device_uri(void *p, int printer_index)
+const char *queueinfo_device_uri(QUEUE_INFO qip, int printer_index)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 
 	if(printer_index >= gu_pca_size(qip->printers))
@@ -866,35 +919,44 @@ const char *queueinfo_device_uri(void *p, int printer_index)
 	return pip->device_uri;
 	}
 
-/** return the description of the queue
- *
- * The description is the one set with "ppad (group, alias) comment".
-*/
-const char *queueinfo_comment(void *p)
+/** Return the number of jobs queued for a particular destination
+ */
+int queueinfo_queued_job_count(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	return qip->comment;
+	if(qip->group_spool_state_valid)				/* if group or alias for group, */
+		return qip->group_spool_state.job_count;
+	else if(qip->printers > 0)
+		{
+		struct PRINTER_INFO *pip = gu_pca_index(qip->printers, 0);
+		return pip->spool_state.job_count;
+		}
+	else			/* probably shouldn't happen */
+		return 0;
 	}
 
-/** return the location of the indicated printer
-*/
-const char *queueinfo_location(void *p, int printer_index)
+/** Return the number of jobs queued for a particular destination
+ */
+int queueinfo_accepting(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	struct PRINTER_INFO *pip;
-	if(printer_index >= gu_pca_size(qip->printers))
-		return NULL;
-	pip = gu_pca_index(qip->printers, printer_index);
-	return pip->location;
+	if(qip->group_spool_state_valid)
+		return qip->group_spool_state.accepting;
+	else if(qip->printers > 0)
+		{
+		struct PRINTER_INFO *pip = gu_pca_index(qip->printers, 0);
+		return pip->spool_state.accepting;
+		}
+	else			/* probably shouldn't happen */
+		return FALSE;
 	}
+
+/*=== papd ================================================================*/
 
 /** Is the queue in transparent mode?
  *
  * This function returns TRUE if "-H transparent" is in the switchset.
 */
-gu_boolean queueinfo_transparentMode(void *p)
+gu_boolean queueinfo_transparentMode(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	return qip->transparentMode;
 	}
 
@@ -903,9 +965,8 @@ gu_boolean queueinfo_transparentMode(void *p)
  * This function returns TRUE if "postscript" is in the list set
  * with "ppad (group, alias) passthru".
 */
-gu_boolean queueinfo_psPassThru(void *p)
+gu_boolean queueinfo_psPassThru(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	return qip->psPassThru;
 	}
 
@@ -915,9 +976,8 @@ gu_boolean queueinfo_psPassThru(void *p)
  * are no member printers, we return FALSE.  A "ppad codes" setting of "Binary"
  * or "TBCP".
 */
-gu_boolean queueinfo_binaryOK(void *p)
+gu_boolean queueinfo_binaryOK(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	int i;
 	gu_boolean answer = FALSE;
 
@@ -939,9 +999,8 @@ gu_boolean queueinfo_binaryOK(void *p)
  * If these is more than one printer and not all have the same PPD file, then
  * this function returns NULL.
 */
-const char *queueinfo_ppdFile(void *p)
+const char *queueinfo_ppdFile(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	const char *answer = NULL;
@@ -965,9 +1024,8 @@ const char *queueinfo_ppdFile(void *p)
  * If these is more than one printer and not all have the same product string, then
  * this function returns NULL.
 */
-const char *queueinfo_product(void *p)
+const char *queueinfo_product(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	const char *answer = NULL;
@@ -991,9 +1049,8 @@ const char *queueinfo_product(void *p)
  * If these is more than one printer and not all have the same product string, then
  * this function returns NULL.
 */
-const char *queueinfo_shortNickName(void *p)
+const char *queueinfo_shortNickName(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	const char *answer = NULL;
@@ -1006,32 +1063,6 @@ const char *queueinfo_shortNickName(void *p)
 		if(!answer)
 			answer = pip->shortNickName;
 		else if(strcmp(answer, pip->shortNickName))
-			return NULL;
-		}
-
-	return answer;
-	}
-
-/** read the PostScript ModelName string of the queue's printer(s)
- *
- * If these is more than one printer and not all have the same ModelName string, then
- * this function returns NULL.
-*/
-const char *queueinfo_modelName(void *p)
-	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
-	struct PRINTER_INFO *pip;
-	int i;
-	const char *answer = NULL;
-
-	for(i=0; i < gu_pca_size(qip->printers); i++)
-		{
-		pip = gu_pca_index(qip->printers, i);
-		if(!pip->modelName)
-			return NULL;
-		if(!answer)
-			answer = pip->modelName;
-		else if(strcmp(answer, pip->modelName))
 			return NULL;
 		}
 
@@ -1067,9 +1098,8 @@ static struct PRINTER_INFO *find_lowest_version(struct QUEUE_INFO *qip)
  * If there is more than one printer, the lowest language level supported
  * is returned.
 */
-int queueinfo_psLanguageLevel(void *p)
+int queueinfo_psLanguageLevel(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip = find_lowest_version(qip);
 	if(pip)
 		return pip->psLanguageLevel;
@@ -1082,9 +1112,8 @@ int queueinfo_psLanguageLevel(void *p)
  * The version string is returned exactly as it appears in the PPD file.
  * If the version string isn't available, this function will return NULL.
 */
-const char *queueinfo_psVersionStr(void *p)
+const char *queueinfo_psVersionStr(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip = find_lowest_version(qip);
 	if(pip)
 		return pip->psVersionStr;
@@ -1099,9 +1128,8 @@ const char *queueinfo_psVersionStr(void *p)
  * available.  Note that the value is stored in a float, so it may differ
  * slightly from the number in the PPD file.
 */
-double queueinfo_psVersion(void *p)
+double queueinfo_psVersion(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip = find_lowest_version(qip);
 	if(pip)
 		return pip->psVersion;
@@ -1117,9 +1145,8 @@ double queueinfo_psVersion(void *p)
  * the version of the software which integrates the stated PostScript version of
  * the PostScript intepreter with a particular printer's other firmware.
 */
-int queueinfo_psRevision(void *p)
+int queueinfo_psRevision(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip = find_lowest_version(qip);
 	if(pip)
 		return pip->psRevision;
@@ -1131,9 +1158,8 @@ int queueinfo_psRevision(void *p)
  *
  * If this function can't determine the answer, it returns 0.
 */
-int queueinfo_psFreeVM(void *p)
+int queueinfo_psFreeVM(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	int lowest_freevm = 0;
@@ -1157,9 +1183,8 @@ int queueinfo_psFreeVM(void *p)
  * determining the lowest resolution, we will examine only the first
  * number.  Thus, "300x1200dpi" will be considered lower than "360dpi".
 */
-const char *queueinfo_resolution(void *p)
+const char *queueinfo_resolution(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	int lowest_resolution = 0;
@@ -1182,9 +1207,8 @@ const char *queueinfo_resolution(void *p)
 
 /** Can the printer print in color?
 */
-gu_boolean queueinfo_colorDevice(void *p)
+gu_boolean queueinfo_colorDevice(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	int i;
 	gu_boolean answer = FALSE;
 
@@ -1207,9 +1231,8 @@ gu_boolean queueinfo_colorDevice(void *p)
  * doesn't specify its fax support or they don't all have the same
  * type then this function will return NULL.
 */
-const char *queueinfo_faxSupport(void *p)
+const char *queueinfo_faxSupport(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	const char *answer = NULL;
@@ -1234,9 +1257,8 @@ const char *queueinfo_faxSupport(void *p)
  * If one or more printers doesn't specify this value or they don't 
  * specify the same value, then we return NULL.
 */
-const char *queueinfo_ttRasterizer(void *p)
+const char *queueinfo_ttRasterizer(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	const char *answer = NULL;
@@ -1258,9 +1280,8 @@ const char *queueinfo_ttRasterizer(void *p)
 /** does it cost money to print on any of the printers?
 
 */
-gu_boolean queueinfo_chargeExists(void *p)
+gu_boolean queueinfo_chargeExists(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	return qip->chargeExists;
 	}
   
@@ -1298,18 +1319,16 @@ static void find_common_fonts(struct QUEUE_INFO *qip)
 
 /** How many fonts are in the font list?
 */
-int queueinfo_fontCount(void *p)
+int queueinfo_fontCount(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	find_common_fonts(qip);
 	return gu_pca_size(qip->fontlist);
 	}
 
 /** Return item index from the printer's font list
 */
-const char *queueinfo_font(void *p, int index)
+const char *queueinfo_font(QUEUE_INFO qip, int index)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	find_common_fonts(qip);
 	if(index > gu_pca_size(qip->fontlist))
 		return NULL;
@@ -1320,9 +1339,8 @@ const char *queueinfo_font(void *p, int index)
  *
  * !!! exists where ???
 */
-gu_boolean queueinfo_fontExists(void *p, const char name[])
+gu_boolean queueinfo_fontExists(QUEUE_INFO qip, const char name[])
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	find_common_fonts(qip);
@@ -1340,14 +1358,13 @@ gu_boolean queueinfo_fontExists(void *p, const char name[])
  * We can only return the option value if all printers use the same
  * PPD file and all have the same value for the option.
 */
-const char *queueinfo_optionValue(void *p, const char name[])
+const char *queueinfo_optionValue(QUEUE_INFO qip, const char name[])
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	const char *answer = NULL;
 	const char *value;
-	if(!queueinfo_ppdFile(p))
+	if(!queueinfo_ppdFile(qip))
 		return NULL;
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
@@ -1361,6 +1378,8 @@ const char *queueinfo_optionValue(void *p, const char name[])
 		}
 	return answer;
 	}
+
+/*=== ppad ================================================================*/
 
 /*
 ** Look up a printer's product, modelname, nickname, and resolution and return 
@@ -1462,9 +1481,8 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
  *
  * For some reason, the returned string is outside of the objects's pool.
  */
-const char *queueinfo_computedMetaFontMode(void *p)
+const char *queueinfo_computedMetaFontMode(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	struct PRINTER_INFO *pip;
 	int i;
 	char *answer = NULL;
@@ -1511,9 +1529,8 @@ const char *queueinfo_computedMetaFontMode(void *p)
  * The result string is part of the object's pool, so it should be used
  * before destroying the queueinfo object.
  */
-const char *queueinfo_computedDefaultFilterOptions(void *p)
+const char *queueinfo_computedDefaultFilterOptions(QUEUE_INFO qip)
 	{
-	struct QUEUE_INFO *qip = (struct QUEUE_INFO *)p;
 	char result_line[256];
 	char *retval = NULL;		/* nix spurious warning */
 	const char *sp;
@@ -1523,21 +1540,21 @@ const char *queueinfo_computedDefaultFilterOptions(void *p)
 
 	snprintf(result_line, sizeof(result_line),
 		"level=%d colour=%s",
-		queueinfo_psLanguageLevel(p),
-		queueinfo_colorDevice(p) ? "True" : "False"
+		queueinfo_psLanguageLevel(qip),
+		queueinfo_colorDevice(qip) ? "True" : "False"
 		);
 
-	if((sp = queueinfo_resolution(p)))
+	if((sp = queueinfo_resolution(qip)))
 		{
 		gu_snprintfcat(result_line, sizeof(result_line), " resolution=%.*s",
 			(int)strspn(sp, "0123456789"), sp
 			);
 		}
 
-	if((i = queueinfo_psFreeVM(p)) > 0)
+	if((i = queueinfo_psFreeVM(qip)) > 0)
 		gu_snprintfcat(result_line, sizeof(result_line), " freevm=%d", i);
 
-	if((sp = queueinfo_computedMetaFontMode(p)))
+	if((sp = queueinfo_computedMetaFontMode(qip)))
 		gu_snprintfcat(result_line, sizeof(result_line), " mfmode=%s", sp);
 
 	if(qip->debug_level >= 2)
