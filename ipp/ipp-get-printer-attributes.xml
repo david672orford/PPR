@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ipp>
+<request>
+	<version-number>1.0</version-number>
+	<operation-id>Get-Printer-Attributes</operation-id>
+	<request-id>17</request-id>
+	<operation-attributes>
+		<charset><name>attributes-charset</name><value>utf-8</value></charset>
+		<naturalLanguage><name>attributes-natural-language</name><value>en-us</value></naturalLanguage>
+		<uri><name>printer-uri</name><param-value>uri</param-value></uri>
+		<integer ifdef="limit"><name>limit</name><param-value>limit</param-value></integer>
+		<keyword><name>requested-attributes</name>
+				<value>all</value>
+			</keyword>
+	</operation-attributes>
+</request>
+</ipp>
