@@ -67,7 +67,8 @@ LIBOBJS=\
 	destinfo.o \
 	ipp_obj.o ipp_req_attrs.o ipp_to_str.o ipp_str_to.o \
 	snmp_messages.o \
-	dispatch.o
+	dispatch.o \
+	pprd_call.o
 
 TARGETS=../libppr.a query_wrapper$(DOTEXE)
 

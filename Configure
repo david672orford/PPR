@@ -1195,7 +1195,6 @@ export HAVE_STATFS=
 export HAVE_SYS_VFS_H=
 export HAVE_TERMIOS_H=1
 export HAVE_FORK=1
-export HAVE_MKFIFO=1
 export HAVE_INNETGROUP=1
 export HAVE_SETREUID=1
 export HAVE_SETREGID=1
@@ -1576,7 +1575,6 @@ cat >&3 <<===EndCYGWIN===
 # MS-Windows 95 or NT with Cygwin 1.1
 HAVE_SNPRINTF=
 HAVE_VSNPRINTF=
-HAVE_MKFIFO=
 HAVE_INNETGROUP=
 BROKEN_SETUID_BIT=1
 SAFE_PATH=/bin:/usr/bin:/winnt/system32:/winnt

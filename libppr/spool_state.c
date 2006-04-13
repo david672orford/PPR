@@ -39,13 +39,13 @@
 #include "global_defines.h"
 #include "global_structs.h"
 
-void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[])
+int printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[])
 	{
-	const char function[] = "printer_spool_state_load";
 	char fname[MAX_PPR_PATH];
 	int fd = -1;
 	char spool_state_data[128];
 	int len;
+	int retval = 0;
 
 	pstate->accepting = TRUE;
 	pstate->protected = FALSE;
@@ -62,12 +62,12 @@ void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prn
 			break;
 		if((len = read(fd, spool_state_data, sizeof(spool_state_data))) == -1)
 			{
-			error("%s(): failed to read \"%s\", errno=%d (%s)", function, fname, errno, strerror(errno));
+			retval = -1;
 			break;
 			}
 		if(len == sizeof(spool_state_data))
 			{
-			error("%s(): to much data in \"%s\"", function, fname);
+			retval = -1;
 			break;
 			}
 		spool_state_data[len] = '\0';
@@ -81,21 +81,24 @@ void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prn
 				&(pstate->job_count)
 				) != 7)
 			{
-			error("%s(): corrupt \"%s\"", function, spool_state_data);
+			retval = -1;
+			break;
 			}
 		} while(FALSE);
 
 	if(fd != -1)
 		close(fd);
+
+	return retval;
 	} /* printer_spool_state_load() */
 
-void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[])
+int group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[])
 	{
-	const char function[] = "group_spool_state_load";
 	char fname[MAX_PPR_PATH];
 	int fd = -1;
 	char spool_state_data[128];
 	int len;
+	int retval = 0;
 
 	gstate->accepting = TRUE;
 	gstate->protected = FALSE;
@@ -108,12 +111,12 @@ void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname
 			break;
 		if((len = read(fd, spool_state_data, sizeof(spool_state_data))) == -1)
 			{
-			error("%s(): failed to read \"%s\", errno=%d (%s)", function, fname, errno, strerror(errno));
+			retval = -1;
 			break;
 			}
 		if(len == sizeof(spool_state_data))
 			{
-			error("%s(): to much data in \"%s\"", function, fname);
+			retval = -1;
 			break;
 			}
 		spool_state_data[len] = '\0';
@@ -124,12 +127,15 @@ void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname
 				&(gstate->job_count)
 				) != 4)
 			{
-			error("%s(): corrupt \"%s\"", function, spool_state_data);
+			retval = -1;
+			break;
 			}
 		} while(FALSE);
 
 	if(fd != -1)
 		close(fd);
+
+	return retval;
 	} /* group_spool_state_load() */
 
 /* end of file */

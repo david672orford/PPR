@@ -94,7 +94,8 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	 * This must come before the code which reads the "Charge:"
 	 * line from the config file.
 	 */
-	printer_spool_state_load(&(printer->spool_state), printer->name);
+	if(printer_spool_state_load(&(printer->spool_state), printer->name) == -1)
+		error("saved printer spool state of \"%s\" was invalid", printer->name);
 	printer->spool_state.job_count = 0;
 		
 	/* Handle state transitions brought about by killing pprd. */
@@ -405,7 +406,8 @@ static void load_group(struct Group *cl, const char grpname[])
 	cl->deleted = FALSE;				/* it is not a deleted group! */
 	cl->rotate = TRUE;					/* rotate is default */
 	
-	group_spool_state_load(&(cl->spool_state), cl->name);
+	if(group_spool_state_load(&(cl->spool_state), cl->name) == -1)
+		error("saved group spool state of \"%s\" was invalid", cl->name);
 	cl->spool_state.job_count = 0;
 
 	y=0;

@@ -76,15 +76,15 @@ int open_fifo(void)
 	int wfd;
 
 	if(mkfifo(FIFO_NAME, UNIX_660) < 0)
-		fatal(0, "%s(): can't make FIFO, errno=%d (%s)", function, errno, gu_strerror(errno));
+		fatal(0, "%s(): can't make FIFO, errno=%d (%s)", function, errno, strerror(errno));
 
 	/* Open the read end. */
 	while((rfd = open(FIFO_NAME, O_RDONLY | O_NONBLOCK)) < 0)
-		fatal(0, "%s(): can't open FIFO for read, errno=%d (%s)", function, errno, gu_strerror(errno));
+		fatal(0, "%s(): can't open FIFO for read, errno=%d (%s)", function, errno, strerror(errno));
 
 	/* Open the write end which will prevent EOF on the read end. */
 	if((wfd = open(FIFO_NAME, O_WRONLY)) < 0)
-		fatal(0, "%s(): can't open FIFO for write, errno=%d (%s)", function, errno, gu_strerror(errno));
+		fatal(0, "%s(): can't open FIFO for write, errno=%d (%s)", function, errno, strerror(errno));
 
 	/* Clear the non-block flag for rfd. */
 	gu_nonblock(rfd, FALSE);
@@ -185,7 +185,7 @@ static int pprd_stop(void)
 
 	if(kill((pid_t)pid, SIGTERM) < 0)
 		{
-		fprintf(stderr, _("%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"), myname, pid, errno, gu_strerror(errno));
+		fprintf(stderr, _("%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"), myname, pid, errno, strerror(errno));
 		return 3;
 		}
 

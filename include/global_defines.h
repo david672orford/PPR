@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 16 February 2006.
+** This file was last modified 13 April 2006.
 */
 
 /*
@@ -118,34 +118,36 @@
 #define MAX_BINS 10					/* max bins per printer */
 #define MAX_GROUPS 150				/* no more than this may groups */
 #define MAX_GROUPSIZE 8				/* no more than 8 printers per group */
-#define MAX_ALIASES 150				/* no more than 150 queue aliases */
 
 #define STATE_UPDATE_MAXLINES 1000
 #define STATE_UPDATE_PPRDRV_MAXBYTES 30000
 
 /*=======================================================================
 ** System Dependent Stuff
-** The system differences are handled in a separate file which
-** is included here.
+** These are adjustments that are made on the basis of things defined
+** in config.h or in the system header files.
 =======================================================================*/
 
 /* A signed number of at least 16 bits: */
-#ifndef SHORT_INT
-typedef short int SHORT_INT;
-#endif
+typedef short int INT16_T;
+typedef unsigned short int UINT16_T;
 
 /* Some of our code assumes that signal()
    sets a BSD style signal handler. */
 #undef signal
 #define signal(a,b) signal_interupting(a,b)
 
+/* BSD symbolic links aren't part of POSIX.  Some systems implement
+ * them and define S_IFLNK but mysteriously fail to define the test
+ * macro S_ISLNK().
+ */
 #ifndef S_ISLNK
 #define S_ISLNK(m) (((m) & S_IFMT) == S_IFLNK)
 #endif
 
 /* uClibc and dietlibc don't support NIS.  We have to put this here in 
  * global_defines.h since no uClibc headers have been read at the
- * time config.h is included. */
+ * time config.h is included, thus these tests are not possible. */
 #ifdef __UCLIBC__
 #undef HAVE_INNETGRP
 #endif
@@ -405,6 +407,11 @@ void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*call
 const char *dest_ppdfile(const char destname[]);
 int translate_snmp_error(int bit, const char **set_description, const char **set_raw1, int *set_severity);
 int translate_snmp_status(int device_status, int printer_status, const char **set_description, const char **set_raw1, int *set_severity);
+int pprd_call(const char command[], ...)
+	#ifdef __GNUC__
+	__attribute__ ((format (printf, 1, 2)))
+	#endif
+	;
 
 /*
 ** The callers of certain libppr routines must provide an error()
@@ -412,10 +419,10 @@ int translate_snmp_status(int device_status, int printer_status, const char **se
 ** noted in their log files.
 */
 void error(const char string[], ...)
-#ifdef __GNUC__
-__attribute__ ((format (printf, 1, 2)))
-#endif
-;
+	#ifdef __GNUC__
+	__attribute__ ((format (printf, 1, 2)))
+	#endif
+	;
 
 /* end of file */
 

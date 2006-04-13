@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 22 February 2006.
+** Last modified 13 April 2006.
 */
 
 /*
@@ -61,6 +61,7 @@ static const char *conf_directory(enum QUEUE_TYPE queue_type)
 		case QUEUE_TYPE_ALIAS:
 			return ALIASCONF;
 		}
+	/* GCC warning is spurious */
 	}
 
 /** Open a PPR destination configuration file.

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2006.
+** Last modified 13 April 2006.
 */
 
 /* =================== for pprd queue entries =====================*/
@@ -35,20 +35,20 @@
 struct QEntry
 	{
 	/* encoded in queue file name */
-	SHORT_INT destid;					/* destination key number */
-	SHORT_INT id;						/* queue id */
-	SHORT_INT subid;					/* fractional queue id */
+	INT16_T destid;					/* destination key number */
+	INT16_T id;						/* queue id */
+	INT16_T subid;					/* fractional queue id */
 
 	/* encoding in mini header */
-	SHORT_INT priority;					/* priority number (1=lowest, 100=highest) */
+	INT16_T priority;					/* priority number (1=lowest, 100=highest) */
 	time_t priority_time;
-	SHORT_INT status;					/* printer id if printing, < 0 for other status */
+	INT16_T status;						/* printer id if printing, < 0 for other status */
 	
 	unsigned short int flags;			/* --keep, responding, etc. */
 	time_t resend_message_at;			/* time at which to retry responder to questioner */
 
-	SHORT_INT media[MAX_DOCMEDIA];		/* list of id numbers of media types req. */
-	SHORT_INT pass;						/* number of current pass thru printers in group */
+	INT16_T media[MAX_DOCMEDIA];		/* list of id numbers of media types req. */
+	INT16_T pass;						/* number of current pass thru printers in group */
 	unsigned char never;				/* bitmap of group member which can't print */
 	unsigned char notnow;				/* bitmap of group members without required media mounted */
 	} ;
@@ -74,15 +74,15 @@ struct QEntry
 struct Jobname
 	{
 	const char *destname;
-	SHORT_INT id;
-	SHORT_INT subid;
+	INT16_T id;
+	INT16_T subid;
 	} ;
 
 struct JOB_SPOOL_STATE
 	{
 	int priority;						/* priority number (1--100) */
 	long priority_time;
-	SHORT_INT status;					/* job status */
+	INT16_T status;						/* job status */
 	short unsigned int flags;			/* job flags */
 	} ;
 	
@@ -258,8 +258,8 @@ struct ALERT {
 	char *address;
 	} ;
 
-void printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[]);
-void group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[]);
+int printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnname[]);
+int group_spool_state_load(struct GROUP_SPOOL_STATE *gstate, const char grpname[]);
 
 /* ======================== Media file format =========================== */
 struct Media
@@ -276,13 +276,13 @@ struct Media
 /* ============= money charged for printing ================= */
 
 struct COMPUTED_CHARGE
-		{
-		int duplex_sheets;
-		int per_duplex;
-		int simplex_sheets;
-		int per_simplex;
-		int total;
-		} ;
+	{
+	int duplex_sheets;
+	int per_duplex;
+	int simplex_sheets;
+	int per_simplex;
+	int total;
+	} ;
 
 void compute_charge(struct COMPUTED_CHARGE *charge, int per_duplex_sheet, int per_simplex_sheet, int vpages,
 		int n_up_n, int vpages_per_sheet, int sigsheets, int sigpart, int copies);
