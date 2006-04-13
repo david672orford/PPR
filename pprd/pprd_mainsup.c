@@ -39,6 +39,7 @@
 #include <grp.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/un.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
 #endif
@@ -67,7 +68,6 @@ int open_fifo(void)
 
 	unlink(FIFO_NAME);
 
-#ifdef HAVE_MKFIFO
 	/*
 	** This is the normal code.  It creates and opens a POSIX FIFO.
 	*/
@@ -93,20 +93,31 @@ int open_fifo(void)
 	gu_set_cloexec(wfd);
 	}
 
-#else
-	/*
-	** This is the substitute code for broken systems.  It creates an ordinary
-	** file which will grow without bounds.
-	*/
-	if((rfd = open(FIFO_NAME, O_RDONLY | O_CREAT, UNIX_660)) == -1)
-		fatal(0, "open_fifo(): can't open(), errno=%d (%s)", errno, gu_strerror(errno));
-	gu_set_cloexec(rfd);
-#endif
-
 	DODEBUG_STARTUP(("%s(): done", function));
 
 	return rfd;
 	} /* end of open_fifo() */
+
+/*
+ * Create the UNIX-domain socket for receiving commands from ipp.
+ */
+int create_unix_socket(void)
+	{
+	const char function[] = "create_unix_socket";
+	int s;
+	struct sockaddr_un addr; 
+
+	if((s = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "socket", errno, strerror(errno));
+	
+	gu_strlcpy(addr.sun_path, SOCKET_NAME, sizeof(addr.sun_path));
+	addr.sun_family = AF_UNIX; 
+	if(bind(s, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1)
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "bind", errno, strerror(errno));
+
+
+	return s;
+	} /* end of create_unix_socket() */
 
 /*
 ** If there is an old log file, rename it.

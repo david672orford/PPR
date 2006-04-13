@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 October 2005.
+** Last modified 13 April 2006.
 */
 
 /*
@@ -143,7 +143,7 @@ static void user_sighandler(int sig)
 
 /*
 ** This SIGALRM handler is used to limit the time we will wait
-** for SIGUSR1 from pprd or rpprd.
+** for SIGUSR1 from pprd.
 */
 static void alarm_sighandler(int sig)
 	{
@@ -160,16 +160,9 @@ FILE *get_ready(void)
 	int fifo;
 	sigset_t set;				/* storage for set containing SIGUSR1 */
 
-	/* Are we using a real FIFO or just an append to a file? */
-	#ifdef HAVE_MKFIFO
-	#define FIFO_OPEN_FLAGS (O_WRONLY | O_NONBLOCK)
-	#else
-	#define FIFO_OPEN_FLAGS (O_WRONLY | O_APPEND)
-	#endif
-
 	if(!FIFO)
 		{
-		if((fifo = open(FIFO_NAME, FIFO_OPEN_FLAGS)) < 0)
+		if((fifo = open(FIFO_NAME, (O_WRONLY | O_NONBLOCK))) == -1)
 			fatal(EXIT_NOSPOOLER, _("can't open FIFO, pprd is probably not running"));
 		FIFO = fdopen(fifo, "w");
 		}

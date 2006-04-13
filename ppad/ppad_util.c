@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 February 2006.
+** Last modified 13 April 2006.
 */
 
 #include "config.h"
@@ -123,11 +123,7 @@ void write_fifo(const char string[], ... )
 	va_list va;
 
 	/* open the fifo */
-	#ifdef HAVE_MKFIFO
 	if((fifo = open(FIFO_NAME, O_WRONLY | O_NONBLOCK)) < 0)
-	#else
-	if((fifo = open(FIFO_NAME, O_WRONLY | O_NONBLOCK)) < 0)
-	#endif
 		fatal(EXIT_NOSPOOLER, _("can't open FIFO, pprd is probably not running"));
 
 	FIFO = fdopen(fifo, "w");

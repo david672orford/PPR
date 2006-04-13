@@ -1,28 +1,26 @@
-lprsrv-test.o: lprsrv-test.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h ../include/util_exits.h
+lprsrv-test.o: ./lprsrv-test.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h ../include/util_exits.h
 
-lprsrv.o: lprsrv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h ../include/util_exits.h ../include/version.h
+lprsrv.o: ./lprsrv.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h ../include/util_exits.h ../include/version.h
 
-lprsrv_cancel.o: lprsrv_cancel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+lprsrv_cancel.o: ./lprsrv_cancel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-lprsrv_client_info.o: lprsrv_client_info.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+lprsrv_client_info.o: ./lprsrv_client_info.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-lprsrv_conf.o: lprsrv_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+lprsrv_conf.o: ./lprsrv_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-lprsrv_list.o: lprsrv_list.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+lprsrv_list.o: ./lprsrv_list.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-lprsrv_print.o: lprsrv_print.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+lprsrv_print.o: ./lprsrv_print.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-lprsrv_standalone.o: lprsrv_standalone.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+uprint_claim_ppr.o: ./uprint_claim_ppr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-uprint_claim_ppr.o: uprint_claim_ppr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h
+uprint_obj.o: ./uprint_obj.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-uprint_obj.o: uprint_obj.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+uprint_print_ppr.o: ./uprint_print_ppr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-uprint_print_ppr.o: uprint_print_ppr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+uprint_run.o: ./uprint_run.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
 
-uprint_run.o: uprint_run.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/rfc1179.h lprsrv.h
+uprint_sysv.o: ./uprint_sysv.c ../include/config.h ../include/gu.h ../include/rfc1179.h lprsrv.h
 
-uprint_sysv.o: uprint_sysv.c ../include/config.h ../include/gu.h ../include/rfc1179.h lprsrv.h
-
-uprint_xlate.o: uprint_xlate.c ../include/config.h ../include/gu.h ../include/rfc1179.h lprsrv.h
+uprint_xlate.o: ./uprint_xlate.c ../include/config.h ../include/gu.h ../include/rfc1179.h lprsrv.h
 

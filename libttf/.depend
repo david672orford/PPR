@@ -1,30 +1,30 @@
-charstrings.o: charstrings.c ../include/config.h libttf_private.h
+ps_type3.o: ./ps_type3.c ../include/config.h libttf_private.h
 
-endian.o: endian.c ../include/config.h libttf_private.h
+charstrings.o: ./charstrings.c ../include/config.h libttf_private.h
 
-fixed.o: fixed.c ../include/config.h libttf_private.h
+endian.o: ./endian.c ../include/config.h libttf_private.h
 
-head.o: head.c ../include/config.h libttf_private.h
+fixed.o: ./fixed.c ../include/config.h libttf_private.h
 
-loadname.o: loadname.c ../include/config.h libttf_private.h
+head.o: ./head.c ../include/config.h libttf_private.h
 
-loadtable.o: loadtable.c ../include/config.h libttf_private.h
+loadname.o: ./loadname.c ../include/config.h libttf_private.h
 
-name.o: name.c ../include/config.h libttf_private.h
+loadtable.o: ./loadtable.c ../include/config.h libttf_private.h
 
-ps_header.o: ps_header.c ../include/config.h libttf_private.h
+name.o: ./name.c ../include/config.h libttf_private.h
 
-ps_sfnts.o: ps_sfnts.c ../include/config.h libttf_private.h
+ps_header.o: ./ps_header.c ../include/config.h libttf_private.h
 
-ps_trailer.o: ps_trailer.c ../include/config.h libttf_private.h
+ps_sfnts.o: ./ps_sfnts.c ../include/config.h libttf_private.h
 
-ps_type3.o: ps_type3.c ../include/config.h libttf_private.h
+ps_trailer.o: ./ps_trailer.c ../include/config.h libttf_private.h
 
-ttf_get_psname.o: ttf_get_psname.c ../include/config.h libttf_private.h
+ttf_get_psname.o: ./ttf_get_psname.c ../include/config.h libttf_private.h
 
-ttf_object.o: ttf_object.c ../include/config.h libttf_private.h
+ttf_object.o: ./ttf_object.c ../include/config.h libttf_private.h
 
-ttf_psout.o: ttf_psout.c ../include/config.h libttf_private.h
+ttf_psout.o: ./ttf_psout.c ../include/config.h libttf_private.h
 
-ttf_strerror.o: ttf_strerror.c ../include/config.h libttf_private.h
+ttf_strerror.o: ./ttf_strerror.c ../include/config.h libttf_private.h
 

@@ -1,22 +1,22 @@
-atalk_ali.o: atalk_ali.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/pap_proto.h
+atalk_ali.o: ./atalk_ali.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/pap_proto.h
 
-atalk_cap.o: atalk_cap.c ../include/config.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+atalk_cap.o: ./atalk_cap.c ../include/config.h ../include/cap_proto.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-clispool.o: clispool.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
+clispool.o: ./clispool.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h
 
-lpr.o: lpr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/rfc1179.h
+lpr.o: ./lpr.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h ../include/rfc1179.h
 
-parallel.o: parallel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
+parallel.o: ./parallel.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
 
-parallel_generic.o: parallel_generic.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
+parallel_generic.o: ./parallel_generic.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
 
-parallel_linux.o: parallel_linux.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h parallel.h
+parallel_linux.o: ./parallel_linux.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h parallel.h
 
-pros.o: pros.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+pros.o: ./pros.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-serial.o: serial.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+serial.o: ./serial.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 
-tcpip.o: tcpip.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
+tcpip.o: ./tcpip.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/interface.h
 
-usb.o: usb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
+usb.o: ./usb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/interface.h ../include/libppr_int.h
 

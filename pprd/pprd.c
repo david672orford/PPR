@@ -242,24 +242,12 @@ static void do_command(int fifo)
 	int count;
 	char *ptr, *next;
 
-	/*
-	** Get a line from the FIFO.  We include lame code for
-	** Cygnus-Win32 which doesn't implement mkfifo() yet.
-	*/
-	#ifdef HAVE_MKFIFO
+	/* Get a block containing one or more commmands from the FIFO. */
 	while((len = read(fifo, buffer, sizeof(buffer))) < 0)
 		{
 		if(errno != EINTR)		/* <-- exception for OSF/1 3.2 */
 			fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 		}
-	#else
-	while((len = read(fifo, buffer, sizeof(buffer))) <= 0)
-		{
-		if(len < -1)
-			fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
-		sleep(1);
-		}
-	#endif
 
 	if(len == 0 || buffer[len-1] != '\n')
 		{

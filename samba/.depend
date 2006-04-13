@@ -1,4 +1,4 @@
-ppr2samba.o: ppr2samba.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/queueinfo.h ../include/version.h
+ppr2samba.o: ./ppr2samba.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/queueinfo.h ../include/version.h
 
-sambaprint.o: sambaprint.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
+sambaprint.o: ./sambaprint.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 

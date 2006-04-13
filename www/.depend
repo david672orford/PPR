@@ -1,4 +1,4 @@
-ppr-passwd.o: ppr-passwd.c ../include/config.h ../include/gu.h ../include/gu_md5.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+ppr-passwd.o: ./ppr-passwd.c ../include/config.h ../include/gu.h ../include/gu_md5.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
 
-ppr-push-httpd.o: ppr-push-httpd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/respond.h
+ppr-push-httpd.o: ./ppr-push-httpd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/respond.h
 

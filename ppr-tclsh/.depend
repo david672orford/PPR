@@ -1,48 +1,48 @@
-panic.o: panic.c
+panic.o: ./panic.c
 
-ppr-tclsh.o: ppr-tclsh.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h tcl.h tclInt.h
+ppr-tclsh.o: ./ppr-tclsh.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h tcl.h tclInt.h
 
-regexp.o: regexp.c tclInt.h tclPort.h ../include/gu.h
+regexp.o: ./regexp.c tclInt.h tclPort.h ../include/gu.h
 
-tclAsync.o: tclAsync.c tclInt.h
+tclAsync.o: ./tclAsync.c tclInt.h
 
-tclBasic.o: tclBasic.c tclInt.h patchlevel.h
+tclBasic.o: ./tclBasic.c tclInt.h patchlevel.h
 
-tclCkalloc.o: tclCkalloc.c tclInt.h tcl.h tclPort.h
+tclCkalloc.o: ./tclCkalloc.c tclInt.h tcl.h tclPort.h
 
-tclCmdAH.o: tclCmdAH.c tclInt.h tclPort.h ../include/gu.h
+tclCmdAH.o: ./tclCmdAH.c tclInt.h tclPort.h ../include/gu.h
 
-tclCmdIL.o: tclCmdIL.c tclInt.h tclPort.h
+tclCmdIL.o: ./tclCmdIL.c tclInt.h tclPort.h
 
-tclCmdMZ.o: tclCmdMZ.c tclInt.h tclPort.h
+tclCmdMZ.o: ./tclCmdMZ.c tclInt.h tclPort.h
 
-tclEnv.o: tclEnv.c tclInt.h tclPort.h
+tclEnv.o: ./tclEnv.c tclInt.h tclPort.h
 
-tclExpr.o: tclExpr.c tclInt.h tclPort.h
+tclExpr.o: ./tclExpr.c tclInt.h tclPort.h
 
-tclGet.o: tclGet.c tclInt.h tclPort.h
+tclGet.o: ./tclGet.c tclInt.h tclPort.h
 
-tclGlob.o: tclGlob.c tclInt.h tclPort.h
+tclGlob.o: ./tclGlob.c tclInt.h tclPort.h
 
-tclHash.o: tclHash.c tclInt.h
+tclHash.o: ./tclHash.c tclInt.h
 
-tclLink.o: tclLink.c tclInt.h
+tclLink.o: ./tclLink.c tclInt.h
 
-tclMain.o: tclMain.c tcl.h
+tclMain.o: ./tclMain.c tcl.h
 
-tclParse.o: tclParse.c tclInt.h tclPort.h
+tclParse.o: ./tclParse.c tclInt.h tclPort.h
 
-tclProc.o: tclProc.c tclInt.h
+tclProc.o: ./tclProc.c tclInt.h
 
-tclTest.o: tclTest.c tclInt.h tclPort.h
+tclTest.o: ./tclTest.c tclInt.h tclPort.h
 
-tclUnixAZ.o: tclUnixAZ.c tclInt.h tclPort.h
+tclUnixAZ.o: ./tclUnixAZ.c tclInt.h tclPort.h
 
-tclUnixStr.o: tclUnixStr.c tclInt.h tclPort.h
+tclUnixStr.o: ./tclUnixStr.c tclInt.h tclPort.h
 
-tclUnixUtil.o: tclUnixUtil.c tclInt.h tclPort.h ../include/gu.h
+tclUnixUtil.o: ./tclUnixUtil.c tclInt.h tclPort.h ../include/gu.h
 
-tclUtil.o: tclUtil.c tclInt.h tclPort.h
+tclUtil.o: ./tclUtil.c tclInt.h tclPort.h
 
-tclVar.o: tclVar.c tclInt.h tclPort.h
+tclVar.o: ./tclVar.c tclInt.h tclPort.h
 

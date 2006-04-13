@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2006.
+** Last modified 13 April 2006.
 */
 
 /*
@@ -469,8 +469,8 @@ int write_queue_file(struct QEntryFile *qentry)
 	} /* end of write_queue_file() */
 
 /*
-** Open the FIFO to pprd or rpprd.  This FIFO will be used to tell
-** the daemon that the job has been placed in the queue.
+** Open the FIFO to pprd.  This FIFO will be used to tell
+** the pprd that the job has been placed in the queue.
 */
 static FILE *open_fifo(const char name[])
 	{
@@ -483,11 +483,7 @@ static FILE *open_fifo(const char name[])
 	** ENOENT or ENXIO (depending on whether the spooler has
 	** ever been run).
 	*/
-	#ifdef HAVE_MKFIFO
-	if((fifo = open(name, O_WRONLY | O_NONBLOCK)) < 0)
-	#else
-	if((fifo = open(name, O_WRONLY | O_APPEND)) < 0)
-	#endif
+	if((fifo = open(name, O_WRONLY | O_NONBLOCK)) == -1)
 		{
 		if(errno != ENXIO && errno != ENOENT)
 			fatal(PPREXIT_OTHERERR, _("Can't open \"%s\", errno=%d (%s)"), name, errno, gu_strerror(errno));
@@ -495,14 +491,13 @@ static FILE *open_fifo(const char name[])
 		}
 
 	/*
-	** This loop takes care of things if this program was
-	** invoked without file descriptors 0 thru 2 already open.
-	** It is popularly supposed that the operating system
-	** connects these to stdin, stdout, and stderr, but actually
-	** the shell does this.  Some daemons may invoke ppr without
-	** opening something on these file descriptors.  If this
-	** happens, we must move the fifo up and open /dev/null
-	** on descriptors 0 thru 2.
+	** This loop takes care of things if this program was invoked without
+	** file descriptors 0 thru 2 already open.  It is popularly supposed that
+	** the operating system connects these to stdin, stdout, and stderr, but
+	** actually the shell does this.  Some daemons may invoke ppr without
+	** opening something on these file descriptors.  If this happens, we must
+	** move the fifo up and open /dev/null on descriptors 0 thru 2.  Otherwise
+	** our messages to stdout and stderr will confound pprd.
 	*/
 	while(fifo <= 2)
 		{

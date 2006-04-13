@@ -6,11 +6,11 @@ papd_cap.o: ./papd_cap.c ../include/config.h ../include/cap_proto.h ../include/g
 
 papd_conf.o: ./papd_conf.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h papd.h
 
-papd_login_aufs.o: ./papd_login_aufs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h ../include/userdb.h papd.h
-
-papd_login_rbi.o: ./papd_login_rbi.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h ../include/userdb.h papd.h ../include/version.h
-
 papd_printjob.o: ./papd_printjob.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h ../include/ppr_exits.h papd.h
 
 papd_query.o: ./papd_query.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h papd.h
+
+papd_login_aufs.o: ./papd_login_aufs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h ../include/userdb.h papd.h
+
+papd_login_rbi.o: ./papd_login_rbi.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/queueinfo.h ../include/userdb.h papd.h ../include/version.h
 

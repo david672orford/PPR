@@ -25,174 +25,35 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 10 April 2006.
+** Last modified 13 April 2006.
 */
 
 /*
  * In this module we handle Internet Printing Protocol requests which have
  * been received by ppr-httpd and passed on to us by the ipp CGI program.
- *
- * These requests arrive as an "IPP" line which specifies the PID of
- * the ipp CGI and a list of HTTP headers and CGI variables.  The POSTed
- * data is in a temporary file (whose name can be derived from the PID)
- * and we send the response document to another temporary file.  Then
- * we send SIGUSR1 to the CGI program "ipp" to tell it that the response 
- * is ready.
  */
 
 #include "config.h"
 #include <string.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <signal.h>
 #include <ctype.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <time.h>
-#ifdef INTERNATIONAL
-#include <libintl.h>
-#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "global_structs.h"
 #include "ipp_constants.h"
-#include "ipp_utils.h"
 #include "pprd.h"
 #include "pprd.auto_h"
 #include "respond.h"
-#include "queueinfo.h"
-
-/** Handler for IPP_GET_JOBS */
-static void ipp_get_jobs(struct IPP *ipp)
-	{
-	const char function[] = "ipp_get_jobs";
-	const char *destname = NULL;
-	int destname_id = -1;
-	int jobid = -1;
-	int i;
-	char fname[MAX_PPR_PATH];
-	FILE *qfile;
-	struct QEntryFile qentryfile;
-	struct REQUEST_ATTRS *req;
-
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
-
-	if((destname = request_attrs_destname(req)))
-		{
-		if((destname_id = destid_by_name(destname)) == -1)
-			{
-			request_attrs_free(req);
-			ipp->response_code = IPP_NOT_FOUND;
-			return;
-			}
-		}
-
-	jobid = request_attrs_jobid(req);
-
-	lock();
-
-	/* Loop over the queue entries. */
-	for(i=0; i < queue_entries; i++)
-		{
-		if(destname_id != -1 && queue[i].destid != destname_id)
-			continue;
-		if(jobid != -1 && queue[i].id != jobid)
-			continue;
-
-		/* Read and parse the queue file. */
-		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(queue[i].destid), queue[i].id, queue[i].subid);
-		if(!(qfile = fopen(fname, "r")))
-			{
-			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
-			continue;
-			}
-		qentryfile_clear(&qentryfile);
-		{
-		int ret = qentryfile_load(&qentryfile, qfile);
-		fclose(qfile);
-		if(ret == -1)
-			{
-			error("%s(): invalid queue file: %s", function, fname);
-			continue;
-			}
-		}
-
-		if(request_attrs_attr_requested(req, "job-id"))
-			{
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
-				"job-id", queue[i].id);
-			}
-		if(request_attrs_attr_requested(req, "job-printer-uri"))
-			{
-			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
-			}
-		if(request_attrs_attr_requested(req, "job-uri"))
-			{
-			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-uri", "/jobs/%d", queue[i].id);
-			}
-
-		/* Derived from "ppop lpq" */
-		if(request_attrs_attr_requested(req, "job-name"))
-			{
-			const char *ptr;
-			if(!(ptr = qentryfile.lpqFileName))
-				if(!(ptr = qentryfile.Title))
-					ptr = "";
-			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr), TRUE);
-			}
-
-		/* Derived from "ppop lpq" */
-		if(request_attrs_attr_requested(req, "job-originating-user-name"))
-			{
-			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(qentryfile.user), TRUE);
-			}
-
-		/* Derived from "ppop lpq" */
-		if(request_attrs_attr_requested(req, "job-k-octets"))
-			{
-			long int bytes = qentryfile.PassThruPDL ? qentryfile.attr.input_bytes : qentryfile.attr.postscript_bytes;
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
-			}
-
-		if(request_attrs_attr_requested(req, "job-state"))
-			{
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_ENUM, "job-state", IPP_JOB_PENDING);	
-			}
-			
-		ipp_add_end(ipp, IPP_TAG_JOB);
-
-		qentryfile_free(&qentryfile);
-		}
-
-	unlock();
-
-	request_attrs_free(req);
-	} /* ipp_get_jobs() */
 
 /** Handler for IPP_CANCEL_JOB
- *
- * !!! Does not yet return proper result codes !!!
  */
-static void ipp_cancel_job(struct IPP *ipp)
+static int ipp_cancel_job(const char command_args[])
 	{
 	const char function[] = "ipp_cancel_job";
-	struct REQUEST_ATTRS *req;
 	int jobid;
 	int i;
 
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_JOB);
+	jobid = atoi(command_args);
 	
-	if((jobid = request_attrs_jobid(req)) == -1)
-		{
-		request_attrs_free(req);
-		ipp->response_code = IPP_NOT_FOUND;
-		return;
-		}
-
 	lock();
 
 	/* Loop over the queue entries.
@@ -282,20 +143,15 @@ static void ipp_cancel_job(struct IPP *ipp)
 	
 	unlock();
 
-	request_attrs_free(req);
+	return IPP_OK;
 	} /* ipp_cancel_job() */
 
-void ipp_dispatch(const char command[])
+int ipp_dispatch(const char command[])
 	{
 	const char function[] = "ipp_dispatch";
-	char fname_in[MAX_PPR_PATH];
-	char fname_out[MAX_PPR_PATH];
 	const char *p;
-	long int ipp_cgi_pid;
-	int in_fd, out_fd;
-	struct stat statbuf;
-	char *command_scratch = NULL;
-	struct IPP *ipp = NULL;
+	int operation_id;
+	int result_code;
 
 	DODEBUG_IPP(("%s(): %s", function, command));
 	
@@ -305,107 +161,23 @@ void ipp_dispatch(const char command[])
 		return;
 		}
 
-	if((ipp_cgi_pid = atol(p)) == 0)
-		{
-		error("%s(): no PID for reply", function);
-		return;
-		}
+	operation_id = atoi(p);
 	p += strspn(p, "0123456789");
 	p += strspn(p, " ");
 
-	in_fd = out_fd = -1;
-	gu_Try
+	switch(operation_id)
 		{
-		ppr_fnamef(fname_in, "%s/ppr-ipp/%ld-in", TEMPDIR, ipp_cgi_pid);
-		if((in_fd = open(fname_in, O_RDONLY)) == -1)
-			gu_Throw("can't open \"%s\", errno=%d (%s)", fname_in, errno, gu_strerror(errno));
-		gu_set_cloexec(in_fd);
-		if(fstat(in_fd, &statbuf) == -1)
-			gu_Throw("fstat(%d, &statbuf) failed, errno=%d (%s)", in_fd, errno, gu_strerror(errno));
-
-		ppr_fnamef(fname_out, "%s/ppr-ipp/%ld-out", TEMPDIR, ipp_cgi_pid);
-		if((out_fd = open(fname_out, O_WRONLY | O_EXCL | O_CREAT, UNIX_660)) == -1)
-			gu_Throw("can't create \"%s\", errno=%d (%s)", fname_out, errno, gu_strerror(errno));
-		gu_set_cloexec(out_fd);
-
-		{
-		char *root=NULL, *path_info=NULL, *remote_user=NULL, *remote_addr=NULL;
-		char *opts = command_scratch = gu_strdup(p);
-		char *name, *value;
-		while((name = gu_strsep(&opts, " ")) && *name)
-			{
-			if(!(value = strchr(name, '=')))
-				gu_Throw("parse error, no = in \"%s\"", name);
-			*(value++) = '\0';
-
-			if(strcmp(name, "ROOT") == 0)
-				root = value;
-			else if(strcmp(name, "PATH_INFO") == 0)
-				path_info = value;
-			else if(strcmp(name, "REMOTE_USER") == 0)
-				remote_user = value;
-			else if(strcmp(name, "REMOTE_ADDR") == 0)
-				remote_addr = value;
-			else
-				debug("%s(): unknown parameter %s=\"%s\"", function, name, value);
-			}
-
-		/* Create an IPP object and read the request from the temporary file. */
-		ipp = ipp_new(root, path_info, statbuf.st_size, in_fd, out_fd);
-		if(remote_user)
-			ipp_set_remote_user(ipp, remote_user);
-		if(remote_addr)
-			ipp_set_remote_addr(ipp, remote_addr);
-		ipp_parse_request_header(ipp);
-		ipp_parse_request_body(ipp);
-		}
-		
-		if(ipp_validate_request(ipp))
-			{
-			DODEBUG_IPP(("%s(): dispatching operation 0x%.4x (%s)", function, ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id)));
-			switch(ipp->operation_id)
-				{
-				case IPP_GET_JOBS:
-					ipp_get_jobs(ipp);
-					break;
-				case IPP_CANCEL_JOB:
-					ipp_cancel_job(ipp);
-					break;
-				default:
-					gu_Throw("unsupported operation: 0x%.2x (%s)", ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id));
-					break;
-				}
-			}
-
-		if(ipp->response_code == IPP_OK)
-			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "status-message", "successful-ok", FALSE);
-
-		ipp_send_reply(ipp, FALSE);
-		}
-	gu_Final {
-		if(ipp)
-			ipp_delete(ipp);
-		if(command_scratch)
-			gu_free(command_scratch);
-		if(in_fd != -1)
-			close(in_fd);
-		if(out_fd != -1)
-			close(out_fd);
-
-		/* Close the output file and tell the IPP CGI program to take it away. */
-		DODEBUG_IPP(("Sending signal to IPP CGI..."));
-		if(kill((pid_t)ipp_cgi_pid, SIGUSR1) == -1)
-			{
-			debug("%s(): kill(%ld, SIGUSR1) failed, errno=%d (%s), deleting reply file", function, (long)ipp_cgi_pid, errno, gu_strerror(errno));
-			unlink(fname_in);
-			unlink(fname_out);
-			}
-		}
-	gu_Catch {
-		error("%s(): %s", function, gu_exception);
+		case IPP_CANCEL_JOB:
+			result_code = ipp_cancel_job(p);
+			break;
+		default:
+			error("unsupported operation: 0x%.2x (%s)", operation_id, ipp_operation_id_to_str(operation_id));
+			result_code = IPP_OPERATION_NOT_SUPPORTED;
+			break;
 		}
 
 	DODEBUG_IPP(("%s(): done", function));
+	return result_code;
 	} /* end of ipp_dispatch() */
 
 /* end of file */

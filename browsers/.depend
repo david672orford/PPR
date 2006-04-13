@@ -1,8 +1,8 @@
-ip_scan_snmp.o: ip_scan_snmp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+ip_scan_snmp.o: ./ip_scan_snmp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
 
-nbp_lookup_ali.o: nbp_lookup_ali.c ../include/config.h ../include/gu.h
+nbp_lookup_ali.o: ./nbp_lookup_ali.c ../include/config.h ../include/gu.h
 
-nbp_lookup_cap.o: nbp_lookup_cap.c
+nbp_lookup_cap.o: ./nbp_lookup_cap.c
 
-usb.o: usb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/version.h
+usb.o: ./usb.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/libppr_int.h ../include/util_exits.h ../include/version.h
 

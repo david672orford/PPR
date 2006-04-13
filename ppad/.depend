@@ -1,5 +1,3 @@
-dispatch_table.o: ./dispatch_table.c ../include/dispatch.h dispatch_table.h
-
 ppad.o: ./ppad.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ppad.h ../include/dispatch.h dispatch_table.h ../include/version.h
 
 ppad_alias.o: ./ppad_alias.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h dispatch_table.h
@@ -15,4 +13,6 @@ ppad_ppd.o: ./ppad_ppd.c ../include/config.h ../include/gu.h ../include/global_d
 ppad_printer.o: ./ppad_printer.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h ../include/interface.h ../include/queueinfo.h ppad.h dispatch_table.h
 
 ppad_util.o: ./ppad_util.c ../include/config.h ../include/gu.h ../include/global_defines.h ppad.h ../include/util_exits.h
+
+dispatch_table.o: ./dispatch_table.c ../include/dispatch.h dispatch_table.h
 

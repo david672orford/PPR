@@ -1,14 +1,14 @@
-alert.o: alert.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
+alert.o: ./alert.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/util_exits.h
 
-file_outdated.o: file_outdated.c
+file_outdated.o: ./file_outdated.c
 
-mkstemp.o: mkstemp.c ../include/config.h ../include/gu.h ../include/global_defines.h
+mkstemp.o: ./mkstemp.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-ppr_conf_query.o: ppr_conf_query.c ../include/config.h ../include/gu.h ../include/global_defines.h
+ppr_conf_query.o: ./ppr_conf_query.c ../include/config.h ../include/gu.h ../include/global_defines.h
 
-rewind_stdin.o: rewind_stdin.c
+rewind_stdin.o: ./rewind_stdin.c
 
-signal_sh.o: signal_sh.c
+signal_sh.o: ./signal_sh.c
 
-tail_status.o: tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
+tail_status.o: ./tail_status.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/version.h
 

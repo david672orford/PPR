@@ -1,5 +1,9 @@
 ipp.o: ./ipp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp.h
 
+ipp_jobs.o: ./ipp_jobs.c
+
+ppr-xml-ipp-client.o: ./ppr-xml-ipp-client.c ../include/config.h ../include/gu.h ../include/ipp_constants.h
+
 ipp_cups_admin.o: ./ipp_cups_admin.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp.h
 
 ipp_destinations.o: ./ipp_destinations.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp.h
@@ -7,6 +11,4 @@ ipp_destinations.o: ./ipp_destinations.c ../include/config.h ../include/gu.h ../
 ipp_print.o: ./ipp_print.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp.h
 
 ipp_run.o: ./ipp_run.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp.h
-
-ppr-xml-ipp-client.o: ./ppr-xml-ipp-client.c ../include/config.h ../include/gu.h ../include/ipp_constants.h
 

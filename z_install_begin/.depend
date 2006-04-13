@@ -1,6 +1,6 @@
-getgrnam.o: getgrnam.c
+getgrnam.o: ./getgrnam.c
 
-getpwnam.o: getpwnam.c
+getpwnam.o: ./getpwnam.c
 
-id.o: id.c
+id.o: ./id.c
 

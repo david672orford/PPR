@@ -1,4 +1,2 @@
-getservbyname.o: getservbyname.c
-
-puts.o: puts.c
+puts.o: ./puts.c
 

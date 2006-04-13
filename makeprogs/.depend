@@ -1,6 +1,6 @@
-ppr-config.o: ppr-config.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
+squeeze.o: ./squeeze.c
 
-readlink.o: readlink.c
+ppr-config.o: ./ppr-config.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/version.h
 
-squeeze.o: squeeze.c
+readlink.o: ./readlink.c
 
