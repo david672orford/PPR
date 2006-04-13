@@ -153,7 +153,7 @@ static void do_attributes(ipp_t *request, const char group_entity[], int group_t
 				case IPP_TAG_BOOLEAN:
 					{
 					int iii;
-					char *values_char;
+					char *values_char = NULL;
 					gu_Try
 						{
 						values_char = gu_alloc(values_count, sizeof(char));
@@ -170,7 +170,7 @@ static void do_attributes(ipp_t *request, const char group_entity[], int group_t
 						}
 					gu_Final
 						{
-						gu_free(values_char);
+						gu_free_if(values_char);
 						}
 					gu_Catch
 						{
@@ -194,6 +194,29 @@ static void do_attributes(ipp_t *request, const char group_entity[], int group_t
 	gu_Catch
 		{
 		gu_ReThrow();
+		}
+	}
+
+static void print_string(const char value[])
+	{
+	const char *p;
+	for(p=value; *p; p++)
+		{
+		switch(*p)
+			{
+			case '<':
+				printf("&lt;");
+				break;
+			case '>':
+				printf("&gt;");
+				break;
+			case '&':
+				printf("&amp;");
+				break;
+			default:
+				fputc(*p, stdout);
+				break;
+			}
 		}
 	}
 
@@ -392,7 +415,10 @@ int main(int argc, char *argv[])
 						printf("    <lang>%s</lang>\n", attr->values[iii].string.charset);
 						/* fall thru */
 					case IPP_TAG_STRING:
-						printf("    <value>%s</value>\n", attr->values[iii].string.text);
+						/*printf("    <value>%s</value>\n", attr->values[iii].string.text);*/
+						printf("    <value>");
+						print_string(attr->values[iii].string.text);
+						printf("</value>\n");
 						break;
 					default:
 						gu_Throw("no handler for values of type 0x%02X", tag_class);

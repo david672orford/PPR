@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ipp/ipp_destionations.c
+** mouse:~ppr/src/ipp/ipp_destinations.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -39,7 +39,6 @@
 #include <errno.h>
 #include <dirent.h>
 #ifdef INTERNATIONAL
-#include <locale.h>
 #include <libintl.h>
 #endif
 #include "gu.h"
