@@ -108,7 +108,9 @@ int create_unix_socket(void)
 	int s;
 	struct sockaddr_un addr; 
 
-	if((s = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)
+	unlink(UNIX_SOCKET_NAME);
+
+	if((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
 		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "socket", errno, strerror(errno));
 	
 	gu_strlcpy(addr.sun_path, UNIX_SOCKET_NAME, sizeof(addr.sun_path));
