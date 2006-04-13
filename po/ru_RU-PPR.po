@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-07 16:34-0400\n"
-"PO-Revision-Date: 2006-03-01 16:30-0500\n"
+"PO-Revision-Date: 2006-04-13 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
 "MIME-Version: 1.0\n"
@@ -3777,7 +3777,7 @@ msgstr "Очередь"
 
 #: ../ppop/ppop_cmds_other.c:1507
 msgid "Type"
-msgstr ""
+msgstr "Тип"
 
 #: ../ppop/ppop_cmds_other.c:1557
 msgid "group"
@@ -3789,15 +3789,15 @@ msgstr "принтер"
 
 #: ../ppop/ppop_cmds_other.c:1558
 msgid "accepting"
-msgstr ""
+msgstr "принимает"
 
 #: ../ppop/ppop_cmds_other.c:1558
 msgid "rejecting"
-msgstr "итказется"
+msgstr "отказывется"
 
 #: ../ppop/ppop_cmds_other.c:1598
 msgid "alias"
-msgstr ""
+msgstr "псевдоним"
 
 #: ../ppop/ppop_cmds_other.c:1629
 msgid "Usage: ppop alerts _printer_\n"

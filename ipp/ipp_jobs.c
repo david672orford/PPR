@@ -52,18 +52,13 @@ struct IPP_QUEUE_ENTRY {
 	INT16_T id;
 	INT16_T subid;
 	INT16_T priority;
-	time_t priority_time;
-	struct IPP_QUEUE_ENTRY *prev;
-	struct IPP_QUEUE_ENTRY *next;
+	int priority_time;
 	};
 
 struct IPP_QUEUE {
 	void *pool;
-	struct IPP_QUEUE_ENTRY *first;
-	struct IPP_QUEUE_ENTRY *last;
-	struct IPP_QUEUE_ENTRY *current;
-	struct IPP_QUEUE_ENTRY *new;
-	int supply_remaining;
+	struct IPP_QUEUE_ENTRY *entries;
+	int count;
 	};
 
 static struct IPP_QUEUE ipp_queue_new(const char destname[], int limit)
@@ -83,13 +78,6 @@ static struct IPP_QUEUE ipp_queue_new(const char destname[], int limit)
 	char buffer[64];
 	int destname_len = strlen(destname);
 
-	struct IPP_QUEUE_ENTRY *first = NULL;
-	struct IPP_QUEUE_ENTRY *last = NULL;
-	struct IPP_QUEUE_ENTRY *current = NULL;
-	struct IPP_QUEUE_ENTRY *old_current = NULL;
-	struct IPP_QUEUE_ENTRY *new = NULL;
-	int supply_remaining = 0;
-	
 	if(!(dir = opendir(QUEUEDIR)))
 		gu_Throw(_("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "opendir", QUEUEDIR, errno, strerror(errno));
 

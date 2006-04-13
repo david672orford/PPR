@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-07 12:41-0400\n"
+"POT-Creation-Date: 2006-04-13 17:42-0400\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -15,84 +15,53 @@ msgstr ""
 "Content-Transfer-Encoding: none\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../pprd/pprd_ipp.c:99
+#: ../pprd/pprd.c:307 ../pprd/pprd.c:350 ../pprd/pprd_mainsup.c:112
+#: ../pprd/pprd_mainsup.c:117 ../pprd/pprd_mainsup.c:120
 #, c-format
-msgid "printing %s"
+msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:111
+#: ../pprd/pprd.c:345
 #, c-format
-msgid "canceling %s"
+msgid "%s(): write to client failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:123
+#: ../pprd/pprd.c:347
 #, c-format
-msgid "seizing %s"
+msgid "%s(): write() wrote %d of %d bytes to client"
 msgstr ""
 
-#: ../pprd/pprd_ipp.c:135
-#, c-format
-msgid "stopping (printing %s)"
-msgstr ""
-
-#: ../pprd/pprd_ipp.c:147
-#, c-format
-msgid "halting (printing %s)"
-msgstr ""
-
-#: ../pprd/pprd_ipp.c:159
-msgid "stopt"
-msgstr ""
-
-#: ../pprd/pprd_ipp.c:173
-#, c-format
-msgid "fault, retry %d in %d seconds"
-msgstr ""
-
-#: ../pprd/pprd_ipp.c:178
-msgid "fault, no auto retry"
-msgstr ""
-
-#: ../pprd/pprd_ipp.c:191
-#, c-format
-msgid "otherwise engaged or off-line, retry %d in %d seconds"
-msgstr ""
-
-#: ../pprd/pprd_ipp.c:203
-msgid "waiting for resource ration"
-msgstr ""
-
-#: ../pprd/pprd_load.c:187 ../pprd/pprd_load.c:190
+#: ../pprd/pprd_load.c:188 ../pprd/pprd_load.c:191
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:156
+#: ../pprd/pprd_mainsup.c:170
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:166
+#: ../pprd/pprd_mainsup.c:180
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:170
+#: ../pprd/pprd_mainsup.c:184
 #, c-format
 msgid "Sending SIGTERM to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:174
+#: ../pprd/pprd_mainsup.c:188
 #, c-format
 msgid "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:180
+#: ../pprd/pprd_mainsup.c:194
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:190
+#: ../pprd/pprd_mainsup.c:204
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr ""

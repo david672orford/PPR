@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-01 17:06-0500\n"
+"POT-Creation-Date: 2006-04-13 17:42-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -14,49 +14,49 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../papd/papd.c:408
+#: ../papd/papd.c:409
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../papd/papd.c:418
+#: ../papd/papd.c:419
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../papd/papd.c:422
+#: ../papd/papd.c:423
 #, c-format
 msgid "Sending %s to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../papd/papd.c:445
+#: ../papd/papd.c:446
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
 
-#: ../papd/papd.c:454
+#: ../papd/papd.c:455
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr ""
 
-#: ../papd/papd.c:470
+#: ../papd/papd.c:471
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s)"
 msgstr ""
 
-#: ../papd/papd.c:506
+#: ../papd/papd.c:507
 #, c-format
 msgid ""
 "Usage: %s [--help] [--version] [--foreground] [--stop] [--reload]\n"
 "\t--debug-toggle --tail\n"
 msgstr ""
 
-#: ../papd/papd_conf.c:312
+#: ../papd/papd_conf.c:313
 #, c-format
 msgid "%s(): opendir(\"%s\") failed, errno=%d (%s)"
 msgstr ""
 
-#: ../papd/papd_printjob.c:102
+#: ../papd/papd_printjob.c:103
 #, c-format
 msgid "%s(): fork() failed, errno=%d (%s)"
 msgstr ""
