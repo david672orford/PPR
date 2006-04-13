@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 7 April 2006.
+** Last modified 13 April 2006.
 */
 
 /*
@@ -44,6 +44,8 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -54,6 +56,7 @@
 #include "pprd.h"
 #include "./pprd.auto_h"
 #include "interface.h"
+#include "ipp_constants.h"
 
 /*
 ** Misc global variables
@@ -234,16 +237,16 @@ static void tick(void)
 /*========================================================================
 ** Handle a command on the pipe.
 ========================================================================*/
-static void do_command(int fifo)
+static void do_fifo_command(int fifo)
 	{
-	const char function[] = "do_command";
+	const char function[] = "do_fifo_command";
 	char buffer[256];			/* buffer for received command */
 	int len;					/* length of data in buffer */
 	int count;
 	char *ptr, *next;
 
 	/* Get a block containing one or more commmands from the FIFO. */
-	while((len = read(fifo, buffer, sizeof(buffer))) < 0)
+	while((len = read(fifo, buffer, sizeof(buffer))) == -1)
 		{
 		if(errno != EINTR)		/* <-- exception for OSF/1 3.2 */
 			fatal(0, "%s(): read() on FIFO failed, errno=%d (%s)", function, errno, gu_strerror(errno));
@@ -284,21 +287,68 @@ static void do_command(int fifo)
 					new_group_config(&ptr[3]);
 				break;
 
-			case 'I':					/* Internet Printing Protocol */
-				{
-				int count = gu_alloc_checkpoint();
-				ipp_dispatch(ptr);
-				gu_alloc_assert(count);
-				}
-				break;
-
 			default:					/* anything else needs a reply to ppop */
 				ppop_dispatch(ptr);
 				break;
 			}
 		}
 
-	} /* end of do_command() */
+	} /* do_fifo_command() */
+
+static void do_socket_command(int usock)
+	{
+	const char function[] = "do_fifo_command";
+	int confd;
+	char buffer[256];
+	int len, writelen;
+	int result;
+
+	if((confd = accept(usock, 0, 0)) == -1)
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "accept", errno, strerror(errno));
+
+	/* Get a block containing one commmand from the socket. */
+	while((len = read(confd, buffer, sizeof(buffer))) < 0)
+		{
+		if(errno != EINTR)		/* <-- exception for OSF/1 3.2 */
+			gu_Throw("%s(): %s() failed, errno=%d (%s)", function, "read", errno, strerror(errno));
+		}
+
+	do	{
+		if(len < 1 || buffer[len-1] != '\n')
+			{
+			error("ignoring malformed command from Unix-domain socket");
+			result = IPP_BAD_REQUEST;
+			break;
+			}
+		buffer[len - 1] = '\0';
+
+		switch(buffer[0])
+			{
+			case 'I':					/* Internet Printing Protocol */
+				{
+				int count = gu_alloc_checkpoint();
+				result = ipp_dispatch(buffer);
+				gu_alloc_assert(count);
+				}
+				break;
+			default:
+				error("unrecognized command received on Unix-domain socket: %s", buffer);
+				result = IPP_OPERATION_NOT_SUPPORTED;
+				break;
+			}
+		
+		} while(FALSE);
+
+	/* Send the IPP result code. */
+	writelen = gu_snprintf(buffer, sizeof(buffer), "%d\n", result);
+	if((len = write(confd, buffer, writelen)) == -1)
+		error(_("%s(): write to client failed, errno=%d (%s)"), function, errno, strerror(errno));
+	if(len != writelen)
+		error(_("%s(): write() wrote %d of %d bytes to client"), function, len, writelen);
+	
+	if(close(confd) == -1)
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "close", errno, strerror(errno));
+	} /* do_socket_command() */
 
 /*========================================================================
 ** The Main Procedure
@@ -308,6 +358,7 @@ static int real_main(int argc, char *argv[])
 	{
 	const char function[] = "real_main";
 	int fifo;					/* first-in-first-out which feeds us requests */
+	int usock;					/* Unix-domain socket for communicating with ipp */
 	sigset_t lock_set;
 	struct timeval next_tick;	/* time of next call to tick() */
 
@@ -392,6 +443,10 @@ static int real_main(int argc, char *argv[])
 	DODEBUG_STARTUP(("opening FIFO"));
 	fifo = open_fifo();
 
+	/* Set up the Unix-domain socket. */
+	DODEBUG_STARTUP(("opening Unix-domain socket"));
+	usock = create_unix_socket();
+
 	/* Load the printers database. */
 	DODEBUG_STARTUP(("loading printers database"));
 	load_printers();
@@ -449,6 +504,10 @@ static int real_main(int argc, char *argv[])
 			/* Listen for activity on FIFO or on any listening sockets. */
 			FD_ZERO(&rfds);
 			FD_SET(fifo, &rfds);
+			lastfd = fifo;
+			FD_SET(usock, &rfds);
+			if(usock > lastfd)
+				lastfd = usock;
 			lastfd = listener_fd_set(fifo, &rfds);
 
 			/* Call select() with SIGCHLD unblocked. */
@@ -461,7 +520,9 @@ static int real_main(int argc, char *argv[])
 		if(readyfds > 0)
 			{
 			if(FD_ISSET(fifo, &rfds))
-				do_command(fifo);
+				do_fifo_command(fifo);
+			else if(FD_ISSET(usock, &rfds))
+				do_socket_command(usock);
 			else if(listener_hook(readyfds, &rfds))
 				;
 			else

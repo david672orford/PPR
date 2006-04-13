@@ -158,7 +158,7 @@ int ipp_dispatch(const char command[])
 	if(!(p = lmatchsp(command, "IPP")))
 		{
 		error("%s(): command missing", function);
-		return;
+		return IPP_INTERNAL_ERROR;
 		}
 
 	operation_id = atoi(p);

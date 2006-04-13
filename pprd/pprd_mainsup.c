@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_mainsup.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 17 October 2005.
+** Last modified 13 April 2006.
 */
 
 #include "config.h"
@@ -39,6 +39,7 @@
 #include <grp.h>
 #include <stdlib.h>
 #include <fcntl.h>
+#include <sys/socket.h>
 #include <sys/un.h>
 #ifdef INTERNATIONAL
 #include <libintl.h>
@@ -110,11 +111,13 @@ int create_unix_socket(void)
 	if((s = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)
 		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "socket", errno, strerror(errno));
 	
-	gu_strlcpy(addr.sun_path, SOCKET_NAME, sizeof(addr.sun_path));
+	gu_strlcpy(addr.sun_path, UNIX_SOCKET_NAME, sizeof(addr.sun_path));
 	addr.sun_family = AF_UNIX; 
 	if(bind(s, (struct sockaddr *)&addr, sizeof(struct sockaddr_un)) == -1)
 		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "bind", errno, strerror(errno));
 
+	if(listen(s, 5) == -1)
+		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "listen", errno, strerror(errno));
 
 	return s;
 	} /* end of create_unix_socket() */
