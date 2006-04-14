@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2006.
+** Last modified 14 April 2006.
 */
 
 /*
@@ -214,6 +214,12 @@ int main(int argc, char *argv[])
 			case IPP_PRINT_JOB:
 				p_handler = ipp_print_job;
 				break;
+			case IPP_GET_PRINTER_ATTRIBUTES:
+				p_handler = ipp_get_printer_attributes;
+				break;
+			case IPP_GET_JOBS:
+				p_handler = ipp_get_jobs;
+				break;
 			case CUPS_GET_DEFAULT:
 				p_handler = cups_get_default;
 				break;
@@ -225,9 +231,6 @@ int main(int argc, char *argv[])
 				break;
 			case CUPS_ADD_PRINTER:
 				p_handler = cups_add_printer;
-				break;
-			case IPP_GET_PRINTER_ATTRIBUTES:
-				p_handler = ipp_get_printer_attributes;
 				break;
 			case CUPS_GET_CLASSES:
 				p_handler = cups_get_classes;

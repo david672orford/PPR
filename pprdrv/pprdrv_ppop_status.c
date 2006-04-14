@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 3 April 2006.
+** Last modified 14 April 2006.
 */
 
 #include "config.h"
@@ -269,13 +269,13 @@ void ppop_status_init(void)
 		int count, bit; long int start, last_news, last_commentary; int details_start;
 		while((line = gu_getline(line, &line_space, f)))
 			{
-			if((count = gu_sscanf(line, "status: %d %d %t %t %t", &status.hrDeviceStatus, &status.hrPrinterStatus, &status.start, &status.last_news, &status.last_commentary)) > 0)
+			if((count = gu_sscanf(line, "status: %d %d %U %U %U", &status.hrDeviceStatus, &status.hrPrinterStatus, &status.start, &status.last_news, &status.last_commentary)) > 0)
 				{
 				if(count < 3)
 					error("%s(): can't parse \"%s\"", function, line);
 				continue;
 				}
-			if((count = gu_sscanf(line, "errorstate: %d %t %t %t %n", &bit, &start, &last_news, &last_commentary, &details_start)) > 0)
+			if((count = gu_sscanf(line, "errorstate: %d %U %U %U %n", &bit, &start, &last_news, &last_commentary, &details_start)) > 0)
 				{
 				if(count < 4)
 					{

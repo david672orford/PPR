@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/libgu/gu_sscanf.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 9 September 2005.
+** Last modified 14 April 2006.
 */
 
 /*! \file
@@ -67,11 +67,11 @@ It implements the following formats:
 
 <dt>%lu</dt>
 
-<dd>not implemented</dd>
+<dd>read an unsigned base ten number and store it in a long unsigned int (not yes implemented)</dd>
 
 <dt>%hu</dt>
 
-<dd>not implemented</dd>
+<dd>rad an unsigned base ten number and store it in a short unsigned int (not implemented)</dd>
 
 <dt>%x</dt>
 
@@ -84,6 +84,10 @@ It implements the following formats:
 <dt>%f</dt>
 
 <dd>read a floating point number</dd>
+
+<dt>%n</dt>
+
+<dd>Store the number of characters read so far.</dd>
 
 <dt>%s</dt>
 
@@ -125,13 +129,9 @@ an additional parsing state or comment fields.</dd>
 <dd>Read an address or filename.  If there are leading or trailing spaces, the whole
 must be quoted.  It continues to end-of-line.
 
-<dt>%t</dt>
+<dt>%U (formerly %t)</dt>
 
-<dd>Get a time_t.</dd>
-
-<dt>%n</dt>
-
-<dd>Store the number of characters read so far.</dd>
+<dd>Read an unsigned decimal integer and store it in a time_t.</dd>
 
 </dl>
 
@@ -433,12 +433,12 @@ int gu_sscanf(const char *input, const char *format, ...)
 					}
 					break;
 
-				case 'n':
+				case 'n':				/* bytes read so far */
 					*(va_arg(va, int *)) = ((string - input) / sizeof(const char));
 					count++;
 					break;
 
-				case 't':
+				case 'U':				/* Unix time */
 					{
 					time_t temptime = 0;
 					while(gu_ascii_isdigit(*string))				/* convert digits */

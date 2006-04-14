@@ -227,7 +227,7 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 			case 'P':
 				if(gu_sscanf(line, "PPRD: %hx %x %hx %hx",
 						&job->spool_state.priority,
-						&job->spool_state.priority_time,
+						&job->spool_state.sequence_number,
 						&job->spool_state.status,
 						&job->spool_state.flags
 						) == 4)
@@ -261,7 +261,7 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'T':
-				MATCH("Time: ", _2("%ld", &job->time), !=1, found_time)
+				MATCH("Time: ", _2("%U", &job->time), !=1, found_time)
 				MATCH("Title: ", _2("%T", &job->Title), !=1, found_other)
 				break;
 

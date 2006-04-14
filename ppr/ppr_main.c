@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 April 2006.
+** Last modified 14 April 2006.
 */
 
 /*
@@ -1848,7 +1848,7 @@ int main(int argc, char *argv[])
 	qentry.jobname.id = 0;								/* not assigned yet */
 	qentry.jobname.subid = 0;							/* job fragment number (unused) */
 	qentry.spool_state.priority = 50;					/* default priority */
-	qentry.spool_state.priority_time = qentry.time;
+	qentry.spool_state.sequence_number = qentry.time;	/* <--temporary hack */
 	qentry.spool_state.status = STATUS_WAITING;
 	qentry.spool_state.flags = 0;
 	qentry.user = NULL;

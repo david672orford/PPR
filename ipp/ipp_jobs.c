@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2006.
+** Last modified 14 April 2006.
 */
 
 /*
@@ -36,6 +36,10 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <errno.h>
 #include <dirent.h>
 #ifdef INTERNATIONAL
@@ -43,167 +47,168 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
 #include "ipp.h"
 
 struct IPP_QUEUE_ENTRY {
+	INT16_T priority;
+	unsigned int sequence_number;
+	const char *destname;
 	INT16_T id;
 	INT16_T subid;
-	INT16_T priority;
-	int priority_time;
 	};
 
-struct IPP_QUEUE {
-	void *pool;
-	struct IPP_QUEUE_ENTRY *entries;
-	int count;
-	};
-
-static struct IPP_QUEUE ipp_queue_new(const char destname[], int limit)
+static int ipp_queue_entry_compare(const void *p1, const void *p2)
 	{
-	const char function[] = "ipp_queue_new";
-	void *pool = gu_pool_new();
-	GU_OBJECT_POOL_PUSH(pool);
-	struct IPP_QUEUE *this = gu_alloc(1, sizeof(struct IPP_QUEUE));
-	this->pool = pool;
+	const struct IPP_QUEUE_ENTRY *e1 = p1;
+	const struct IPP_QUEUE_ENTRY *e2 = p2;
+	if(e1->priority < e2->priority)
+		return 1;
+	if(e1->priority > e2->priority)
+		return -1;
+	if(e1->sequence_number < e2->sequence_number)
+		return -1;
+	if(e1->sequence_number > e2->sequence_number)
+		return 1;	
 
+	return 0;
+	}
+
+static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int jobid, int *set_used)
 	{
+	const char function[] = "load_queue";
+	struct IPP_QUEUE_ENTRY *queue = NULL;
+	int queue_used = 0;
+	int queue_space = 0;
 	DIR *dir;
 	struct dirent *direntp;
 	char *p;
 	char fname[MAX_PPR_PATH];
 	int fd;
 	char buffer[64];
-	int destname_len = strlen(destname);
+	void *destnames = gu_pch_new(64);
 
 	if(!(dir = opendir(QUEUEDIR)))
 		gu_Throw(_("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "opendir", QUEUEDIR, errno, strerror(errno));
 
 	while((direntp = readdir(dir)))
 		{
-		if(dirent->d_name[0] == '.')
+		/* Skip ".", "..", and hidden files. */
+		if(direntp->d_name[0] == '.')
 			continue;
+
 		/* Locate hyphen between destname and ID */
 		if(!(p = strrchr(direntp->d_name, '-')))
 			continue;
+
 		/* If destname does not match, skip this file. */
-		if((p - direntp->d_name) != destname_len || strncmp(direntp->d_name, destname, destname_len) != 0)
+		if(destname && ((p - direntp->d_name) != strlen(destname) || strncmp(direntp->d_name, destname, strlen(destname)) != 0))
 			continue;
+	
+		/* Expand the queue array if necessary. */	
+		if(queue_used == queue_space)
+			{
+			queue_space += 1024;
+			queue = gu_realloc(queue, queue_space, sizeof(struct IPP_QUEUE_ENTRY));
+			}
+
+		/* Parse the part of the filename after the hyphen in order to extract the 
+		 * ID and subid. */
+		if(gu_sscanf(p+1, "%d.%hd", &queue[queue_used].id, &queue[queue_used].subid) != 2)
+			{
+			fprintf(stderr, X_("Can't parse id.subid: %s\n"), p+1);
+			continue;
+			}
+
+		/* If a particular job ID was requested and this isn't it, skip it. */
+		if(jobid != -1 && jobid != queue[queue_used].id)
+			continue;
+
+		/* Open the queue file and extract the fields which we will use for sorting. */
 		ppr_fnamef(fname, "%s/%s", QUEUEDIR, direntp->d_name);
 		if((fd = open(fname, O_RDONLY)) == -1)
 			{
-			fprintf(stderr, _("Can't open \"%s\", errno=%d (%s)\n"), fname, errno, strerror(errno));
+			fprintf(stderr, X_("Can't open \"%s\", errno=%d (%s)\n"), fname, errno, strerror(errno));
 			continue;
 			}
 		if(read(fd, buffer, sizeof(buffer)) != sizeof(buffer))
 			{
-			fprintf(stderr, _("Can't read \"%s\"\n"), fname);
+			fprintf(stderr, X_("Can't read \"%s\"\n"), fname);
 			continue;
 			}
-		if(this->supply_remaining == 0)
+		if(gu_sscanf(buffer, "PPRD: %hx %x", &queue[queue_used].priority, &queue[queue_used].sequence_number) != 2)
 			{
-			new = gu_alloc(1024, sizeof(struct IPP_QUEUE_ENTRY));
-			supply_remaining = 1024;
-			}
-		if(gu_sscanf(buffer, "PPRD: %hx %x", &new->priority, &new->priority_time) != 2)
-			{
-			fprintf(stderr, _("Can't parse \"%s\"\n"), fname);
+			fprintf(stderr, X_("Can't parse contents of \"%s\"\n"), fname);
 			continue;
 			}
 
-		if(!this->current)
+		if(destname)		/* all the same */
+			queue[queue_used].destname = destname;
+		else				/* possibly different, don't save more than one copy */
 			{
-			current = first = last = new;
-			}
-		else
-			{
-			#if 0
-			while(TRUE)
+			*p = '\0';
+			if(!(queue[queue_used].destname = gu_pch_get(destnames, direntp->d_name)))
 				{
-				if(current->priority <= new->priority && current->priority_time > new->priority_time
-						&& (!current->prev || prev->))
-					{
-					new->next = current;
-					new->prev = current->prev;
-					break;
-					}
-				if(!current->next)
-					{
-
-					break;
-					}
+				char *temp = gu_strdup(direntp->d_name);
+				gu_pch_set(destnames, direntp->d_name, temp);
+				queue[queue_used].destname = temp;
 				}
-			#endif
 			}
 		
-		this->new++;
-		this->supply_remaining--;
+		queue_used++;
+
+		/* If we are searching for only one jobid, we got here so we must have found it.
+		 * Bail out early.
+		 */
+		if(jobid != -1)
+			break;
 		}
 	
-	closedir(dir);	
-	}
-	
-	GU_OBJECT_POOL_POP(this->pool);		
-	}
+	closedir(dir);
 
-static struct ipp_queue_free(struct IPP_QUEUE *this)
-	{
-	gu_pool_free(this->pool);
+	qsort(queue, queue_used, sizeof(struct IPP_QUEUE_ENTRY), ipp_queue_entry_compare);
+
+	*set_used = queue_used;
+	return queue;
 	}
 
 /** Handler for IPP_GET_JOBS */
-static void ipp_get_jobs(struct IPP *ipp)
+void ipp_get_jobs(struct IPP *ipp)
 	{
 	const char function[] = "ipp_get_jobs";
+	struct REQUEST_ATTRS *req;
 	const char *destname = NULL;
-	int destname_id = -1;
 	int jobid = -1;
-	int i;
+	struct IPP_QUEUE_ENTRY *queue;
+	int queue_num_entries;
+	int iii;
 	char fname[MAX_PPR_PATH];
 	FILE *qfile;
 	struct QEntryFile qentryfile;
-	struct REQUEST_ATTRS *req;
 
 	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
-
-	if((destname = request_attrs_destname(req)))
-		{
-		if((destname_id = destid_by_name(destname)) == -1)
-			{
-			request_attrs_free(req);
-			ipp->response_code = IPP_NOT_FOUND;
-			return;
-			}
-		}
-
+	destname = request_attrs_destname(req);
 	jobid = request_attrs_jobid(req);
 
-	lock();
+	queue = ipp_load_queue(destname, jobid, &queue_num_entries);
 
-	/* Loop over the queue entries. */
-	for(i=0; i < queue_entries; i++)
+	for(iii=0; iii < queue_num_entries; iii++)
 		{
-		if(destname_id != -1 && queue[i].destid != destname_id)
-			continue;
-		if(jobid != -1 && queue[i].id != jobid)
-			continue;
-
-		/* Read and parse the queue file. */
-		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, destid_to_name(queue[i].destid), queue[i].id, queue[i].subid);
+		/* Read and parse the queue file.  We already know the file exists
+		 * and we can open it. */
+		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, queue[iii].destname, queue[iii].id, queue[iii].subid);
 		if(!(qfile = fopen(fname, "r")))
-			{
-			error("%s(): can't open \"%s\", errno=%d (%s)", function, fname, errno, gu_strerror(errno) );
-			continue;
-			}
+			gu_Throw(X_("%s(): can't open \"%s\", errno=%d (%s)"), function, fname, errno, gu_strerror(errno) );
 		qentryfile_clear(&qentryfile);
 		{
 		int ret = qentryfile_load(&qentryfile, qfile);
 		fclose(qfile);
 		if(ret == -1)
 			{
-			error("%s(): invalid queue file: %s", function, fname);
+			fprintf(stderr, X_("%s(): invalid queue file: %s"), function, fname);
 			continue;
 			}
 		}
@@ -211,17 +216,17 @@ static void ipp_get_jobs(struct IPP *ipp)
 		if(request_attrs_attr_requested(req, "job-id"))
 			{
 			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
-				"job-id", queue[i].id);
+				"job-id", queue[iii].id);
 			}
 		if(request_attrs_attr_requested(req, "job-printer-uri"))
 			{
 			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-printer-uri", "/printers/%s", destid_to_name(queue[i].destid));
+				"job-printer-uri", "/printers/%s", queue[iii].destname);
 			}
 		if(request_attrs_attr_requested(req, "job-uri"))
 			{
 			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-uri", "/jobs/%d", queue[i].id);
+				"job-uri", "/jobs/%d", queue[iii].id);
 			}
 
 		/* Derived from "ppop lpq" */
@@ -237,27 +242,28 @@ static void ipp_get_jobs(struct IPP *ipp)
 		/* Derived from "ppop lpq" */
 		if(request_attrs_attr_requested(req, "job-originating-user-name"))
 			{
-			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-originating-user-name", gu_strdup(qentryfile.user));
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME,
+				"job-originating-user-name", gu_strdup(qentryfile.user));
 			}
 
 		/* Derived from "ppop lpq" */
 		if(request_attrs_attr_requested(req, "job-k-octets"))
 			{
 			long int bytes = qentryfile.PassThruPDL ? qentryfile.attr.input_bytes : qentryfile.attr.postscript_bytes;
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-k-octets", (bytes + 512) / 1024);
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+				"job-k-octets", (bytes + 512) / 1024);
 			}
 
 		if(request_attrs_attr_requested(req, "job-state"))
 			{
-			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_ENUM, "job-state", IPP_JOB_PENDING);	
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_ENUM,
+				"job-state", IPP_JOB_PENDING);	
 			}
 			
 		ipp_add_end(ipp, IPP_TAG_JOB);
 
 		qentryfile_free(&qentryfile);
 		}
-
-	unlock();
 
 	request_attrs_free(req);
 	} /* ipp_get_jobs() */

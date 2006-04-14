@@ -46,7 +46,7 @@ int qentryfile_save(const struct QEntryFile *qentry, FILE *Qfile)
 	 * pprd can easily modify it. */
 	if(fprintf(Qfile, "PPRD: %02X %08X %02X %04X                                      \n",
 			qentry->spool_state.priority,
-			(unsigned int)qentry->spool_state.priority_time,
+			qentry->spool_state.sequence_number,
 			(qentry->spool_state.status * -1),
 			qentry->spool_state.flags) != 64)
 		gu_Throw("PPRD line is not 64 bytes long!");

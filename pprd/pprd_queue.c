@@ -160,7 +160,7 @@ void queue_write_status_and_flags(struct QEntry *job)
 	/* Write the new line.  If the job is printing, substitute 0 for the actual printer index. */
 	if(snprintf(buf, sizeof(buf), "PPRD: %02X %08X %02X %04X                                      \n",
 			job->priority,
-			(unsigned int)job->priority_time,
+			job->sequence_number,
 			job->status >= 0 ? 0 : (job->status * -1),
 			job->flags) != 64
 			)
@@ -325,8 +325,10 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		while((line = gu_getline(line, &line_available, qfile)))
 			{
 			if(gu_sscanf(line, "PPRD: %hx %x %hx %hx",
-					&newent.priority, &newent.priority_time,
-					&newent.status, &newent.flags
+					&newent.priority,
+					&newent.sequence_number,
+					&newent.status,
+					&newent.flags
 					) == 4
 				)
 				{
@@ -417,7 +419,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 			** of the queue and break out of the loop.
 			*/
 			if(newent.priority > queue[x].priority ||
-				(newent.priority == queue[x].priority && newent.priority_time < queue[x].priority_time)
+				(newent.priority == queue[x].priority && newent.sequence_number < queue[x].sequence_number)
 				)
 				{
 				int y;

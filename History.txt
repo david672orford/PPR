@@ -10052,4 +10052,20 @@ no final tarball was released.
 
 * cron/cron_run_daily.c: removed since never completed.
 
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
+* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+
 

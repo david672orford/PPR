@@ -51,7 +51,7 @@ void qentryfile_clear(struct QEntryFile *job)
 	job->jobname.subid = 0;
 
 	job->spool_state.priority = 1;
-	job->spool_state.priority_time = 0;
+	job->spool_state.sequence_number = 0;
 	job->spool_state.status = 0;
 	job->spool_state.flags = 0;
 

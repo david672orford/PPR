@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 13 April 2006.
+** Last modified 14 April 2006.
 */
 
 /* =================== for pprd queue entries =====================*/
@@ -39,12 +39,12 @@ struct QEntry
 	INT16_T id;						/* queue id */
 	INT16_T subid;					/* fractional queue id */
 
-	/* encoding in mini header */
+	/* encoding in "PPRD:" mini header */
 	INT16_T priority;					/* priority number (1=lowest, 100=highest) */
-	time_t priority_time;
+	unsigned int sequence_number;
 	INT16_T status;						/* printer id if printing, < 0 for other status */
-	
 	unsigned short int flags;			/* --keep, responding, etc. */
+	
 	time_t resend_message_at;			/* time at which to retry responder to questioner */
 
 	INT16_T media[MAX_DOCMEDIA];		/* list of id numbers of media types req. */
@@ -81,7 +81,7 @@ struct Jobname
 struct JOB_SPOOL_STATE
 	{
 	int priority;						/* priority number (1--100) */
-	long priority_time;
+	unsigned int sequence_number;
 	INT16_T status;						/* job status */
 	short unsigned int flags;			/* job flags */
 	} ;

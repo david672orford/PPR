@@ -242,6 +242,12 @@ int main(int argc, char *argv[])
 		gu_pch_set(params, "uri", opt_url);
 		}
 
+	if(!opt_url)
+		{
+		fprintf(stderr, "Usage: <request xml file> <printer URL>\n");
+		return 1;
+		}
+	
 	/* Treat the remaining command-line arguments as name-value pairs and 
 	 * load them into the Perl Compatible Hash params{}.
 	 */

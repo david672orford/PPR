@@ -42,7 +42,7 @@ PROGS=$(BIN_PROGS) $(CGI_PROGS)
 
 all: $(PROGS)
 
-ipp$(DOTEXE): ipp.o ipp_print.o ipp_destinations.o ipp_cups_admin.o ipp_run.o ../libppr.a ../libgu.a
+ipp$(DOTEXE): ipp.o ipp_print.o ipp_destinations.o ipp_jobs.o ipp_cups_admin.o ipp_run.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ZLIBLIBS)
 
 ppr-xml-ipp-client$(DOTEXE): ppr-xml-ipp-client.o ../libppr.a ../libgu.a

@@ -10,9 +10,7 @@
 		<uri><name>printer-uri</name><param-value>uri</param-value></uri>
 		<integer ifdef="limit"><name>limit</name><param-value>limit</param-value></integer>
 		<keyword><name>requested-attributes</name>
-				<value>job-id</value>
-				<value>job-name</value>
-				<value>document-format</value>
+				<value>all</value>
 			</keyword>
 	</operation-attributes>
 </request>
