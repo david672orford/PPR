@@ -3793,7 +3793,7 @@ msgstr "принимает"
 
 #: ../ppop/ppop_cmds_other.c:1558
 msgid "rejecting"
-msgstr "отказывется"
+msgstr "отвергает"
 
 #: ../ppop/ppop_cmds_other.c:1598
 msgid "alias"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-13 17:42-0400\n"
+"POT-Creation-Date: 2006-04-14 12:15-0400\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "Content-Transfer-Encoding: none\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../pprd/pprd.c:307 ../pprd/pprd.c:350 ../pprd/pprd_mainsup.c:112
-#: ../pprd/pprd_mainsup.c:117 ../pprd/pprd_mainsup.c:120
+#: ../pprd/pprd.c:307 ../pprd/pprd.c:350 ../pprd/pprd_mainsup.c:114
+#: ../pprd/pprd_mainsup.c:119 ../pprd/pprd_mainsup.c:122
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr ""
@@ -36,32 +36,32 @@ msgstr ""
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:170
+#: ../pprd/pprd_mainsup.c:172
 #, c-format
 msgid "%s: not running\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:180
+#: ../pprd/pprd_mainsup.c:182
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:184
+#: ../pprd/pprd_mainsup.c:186
 #, c-format
 msgid "Sending SIGTERM to %s (PID=%ld).\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:188
+#: ../pprd/pprd_mainsup.c:190
 #, c-format
 msgid "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:194
+#: ../pprd/pprd_mainsup.c:196
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr ""
 
-#: ../pprd/pprd_mainsup.c:204
+#: ../pprd/pprd_mainsup.c:206
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr ""
