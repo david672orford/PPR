@@ -71,6 +71,7 @@ void debug(const char message[], ...)
 	vfprintf(stderr, message, va);
 	fputc('\n', stderr);
 	va_end(va);
+	fflush(stderr);
 	} /* end of debug() */
 
 /** validate a request, set an error if it is bad
@@ -187,18 +188,23 @@ int main(int argc, char *argv[])
 			gu_Throw("SCRIPT_NAME is not defined");
 
 		debug("server: %s, port: %s, script: %s", server, port, script);
-		
-		if(strcmp(script, "/") == 0)
-			script = "";
-
+	
+		/* For "ipp://localhost/printers/dummy" it script will be "".  For 
+		 * "ipp://host/cgi-bin/ipp/printers/dummy" it will be "cgi-bin/ipp".
+		 * We want to produce "ipp://localhost" for the former and 
+		 * "ipp://localhost/cgi-bin/ipp" for the latter.
+		 */
 		if(strcmp(port, "631") == 0)
-			gu_asprintf(&root, "ipp://%s/%s", server, script);
+			gu_asprintf(&root, "ipp://%s%s%s", server, strlen(script) > 0 ? "/" : "", script);
 		else
-			gu_asprintf(&root, "http://%s:%s/%s", server, port, script);
+			gu_asprintf(&root, "http://%s:%s%s%s", server, port, strlen(script) > 0 ? "/" : "", script);
 		}
 	
 		/* Wrap all of this information up in an IPP object. */
 		ipp = ipp_new(root, path_info, content_length, 0, 1);
+		#ifdef DEBUG
+		ipp_set_debug_level(ipp, 1);
+		#endif
 
 		if((p = getenv("REMOTE_USER")) && *p)	/* defined and not empty */
 			ipp_set_remote_user(ipp, p);
@@ -270,7 +276,7 @@ int main(int argc, char *argv[])
 			{
 			ipp->response_code = IPP_OPERATION_NOT_SUPPORTED;
 			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
-				"status-message", "Server does not support this IPP operation.");
+				"status-message", _("Server does not support this IPP operation."));
 			}
 
 		ipp_send_reply(ipp, TRUE);

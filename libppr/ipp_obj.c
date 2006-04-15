@@ -42,8 +42,8 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 
-#if 0
-#define DEBUG(a) debug a
+#if 1
+#define DEBUG(a) if(ipp->debug_level >= 5) debug a
 #else
 #define DEBUG(a)
 #endif
@@ -66,6 +66,8 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 	ipp->magic = 0xAABB;
 	ipp->pool = pool;
 
+	ipp->debug_level = 0;
+	
 	ipp->root = root;
 	ipp->path_info = path_info;
 	ipp->bytes_left = content_length;
@@ -93,6 +95,11 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 	return ipp;
 	} /* ipp_new() */
 
+void ipp_set_debug_level(struct IPP *ipp, int level)
+	{
+	ipp->debug_level = level;
+	}
+
 /*
 ** Read a bufferful of an IPP request from stdin.
 */
@@ -110,28 +117,28 @@ static void ipp_readbuf_load(struct IPP *p)
 /*
 ** Flush the response buffer.
 */
-static void ipp_writebuf_flush(struct IPP *p)
+static void ipp_writebuf_flush(struct IPP *ipp)
 	{
 	char *write_ptr;
 	int to_write, len;
 
-	DEBUG(("ipp_writebuf_flush(): %d bytes to flush to fd %d", p->writebuf_i, p->out_fd));
+	DEBUG(("ipp_writebuf_flush(): %d bytes to flush to fd %d", ipp->writebuf_i, ipp->out_fd));
 	
-	to_write = p->writebuf_i;
-	write_ptr = p->writebuf;
+	to_write = ipp->writebuf_i;
+	write_ptr = ipp->writebuf;
 
 	while(to_write > 0)
 		{
 		DEBUG(("  trying to write %d bytes", to_write));
-		if((len = write(p->out_fd, write_ptr, to_write)) == -1)
+		if((len = write(ipp->out_fd, write_ptr, to_write)) == -1)
 			gu_Throw("writing response failed, errno=%d (%s)", errno, gu_strerror(errno));
 		DEBUG(("    wrote %d bytes", len));
 		to_write -= len;
 		write_ptr += len;
 		}
 
-	p->writebuf_i = 0;
-	p->writebuf_remaining = sizeof(p->writebuf);
+	ipp->writebuf_i = 0;
+	ipp->writebuf_remaining = sizeof(ipp->writebuf);
 	}
 
 /** Finish the IPP service transaction
@@ -143,7 +150,7 @@ service object is destroyed.
 */
 void ipp_delete(struct IPP *ipp)
 	{
-	DEBUG(("ipp_delete(): %d leftover bytes", p->bytes_left + p->readbuf_remaining));
+	DEBUG(("ipp_delete(): %d leftover bytes", ipp->bytes_left + ipp->readbuf_remaining));
 
 	if(ipp->magic != 0xAABB)
 		gu_Throw("ipp_delete(): not an IPP object");
@@ -350,7 +357,7 @@ void ipp_parse_request_header(struct IPP *ipp)
 
 	DEBUG(("version-number: %d.%d, operation-id: 0x%.4X (%s), request-id: %d",
 		ipp->version_major, ipp->version_minor,
-		ipp->operation_id, ipp_operation_to_str(ipp->operation_id),
+		ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id),
 		ipp->request_id
 		));
 	} /* ipp_parse_request_header() */
@@ -367,6 +374,9 @@ void ipp_parse_request_body(struct IPP *ipp)
 	char *name = NULL;
 	ipp_attribute_t *ap = NULL, **ap_resize = NULL;
 	int ap_i = 0;
+	#ifdef DEBUG
+	int prev_delim = -1;
+	#endif
 
 	GU_OBJECT_POOL_PUSH(ipp->pool);
 
@@ -394,6 +404,17 @@ void ipp_parse_request_body(struct IPP *ipp)
 				name_length,
 				name ? name : "",
 				value_length));
+
+			#ifdef DEBUG
+			if(ipp->debug_level > 0)
+				{
+				if(delimiter_tag != prev_delim)
+					{
+					
+					prev_delim = delimiter_tag;
+					}
+				}
+			#endif
 
 			if(name_length > 0)
 				{

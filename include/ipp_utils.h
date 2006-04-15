@@ -108,6 +108,8 @@ struct IPP
 	int magic;
 	void *pool;
 
+	int debug_level;
+
 	const char *root;
 	const char *path_info;
 	int bytes_left;
@@ -141,6 +143,7 @@ struct IPP
 
 /* IPP object methods */
 struct IPP *ipp_new(const char root[], const char path_info[], int content_length, int in_fd, int out_fd);
+void ipp_set_debug_level(struct IPP *ipp, int level);
 void ipp_delete(struct IPP *ipp);
 int ipp_get_block(struct IPP *ipp, char **pptr);
 void ipp_set_remote_user(struct IPP *ipp, const char remote_user[]);

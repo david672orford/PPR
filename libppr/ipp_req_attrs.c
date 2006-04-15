@@ -93,28 +93,37 @@ struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported)
 				for(iii=0; iii<attr->num_values; iii++)
 					gu_pch_set(this->requested_attributes, attr->values[iii].string.text, "TRUE");
 				}
-			else if(supported & REQUEST_ATTRS_SUPPORTS_PRINTER && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_PRINTER && attr->value_tag == IPP_TAG_URI
+					&& strcmp(attr->name, "printer-uri") == 0)
 				this->printer_uri = attr->values[0].string.text;
-			else if(supported & (REQUEST_ATTRS_SUPPORTS_PRINTER|REQUEST_ATTRS_SUPPORTS_JOB) && attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "printer-name") == 0)
+			else if(supported & (REQUEST_ATTRS_SUPPORTS_PRINTER|REQUEST_ATTRS_SUPPORTS_JOB) && attr->value_tag == IPP_TAG_NAME
+					&& strcmp(attr->name, "printer-name") == 0)
 				this->printer_name = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "job-uri") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_URI
+					&& strcmp(attr->name, "job-uri") == 0)
 				this->job_uri = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_INTEGER && strcmp(attr->name, "job-id") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_INTEGER
+					&& strcmp(attr->name, "job-id") == 0)
 				this->job_id = attr->values[0].integer;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_DEVICE_CLASS && attr->value_tag == IPP_TAG_KEYWORD && strcmp(attr->name, "device-class") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_DEVICE_CLASS && attr->value_tag == IPP_TAG_KEYWORD
+					&& strcmp(attr->name, "device-class") == 0)
 				this->device_class = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_PPD_MAKE && attr->value_tag == IPP_TAG_TEXT && strcmp(attr->name, "ppd-make") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_PPD_MAKE && attr->value_tag == IPP_TAG_TEXT
+					&& strcmp(attr->name, "ppd-make") == 0)
 				this->ppd_make = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_LIMIT && attr->value_tag == IPP_TAG_INTEGER && strcmp(attr->name, "limit") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_LIMIT && attr->value_tag == IPP_TAG_INTEGER
+					&& strcmp(attr->name, "limit") == 0)
 				this->limit = attr->values[0].integer;
 			else
 				ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
 			}
 		else if(attr->group_tag == IPP_TAG_PRINTER)
 			{
-			if(supported & REQUEST_ATTRS_SUPPORTS_PCREATE && attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "device-uri") == 0)
+			if(supported & REQUEST_ATTRS_SUPPORTS_PCREATE && attr->value_tag == IPP_TAG_URI
+					&& strcmp(attr->name, "device-uri") == 0)
 				this->device_uri = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_PCREATE && attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "ppd-name") == 0)
+			else if(supported & REQUEST_ATTRS_SUPPORTS_PCREATE && attr->value_tag == IPP_TAG_NAME
+					&& strcmp(attr->name, "ppd-name") == 0)
 				this->ppd_name = attr->values[0].string.text;
 			else
 				ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);

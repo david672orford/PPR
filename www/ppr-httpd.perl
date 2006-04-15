@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 12 April 2006.
+# Last modified 14 April 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -483,11 +483,13 @@ while(1)
 		# ipp CGI program.
 		if($path eq "")
 			{
+			$script_name = "";
 			$script_exe = "$CGI_BIN/ipp";
 			$path_info = "/";
 			}
 		if($path =~ m#^((printers|admin|jobs)/.*)$#)
 			{
+			$script_name = "";
 			$script_exe = "$CGI_BIN/ipp";
 			$path_info = "/$1";
 			}
@@ -504,6 +506,7 @@ while(1)
 		#
 		if(defined($script_exe))
 			{
+			print STDERR "path: $path, script_exe: $script_exe, path_info: $path_info\n" if($DEBUG > 0);
 			$resp_header_connection =
 				do_cgi($request_method, $request_uri, \%request_headers,
 					$script_name, $script_exe, $path_info, $query,

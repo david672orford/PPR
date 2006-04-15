@@ -189,17 +189,22 @@ void ipp_get_jobs(struct IPP *ipp)
 	FILE *qfile;
 	struct QEntryFile qentryfile;
 
+	DEBUG(("%s()", function));
+	
 	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
 	destname = request_attrs_destname(req);
 	jobid = request_attrs_jobid(req);
+	DEBUG(("%s(): destname=\"%s\", jobid=%d", function, destname ? destname : "", jobid));
 
 	queue = ipp_load_queue(destname, jobid, &queue_num_entries);
+	DEBUG(("%s(): %d entries", function, queue_num_entries));
 
 	for(iii=0; iii < queue_num_entries; iii++)
 		{
 		/* Read and parse the queue file.  We already know the file exists
 		 * and we can open it. */
 		ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, queue[iii].destname, queue[iii].id, queue[iii].subid);
+		DEBUG(("%s(): reading \"%s\"", function, fname));
 		if(!(qfile = fopen(fname, "r")))
 			gu_Throw(X_("%s(): can't open \"%s\", errno=%d (%s)"), function, fname, errno, gu_strerror(errno) );
 		qentryfile_clear(&qentryfile);
@@ -254,10 +259,65 @@ void ipp_get_jobs(struct IPP *ipp)
 				"job-k-octets", (bytes + 512) / 1024);
 			}
 
+		/* Convert the pprd job state to IPP state.  This requires more work!!!
+		 * Good implementation may require changes to pprd.
+		 */
 		if(request_attrs_attr_requested(req, "job-state"))
 			{
+			int state;
+			const char *state_reasons[10];
+			int state_reasons_count = 0;
+
+			switch(qentryfile.spool_state.status)
+				{
+				case STATUS_WAITING:				/* waiting for printer */
+					state = IPP_JOB_PENDING;
+					state_reasons[state_reasons_count++] = "job-queued";
+					break;
+				case STATUS_HELD:					/* put on hold by user */
+					state = IPP_JOB_HELD;
+					state_reasons[state_reasons_count++] = "";
+					break;
+				case STATUS_WAITING4MEDIA:			/* proper media not mounted */
+					state = IPP_JOB_HELD;
+					state_reasons[state_reasons_count++] = "resources-not-ready";
+					break;
+				case STATUS_ARRESTED:				/* automaticaly put on hold because of a job error */
+					state = IPP_JOB_COMPLETED;
+					state_reasons[state_reasons_count++] = "document-format-error";
+					state_reasons[state_reasons_count++] = "job-completed-with-errors";
+					break;
+				case STATUS_CANCEL:					/* being canceled */
+				case STATUS_SEIZING:				/* going from printing to held (get rid of this) */
+					state = IPP_JOB_PROCESSING;
+					state_reasons[state_reasons_count++] = "processing-to-stop-point";
+					state_reasons[state_reasons_count++] = "job-canceled-by-user";
+					break;
+				case STATUS_STRANDED:				/* no printer can print it */
+					state = IPP_JOB_HELD;
+					state_reasons[state_reasons_count++] = "resources-not-ready";
+					break;
+				case STATUS_FINISHED:				/* job has been printed */
+					state = IPP_JOB_COMPLETED;
+					state_reasons[state_reasons_count++] = "job-completed-successfully";
+					break;
+				case STATUS_FUNDS:					/* insufficient funds to print it */
+					state = IPP_JOB_HELD;
+					state_reasons[state_reasons_count++] = "resources-not-ready";
+					break;
+				default:
+					state = IPP_JOB_PROCESSING;
+					state_reasons[state_reasons_count++] = "job-printing";
+					break;
+				}
+
+			if(state_reasons_count == 0)
+				state_reasons[state_reasons_count++] = "none";
+			
 			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_ENUM,
-				"job-state", IPP_JOB_PENDING);	
+				"job-state", state);
+			ipp_add_strings(ipp, IPP_TAG_JOB, IPP_TAG_KEYWORD,
+				"job-state-reasons", state_reasons_count, state_reasons);
 			}
 			
 		ipp_add_end(ipp, IPP_TAG_JOB);
