@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2006.
+** Last modified 17 April 2006.
 */
 
 /*! \file
@@ -38,14 +38,14 @@ descriptors from which to read the request and to which to send the reply
 as well as the base path for building IPP object URL's, and the 
 PATH_INFO.
 
-Once the object has bee created, it is necessary to call ipp_parse_request_header()
-and ipp_parse_request_body() in order to read in the full request.  Once this is 
-done, One can call methods of the IPP object to
+Once the object has bee created, it is necessary to call
+ipp_parse_request_header() and ipp_parse_request_body() in order to read in the
+full request.  Once this is done, One can call methods of the IPP object to
 enumerate the request attributes.  
 
-Other methods of the IPP object can be used
-to build a reply which, when ipp_send_reply() is called, is formatted and sent
-to the reply file descriptor which ch was specified as a parameter to ipp_new().
+Other methods of the IPP object can be used to build a reply which, when
+ipp_send_reply() is called, is formatted and sent to the reply file descriptor
+which ch was specified as a parameter to ipp_new().
 
 Here is a partial example of using the IPP object from a CGI "script":
 
@@ -55,8 +55,7 @@ Here is a partial example of using the IPP object from a CGI "script":
 		ipp_set_remote_user(ipp, p);
 	if((p = getenv("REMOTE_ADDR")))
 		ipp_set_remote_addr(ipp, p);
-	ipp_parse_request_header(ipp);
-	ipp_parse_request_body(ipp);
+	ipp_parse_request(ipp);
 
 	... read request and build reply ...
 	
@@ -160,8 +159,7 @@ char *ipp_get_bytes(struct IPP *ipp, int len);
 void ipp_put_bytes(struct IPP *ipp, const char *data, int len);
 void ipp_put_string(struct IPP *ipp, const char string[]);
 void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr);
-void ipp_parse_request_header(struct IPP *ipp);
-void ipp_parse_request_body(struct IPP *ipp);
+void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr);
 void ipp_add_end(struct IPP *ipp, int group);

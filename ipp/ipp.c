@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 14 April 2006.
+** Last modified 17 April 2006.
 */
 
 /*
@@ -211,10 +211,8 @@ int main(int argc, char *argv[])
 		if((p = getenv("REMOTE_ADDR")))
 			ipp_set_remote_addr(ipp, p);
 
-		ipp_parse_request_header(ipp);
-		ipp_parse_request_body(ipp);
+		ipp_parse_request(ipp);
 
-		DEBUG(("dispatching operation 0x%.4x (%s)", ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id)));
 		switch(ipp->operation_id)
 			{
 			case IPP_PRINT_JOB:
@@ -260,10 +258,11 @@ int main(int argc, char *argv[])
 				}
 			else
 				{
-				DEBUG(("dispatching"));
+				DEBUG(("invoking handler..."));
 				#ifdef DEBUG
 				/*kill(getpid(), SIGSTOP);*/
 				#endif
+				ipp->response_code = IPP_OK;
 				(*p_handler)(ipp);
 				if(ipp->response_code == IPP_OK)
 					{

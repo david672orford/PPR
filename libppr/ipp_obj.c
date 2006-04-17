@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 March 2006.
+** Last modified 17 April 2006.
 */
 
 /*! \file */
@@ -44,11 +44,13 @@
 
 #if 1
 #define DEBUG(a) if(ipp->debug_level >= 5) debug a
+#define XML_DEBUG(a) if(ipp->debug_level > 0) debug a
 #else
 #define DEBUG(a)
+#define XML_DEBUG(a)
 #endif
 
-/*! create IPP request handling object
+/** create IPP request handling object
 
 This function creates an IPP service object.  The IPP request will be read
 from stdin and the response will be sent to stdout.  IPP data of various
@@ -95,6 +97,12 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 	return ipp;
 	} /* ipp_new() */
 
+/** set IPP object debug level
+ *
+ * The IPP object can print debug messages by calling the 
+ * callback function debug().  This method sets the debug level
+ * a higher debug level means more debug messages.
+ */
 void ipp_set_debug_level(struct IPP *ipp, int level)
 	{
 	ipp->debug_level = level;
@@ -336,15 +344,23 @@ void ipp_put_string(struct IPP *ipp, const char string[])
 		ipp_put_byte(ipp, string[i]);
 	}
 
-/** read the IPP request's header and store it in the IPP object
+/** read an IPP request from stdin and store it in the IPP object
  *
- * This function retrieves the operation ID.  This is enough for
- * the ipp CGI to decide if it can handle the request itself or 
- * needs to pass it to pprd.  If it can handle the request itself,
- * it goes on to call ipp_parse_request_body().
 */
-void ipp_parse_request_header(struct IPP *ipp)
+void ipp_parse_request(struct IPP *ipp)
 	{
+	char *p;
+	int tag, delimiter_tag = 0, value_tag, name_length, value_length;
+	char *name = NULL;
+	ipp_attribute_t *ap = NULL, **ap_resize = NULL;
+	int ap_i = 0;
+
+	/* For XML description of request. */
+	#ifdef DEBUG
+	int prev_delim = -1;
+	int prev_value = -1;
+	#endif
+
 	if(ipp->bytes_left < 9)
 		gu_Throw("request is too short to be an IPP request");
 
@@ -355,47 +371,59 @@ void ipp_parse_request_header(struct IPP *ipp)
 	ipp->operation_id = ipp_get_ss(ipp);
 	ipp->request_id = ipp_get_si(ipp);
 
-	DEBUG(("version-number: %d.%d, operation-id: 0x%.4X (%s), request-id: %d",
-		ipp->version_major, ipp->version_minor,
-		ipp->operation_id, ipp_operation_id_to_str(ipp->operation_id),
-		ipp->request_id
-		));
-	} /* ipp_parse_request_header() */
-
-/** read more of the IPP request
- *
- * This function picks up where ipp_parse_request_header() left off and
- * reads up to (but not including) the print job data.
- */
-void ipp_parse_request_body(struct IPP *ipp)
-	{
-	char *p;
-	int tag, delimiter_tag = 0, value_tag, name_length, value_length;
-	char *name = NULL;
-	ipp_attribute_t *ap = NULL, **ap_resize = NULL;
-	int ap_i = 0;
 	#ifdef DEBUG
-	int prev_delim = -1;
+	if(ipp->debug_level > 0)
+		{
+		debug("<ipp>");
+		debug("<request>");
+		debug(" <version-number>%d.%d</version-number>",
+			ipp->version_major, ipp->version_minor
+			);
+		debug(" <operation-id>%s</operation-id>",
+			ipp_operation_id_to_str(ipp->operation_id)
+			);
+		debug(" <request-id>%d</request-id>",
+			ipp->request_id
+			);
+		}
 	#endif
 
 	GU_OBJECT_POOL_PUSH(ipp->pool);
 
 	while((tag = ipp_get_byte(ipp)) != IPP_TAG_END)
 		{
-		if(tag >= 0x00 && tag <= 0x0f)		/* changes interpretation of subsequent tags */
+		/* Delimiter tags change interpretation of subsequent tags. */
+		if(tag >= 0x00 && tag <= 0x0f)
 			{
+			/* Emmit XML description of attribute group. */
+			#ifdef DEBUG
+			if(ipp->debug_level > 0)
+				{
+				if(prev_value != -1)
+					debug(" </%s>", ipp_tag_to_str(prev_value));
+				if(prev_delim != -1)
+					debug("</%s>", ipp_tag_to_str(prev_delim));
+				debug("<%s>", ipp_tag_to_str(tag));		
+				prev_delim = tag;
+				}
+			#endif
+
 			delimiter_tag = tag;
 			name = NULL;
 			}
+		/* Value tags announce name-value pairs. */
 		else if(tag >= 0x10 && tag <= 0xff)
 			{
-			value_tag = tag;
+			value_tag = tag;		/* Accept as a value tag. */
 
+			/* Read in the length of the name, the name, and the 
+			 * length of the value, but hold off on actually 
+			 * reading the value until we have allocated storage
+			 * for it.
+			 */
 			name_length = ipp_get_ss(ipp);
-
 			if(name_length > 0)
 				name = ipp_get_bytes(ipp, name_length);
-
 			value_length = ipp_get_ss(ipp);
 
 			DEBUG(("0x%.2x (%s) 0x%.2x (%s) name[%d]=\"%s\", value_len=%d",
@@ -405,19 +433,25 @@ void ipp_parse_request_body(struct IPP *ipp)
 				name ? name : "",
 				value_length));
 
-			#ifdef DEBUG
-			if(ipp->debug_level > 0)
-				{
-				if(delimiter_tag != prev_delim)
-					{
-					
-					prev_delim = delimiter_tag;
-					}
-				}
-			#endif
-
+			/* If the name is greater than zero, then this is a new
+			 * item rather than an additional value for the previous 
+			 * item. */
 			if(name_length > 0)
 				{
+				/* Emmit start of XML description of this value.
+				 * Be sure to close any previous value description first.
+				 */
+				#ifdef DEBUG
+				if(ipp->debug_level > 0)
+					{
+					if(prev_value != -1)
+						debug(" </%s>", ipp_tag_to_str(prev_value));
+					debug(" <%s>", ipp_tag_to_str(value_tag));
+					prev_value = value_tag;
+					debug("  <name>%s</name>", name);
+					}
+				#endif
+
 				/* Where is the pointer to this ipp_attribute_t going to be?  
 				 * We need to know because we will have to adjust it if we
 				 * have to enlarge this object in the future.
@@ -454,23 +488,23 @@ void ipp_parse_request_body(struct IPP *ipp)
 				ap->num_values++;
 				}
 
-			/* Don't forget to keep ipp_delete() in sync with this! */
+			/* Store the value in the space allocated above. */
 			switch(ipp_tag_simplify(value_tag))
 				{
 				case IPP_TAG_INTEGER:
 					ap->values[ap_i].integer = ipp_get_si(ipp);
-					DEBUG(("    %s[%d]=%d", ipp_tag_to_str(value_tag), value_length, ap->values[ap_i].integer));
+					XML_DEBUG(("  <value>%d</value>", ap->values[ap_i].integer));
 					break;
 				case IPP_TAG_STRING:
 					p = ipp_get_bytes(ipp, value_length);
 					ap->values[ap_i].string.text = p;
-					DEBUG(("    %s[%d]=\"%s\"", ipp_tag_to_str(value_tag), value_length, p));
+					XML_DEBUG(("  <value>%s</value>", ap->values[ap_i].string.text));
 					break;
 				default:
 					p = ipp_get_bytes(ipp, value_length);
 					ap->values[ap_i].unknown.length = value_length;
 					ap->values[ap_i].unknown.data = p;
-					DEBUG(("    %s[%d]", ipp_tag_to_str(value_tag), value_length));
+					XML_DEBUG(("  <value>[%d byte value]</value>", value_length));
 					break;
 				}
 			}
@@ -480,10 +514,14 @@ void ipp_parse_request_body(struct IPP *ipp)
 			}
 		}
 
-    DEBUG(("end of request read"));
-    
-	/* This will be the default. */
-    ipp->response_code = IPP_OK;
+	#ifdef DEBUG
+	if(prev_value != -1)
+		debug(" </%s>", ipp_tag_to_str(prev_value));
+	if(prev_delim != -1)
+		debug("</%s>", ipp_tag_to_str(delimiter_tag));
+	debug("</request>");
+	debug("</ipp>");
+	#endif
 
 	GU_OBJECT_POOL_POP(ipp->pool);
 	} /* end of ipp_parse_request() */
@@ -495,13 +533,13 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 	ipp_value_t *p;
 	int i, len;
 	
+	XML_DEBUG((" <%s><name>%s</name>",
+		ipp_tag_to_str(attr->value_tag),
+		attr->name
+		));
+
 	for(i=0 ; i < attr->num_values; i++)
 		{
-		DEBUG(("  encoding 0x%.2x (%s) name=\"%s\"",
-			attr->value_tag, ipp_tag_to_str(attr->value_tag),
-			attr->name
-			));
-
 		p = &attr->values[i];
 		ipp_put_byte(ipp, attr->value_tag);
 
@@ -531,7 +569,7 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 				else
 					gu_snprintf(temp, sizeof(temp), attr->template, p->string.text);
 
-				DEBUG(("    \"%s\" + \"%s\"", ipp->root, temp));
+				XML_DEBUG(("  <value>%s%s</value>", ipp->root, temp));
 				len = strlen(ipp->root) + strlen(temp);
 				ipp_put_ss(ipp, len);
 				ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
@@ -540,7 +578,7 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 				}
 			else if(p->string.text[0] == '/')
 				{
-				DEBUG(("    \"%s\" + \"%s\"", ipp->root, p->string.text));
+				XML_DEBUG(("  <value>%s%s</value>", ipp->root, p->string.text));
 				len = strlen(ipp->root) + strlen(p->string.text);
 				ipp_put_ss(ipp, len);
 				ipp_put_bytes(ipp, ipp->root, strlen(ipp->root));
@@ -549,21 +587,22 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 				}
 			}
 
+		/* non-URL items get basic treatment */
 		switch(ipp_tag_simplify(attr->value_tag))
 			{
 			case IPP_TAG_INTEGER:
-				DEBUG(("    %d", p->integer));
+				XML_DEBUG(("  <value>%d</value>", p->integer));
 				ipp_put_ss(ipp, 4);
 				ipp_put_si(ipp, p->integer);
 				break;
 			case IPP_TAG_STRING:
-				DEBUG(("    \"%s\"", p->string.text));
+				XML_DEBUG(("  <value>%s</value>", p->string.text));
 				len = strlen(p->string.text);
 				ipp_put_ss(ipp, len);
 				ipp_put_bytes(ipp, p->string.text, len);
 				break;
 			case IPP_TAG_BOOLEAN:
-				DEBUG(("    %s", p->boolean ? "TRUE" : "FALSE"));
+				XML_DEBUG(("  <value>%s</value>", p->boolean ? "true" : "false"));
 				ipp_put_ss(ipp, 1);
 				ipp_put_sb(ipp, p->boolean ? 1 : 0);
 				break;
@@ -571,6 +610,10 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 				gu_Throw("ipp_put_attr(): missing case for value tag 0x%.2x in ipp_put_attr()", attr->value_tag);
 			}
 		}
+
+	XML_DEBUG((" </%s>",
+		ipp_tag_to_str(attr->value_tag)
+		));
 	} /* end of ipp_put_attr() */
 
 /** send the IPP response in the IPP object
@@ -584,73 +627,89 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	if(header)
 		ipp_put_string(ipp, "Content-Type: application/ipp\r\n\r\n");
 
-	ipp_put_sb(ipp, 1);		/* version number 1.0 */
-	ipp_put_sb(ipp, 0);
+	#ifdef DEBUG
+	if(ipp->debug_level > 0)
+		{
+		debug("<ipp>");
+		debug("<response>");
+		debug("<version-number>%d.%d</version-number>", 1, 1);
+		debug("<status-code>0x%04x</status-code>", ipp->response_code);
+		debug("<request-id>%d</request-id>", ipp->request_id);
+		}
+	#endif
 
-	DEBUG(("response_code: %d", ipp->response_code));
+	ipp_put_sb(ipp, 1);		/* version major */
+	ipp_put_sb(ipp, 1);		/* version minor */
 	ipp_put_ss(ipp, ipp->response_code);
 	ipp_put_si(ipp, ipp->request_id);
 	
 	if(!(p = ipp->response_attrs_operation))
 		gu_Throw("no response_attrs_operation");
-	DEBUG(("encoding operation tags"));
+
+	XML_DEBUG(("<operation-attributes>"));
 	ipp_put_byte(ipp, IPP_TAG_OPERATION);
 	for( ; p; p = p->next)
-		{
 		ipp_put_attr(ipp, p);
-		}
+	XML_DEBUG(("</operation-attributes>"));
 
 	if((p = ipp->response_attrs_printer))
 		{
-		DEBUG(("encoding printer tags"));
+		XML_DEBUG(("<printer-attributes>"));
 		ipp_put_byte(ipp, IPP_TAG_PRINTER);
 		for( ; p; p = p->next)
 			{
-			DEBUG((" printer:"));
 			if(p->value_tag == IPP_TAG_END)
 				{
+				XML_DEBUG(("</printer-attributes>"));
 				if(p->next)
 					{
+					XML_DEBUG(("<printer-attributes>"));
 					ipp_put_byte(ipp, IPP_TAG_PRINTER);
-					DEBUG(("-------------------------------------------------"));
 					}
 				}
 			else
 				ipp_put_attr(ipp, p);
 			}
+		XML_DEBUG(("</printer-attributes>"));
 		}
 	
 	if((p = ipp->response_attrs_job))
 		{
-		DEBUG(("encoding job tags"));
+		XML_DEBUG(("<job-attributes>"));
 		ipp_put_byte(ipp, IPP_TAG_JOB);
 
 		for( ; p; p = p->next)
 			{
 			if(p->value_tag == IPP_TAG_END)
 				{
+				XML_DEBUG(("</job-attributes>"));
 				if(p->next)
 					{
+					XML_DEBUG(("<job-attributes>"));
 					ipp_put_byte(ipp, IPP_TAG_JOB);
-					DEBUG(("-------------------------------------------------"));
 					}
 				}
 			else
 				ipp_put_attr(ipp, p);
 			}
+		XML_DEBUG(("</job-attributes>"));
 		}
 
 	if((p = ipp->response_attrs_unsupported))
 		{
-		DEBUG(("encoding unsupported tags"));
+		XML_DEBUG(("<unsupported-attributes>"));
 		ipp_put_byte(ipp, IPP_TAG_UNSUPPORTED);
 		for( ; p; p = p->next)
-			{
 			ipp_put_attr(ipp, p);
-			}
+		XML_DEBUG(("</unsupported-attributes>"));
 		}
 
 	ipp_put_byte(ipp, IPP_TAG_END);
+
+	#ifdef DEBUG
+	debug("</ipp>");
+	debug("</response>");
+	#endif
 
 	ipp_writebuf_flush(ipp);
 	} /* end of ipp_send_reply() */

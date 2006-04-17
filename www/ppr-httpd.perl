@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 14 April 2006.
+# Last modified 17 April 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -1287,7 +1287,7 @@ sub do_cgi
 			while($length = read(RESP_READ, $buffer, $POST_RESPONSE_BUFSIZE))
 				{
 				# send each as a chunk
-				print STDERR $length, " byte chunk\n" if($DEBUG > 0);
+				print STDERR $length, " byte chunk\n" if($DEBUG > 1);
 				printf("%X\r\n", $length);
 				print $buffer;
 				print "\r\n";
