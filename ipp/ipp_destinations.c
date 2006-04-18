@@ -131,6 +131,9 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE
 /*
  * This function is the meat of IPP_GET_PRINTER_ATTRIBUTES,
  * CUPS_GET_PRINTERS and CUPS_GET_CLASSES.
+ *
+ * For compatibility with CupsClient (which is a badly broken IPP client), we
+ * return these attributes in the same order as CUPS does.
  */
 static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE_INFO qip)
 	{
@@ -139,17 +142,15 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 
 	destname = queueinfo_hoist_value(qip, queueinfo_name(qip));
 
-	if(request_attrs_attr_requested(req, "printer-name"))
+	if(request_attrs_attr_requested(req, "printer-uri-supported"))
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
-			"printer-name", destname);
+		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+			"printer-uri-supported", queueinfo_is_group(qip) ? "/classes/%s" : "/printers/%s", destname);
 		}
 
-	if(request_attrs_attr_requested(req, "printer-uri"))
-		{
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,	
-			"printer-uri", queueinfo_is_group(qip) ? "/classes/%s" : "/printers/%s", destname);
-		}
+	/* Add printer-state, printer-state-reasons, and printer-state-message. */
+	if(!queueinfo_is_group(qip))
+		printer_add_status(ipp, req, qip);
 
 	if(request_attrs_attr_requested(req, "printer-is-accepting-jobs"))
 		{
@@ -159,24 +160,24 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			);
 		}
 
-	if(!queueinfo_is_group(qip))
+	/* printer-is-shared */
+
+	/* RFC 2911 4.4.29, measured in seconds
+	 * We follow the lead of CUPS and just return Unix time.
+	 */
+	if(request_attrs_attr_requested(req, "printer-up-time"))
 		{
-		printer_add_status(ipp, req, qip);
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+			"printer-up-time", time(NULL));
 		}
 
-	if(queueinfo_is_group(qip) && request_attrs_attr_requested(req, "member-names"))
-		{
-		int iii;
-		const char *members[MAX_GROUPSIZE];
-		const char *temp;
-		for(iii=0; iii < MAX_GROUPSIZE; iii++)
-			{
-			if(!(temp = queueinfo_membername(qip, iii)))
-				break;
-			members[iii] = queueinfo_hoist_value(qip, temp);
-			}
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", iii, members);
-		}
+	/* printer-state-change-time */
+
+	/* printer-current-time */
+
+	/* printer-error-policy */
+
+	/* printer-op-policy */
 
 	if(request_attrs_attr_requested(req, "queued-job-count"))
 		{
@@ -184,16 +185,18 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			"queued-job-count", queueinfo_queued_job_count(qip));
 		}
 
-	if(request_attrs_attr_requested(req, "printer-uri-supported"))
-		{
-		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-			"printer-uri-supported", queueinfo_is_group(qip) ? "/classes/%s" : "/printers/%s", destname);
-		}
+	/* uri-authentication-supported */
 
-	if(request_attrs_attr_requested(req, "uri_security_supported"))
+	if(request_attrs_attr_requested(req, "uri-security-supported"))
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
 			"uri-security-supported", "none");
+		}
+
+	if(request_attrs_attr_requested(req, "printer-name"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME,
+			"printer-name", destname);
 		}
 
 	if(request_attrs_attr_requested(req, "printer-location"))
@@ -213,6 +216,26 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			p = queueinfo_hoist_value(qip, p);
 			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
 				"printer-info", p);
+			}
+		}
+
+	/* printer-more-info */
+
+	/* job-quota-period */
+
+	/* job-k-limit */
+
+	/* job-page-limit */
+
+	/* job-sheets-default */
+
+	if(request_attrs_attr_requested(req, "device-uri"))
+		{
+		if((p = queueinfo_device_uri(qip, 0)))
+			{
+			p = queueinfo_hoist_value(qip, p);
+			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
+				"device-uri", p);
 			}
 		}
 
@@ -237,15 +260,106 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			}
 		}
 
-	if(request_attrs_attr_requested(req, "device-uri"))
+	/* media-supported */
+
+	/* media-default */
+
+	/* port-monitor */
+
+	/* port-monitor-supported */
+
+	/* finishings-supported */
+
+	/* finishings-default */
+
+	/* printer-type */
+
+	if(request_attrs_attr_requested(req, "charset-configured"))
 		{
-		if((p = queueinfo_device_uri(qip, 0)))
-			{
-			p = queueinfo_hoist_value(qip, p);
-			ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-				"device-uri", p);
-			}
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+			"charset-configured", "utf-8");
 		}
+
+	if(request_attrs_attr_requested(req, "charset-supported"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
+			"charset-supported", "utf-8");
+		}
+
+	/* compression-supported */
+
+	/* copies-default */
+
+	/* copies-supported */
+
+	if(request_attrs_attr_requested(req, "document-format-default"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+			"document-format-default", "text/plain");
+		}
+
+	if(request_attrs_attr_requested(req, "document-format-supported"))
+		{
+		const char *list[] = {
+			"text/plain",
+			"application/postscript",
+			"application/octet-stream"
+			};
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
+			"document-format-supported", sizeof(list) / sizeof(list[0]), list);
+		}
+
+	if(request_attrs_attr_requested(req, "generated-natural-language-supported"))
+		{
+		const char *list[] = {
+			"en-us",
+			"ru-ru"
+			};
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+			"generated-natural-language-supported", sizeof(list) / sizeof(list[0]), list);
+		}
+
+	/* ipp-versions-supported */
+
+	/* job-hold-until-default */
+
+	/* job-hold-until-supported */
+
+	/* job-priority-default */
+
+	/* job-priority-supported */
+
+	/* job-sheets-supported */
+
+	/* multiple-document-handling-supported */
+
+	/* multiple-document-jobs-supported */
+
+	/* multiple-operation-timeout */
+
+	if(request_attrs_attr_requested(req, "natural-language-configured"))
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
+			"natural-language-configured", "en-us");
+		}
+
+	/* notify-attributes-supported */
+
+	/* notify-lease-duration-supported */
+
+	/* notify-max-events-supported */
+
+	/* notify-events-default */
+
+	/* notify-events-supported */
+
+	/* notify-pull-method-supported */
+
+	/* notify-schemes-supported */
+
+	/* number-up-default */
+
+	/* number-up-supported */
 
 	/* Which operations are supported for this printer object? */
 	if(request_attrs_attr_requested(req, "operations-supported"))
@@ -269,48 +383,11 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
 		}
 
-	if(request_attrs_attr_requested(req, "charset-configured"))
-		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
-			"charset-configured", "utf-8");
-		}
-	if(request_attrs_attr_requested(req, "charset-supported"))
-		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_CHARSET, 
-			"charset-supported", "utf-8");
-		}
-	
-	if(request_attrs_attr_requested(req, "natural-language-configured"))
-		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
-			"natural-language-configured", "en-us");
-		}
-	if(request_attrs_attr_requested(req, "generated-natural-language-supported"))
-		{
-		const char *list[] = {
-			"en-us",
-			"ru-ru"
-			};
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_LANGUAGE, 
-			"generated-natural-language-supported", sizeof(list) / sizeof(list[0]), list);
-		}
+	/* orientation-requested-default */
 
-	if(request_attrs_attr_requested(req, "document-format-default"))
-		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
-			"document-format-default", "text/plain");
-		}
+	/* orientation-requested-supported */
 
-	if(request_attrs_attr_requested(req, "document-format-supported"))
-		{
-		const char *list[] = {
-			"text/plain",
-			"application/postscript",
-			"application/octet-stream"
-			};
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_MIMETYPE,
-			"document-format-supported", sizeof(list) / sizeof(list[0]), list);
-		}
+	/* page-ranges-supported */
 
 	/* On request, PPR will attempt to override job options
 	 * already selected in the job body. */
@@ -320,14 +397,25 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			"pdl-override-supported", "attempted");
 		}
 
-#if 0	
-	/* measured in seconds */
-	if(request_attrs_attr_requested(req, "printer-uptime"))
+
+	/* printer-error-policy-supported */
+
+	/* printer-op-policy-supported */	
+	
+	if(queueinfo_is_group(qip) && request_attrs_attr_requested(req, "member-names"))
 		{
-		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
-			"printer-uptime", time(NULL) - daemon_start_time);
+		int iii;
+		const char *members[MAX_GROUPSIZE];
+		const char *temp;
+		for(iii=0; iii < MAX_GROUPSIZE; iii++)
+			{
+			if(!(temp = queueinfo_membername(qip, iii)))
+				break;
+			members[iii] = queueinfo_hoist_value(qip, temp);
+			}
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", iii, members);
 		}
-#endif
+
 	} /* add_queue_attributes() */
 
 /** Handler for IPP_GET_PRINTER_ATTRIBUTES */

@@ -425,6 +425,29 @@ int main(int argc, char *argv[])
 						print_string(attr->values[iii].string.text);
 						printf("</value>\n");
 						break;
+					case IPP_TAG_DATE:
+						{
+						ipp_uchar_t *p = attr->values[iii].date;
+						printf("    <value>%d-%d-%d,%d:%d:%d.%d,%c%d.%d</value>\n",
+							p[0] * 256 + p[1],	/* year */
+							p[2],				/* month */
+							p[3],				/* day */
+							p[4],				/* hour */
+							p[5],				/* minute */
+							p[6],				/* second */
+							p[7],				/* deci-seconds */
+							p[8],				/* direction from UTC */
+							p[9],				/* hours from UTC */
+							p[10]				/* minutes from UTC */
+							);
+						}
+						break;
+					case IPP_TAG_RANGE:
+						printf("    <value>%d..%d</value>\n",
+							attr->values[iii].range.lower,
+							attr->values[iii].range.upper
+							);
+						break;
 					default:
 						gu_Throw("no handler for values of type 0x%02X", tag_class);
 					}
