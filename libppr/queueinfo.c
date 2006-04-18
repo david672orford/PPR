@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 April 2006.
+** Last modified 17 April 2006.
 */
 
 /*+ \file
@@ -846,6 +846,13 @@ const char *queueinfo_name(QUEUE_INFO qip)
 	return qip->name;
 	}
 
+/** Is this object a group or an alias for a group?
+ */
+gu_boolean queueinfo_is_group(QUEUE_INFO qip)
+	{
+	return qip->group_spool_state_valid;
+	}
+
 /** return the description of the queue
  *
  * The description is the one set with "ppad (group, alias) comment".
@@ -891,7 +898,7 @@ const char *queueinfo_modelName(QUEUE_INFO qip)
 		}
 
 	return answer;
-	}
+	} /* queueinfo_modelName() */
 
 /** Create a CUPS-style URI for a printer's device
  */
@@ -917,7 +924,7 @@ const char *queueinfo_device_uri(QUEUE_INFO qip, int printer_index)
 	GU_OBJECT_POOL_POP(qip->pool);
 
 	return pip->device_uri;
-	}
+	} /* queueinfo_device_uri() */
 
 /** Return the number of jobs queued for a particular destination
  */
@@ -934,7 +941,7 @@ int queueinfo_queued_job_count(QUEUE_INFO qip)
 		return 0;
 	}
 
-/** Return the number of jobs queued for a particular destination
+/** Return TRUE if this queue is accepting new jobs.
  */
 int queueinfo_accepting(QUEUE_INFO qip)
 	{
@@ -947,6 +954,35 @@ int queueinfo_accepting(QUEUE_INFO qip)
 		}
 	else			/* probably shouldn't happen */
 		return FALSE;
+	}
+
+/** Return the pprd status for the indicated printer.
+ */
+int queueinfo_status(QUEUE_INFO qip)
+	{
+	if(qip->group_spool_state_valid)
+		gu_Throw("not a printer");
+	else if(qip->printers > 0)
+		{
+		struct PRINTER_INFO *pip = gu_pca_index(qip->printers, 0);
+		return pip->spool_state.status;
+		}
+	else
+		gu_Throw("shouldn't happen");
+	}
+
+/*
+ * Return the name of a particular member.
+ */
+const char *queueinfo_membername(QUEUE_INFO qip, int index)
+	{
+	struct PRINTER_INFO *pip;
+	if(index < gu_pca_size(qip->printers))
+		{
+		pip = gu_pca_index(qip->printers, index);
+		return pip->name;
+		}
+	return FALSE;
 	}
 
 /*=== papd ================================================================*/

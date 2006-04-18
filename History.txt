@@ -10054,18 +10054,7 @@ no final tarball was released.
 
 * libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
 
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
-
+* libppr/ipp_obj.c: changed debugging code to print the request and
+  the response in approximately the XML format used by ppr-xml-ipp-client.
+  This should greatly simply the generation of test cases.
 

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 11 April 2006.
+** Last modified 17 April 2006.
 */
 
 /* An opaque type declaration */
@@ -45,6 +45,7 @@ void *queueinfo_hoist_value(QUEUE_INFO qip, const void *value);
 
 /* basic */
 const char *queueinfo_name(QUEUE_INFO qip);
+gu_boolean queueinfo_is_group(QUEUE_INFO qip);
 const char *queueinfo_comment(QUEUE_INFO qip);
 const char *queueinfo_location(QUEUE_INFO qip, int printer_index);
 
@@ -53,6 +54,8 @@ const char *queueinfo_device_uri(QUEUE_INFO qip, int printer_index);
 int queueinfo_queued_job_count(QUEUE_INFO qip);
 const char *queueinfo_modelName(QUEUE_INFO qip);
 int queueinfo_accepting(QUEUE_INFO qip);
+int queueinfo_status(QUEUE_INFO qip);
+const char *queueinfo_membername(QUEUE_INFO qip, int index);
 
 /* papd */
 gu_boolean  queueinfo_transparentMode(QUEUE_INFO qip);

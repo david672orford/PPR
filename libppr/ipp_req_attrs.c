@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 30 March 2006.
+** Last modified 17 April 2006.
 */
 
 /*! \file */
@@ -186,7 +186,7 @@ char *request_attrs_destname(struct REQUEST_ATTRS *this)
 	{
 	if(this->printer_name)
 		return this->printer_name;
-	if(this->printer_uri)
+	if(this->printer_uri_obj)
 		return this->printer_uri_obj->basename;		/* possibly null */
 	return NULL;
 	}

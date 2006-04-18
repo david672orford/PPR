@@ -1321,7 +1321,10 @@ sub do_cgi
 		{ print STDERR "close() failed on pipe from CGI script: $!" }
 
 	# Do we have to do this too?
-	while(wait() != -1) { }
+	while(wait() != -1)
+		{
+		print STDERR "status: $?\n" if($DEBUG > 0);
+		}
 
 	# Return the possibly altered "Connection:" header value.
 	print STDERR "CGI executing complete, status: $status, connection: $resp_header_connection\n\n" if($DEBUG > 0);

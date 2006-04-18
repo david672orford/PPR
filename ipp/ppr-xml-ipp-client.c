@@ -421,7 +421,6 @@ int main(int argc, char *argv[])
 						printf("    <lang>%s</lang>\n", attr->values[iii].string.charset);
 						/* fall thru */
 					case IPP_TAG_STRING:
-						/*printf("    <value>%s</value>\n", attr->values[iii].string.text);*/
 						printf("    <value>");
 						print_string(attr->values[iii].string.text);
 						printf("</value>\n");

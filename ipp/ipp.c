@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 17 April 2006.
+** Last modified 18 April 2006.
 */
 
 /*
@@ -78,16 +60,39 @@ void debug(const char message[], ...)
 */
 static gu_boolean ipp_validate_request(struct IPP *ipp)
 	{
-	/* ipp_attribute_t *attr; */
+	ipp_attribute_t *attr;
 
-	/* For now, English is all we are capable of. */
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET,
-		"attributes-charset", "utf-8");
-	ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
-		"attributes-natural-language", "en-us");
+	if(ipp->version_major != 1)
+		{
+		ipp->response_code = IPP_VERSION_NOT_SUPPORTED;
+		return FALSE;
+		}
 
-/*	if(!(attr = ipp_find_attribute(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET, "attributes-charset")))
-*/		
+	/* Charset must be first attribute */
+	attr = ipp->request_attrs;
+	if(!attr || attr->group_tag != IPP_TAG_OPERATION
+			|| attr->value_tag != IPP_TAG_CHARSET 
+			|| attr->num_values != 1
+			|| strcmp(attr->name, "attributes-charset") != 0
+		)
+		{
+		debug("first attribute is not attributes-charset");
+		ipp->response_code = IPP_BAD_REQUEST;
+		return FALSE;
+		}
+
+	/* Natural language must be the second */	
+	attr = attr->next;
+	if(!attr || attr->group_tag != IPP_TAG_OPERATION
+			|| attr->value_tag != IPP_TAG_LANGUAGE
+			|| attr->num_values != 1
+			|| strcmp(attr->name, "attributes-natural-language") != 0
+		)
+		{
+		debug("second attribute is not attributes-charset");
+		ipp->response_code = IPP_BAD_REQUEST;
+		return FALSE;
+		}
 
 	return TRUE;
 	}
@@ -213,69 +218,70 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request(ipp);
 
-		switch(ipp->operation_id)
-			{
-			case IPP_PRINT_JOB:
-				p_handler = ipp_print_job;
-				break;
-			case IPP_GET_PRINTER_ATTRIBUTES:
-				p_handler = ipp_get_printer_attributes;
-				break;
-			case IPP_GET_JOBS:
-				p_handler = ipp_get_jobs;
-				break;
-			case CUPS_GET_DEFAULT:
-				p_handler = cups_get_default;
-				break;
-			case CUPS_GET_DEVICES:
-				p_handler = cups_get_devices;
-				break;
-			case CUPS_GET_PPDS:
-				p_handler = cups_get_ppds;
-				break;
-			case CUPS_ADD_PRINTER:
-				p_handler = cups_add_printer;
-				break;
-			case CUPS_GET_CLASSES:
-				p_handler = cups_get_classes;
-				break;
-			case CUPS_GET_PRINTERS:
-				p_handler = cups_get_printers;
-				break;
-			default:
-				p_handler = NULL;
-				break;
-			}
+		/* For now, English is all we are capable of. */
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET,
+			"attributes-charset", "utf-8");
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
+			"attributes-natural-language", "en-us");
 
-		if(p_handler)		/* if we found a handler function, */
+		if(ipp_validate_request(ipp))
 			{
-			DEBUG(("handler found"));
-
-			DEBUG(("validating request"));
-			if(!ipp_validate_request(ipp))
+			switch(ipp->operation_id)
 				{
-				DEBUG(("request is invalid"));
+				case IPP_PRINT_JOB:
+					p_handler = ipp_print_job;
+					break;
+				case IPP_GET_PRINTER_ATTRIBUTES:
+					p_handler = ipp_get_printer_attributes;
+					break;
+				case IPP_GET_JOBS:
+					p_handler = ipp_get_jobs;
+					break;
+				case CUPS_GET_DEFAULT:
+					p_handler = cups_get_default;
+					break;
+				case CUPS_GET_DEVICES:
+					p_handler = cups_get_devices;
+					break;
+				case CUPS_GET_PPDS:
+					p_handler = cups_get_ppds;
+					break;
+				case CUPS_ADD_PRINTER:
+					p_handler = cups_add_printer;
+					break;
+				case CUPS_GET_CLASSES:
+					p_handler = cups_get_classes;
+					break;
+				case CUPS_GET_PRINTERS:
+					p_handler = cups_get_printers;
+					break;
+				default:
+					p_handler = NULL;
+					break;
+				}
+	
+			if(p_handler)		/* if we found a handler function, */
+				{
+				DEBUG(("invoking handler..."));
+				ipp->response_code = IPP_OK;	/* default */
+				(*p_handler)(ipp);
 				}
 			else
 				{
-				DEBUG(("invoking handler..."));
-				#ifdef DEBUG
-				/*kill(getpid(), SIGSTOP);*/
-				#endif
-				ipp->response_code = IPP_OK;
-				(*p_handler)(ipp);
-				if(ipp->response_code == IPP_OK)
-					{
-					ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
-						"status-message", "successful-ok");
-					}
+				ipp->response_code = IPP_OPERATION_NOT_SUPPORTED;
 				}
-			}
-		else
+			} /* request is valid */
+
+		switch(ipp->response_code)
 			{
-			ipp->response_code = IPP_OPERATION_NOT_SUPPORTED;
-			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
-				"status-message", _("Server does not support this IPP operation."));
+			case IPP_OK:
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
+					"status-message", "successful-ok");
+				break;
+			case IPP_OPERATION_NOT_SUPPORTED:
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
+					"status-message", _("Server does not support this IPP operation."));
+				break;
 			}
 
 		ipp_send_reply(ipp, TRUE);

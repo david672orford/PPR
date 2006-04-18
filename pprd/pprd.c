@@ -389,7 +389,7 @@ static int real_main(int argc, char *argv[])
 	if(geteuid() == 0)
 		{
 		/* Start listening for IPP connexions. */
-		listener_bind(":ipp", LIBDIR"/ppr-httpd");
+		listener_bind("127.0.0.1:ipp", LIBDIR"/ppr-httpd");
 	
 		/* Start listening for BSD LPD connexions. */
 		listener_bind(":printer", LIBDIR"/lprsrv");

@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 12 April 2006.
+** Last modified 17 April 2006.
 */
 
 /*
@@ -43,10 +43,90 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
 #include "ipp.h"
+
+/** Convert a PPR printer's status to IPP status
+ *
+ * printer-state (RFC 2911 4.4.11)
+ * 		idle
+ * 		processing
+ * 		stopped
+ * printer-state-reasons (RFC 2911 4.4.12)
+ * 			
+ * printer-state-message (RFC 2911 4.4.13)
+ * 		free-form human-readable text
+ */
+static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE_INFO qip)
+	{
+	int state;
+	const char *state_reasons[10];
+	int state_reasons_count = 0;
+	const char *state_message = NULL;
+
+	switch(queueinfo_status(qip))
+		{
+		case PRNSTATUS_IDLE:
+			state = IPP_PRINTER_IDLE;
+			break;
+		case PRNSTATUS_PRINTING:
+			state = IPP_PRINTER_PROCESSING;
+			break;
+		case PRNSTATUS_CANCELING:
+		case PRNSTATUS_SEIZING:
+			state = IPP_PRINTER_PROCESSING;
+			break;
+		case PRNSTATUS_STOPPING:
+		case PRNSTATUS_HALTING:
+			state = IPP_PRINTER_PROCESSING;
+			state_reasons[state_reasons_count++] = "moving-to-paused";
+			break;
+		case PRNSTATUS_STOPT:
+			state = IPP_PRINTER_STOPPED;
+			state_reasons[state_reasons_count++] = "paused";
+			break;
+		case PRNSTATUS_FAULT:
+			state = IPP_PRINTER_STOPPED;
+			state_reasons[state_reasons_count++] = "other";
+			break;
+		case PRNSTATUS_ENGAGED:
+			state = IPP_PRINTER_STOPPED;
+			state_reasons[state_reasons_count++] = "connecting-to-device";
+			break;
+		case PRNSTATUS_STARVED:
+			state = IPP_PRINTER_STOPPED;
+			state_reasons[state_reasons_count++] = "other";
+			break;
+		default:
+			debug("invalid printer state");
+			state = IPP_PRINTER_IDLE;
+			state_reasons[state_reasons_count++] = "other";
+			break;
+		}
+
+	if(request_attrs_attr_requested(req, "printer-state"))
+		{
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+			"printer-state", state);
+		}
+
+	if(state_reasons_count == 0)
+		state_reasons[state_reasons_count++] = "none";
+	if(request_attrs_attr_requested(req, "printer-state-reasons"))
+		{
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD,
+			"printer-state-reasons", state_reasons_count, state_reasons);
+		}
+
+	if(request_attrs_attr_requested(req, "printer-state-message") && state_message)
+		{
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
+			"printer-state-message", state_message);
+		}
+	}
 
 /*
  * This function is the meat of IPP_GET_PRINTER_ATTRIBUTES,
@@ -68,7 +148,7 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 	if(request_attrs_attr_requested(req, "printer-uri"))
 		{
 		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,	
-			"printer-uri", "/printers/%s", destname);
+			"printer-uri", queueinfo_is_group(qip) ? "/classes/%s" : "/printers/%s", destname);
 		}
 
 	if(request_attrs_attr_requested(req, "printer-is-accepting-jobs"))
@@ -79,21 +159,24 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			);
 		}
 
-#if 0
-	if(destid_is_printer(destid))
-		printer_add_status(ipp, req, destid);
-#endif
+	if(!queueinfo_is_group(qip))
+		{
+		printer_add_status(ipp, req, qip);
+		}
 
-#if 0	
-	if(destid_is_group(destid) && request_attrs_attr_requested(req, "member-names"))
+	if(queueinfo_is_group(qip) && request_attrs_attr_requested(req, "member-names"))
 		{
 		int iii;
 		const char *members[MAX_GROUPSIZE];
-		for(iii=0; iii < groups[iii].members; iii++)
-			members[iii] = printers[groups[destid_to_gindex(destid)].printers[iii]].name;
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", groups[iii].members, members, FALSE);
+		const char *temp;
+		for(iii=0; iii < MAX_GROUPSIZE; iii++)
+			{
+			if(!(temp = queueinfo_membername(qip, iii)))
+				break;
+			members[iii] = queueinfo_hoist_value(qip, temp);
+			}
+		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", iii, members);
 		}
-#endif
 
 	if(request_attrs_attr_requested(req, "queued-job-count"))
 		{
@@ -101,13 +184,11 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			"queued-job-count", queueinfo_queued_job_count(qip));
 		}
 
-#if 0
 	if(request_attrs_attr_requested(req, "printer-uri-supported"))
 		{
 		ipp_add_template(ipp, IPP_TAG_PRINTER, IPP_TAG_URI,
-			"printer-uri-supported", destid_is_group(destid) ? "/classes/%s" : "/printers/%s", destid_to_name(destid));
+			"printer-uri-supported", queueinfo_is_group(qip) ? "/classes/%s" : "/printers/%s", destname);
 		}
-#endif
 
 	if(request_attrs_attr_requested(req, "uri_security_supported"))
 		{

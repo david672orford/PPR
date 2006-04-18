@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 14 April 2006.
+** Last modified 18 April 2006.
 */
 
 /*
@@ -181,7 +163,7 @@ void ipp_get_jobs(struct IPP *ipp)
 	const char function[] = "ipp_get_jobs";
 	struct REQUEST_ATTRS *req;
 	const char *destname = NULL;
-	int jobid = -1;
+	int jobid;
 	struct IPP_QUEUE_ENTRY *queue;
 	int queue_num_entries;
 	int iii;
@@ -195,6 +177,12 @@ void ipp_get_jobs(struct IPP *ipp)
 	destname = request_attrs_destname(req);
 	jobid = request_attrs_jobid(req);
 	DEBUG(("%s(): destname=\"%s\", jobid=%d", function, destname ? destname : "", jobid));
+	if(!destname && jobid == -1)
+		{
+		DEBUG(("%s(): no printer-uri and no job-id", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
 
 	queue = ipp_load_queue(destname, jobid, &queue_num_entries);
 	DEBUG(("%s(): %d entries", function, queue_num_entries));
