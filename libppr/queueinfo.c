@@ -737,6 +737,9 @@ void *queueinfo_hoist_value(QUEUE_INFO qip, const void *value)
 	} /* end of queueinfo_hoist_value() */
 
 /** create a queueinfo object and load a queue's information into it
+ *
+ * If the requested destination does not exist, return NULL.  We do not throw
+ * an exception because such a circumstance is not considered unusual.
 */
 QUEUE_INFO queueinfo_new_load_config(enum QUEUEINFO_TYPE qit, const char name[])
 	{

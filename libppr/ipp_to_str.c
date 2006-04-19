@@ -116,6 +116,13 @@ const char *ipp_tag_to_str(int tag)
 		case IPP_TAG_UNSUPPORTED:
 			return "unsupported-attributes";
 
+		case IPP_TAG_UNSUPPORTED_VALUE:
+			return "unsupported";
+		case IPP_TAG_UNKNOWN:
+			return "unknown";
+		case IPP_TAG_NOVALUE:
+			return "no-value";
+
 		case IPP_TAG_INTEGER:
 			return "integer";
 		case IPP_TAG_BOOLEAN:
@@ -154,7 +161,7 @@ const char *ipp_tag_to_str(int tag)
 			return "mimeMediaType";
 
 		default:
-			return "unknown";
+			return "unrecognized tag";
 		}
 	}
 

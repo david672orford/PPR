@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--13 April 2006
+2.00a1, 11 December 2004--19 April 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10057,4 +10057,11 @@ no final tarball was released.
 * libppr/ipp_obj.c: changed debugging code to print the request and
   the response in approximately the XML format used by ppr-xml-ipp-client.
   This should greatly simply the generation of test cases.
+
+* queueinfo.c:queueinfo_new_load_config(): changed to return NULL rather than
+  throwing an exception when the destination is not found.  Changed papd to
+  conform.  Ppad already conformed.
+
+* libgu/gu_uri.c: added dirname to structure.
+
 

@@ -1,31 +1,13 @@
 /*
-** mouse:~ppr/src/ipp/ipp_utils.c
+** mouse:~ppr/src/ipp/ipp_req_attrs.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 17 April 2006.
+** Last modified 19 April 2006.
 */
 
 /*! \file */
@@ -48,13 +30,20 @@
 #define DEBUG(a)
 #endif
 
-/* ======================================================================= */
-
 /** Create an object which can tell us if an attribute was requested.
  *
  * We pass the IPP object to the constructor and it reads the operation
  * attributes from it and files away the values of those which we have
  * told it are supported. 
+ *
+ * supported is the bitwise or of:
+ *   REQ_SUPPORTS_PRINTER--for operations on one existing printer
+ *   REQ_SUPPORTS_PRINTER--for operations on multiple printers
+ *   REQ_SUPPORTS_JOB--for operations on one job
+ *   REQ_SUPPORTS_JOBS--for operations on many jobs
+ *   REQ_SUPPORTS_DEVICE--for listing devices
+ *   REQ_SUPPORTS_PPDS--for listing PPD files
+ *
  */ 
 struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported)
 	{
@@ -66,7 +55,6 @@ struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported)
 	this->requested_attributes_all = FALSE;
 	this->printer_uri = NULL;
 	this->printer_uri_obj = NULL;
-	this->printer_name = NULL;
 	this->job_uri = NULL;
 	this->job_uri_obj = NULL;
 	this->job_id = -1;
@@ -93,40 +81,49 @@ struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported)
 				for(iii=0; iii<attr->num_values; iii++)
 					gu_pch_set(this->requested_attributes, attr->values[iii].string.text, "TRUE");
 				}
-			else if(supported & REQUEST_ATTRS_SUPPORTS_PRINTER && attr->value_tag == IPP_TAG_URI
-					&& strcmp(attr->name, "printer-uri") == 0)
+			else if(supported & (REQ_SUPPORTS_PRINTER|REQ_SUPPORTS_JOB)
+					&& attr->value_tag == IPP_TAG_URI
+					&& strcmp(attr->name, "printer-uri") == 0
+					)
 				this->printer_uri = attr->values[0].string.text;
-			else if(supported & (REQUEST_ATTRS_SUPPORTS_PRINTER|REQUEST_ATTRS_SUPPORTS_JOB) && attr->value_tag == IPP_TAG_NAME
-					&& strcmp(attr->name, "printer-name") == 0)
-				this->printer_name = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_URI
-					&& strcmp(attr->name, "job-uri") == 0)
+			else if(supported & REQ_SUPPORTS_JOB
+					&& attr->value_tag == IPP_TAG_URI
+					&& strcmp(attr->name, "job-uri") == 0
+					)
 				this->job_uri = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_JOB && attr->value_tag == IPP_TAG_INTEGER
-					&& strcmp(attr->name, "job-id") == 0)
+			else if(supported & REQ_SUPPORTS_JOB
+					&& attr->value_tag == IPP_TAG_INTEGER
+					&& strcmp(attr->name, "job-id") == 0
+					)
 				this->job_id = attr->values[0].integer;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_DEVICE_CLASS && attr->value_tag == IPP_TAG_KEYWORD
-					&& strcmp(attr->name, "device-class") == 0)
+			else if(supported & REQ_SUPPORTS_DEVICES
+					&& attr->value_tag == IPP_TAG_KEYWORD
+					&& strcmp(attr->name, "device-class") == 0
+					)
 				this->device_class = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_PPD_MAKE && attr->value_tag == IPP_TAG_TEXT
-					&& strcmp(attr->name, "ppd-make") == 0)
+			else if(supported & REQ_SUPPORTS_PPDS
+					&& attr->value_tag == IPP_TAG_TEXT
+					&& strcmp(attr->name, "ppd-make") == 0
+					)
 				this->ppd_make = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_LIMIT && attr->value_tag == IPP_TAG_INTEGER
-					&& strcmp(attr->name, "limit") == 0)
+			else if(supported & (REQ_SUPPORTS_PRINTERS|REQ_SUPPORTS_JOBS|REQ_SUPPORTS_DEVICES|REQ_SUPPORTS_PPDS)
+					&& attr->value_tag == IPP_TAG_INTEGER
+					&& strcmp(attr->name, "limit") == 0
+					)
 				this->limit = attr->values[0].integer;
-			else
-				ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
 			}
 		else if(attr->group_tag == IPP_TAG_PRINTER)
 			{
-			if(supported & REQUEST_ATTRS_SUPPORTS_PCREATE && attr->value_tag == IPP_TAG_URI
-					&& strcmp(attr->name, "device-uri") == 0)
+			if(supported & REQ_SUPPORTS_PCREATE
+					&& attr->value_tag == IPP_TAG_URI
+					&& strcmp(attr->name, "device-uri") == 0
+					)
 				this->device_uri = attr->values[0].string.text;
-			else if(supported & REQUEST_ATTRS_SUPPORTS_PCREATE && attr->value_tag == IPP_TAG_NAME
-					&& strcmp(attr->name, "ppd-name") == 0)
+			else if(supported & REQ_SUPPORTS_PCREATE
+					&& attr->value_tag == IPP_TAG_NAME
+					&& strcmp(attr->name, "ppd-name") == 0
+					)
 				this->ppd_name = attr->values[0].string.text;
-			else
-				ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
 			}
 		else
 			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
@@ -143,7 +140,7 @@ struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported)
 		this->job_uri_obj = gu_uri_new(this->job_uri);
 
 	return this;
-	}
+	} /* request_attrs_new() */
 
 /** Destroy a requested attributes object.
  *
@@ -166,9 +163,12 @@ void request_attrs_free(struct REQUEST_ATTRS *this)
 	if(this->job_uri_obj)
 		gu_uri_free(this->job_uri_obj);
 	gu_free(this);
-	}
+	} /* request_attrs_free() */
 
-/** Return true if the indicate attributes was requested. */
+/** Return true if the indicate attributes was requested.
+ * We also make a note of the fact that the caller asked about this attribute
+ * since that presumably means that the request was handled.
+ */
 gu_boolean request_attrs_attr_requested(struct REQUEST_ATTRS *this, char name[])
 	{
 	if(this->requested_attributes_all)
@@ -184,8 +184,6 @@ gu_boolean request_attrs_attr_requested(struct REQUEST_ATTRS *this, char name[])
 /** Return the requested queue name or NULL if none requested. */
 char *request_attrs_destname(struct REQUEST_ATTRS *this)
 	{
-	if(this->printer_name)
-		return this->printer_name;
 	if(this->printer_uri_obj)
 		return this->printer_uri_obj->basename;		/* possibly null */
 	return NULL;

@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 17 April 2006.
+** Last modified 19 April 2006.
 */
 
 /*! \file */
@@ -37,11 +19,17 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <stdarg.h>
 #include "gu.h"
 #include "global_defines.h"
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 
+/* If this is enabled, debugging code is compiled in and the
+ * caller must provided a callback function debug().  No 
+ * debugging callbacks will actually be made until the caller
+ * sets the debug level to something greater than 0.
+ */
 #if 1
 #define DEBUG(a) if(ipp->debug_level >= 5) debug a
 #define XML_DEBUG(a) if(ipp->debug_level > 0) debug a
@@ -92,6 +80,8 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 	ipp->response_attrs_printer = NULL;
 	ipp->response_attrs_job = NULL;
 	ipp->response_attrs_unsupported = NULL;
+
+	ipp->suppress_unsupported = FALSE;
 
 	GU_OBJECT_POOL_POP(ipp->pool);
 	return ipp;
@@ -200,7 +190,7 @@ void ipp_set_remote_addr(struct IPP *ipp, const char remote_addr[])
 
 The character pointer pointed two by pptr is set to point to the next
 block of the file.  The length of the block is returned.  This is used
-to read the print file data.
+to read the print file data which follows the IPP request.
 
 */
 int ipp_get_block(struct IPP *ipp, char **pptr)
@@ -223,14 +213,16 @@ int ipp_get_block(struct IPP *ipp, char **pptr)
 		}
 
 	return len;
-	}
+	} /* ipp_get_block() */
+
+/*=== Request parsing =====================================================*/
 
 /** fetch an unsigned byte from the IPP request
 
 This is used to read tags.
 
 */
-char ipp_get_byte(struct IPP *ipp)
+static char ipp_get_byte(struct IPP *ipp)
 	{
 	if(ipp->readbuf_remaining < 1)
 		ipp_readbuf_load(ipp);
@@ -245,7 +237,7 @@ char ipp_get_byte(struct IPP *ipp)
 This is used to write tags.
 
 */
-void ipp_put_byte(struct IPP *ipp, char val)
+static void ipp_put_byte(struct IPP *ipp, char val)
 	{
 	ipp->writebuf[ipp->writebuf_i++] = val;
 	ipp->writebuf_remaining--;
@@ -255,14 +247,14 @@ void ipp_put_byte(struct IPP *ipp, char val)
 
 /** fetch a signed byte from the IPP request
 */
-int ipp_get_sb(struct IPP *ipp)
+static int ipp_get_sb(struct IPP *ipp)
 	{
 	return (int)(signed char)ipp_get_byte(ipp);
 	}
 
 /** fetch a signed short from the IPP request
 */
-int ipp_get_ss(struct IPP *ipp)
+static int ipp_get_ss(struct IPP *ipp)
 	{
 	unsigned char a, b;
 	a = ipp_get_byte(ipp);
@@ -272,7 +264,7 @@ int ipp_get_ss(struct IPP *ipp)
 
 /** fetch a signed integer from the IPP request
 */
-int ipp_get_si(struct IPP *ipp)
+static int ipp_get_si(struct IPP *ipp)
 	{
 	unsigned char a, b, c, d;
 	a = ipp_get_byte(ipp);
@@ -284,14 +276,14 @@ int ipp_get_si(struct IPP *ipp)
 
 /** append a signed byte to the IPP response
 */
-void ipp_put_sb(struct IPP *ipp, int val)
+static void ipp_put_sb(struct IPP *ipp, int val)
 	{
 	ipp_put_byte(ipp, (unsigned char)val);
 	}
 
 /** append a signed short to the IPP response
 */
-void ipp_put_ss(struct IPP *ipp, int val)
+static void ipp_put_ss(struct IPP *ipp, int val)
 	{
 	unsigned int temp = (unsigned int)val;
 	ipp_put_byte(ipp, (temp & 0xFF00) >> 8);
@@ -300,7 +292,7 @@ void ipp_put_ss(struct IPP *ipp, int val)
 
 /** append a signed integer to the IPP response
 */
-void ipp_put_si(struct IPP *ipp, int val)
+static void ipp_put_si(struct IPP *ipp, int val)
 	{
 	unsigned int temp = (unsigned int)val;
 	ipp_put_byte(ipp, (temp & 0xFF000000) >> 24);
@@ -311,7 +303,7 @@ void ipp_put_si(struct IPP *ipp, int val)
 
 /** fetch a byte array of specified length
 */
-char *ipp_get_bytes(struct IPP *ipp, int len)
+static char *ipp_get_bytes(struct IPP *ipp, int len)
     {
 	char *ptr;
 	GU_OBJECT_POOL_PUSH(ipp->pool);
@@ -323,26 +315,6 @@ char *ipp_get_bytes(struct IPP *ipp, int len)
 	GU_OBJECT_POOL_POP(ipp->pool);
 	return ptr;
     }
-
-/** append a byte array of a specified length
-*/
-void ipp_put_bytes(struct IPP *ipp, const char *data, int len)
-	{
-	int i;
-	for(i=0; i<len; i++)
-		{
-		ipp_put_byte(ipp, data[i]);
-		}
-	}
-
-/** append a string to the reply
-*/
-void ipp_put_string(struct IPP *ipp, const char string[])
-	{
-	int i;
-	for(i=0; string[i]; i++)
-		ipp_put_byte(ipp, string[i]);
-	}
 
 /** read an IPP request from stdin and store it in the IPP object
  *
@@ -526,9 +498,31 @@ void ipp_parse_request(struct IPP *ipp)
 	GU_OBJECT_POOL_POP(ipp->pool);
 	} /* end of ipp_parse_request() */
 
+/*=== Reply creation ======================================================*/
+
+/** append a byte array of a specified length
+*/
+static void ipp_put_bytes(struct IPP *ipp, const char *data, int len)
+	{
+	int i;
+	for(i=0; i<len; i++)
+		{
+		ipp_put_byte(ipp, data[i]);
+		}
+	}
+
+/** append a string to the reply
+*/
+static void ipp_put_string(struct IPP *ipp, const char string[])
+	{
+	int i;
+	for(i=0; string[i]; i++)
+		ipp_put_byte(ipp, string[i]);
+	}
+
 /** append an attribute to the IPP response
 */
-void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
+static void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 	{
 	ipp_value_t *p;
 	int i, len;
@@ -616,125 +610,12 @@ void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 		));
 	} /* end of ipp_put_attr() */
 
-/** send the IPP response in the IPP object
-*/
-void ipp_send_reply(struct IPP *ipp, gu_boolean header)
-	{
-	ipp_attribute_t *p;
-	
-	DEBUG(("ipp_send_reply()"));
-
-	if(header)
-		ipp_put_string(ipp, "Content-Type: application/ipp\r\n\r\n");
-
-	#ifdef DEBUG
-	if(ipp->debug_level > 0)
-		{
-		debug("<ipp>");
-		debug("<response>");
-		debug("<version-number>%d.%d</version-number>", 1, 1);
-		debug("<status-code>0x%04x</status-code>", ipp->response_code);
-		debug("<request-id>%d</request-id>", ipp->request_id);
-		}
-	#endif
-
-	ipp_put_sb(ipp, 1);		/* version major */
-	ipp_put_sb(ipp, 1);		/* version minor */
-	ipp_put_ss(ipp, ipp->response_code);
-	ipp_put_si(ipp, ipp->request_id);
-	
-	if(!(p = ipp->response_attrs_operation))
-		gu_Throw("no response_attrs_operation");
-
-	XML_DEBUG(("<operation-attributes>"));
-	ipp_put_byte(ipp, IPP_TAG_OPERATION);
-	for( ; p; p = p->next)
-		ipp_put_attr(ipp, p);
-	XML_DEBUG(("</operation-attributes>"));
-
-	if((p = ipp->response_attrs_printer))
-		{
-		XML_DEBUG(("<printer-attributes>"));
-		ipp_put_byte(ipp, IPP_TAG_PRINTER);
-		for( ; p; p = p->next)
-			{
-			if(p->value_tag == IPP_TAG_END)
-				{
-				XML_DEBUG(("</printer-attributes>"));
-				if(p->next)
-					{
-					XML_DEBUG(("<printer-attributes>"));
-					ipp_put_byte(ipp, IPP_TAG_PRINTER);
-					}
-				}
-			else
-				ipp_put_attr(ipp, p);
-			}
-		XML_DEBUG(("</printer-attributes>"));
-		}
-	
-	if((p = ipp->response_attrs_job))
-		{
-		XML_DEBUG(("<job-attributes>"));
-		ipp_put_byte(ipp, IPP_TAG_JOB);
-
-		for( ; p; p = p->next)
-			{
-			if(p->value_tag == IPP_TAG_END)
-				{
-				XML_DEBUG(("</job-attributes>"));
-				if(p->next)
-					{
-					XML_DEBUG(("<job-attributes>"));
-					ipp_put_byte(ipp, IPP_TAG_JOB);
-					}
-				}
-			else
-				ipp_put_attr(ipp, p);
-			}
-		XML_DEBUG(("</job-attributes>"));
-		}
-
-	if((p = ipp->response_attrs_unsupported))
-		{
-		XML_DEBUG(("<unsupported-attributes>"));
-		ipp_put_byte(ipp, IPP_TAG_UNSUPPORTED);
-		for( ; p; p = p->next)
-			ipp_put_attr(ipp, p);
-		XML_DEBUG(("</unsupported-attributes>"));
-		}
-
-	ipp_put_byte(ipp, IPP_TAG_END);
-
-	#ifdef DEBUG
-	debug("</ipp>");
-	debug("</response>");
-	#endif
-
-	ipp_writebuf_flush(ipp);
-	} /* end of ipp_send_reply() */
-
-/*
-** add an attribute to the IPP response
-** This is an internal function.  Other functions call it in order
-** to add an empty attribute which they procede to fill in.
-*/
-static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, const char name[], int num_values)
+/* Add an attribute to the IPP response. */
+static void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap)
 	{
 	ipp_attribute_t **ap1;
-	ipp_attribute_t	*ap;
 
-	GU_OBJECT_POOL_PUSH(ipp->pool);
-
-	ap = gu_alloc(1, sizeof(ipp_attribute_t) + sizeof(ipp_value_t) * (num_values - 1));
-	ap->next = NULL;
-	ap->group_tag = 0;				/* consider this unused */
-	ap->value_tag = tag;
-	ap->name = (char*)name;
-	ap->template = NULL;
-	ap->num_values = num_values;
-
-	switch(group)
+	switch(ap->group_tag)
 		{
 		case IPP_TAG_OPERATION:
 			ap1 = &ipp->response_attrs_operation;
@@ -760,8 +641,30 @@ static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, c
 
 	/* update the next pointer to point to this new one. */
 	*ap1 = ap;
+	}
+
+/*
+** Create a new attribute and add it to the IPP response
+** This is an internal function.  Other functions call it in order
+** to add an empty attribute which they procede to fill in.
+*/
+static ipp_attribute_t *ipp_new_attribute(struct IPP *ipp, int group, int tag, const char name[], int num_values)
+	{
+	ipp_attribute_t	*ap;
+
+	GU_OBJECT_POOL_PUSH(ipp->pool);
+
+	ap = gu_alloc(1, sizeof(ipp_attribute_t) + sizeof(ipp_value_t) * (num_values - 1));
+	ap->next = NULL;
+	ap->group_tag = group;
+	ap->value_tag = tag;
+	ap->name = (char*)name;
+	ap->template = NULL;
+	ap->num_values = num_values;
 
 	GU_OBJECT_POOL_POP(ipp->pool);
+
+	ipp_insert_attribute(ipp, ap);
 
 	return ap;
 	} /* end of ipp_add_attr() */
@@ -770,7 +673,7 @@ static ipp_attribute_t *ipp_add_attribute(struct IPP *ipp, int group, int tag, c
  */
 void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr)
 	{
-	ipp_attribute_t *new_attr = ipp_add_attribute(ipp, group, attr->value_tag, attr->name, attr->num_values);
+	ipp_attribute_t *new_attr = ipp_new_attribute(ipp, group, attr->value_tag, attr->name, attr->num_values);
 	memcpy(new_attr->values, attr->values, sizeof(attr->values[0]) * attr->num_values);
 	}
 
@@ -778,7 +681,7 @@ void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr)
 */
 void ipp_add_end(struct IPP *ipp, int group)
 	{
-	ipp_add_attribute(ipp, group, IPP_TAG_END, NULL, 1);	/* !!! is 1 correct? !!! */
+	ipp_new_attribute(ipp, group, IPP_TAG_END, NULL, 1);	/* !!! is 1 correct? !!! */
 	}
 
 /** add an integer to the IPP response
@@ -790,7 +693,7 @@ void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int
 	ipp_attribute_t *ap;
 	if(ipp_tag_simplify(tag) != IPP_TAG_INTEGER && tag != IPP_TAG_URI)
 		gu_Throw("ipp_add_integer(): %s is a %s", name, ipp_tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+	ap = ipp_new_attribute(ipp, group, tag, name, 1);
 	ap->values[0].integer = value;
 	}
 
@@ -804,7 +707,7 @@ void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], in
 	int i;
 	if(ipp_tag_simplify(tag) != IPP_TAG_INTEGER && tag != IPP_TAG_URI)
 		gu_Throw("ipp_add_integer(): %s is a %s", name, ipp_tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name, num_values);
+	ap = ipp_new_attribute(ipp, group, tag, name, num_values);
 	for(i=0; i<num_values; i++)
 		ap->values[i].integer = values[i];
 	}
@@ -819,7 +722,7 @@ void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], cons
 	ipp_attribute_t *ap;
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_string(): %s is a %s", name, ipp_tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+	ap = ipp_new_attribute(ipp, group, tag, name, 1);
 	ap->values[0].string.text = (char*)value;
 	}
 
@@ -834,7 +737,7 @@ void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int
 	int i;
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_strings(): %s is a %s", name, ipp_tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name, num_values);
+	ap = ipp_new_attribute(ipp, group, tag, name, num_values);
 	for(i=0; i<num_values; i++)
 		ap->values[i].string.text = (char*)values[i];
 	}
@@ -858,7 +761,7 @@ void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], cons
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_printf(): %s is a %s", name, ipp_tag_to_str(tag));
 
-	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+	ap = ipp_new_attribute(ipp, group, tag, name, 1);
 
 	GU_OBJECT_POOL_PUSH(ipp->pool);
 	va_start(va, value);
@@ -884,7 +787,7 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
 		gu_Throw("ipp_add_printf(): %s is a %s", name, ipp_tag_to_str(tag));
 
-	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+	ap = ipp_new_attribute(ipp, group, tag, name, 1);
 
 	ap->template = template;
 
@@ -905,9 +808,121 @@ void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_
 	ipp_attribute_t *ap;
 	if(tag != IPP_TAG_BOOLEAN)
 		gu_Throw("ipp_add_boolean(): %s is a %s", name, ipp_tag_to_str(tag));
-	ap = ipp_add_attribute(ipp, group, tag, name, 1);
+	ap = ipp_new_attribute(ipp, group, tag, name, 1);
 	ap->values[0].boolean = value;
 	}
+
+/** send the IPP response in the IPP object
+*/
+void ipp_send_reply(struct IPP *ipp, gu_boolean header)
+	{
+	ipp_attribute_t *attr;
+	
+	DEBUG(("ipp_send_reply()"));
+
+	/* Any operation or job-template attributes which have not yet been
+	 * read (and removed) must be unsupported.
+	 */
+	if(!ipp->suppress_unsupported)
+		{
+		for(attr = ipp->request_attrs; attr; attr = attr->next)
+			{
+			if(attr->group_tag == IPP_TAG_OPERATION || attr->group_tag == IPP_TAG_JOB)
+				ipp_new_attribute(ipp, IPP_TAG_UNSUPPORTED, IPP_TAG_UNSUPPORTED_VALUE, attr->name, 0);
+			}
+		}
+
+	/* If we are communicating over HTTP, we need an HTTP header. */
+	if(header)
+		ipp_put_string(ipp, "Content-Type: application/ipp\r\n\r\n");
+
+	#ifdef DEBUG
+	if(ipp->debug_level > 0)
+		{
+		debug("<ipp>");
+		debug("<response>");
+		debug("<version-number>%d.%d</version-number>", 1, 1);
+		debug("<status-code>0x%04x</status-code>", ipp->response_code);
+		debug("<request-id>%d</request-id>", ipp->request_id);
+		}
+	#endif
+
+	ipp_put_sb(ipp, 1);		/* version major */
+	ipp_put_sb(ipp, 1);		/* version minor */
+	ipp_put_ss(ipp, ipp->response_code);
+	ipp_put_si(ipp, ipp->request_id);
+	
+	if(!(attr = ipp->response_attrs_operation))
+		gu_Throw("no response_attrs_operation");
+	XML_DEBUG(("<operation-attributes>"));
+	ipp_put_byte(ipp, IPP_TAG_OPERATION);
+	for( ; attr; attr = attr->next)
+		ipp_put_attr(ipp, attr);
+	XML_DEBUG(("</operation-attributes>"));
+
+	if((attr = ipp->response_attrs_printer))
+		{
+		XML_DEBUG(("<printer-attributes>"));
+		ipp_put_byte(ipp, IPP_TAG_PRINTER);
+		for( ; attr; attr = attr->next)
+			{
+			if(attr->value_tag == IPP_TAG_END)
+				{
+				XML_DEBUG(("</printer-attributes>"));
+				if(attr->next)
+					{
+					XML_DEBUG(("<printer-attributes>"));
+					ipp_put_byte(ipp, IPP_TAG_PRINTER);
+					}
+				}
+			else
+				ipp_put_attr(ipp, attr);
+			}
+		XML_DEBUG(("</printer-attributes>"));
+		}
+	
+	if((attr = ipp->response_attrs_job))
+		{
+		XML_DEBUG(("<job-attributes>"));
+		ipp_put_byte(ipp, IPP_TAG_JOB);
+
+		for( ; attr; attr = attr->next)
+			{
+			if(attr->value_tag == IPP_TAG_END)
+				{
+				XML_DEBUG(("</job-attributes>"));
+				if(attr->next)
+					{
+					XML_DEBUG(("<job-attributes>"));
+					ipp_put_byte(ipp, IPP_TAG_JOB);
+					}
+				}
+			else
+				ipp_put_attr(ipp, attr);
+			}
+		XML_DEBUG(("</job-attributes>"));
+		}
+
+	if((attr = ipp->response_attrs_unsupported))
+		{
+		XML_DEBUG(("<unsupported-attributes>"));
+		ipp_put_byte(ipp, IPP_TAG_UNSUPPORTED);
+		for( ; attr; attr = attr->next)
+			ipp_put_attr(ipp, attr);
+		XML_DEBUG(("</unsupported-attributes>"));
+		}
+
+	/* end of IPP response */
+	ipp_put_byte(ipp, IPP_TAG_END);
+	#ifdef DEBUG
+	debug("</ipp>");
+	debug("</response>");
+	#endif
+
+	ipp_writebuf_flush(ipp);
+	} /* end of ipp_send_reply() */
+
+/*=========================================================================*/
 
 /** find an attribute in the IPP request
  *
@@ -918,13 +933,130 @@ ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const c
 	{
 	ipp_attribute_t *p;
 	
-	for(p = ipp->request_attrs; p; p = p->next)
+	for(p=ipp->request_attrs; p; p=p->next)
 		{
-		if(p->group_tag == group && p->value_tag == tag && strcmp(p->name, name) == 0)
-			break;
+		if(p->group_tag == group
+				&& p->value_tag == tag
+			   	&& strcmp(p->name, name) == 0
+				)
+			{
+			return p;
+			}
 		}
 		
-	return p;
+	return NULL;
 	} /* ipp_find_attribute() */
+
+/** find an attribute in the IPP request and remove it
+ *
+ * A pointer to the first attribute which matches group, tag, and name[]
+ * is returned.  The attribute is then removed from the IPP object so
+ * that we will later know that it was handled.
+*/
+ipp_attribute_t *ipp_claim_attribute(struct IPP *ipp, int group, int tag, const char name[])
+	{
+	ipp_attribute_t *p;
+	ipp_attribute_t **pp;
+	
+	for(p=ipp->request_attrs,pp=&(ipp->request_attrs); p; pp=&(p->next),p=p->next)
+		{
+		if(p->group_tag == group
+				&& p->value_tag == tag
+			   	&& strcmp(p->name, name) == 0
+				)
+			{
+			*pp = p->next;
+			p->next = NULL;
+			return p;
+			}
+		}
+		
+	return NULL;
+	} /* ipp_claim_attribute() */
+
+/* This extends ipp_claim_attribute() to accept only single values. */
+static ipp_attribute_t *ipp_claim_attribute_single_value(struct IPP *ipp, int group, int tag, const char name[])
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute(ipp, group, tag, name)))
+		{
+		if(attr->num_values == 1)
+			return attr;
+		else
+			ipp->response_code = IPP_BAD_REQUEST;
+		}
+	return NULL;
+	}
+
+/** Find a single value URI attribute, remove it, and return a gu_uri object. */
+struct URI *ipp_claim_uri(struct IPP *ipp, const char name[])
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, name)))
+		{
+		void *p;
+		GU_OBJECT_POOL_PUSH(ipp->pool);
+		p = gu_uri_new(attr->values[0].string.text);
+		GU_OBJECT_POOL_POP(ipp->pool);
+		return p;
+		}
+	return NULL;
+	}
+
+/** Find a single value positive integer attribute, remove it, and return the integer.
+ * If the integer is not found, we return 0. */
+int ipp_claim_positive_integer(struct IPP *ipp, const char name[])
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_INTEGER, name)))
+		{
+		if(attr->values[0].integer <= 0)
+			{
+			attr->group_tag = IPP_TAG_UNSUPPORTED;
+			ipp_insert_attribute(ipp, attr);
+			return 0;
+			}
+		return attr->values[0].integer;
+		}
+	return 0;
+	}
+
+/** Find a single value string attribute, remove it, and return the string. */
+const char *ipp_claim_name(struct IPP *ipp, const char name[])
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, name)))
+		return attr->values[0].string.text;
+	return NULL;
+	}
+
+/** Find a single value keyword attribute, remove it, and return the string.
+ * The string is tested against each of the supplied posibilities and returned
+ * only if it matches one of them.  If not, it is entered as an unsupported
+ * attribute.
+ */
+const char *ipp_claim_keyword(struct IPP *ipp, const char name[], ...)
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, name)))
+		{
+		va_list va;
+		const char *p;
+		va_start(va, name);
+		while((p = va_arg(va, char*)))
+			{
+			if(strcmp(attr->values[0].string.text, p) == 0)
+				break;
+			}
+		va_end(va);
+		if(!p)
+			{
+			attr->group_tag = IPP_TAG_UNSUPPORTED;
+			ipp_insert_attribute(ipp, attr);
+			}
+		return p;
+		}
+	return NULL;
+	}
 
 /* end of file */

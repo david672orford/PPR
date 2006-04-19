@@ -422,7 +422,7 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 void ipp_get_printer_attributes(struct IPP *ipp)
 	{
 	const char *destname;
-	struct REQUEST_ATTRS *req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER);
+	struct REQUEST_ATTRS *req = request_attrs_new(ipp, REQ_SUPPORTS_PRINTER);
 	void *qip;
 	if(!(destname = request_attrs_destname(req)))
 		ipp->response_code = IPP_BAD_REQUEST;
@@ -493,39 +493,23 @@ void cups_get_classes(struct IPP *ipp)
 void cups_get_default(struct IPP *ipp)
 	{
 	struct REQUEST_ATTRS *req;
-	FILE *f;
-	gu_boolean found = FALSE;
+	void *qip;
 
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PPD_MAKE | REQUEST_ATTRS_SUPPORTS_LIMIT);
+	req = request_attrs_new(ipp, REQ_SUPPORTS_PPDS);
 
-	/* In PPR the default destination is set by defining an alias "default".
-	 * Here we open its config file, read what it points to, and return that
-	 * as the default destination.
-	 */ 
-	if((f = fopen(ALIASCONF"/default", "r")))
+	/* In PPR the default destination is set by defining an alias "default". */ 
+	if((qip = queueinfo_new_load_config(QUEUEINFO_ALIAS, "default")))
 		{
-		char *line = NULL;
-		int line_len = 80;
-		char *p;
-		while((line = gu_getline(line, &line_len, f)))
-			{
-			if((p = lmatchp(line, "ForWhat:")))
-				{
-				if(request_attrs_attr_requested(req, "printer-name"))
-					ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "printer-name", gu_strdup(p));
-				found = TRUE;
-				break;
-				}
-			}
-		if(line)
-			gu_free(line);
-		fclose(f);
+		add_queue_attributes(ipp, req, qip);
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		queueinfo_free(qip);
+		}
+	else
+		{
+		ipp->response_code = IPP_NOT_FOUND;
 		}
 
 	request_attrs_free(req);
-
-	if(!found)
-		ipp->response_code = IPP_NOT_FOUND;
 	} /* cups_get_default() */
 
 /* end of file */

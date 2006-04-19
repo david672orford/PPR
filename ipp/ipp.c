@@ -18,6 +18,7 @@
 #include "config.h"
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #ifdef INTERNATIONAL
 #include <locale.h>
 #include <libintl.h>
@@ -56,62 +57,25 @@ void debug(const char message[], ...)
 	fflush(stderr);
 	} /* end of debug() */
 
-/** validate a request, set an error if it is bad
-*/
-static gu_boolean ipp_validate_request(struct IPP *ipp)
+
+/* Serve up the PPD file for a specified printer.  The URL for printer
+ * "smith" will be "ipp://hostname/printers/smith.ppd".
+ */
+static void send_ppd(const char prnname[])
 	{
-	ipp_attribute_t *attr;
+	void *qip;
+	const void *ppd;
 
-	if(ipp->version_major != 1)
-		{
-		ipp->response_code = IPP_VERSION_NOT_SUPPORTED;
-		return FALSE;
-		}
-
-	/* Charset must be first attribute */
-	attr = ipp->request_attrs;
-	if(!attr || attr->group_tag != IPP_TAG_OPERATION
-			|| attr->value_tag != IPP_TAG_CHARSET 
-			|| attr->num_values != 1
-			|| strcmp(attr->name, "attributes-charset") != 0
+	if((qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, prnname))
+			&& (ppd = queueinfo_ppdFile(qip))
 		)
-		{
-		debug("first attribute is not attributes-charset");
-		ipp->response_code = IPP_BAD_REQUEST;
-		return FALSE;
-		}
-
-	/* Natural language must be the second */	
-	attr = attr->next;
-	if(!attr || attr->group_tag != IPP_TAG_OPERATION
-			|| attr->value_tag != IPP_TAG_LANGUAGE
-			|| attr->num_values != 1
-			|| strcmp(attr->name, "attributes-natural-language") != 0
-		)
-		{
-		debug("second attribute is not attributes-charset");
-		ipp->response_code = IPP_BAD_REQUEST;
-		return FALSE;
-		}
-
-	return TRUE;
-	}
-
-static void send_ppd(const char name[])
-	{
-	char *queue = gu_strndup(name, strlen(name) - 4);	/* leave off ".ppd" */
-	void *qip = queueinfo_new_load_config(QUEUEINFO_SEARCH, queue);
-	const void *ppd = queueinfo_ppdFile(qip);
-	if(ppd)
 		{
 		void *ppdobj;
 		char *line;
 		printf("Content-Type: text/plain\n\n");
 		ppdobj = ppdobj_new(ppd);
 		while((line = ppdobj_readline(ppdobj)))
-			{
 			printf("%s\n", line);
-			}
 		ppdobj_free(ppdobj);
 		}
 	else
@@ -120,9 +84,40 @@ static void send_ppd(const char name[])
 		printf("Content-Type: text/plain\n\n");
 		printf("\n");
 		}
-	queueinfo_free(qip);
-	gu_free_if(queue);
+
+	if(qip)
+		queueinfo_free(qip);
 	} /* end of send_ppd() */
+
+static const char *setlang(const char language[], const char charset[])
+	{
+	#ifdef INTERNATIONAL
+	char *lang, *ret;
+
+	gu_asprintf(&lang, "%s.%s", language, charset);
+
+	/* Convert "ru-ru" to "ru_RU".  This may be a Linux hack. */
+	if(strlen(lang) >= 5 && lang[2] == '-')
+		{
+		lang[2] = '_';
+		lang[3] = toupper(lang[3]);
+		lang[4] = toupper(lang[4]);
+		}
+
+	ret = setlocale(LC_ALL, lang);
+
+	gu_free(lang);
+
+	return ret;
+
+	/* Dummy implentation */
+	#else
+	if(strcmp(language, "en-us") == 0 && strcmp(charset, "utf-8") == 0)
+		return "OK";
+	else
+		return NULL;
+	#endif
+	}
 
 int main(int argc, char *argv[])
 	{
@@ -130,9 +125,7 @@ int main(int argc, char *argv[])
 	struct IPP *ipp = NULL;
 	char *root = NULL;
 	
-	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
-	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	#endif
@@ -155,7 +148,10 @@ int main(int argc, char *argv[])
 			/* This is for CUPS PPD downloading. */
 			if((p = lmatchp(path_info, "/printers/")) && gu_rmatch(p, ".ppd"))
 				{
-				send_ppd(p);
+				/* leave off ".ppd" */
+				char *prnname = gu_strndup(p, strlen(p) - 4);
+				send_ppd(prnname);
+				gu_free(prnname);
 				return 0;
 				}
 			}
@@ -218,14 +214,65 @@ int main(int argc, char *argv[])
 
 		ipp_parse_request(ipp);
 
-		/* For now, English is all we are capable of. */
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET,
-			"attributes-charset", "utf-8");
-		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
-			"attributes-natural-language", "en-us");
+		/* Simple exception handling block */
+		do	{
+			ipp_attribute_t *attr1, *attr2;
+			
+			if(ipp->version_major != 1)
+				{
+				ipp->response_code = IPP_VERSION_NOT_SUPPORTED;
+				break;
+				}
+			
+			/* Charset must be first attribute */
+			attr1 = ipp->request_attrs;
+			if(!attr1 || attr1->group_tag != IPP_TAG_OPERATION
+					|| attr1->value_tag != IPP_TAG_CHARSET 
+					|| attr1->num_values != 1
+					|| strcmp(attr1->name, "attributes-charset") != 0
+				)
+				{
+				debug("first attribute is not attributes-charset");
+				ipp->response_code = IPP_BAD_REQUEST;
+				break;
+				}
 
-		if(ipp_validate_request(ipp))
+			/* Natural language must be the second */	
+			attr2 = attr1->next;
+			if(!attr2 || attr2->group_tag != IPP_TAG_OPERATION
+					|| attr2->value_tag != IPP_TAG_LANGUAGE
+					|| attr2->num_values != 1
+					|| strcmp(attr2->name, "attributes-natural-language") != 0
+				)
+				{
+				debug("second attribute is not attributes-charset");
+				ipp->response_code = IPP_BAD_REQUEST;
+				break;
+				}
+
+			/* Do the best we can to accommodate the client's language
+			 * and character set requests.
+			 */
 			{
+			const char *language = attr2->values[0].string.text;
+			const char *charset = attr1->values[0].string.text;
+
+			if(!setlang(language, charset))
+				{
+				language = "en-us";
+				if(!setlang(language, charset))
+					{
+					ipp->response_code = IPP_CHARSET;
+					ipp->suppress_unsupported = TRUE;
+					}
+				}
+
+			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET,
+				"attributes-charset", charset);
+			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
+				"attributes-natural-language", language);
+			}
+
 			switch(ipp->operation_id)
 				{
 				case IPP_PRINT_JOB:
@@ -270,7 +317,7 @@ int main(int argc, char *argv[])
 				{
 				ipp->response_code = IPP_OPERATION_NOT_SUPPORTED;
 				}
-			} /* request is valid */
+			} while(FALSE);
 
 		switch(ipp->response_code)
 			{
@@ -280,7 +327,11 @@ int main(int argc, char *argv[])
 				break;
 			case IPP_OPERATION_NOT_SUPPORTED:
 				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
-					"status-message", _("Server does not support this IPP operation."));
+					"status-message", _("IPP server does not support this IPP operation"));
+				break;
+			case IPP_CHARSET:
+				ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
+					"status-message", _("IPP server does not support your chosen character set"));
 				break;
 			}
 

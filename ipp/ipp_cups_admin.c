@@ -75,7 +75,7 @@ void cups_get_ppds(struct IPP *ipp)
 	char *p, *f_description, *f_manufacturer;
 	int count = 0;
 
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PPD_MAKE | REQUEST_ATTRS_SUPPORTS_LIMIT);
+	req = request_attrs_new(ipp, REQ_SUPPORTS_PPDS);
 
 	if(!(f = fopen(PPD_INDEX, "r")))
 		{
@@ -140,7 +140,7 @@ void cups_add_printer(struct IPP *ipp)
 	const char *printer;
 	struct REQUEST_ATTRS *req;
 		
-	req = request_attrs_new(ipp, REQUEST_ATTRS_SUPPORTS_PRINTER | REQUEST_ATTRS_SUPPORTS_PCREATE);
+	req = request_attrs_new(ipp, REQ_SUPPORTS_PRINTER | REQ_SUPPORTS_PCREATE);
 
 	do	{
 		int retcode = 0;

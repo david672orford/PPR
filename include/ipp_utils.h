@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
-** 
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-** 
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** Last modified 17 April 2006.
+** Last modified 19 April 2006.
 */
 
 /*! \file
@@ -138,6 +120,8 @@ struct IPP
 	ipp_attribute_t *response_attrs_printer;	
 	ipp_attribute_t *response_attrs_job;	
 	ipp_attribute_t *response_attrs_unsupported;	
+
+	gu_boolean suppress_unsupported;
 	};
 
 /* IPP object methods */
@@ -147,18 +131,6 @@ void ipp_delete(struct IPP *ipp);
 int ipp_get_block(struct IPP *ipp, char **pptr);
 void ipp_set_remote_user(struct IPP *ipp, const char remote_user[]);
 void ipp_set_remote_addr(struct IPP *ipp, const char remote_addr[]);
-char ipp_get_byte(struct IPP *ipp);
-void ipp_put_byte(struct IPP *ipp, char val);
-int ipp_get_sb(struct IPP *ipp);
-int ipp_get_ss(struct IPP *ipp);
-int ipp_get_si(struct IPP *ipp);
-void ipp_put_sb(struct IPP *ipp, int val);
-void ipp_put_ss(struct IPP *ipp, int val);
-void ipp_put_si(struct IPP *ipp, int val);
-char *ipp_get_bytes(struct IPP *ipp, int len);
-void ipp_put_bytes(struct IPP *ipp, const char *data, int len);
-void ipp_put_string(struct IPP *ipp, const char string[]);
-void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr);
 void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr);
@@ -179,6 +151,11 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	;
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
+ipp_attribute_t *ipp_claim_attribute(struct IPP *ipp, int group, int tag, const char name[]);
+struct URI *ipp_claim_uri(struct IPP *ipp, const char name[]);
+int ipp_claim_positive_integer(struct IPP *ipp, const char name[]);
+const char *ipp_claim_name(struct IPP *ipp, const char name[]);
+const char *ipp_claim_keyword(struct IPP *ipp, const char name[], ...);
 
 /*==================== ipp_req_attrs.c ========================*/
 
@@ -188,7 +165,6 @@ struct REQUEST_ATTRS {
 	gu_boolean requested_attributes_all;
 	char *printer_uri;
 	struct URI *printer_uri_obj;
-	char *printer_name;
 	char *job_uri;
 	struct URI *job_uri_obj;
 	int job_id;
@@ -200,13 +176,14 @@ struct REQUEST_ATTRS {
 	};
 
 /* Use enum to define bit constants */
-enum REQUEST_ATTR_SUPPORTS {
-   	REQUEST_ATTRS_SUPPORTS_PRINTER = 1,			/* printer-name, printer-uri */
-	REQUEST_ATTRS_SUPPORTS_JOB = 2,				/* job-uri, printer-name, job_id */
-	REQUEST_ATTRS_SUPPORTS_LIMIT = 4,
-	REQUEST_ATTRS_SUPPORTS_DEVICE_CLASS = 8,	/* device-class */
-	REQUEST_ATTRS_SUPPORTS_PPD_MAKE = 16,		/* ppd-make */
-	REQUEST_ATTRS_SUPPORTS_PCREATE = 32			/* device-uri, ppd-name, etc. */
+enum REQ_SUPPORTS {
+   	REQ_SUPPORTS_PRINTER = 1,		/* printer-uri */
+   	REQ_SUPPORTS_PRINTERS = 2,		/* printer-info, printer-location, printer-type, printer-type-mask, limit */
+	REQ_SUPPORTS_JOB = 4,			/* job-uri, printer-uri, job-id */
+	REQ_SUPPORTS_JOBS = 8,			/* printer-uri, which-jobs, limit */
+	REQ_SUPPORTS_DEVICES = 16,		/* device-class, limit */
+	REQ_SUPPORTS_PPDS = 32,			/* ppd-make, limit */
+	REQ_SUPPORTS_PCREATE = 64		/* device-uri, ppd-name, etc. */
 	};
 
 struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported);
