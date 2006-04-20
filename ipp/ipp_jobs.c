@@ -194,7 +194,7 @@ void ipp_get_jobs(struct IPP *ipp)
 	limit = ipp_claim_positive_integer(ipp, "limit");
 	which_jobs = ipp_claim_keyword(ipp, "which-jobs", "not-completed", "completed", NULL);
 	
-	req = request_attrs_new(ipp, REQ_SUPPORTS_JOBS);
+	req = request_attrs_new(ipp, 0);
 
 	if(!printer_uri)	
 		{
@@ -203,6 +203,7 @@ void ipp_get_jobs(struct IPP *ipp)
 		return;
 		}
 
+	/* !!! should actually test for printer or group !!! */
 	if(!printer_uri->dirname 
 			|| (strcmp(printer_uri->dirname, "/printers") != 0 && strcmp(printer_uri->dirname, "/classes") != 0)
 			|| !printer_uri->basename)

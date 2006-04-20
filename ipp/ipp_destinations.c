@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 17 April 2006.
+** Last modified 20 April 2006.
 */
 
 /*
@@ -421,15 +403,24 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 /** Handler for IPP_GET_PRINTER_ATTRIBUTES */
 void ipp_get_printer_attributes(struct IPP *ipp)
 	{
-	const char *destname;
-	struct REQUEST_ATTRS *req = request_attrs_new(ipp, REQ_SUPPORTS_PRINTER);
+	struct REQUEST_ATTRS *req;
+	struct URI *printer_uri;
 	void *qip;
-	if(!(destname = request_attrs_destname(req)))
+
+	req = request_attrs_new(ipp, 0);
+	if(!(printer_uri = ipp_claim_uri(ipp, "printer-uri")))
 		ipp->response_code = IPP_BAD_REQUEST;
-	else if(!(qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, destname)))
+	else if(!printer_uri->dirname
+			|| strcmp(printer_uri->dirname, "/printer") != 0
+			|| !printer_uri->basename
+			|| !(qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printer_uri->basename))
+			)
 		ipp->response_code = IPP_NOT_FOUND;
 	else
 		add_queue_attributes(ipp, req, qip);
+
+	if(printer_uri)
+		gu_uri_free(printer_uri);
 	request_attrs_free(req);
 	} /* ipp_get_printer_attributes() */
 
@@ -465,10 +456,14 @@ void cups_get_printers(struct IPP *ipp)
 /* CUPS_GET_CLASSES */
 void cups_get_classes(struct IPP *ipp)
 	{
-	struct REQUEST_ATTRS *req = request_attrs_new(ipp, 0);
+	struct REQUEST_ATTRS *req;
 	DIR *dir;
 	struct dirent *direntp;
 	void *qip;
+
+	DEBUG(("cups_get_classes()"));
+
+   	req = request_attrs_new(ipp, 0);
 
 	if(!(dir = opendir(GRCONF)))
 		gu_Throw("Can't open \"%s\", errno=%d (%s)", GRCONF, errno, strerror(errno));
@@ -495,7 +490,7 @@ void cups_get_default(struct IPP *ipp)
 	struct REQUEST_ATTRS *req;
 	void *qip;
 
-	req = request_attrs_new(ipp, REQ_SUPPORTS_PPDS);
+	req = request_attrs_new(ipp, 0);
 
 	/* In PPR the default destination is set by defining an alias "default". */ 
 	if((qip = queueinfo_new_load_config(QUEUEINFO_ALIAS, "default")))
