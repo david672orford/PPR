@@ -405,19 +405,22 @@ void ipp_get_printer_attributes(struct IPP *ipp)
 	{
 	struct REQUEST_ATTRS *req;
 	struct URI *printer_uri;
+	const char *destname;
+	enum QUEUEINFO_TYPE qtype;
 	void *qip;
 
-	req = request_attrs_new(ipp, 0);
-	if(!(printer_uri = ipp_claim_uri(ipp, "printer-uri")))
+	DEBUG(("ipp_get_printer_attributes()"));
+	
+	req = request_attrs_new(ipp);
+	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		ipp->response_code = IPP_BAD_REQUEST;
-	else if(!printer_uri->dirname
-			|| strcmp(printer_uri->dirname, "/printer") != 0
-			|| !printer_uri->basename
-			|| !(qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, printer_uri->basename))
-			)
+	else if(!(destname = printer_uri_validate(printer_uri, &qtype)))
 		ipp->response_code = IPP_NOT_FOUND;
 	else
+		{
+		qip = queueinfo_new_load_config(qtype, destname);
 		add_queue_attributes(ipp, req, qip);
+		}
 
 	if(printer_uri)
 		gu_uri_free(printer_uri);
@@ -434,7 +437,7 @@ void cups_get_printers(struct IPP *ipp)
 
 	DEBUG(("cups_get_printers()"));
 	
-	req = request_attrs_new(ipp, 0);
+	req = request_attrs_new(ipp);
 	
 	if(!(dir = opendir(PRCONF)))
 		gu_Throw("Can't open \"%s\", errno=%d (%s)", PRCONF, errno, strerror(errno));
@@ -463,7 +466,7 @@ void cups_get_classes(struct IPP *ipp)
 
 	DEBUG(("cups_get_classes()"));
 
-   	req = request_attrs_new(ipp, 0);
+   	req = request_attrs_new(ipp);
 
 	if(!(dir = opendir(GRCONF)))
 		gu_Throw("Can't open \"%s\", errno=%d (%s)", GRCONF, errno, strerror(errno));
@@ -490,7 +493,7 @@ void cups_get_default(struct IPP *ipp)
 	struct REQUEST_ATTRS *req;
 	void *qip;
 
-	req = request_attrs_new(ipp, 0);
+	req = request_attrs_new(ipp);
 
 	/* In PPR the default destination is set by defining an alias "default". */ 
 	if((qip = queueinfo_new_load_config(QUEUEINFO_ALIAS, "default")))

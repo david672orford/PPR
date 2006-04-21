@@ -30,12 +30,6 @@
 #include "queueinfo.h"
 #include "ipp.h"
 
-#ifdef DEBUG
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
-#endif
-
 /** Send a debug message to the HTTP server's error log
 
 This function sends a message to stderr.  Messages sent to stderr end up in
@@ -57,6 +51,48 @@ void debug(const char message[], ...)
 	fflush(stderr);
 	} /* end of debug() */
 
+/*
+ * Examine the supplied URL and determine if it is a valid printer-uri
+ * for a printer that actually exists.  If it is, set queue_type and
+ * return the destname.
+ *
+ * We accept URIs in CUPS format:
+ *
+ * ipp://hostname/printers/printer_name
+ * ipp://hostname/classes/group_name
+ */
+const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *qtype)
+	{
+	char fname[MAX_PPR_PATH];
+	struct stat statbuf;
+
+	if(!printer_uri->dirname)		/* No directory */
+		return NULL;
+	if(!printer_uri->basename)		/* No destname */
+		return NULL;
+
+	if(strcmp(printer_uri->dirname, "/printers") == 0)
+		{
+		ppr_fnamef(fname, "%s/%s", PRCONF, printer_uri->basename);
+		debug("Trying %s", fname);
+		if(stat(fname, &statbuf) == 0)
+			{
+			*qtype = QUEUEINFO_PRINTER;
+			return printer_uri->basename;
+			}
+		}
+	else if(strcmp(printer_uri->dirname, "/classes") == 0)
+		{
+		ppr_fnamef(fname, "%s/%s", GRCONF, printer_uri->basename);
+		if(stat(fname, &statbuf) == 0)
+			{
+			*qtype = QUEUEINFO_GROUP;
+			return printer_uri->basename;
+			}
+		}
+
+	return NULL;
+	} /* printer_uri_validate() */
 
 /* Serve up the PPD file for a specified printer.  The URL for printer
  * "smith" will be "ipp://hostname/printers/smith.ppd".
@@ -89,6 +125,9 @@ static void send_ppd(const char prnname[])
 		queueinfo_free(qip);
 	} /* end of send_ppd() */
 
+/* This function attempts to set the language and character set of
+ * the C library and Gettext.  If it failes, it returns NULL.
+ */
 static const char *setlang(const char language[], const char charset[])
 	{
 	#ifdef INTERNATIONAL
@@ -249,6 +288,9 @@ int main(int argc, char *argv[])
 				ipp->response_code = IPP_BAD_REQUEST;
 				break;
 				}
+
+			/* Hide these so they don't show up in the unsupported list. */
+			ipp->request_attrs = attr2->next;
 
 			/* Do the best we can to accommodate the client's language
 			 * and character set requests.

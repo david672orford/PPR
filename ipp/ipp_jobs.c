@@ -190,7 +190,7 @@ void ipp_get_jobs(struct IPP *ipp)
 	DEBUG(("%s()", function));
 	
 	printer_uri = ipp_claim_uri(ipp, "printer-uri");
-	ipp_claim_name(ipp, "requesting-user-name");
+	ipp_claim_string(ipp, IPP_TAG_NAME, "requesting-user-name");
 	limit = ipp_claim_positive_integer(ipp, "limit");
 	which_jobs = ipp_claim_keyword(ipp, "which-jobs", "not-completed", "completed", NULL);
 	

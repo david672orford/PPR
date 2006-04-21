@@ -72,10 +72,14 @@ void cups_get_ppds(struct IPP *ipp)
 	FILE *f;
 	char *line = NULL;
 	int line_space = 256;
+	const char *ppd_make;
+	int limit;
 	char *p, *f_description, *f_manufacturer;
 	int count = 0;
 
-	req = request_attrs_new(ipp, REQ_SUPPORTS_PPDS);
+	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
+	ppd_make = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "ppd-make");
+	req = request_attrs_new(ipp);
 
 	if(!(f = fopen(PPD_INDEX, "r")))
 		{
@@ -100,11 +104,11 @@ void cups_get_ppds(struct IPP *ipp)
 			}
 
 		/* If filtering my manufacturer, skip those that don't match. */
-		if(req->ppd_make && strcmp(req->ppd_make, f_manufacturer) != 0)
+		if(ppd_make && strcmp(ppd_make, f_manufacturer) != 0)
 			continue;
 
 		/* Do not exceed the number of items limit imposed by the client. */
-		if(req->limit != -1 && count >= req->limit)
+		if(limit != 0 && count >= limit)
 			break;
 
 		/* Include those attributes which were requested. */
@@ -137,31 +141,26 @@ void cups_get_ppds(struct IPP *ipp)
  */
 void cups_add_printer(struct IPP *ipp)
 	{
-	const char *printer;
-	struct REQUEST_ATTRS *req;
-		
-	req = request_attrs_new(ipp, REQ_SUPPORTS_PRINTER | REQ_SUPPORTS_PCREATE);
+	struct URI *printer_uri;
+	const char *value;
+	int retcode = 0;
 
-	do	{
-		int retcode = 0;
+	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
+		{
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
 
-		if(!(printer = request_attrs_destname(req)))
-			{
-			ipp->response_code = IPP_BAD_REQUEST;
-			break;
-			}
+	/* This must be first in case we are creating the printer. */
+	if(retcode == 0 && (value = ipp_claim_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri")))
+		retcode = run(PPAD_PATH, "interface", printer_uri->basename, "dummy", value, NULL);
 
-		/* This must be first in case we are creating the printer. */
-		if(retcode == 0 && req->device_uri)
-			retcode = run(PPAD_PATH, "interface", printer, "dummy", req->device_uri, NULL);
-		if(retcode == 0 && req->ppd_name)
-			retcode = run(PPAD_PATH, "ppd", printer, req->ppd_name, NULL);
+	/* Set attributes */
+	if(retcode == 0 && (value = ipp_claim_string(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "ppd-name")))
+		retcode = run(PPAD_PATH, "ppd", printer_uri->basename, value, NULL);
 
-		if(retcode != 0)
-			ipp->response_code = IPP_BAD_REQUEST;
-		} while(FALSE);
-	
-	request_attrs_free(req);
+	if(retcode != 0)
+		ipp->response_code = IPP_BAD_REQUEST;
 	} /* cups_add_printer() */
 
 /* end of file */

@@ -6,6 +6,7 @@
 
 /* ipp.c */
 void debug(const char message[], ...);
+const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *qtype);
 
 /* ipp_print.c */
 void ipp_print_job(struct IPP *ipp);

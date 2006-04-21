@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 April 2006.
+** Last modified 20 April 2006.
 */
 
 #include "config.h"
@@ -346,7 +346,13 @@ int main(int argc, char *argv[])
 		printf("<ipp>\n");
 		printf("<response>\n");
 		printf("<version-number>%d.%d</version-number>\n", response->request.status.version[0], response->request.status.version[1]);
-		printf(" <status-code>0x%04x</status-code>\n", response->request.status.status_code);
+		{
+		const char *code_str;
+		if((code_str = ipp_status_code_to_str(response->request.status.status_code)))
+			printf(" <status-code>%s</status-code>\n", code_str);
+		else
+			printf(" <status-code>0x%04x</status-code>\n", response->request.status.status_code);
+		}
 		printf(" <request-id>%d</request_id>\n", response->request.status.request_id);
 	
 		/* Step thru the IPP attributes in the response.  We will keep track 

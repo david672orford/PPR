@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 April 2006.
+** Last modified 20 April 2006.
 */
 
 /*! \file
@@ -133,7 +133,7 @@ void ipp_set_remote_user(struct IPP *ipp, const char remote_user[]);
 void ipp_set_remote_addr(struct IPP *ipp, const char remote_addr[]);
 void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
-void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr);
+void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap);
 void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
 void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], int num_values, int values[]);
@@ -152,10 +152,10 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
 ipp_attribute_t *ipp_claim_attribute(struct IPP *ipp, int group, int tag, const char name[]);
-struct URI *ipp_claim_uri(struct IPP *ipp, const char name[]);
-int ipp_claim_positive_integer(struct IPP *ipp, const char name[]);
-const char *ipp_claim_name(struct IPP *ipp, const char name[]);
-const char *ipp_claim_keyword(struct IPP *ipp, const char name[], ...);
+struct URI *ipp_claim_uri(struct IPP *ipp, int group_tag, const char name[]);
+int ipp_claim_positive_integer(struct IPP *ipp, int group_tag, const char name[]);
+const char *ipp_claim_string(struct IPP *ipp, int group_tag, int value_tag, const char name[]);
+const char *ipp_claim_keyword(struct IPP *ipp, int group_tag, const char name[], ...);
 
 /*==================== ipp_req_attrs.c ========================*/
 
@@ -163,33 +163,10 @@ const char *ipp_claim_keyword(struct IPP *ipp, const char name[], ...);
 struct REQUEST_ATTRS {
 	void *requested_attributes;
 	gu_boolean requested_attributes_all;
-	char *printer_uri;
-	struct URI *printer_uri_obj;
-	char *job_uri;
-	struct URI *job_uri_obj;
-	int job_id;
-	char *device_class;
-	char *device_uri;
-	char *ppd_make;
-	char *ppd_name;
-	int limit;
 	};
 
-/* Use enum to define bit constants */
-enum REQ_SUPPORTS {
-   	REQ_SUPPORTS_PRINTER = 1,		/* printer-uri */
-   	REQ_SUPPORTS_PRINTERS = 2,		/* printer-info, printer-location, printer-type, printer-type-mask, limit */
-	REQ_SUPPORTS_JOB = 4,			/* job-uri, printer-uri, job-id */
-	REQ_SUPPORTS_JOBS = 8,			/* printer-uri, which-jobs, limit */
-	REQ_SUPPORTS_DEVICES = 16,		/* device-class, limit */
-	REQ_SUPPORTS_PPDS = 32,			/* ppd-make, limit */
-	REQ_SUPPORTS_PCREATE = 64		/* device-uri, ppd-name, etc. */
-	};
-
-struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp, int supported);
+struct REQUEST_ATTRS *request_attrs_new(struct IPP *ipp);
 void request_attrs_free(struct REQUEST_ATTRS *this);
 gu_boolean request_attrs_attr_requested(struct REQUEST_ATTRS *this, char name[]);
-char *request_attrs_destname(struct REQUEST_ATTRS *this);
-int request_attrs_jobid(struct REQUEST_ATTRS *this);
 
 /* end of file */

@@ -49,67 +49,209 @@
 #include "queueinfo.h"
 #include "ipp.h"
 
-/*
- * Given a URI, return the base filename without path.  We use this as a
- * crude way of extracting the queue name from a URI.
- */
-static const char *uri_basename(const char uri[])
+struct IPP_TO_PPR {
+	int value_tag;
+	char *name;
+	char *ppr_option;
+	char *constraints;
+	};
+
+struct IPP_TO_PPR xlate_operation[] =
 	{
-	const char *p;
-	if((p = strrchr(uri, '/')))
-		return p + 1;
-	else
-		gu_Throw("URI \"%s\" has no basename", uri);
-	}
+	{IPP_TAG_NAME, "job-name", "--title", NULL},
+	{IPP_TAG_NAME, "document-name", "--lpq-filename", NULL},
+	{IPP_TAG_ZERO}
+	};
+
+struct IPP_TO_PPR xlate_job_template[] =
+	{
+	{IPP_TAG_INTEGER, "job-priority", "--ipp-priority", "1 100"},
+	{IPP_TAG_INTEGER, "copies", "-n", "1 "},
+	{IPP_TAG_KEYWORD, "sides", "--feature", "one-sided(Duplex=None) two-sided-long-edge(Duplex=DuplexNoTumble) two-sided-short-edge(Duplex=DuplexTumble"},
+	{IPP_TAG_INTEGER, "number-up", "-N", "1 16"},
+	{IPP_TAG_ZERO}
+	};
 
 /*
  * Handle IPP_PRINT_JOB 
  */
 void ipp_print_job(struct IPP *ipp)
 	{
-	const char *printer_uri = NULL;
-	const char *username = NULL;
-	const char *args[100];			/* ppr command line */
+	struct URI *printer_uri;
+	const char *destname;
+	const char *requesting_user_name;
 	char for_whom[64];
-	int iii = 0;
+	const char *args[100];			/* ppr command line */
+	int args_i;
 		
-	{
-	ipp_attribute_t *attr;
-	for(attr = ipp->request_attrs; attr; attr = attr->next)
-		{
-		if(attr->group_tag != IPP_TAG_OPERATION)
-			continue;
-		
-		if(attr->value_tag == IPP_TAG_URI && strcmp(attr->name, "printer-uri") == 0)
-			printer_uri = attr->values[0].string.text;
-		else if(attr->value_tag == IPP_TAG_NAME && strcmp(attr->name, "requesting-user-name") == 0)
-			username = attr->values[0].string.text;
-		else
-			ipp_copy_attribute(ipp, IPP_TAG_UNSUPPORTED, attr);
-		}
-	}
-
-	if(!printer_uri)
+	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
 		ipp->response_code = IPP_BAD_REQUEST;
 		return;
 		}
-	
+	if(!(destname = printer_uri_validate(printer_uri, NULL)))
+		{
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+
+	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
+
+	/* The username will be username@host */
 	snprintf(for_whom, sizeof(for_whom),
 		"%s@%s",
-		ipp->remote_user ? ipp->remote_user : username, 
+		ipp->remote_user ? ipp->remote_user : requesting_user_name, 
 		ipp->remote_addr ? ipp->remote_addr : "?"
 		);
 
-	args[iii++] = PPR_PATH;
-	args[iii++] = "-d";
-	args[iii++] = uri_basename(printer_uri);
-	args[iii++] = "-u";
-	args[iii++] = for_whom;
-	args[iii++] = "--responder";
-	args[iii++] = "followme";
-	args[iii++] = "--responder-address";
-	args[iii++] = ipp->remote_user ? ipp->remote_user : username;
+	/* Basic arguments */
+	args_i = 0;
+	args[args_i++] = PPR_PATH;
+	args[args_i++] = "-d";
+	args[args_i++] = destname;
+	args[args_i++] = "-u";
+	args[args_i++] = for_whom;
+	args[args_i++] = "--responder";
+	args[args_i++] = "followme";
+	args[args_i++] = "--responder-address";
+	args[args_i++] = ipp->remote_user ? ipp->remote_user : requesting_user_name;
+
+	/* Additional arguments at the user's request. */
+	gu_Try
+		{
+		ipp_attribute_t *attr;
+		for(attr = ipp->request_attrs; attr; attr = attr->next)
+			{
+			if(attr->group_tag != IPP_TAG_OPERATION)
+				break;
+			if(strcmp(attr->name, "job-name") == 0)
+				{
+				if(attr->value_tag != IPP_TAG_NAME || attr->num_values != 1)
+					gu_Throw(attr->name);
+				args[args_i++] = "--title";
+				args[args_i++] = attr->values[0].string.text;
+				continue;
+				}
+			if(strcmp(attr->name, "document-name") == 0)
+				{
+				if(attr->value_tag != IPP_TAG_NAME || attr->num_values != 1)
+					gu_Throw(attr->name);
+				args[args_i++] = "--lpq-filename";
+				args[args_i++] = attr->values[0].string.text;
+				continue;
+				}
+			if(strcmp(attr->name, "compression") == 0)
+				{
+
+				continue;
+				}
+			if(strcmp(attr->name, "document-format") == 0)
+				{
+
+				continue;
+				}
+			attr->group_tag = IPP_TAG_UNSUPPORTED;
+			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
+			ipp_insert_attribute(ipp, attr);
+			}
+		for(attr = ipp->request_attrs; attr; attr = attr->next)
+			{
+			if(attr->group_tag != IPP_TAG_JOB)
+				break;
+			if(strcmp(attr->name, "job-priority") == 0)
+				{
+				if(attr->value_tag != IPP_TAG_INTEGER || attr->num_values != 1)
+					gu_Throw(attr->name);
+				if(attr->values[0].integer < 1 || attr->values[0].integer > 100)
+					{
+					attr->group_tag = IPP_TAG_UNSUPPORTED;
+					ipp_insert_attribute(ipp, attr);
+					}
+				else
+					{
+					char *temp;		/* !!! memory leak !!! */
+					gu_asprintf(&temp, "%d", attr->values[0].integer);
+					args[args_i++] = "--ipp-priority";
+					args[args_i++] = temp;
+					}
+				continue;
+				}
+			if(strcmp(attr->name, "copies") == 0)
+				{
+				if(attr->value_tag != IPP_TAG_INTEGER || attr->num_values != 1)
+					gu_Throw(attr->name);
+				if(attr->values[0].integer < 1)
+					{
+					attr->group_tag = IPP_TAG_UNSUPPORTED;
+					ipp_insert_attribute(ipp, attr);
+					}
+				else
+					{
+					char *temp;		/* !!! memory leak !!! */
+					gu_asprintf(&temp, "%d", attr->values[0].integer);
+					args[args_i++] = "--copies";
+					args[args_i++] = temp;
+					}
+				continue;
+				}
+			if(strcmp(attr->name, "sides") == 0)
+				{
+				if(attr->value_tag != IPP_TAG_KEYWORD || attr->num_values != 1)
+					gu_Throw(attr->name);
+				if(strcmp("one-sided", attr->values[0].string.text) == 0)
+					{
+					args[args_i++] = "--feature";
+					args[args_i++] = "Duplex=None";
+					}
+				else if(strcmp("two-sided-long-edge", attr->values[0].string.text) == 0)
+					{
+					args[args_i++] = "--feature";
+					args[args_i++] = "Duplex=DuplexNoTumble";
+					}
+				else if(strcmp("two-sided-short-edge", attr->values[0].string.text) == 0)
+					{
+					args[args_i++] = "--feature";
+					args[args_i++] = "Duplex=DuplexTumble";
+					}
+				else
+					{
+					attr->group_tag = IPP_TAG_UNSUPPORTED;
+					ipp_insert_attribute(ipp, attr);
+					}
+				continue;
+				}
+			if(strcmp(attr->name, "number-up") == 0)
+				{
+				if(attr->value_tag != IPP_TAG_INTEGER || attr->num_values != 1)
+					gu_Throw(attr->name);
+				if(attr->values[0].integer < 1 || attr->values[0].integer > 16)
+					{
+					attr->group_tag = IPP_TAG_UNSUPPORTED;
+					ipp_insert_attribute(ipp, attr);
+					}
+				else
+					{
+					char *temp;		/* !!! memory leak !!! */
+					gu_asprintf(&temp, "%d", attr->values[0].integer);
+					args[args_i++] = "-N";
+					args[args_i++] = temp;
+					}
+				continue;
+				}
+			attr->group_tag = IPP_TAG_UNSUPPORTED;
+			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
+			ipp_insert_attribute(ipp, attr);
+			}
+		/* Delete all processed attributes from the request. */
+		ipp->request_attrs = attr;
+		}
+	gu_Catch
+		{
+		debug("attribute %s bad", gu_exception);
+		ipp->response_code = IPP_BAD_REQUEST;
+		ipp->suppress_unsupported = TRUE;
+		return;
+		}
 
 	{
 	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
@@ -142,9 +284,9 @@ void ipp_print_job(struct IPP *ipp)
 			
 			snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
 
-			args[iii++] = "--print-id-to-fd";
-			args[iii++] = fd_str;
-			args[iii++] = NULL;
+			args[args_i++] = "--print-id-to-fd";
+			args[args_i++] = fd_str;
+			args[args_i++] = NULL;
 
 			execv(PPR_PATH, (char**)args);
 	
@@ -190,7 +332,8 @@ void ipp_print_job(struct IPP *ipp)
 		
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
-		ipp_add_printf(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "%s/%d", printer_uri, jobid);
+		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "/jobs/%d", jobid);
+
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
 		}
 	gu_Final

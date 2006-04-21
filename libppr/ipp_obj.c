@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 April 2006.
+** Last modified 20 April 2006.
 */
 
 /*! \file */
@@ -611,7 +611,7 @@ static void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 	} /* end of ipp_put_attr() */
 
 /* Add an attribute to the IPP response. */
-static void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap)
+void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap)
 	{
 	ipp_attribute_t **ap1;
 
@@ -668,14 +668,6 @@ static ipp_attribute_t *ipp_new_attribute(struct IPP *ipp, int group, int tag, c
 
 	return ap;
 	} /* end of ipp_add_attr() */
-
-/** copy an attribute from the request to the response
- */
-void ipp_copy_attribute(struct IPP *ipp, int group, ipp_attribute_t *attr)
-	{
-	ipp_attribute_t *new_attr = ipp_new_attribute(ipp, group, attr->value_tag, attr->name, attr->num_values);
-	memcpy(new_attr->values, attr->values, sizeof(attr->values[0]) * attr->num_values);
-	}
 
 /** add an object divider to the IPP response
 */
@@ -989,26 +981,40 @@ static ipp_attribute_t *ipp_claim_attribute_single_value(struct IPP *ipp, int gr
 	}
 
 /** Find a single value URI attribute, remove it, and return a gu_uri object. */
-struct URI *ipp_claim_uri(struct IPP *ipp, const char name[])
+struct URI *ipp_claim_uri(struct IPP *ipp, int group_tag, const char name[])
 	{
 	ipp_attribute_t *attr;
-	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_URI, name)))
+	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, IPP_TAG_URI, name)))
 		{
-		void *p;
+		struct URI *uri;
 		GU_OBJECT_POOL_PUSH(ipp->pool);
-		p = gu_uri_new(attr->values[0].string.text);
+		uri = gu_uri_new(attr->values[0].string.text);
+		#ifdef DEBUG
+		if(uri && ipp->debug_level >= 5)
+			{
+			debug("URI = {");
+			debug("    method->\"%s\",", uri->method ? uri->method : "");
+			debug("    node->\"%s\",", uri->node ? uri->node : "");
+			debug("    port->%d,", uri->port);
+			debug("    path->\"%s\",", uri->path ? uri->path : "");
+			debug("    dirname->\"%s\",", uri->dirname ? uri->dirname : "");
+			debug("    basename->\"%s\",", uri->basename ? uri->basename : "");
+			debug("    query->\"%s\",", uri->query ? uri->query : "");
+			debug("    }");
+			}
+		#endif
 		GU_OBJECT_POOL_POP(ipp->pool);
-		return p;
+		return uri;
 		}
 	return NULL;
 	}
 
 /** Find a single value positive integer attribute, remove it, and return the integer.
  * If the integer is not found, we return 0. */
-int ipp_claim_positive_integer(struct IPP *ipp, const char name[])
+int ipp_claim_positive_integer(struct IPP *ipp, int group_tag, const char name[])
 	{
 	ipp_attribute_t *attr;
-	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_INTEGER, name)))
+	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, IPP_TAG_INTEGER, name)))
 		{
 		if(attr->values[0].integer <= 0)
 			{
@@ -1022,10 +1028,10 @@ int ipp_claim_positive_integer(struct IPP *ipp, const char name[])
 	}
 
 /** Find a single value string attribute, remove it, and return the string. */
-const char *ipp_claim_name(struct IPP *ipp, const char name[])
+const char *ipp_claim_string(struct IPP *ipp, int group_tag, int value_tag, const char name[])
 	{
 	ipp_attribute_t *attr;
-	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, name)))
+	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, value_tag, name)))
 		return attr->values[0].string.text;
 	return NULL;
 	}
@@ -1035,10 +1041,10 @@ const char *ipp_claim_name(struct IPP *ipp, const char name[])
  * only if it matches one of them.  If not, it is entered as an unsupported
  * attribute.
  */
-const char *ipp_claim_keyword(struct IPP *ipp, const char name[], ...)
+const char *ipp_claim_keyword(struct IPP *ipp, int group_tag, const char name[], ...)
 	{
 	ipp_attribute_t *attr;
-	if((attr = ipp_claim_attribute_single_value(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, name)))
+	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, IPP_TAG_KEYWORD, name)))
 		{
 		va_list va;
 		const char *p;

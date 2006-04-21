@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 18 April 2006.
+** Last modified 20 April 2006.
 */
 
 /*! \file */
@@ -162,6 +162,23 @@ const char *ipp_tag_to_str(int tag)
 
 		default:
 			return "unrecognized tag";
+		}
+	} /* ipp_tag_to_str() */
+
+/** Convert an IPP status code to a string
+ */
+const char *ipp_status_code_to_str(int status_code)
+	{
+	switch(status_code)
+		{
+		case IPP_OK:
+			return "success-ok";
+		case IPP_BAD_REQUEST:
+			return "client-error-bad-request";
+		case IPP_NOT_FOUND:
+			return "client-error-not-found";
+		default:
+			return NULL;
 		}
 	}
 
