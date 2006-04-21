@@ -673,7 +673,14 @@ static ipp_attribute_t *ipp_new_attribute(struct IPP *ipp, int group, int tag, c
 */
 void ipp_add_end(struct IPP *ipp, int group)
 	{
-	ipp_new_attribute(ipp, group, IPP_TAG_END, NULL, 1);	/* !!! is 1 correct? !!! */
+	ipp_new_attribute(ipp, group, IPP_TAG_END, NULL, 0);
+	}
+
+/** add an item with an out-of-band value
+*/
+void ipp_add_out_of_band(struct IPP *ipp, int group_tag, int value_tag, const char name[])
+	{
+	ipp_new_attribute(ipp, group_tag, value_tag, name, 0);
 	}
 
 /** add an integer to the IPP response

@@ -136,6 +136,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap);
 void ipp_add_end(struct IPP *ipp, int group);
 void ipp_add_integer(struct IPP *ipp, int group, int tag, const char name[], int value);
+void ipp_add_out_of_band(struct IPP *ipp, int group_tag, int value_tag, const char name[]);
 void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], int num_values, int values[]);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);
 void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[]);

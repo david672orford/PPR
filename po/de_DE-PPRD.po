@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-14 12:16-0400\n"
+"POT-Creation-Date: 2006-04-21 14:56-0400\n"
 "PO-Revision-Date: 2004-10-21 18:17+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -16,18 +16,18 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../pprd/pprd.c:307 ../pprd/pprd.c:350 ../pprd/pprd_mainsup.c:114
+#: ../pprd/pprd.c:289 ../pprd/pprd.c:332 ../pprd/pprd_mainsup.c:114
 #: ../pprd/pprd_mainsup.c:119 ../pprd/pprd_mainsup.c:122
 #, fuzzy, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../pprd/pprd.c:345
+#: ../pprd/pprd.c:327
 #, fuzzy, c-format
 msgid "%s(): write to client failed, errno=%d (%s)"
 msgstr "%s: setgid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../pprd/pprd.c:347
+#: ../pprd/pprd.c:329
 #, c-format
 msgid "%s(): write() wrote %d of %d bytes to client"
 msgstr ""
@@ -319,21 +319,27 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
 
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s: Der Nutzer \"%s\" existiert nicht.\n"
+#, fuzzy
+#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
+#~ msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
 
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s: Die Gruppe \"%s\" existiert nicht.\n"
+#~ msgid "%s: setuid(0) did not fail!\n"
+#~ msgstr "%s: setuid(0) nicht fehlgeschlagen!\n"
 
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
+#~ msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#~ msgid ""
-#~ "%s: Security problem: euid = %ld\n"
-#~ "(This program should be setuid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s: Sicherheitsproblem: euid = %ld\n"
-#~ "(Dieses Programm muß setuid %ld (%s) sein.)\n"
+#~ msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
+#~ msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s: Nur \"%s\" oder \"root\" dürfen %s sterten.\n"
 
 #~ msgid ""
 #~ "%s: Security problem: egid = %ld\n"
@@ -342,24 +348,18 @@ msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht
 #~ "%s: Sicherheitsproblem: egid = %ld\n"
 #~ "(Dieses Programm muß setgid %ld (%s) sein.)\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s: Nur \"%s\" oder \"root\" dürfen %s sterten.\n"
+#~ msgid ""
+#~ "%s: Security problem: euid = %ld\n"
+#~ "(This program should be setuid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s: Sicherheitsproblem: euid = %ld\n"
+#~ "(Dieses Programm muß setuid %ld (%s) sein.)\n"
 
-#~ msgid "%s: setgroups(\"%s\", %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s: Warnung: Die primäre Gruppe für den Nutzer \"%s\" ist nicht \"%s\".\n"
 
-#~ msgid "%s: setuid(%ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setuid(%ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s: Die Gruppe \"%s\" existiert nicht.\n"
 
-#~ msgid "%s: setreuid(%ld, %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setreuid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s: setregid(%ld, %ld) failed, errno=%d (%s)\n"
-#~ msgstr "%s: setregid(%ld, %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
-
-#~ msgid "%s: setuid(0) did not fail!\n"
-#~ msgstr "%s: setuid(0) nicht fehlgeschlagen!\n"
-
-#, fuzzy
-#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
-#~ msgstr "Der Drucker \"%s\" war für %d Minuten anderweitig beschäftigt oder nicht erreichbar.\n"
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s: Der Nutzer \"%s\" existiert nicht.\n"

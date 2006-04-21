@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 18 April 2006.
+** Last modified 21 April 2006.
 */
 
 /*
@@ -74,10 +74,10 @@ const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *q
 	if(strcmp(printer_uri->dirname, "/printers") == 0)
 		{
 		ppr_fnamef(fname, "%s/%s", PRCONF, printer_uri->basename);
-		debug("Trying %s", fname);
 		if(stat(fname, &statbuf) == 0)
 			{
-			*qtype = QUEUEINFO_PRINTER;
+			if(qtype)
+				*qtype = QUEUEINFO_PRINTER;
 			return printer_uri->basename;
 			}
 		}
@@ -86,13 +86,25 @@ const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *q
 		ppr_fnamef(fname, "%s/%s", GRCONF, printer_uri->basename);
 		if(stat(fname, &statbuf) == 0)
 			{
-			*qtype = QUEUEINFO_GROUP;
+			if(qtype)
+				*qtype = QUEUEINFO_GROUP;
 			return printer_uri->basename;
 			}
 		}
 
 	return NULL;
 	} /* printer_uri_validate() */
+
+const char *destname_to_uri_template(const char destname[])
+	{
+	char fname[MAX_PPR_PATH];
+	struct stat statbuf;
+	ppr_fnamef(fname, "%s/%s", GRCONF, destname);
+	if(stat(fname, &statbuf) == 0)
+		return "/classes/%s";
+	else
+		return "/printers/%s";
+	}
 
 /* Serve up the PPD file for a specified printer.  The URL for printer
  * "smith" will be "ipp://hostname/printers/smith.ppd".
@@ -202,7 +214,6 @@ int main(int argc, char *argv[])
 	gu_Try {
 		char *p, *path_info;
 		int content_length;
-		void (*p_handler)(struct IPP *ipp);
 
 		/* Do basic input validation */
 		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
@@ -256,6 +267,7 @@ int main(int argc, char *argv[])
 		/* Simple exception handling block */
 		do	{
 			ipp_attribute_t *attr1, *attr2;
+			void (*p_handler)(struct IPP *ipp);
 			
 			if(ipp->version_major != 1)
 				{
@@ -315,19 +327,95 @@ int main(int argc, char *argv[])
 				"attributes-natural-language", language);
 			}
 
+			p_handler = NULL;
 			switch(ipp->operation_id)
 				{
 				case IPP_PRINT_JOB:
 					p_handler = ipp_print_job;
 					break;
-				case IPP_GET_PRINTER_ATTRIBUTES:
-					p_handler = ipp_get_printer_attributes;
+				case IPP_PRINT_URI:
+					/* not implemented */
+					break;
+				case IPP_VALIDATE_JOB:
+					/* not implemented */
+					break;
+				case IPP_CREATE_JOB:
+					/* not implemented */
+					break;
+				case IPP_SEND_DOCUMENT:
+					/* not implemented */
+					break;
+				case IPP_SEND_URI:
+					/* not implemented */
+					break;
+				case IPP_CANCEL_JOB:
+					p_handler = ipp_cancel_job;
+					break;
+				case IPP_GET_JOB_ATTRIBUTES:
+					/* not implemented */
 					break;
 				case IPP_GET_JOBS:
 					p_handler = ipp_get_jobs;
 					break;
+				case IPP_GET_PRINTER_ATTRIBUTES:
+					p_handler = ipp_get_printer_attributes;
+					break;
+				case IPP_HOLD_JOB:
+					p_handler = ipp_hold_job;
+					break;
+				case IPP_RELEASE_JOB:
+					p_handler = ipp_release_job;
+					break;
+				case IPP_RESTART_JOB:
+					/* not implemented */
+					break;
+				case IPP_PAUSE_PRINTER:
+					/* not implemented */
+					break;
+				case IPP_RESUME_PRINTER:
+					/* not implemented */
+					break;
+				case IPP_PURGE_JOBS:
+					/* not implemented */
+					break;
+				case IPP_SET_PRINTER_ATTRIBUTES:
+					/* not implemented */
+					break;		
+				case IPP_SET_JOB_ATTRIBUTES:
+					/* not implemented */
+					break;
+				case IPP_GET_PRINTER_SUPPORTED_VALUES:
+					/* not implemented */
+					break;
 				case CUPS_GET_DEFAULT:
 					p_handler = cups_get_default;
+					break;
+				case CUPS_GET_PRINTERS:
+					p_handler = cups_get_printers;
+					break;
+				case CUPS_ADD_PRINTER:
+					p_handler = cups_add_printer;
+					break;
+				case CUPS_DELETE_PRINTER:
+					/* not implemented */
+					break;
+				case CUPS_GET_CLASSES:
+					p_handler = cups_get_classes;
+					break;
+				case CUPS_ADD_CLASS:
+					/* not implemented */
+					break;
+				case CUPS_DELETE_CLASS:
+					/* not implemented */
+					break;
+				case CUPS_ACCEPT_JOBS:
+					/* not implemented */
+					break;
+				case CUPS_REJECT_JOBS:
+					/* not implemented */
+					break;
+				case CUPS_SET_DEFAULT:
+					/* not implemented */
 					break;
 				case CUPS_GET_DEVICES:
 					p_handler = cups_get_devices;
@@ -335,17 +423,8 @@ int main(int argc, char *argv[])
 				case CUPS_GET_PPDS:
 					p_handler = cups_get_ppds;
 					break;
-				case CUPS_ADD_PRINTER:
-					p_handler = cups_add_printer;
-					break;
-				case CUPS_GET_CLASSES:
-					p_handler = cups_get_classes;
-					break;
-				case CUPS_GET_PRINTERS:
-					p_handler = cups_get_printers;
-					break;
-				default:
-					p_handler = NULL;
+				case CUPS_MOVE_JOB:
+					/* not implemented */
 					break;
 				}
 	

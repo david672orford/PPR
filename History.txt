@@ -10052,7 +10052,7 @@ no final tarball was released.
 
 * cron/cron_run_daily.c: removed since never completed.
 
-* libgu/gu_sscanf() changed %t to %U to avoid colision with ANSI C99.
+* libgu/gu_sscanf() changed %t to %U to avoid collision with ANSI C99.
 
 * libppr/ipp_obj.c: changed debugging code to print the request and
   the response in approximately the XML format used by ppr-xml-ipp-client.
@@ -10064,4 +10064,8 @@ no final tarball was released.
 
 * libgu/gu_uri.c: added dirname to structure.
 
+* libgu/gu_utf8_printf.c: added support for %ld.
+
+* ppop/: fixed "ppop qquery" command to apply copies to page computations
+  after computing the number of sides or sheets in a job.
 

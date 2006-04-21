@@ -7,12 +7,16 @@
 /* ipp.c */
 void debug(const char message[], ...);
 const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *qtype);
+const char *destname_to_uri_template(const char destname[]);
 
 /* ipp_print.c */
 void ipp_print_job(struct IPP *ipp);
 	
 /* ipp_jobs.c */
 void ipp_get_jobs(struct IPP *ipp);
+void ipp_cancel_job(struct IPP *ipp);
+void ipp_hold_job(struct IPP *ipp);
+void ipp_release_job(struct IPP *ipp);
 
 /* ipp_cups_admin.c */
 void cups_get_devices(struct IPP *ipp);

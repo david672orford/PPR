@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 April 2006.
+** Last modified 21 April 2006.
 */
 
 /*! \file
@@ -81,6 +81,31 @@ int ipp_str_to_tag(const char str[]);
 #define IPP_SET_PRINTER_ATTRIBUTES 0x0013
 #define IPP_SET_JOB_ATTRIBUTES 0x0014
 #define IPP_GET_PRINTER_SUPPORTED_VALUES 0x0015
+#define IPP_CREATE_PRINTER_SUBSCRIPTION 0x0016
+#define IPP_CREATE_JOB_SUBSCRIPTION 0x0017
+#define IPP_GET_SUBSCRIPTION_ATTRIBUTES 0x0018
+#define IPP_GET_SUBSCRIPTIONS 0x0019
+#define IPP_RENEW_SUBSCRIPTION 0x001a
+#define IPP_CANCEL_SUBSCRIPTION 0x001b
+#define IPP_GET_NOTIFICATIONS 0x001c
+#define IPP_SEND_NOTIFICATIONS 0x001d
+#define IPP_GET_PRINT_SUPPORT_FILES 0x0021
+#define IPP_ENABLE_PRINTER 0x0022
+#define IPP_DISABLE_PRINTER 0x0023
+#define IPP_PAUSE_PRINTER_AFTER_CURRENT_JOB 0x0024
+#define IPP_HOLD_NEW_JOBS 0x0025
+#define IPP_RELEASE_HELD_NEW_JOBS 0x0026
+#define IPP_DEACTIVATE_PRINTER 0x0027
+#define IPP_ACTIVATE_PRINTER 0x0028
+#define IPP_RESTART_PRINTER 0x0029
+#define IPP_SHUTDOWN_PRINTER 0x002a
+#define IPP_STARTUP_PRINTER 0x002b
+#define IPP_REPROCESS_JOB 0x002c
+#define IPP_CANCEL_CURRENT_JOB 0x002d
+#define IPP_SUSPEND_CURRENT_JOB 0x002e
+#define IPP_RESUME_JOB 0x002f
+#define IPP_PROMOTE_JOB 0x0030
+#define IPP_SCHEDULE_JOB_AFTER 0x0031
 
 /* CUPS IPP Extension Operations */
 #define CUPS_GET_DEFAULT 0x4001
@@ -96,6 +121,7 @@ int ipp_str_to_tag(const char str[]);
 #define CUPS_GET_DEVICES 0x400b
 #define CUPS_GET_PPDS 0x400c
 #define CUPS_MOVE_JOB 0x400d
+#define CUPS_AUTHENTICATE_JOB 0x400e
 
 /*
  * IPP request result codes

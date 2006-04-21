@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 13 April 2006.
+** Last modified 21 April 2006.
 */
 
 /*
@@ -66,10 +48,9 @@ static int ipp_cancel_job(const char command_args[])
 		if(queue[i].id == jobid)
 			{
 			int prnid;
-
-			/* !!! Access checking should go here !!! */
 			
-			if((prnid = queue[i].status) >= 0)	/* if pprdrv is active */
+			/* If pprdrv is active, */
+			if((prnid = queue[i].status) >= 0)
 				{
 				/* If it is printing we can say it is now canceling, but
 				   if it is halting or stopping we don't want to mess with
@@ -94,7 +75,7 @@ static int ipp_cancel_job(const char command_args[])
 				/* nothing to do */
 				}
 
-			/* If a hold is in progress, do what we woudld do if the job were being
+			/* If a hold is in progress, do what we would do if the job were being
 			   printed, but without the need to kill() pprdrv again.  This
 			   is tough because the queue doesn't contain the printer
 			   id anymore. */
@@ -146,6 +127,119 @@ static int ipp_cancel_job(const char command_args[])
 	return IPP_OK;
 	} /* ipp_cancel_job() */
 
+/* Handler for IPP_HOLD_JOB
+*/
+static int ipp_hold_job(const char command_args[])
+	{
+	const char *function = "ipp_hold_job";
+	int job_id;
+	int x;
+	int retcode = IPP_OK;
+
+	job_id = atoi(command_args);
+
+	lock();										/* lock the queue */
+
+	for(x=0; x < queue_entries; x++)			/* and search it */
+		{
+		if(queue[x].id != job_id)
+			continue;
+
+		switch(queue[x].status)
+			{
+			case STATUS_WAITING:		/* if not printing, */
+			case STATUS_WAITING4MEDIA:	/* just quitely go to `hold' */
+				queue_p_job_new_status(&queue[x], STATUS_HELD);
+				break;
+			case STATUS_HELD:			/* if already held, nothing to do */
+				break;
+			case STATUS_ARRESTED:		/* can't hold an arrested job */
+				retcode = IPP_NOT_POSSIBLE;
+				break;
+			case STATUS_SEIZING:		/* already going to held */
+				break;
+			case STATUS_CANCEL:			/* if being canceled, hijack the operation */
+				printer_new_status(&printers[queue[x].status], PRNSTATUS_SEIZING);
+				printers[queue[x].status].cancel_job = FALSE;
+				printers[queue[x].status].hold_job = TRUE;
+				queue_p_job_new_status(&queue[x], STATUS_SEIZING);
+				break;
+			default:						/* printing? */
+				if(queue[x].status >= 0)
+					{
+					int prnid = queue[x].status;
+
+					queue_p_job_new_status(&queue[x], STATUS_SEIZING);
+					printer_new_status(&printers[prnid], PRNSTATUS_SEIZING);
+					printers[prnid].hold_job = TRUE;
+
+					DODEBUG_PPOPINT(("killing pprdrv (printer=%s, pid=%ld)", destid_to_name(prnid), (long)printers[prnid].job_pid));
+					if(printers[prnid].job_pid <= 0)
+						error("%s(): assertion failed, printers[%d].pid = %ld", function, prnid, (long)printers[prnid].job_pid);
+					else
+						pprdrv_kill(prnid);
+					}
+				else
+					{
+					retcode = IPP_INTERNAL_ERROR;
+					}
+				break;
+			}
+
+		break;	/* we found it */
+		}
+
+	unlock();
+
+	return retcode;
+	} /* end of ipp_hold_job() */
+
+/* Handler for IPP_RELEASE_JOB
+*/
+static int ipp_release_job(const char command_args[])
+	{
+	int job_id;
+	int x;
+	int retcode = IPP_OK;
+
+	job_id = atoi(command_args);
+
+	lock();										/* lock the queue */
+
+	for(x=0; x < queue_entries; x++)			/* and search it */
+		{
+		if(queue[x].id != job_id)
+			continue;
+
+		switch(queue[x].status)
+			{
+			case STATUS_HELD:
+				queue_p_job_new_status(&queue[x], STATUS_WAITING);
+				media_set_notnow_for_job(&queue[x], TRUE);
+				if(queue[x].status == STATUS_WAITING)
+					printer_try_start_suitable_4_this_job(&queue[x]);
+				break;
+			case STATUS_ARRESTED:
+				retcode = IPP_NOT_POSSIBLE;
+				break;
+			case STATUS_SEIZING:			/* in transition to held */
+				/* This should be fixed */
+				retcode = IPP_NOT_POSSIBLE;
+				break;
+			case STATUS_WAITING:			/* not held */
+			case STATUS_WAITING4MEDIA:
+			default:						/* printing */
+				break;
+			}
+
+		break;
+		}
+
+	unlock();
+
+	return retcode;
+	} /* end of ipp_release_job() */
+
 int ipp_dispatch(const char command[])
 	{
 	const char function[] = "ipp_dispatch";
@@ -170,13 +264,19 @@ int ipp_dispatch(const char command[])
 		case IPP_CANCEL_JOB:
 			result_code = ipp_cancel_job(p);
 			break;
+		case IPP_HOLD_JOB:
+			result_code = ipp_hold_job(p);
+			break;
+		case IPP_RELEASE_JOB:
+			result_code = ipp_release_job(p);
+			break;
 		default:
 			error("unsupported operation: 0x%.2x (%s)", operation_id, ipp_operation_id_to_str(operation_id));
 			result_code = IPP_OPERATION_NOT_SUPPORTED;
 			break;
 		}
 
-	DODEBUG_IPP(("%s(): done", function));
+	DODEBUG_IPP(("%s(): done, result = 0x%04x", function, result_code));
 	return result_code;
 	} /* end of ipp_dispatch() */
 

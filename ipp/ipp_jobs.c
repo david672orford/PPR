@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 18 April 2006.
+** Last modified 21 April 2006.
 */
 
 /*
@@ -180,6 +180,8 @@ void ipp_get_jobs(struct IPP *ipp)
 	{
 	const char function[] = "ipp_get_jobs";
 	struct URI *printer_uri;
+	const char *destname;
+	const char *requesting_user_name;
 	int limit;
 	struct REQUEST_ATTRS *req;
 	const char *which_jobs;
@@ -189,40 +191,35 @@ void ipp_get_jobs(struct IPP *ipp)
 
 	DEBUG(("%s()", function));
 	
-	printer_uri = ipp_claim_uri(ipp, "printer-uri");
-	ipp_claim_string(ipp, IPP_TAG_NAME, "requesting-user-name");
-	limit = ipp_claim_positive_integer(ipp, "limit");
-	which_jobs = ipp_claim_keyword(ipp, "which-jobs", "not-completed", "completed", NULL);
-	
-	req = request_attrs_new(ipp, 0);
-
-	if(!printer_uri)	
+	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
 		DEBUG(("%s(): no printer-uri", function));
 		ipp->response_code = IPP_BAD_REQUEST;
 		return;
 		}
 
-	/* !!! should actually test for printer or group !!! */
-	if(!printer_uri->dirname 
-			|| (strcmp(printer_uri->dirname, "/printers") != 0 && strcmp(printer_uri->dirname, "/classes") != 0)
-			|| !printer_uri->basename)
+	if(!(destname = printer_uri_validate(printer_uri, NULL)))
 		{
 		DEBUG(("%s(): not a known printer", function));
 		ipp->response_code = IPP_NOT_FOUND;
 		return;
 		}
 
+	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
+	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
+	which_jobs = ipp_claim_keyword(ipp, IPP_TAG_OPERATION, "which-jobs", "not-completed", "completed", NULL);
+	req = request_attrs_new(ipp);
+
 	queue = ipp_load_queue(
-			printer_uri->basename,
+			destname,
 		   	&queue_num_entries,
 		   	which_jobs && strcmp(which_jobs, "completed") == 0
 			);
 	DEBUG(("%s(): %d entries", function, queue_num_entries));
 
 	/* If the number of entries found exceeds the limit, clip. */
-	if(req->limit != -1 && queue_num_entries > req->limit)
-		queue_num_entries = req->limit;
+	if(limit != 0 && queue_num_entries > limit)
+		queue_num_entries = limit;
 
 	for(iii=0; iii < queue_num_entries; iii++)
 		{
@@ -306,34 +303,47 @@ void ipp_get_jobs(struct IPP *ipp)
 			}
 
 		/* job-printer-up-time */
+		if(request_attrs_attr_requested(req, "printer-up-time"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+				"printer-up-time", time(NULL));
+			}
 
-		/* printer-uri */
+		/* printer-uri (probably spurious) */
 
-		/* Derived from "ppop lpq" */
 		if(request_attrs_attr_requested(req, "job-originating-user-name"))
 			{
 			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME,
 				"job-originating-user-name", gu_strdup(qentryfile.user));
 			}
 
-		/* Derived from "ppop lpq" */
-		/* Not correct */
 		if(request_attrs_attr_requested(req, "job-name"))
 			{
 			const char *ptr;
-			if(!(ptr = qentryfile.lpqFileName))
-				if(!(ptr = qentryfile.Title))
+			if(!(ptr = qentryfile.Title))
+				if(!(ptr = qentryfile.lpqFileName))
 					ptr = "";
 			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr));
 			}
 
 		/* document-format */
 
-		/* job-sheets */
+		/* job-sheets (RFC 2911 4.2.3, banner pages) */
 		
-		/* job-hold-until */
+		if(request_attrs_attr_requested(req, "job-hold-until"))
+			{
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_KEYWORD,
+				"job-hold-until",
+				qentryfile.spool_state.status == STATUS_HELD ? "indefinite" : "no-hold"
+				);
+			}
 
 		/* job-priority */
+		if(request_attrs_attr_requested(req, "job-priority"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+				"job-priority", queue[iii].priority);
+			}
 
 		/* job-originating-host-name */
 		
@@ -349,12 +359,21 @@ void ipp_get_jobs(struct IPP *ipp)
 				"job-state", job_state);
 			}
 
-		/* job-media-sheets-completed */
+		/* Not yet available */
+		#if 0
+		if(request_attrs_attr_requested(req, "job-media-sheets-completed"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+				"job-media-sheets-completed",
+				???
+				);
+			}
+		#endif
 
 		if(request_attrs_attr_requested(req, "job-printer-uri"))
 			{
 			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
-				"job-printer-uri", "/printers/%s", queue[iii].destname);
+				"job-printer-uri", destname_to_uri_template(queue[iii].destname), queue[iii].destname);
 			}
 
 		/* Derived from "ppop lpq" */
@@ -367,6 +386,11 @@ void ipp_get_jobs(struct IPP *ipp)
 			}
 
 		/* time-at-creation */
+		if(request_attrs_attr_requested(req, "time-at-creation"))
+			{
+			ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+				"time-at-creation", qentryfile.time);
+			}
 
 		/* time-at-processing */
 
@@ -377,7 +401,50 @@ void ipp_get_jobs(struct IPP *ipp)
 			ipp_add_strings(ipp, IPP_TAG_JOB, IPP_TAG_KEYWORD,
 				"job-state-reasons", job_state_reasons_count, job_state_reasons);
 			}
-			
+
+		/*
+		 * RFC 2911 4.3.13.3 seems to indicate that this is the actually number
+		 * of pieces of paper that will come out of the printer once all copies
+		 * have been printed.
+		 * CUPS 1.2 does not seem to support this attribute.
+		 */		
+		if(request_attrs_attr_requested(req, "job-media-sheets"))
+			{
+			if(qentryfile.attr.pages >= 0)
+				{
+				int total = qentryfile.attr.pages;
+				total = (total + qentryfile.attr.pagefactor - 1) / qentryfile.attr.pagefactor;
+				if(qentryfile.opts.copies > 1)
+					total *= qentryfile.opts.copies;
+				ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+					"job-media-sheets", total
+					);
+				}
+			else
+				{
+				ipp_add_out_of_band(ipp, IPP_TAG_JOB, IPP_TAG_UNKNOWN, "job-media-sheets");
+				}
+			}
+
+		/* RFC 2911 4.3.17.2 seems to indicate that this is the number of media
+		 * sides covered before accounting for multiple copies.
+		 * CUPS 1.2 does not seem to support this attribute.
+		 */
+		if(request_attrs_attr_requested(req, "job-impressions"))
+			{
+			if(qentryfile.attr.pages >= 0)
+				{
+				ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+					"job-impressions",
+					((qentryfile.attr.pages + qentryfile.N_Up.N - 1) / qentryfile.N_Up.N)
+					);
+				}
+			else
+				{
+				ipp_add_out_of_band(ipp, IPP_TAG_JOB, IPP_TAG_UNKNOWN, "job-impressions");
+				}
+			}
+
 		ipp_add_end(ipp, IPP_TAG_JOB);
 
 		qentryfile_free(&qentryfile);
@@ -385,5 +452,117 @@ void ipp_get_jobs(struct IPP *ipp)
 
 	request_attrs_free(req);
 	} /* ipp_get_jobs() */
+
+static void ipp_X_job(struct IPP *ipp, int ipp_operation)
+	{
+	const char function[] = "ipp_X_job";
+	struct URI *printer_uri = NULL;
+	int job_id = 0;
+	struct URI *job_uri = NULL;
+	const char *requesting_user_name;
+	const char *destname = NULL;
+
+	DEBUG(("%s()", function));
+
+	if((printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
+		{
+		if(!(destname = printer_uri_validate(printer_uri, NULL)))
+			{
+			DEBUG(("%s(): not a known printer", function));
+			ipp->response_code = IPP_NOT_FOUND;
+			return;
+			}
+		if((job_id = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "job-id")) > 0)
+			{
+			DEBUG(("%s(): job-id missing", function));
+			ipp->response_code = IPP_BAD_REQUEST;
+			return;
+			}
+		}
+	else if((job_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "job-uri")))
+		{
+		if(job_uri->dirname && strcmp(job_uri->dirname, "/jobs") == 0
+				&& job_uri->basename && (job_id = atoi(job_uri->basename)) > 0)
+			{
+			DEBUG(("%s(): job-id: %d", function, job_id));
+			}
+		else
+			{
+			DEBUG(("%s(): not a valid job URI", function));
+			ipp->response_code = IPP_NOT_FOUND;
+			return;
+			}
+		}
+	else
+		{
+		DEBUG(("%s(): nothing to identify the job", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+
+	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
+
+	{
+	DIR *dir;
+	struct dirent *direntp;
+	char *p;
+	int id;
+	short int subid;
+	char fname[MAX_PPR_PATH];
+	FILE *f;
+	char *line = NULL;
+	int line_space = 80;
+
+	if(!(dir = opendir(QUEUEDIR)))
+		gu_Throw(_("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "opendir", QUEUEDIR, errno, strerror(errno));
+
+	while(ipp->response_code == IPP_OK && (direntp = readdir(dir)))
+		{
+		/* Skip ".", "..", and hidden files. */
+		if(direntp->d_name[0] == '.')
+			continue;
+
+		DEBUG(("%s(): %s", function, direntp->d_name));
+		
+		/* Locate hyphen between destname and ID */
+		if(!(p = strrchr(direntp->d_name, '-')))
+			continue;
+
+		/* If destname does not match, skip this file. */
+		if(destname && ((p - direntp->d_name) != strlen(destname) || strncmp(direntp->d_name, destname, strlen(destname)) != 0))
+			continue;
+
+		/* Parse the part of the filename after the hyphen in order to extract the 
+		 * ID and subid. */
+		if(gu_sscanf(p+1, "%d.%hd", &id, &subid) != 2)
+			{
+			fprintf(stderr, X_("Can't parse id.subid: %s\n"), p+1);
+			continue;
+			}
+		if(job_id != id)
+			continue;
+
+		DEBUG(("%s(): asking pprd to delete job %d", function, id));
+		ipp->response_code = pprd_call("IPP %d %d\n", ipp_operation, id);
+		}
+	
+	closedir(dir);
+	}
+	} /* ipp_X_job() */
+
+void ipp_cancel_job(struct IPP *ipp)
+	{
+	ipp_X_job(ipp, IPP_CANCEL_JOB);
+	}
+
+void ipp_hold_job(struct IPP *ipp)
+	{
+	ipp_X_job(ipp, IPP_HOLD_JOB);
+	}
+
+void ipp_release_job(struct IPP *ipp)
+	{
+	ipp_X_job(ipp, IPP_RELEASE_JOB);
+	}
 
 /* end of file */

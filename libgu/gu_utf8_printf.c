@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 24 February 2006.
+** Last modified 21 April 2006.
 */
 
 /*! \file
@@ -63,12 +45,14 @@ static int gu_utf8_wswidth(const char *string)
 
 union VALUE {
 	int integer;
+	long int long_integer;
 	char *character_pointer;
 	double floating_point;
 	};
 
 enum VALUE_TYPE {
 	VALUE_TYPE_INTEGER,
+	VALUE_TYPE_LONG_INTEGER,
 	VALUE_TYPE_CHARACTER_POINTER,
 	VALUE_TYPE_FLOATING_POINT
 	};
@@ -80,6 +64,7 @@ struct FSPEC {
 	gu_boolean flag_leading_zeros;
 	int width;
 	int precision;
+	gu_boolean flag_l;
 	enum VALUE_TYPE value_type;
 	union VALUE value;
 	int format_length;
@@ -154,6 +139,7 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 			fspecs[findex].flag_leading_zeros = FALSE;
 			fspecs[findex].width = 0;
 			fspecs[findex].precision = -1;		/* unspecified */
+			fspecs[findex].flag_l = FALSE;
 			position = -1;
 
 			/* Is the argument index specified? */
@@ -230,25 +216,16 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 			arguments_store(arguments, position, findex, ARG_FSPEC_FIELD_VALUE);
 
 			/* Look for parameter size modifiers. */
-			/* We don't support any of them yet, so this code is commented out. */
-			#if 0
-			while(strchr("hlL", wc))
+			while(strchr("hl", wc))
 				{
 				switch(wc)
 					{
-					case 'h':
-						fspecs[findex].flag_h = TRUE;
-						break;
 					case 'l':
 						fspecs[findex].flag_l = TRUE;
-						break;
-					case 'L':
-						fspecs[findex].flag_L = TRUE;
 						break;
 					}
 				wc = gu_utf8_sgetwc(&formatp);
 				}
-			#endif
 			
 			/* this must be the type field */	
 			switch(wc)
@@ -259,7 +236,10 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					break;
 				case 'c':
 				case 'd':
-					fspecs[findex].value_type = VALUE_TYPE_INTEGER;
+					if(fspecs[findex].flag_l)
+						fspecs[findex].value_type = VALUE_TYPE_LONG_INTEGER;
+					else
+						fspecs[findex].value_type = VALUE_TYPE_INTEGER;
 					aindex++;
 					break;
 				case 's':
@@ -275,7 +255,10 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					break;
 				}
 
-			/* How many characters does the format specifier consume? */
+			/* How many characters does the format specifier consume?
+			 * This is not really correct since it treats bytes and
+			 * characters as equivelent, but this should not be a problem
+			 * since all format specifiers are ASCII digits. */
 			fspecs[findex].format_length = (formatp - formatp_save);
 
 			findex++;
@@ -297,6 +280,9 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					{
 					case VALUE_TYPE_INTEGER:
 						fspecs[findex].value.integer = va_arg(args, int);
+						break;
+					case VALUE_TYPE_LONG_INTEGER:
+						fspecs[findex].value.long_integer = va_arg(args, long int);
 						break;
 					case VALUE_TYPE_CHARACTER_POINTER:
 						fspecs[findex].value.character_pointer = va_arg(args, char*);
@@ -346,10 +332,15 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 					{
 					char buffer[32];
 					int bi;
-					int n = fspecs[findex].value.integer;
+					long int n;
 					gu_boolean negative = FALSE;
 					int width_left;
 
+					if(fspecs[findex].flag_l)
+						n = fspecs[findex].value.long_integer;
+					else
+						n = fspecs[findex].value.integer;
+					
 					/* Separate sign and absolute value */
 					if(n < 0)
 						{
@@ -420,9 +411,12 @@ int gu_utf8_vfprintf(FILE *f, const char *format, va_list args)
 				/* UTF-8 String */
 				case 's':
 					{
-					const char *s = fspecs[findex].value.character_pointer;
+					const char *s;
 					int width_left, limit;
 					wchar_t wc;
+
+				   	if(!(s = fspecs[findex].value.character_pointer))
+						s = "(NULL)";
 
 					/* If a width was specified, substract the width of the
 					 * string to be printed keeping in mind that the

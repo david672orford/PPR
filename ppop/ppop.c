@@ -278,7 +278,8 @@ int print_reply(void)
 /*
 ** Function for breaking up a queue file name into its constituent parts.
 ** If it is not a valid job name, this function returns NULL.
-** It deliberately leaks memory.  We rely on the pools mechanism to clean it up.
+** It deliberately leaks memory.  We rely on the pools mechanism to clean 
+** it up.
 */
 const struct Jobname *parse_jobname(const char *jobname)
 	{
