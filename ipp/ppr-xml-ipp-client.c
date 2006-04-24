@@ -334,7 +334,13 @@ int main(int argc, char *argv[])
 		response = cupsDoFileRequest(http, request, uri->path ? uri->path : "/", opt_filename);
 		request = NULL;		/* cupsDoFileRequest() freed request.  Ouch! */
 		if(!response)
-			gu_Throw("request failed: 0x%04x", cupsLastError());
+			{
+			const char *code_str;
+			if((code_str = ipp_status_code_to_str(cupsLastError())))
+				gu_Throw("request failed: %s", code_str);
+			else
+				gu_Throw("request failed: 0x%04x", cupsLastError());
+			}
 
 		/* Print the response as XML */
 		{

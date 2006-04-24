@@ -198,12 +198,15 @@ static int ipp_hold_job(const char command_args[])
 */
 static int ipp_release_job(const char command_args[])
 	{
+	const char function[] = "ipp_release_job";
 	int job_id;
 	int x;
 	int retcode = IPP_OK;
 
 	job_id = atoi(command_args);
 
+	DODEBUG_IPP(("%s(): job_id=%d", function, job_id));
+	
 	lock();										/* lock the queue */
 
 	for(x=0; x < queue_entries; x++)			/* and search it */
@@ -214,26 +217,35 @@ static int ipp_release_job(const char command_args[])
 		switch(queue[x].status)
 			{
 			case STATUS_HELD:
+				DODEBUG_IPP(("%s(): job is held", function));
 				queue_p_job_new_status(&queue[x], STATUS_WAITING);
 				media_set_notnow_for_job(&queue[x], TRUE);
 				if(queue[x].status == STATUS_WAITING)
 					printer_try_start_suitable_4_this_job(&queue[x]);
 				break;
 			case STATUS_ARRESTED:
+				DODEBUG_IPP(("%s(): job is arrested", function));
 				retcode = IPP_NOT_POSSIBLE;
 				break;
 			case STATUS_SEIZING:			/* in transition to held */
+				DODEBUG_IPP(("%s(): job is already in transition to held", function));
 				/* This should be fixed */
 				retcode = IPP_NOT_POSSIBLE;
 				break;
 			case STATUS_WAITING:			/* not held */
 			case STATUS_WAITING4MEDIA:
 			default:						/* printing */
+				DODEBUG_IPP(("%s(): job is not held", function));
 				break;
 			}
 
 		break;
 		}
+
+	#ifdef DEBUG_IPP
+	if(x == queue_entries)
+		debug("%s(): job not found", function);
+	#endif
 
 	unlock();
 
@@ -242,7 +254,7 @@ static int ipp_release_job(const char command_args[])
 
 int ipp_dispatch(const char command[])
 	{
-	const char function[] = "ipp_dispatch";
+	FUNCTION4DEBUG("ipp_dispatch")
 	const char *p;
 	int operation_id;
 	int result_code;

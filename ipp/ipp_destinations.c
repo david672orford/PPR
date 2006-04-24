@@ -468,6 +468,7 @@ void cups_get_classes(struct IPP *ipp)
 
    	req = request_attrs_new(ipp);
 
+	/* First do the real groups. */
 	if(!(dir = opendir(GRCONF)))
 		gu_Throw("Can't open \"%s\", errno=%d (%s)", GRCONF, errno, strerror(errno));
 
@@ -482,6 +483,25 @@ void cups_get_classes(struct IPP *ipp)
 		}
 
 	closedir(dir);
+
+	/* Now do the aliases.  CUPS does not have aliases so we have to show
+	 * our aliases as classes with one member each.
+	 */
+	if(!(dir = opendir(ALIASCONF)))
+		gu_Throw("Can't open \"%s\", errno=%d (%s)", ALIASCONF, errno, strerror(errno));
+
+	while((direntp = readdir(dir)))
+		{
+		if(direntp->d_name[0] == '.')
+			continue;
+		qip = queueinfo_new_load_config(QUEUEINFO_ALIAS, direntp->d_name);
+		add_queue_attributes(ipp, req, qip);
+		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		queueinfo_free(qip);
+		}
+
+	closedir(dir);
+
 	request_attrs_free(req);
 	} /* cups_get_classes() */
 
@@ -490,21 +510,26 @@ void cups_get_classes(struct IPP *ipp)
  */
 void cups_get_default(struct IPP *ipp)
 	{
+	const char *default_destination = "default";
 	struct REQUEST_ATTRS *req;
 	void *qip;
 
 	req = request_attrs_new(ipp);
 
-	/* In PPR the default destination is set by defining an alias "default". */ 
-	if((qip = queueinfo_new_load_config(QUEUEINFO_ALIAS, "default")))
+	/* If no default destination defined or the default destination doesn't
+	 * exist, */
+	if(!(default_destination = ppr_get_default())
+		|| !(qip = queueinfo_new_load_config(QUEUEINFO_SEARCH, default_destination))
+		)
+		{
+		ipp->response_code = IPP_NOT_FOUND;
+		}
+	/* OK, we found it. */
+	else
 		{
 		add_queue_attributes(ipp, req, qip);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		queueinfo_free(qip);
-		}
-	else
-		{
-		ipp->response_code = IPP_NOT_FOUND;
 		}
 
 	request_attrs_free(req);

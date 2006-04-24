@@ -138,16 +138,17 @@ static void send_ppd(const char prnname[])
 	} /* end of send_ppd() */
 
 /* This function attempts to set the language and character set of
- * the C library and Gettext.  If it failes, it returns NULL.
+ * the C library and Gettext.  If it fails, it returns NULL.
  */
-static const char *setlang(const char language[], const char charset[])
+static const char *setlang(const char language[])
 	{
 	#ifdef INTERNATIONAL
 	char *lang, *ret;
 
-	gu_asprintf(&lang, "%s.%s", language, charset);
+	gu_asprintf(&lang, "%s.UTF-8", language);
 
-	/* Convert "ru-ru" to "ru_RU".  This may be a Linux hack. */
+	/* Convert names such as "ru-ru" to "ru_RU".  This may be a Linux or 
+	 * GNU Libc hack. */
 	if(strlen(lang) >= 5 && lang[2] == '-')
 		{
 		lang[2] = '_';
@@ -163,7 +164,7 @@ static const char *setlang(const char language[], const char charset[])
 
 	/* Dummy implentation */
 	#else
-	if(strcmp(language, "en-us") == 0 && strcmp(charset, "utf-8") == 0)
+	if(strcmp(language, "en-us") == 0)
 		return "OK";
 	else
 		return NULL;
@@ -304,25 +305,23 @@ int main(int argc, char *argv[])
 			/* Hide these so they don't show up in the unsupported list. */
 			ipp->request_attrs = attr2->next;
 
-			/* Do the best we can to accommodate the client's language
-			 * and character set requests.
-			 */
-			{
-			const char *language = attr2->values[0].string.text;
-			const char *charset = attr1->values[0].string.text;
-
-			if(!setlang(language, charset))
+			/* For now we only support UTF-8. */
+			if(strcmp(attr1->values[0].string.text, "utf-8") != 0)
 				{
-				language = "en-us";
-				if(!setlang(language, charset))
-					{
-					ipp->response_code = IPP_CHARSET;
-					ipp->suppress_unsupported = TRUE;
-					}
+				ipp->response_code = IPP_CHARSET;
+				/* suppress unsupported processing */
+				ipp->request_attrs = NULL;
+				/* abort request processing */
+				break;
 				}
 
+			/* Do the best we can to accommodate the client's language request. */
+			{
+			const char *language = attr2->values[0].string.text;
+			if(!setlang(language))
+				language = "en-us";
 			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET,
-				"attributes-charset", charset);
+				"attributes-charset", "utf-8");
 			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
 				"attributes-natural-language", language);
 			}

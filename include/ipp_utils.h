@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 April 2006.
+** Last modified 24 April 2006.
 */
 
 /*! \file
@@ -120,8 +120,6 @@ struct IPP
 	ipp_attribute_t *response_attrs_printer;	
 	ipp_attribute_t *response_attrs_job;	
 	ipp_attribute_t *response_attrs_unsupported;	
-
-	gu_boolean suppress_unsupported;
 	};
 
 /* IPP object methods */
@@ -131,6 +129,7 @@ void ipp_delete(struct IPP *ipp);
 int ipp_get_block(struct IPP *ipp, char **pptr);
 void ipp_set_remote_user(struct IPP *ipp, const char remote_user[]);
 void ipp_set_remote_addr(struct IPP *ipp, const char remote_addr[]);
+const char *ipp_user_at_host(struct IPP *ipp, const char requesting_user_name[]);
 void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap);
@@ -157,6 +156,7 @@ struct URI *ipp_claim_uri(struct IPP *ipp, int group_tag, const char name[]);
 int ipp_claim_positive_integer(struct IPP *ipp, int group_tag, const char name[]);
 const char *ipp_claim_string(struct IPP *ipp, int group_tag, int value_tag, const char name[]);
 const char *ipp_claim_keyword(struct IPP *ipp, int group_tag, const char name[], ...);
+gu_boolean ipp_claim_boolean(struct IPP *ipp, int group_tag, const char name[], gu_boolean default_value);
 
 /*==================== ipp_req_attrs.c ========================*/
 

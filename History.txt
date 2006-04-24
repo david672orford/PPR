@@ -10069,3 +10069,11 @@ no final tarball was released.
 * ppop/: fixed "ppop qquery" command to apply copies to page computations
   after computing the number of sides or sheets in a job.
 
+* libppr/get_default.c: added file with ppr_get_defualt() which reads
+  /etc/ppr/default.  Previously the default destination was not changeable,
+  it was always "default" which one was expected to define as an alias.  But
+  this did not fit in very well with what applications expected which was that
+  the default destination would point to an identifiable queue.  They often
+  used the default destination information to highlight that queue in the
+  print dialog.
+

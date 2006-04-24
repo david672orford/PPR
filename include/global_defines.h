@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 13 April 2006.
+** This file was last modified 24 April 2006.
 */
 
 /*
@@ -412,6 +412,7 @@ int pprd_call(const char command[], ...)
 	__attribute__ ((format (printf, 1, 2)))
 	#endif
 	;
+char *ppr_get_default(void);
 
 /*
 ** The callers of certain libppr routines must provide an error()

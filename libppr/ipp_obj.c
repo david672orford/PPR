@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 April 2006.
+** Last modified 24 April 2006.
 */
 
 /*! \file */
@@ -48,7 +48,7 @@ member functions.
 */
 struct IPP *ipp_new(const char root[], const char path_info[], int content_length, int in_fd, int out_fd)
 	{
-	struct IPP *ipp;
+	struct IPP *ipp = NULL;
 	void *pool;
 
 	GU_OBJECT_POOL_PUSH((pool = gu_pool_new()));
@@ -80,8 +80,6 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 	ipp->response_attrs_printer = NULL;
 	ipp->response_attrs_job = NULL;
 	ipp->response_attrs_unsupported = NULL;
-
-	ipp->suppress_unsupported = FALSE;
 
 	GU_OBJECT_POOL_POP(ipp->pool);
 	return ipp;
@@ -215,6 +213,21 @@ int ipp_get_block(struct IPP *ipp, char **pptr)
 	return len;
 	} /* ipp_get_block() */
 
+/** decide on a user name to use and return it
+ */
+const char *ipp_user_at_host(struct IPP *ipp, const char requesting_user_name[])
+	{
+	char *temp = NULL;
+	GU_OBJECT_POOL_PUSH((ipp->pool));
+	gu_asprintf(&temp,
+		"%s@%s",
+		ipp->remote_user ? ipp->remote_user : requesting_user_name ? requesting_user_name : "nobody",
+		ipp->remote_addr ? ipp->remote_addr : "?"
+		);
+	GU_OBJECT_POOL_POP((ipp->pool));
+	return temp;
+	}
+
 /*=== Request parsing =====================================================*/
 
 /** fetch an unsigned byte from the IPP request
@@ -305,7 +318,7 @@ static void ipp_put_si(struct IPP *ipp, int val)
 */
 static char *ipp_get_bytes(struct IPP *ipp, int len)
     {
-	char *ptr;
+	char *ptr = NULL;
 	GU_OBJECT_POOL_PUSH(ipp->pool);
 	ptr = gu_alloc(len + 1, sizeof(char));
 	int i;
@@ -650,7 +663,7 @@ void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap)
 */
 static ipp_attribute_t *ipp_new_attribute(struct IPP *ipp, int group, int tag, const char name[], int num_values)
 	{
-	ipp_attribute_t	*ap;
+	ipp_attribute_t	*ap = NULL;
 
 	GU_OBJECT_POOL_PUSH(ipp->pool);
 
@@ -822,13 +835,10 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	/* Any operation or job-template attributes which have not yet been
 	 * read (and removed) must be unsupported.
 	 */
-	if(!ipp->suppress_unsupported)
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
 		{
-		for(attr = ipp->request_attrs; attr; attr = attr->next)
-			{
-			if(attr->group_tag == IPP_TAG_OPERATION || attr->group_tag == IPP_TAG_JOB)
-				ipp_new_attribute(ipp, IPP_TAG_UNSUPPORTED, IPP_TAG_UNSUPPORTED_VALUE, attr->name, 0);
-			}
+		if(attr->group_tag == IPP_TAG_OPERATION || attr->group_tag == IPP_TAG_JOB)
+			ipp_new_attribute(ipp, IPP_TAG_UNSUPPORTED, IPP_TAG_UNSUPPORTED_VALUE, attr->name, 0);
 		}
 
 	/* If we are communicating over HTTP, we need an HTTP header. */
@@ -993,7 +1003,7 @@ struct URI *ipp_claim_uri(struct IPP *ipp, int group_tag, const char name[])
 	ipp_attribute_t *attr;
 	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, IPP_TAG_URI, name)))
 		{
-		struct URI *uri;
+		struct URI *uri = NULL;
 		GU_OBJECT_POOL_PUSH(ipp->pool);
 		uri = gu_uri_new(attr->values[0].string.text);
 		#ifdef DEBUG
@@ -1070,6 +1080,15 @@ const char *ipp_claim_keyword(struct IPP *ipp, int group_tag, const char name[],
 		return p;
 		}
 	return NULL;
+	}
+
+/** Find a single value boolean attribute, remove it, and return its value */
+gu_boolean ipp_claim_boolean(struct IPP *ipp, int group_tag, const char name[], gu_boolean default_value)
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, IPP_TAG_BOOLEAN, name)))
+		return attr->values[0].boolean;
+	return default_value;
 	}
 
 /* end of file */

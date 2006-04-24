@@ -72,7 +72,7 @@ static int ipp_queue_entry_compare_reversed(const void *p1, const void *p2)
  * only and reverse the sorting order (as specified by RFC 2911 3.2.6.1).
  * If it is false, return only jobs which are still potentially printable.
  */
-static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_used, gu_boolean completed)
+static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_used, gu_boolean completed, const char *filter_user)
 	{
 	const char function[] = "load_queue";
 	struct IPP_QUEUE_ENTRY *queue = NULL;
@@ -82,8 +82,9 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 	struct dirent *direntp;
 	char *p;
 	char fname[MAX_PPR_PATH];
-	int fd;
-	char buffer[64];
+	FILE *qf;
+	char *line = NULL;
+	int line_space = 80;
 	int status;
 	void *destnames = gu_pch_new(64);
 
@@ -121,47 +122,64 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 
 		/* Open the queue file and extract the fields which we will use for sorting. */
 		ppr_fnamef(fname, "%s/%s", QUEUEDIR, direntp->d_name);
-		if((fd = open(fname, O_RDONLY)) == -1)
+		if(!(qf = fopen(fname, "r")))
 			{
 			fprintf(stderr, X_("Can't open \"%s\", errno=%d (%s)\n"), fname, errno, strerror(errno));
 			continue;
 			}
-		if(read(fd, buffer, sizeof(buffer)) != sizeof(buffer))
-			{
-			fprintf(stderr, X_("Can't read \"%s\"\n"), fname);
-			continue;
-			}
-		if(gu_sscanf(buffer, "PPRD: %hx %x %hx", &queue[queue_used].priority, &queue[queue_used].sequence_number, &status) != 3)
-			{
-			fprintf(stderr, X_("Can't parse contents of \"%s\"\n"), fname);
-			continue;
-			}
 
-		if(status == STATUS_FINISHED || status == STATUS_ARRESTED)
-			{
-			if(!completed)
-				continue;
-			}
-		else
-			{
-			if(completed)
-				continue;
-			}
-		
-		if(destname)		/* all the same queue */
-			queue[queue_used].destname = destname;
-		else				/* possibly different, don't save more than one copy */
-			{
-			*p = '\0';
-			if(!(queue[queue_used].destname = gu_pch_get(destnames, direntp->d_name)))
+		/* This isn't a real loop.  It just gives us a way to skip the job
+		 * without skipping the code which closes the job file. */
+		do	{
+			if(!(line = gu_getline(line, &line_space, qf))
+					|| gu_sscanf(line, "PPRD: %hx %x %hx", &queue[queue_used].priority, &queue[queue_used].sequence_number, &status) != 3)
 				{
-				char *temp = gu_strdup(direntp->d_name);
-				gu_pch_set(destnames, direntp->d_name, temp);
-				queue[queue_used].destname = temp;
+				fprintf(stderr, X_("Can't parse contents of \"%s\"\n"), fname);
+				break;
 				}
-			}
+
+			if(status == STATUS_FINISHED || status == STATUS_ARRESTED)
+				{
+				if(!completed)
+					break;
+				}
+			else
+				{
+				if(completed)
+					break;
+				}
+	
+			/* If we are filtering by username, */
+			if(filter_user)
+				{
+				if(!(line = gu_getline(line, &line_space, qf))
+						|| !(p = lmatchp(line, "User:"))
+						)
+					{
+					fprintf(stderr, X_("Can't parse contents of \"%s\"\n"), fname);
+					break;
+					}
+				if(strcmp(filter_user, p) != 0)
+					break;
+				}
+
+			if(destname)		/* all the same queue */
+				queue[queue_used].destname = destname;
+			else				/* possibly different, don't save more than one copy */
+				{
+				*p = '\0';
+				if(!(queue[queue_used].destname = gu_pch_get(destnames, direntp->d_name)))
+					{
+					char *temp = gu_strdup(direntp->d_name);
+					gu_pch_set(destnames, direntp->d_name, temp);
+					queue[queue_used].destname = temp;
+					}
+				}
 		
-		queue_used++;
+			queue_used++;
+			} while(FALSE);
+
+		fclose(qf);
 		}
 	
 	closedir(dir);
@@ -181,12 +199,13 @@ void ipp_get_jobs(struct IPP *ipp)
 	const char function[] = "ipp_get_jobs";
 	struct URI *printer_uri;
 	const char *destname;
-	const char *requesting_user_name;
+	const char *user_at_host;
 	int limit;
+	const char *which_jobs;			/* "completed" or "no-completed" */
+	gu_boolean my_jobs;
 	struct REQUEST_ATTRS *req;
-	const char *which_jobs;
-	struct IPP_QUEUE_ENTRY *queue;
-	int queue_num_entries;
+	struct IPP_QUEUE_ENTRY *queue;	/* array of matching jobs */
+	int queue_num_entries;			/* number of entries in above */
 	int iii;
 
 	DEBUG(("%s()", function));
@@ -205,15 +224,17 @@ void ipp_get_jobs(struct IPP *ipp)
 		return;
 		}
 
-	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
+	user_at_host = ipp_user_at_host(ipp, ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name"));
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
 	which_jobs = ipp_claim_keyword(ipp, IPP_TAG_OPERATION, "which-jobs", "not-completed", "completed", NULL);
+	my_jobs = ipp_claim_boolean(ipp, IPP_TAG_OPERATION, "my-jobs", FALSE);
 	req = request_attrs_new(ipp);
 
 	queue = ipp_load_queue(
 			destname,
 		   	&queue_num_entries,
-		   	which_jobs && strcmp(which_jobs, "completed") == 0
+		   	which_jobs && strcmp(which_jobs, "completed") == 0,
+			my_jobs ? user_at_host : NULL
 			);
 	DEBUG(("%s(): %d entries", function, queue_num_entries));
 
@@ -459,8 +480,8 @@ static void ipp_X_job(struct IPP *ipp, int ipp_operation)
 	struct URI *printer_uri = NULL;
 	int job_id = 0;
 	struct URI *job_uri = NULL;
-	const char *requesting_user_name;
 	const char *destname = NULL;
+	const char *user_at_host;
 
 	DEBUG(("%s()", function));
 
@@ -500,18 +521,17 @@ static void ipp_X_job(struct IPP *ipp, int ipp_operation)
 		return;
 		}
 
-	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
-
+	user_at_host = ipp_user_at_host(ipp, ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name"));
+	
 	{
 	DIR *dir;
 	struct dirent *direntp;
 	char *p;
 	int id;
 	short int subid;
-	char fname[MAX_PPR_PATH];
-	FILE *f;
 	char *line = NULL;
 	int line_space = 80;
+	gu_boolean is_administrator = user_acl_allows(user_at_host, "ppop");
 
 	if(!(dir = opendir(QUEUEDIR)))
 		gu_Throw(_("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "opendir", QUEUEDIR, errno, strerror(errno));
@@ -542,6 +562,27 @@ static void ipp_X_job(struct IPP *ipp, int ipp_operation)
 		if(job_id != id)
 			continue;
 
+		if(!is_administrator)
+			{
+			char fname[MAX_PPR_PATH];
+			FILE *f;
+			char *job_user = NULL;
+			ppr_fnamef(fname, "%s/%s", QUEUEDIR, direntp->d_name);
+			if(!(f = fopen(fname, "r")))
+				{
+				fprintf(stderr, X_("Can't open \"%s\", errno=%d (%s)\n"), fname, errno, strerror(errno));
+				continue;
+				}
+			while((line = gu_getline(line, &line_space, f)))
+				{
+				if((job_user = lmatchp(line, "User:")))
+					break;	
+				}
+			fclose(f);
+			if(!job_user || strcmp(job_user, user_at_host) != 0)
+				continue;
+			}
+		
 		DEBUG(("%s(): asking pprd to delete job %d", function, id));
 		ipp->response_code = pprd_call("IPP %d %d\n", ipp_operation, id);
 		}
