@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 April 2006.
+** Last modified 24 April 2006.
 */
 
 #include "config.h"
@@ -22,7 +22,8 @@
 #include "gu.h"
 #include "ipp_constants.h"
 
-/* This function steps through the node set attributes and adds what it finds to request.
+/* This function steps through the XML node set attributes and adds what it
+ * finds to the IPP request.
  * request -- IPP request we are constructing
  * group_entity -- name of entity from which we extracted attributes (for error messages)
  * group_tag -- group tag to set when adding attributes to request

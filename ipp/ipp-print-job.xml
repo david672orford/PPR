@@ -4,10 +4,10 @@
 	<operation-id>Print-Job</operation-id>
 	<request-id>17</request-id>
 	<operation-attributes>
-		<charset><name>attributes-charset</name><value>US-ASCII</value></charset>
+		<charset><name>attributes-charset</name><value>utf-8</value></charset>
 		<naturalLanguage><name>attributes-natural-language</name><value>en-US</value></naturalLanguage>
 		<uri><name>printer-uri</name><param-value>uri</param-value></uri>
-		<nameWithoutLanguage><name>job-name</name><value>test job</value></nameWithoutLanguage>
+		<nameWithoutLanguage><name>job-name</name><param-value>filename</param-value></nameWithoutLanguage>
 		<boolean><name>ipp-attribute-fidelity</name><value>true</value></boolean>
 	</operation-attributes>
 	<job-attributes>

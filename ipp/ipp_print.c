@@ -62,7 +62,7 @@ void ipp_print_job(struct IPP *ipp)
 	struct URI *printer_uri;
 	const char *destname;
 	const char *requesting_user_name;
-	char for_whom[64];
+	const char *user_at_host;
 	const char *args[100];			/* ppr command line */
 	int args_i;
 		
@@ -78,25 +78,16 @@ void ipp_print_job(struct IPP *ipp)
 		}
 
 	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
-
-	/* The username will be username@host */
-	snprintf(for_whom, sizeof(for_whom),
-		"%s@%s",
-		ipp->remote_user ? ipp->remote_user : requesting_user_name, 
-		ipp->remote_addr ? ipp->remote_addr : "?"
-		);
+	user_at_host = ipp_user_at_host(ipp, requesting_user_name);
 
 	/* Basic arguments */
 	args_i = 0;
 	args[args_i++] = PPR_PATH;
-	args[args_i++] = "-d";
-	args[args_i++] = destname;
-	args[args_i++] = "-u";
-	args[args_i++] = for_whom;
-	args[args_i++] = "--responder";
-	args[args_i++] = "followme";
-	args[args_i++] = "--responder-address";
-	args[args_i++] = ipp->remote_user ? ipp->remote_user : requesting_user_name;
+	args[args_i++] = "-d"; args[args_i++] = destname;
+	args[args_i++] = "-u"; args[args_i++] = user_at_host;
+	args[args_i++] = "-f"; args[args_i++] = ipp->remote_user ? ipp->remote_user : requesting_user_name;
+	args[args_i++] = "--responder"; args[args_i++] = "followme";
+	args[args_i++] = "--responder-address"; args[args_i++] = user_at_host;
 
 	/* Additional arguments at the user's request. */
 	gu_Try
@@ -134,6 +125,7 @@ void ipp_print_job(struct IPP *ipp)
 				}
 			attr->group_tag = IPP_TAG_UNSUPPORTED;
 			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
+			attr->num_values = 0;
 			ipp_insert_attribute(ipp, attr);
 			}
 		for(attr = ipp->request_attrs; attr; attr = attr->next)
@@ -222,6 +214,7 @@ void ipp_print_job(struct IPP *ipp)
 				}
 			attr->group_tag = IPP_TAG_UNSUPPORTED;
 			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
+			attr->num_values = 0;
 			ipp_insert_attribute(ipp, attr);
 			}
 		/* Delete all processed attributes from the request. */
