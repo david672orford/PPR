@@ -535,4 +535,12 @@ void cups_get_default(struct IPP *ipp)
 	request_attrs_free(req);
 	} /* cups_get_default() */
 
+void ipp_pause_printer(struct IPP *ipp)
+	{
+	}
+
+void ipp_resume_printer(struct IPP *ipp)
+	{
+	}
+
 /* end of file */

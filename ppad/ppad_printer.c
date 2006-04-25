@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 April 2006.
+** Last modified 25 April 2006.
 */
 
 /*==============================================================
@@ -799,7 +799,7 @@ int command_show(const char *argv[])
 				gu_utf8_printf(_("%s (by default)"), jobbreak_description(jobbreak_default));
 			else
 				gu_utf8_puts(jobbreak_description(jobbreak));
-		putchar('\n');
+		gu_putwc('\n');
 
 		gu_utf8_puts("  ");
 			gu_utf8_puts(_("Feedback: "));
@@ -807,7 +807,7 @@ int command_show(const char *argv[])
 				gu_utf8_printf(_("%s (by default)"), feedback_description(feedback_default));
 			else
 				gu_utf8_puts(feedback_description(feedback));
-			putchar('\n');
+			gu_putwc('\n');
 
 		gu_utf8_puts("  ");
 			gu_utf8_puts(_("Codes: "));
@@ -815,7 +815,7 @@ int command_show(const char *argv[])
 				gu_utf8_printf(_("%s (by default)"), codes_description(codes_default));
 			else
 				gu_utf8_puts(codes_description(codes));
-			putchar('\n');
+			gu_putwc('\n');
 
 		/*-------------------------------------
 		** PPD File Related Things
@@ -828,7 +828,7 @@ int command_show(const char *argv[])
 		gu_utf8_puts(s);
 		if(deffiltopts)
 			print_wrapped(deffiltopts, strlen(s));
-		putchar('\n');
+		gu_putwc('\n');
 		}
 
 		/* RIP */
@@ -862,7 +862,7 @@ int command_show(const char *argv[])
 			else
 				gu_utf8_printf(", %s", bins[x]);
 			}
-		putchar('\n');
+		gu_putwc('\n');
 		}
 
 		gu_utf8_puts("  ");
@@ -890,7 +890,7 @@ int command_show(const char *argv[])
 					gu_utf8_printf(_("(send alert after %d errors, send notice on recovery)"), (alerts_frequency * -1));
 				break;
 			}
-		putchar('\n');
+		gu_putwc('\n');
 		gu_utf8_puts("  "); gu_utf8_printf(_("Alert method: %s\n"), alerts_method ? alerts_method : _("none"));
 		gu_utf8_puts("  "); gu_utf8_printf(_("Alert address: %s\n"), alerts_address ? alerts_address : _("none"));
 
@@ -921,7 +921,7 @@ int command_show(const char *argv[])
 		gu_utf8_puts(_("Switchset: "));
 		if(switchset)
 			print_switchset(switchset);
-		putchar('\n');
+		gu_putwc('\n');
 
 		/* Rare option is not show unless set. */
 		if(passthru)
@@ -1004,14 +1004,14 @@ int command_show(const char *argv[])
 		if(charge_duplex_sheet != -1)
 			{			/* money() returns pointer to static array! */
 			gu_utf8_puts(money(charge_duplex_sheet));
-			putchar(' ');
+			gu_putwc(' ');
 			gu_utf8_puts(money(charge_simplex_sheet));
 			}
 		else
 			{
-			putchar(' ');
+			gu_putwc(' ');
 			}
-		putchar('\n');
+		gu_putwc('\n');
 
 		/* PPD file related things */
 		gu_utf8_printf("ppd\t%s\n", PPDFile ? PPDFile : "");
@@ -1030,11 +1030,11 @@ int command_show(const char *argv[])
 			p2 += strspn(p2, " \t");
 			len2 = strcspn(p2, "/ \t");
 			if(x)
-				putchar(' ');
+				gu_putwc(' ');
 			gu_utf8_printf("%.*s %.*s", len1, p1, len2, p2);
 			}
 		}
-		putchar('\n');
+		gu_putwc('\n');
 
 		gu_utf8_puts("bins\t");
 		{
@@ -1047,14 +1047,14 @@ int command_show(const char *argv[])
 				gu_utf8_puts(bins[x]);
 			}
 		}
-		putchar('\n');
+		gu_putwc('\n');
 
 		gu_utf8_printf("outputorder\t%s\n", outputorder_description(outputorder));
 
 		gu_utf8_printf("deffiltopts\t%s\n", deffiltopts ? deffiltopts : "");
 
 		/* Other things */
-		gu_utf8_puts("switchset\t"); if(switchset) print_switchset(switchset); putchar('\n');
+		gu_utf8_puts("switchset\t"); if(switchset) print_switchset(switchset); gu_putwc('\n');
 		gu_utf8_printf("passthru\t%s\n", passthru ? passthru : "");
 		gu_utf8_printf("limitpages\t%d %d\n", limitpages_lower, limitpages_upper);
 		gu_utf8_printf("limitkilobytes\t%d %d\n", limitkilobytes_lower, limitkilobytes_upper);
@@ -2489,7 +2489,7 @@ int command_ppdopts(const char *argv[])
 		next_value = 0;
 
 		if(!answers)
-			putchar('\n');
+			gu_putwc('\n');
 
 		while((ppdline = ppdobj_readline(ppd_obj)))
 			{

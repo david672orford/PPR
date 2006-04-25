@@ -49,10 +49,56 @@ struct IPP_TO_PPR xlate_job_template[] =
 	{
 	{IPP_TAG_INTEGER, "job-priority", "--ipp-priority", "1 100"},
 	{IPP_TAG_INTEGER, "copies", "-n", "1 "},
-	{IPP_TAG_KEYWORD, "sides", "--feature", "one-sided(Duplex=None) two-sided-long-edge(Duplex=DuplexNoTumble) two-sided-short-edge(Duplex=DuplexTumble"},
+	{IPP_TAG_KEYWORD, "sides", "--feature",
+							"one-sided\0Duplex=None\0"
+							"two-sided-long-edge\0Duplex=DuplexNoTumble\0"
+						   	"two-sided-short-edge\0Duplex=DuplexTumble\0"},
 	{IPP_TAG_INTEGER, "number-up", "-N", "1 16"},
 	{IPP_TAG_ZERO}
 	};
+
+static char **convert_attributes(struct IPP *ipp, int group_tag, struct IPP_TO_PPR *template, char **args, int args_i, int args_space)
+	{
+	ipp_attribute_t *attr;
+	struct IPP_TO_PPR *tp;
+	for(attr = ipp->request_attrs; attr; attr = attr->next)
+		{
+		if(attr->group_tag != group_tag)
+			break;
+		for(tp=template; tp->value_tag != IPP_TAG_ZERO; tp++)
+			{
+			if(strcmp(tp->name, attr->name) == 0)
+				{
+				if(attr->value_tag != tp->value_tag || attr->num_values != 1)
+					{
+					debug("attribute %s bad", attr->name);
+					ipp->response_code = IPP_BAD_REQUEST;
+					ipp->request_attrs = NULL;		/* suppress unsupported processing */
+					}
+				else
+					{
+					switch(tp->value_tag)
+						{
+						case IPP_TAG_INTEGER:
+							break;
+						case IPP_TAG_NAME:
+							break;
+						case IPP_TAG_KEYWORD:
+							break;
+						}
+					}
+				break;
+				}
+			}
+		if(!tp)
+			{
+			attr->group_tag = IPP_TAG_UNSUPPORTED;
+			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
+			attr->num_values = 0;
+			ipp_insert_attribute(ipp, attr);
+			}
+		}	
+	}
 
 /*
  * Handle IPP_PRINT_JOB 

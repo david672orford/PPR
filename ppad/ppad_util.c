@@ -220,7 +220,7 @@ void print_switchset(char *switchset)
 		argument[strcspn(argument, "|\n")] = '\0';	/* NULL terminate */
 
 		if(count > 0)
-			putchar(' ');
+			gu_putwc(' ');
 
 		/* if a long option, argument is actually option=argument */
 		if(optchar == '-')
@@ -255,6 +255,8 @@ void print_switchset(char *switchset)
 ** Print some text.  Wrap the text to 80 columns.  Indent subsequent
 ** lines by 4 spaces.  Understand that start_column is the column
 ** the cursor is when this is called.  (0 is the first column.)
+**
+** !!! This code must be fixed for UTF-8 !!!
 */
 int print_wrapped(const char *text, int starting_column)
 	{
@@ -284,7 +286,7 @@ int print_wrapped(const char *text, int starting_column)
 
 		while(word_len--)							/* Print the element. */
 			{
-			putchar(text[x++]);
+			gu_putwc(text[x++]);
 			}
 		}
 

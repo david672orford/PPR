@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 21 April 2006.
+** Last modified 25 April 2006.
 */
 
 /*
@@ -369,13 +369,13 @@ int main(int argc, char *argv[])
 					/* not implemented */
 					break;
 				case IPP_PAUSE_PRINTER:
-					/* not implemented */
+					p_handler = ipp_pause_printer;
 					break;
 				case IPP_RESUME_PRINTER:
-					/* not implemented */
+					p_handler = ipp_resume_printer;
 					break;
 				case IPP_PURGE_JOBS:
-					/* not implemented */
+					p_handler = ipp_purge_jobs;
 					break;
 				case IPP_SET_PRINTER_ATTRIBUTES:
 					/* not implemented */
@@ -429,9 +429,17 @@ int main(int argc, char *argv[])
 	
 			if(p_handler)		/* if we found a handler function, */
 				{
+				/* Save the handler the trouble of setting the response code
+				 * for the common case. */
+				ipp->response_code = IPP_OK;
+
+				/* Give the handler a memory pool into which to put its blocks. */
+				gu_pool_push(ipp->pool);
+				
 				DEBUG(("invoking handler..."));
-				ipp->response_code = IPP_OK;	/* default */
 				(*p_handler)(ipp);
+
+				gu_pool_pop(ipp->pool);
 				}
 			else
 				{

@@ -26,7 +26,7 @@
 ** POSSIBILITY OF SUCH DAMAGE.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 24 April 2006.
+** This file was last modified 25 April 2006.
 */
 
 /*
@@ -186,6 +186,15 @@ typedef unsigned short int UINT16_T;
 #endif
 #ifndef HAVE_SETREGID
 #define setregid(x,y)  setresgid((x),(y),-1)
+#endif
+#endif
+
+/* C99 provides va_copy().  In draft proposals it was called __va_copy(). */
+#ifndef va_copy
+#ifdef __va_copy
+#define va_copy(dest,src) __va_copy(dest,src)
+#else
+#define va_copy(dest,src) dest=src
 #endif
 #endif
 

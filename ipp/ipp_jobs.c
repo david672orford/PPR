@@ -606,4 +606,8 @@ void ipp_release_job(struct IPP *ipp)
 	ipp_X_job(ipp, IPP_RELEASE_JOB);
 	}
 
+void ipp_purge_jobs(struct IPP *ipp)
+	{
+	}
+
 /* end of file */

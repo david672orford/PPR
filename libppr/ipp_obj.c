@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 25 April 2006.
 */
 
 /*! \file */
@@ -317,17 +317,17 @@ static void ipp_put_si(struct IPP *ipp, int val)
 /** fetch a byte array of specified length
 */
 static char *ipp_get_bytes(struct IPP *ipp, int len)
-    {
+	{
 	char *ptr = NULL;
+	int i;
 	GU_OBJECT_POOL_PUSH(ipp->pool);
 	ptr = gu_alloc(len + 1, sizeof(char));
-	int i;
 	for(i=0; i<len; i++)
 		ptr[i] = ipp_get_byte(ipp);
 	ptr[len] = '\0';
 	GU_OBJECT_POOL_POP(ipp->pool);
 	return ptr;
-    }
+	} 
 
 /** read an IPP request from stdin and store it in the IPP object
  *
