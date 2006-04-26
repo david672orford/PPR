@@ -1,13 +1,19 @@
 <?xml version="1.0"?>
 <ipp>
 <request>
-	<version-number>1.0</version-number>
+	<version-number>1.1</version-number>
 	<operation-id>CUPS-Get-Printers</operation-id>
-	<request-id>36</request-id>
+	<request-id>1</request-id>
 	<operation-attributes>
-		<charset><name>attributes-charset</name><value>US-ASCII</value></charset>
-		<naturalLanguage><name>attributes-natural-language</name><value>en-US</value></naturalLanguage>
-		<integer ifdef="limit"><name>limit</name><param-value>limit</param-value></integer>
+		<charset><name>attributes-charset</name>
+			<value>utf-8</value>
+			</charset>
+		<naturalLanguage><name>attributes-natural-language</name>
+			<value>en-US</value>
+			</naturalLanguage>
+		<integer ifdef="limit"><name>limit</name>
+			<param-value>limit</param-value>
+			</integer>
 	</operation-attributes>
 </request>
 </ipp>

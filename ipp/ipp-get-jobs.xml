@@ -9,16 +9,20 @@
 			<value>utf-8</value>
 			</charset>
 		<naturalLanguage><name>attributes-natural-language</name>
-			<value>ru-ru</value>
+			<value>en-US</value>
 			</naturalLanguage>
-		<uri><name>printer-uri</name><param-value>uri</param-value></uri>
-		<integer ifdef="limit"><name>limit</name><param-value>limit</param-value></integer>
-		<keyword><name>requested-attributes</name>
-				<value>all</value>
-			</keyword>
-		<integer><name>life-the-universe-and-everything</name>
-				<value>42</value>
+		<uri><name>printer-uri</name>
+			<param-value>uri</param-value>
+			</uri>
+		<nameWithoutLanguage><name>requesting-user-name</name>
+			<env-value>USER</env-value>
+			</nameWithoutLanguage>
+		<integer ifdef="limit"><name>limit</name>
+			<param-value>limit</param-value>
 			</integer>
+		<keyword><name>requested-attributes</name>
+			<value>all</value>
+			</keyword>
 	</operation-attributes>
 </request>
 </ipp>

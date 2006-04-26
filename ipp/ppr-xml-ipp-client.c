@@ -123,6 +123,19 @@ static void do_attributes(ipp_t *request, const char group_entity[], int group_t
 						gu_Throw("Parameter not defined: %s", name);
 					continue;
 					}
+				if(xmlStrcmp(cur2->name, (const xmlChar*)"env-value") == 0)
+					{
+					char *name;
+					if(values_count == values_space)	/* growable array */
+						{
+						values_space += 16;
+						values = gu_realloc(values, values_space, sizeof(int));
+						}
+					name = (char*)xmlNodeListGetString(doc, cur2->xmlChildrenNode, 1);
+					if(!(values[values_count++] = getenv(name)))
+						gu_Throw("Environment variable not defined: %s", name);
+					continue;
+					}
 				if(xmlStrcmp(cur2->name, (const xmlChar*)"text") == 0)
 					continue;
 				if(xmlStrcmp(cur2->name, (const xmlChar*)"comment") == 0)

@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <ipp>
 <request>
-	<version-number>1.0</version-number>
-	<operation-id>Get-Printer-Attributes</operation-id>
+	<version-number>1.1</version-number>
+	<operation-id>Pause-Printer</operation-id>
 	<request-id>1</request-id>
 	<operation-attributes>
 		<charset><name>attributes-charset</name>
@@ -14,12 +14,6 @@
 		<uri><name>printer-uri</name>
 			<param-value>uri</param-value>
 			</uri>
-		<integer ifdef="limit"><name>limit</name>
-			<param-value>limit</param-value>
-			</integer>
-		<keyword><name>requested-attributes</name>
-			<value>all</value>
-			</keyword>
 		<nameWithoutLanguage><name>requesting-user-name</name>
 			<env-value>USER</env-value>
 			</nameWithoutLanguage>

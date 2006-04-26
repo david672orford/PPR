@@ -2,27 +2,30 @@
 <ipp>
 <request>
 	<version-number>1.0</version-number>
-	<operation-id>Get-Printer-Attributes</operation-id>
+	<operation-id>Get-Job-Attributes</operation-id>
 	<request-id>1</request-id>
 	<operation-attributes>
 		<charset><name>attributes-charset</name>
 			<value>utf-8</value>
 			</charset>
 		<naturalLanguage><name>attributes-natural-language</name>
-			<value>en-US</value>
+			<value>en-us</value>
 			</naturalLanguage>
-		<uri><name>printer-uri</name>
+		<uri ifdef="job-id"><name>printer-uri</name>
 			<param-value>uri</param-value>
 			</uri>
-		<integer ifdef="limit"><name>limit</name>
-			<param-value>limit</param-value>
+		<integer ifdef="job-id"><name>job-id</name>
+			<param-value>job-id</param-value>
 			</integer>
-		<keyword><name>requested-attributes</name>
-			<value>all</value>
-			</keyword>
+		<uri ifndef="job-id"><name>job-uri</name>
+			<param-value>uri</param-value>
+			</uri>
 		<nameWithoutLanguage><name>requesting-user-name</name>
 			<env-value>USER</env-value>
 			</nameWithoutLanguage>
+		<keyword ifdef="requested-attributes"><name>requested-attributes</name>
+				<param-value>requested-attributes</param-value>
+			</keyword>
 	</operation-attributes>
 </request>
 </ipp>

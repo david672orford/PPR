@@ -1,26 +1,28 @@
 <?xml version="1.0"?>
 <ipp>
 <request>
- <version-number>1.1</version-number>
- <operation-id>Release-Job</operation-id>
- <request-id>1</request-id>
-<operation-attributes>
- <charset>
-  <name>attributes-charset</name>
-  <value>utf-8</value>
- </charset>
- <naturalLanguage>
-  <name>attributes-natural-language</name>
-  <value>en</value>
- </naturalLanguage>
- <uri>
-  <name>job-uri</name>
-  <param-value>uri</param-value>
- </uri>
- <nameWithoutLanguage>
-  <name>requesting-user-name</name>
-  <value>chappell</value>
- </nameWithoutLanguage>
-</operation-attributes>
+	<version-number>1.1</version-number>
+	<operation-id>Release-Job</operation-id>
+	<request-id>1</request-id>
+	<operation-attributes>
+		<charset><name>attributes-charset</name>
+			<value>utf-8</value>
+			</charset>
+		<naturalLanguage><name>attributes-natural-language</name>
+			<value>en-US</value>
+			</naturalLanguage>
+		<uri ifdef="job-id"><name>printer-uri</name>
+			<param-value>uri</param-value>
+			</uri>
+		<integer ifdef="job-id"><name>job-id</name>
+			<param-value>job-id</param-value>
+			</integer>
+		<uri ifndef="job-id"><name>job-uri</name>
+			<param-value>uri</param-value>
+			</uri>
+		<nameWithoutLanguage><name>requesting-user-name</name>
+			<env-value>USER</env-value>
+			</nameWithoutLanguage>
+	</operation-attributes>
 </request>
 </ipp>
