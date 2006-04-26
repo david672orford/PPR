@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*! \file
@@ -129,7 +129,6 @@ void ipp_delete(struct IPP *ipp);
 int ipp_get_block(struct IPP *ipp, char **pptr);
 void ipp_set_remote_user(struct IPP *ipp, const char remote_user[]);
 void ipp_set_remote_addr(struct IPP *ipp, const char remote_addr[]);
-const char *ipp_user_at_host(struct IPP *ipp, const char requesting_user_name[]);
 void ipp_parse_request(struct IPP *ipp);
 void ipp_send_reply(struct IPP *ipp, gu_boolean header);
 void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap);

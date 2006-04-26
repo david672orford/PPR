@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*
@@ -32,64 +32,154 @@
 #include "ipp.h"
 
 struct IPP_TO_PPR {
-	int value_tag;
-	char *name;
-	char *ppr_option;
-	char *constraints;
+	int value_tag;			/* type of IPP attribute value */
+	char *name;				/* name of IPP attribute */
+	char *ppr_option;		/* ppr(1) option to implement it */
+	char *constraints;		/* rules for validating or mapping values */
 	};
 
+/* For operation attributes. */
 struct IPP_TO_PPR xlate_operation[] =
 	{
 	{IPP_TAG_NAME, "job-name", "--title", NULL},
 	{IPP_TAG_NAME, "document-name", "--lpq-filename", NULL},
+	/* compression */
+	/* document-format */
 	{IPP_TAG_ZERO}
 	};
 
+/* For job template attributes. */
 struct IPP_TO_PPR xlate_job_template[] =
 	{
 	{IPP_TAG_INTEGER, "job-priority", "--ipp-priority", "1 100"},
-	{IPP_TAG_INTEGER, "copies", "-n", "1 "},
-	{IPP_TAG_KEYWORD, "sides", "--feature",
+	{IPP_TAG_INTEGER, "copies", "--copies", "1 "},
+	{IPP_TAG_KEYWORD, "sides", "--feature",		/* feature from PPD file */
 							"one-sided\0Duplex=None\0"
 							"two-sided-long-edge\0Duplex=DuplexNoTumble\0"
-						   	"two-sided-short-edge\0Duplex=DuplexTumble\0"},
+						   	"two-sided-short-edge\0Duplex=DuplexTumble\0"
+							},
 	{IPP_TAG_INTEGER, "number-up", "-N", "1 16"},
 	{IPP_TAG_ZERO}
 	};
 
-static char **convert_attributes(struct IPP *ipp, int group_tag, struct IPP_TO_PPR *template, char **args, int args_i, int args_space)
+/*
+ * Driver function for above tables.  It reads IPP attributes and appends
+ * options to the ppr(1) command line.
+ */
+static ipp_attribute_t* convert_attributes(
+		struct IPP *ipp,
+	   	ipp_attribute_t *attr,			/* attribute to start with */
+	   	int group_tag,					/* process only attributes of this type */
+	   	struct IPP_TO_PPR *template,	/* conversion template table */
+	   	const char ***args, int *args_i, int *args_space
+		)
 	{
-	ipp_attribute_t *attr;
-	struct IPP_TO_PPR *tp;
-	for(attr = ipp->request_attrs; attr; attr = attr->next)
+	struct IPP_TO_PPR *tp;		/* markes our place in the template table */
+
+	/* Step thru IPP attributes. */	
+	for( ; attr; attr = attr->next)
 		{
+		/* If another attribute group is starting, we are done. */
 		if(attr->group_tag != group_tag)
 			break;
+
+		/* Stop thru this templates looking for a match for this attribute. */
 		for(tp=template; tp->value_tag != IPP_TAG_ZERO; tp++)
 			{
-			if(strcmp(tp->name, attr->name) == 0)
+			if(strcmp(tp->name, attr->name) != 0)
+				continue;
+
+			/* Check for incorrect value tag or other than a single value. 
+			 * Per RFC 3196 3.1.2.1.5 we reject the whole request if any
+			 * of these tests fails. */
+			if(attr->value_tag != tp->value_tag || attr->num_values != 1)
 				{
-				if(attr->value_tag != tp->value_tag || attr->num_values != 1)
+				debug("attribute %s bad", attr->name);
+				ipp->response_code = IPP_BAD_REQUEST;
+				/* Suppress unsupported processing.  Otherwise any attributes
+				 * which we have not yet consumed will be listed as unsupported! */
+				ipp->request_attrs = NULL;
+				continue;
+				}
+
+			/* Value validation and mapping. */
+			{
+			const char *value = NULL;	/* store value hither after validation and string conversion */
+			switch(tp->value_tag)		/* validate according to value type */
+				{
+				case IPP_TAG_INTEGER:	/* integer within inclusive range */
 					{
-					debug("attribute %s bad", attr->name);
-					ipp->response_code = IPP_BAD_REQUEST;
-					ipp->request_attrs = NULL;		/* suppress unsupported processing */
-					}
-				else
-					{
-					switch(tp->value_tag)
+					int lower_bound, upper_bound;
+					int matches = gu_sscanf(tp->constraints, "%d %d", &lower_bound, &upper_bound);
+					if((matches >= 1 && attr->values[0].integer >= lower_bound)
+							&&
+						(matches == 2 && attr->values[0].integer <= upper_bound)
+						)
 						{
-						case IPP_TAG_INTEGER:
-							break;
-						case IPP_TAG_NAME:
-							break;
-						case IPP_TAG_KEYWORD:
-							break;
+						char *temp;		/* value is const, but gu_asprintf() requires non-const */
+						gu_asprintf(&temp, "%d", attr->values[0].integer);
+						value = temp;
 						}
 					}
+					break;
+				case IPP_TAG_NAME:
+					value = attr->values[0].string.text;
+					break;
+				case IPP_TAG_KEYWORD:	/* if keyword listed, take mapped value */
+					{
+					const char *p, *keyword, *cooresponding_value;
+					/* Step thru the keywords listed in the constraints pattern
+					 * of the matched template.  The end of the list is marked
+					 * by an empty keyword. */
+					for(p=tp->constraints; *p; )
+						{
+						keyword = p;
+						p += strlen(p) + 1;		/* step over keyword and its terminating null */
+						cooresponding_value = p;
+						p += strlen(p) + 1;
+						if(strcmp(keyword, attr->values[0].string.text) == 0)
+							{
+							value = cooresponding_value;	/* accept mapped value */
+							break;
+							}
+						}
+					}
+					break;
+				}
+
+			/* If value failed constraint tests, then it will not have been 
+			 * converted to a string. */
+			if(!value)
+				{
+				/* We change the group tag but leave the value tag alone.
+				 * This indicates to the client that we support the attribute
+				 * but not the selected value. */
+				attr->group_tag = IPP_TAG_UNSUPPORTED;
+				ipp_insert_attribute(ipp, attr);	/* move attrib to response */
 				break;
 				}
+
+			/* If we are out of space in the ppr arguments array, enlarge it. */
+			if((*args_i + 2) >= *args_space)
+				{
+				*args_space += 64;
+				*args = gu_realloc(*args, *args_space, sizeof(char*));
+				}
+	
+			/* Append the ppr option supplied in the template and the 
+			 * validated (and possibly mapped) value to the ppr command 
+			 * line. */
+			*args[(*args_i)++] = tp->ppr_option;
+			*args[(*args_i)++] = value;
 			}
+
+			/* We found it, no need to examine furthur templates. */
+			break;
+			} /* template loop */
+
+		/* If the template search loop failed to find this attribute, 
+		 * we do not support it at all (as opposed to just not supporting
+		 * the chosen value). */
 		if(!tp)
 			{
 			attr->group_tag = IPP_TAG_UNSUPPORTED;
@@ -97,20 +187,22 @@ static char **convert_attributes(struct IPP *ipp, int group_tag, struct IPP_TO_P
 			attr->num_values = 0;
 			ipp_insert_attribute(ipp, attr);
 			}
-		}	
-	}
+		} /* attribute loop */
+
+	return attr;
+	} /* convert_attributes() */
 
 /*
- * Handle IPP_PRINT_JOB 
+ * Handle IPP_PRINT_JOB or IPP_VALIDATE_JOB
  */
 void ipp_print_job(struct IPP *ipp)
 	{
 	struct URI *printer_uri;
 	const char *destname;
-	const char *requesting_user_name;
 	const char *user_at_host;
-	const char *args[100];			/* ppr command line */
+	const char **args;			/* ppr command line */
 	int args_i;
+	int args_space;
 		
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
@@ -123,157 +215,34 @@ void ipp_print_job(struct IPP *ipp)
 		return;
 		}
 
-	requesting_user_name = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
-	user_at_host = ipp_user_at_host(ipp, requesting_user_name);
+	user_at_host = extract_identity(ipp, FALSE);
+
+	/* Allocate some space for the PPR arguments.  At least 14 spaces
+	 * will be needed. */
+	args_space = 64;
+	args = gu_realloc(NULL, args_space, sizeof(char*));
 
 	/* Basic arguments */
 	args_i = 0;
 	args[args_i++] = PPR_PATH;
 	args[args_i++] = "-d"; args[args_i++] = destname;
 	args[args_i++] = "-u"; args[args_i++] = user_at_host;
-	args[args_i++] = "-f"; args[args_i++] = ipp->remote_user ? ipp->remote_user : requesting_user_name;
+	args[args_i++] = "-f"; args[args_i++] = user_at_host;
 	args[args_i++] = "--responder"; args[args_i++] = "followme";
-	args[args_i++] = "--responder-address"; args[args_i++] = user_at_host;
+	/*args[args_i++] = "--responder-address"; args[args_i++] = user_at_host;*/
 
-	/* Additional arguments at the user's request. */
-	gu_Try
-		{
-		ipp_attribute_t *attr;
-		for(attr = ipp->request_attrs; attr; attr = attr->next)
-			{
-			if(attr->group_tag != IPP_TAG_OPERATION)
-				break;
-			if(strcmp(attr->name, "job-name") == 0)
-				{
-				if(attr->value_tag != IPP_TAG_NAME || attr->num_values != 1)
-					gu_Throw(attr->name);
-				args[args_i++] = "--title";
-				args[args_i++] = attr->values[0].string.text;
-				continue;
-				}
-			if(strcmp(attr->name, "document-name") == 0)
-				{
-				if(attr->value_tag != IPP_TAG_NAME || attr->num_values != 1)
-					gu_Throw(attr->name);
-				args[args_i++] = "--lpq-filename";
-				args[args_i++] = attr->values[0].string.text;
-				continue;
-				}
-			if(strcmp(attr->name, "compression") == 0)
-				{
+	/* Convert IPP operation and job template attributes to PPR options. 
+	 * Move ipp->request_attrs ahead as we go in order to keep track of
+	 * what has been handled so far. */
+	ipp->request_attrs = convert_attributes(ipp, ipp->request_attrs, IPP_TAG_OPERATION, xlate_operation, &args, &args_i, &args_space);
+	ipp->request_attrs  = convert_attributes(ipp, ipp->request_attrs, IPP_TAG_JOB, xlate_job_template, &args, &args_i, &args_space);
 
-				continue;
-				}
-			if(strcmp(attr->name, "document-format") == 0)
-				{
-
-				continue;
-				}
-			attr->group_tag = IPP_TAG_UNSUPPORTED;
-			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
-			attr->num_values = 0;
-			ipp_insert_attribute(ipp, attr);
-			}
-		for(attr = ipp->request_attrs; attr; attr = attr->next)
-			{
-			if(attr->group_tag != IPP_TAG_JOB)
-				break;
-			if(strcmp(attr->name, "job-priority") == 0)
-				{
-				if(attr->value_tag != IPP_TAG_INTEGER || attr->num_values != 1)
-					gu_Throw(attr->name);
-				if(attr->values[0].integer < 1 || attr->values[0].integer > 100)
-					{
-					attr->group_tag = IPP_TAG_UNSUPPORTED;
-					ipp_insert_attribute(ipp, attr);
-					}
-				else
-					{
-					char *temp;		/* !!! memory leak !!! */
-					gu_asprintf(&temp, "%d", attr->values[0].integer);
-					args[args_i++] = "--ipp-priority";
-					args[args_i++] = temp;
-					}
-				continue;
-				}
-			if(strcmp(attr->name, "copies") == 0)
-				{
-				if(attr->value_tag != IPP_TAG_INTEGER || attr->num_values != 1)
-					gu_Throw(attr->name);
-				if(attr->values[0].integer < 1)
-					{
-					attr->group_tag = IPP_TAG_UNSUPPORTED;
-					ipp_insert_attribute(ipp, attr);
-					}
-				else
-					{
-					char *temp;		/* !!! memory leak !!! */
-					gu_asprintf(&temp, "%d", attr->values[0].integer);
-					args[args_i++] = "--copies";
-					args[args_i++] = temp;
-					}
-				continue;
-				}
-			if(strcmp(attr->name, "sides") == 0)
-				{
-				if(attr->value_tag != IPP_TAG_KEYWORD || attr->num_values != 1)
-					gu_Throw(attr->name);
-				if(strcmp("one-sided", attr->values[0].string.text) == 0)
-					{
-					args[args_i++] = "--feature";
-					args[args_i++] = "Duplex=None";
-					}
-				else if(strcmp("two-sided-long-edge", attr->values[0].string.text) == 0)
-					{
-					args[args_i++] = "--feature";
-					args[args_i++] = "Duplex=DuplexNoTumble";
-					}
-				else if(strcmp("two-sided-short-edge", attr->values[0].string.text) == 0)
-					{
-					args[args_i++] = "--feature";
-					args[args_i++] = "Duplex=DuplexTumble";
-					}
-				else
-					{
-					attr->group_tag = IPP_TAG_UNSUPPORTED;
-					ipp_insert_attribute(ipp, attr);
-					}
-				continue;
-				}
-			if(strcmp(attr->name, "number-up") == 0)
-				{
-				if(attr->value_tag != IPP_TAG_INTEGER || attr->num_values != 1)
-					gu_Throw(attr->name);
-				if(attr->values[0].integer < 1 || attr->values[0].integer > 16)
-					{
-					attr->group_tag = IPP_TAG_UNSUPPORTED;
-					ipp_insert_attribute(ipp, attr);
-					}
-				else
-					{
-					char *temp;		/* !!! memory leak !!! */
-					gu_asprintf(&temp, "%d", attr->values[0].integer);
-					args[args_i++] = "-N";
-					args[args_i++] = temp;
-					}
-				continue;
-				}
-			attr->group_tag = IPP_TAG_UNSUPPORTED;
-			attr->value_tag = IPP_TAG_UNSUPPORTED_VALUE;
-			attr->num_values = 0;
-			ipp_insert_attribute(ipp, attr);
-			}
-		/* Delete all processed attributes from the request. */
-		ipp->request_attrs = attr;
-		}
-	gu_Catch
-		{
-		debug("attribute %s bad", gu_exception);
-		ipp->response_code = IPP_BAD_REQUEST;
-		ipp->request_attrs = NULL;		/* suppress unsupported processing */
+	/* If this isn't an actual print job request, but just a dry run,
+	 * we have done all we need to do, bail out. */
+	if(ipp->operation_id == IPP_VALIDATE_JOB)
 		return;
-		}
 
+	/* Set up a pipe and launch PPR on the end of it. */
 	{
 	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
 	int jobid_fds[2] = {-1, -1};	/* for ppr to send us jobid */
@@ -303,7 +272,7 @@ void ipp_print_job(struct IPP *ipp)
 			close(toppr_fds[0]);
 			dup2(2, 1);
 			
-			snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
+			gu_snprintf(fd_str, sizeof(fd_str), "%d", jobid_fds[1]);
 
 			args[args_i++] = "--print-id-to-fd";
 			args[args_i++] = fd_str;

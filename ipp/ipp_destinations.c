@@ -350,16 +350,36 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			{
 			IPP_PRINT_JOB,
 			/* IPP_PRINT_URI, */
-			/* IPP_VALIDATE_JOB, */
+			IPP_VALIDATE_JOB,
 			/* IPP_CREATE_JOB, */
 			/* IPP_SEND_DOCUMENT, */
 			/* IPP_SEND_URI, */
 			IPP_CANCEL_JOB,
-			/* IPP_GET_JOB_ATTRIBUTES, */
+			IPP_GET_JOB_ATTRIBUTES,
 			IPP_GET_JOBS,
 			IPP_GET_PRINTER_ATTRIBUTES,
+			IPP_HOLD_JOB,
+			IPP_RELEASE_JOB,
+			/* IPP_RESTART_JOB, */
+			IPP_PAUSE_PRINTER,
+			IPP_RESUME_PRINTER,
+			IPP_PURGE_JOBS,
+			/* IPP_SET_PRINTER_ATTRIBUTES, */
+			/* IPP_SET_JOB_ATTRIBUTES, */
+			/* IPP_GET_PRINTER_SUPPORTED_VALUES, */
+			CUPS_GET_DEFAULT,
 			CUPS_GET_PRINTERS,
-			CUPS_GET_CLASSES
+			CUPS_ADD_PRINTER,
+			/* CUPS_DELETE_PRINTER, */
+			CUPS_GET_CLASSES,
+			/* CUPS_ADD_CLASS, */
+			/* CUPS_DELETE_CLASS, */
+			/* CUPS_ACCEPT_JOBS, */
+			/* CUPS_REJECT_JOBS, */
+			/* CUPS_SET_DEFAULT, */
+			CUPS_GET_DEVICES,
+			CUPS_GET_PPDS,
+			/* CUPS_MOVE_JOB */
 			};
 		ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 			"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);
@@ -404,27 +424,20 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 void ipp_get_printer_attributes(struct IPP *ipp)
 	{
 	struct REQUEST_ATTRS *req;
-	struct URI *printer_uri;
 	const char *destname;
 	enum QUEUEINFO_TYPE qtype;
 	void *qip;
 
 	DEBUG(("ipp_get_printer_attributes()"));
 	
-	req = request_attrs_new(ipp);
-	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
-		ipp->response_code = IPP_BAD_REQUEST;
-	else if(!(destname = printer_uri_validate(printer_uri, &qtype)))
-		ipp->response_code = IPP_NOT_FOUND;
-	else
+	if((destname = extract_destname(ipp, &qtype)))
 		{
 		qip = queueinfo_new_load_config(qtype, destname);
+		req = request_attrs_new(ipp);
 		add_queue_attributes(ipp, req, qip);
+		request_attrs_free(req);
 		}
 
-	if(printer_uri)
-		gu_uri_free(printer_uri);
-	request_attrs_free(req);
 	} /* ipp_get_printer_attributes() */
 
 /** Handler for CUPS_GET_PRINTERS */
@@ -535,12 +548,22 @@ void cups_get_default(struct IPP *ipp)
 	request_attrs_free(req);
 	} /* cups_get_default() */
 
-void ipp_pause_printer(struct IPP *ipp)
+/* Do something to a printer which requires operator-level access
+ * and a simple command to pprd.
+ */
+void ipp_X_printer(struct IPP *ipp)
 	{
-	}
-
-void ipp_resume_printer(struct IPP *ipp)
-	{
+	const char function[] = "ipp_X_printer";
+	const char *destname;
+	DEBUG(("%s()", function));
+	if(!(destname = extract_destname(ipp, NULL)))
+		return;
+	if(!user_acl_allows(extract_identity(ipp, TRUE), "ppop"))
+		{
+		ipp->response_code = IPP_NOT_AUTHORIZED;
+		return;
+		}
+	ipp->response_code = pprd_call("IPP %d %s\n", ipp->operation_id, destname);	
 	}
 
 /* end of file */

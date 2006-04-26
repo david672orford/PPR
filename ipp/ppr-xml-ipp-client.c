@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 26 April 2006.
 */
 
 #include "config.h"
@@ -60,6 +60,18 @@ static void do_attributes(ipp_t *request, const char group_entity[], int group_t
 			if((ifdef = (const char *)xmlGetProp(cur, (const xmlChar*)"ifdef")))
 				{
 				if(!gu_pch_get(params, ifdef))
+					continue;
+				}
+			}
+			
+			/* If the item has an ifndef= attribute, skip it if its value
+			 * is the name of a defined parameter.
+			 */
+			{
+			const char *ifndef;
+			if((ifndef = (const char *)xmlGetProp(cur, (const xmlChar*)"ifndef")))
+				{
+				if(gu_pch_get(params, ifndef))
 					continue;
 				}
 			}

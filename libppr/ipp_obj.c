@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*! \file */
@@ -212,21 +212,6 @@ int ipp_get_block(struct IPP *ipp, char **pptr)
 
 	return len;
 	} /* ipp_get_block() */
-
-/** decide on a user name to use and return it
- */
-const char *ipp_user_at_host(struct IPP *ipp, const char requesting_user_name[])
-	{
-	char *temp = NULL;
-	GU_OBJECT_POOL_PUSH((ipp->pool));
-	gu_asprintf(&temp,
-		"%s@%s",
-		ipp->remote_user ? ipp->remote_user : requesting_user_name ? requesting_user_name : "nobody",
-		ipp->remote_addr ? ipp->remote_addr : "?"
-		);
-	GU_OBJECT_POOL_POP((ipp->pool));
-	return temp;
-	}
 
 /*=== Request parsing =====================================================*/
 

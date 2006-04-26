@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*
@@ -95,6 +95,73 @@ const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *q
 	return NULL;
 	} /* printer_uri_validate() */
 
+const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
+	{
+	const char function[] = "extract_destname";
+	struct URI *printer_uri;
+	const char *destname;
+	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
+		{
+		DEBUG(("%s(): no printer-uri", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return NULL;
+		}
+
+	if(!(destname = printer_uri_validate(printer_uri, qtype)))
+		{
+		DEBUG(("%s(): not a known printer", function));
+		ipp->response_code = IPP_NOT_FOUND;
+		return NULL;
+		}
+	return destname;
+	}
+
+/** decide on a user name and host name to use and return them
+ */
+const char *extract_identity(struct IPP *ipp, gu_boolean require_authentication)
+	{
+	const char *username;
+	char *temp = NULL;
+
+	/* This is the un-authenticated username supplied by the client. */
+	username = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_NAME, "requesting-user-name");
+
+	/* If the request is authenticated, the authenticated username had 
+	 * better agree with what the client claims or we will substitute 
+	 * the username "nobody" which should revoke all privildges.
+	 */
+	if(username && ipp->remote_user && strcmp(username, ipp->remote_user) != 0)
+		{
+		fprintf(stderr, "Warning: requesting-user-name=\"%s\" but REMOTE_USER=\"%s\"\n", username, ipp->remote_user);
+		username = "nobody-inconsistent";
+		}
+	/* If login is required, take the authenticated name.  If the client 
+	 * did not log in, use "nobody". */
+	else if(require_authentication)
+		{
+		if(ipp->remote_user)
+			username = ipp->remote_user;
+		else
+			username = "nobody-unauthenticated";
+		}
+	/* If no username at all is available, use "nobody". */
+	else if(!username)
+		{
+		username = "nobody";
+		}
+
+	gu_asprintf(&temp,
+		"%s@%s",
+		username, 
+		ipp->remote_addr ? ipp->remote_addr : "?"
+		);
+	return temp;
+	}
+
+/*
+ * Given an PPR destination name, return the URL template which should
+ * be used for generating printer-uri.
+ */
 const char *destname_to_uri_template(const char destname[])
 	{
 	char fname[MAX_PPR_PATH];
@@ -329,53 +396,54 @@ int main(int argc, char *argv[])
 			p_handler = NULL;
 			switch(ipp->operation_id)
 				{
-				case IPP_PRINT_JOB:
+				case IPP_PRINT_JOB:		/* REQUIRED */
 					p_handler = ipp_print_job;
 					break;
-				case IPP_PRINT_URI:
+				case IPP_PRINT_URI:		/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_VALIDATE_JOB:
+				case IPP_VALIDATE_JOB:	/* REQUIRED */
+					/* won't actually print when sees operation-id */
+					p_handler = ipp_print_job;
+					break;
+				case IPP_CREATE_JOB:	/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_CREATE_JOB:
+				case IPP_SEND_DOCUMENT:	/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_SEND_DOCUMENT:
+				case IPP_SEND_URI:		/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_SEND_URI:
-					/* not implemented */
+				case IPP_CANCEL_JOB:	/* REQUIRED */
+					p_handler = ipp_X_job;
 					break;
-				case IPP_CANCEL_JOB:
-					p_handler = ipp_cancel_job;
+				case IPP_GET_JOB_ATTRIBUTES:	/* REQUIRED */
+					p_handler = ipp_get_job_attributes;
 					break;
-				case IPP_GET_JOB_ATTRIBUTES:
-					/* not implemented */
-					break;
-				case IPP_GET_JOBS:
+				case IPP_GET_JOBS:		/* REQUIRED */
 					p_handler = ipp_get_jobs;
 					break;
-				case IPP_GET_PRINTER_ATTRIBUTES:
+				case IPP_GET_PRINTER_ATTRIBUTES:	/* REQUIRED */
 					p_handler = ipp_get_printer_attributes;
 					break;
-				case IPP_HOLD_JOB:
-					p_handler = ipp_hold_job;
+				case IPP_HOLD_JOB:			/* OPTIONAL */
+					p_handler = ipp_X_job;
 					break;
-				case IPP_RELEASE_JOB:
-					p_handler = ipp_release_job;
+				case IPP_RELEASE_JOB:		/* OPTIONAL */
+					p_handler = ipp_X_job;
 					break;
-				case IPP_RESTART_JOB:
+				case IPP_RESTART_JOB:		/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_PAUSE_PRINTER:
-					p_handler = ipp_pause_printer;
+				case IPP_PAUSE_PRINTER:		/* OPTIONAL */
+					p_handler = ipp_X_printer;
 					break;
-				case IPP_RESUME_PRINTER:
-					p_handler = ipp_resume_printer;
+				case IPP_RESUME_PRINTER:	/* OPTIONAL */
+					p_handler = ipp_X_printer;
 					break;
-				case IPP_PURGE_JOBS:
-					p_handler = ipp_purge_jobs;
+				case IPP_PURGE_JOBS:		/* OPTIONAL */
+					p_handler = ipp_X_printer;
 					break;
 				case IPP_SET_PRINTER_ATTRIBUTES:
 					/* not implemented */
