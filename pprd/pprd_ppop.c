@@ -940,11 +940,13 @@ static void ppop_accept_reject(const char command[], int action)
 		{
 		int gindex = destid_to_gindex(destid);
 		groups[gindex].spool_state.accepting = action;
+		groups[gindex].spool_state.printer_state_change_time = time(NULL);
 		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
 		}
 	else
 		{
 		printers[destid].spool_state.accepting = action;
+		printers[destid].spool_state.printer_state_change_time = time(NULL);
 		printer_spool_state_save(&(printers[destid].spool_state), printers[destid].name);
 		}
 

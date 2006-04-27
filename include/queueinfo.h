@@ -55,6 +55,7 @@ int queueinfo_queued_job_count(QUEUE_INFO qip);
 const char *queueinfo_modelName(QUEUE_INFO qip);
 int queueinfo_accepting(QUEUE_INFO qip);
 int queueinfo_status(QUEUE_INFO qip);
+int queueinfo_state_change_time(QUEUE_INFO qip);
 const char *queueinfo_membername(QUEUE_INFO qip, int index);
 
 /* papd */

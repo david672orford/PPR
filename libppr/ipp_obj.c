@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 26 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*! \file */
@@ -795,15 +795,15 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	va_end(va);
 	}
 
-void ipp_add_templates(struct IPP *ipp, int group, int tag, const char name[], const char template[], int num_values, void *values)
+void ipp_add_templates(struct IPP *ipp, int group_tag, int value_tag, const char name[], const char template[], int num_values, void *values)
 	{
 	ipp_attribute_t *ap;
 	int i;
 
-	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
-		gu_Throw("ipp_add_templates(): %s is a %s", name, ipp_tag_to_str(tag));
+	if(ipp_tag_simplify(value_tag) != IPP_TAG_STRING)
+		gu_Throw("ipp_add_templates(): %s is a %s", name, ipp_tag_to_str(value_tag));
 
-	ap = ipp_new_attribute(ipp, group, tag, name, num_values);
+	ap = ipp_new_attribute(ipp, group_tag, value_tag, name, num_values);
 	ap->template = template;
 
 	if(strstr(template, "%d"))
@@ -824,12 +824,12 @@ void ipp_add_templates(struct IPP *ipp, int group, int tag, const char name[], c
  *
  * This keeps a pointer to name[], so it had better not change!
 */
-void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value)
+void ipp_add_boolean(struct IPP *ipp, int group_tag, int value_tag, const char name[], gu_boolean value)
 	{
 	ipp_attribute_t *ap;
-	if(tag != IPP_TAG_BOOLEAN)
-		gu_Throw("ipp_add_boolean(): %s is a %s", name, ipp_tag_to_str(tag));
-	ap = ipp_new_attribute(ipp, group, tag, name, 1);
+	if(value_tag != IPP_TAG_BOOLEAN)
+		gu_Throw("ipp_add_boolean(): %s is a %s", name, ipp_tag_to_str(value_tag));
+	ap = ipp_new_attribute(ipp, group_tag, value_tag, name, 1);
 	ap->values[0].boolean = value;
 	}
 
@@ -1050,6 +1050,15 @@ int ipp_claim_positive_integer(struct IPP *ipp, int group_tag, const char name[]
 			}
 		return attr->values[0].integer;
 		}
+	return 0;
+	}
+
+/** Find a single value enumberation, remove it, and return the number. */
+int ipp_claim_enum(struct IPP *ipp, int group_tag, const char name[])
+	{
+	ipp_attribute_t *attr;
+	if((attr = ipp_claim_attribute_single_value(ipp, group_tag, IPP_TAG_ENUM, name)))
+		return attr->values[0].integer;
 	return 0;
 	}
 

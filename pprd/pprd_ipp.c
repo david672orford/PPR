@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*
@@ -264,44 +264,60 @@ static int ipp_release_job(const char command_args[])
  */
 static int ipp_pause_printer(const char command_args[])
 	{
-	int prnid;
+	const char *p = command_args;
 	int retcode = IPP_OK;
 
-	if((prnid = destid_by_printer(command_args)) == -1)
-		return IPP_NOT_FOUND;
-
-	switch(printers[prnid].spool_state.status)
+	if((p = lmatchp(p, "group")))
 		{
-		case PRNSTATUS_FAULT:	/* If not printing now, */
-		case PRNSTATUS_IDLE:	/* we may go directly to stopt. */
-		case PRNSTATUS_ENGAGED:
-		case PRNSTATUS_STARVED:
-			printer_new_status(&printers[prnid], PRNSTATUS_STOPT);
-			media_startstop_update_waitreason(prnid);
-			break;
-		case PRNSTATUS_HALTING:
-		case PRNSTATUS_STOPT:
-		case PRNSTATUS_STOPPING:
-			break;
-		case PRNSTATUS_CANCELING:			/* if pprdrv already sent kill signal */
-		case PRNSTATUS_SEIZING:
-			printer_new_status(&printers[prnid], PRNSTATUS_HALTING);
-			media_startstop_update_waitreason(prnid);
-			break;
-		case PRNSTATUS_PRINTING:
-			#if 1		/* immediate halt */
-			printer_new_status(&printers[prnid], PRNSTATUS_HALTING);
-			pprdrv_kill(prnid);
-			#else		/* stop after end of current job */
-			printer_new_status(&printers[prnid], PRNSTATUS_STOPPING);
-			#endif
-			media_startstop_update_waitreason(prnid);
-			break;
-		default:
-			error(X_("printer \"%s\" is in undefined state %d"), command_args, printers[prnid].spool_state.status);
-			retcode = IPP_INTERNAL_ERROR;
-			break;
+		int destid, gindex;
+		if((destid = destid_by_group(p)) == -1)
+			return IPP_NOT_FOUND;
+		gindex = destid_to_gindex(destid);
+		groups[gindex].spool_state.held = TRUE;
+		groups[gindex].spool_state.printer_state_change_time = time(NULL);
+		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
 		}
+	else if((p = lmatchp(p, "printer")))
+		{
+		int prnid;
+		if((prnid = destid_by_printer(p)) == -1)
+			return IPP_NOT_FOUND;
+	
+		switch(printers[prnid].spool_state.status)
+			{
+			case PRNSTATUS_FAULT:	/* If not printing now, */
+			case PRNSTATUS_IDLE:	/* we may go directly to stopt. */
+			case PRNSTATUS_ENGAGED:
+			case PRNSTATUS_STARVED:
+				printer_new_status(&printers[prnid], PRNSTATUS_STOPT);
+				media_startstop_update_waitreason(prnid);
+				break;
+			case PRNSTATUS_HALTING:
+			case PRNSTATUS_STOPT:
+			case PRNSTATUS_STOPPING:
+				break;
+			case PRNSTATUS_CANCELING:			/* if pprdrv already sent kill signal */
+			case PRNSTATUS_SEIZING:
+				printer_new_status(&printers[prnid], PRNSTATUS_HALTING);
+				media_startstop_update_waitreason(prnid);
+				break;
+			case PRNSTATUS_PRINTING:
+				#if 1		/* immediate halt */
+				printer_new_status(&printers[prnid], PRNSTATUS_HALTING);
+				pprdrv_kill(prnid);
+				#else		/* stop after end of current job */
+				printer_new_status(&printers[prnid], PRNSTATUS_STOPPING);
+				#endif
+				media_startstop_update_waitreason(prnid);
+				break;
+			default:
+				error(X_("printer \"%s\" is in undefined state %d"), command_args, printers[prnid].spool_state.status);
+				retcode = IPP_INTERNAL_ERROR;
+				break;
+			}
+		}
+	else	/* error in ippd */
+		retcode = IPP_INTERNAL_ERROR;
 
 	return retcode;
 	} /* ipp_pause_printer() */
@@ -310,51 +326,110 @@ static int ipp_pause_printer(const char command_args[])
  */
 static int ipp_resume_printer(const char command_args[])
 	{
-	int prnid;
+	const char *p = command_args;
 	int retcode = IPP_OK;
 
-	if((prnid = destid_by_printer(command_args)) == -1)
-		return IPP_NOT_FOUND;
-
-	switch(printers[prnid].spool_state.status)
+	if((p = lmatchp(p, "group")))
 		{
-		case PRNSTATUS_IDLE:
-		case PRNSTATUS_CANCELING:
-		case PRNSTATUS_SEIZING:
-		case PRNSTATUS_ENGAGED:
-		case PRNSTATUS_STARVED:
-			break;
-		case PRNSTATUS_PRINTING:
-			break;
-		case PRNSTATUS_FAULT:
-		case PRNSTATUS_STOPT:
-			printer_new_status(&printers[prnid], PRNSTATUS_IDLE);
-			media_startstop_update_waitreason(prnid);
-			printer_look_for_work(prnid);
-			break;
-		case PRNSTATUS_HALTING:
-			retcode = IPP_NOT_POSSIBLE;
-			break;
-		case PRNSTATUS_STOPPING:
-			printer_new_status(&printers[prnid], PRNSTATUS_PRINTING);
-			media_startstop_update_waitreason(prnid);
-			break;
-		default:
-			error(X_("printer \"%s\" is in undefined state %d"), command_args, printers[prnid].spool_state.status);
-			retcode = IPP_INTERNAL_ERROR;
-			break;
+		int destid, gindex;
+		if((destid = destid_by_group(p)) == -1)
+			return IPP_NOT_FOUND;
+		gindex = destid_to_gindex(destid);
+
+		groups[gindex].spool_state.held = FALSE;
+		groups[gindex].spool_state.printer_state_change_time = time(NULL);
+		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
+
+		group_look_for_work(gindex);
 		}
+	else if((p = lmatchp(p, "printer")))
+		{
+		int prnid;
+		if((prnid = destid_by_printer(p)) == -1)
+			return IPP_NOT_FOUND;
+	
+		switch(printers[prnid].spool_state.status)
+			{
+			case PRNSTATUS_IDLE:
+			case PRNSTATUS_CANCELING:
+			case PRNSTATUS_SEIZING:
+			case PRNSTATUS_ENGAGED:
+			case PRNSTATUS_STARVED:
+				break;
+			case PRNSTATUS_PRINTING:
+				break;
+			case PRNSTATUS_FAULT:
+			case PRNSTATUS_STOPT:
+				printer_new_status(&printers[prnid], PRNSTATUS_IDLE);
+				media_startstop_update_waitreason(prnid);
+				printer_look_for_work(prnid);
+				break;
+			case PRNSTATUS_HALTING:
+				retcode = IPP_NOT_POSSIBLE;
+				break;
+			case PRNSTATUS_STOPPING:
+				printer_new_status(&printers[prnid], PRNSTATUS_PRINTING);
+				media_startstop_update_waitreason(prnid);
+				break;
+			default:
+				error(X_("printer \"%s\" is in undefined state %d"), command_args, printers[prnid].spool_state.status);
+				retcode = IPP_INTERNAL_ERROR;
+				break;
+			}
+		}
+	else		/* error in ippd */
+		retcode = IPP_INTERNAL_ERROR;
 
 	return retcode;
 	} /* ipp_resume_printer() */
 
 static int ipp_purge_jobs(const char command_args[])
 	{
+	const char *p = command_args;
 	int destid;
-	if((destid = destid_by_name(command_args)) == -1)
-		return IPP_NOT_FOUND;
+
+	if((p = lmatchp(p, "group")))
+		{
+		if((destid = destid_by_group(command_args)) == -1)
+			return IPP_NOT_FOUND;
+		}
+	else if((p = lmatchp(p, "printer")))
+		{
+		if((destid = destid_by_printer(command_args)) == -1)
+			return IPP_NOT_FOUND;
+		}
+	else		/* error in ippd */
+		return IPP_INTERNAL_ERROR;
+
 	return ipp_cancel_job_core(destid, WILDCARD_JOBID);
 	} /* ipp_purge_jobs() */
+
+static int cups_accept_or_reject_jobs(const char command_args[], gu_boolean accepting)
+	{
+	const char *p = command_args;
+	int destid;
+	if((p = lmatchp(p, "group")))
+		{
+		int gindex;
+		if((destid = destid_by_group(command_args)) == -1)
+			return IPP_NOT_FOUND;
+		gindex = destid_to_gindex(destid);
+		groups[gindex].spool_state.accepting = accepting;
+		groups[gindex].spool_state.printer_state_change_time = time(NULL);
+		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
+		return IPP_OK;
+		}
+	if((p = lmatchp(p, "printer")))
+		{
+		if((destid = destid_by_group(command_args)) == -1)
+			return IPP_NOT_FOUND;
+		printers[destid].spool_state.accepting = accepting;
+		printers[destid].spool_state.printer_state_change_time = time(NULL);
+		printer_spool_state_save(&(printers[destid].spool_state), printers[destid].name);
+		return IPP_OK;
+		}
+	return IPP_BAD_REQUEST;
+	} /* ipp_pause_printer() */
 
 int ipp_dispatch(const char command[])
 	{
@@ -394,6 +469,12 @@ int ipp_dispatch(const char command[])
 			break;
 		case IPP_PURGE_JOBS:
 			result_code = ipp_purge_jobs(p);
+			break;
+		case CUPS_ACCEPT_JOBS:
+			result_code = cups_accept_or_reject_jobs(p, TRUE);
+			break;
+		case CUPS_REJECT_JOBS:
+			result_code = cups_accept_or_reject_jobs(p, FALSE);
 			break;
 		default:
 			error("unsupported operation: 0x%.2x (%s)", operation_id, ipp_operation_id_to_str(operation_id));

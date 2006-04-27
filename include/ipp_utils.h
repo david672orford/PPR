@@ -148,12 +148,13 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	__attribute__ (( format (printf, 5, 6) ))
 	#endif
 	;
-void ipp_add_templates(struct IPP *ipp, int group, int tag, const char name[], const char template[], int num_values, void *values);
-void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
-ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
-ipp_attribute_t *ipp_claim_attribute(struct IPP *ipp, int group, int tag, const char name[]);
+void ipp_add_templates(struct IPP *ipp, int group_tag, int value_tag, const char name[], const char template[], int num_values, void *values);
+void ipp_add_boolean(struct IPP *ipp, int group_tag, int value_tag, const char name[], gu_boolean value);
+ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group_tag, int value_tag, const char name[]);
+ipp_attribute_t *ipp_claim_attribute(struct IPP *ipp, int group_tag, int value_tag, const char name[]);
 struct URI *ipp_claim_uri(struct IPP *ipp, int group_tag, const char name[]);
 int ipp_claim_positive_integer(struct IPP *ipp, int group_tag, const char name[]);
+int ipp_claim_enum(struct IPP *ipp, int group_tag, const char name[]);
 const char *ipp_claim_string(struct IPP *ipp, int group_tag, int value_tag, const char name[]);
 const char *ipp_claim_keyword(struct IPP *ipp, int group_tag, const char name[], ...);
 gu_boolean ipp_claim_boolean(struct IPP *ipp, int group_tag, const char name[], gu_boolean default_value);

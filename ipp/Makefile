@@ -7,7 +7,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 24 April 2006.
+# Last modified 27 April 2006.
 #
 
 include ../Makefile.conf
@@ -16,7 +16,7 @@ include ../Makefile.conf
 
 BIN_PROGS=ppr-xml-ipp-client$(DOTEXE)
 
-CGI_PROGS=ipp$(DOTEXE)
+CGI_PROGS=ippd$(DOTEXE)
 
 PROGS=$(BIN_PROGS) $(CGI_PROGS)
 
@@ -24,7 +24,7 @@ PROGS=$(BIN_PROGS) $(CGI_PROGS)
 
 all: $(PROGS)
 
-ipp$(DOTEXE): ipp.o ipp_print.o ipp_destinations.o ipp_jobs.o ipp_cups_admin.o ipp_run.o ../libppr.a ../libgu.a
+ippd$(DOTEXE): ippd.o ippd_print.o ippd_destinations.o ippd_jobs.o ippd_cups_admin.o ippd_run.o ../libppr.a ../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(ZLIBLIBS)
 
 ppr-xml-ipp-client$(DOTEXE): ppr-xml-ipp-client.o ../libppr.a ../libgu.a

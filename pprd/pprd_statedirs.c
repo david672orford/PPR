@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
-** 
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-** 
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** Last modified 7 April 2006.
+** Last modified 27 April 2006.
 */
 
 #include "config.h"
@@ -50,13 +32,15 @@ void printer_spool_state_save(struct PRINTER_SPOOL_STATE *pstate, const char prn
 	ppr_fnamef(fname, "%s/%s/spool_state", PRINTERS_PERSISTENT_STATEDIR, prnname);
 	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
-	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d %d %d\n",
+	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d %d %d %d %d\n",
 		pstate->accepting,
-		pstate->protected,
+		pstate->previous_status,
 		pstate->status,
 		pstate->next_error_retry,
 		pstate->next_engaged_retry,
 		pstate->countdown,
+		pstate->printer_state_change_time,
+		pstate->protected,
 		pstate->job_count
 		);
 	write(fd, temp, len);
@@ -72,8 +56,10 @@ void group_spool_state_save(struct GROUP_SPOOL_STATE *gstate, const char grpname
 	ppr_fnamef(fname, "%s/%s/spool_state", GROUPS_PERSISTENT_STATEDIR, grpname);
 	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
-	len = gu_snprintf(temp, sizeof(temp), "%d %d %d\n",
+	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d\n",
 		gstate->accepting,
+		gstate->held,
+		gstate->printer_state_change_time,
 		gstate->protected,
 		gstate->job_count
 		);

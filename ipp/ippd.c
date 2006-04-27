@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ipp/ipp.c
+** mouse:~ppr/src/ipp/ippd.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 26 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*
@@ -28,7 +28,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp-functions.h"
+#include "ippd.h"
 
 /** Send a debug message to the HTTP server's error log
 
@@ -461,25 +461,25 @@ int main(int argc, char *argv[])
 					p_handler = cups_get_printers;
 					break;
 				case CUPS_ADD_MODIFY_PRINTER:
-					p_handler = cups_add_printer;
+					p_handler = cups_add_modify_printer;
 					break;
 				case CUPS_DELETE_PRINTER:
-					/* not implemented */
+					p_handler = cups_delete_printer;
 					break;
 				case CUPS_GET_CLASSES:
 					p_handler = cups_get_classes;
 					break;
 				case CUPS_ADD_MODIFY_CLASS:
-					/* not implemented */
+					p_handler = cups_add_modify_class;
 					break;
 				case CUPS_DELETE_CLASS:
-					/* not implemented */
+					p_handler = cups_delete_class;
 					break;
 				case CUPS_ACCEPT_JOBS:
-					/* not implemented */
+					p_handler = ipp_X_printer;
 					break;
 				case CUPS_REJECT_JOBS:
-					/* not implemented */
+					p_handler = ipp_X_printer;
 					break;
 				case CUPS_SET_DEFAULT:
 					/* not implemented */

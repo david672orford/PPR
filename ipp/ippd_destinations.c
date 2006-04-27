@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ipp/ipp_destinations.c
+** mouse:~ppr/src/ipp/ippd_destinations.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*
@@ -29,7 +29,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp-functions.h"
+#include "ippd.h"
 
 /** Convert a PPR printer's status to IPP status
  *
@@ -153,7 +153,11 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			"printer-up-time", time(NULL));
 		}
 
-	/* printer-state-change-time */
+	if(request_attrs_attr_requested(req, "printer-state-change-time"))
+		{
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+			"printer-state-change-time", queueinfo_state_change_time(qip));
+		}
 
 	/* printer-current-time */
 
@@ -370,12 +374,12 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			CUPS_GET_DEFAULT,
 			CUPS_GET_PRINTERS,
 			CUPS_ADD_MODIFY_PRINTER,
-			/* CUPS_DELETE_PRINTER, */
+			CUPS_DELETE_PRINTER,
 			CUPS_GET_CLASSES,
-			/* CUPS_ADD_MODIFY_CLASS, */
-			/* CUPS_DELETE_CLASS, */
-			/* CUPS_ACCEPT_JOBS, */
-			/* CUPS_REJECT_JOBS, */
+			CUPS_ADD_MODIFY_CLASS,
+			CUPS_DELETE_CLASS,
+			CUPS_ACCEPT_JOBS,
+			CUPS_REJECT_JOBS,
 			/* CUPS_SET_DEFAULT, */
 			CUPS_GET_DEVICES,
 			CUPS_GET_PPDS,
@@ -555,20 +559,32 @@ void cups_get_default(struct IPP *ipp)
 
 /* Do something to a printer which requires operator-level access
  * and a simple command to pprd.
+ *
+ * IPP_PAUSE_PRINTER
+ * IPP_RESUME_PRINTER
+ * IPP_PURGE_JOBS
+ * CUPS_ACCEPT_JOBS
+ * CUPS_REJECT_JOBS
  */
 void ipp_X_printer(struct IPP *ipp)
 	{
 	const char function[] = "ipp_X_printer";
 	const char *destname;
+	enum QUEUEINFO_TYPE qtype;
 	DEBUG(("%s()", function));
-	if(!(destname = extract_destname(ipp, NULL)))
+	if(!(destname = extract_destname(ipp, &qtype)))
 		return;
 	if(!user_acl_allows(extract_identity(ipp, TRUE), "ppop"))
 		{
 		ipp->response_code = IPP_NOT_AUTHORIZED;
 		return;
 		}
-	ipp->response_code = pprd_call("IPP %d %s\n", ipp->operation_id, destname);	
+	ipp->response_code = pprd_call(
+			"IPP %d %s %s\n",
+			ipp->operation_id,
+			qtype == QUEUEINFO_GROUP ? "group" : "printer",
+			destname
+			);
 	}
 
 /* end of file */

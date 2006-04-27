@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-26 22:27-0400\n"
+"POT-Creation-Date: 2006-04-27 10:33-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -359,22 +359,12 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
-
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
-
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
-
 #, fuzzy
-#~ msgid ""
-#~ "%s: Security problem: euid = %ld\n"
-#~ "(This program should be setuid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s : problème de sécurité : euid = %u\n"
-#~ "(Ce programme devrait être setuid \"%s\".)\n"
+#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
+#~ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
+
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -384,9 +374,19 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "%s : problème de sécurité : egid = %u\n"
 #~ "(Ce programme devrait être setgid \"%s\".)\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
-
 #, fuzzy
-#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
-#~ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
+#~ msgid ""
+#~ "%s: Security problem: euid = %ld\n"
+#~ "(This program should be setuid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s : problème de sécurité : euid = %u\n"
+#~ "(Ce programme devrait être setuid \"%s\".)\n"
+
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
+
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
+
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"

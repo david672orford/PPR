@@ -10077,3 +10077,6 @@ no final tarball was released.
   used the default destination information to highlight that queue in the
   print dialog.
 
+* ipp/: renamed IPP server from "ipp" to "ippd".
+
+

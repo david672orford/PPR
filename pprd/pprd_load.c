@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 7 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*
@@ -96,8 +78,18 @@ static void load_printer(struct Printer *printer, const char prnname[])
 	 */
 	if(printer_spool_state_load(&(printer->spool_state), printer->name) == -1)
 		error("saved printer spool state of \"%s\" was invalid", printer->name);
+
+	/* The system administrator may have removed jobs.  When we load the
+	 * queue we will increment this number for each job we find for this
+	 * printer. */
 	printer->spool_state.job_count = 0;
-		
+
+	/* This is required by RFC 3995 6.1. */
+	printer->spool_state.printer_state_change_time = time(NULL);
+
+	/* If there is a "Charge:" line we will set this to TRUE. */
+	printer->spool_state.protected = FALSE;
+
 	/* Handle state transitions brought about by killing pprd. */
 	switch(printer->spool_state.status)
 		{
@@ -408,7 +400,16 @@ static void load_group(struct Group *cl, const char grpname[])
 	
 	if(group_spool_state_load(&(cl->spool_state), cl->name) == -1)
 		error("saved group spool state of \"%s\" was invalid", cl->name);
+
+	/* We will count what is really in the queue. */
 	cl->spool_state.job_count = 0;
+
+	/* Required by RFC 3995 6.1. */
+	cl->spool_state.printer_state_change_time = time(NULL);
+
+	/* This may be out-of-date.  If there is a charge, this will be
+	 * set to TRUE below. */
+	cl->spool_state.protected = FALSE;
 
 	y=0;
 	while((line = gu_getline(line, &line_space, f)))
@@ -578,13 +579,8 @@ void new_group_config(char *group)
 				}							/* invalid, so just clear them */
 			}								/* (they will be set again if necessary). */
 	
-	
 		/* look for work for any group members which are idle */
-		for(y=0; y<groups[x].members; y++)
-			{
-			if(printers[groups[x].printers[y]].spool_state.status == PRNSTATUS_IDLE)
-				printer_look_for_work(groups[x].printers[y]);
-			}
+		group_look_for_work(x);
 		}
 
 	unlock();

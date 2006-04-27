@@ -974,6 +974,21 @@ int queueinfo_status(QUEUE_INFO qip)
 		gu_Throw("shouldn't happen");
 	}
 
+/** Return the RFC 3995 printer-state-change-time
+ */
+int queueinfo_state_change_time(QUEUE_INFO qip)
+	{
+	if(qip->group_spool_state_valid)
+		return qip->group_spool_state.printer_state_change_time;
+	else if(qip->printers > 0)
+		{
+		struct PRINTER_INFO *pip = gu_pca_index(qip->printers, 0);
+		return pip->spool_state.printer_state_change_time;
+		}
+	else
+		gu_Throw("shouldn't happen");
+	}
+
 /*
  * Return the name of a particular member.
  */

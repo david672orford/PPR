@@ -1,5 +1,5 @@
 /*
-** mouse:~ppr/src/ipp/ipp_jobs.c
+** mouse:~ppr/src/ipp/ippd_jobs.c
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 26 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*
@@ -33,7 +33,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp-functions.h"
+#include "ippd.h"
 
 struct IPP_QUEUE_ENTRY {
 	INT16_T priority;
