@@ -33,7 +33,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp.h"
+#include "ipp-functions.h"
 
 struct IPP_QUEUE_ENTRY {
 	INT16_T priority;

@@ -312,7 +312,7 @@ static char *ipp_get_bytes(struct IPP *ipp, int len)
 	ptr[len] = '\0';
 	GU_OBJECT_POOL_POP(ipp->pool);
 	return ptr;
-	} 
+	}
 
 /** read an IPP request from stdin and store it in the IPP object
  *
@@ -782,10 +782,9 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	va_list va;
 
 	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
-		gu_Throw("ipp_add_printf(): %s is a %s", name, ipp_tag_to_str(tag));
+		gu_Throw("ipp_add_template(): %s is a %s", name, ipp_tag_to_str(tag));
 
 	ap = ipp_new_attribute(ipp, group, tag, name, 1);
-
 	ap->template = template;
 
 	va_start(va, template);
@@ -794,6 +793,31 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	else
 		ap->values[0].string.text = va_arg(va, char*);
 	va_end(va);
+	}
+
+void ipp_add_templates(struct IPP *ipp, int group, int tag, const char name[], const char template[], int num_values, void *values)
+	{
+	ipp_attribute_t *ap;
+	int i;
+
+	if(ipp_tag_simplify(tag) != IPP_TAG_STRING)
+		gu_Throw("ipp_add_templates(): %s is a %s", name, ipp_tag_to_str(tag));
+
+	ap = ipp_new_attribute(ipp, group, tag, name, num_values);
+	ap->template = template;
+
+	if(strstr(template, "%d"))
+		{
+		int *p = (int*)values;
+		for(i=0; i<num_values; i++)
+			ap->values[i].integer = *(p++);
+		}
+	else
+		{
+		char **p = (char**)values;
+		for(i=0; i<num_values; i++)
+			ap->values[i].string.text = *(p++); 
+		}
 	}
 
 /** add a boolean  to the IPP response 

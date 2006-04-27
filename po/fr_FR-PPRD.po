@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-21 14:56-0400\n"
+"POT-Creation-Date: 2006-04-26 22:27-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -65,79 +65,79 @@ msgstr ""
 msgid "Shutdown complete.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:112
+#: ../pprd/pprd_ppop.c:94
 #, c-format
 msgid "Destination \"%s\" does not exist.\n"
 msgstr "La destination \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:294 ../pprd/pprd_ppop.c:522 ../pprd/pprd_ppop.c:682
-#: ../pprd/pprd_ppop.c:824
+#: ../pprd/pprd_ppop.c:276 ../pprd/pprd_ppop.c:504 ../pprd/pprd_ppop.c:664
+#: ../pprd/pprd_ppop.c:806
 #, c-format
 msgid "The destination \"%s\" does not exist.\n"
 msgstr "La destination \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:350
+#: ../pprd/pprd_ppop.c:332
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:357
+#: ../pprd/pprd_ppop.c:339
 #, c-format
 msgid "\"%s\" is a group of printers, not a printer.\n"
 msgstr "\"%s\" est un groupe d'imprimantes, pas une imprimante.\n"
 
 # msgid "\"%s\" is not stopt.\n"
 # msgstr "\"%s\" n'est pas arrêté.\n"
-#: ../pprd/pprd_ppop.c:373
+#: ../pprd/pprd_ppop.c:355
 #, c-format
 msgid "The printer \"%s\" is not stopt.\n"
 msgstr "L'imprimante \"%s\" n'est pas arrêtée.\n"
 
 # msgid "\"%s\" is already printing.\n"
 # msgstr "\"%s\" est déjà en cours d'impression.\n"
-#: ../pprd/pprd_ppop.c:378
+#: ../pprd/pprd_ppop.c:360
 #, c-format
 msgid "The printer \"%s\" is already printing.\n"
 msgstr "L'imprimante \"%s\" est déjà en train d'imprimer.\n"
 
 # msgid "There is an outstanding halt command for \"%s\".\n"
 # msgstr "Il y a une commande d'arrêt en suspens pour \"%s\".\n"
-#: ../pprd/pprd_ppop.c:391
+#: ../pprd/pprd_ppop.c:373
 #, c-format
 msgid "There is an outstanding halt command for the printer \"%s\".\n"
 msgstr "Il y a une commande d'arrêt en cours pour l'imprimante \"%s\".\n"
 
 # msgid "spooler error, \"%s\" is in an undefined state.\n"
 # msgstr "erreur de gestionnaire de file, \"%s\" est dans un état indéfini.\n"
-#: ../pprd/pprd_ppop.c:407 ../pprd/pprd_ppop.c:465
+#: ../pprd/pprd_ppop.c:389 ../pprd/pprd_ppop.c:447
 #, c-format
 msgid "Internal pprd error: printer \"%s\" is in an undefined state.\n"
 msgstr "Erreur interne de pprd : l'imprimante \"%s\" est dans un état indéfini.\n"
 
 # msgid "\"%s\" is already halting.\n"
 # msgstr "\"%s\" est déjà en train de s'arrêter.\n"
-#: ../pprd/pprd_ppop.c:426
+#: ../pprd/pprd_ppop.c:408
 #, c-format
 msgid "The printer \"%s\" is already halting.\n"
 msgstr "L'imprimante \"%s\" est déjà en train de s'arrêter.\n"
 
 # msgid "\"%s\" is already stopt.\n"
 # msgstr "\"%s\" est déjà arrêté.\n"
-#: ../pprd/pprd_ppop.c:431
+#: ../pprd/pprd_ppop.c:413
 #, c-format
 msgid "The printer \"%s\" is already stopt.\n"
 msgstr "L'imprimante \"%s\" est déjà arrêtée.\n"
 
 # msgid "\"%s\" is already stopping.\n"
 # msgstr "\"%s\" est déjà en cours d'arrêt.\n"
-#: ../pprd/pprd_ppop.c:445
+#: ../pprd/pprd_ppop.c:427
 #, c-format
 msgid "The printer \"%s\" is already stopping.\n"
 msgstr "L'imprimante \"%s\" est déjà en train de s'arrêter.\n"
 
 # msgid "Notify feature already in use for \"%s\".\n"
 # msgstr "Possibilité d'annonce déjà utilisée pour \"%s\".\n"
-#: ../pprd/pprd_ppop.c:478
+#: ../pprd/pprd_ppop.c:460
 #, c-format
 msgid ""
 "Another process is already using the notify\n"
@@ -148,21 +148,21 @@ msgstr ""
 
 # msgid "\"%s\" is already held.\n"
 # msgstr "\"%s\" est déjà suspendu.\n"
-#: ../pprd/pprd_ppop.c:550
+#: ../pprd/pprd_ppop.c:532
 #, c-format
 msgid "The print job \"%s\" is already held.\n"
 msgstr "Le travail d'impression \"%s\" est déjà suspendu.\n"
 
 # msgid "\"%s\" is arrested.\n"
 # msgstr "\"%s\" est arrêté.\n"
-#: ../pprd/pprd_ppop.c:554
+#: ../pprd/pprd_ppop.c:536
 #, c-format
 msgid "The print job \"%s\" is arrested.\n"
 msgstr "Le travail d'impression \"%s\" est arrêté.\n"
 
 # msgid "\"%s\" is already in transition to the held state.\n"
 # msgstr "\"%s\" est déjà en cours vers l'état suspendu.\n"
-#: ../pprd/pprd_ppop.c:559
+#: ../pprd/pprd_ppop.c:541
 #, c-format
 msgid ""
 "The print job \"%s\" is already undergoing a\n"
@@ -173,7 +173,7 @@ msgstr ""
 
 # msgid "Converting cancel to hold for job \"%s\".\n"
 # msgstr "Conversion d'annulation vers suspension pour le travail \"%s\".\n"
-#: ../pprd/pprd_ppop.c:566
+#: ../pprd/pprd_ppop.c:548
 #, c-format
 msgid ""
 "Converting outstanding cancel order for\n"
@@ -182,19 +182,19 @@ msgstr ""
 "Conversion de l'ordre d'annulation en attente pour le\n"
 "travail \"%s\" en un ordre de suspension.\n"
 
-#: ../pprd/pprd_ppop.c:581
+#: ../pprd/pprd_ppop.c:563
 #, c-format
 msgid "Seizing job \"%s\" which is printing on \"%s\".\n"
 msgstr "Saisie du travail \"%s\" qui est en cours d'impression sur \"%s\".\n"
 
 # msgid "\"%s\" has unknown status %d.\n"
 # msgstr "\"%s\" a un état %d inconnu.\n"
-#: ../pprd/pprd_ppop.c:603
+#: ../pprd/pprd_ppop.c:585
 #, c-format
 msgid "Internal pprd error: job \"%s\" has unknown status %d.\n"
 msgstr "Erreur interne de pprd : le travail \"%s\" a un état %d inconnu.\n"
 
-#: ../pprd/pprd_ppop.c:625
+#: ../pprd/pprd_ppop.c:607
 #, c-format
 msgid ""
 "The print job \"%s\" can't be released until an\n"
@@ -205,24 +205,24 @@ msgstr ""
 
 # msgid "\"%s\" is not held.\n"
 # msgstr "\"%s\" n'est pas suspendu.\n"
-#: ../pprd/pprd_ppop.c:634
+#: ../pprd/pprd_ppop.c:616
 #, c-format
 msgid "The print job \"%s\" is not being held.\n"
 msgstr "Le travail d'impression \"%s\" n'est pas suspendu.\n"
 
 # "\"%s\" ne peut être libéré avant que l'opération de suspension\n"
 # "soit terminée.\n"
-#: ../pprd/pprd_ppop.c:648 ../pprd/pprd_ppop.c:783
+#: ../pprd/pprd_ppop.c:630 ../pprd/pprd_ppop.c:765
 #, c-format
 msgid "The print job \"%s\" does not exist.\n"
 msgstr "Le travail d'impression \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:880
+#: ../pprd/pprd_ppop.c:862
 #, c-format
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:887
+#: ../pprd/pprd_ppop.c:869
 #, c-format
 msgid "\"%s\" is not a printer.\n"
 msgstr "\"%s\" n'est pas une imprimante.\n"
@@ -242,53 +242,53 @@ msgstr "\"%s\" n'est pas une imprimante.\n"
 # "Files: ../pprd/pprd.c ../pprd/pprd_alert.c ../pprd/pprd_load.c "
 # "../pprd/pprd_log.c ../pprd/pprd_mainsup.c ../pprd/pprd_nag.c "
 # "../pprd/pprd_ppopint.c ../pprd/pprd_queue.c ../pprd/pprd_respond.c\n"
-#: ../pprd/pprd_ppop.c:901
+#: ../pprd/pprd_ppop.c:883
 #, c-format
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:953 ../pprd/pprd_ppop.c:1029
+#: ../pprd/pprd_ppop.c:935 ../pprd/pprd_ppop.c:1011
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1070 ../pprd/pprd_ppop.c:1077 ../pprd/pprd_ppop.c:1271
-#: ../pprd/pprd_ppop.c:1356
+#: ../pprd/pprd_ppop.c:1052 ../pprd/pprd_ppop.c:1059 ../pprd/pprd_ppop.c:1253
+#: ../pprd/pprd_ppop.c:1338
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1210
+#: ../pprd/pprd_ppop.c:1192
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1219
+#: ../pprd/pprd_ppop.c:1201
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1224
+#: ../pprd/pprd_ppop.c:1206
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1228
+#: ../pprd/pprd_ppop.c:1210
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_ppop.c:1236
+#: ../pprd/pprd_ppop.c:1218
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1238
+#: ../pprd/pprd_ppop.c:1220
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1323 ../pprd/pprd_ppop.c:1380
+#: ../pprd/pprd_ppop.c:1305 ../pprd/pprd_ppop.c:1362
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"
@@ -359,20 +359,14 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#, fuzzy
-#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
-#~ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
 
-#, fuzzy
-#~ msgid ""
-#~ "%s: Security problem: egid = %ld\n"
-#~ "(This program should be setgid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s : problème de sécurité : egid = %u\n"
-#~ "(Ce programme devrait être setgid \"%s\".)\n"
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
 
 #, fuzzy
 #~ msgid ""
@@ -382,11 +376,17 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "%s : problème de sécurité : euid = %u\n"
 #~ "(Ce programme devrait être setuid \"%s\".)\n"
 
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
+#, fuzzy
+#~ msgid ""
+#~ "%s: Security problem: egid = %ld\n"
+#~ "(This program should be setgid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s : problème de sécurité : egid = %u\n"
+#~ "(Ce programme devrait être setgid \"%s\".)\n"
 
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
 
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
+#, fuzzy
+#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
+#~ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"

@@ -45,7 +45,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp.h"
+#include "ipp-functions.h"
 
 /*
  * Handle CUPS_GET_DEVICES
@@ -137,7 +137,7 @@ void cups_get_ppds(struct IPP *ipp)
 	} /* cups_get_ppds() */
 
 /*
- * Handle CUPS_ADD_PRINTER also known as CUPS-Add-Modify-Printer
+ * Handle CUPS_ADD_MODIFY_PRINTER also known as CUPS-Add-Modify-Printer
  */
 void cups_add_printer(struct IPP *ipp)
 	{

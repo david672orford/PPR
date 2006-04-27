@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*! \file */
@@ -248,11 +248,11 @@ int qentryfile_load(struct QEntryFile *job, FILE *qfile)
 				break;
 
 			case 'U':
-				/* This is %Z for consistency with the simplified code in
+				/* This is %T for consistency with the simplified code in
 				 * IPP server which just takes the part of the
 				 * line after "User:".
 				 */
-				MATCH("User: ", _2("%Z", &job->user), <1, found_user)
+				MATCH("User: ", _2("%T", &job->user), <1, found_user)
 				break;
 			}
 

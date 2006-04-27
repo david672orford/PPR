@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-21 14:56-0400\n"
+"POT-Creation-Date: 2006-04-26 22:27-0400\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -2535,24 +2535,24 @@ msgstr "Rolle"
 msgid "Source Download"
 msgstr "Quellen herunterladen"
 
-#~ msgid "Original Queue Priority of this Job"
-#~ msgstr "Originale Warteschlangenpriorität des Auftrages"
+#~ msgid "Numberic Unix Userid of Job Submitter"
+#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
+
+#~ msgid "Unix User"
+#~ msgstr "Unix Nutzer"
+
+#~ msgid "Proxy For"
+#~ msgstr "Proxy für"
+
+#~ msgid "Submitted by Unix user:"
+#~ msgstr "Übermittelt von Unix-Nutzer:"
+
+#~ msgid "As proxy for:"
+#~ msgstr "Als Proxy für:"
 
 #, fuzzy
 #~ msgid "For Whom is the Submitter Acting as Proxy?"
 #~ msgstr "Für wen arbeitet der Überträger als Proxy?"
 
-#~ msgid "As proxy for:"
-#~ msgstr "Als Proxy für:"
-
-#~ msgid "Submitted by Unix user:"
-#~ msgstr "Übermittelt von Unix-Nutzer:"
-
-#~ msgid "Proxy For"
-#~ msgstr "Proxy für"
-
-#~ msgid "Unix User"
-#~ msgstr "Unix Nutzer"
-
-#~ msgid "Numberic Unix Userid of Job Submitter"
-#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
+#~ msgid "Original Queue Priority of this Job"
+#~ msgstr "Originale Warteschlangenpriorität des Auftrages"

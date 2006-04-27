@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*! \file */
@@ -51,10 +51,10 @@ struct TABLE operations[] =
 	{"Get-Printer-Supported-Values", IPP_GET_PRINTER_SUPPORTED_VALUES},
 	{"CUPS-Get-Default", CUPS_GET_DEFAULT},
 	{"CUPS-Get-Printers", CUPS_GET_PRINTERS},
-	{"CUPS-Add-Printer", CUPS_ADD_PRINTER},
+	{"CUPS-Add-Modify-Printer", CUPS_ADD_MODIFY_PRINTER},
 	{"CUPS-Delete-Printer", CUPS_DELETE_PRINTER},
 	{"CUPS-Get-Classes", CUPS_GET_CLASSES},
-	{"CUPS-Add-Class", CUPS_ADD_CLASS},
+	{"CUPS-Add-Modify-Class", CUPS_ADD_MODIFY_CLASS},
 	{"CUPS-Delete-Class", CUPS_DELETE_CLASS},
 	{"CUPS-Accept-Jobs", CUPS_ACCEPT_JOBS},
 	{"CUPS-Reject-Jobs", CUPS_REJECT_JOBS},

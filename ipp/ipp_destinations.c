@@ -29,7 +29,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp.h"
+#include "ipp-functions.h"
 
 /** Convert a PPR printer's status to IPP status
  *
@@ -369,10 +369,10 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			/* IPP_GET_PRINTER_SUPPORTED_VALUES, */
 			CUPS_GET_DEFAULT,
 			CUPS_GET_PRINTERS,
-			CUPS_ADD_PRINTER,
+			CUPS_ADD_MODIFY_PRINTER,
 			/* CUPS_DELETE_PRINTER, */
 			CUPS_GET_CLASSES,
-			/* CUPS_ADD_CLASS, */
+			/* CUPS_ADD_MODIFY_CLASS, */
 			/* CUPS_DELETE_CLASS, */
 			/* CUPS_ACCEPT_JOBS, */
 			/* CUPS_REJECT_JOBS, */
@@ -399,23 +399,28 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			"pdl-override-supported", "attempted");
 		}
 
-
 	/* printer-error-policy-supported */
 
 	/* printer-op-policy-supported */	
 	
-	if(queueinfo_is_group(qip) && request_attrs_attr_requested(req, "member-names"))
+	if(queueinfo_is_group(qip))
 		{
-		int iii;
-		const char *members[MAX_GROUPSIZE];
-		const char *temp;
-		for(iii=0; iii < MAX_GROUPSIZE; iii++)
+	   	if(request_attrs_attr_requested(req, "member-names") || request_attrs_attr_requested(req, "member-uris"))
 			{
-			if(!(temp = queueinfo_membername(qip, iii)))
-				break;
-			members[iii] = queueinfo_hoist_value(qip, temp);
+			int iii;
+			const char *members[MAX_GROUPSIZE];
+			const char *temp;
+			for(iii=0; iii < MAX_GROUPSIZE; iii++)
+				{
+				if(!(temp = queueinfo_membername(qip, iii)))
+					break;
+				members[iii] = queueinfo_hoist_value(qip, temp);
+				}
+	   		if(request_attrs_attr_requested(req, "member-names"))
+				ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", iii, members);
+	   		if(request_attrs_attr_requested(req, "member-uris"))
+				ipp_add_templates(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-uris", "/printers/%s", iii, members);
 			}
-		ipp_add_strings(ipp, IPP_TAG_PRINTER, IPP_TAG_NAME, "member-names", iii, members);
 		}
 
 	} /* add_queue_attributes() */

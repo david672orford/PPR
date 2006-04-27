@@ -53,7 +53,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp.h"
+#include "ipp-functions.h"
 
 static void sigchld_handler(int sig)
 	{

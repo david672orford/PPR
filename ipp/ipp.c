@@ -28,7 +28,7 @@
 #include "ipp_constants.h"
 #include "ipp_utils.h"
 #include "queueinfo.h"
-#include "ipp.h"
+#include "ipp-functions.h"
 
 /** Send a debug message to the HTTP server's error log
 
@@ -460,7 +460,7 @@ int main(int argc, char *argv[])
 				case CUPS_GET_PRINTERS:
 					p_handler = cups_get_printers;
 					break;
-				case CUPS_ADD_PRINTER:
+				case CUPS_ADD_MODIFY_PRINTER:
 					p_handler = cups_add_printer;
 					break;
 				case CUPS_DELETE_PRINTER:
@@ -469,7 +469,7 @@ int main(int argc, char *argv[])
 				case CUPS_GET_CLASSES:
 					p_handler = cups_get_classes;
 					break;
-				case CUPS_ADD_CLASS:
+				case CUPS_ADD_MODIFY_CLASS:
 					/* not implemented */
 					break;
 				case CUPS_DELETE_CLASS:

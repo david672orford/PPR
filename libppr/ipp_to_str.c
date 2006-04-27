@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 April 2006.
+** Last modified 26 April 2006.
 */
 
 /*! \file */
@@ -71,13 +71,13 @@ const char *ipp_operation_id_to_str(int op)
 			return "CUPS-Get-Default";
 		case CUPS_GET_PRINTERS:
 			return "CUPS-Get-Printers";
-		case CUPS_ADD_PRINTER:
+		case CUPS_ADD_MODIFY_PRINTER:
 			return "CUPS-Add-Printer";
 		case CUPS_DELETE_PRINTER:
 			return "CUPS-Delete-Printer";
 		case CUPS_GET_CLASSES:
 			return "CUPS-Get-Classes";
-		case CUPS_ADD_CLASS:
+		case CUPS_ADD_MODIFY_CLASS:
 			return "CUPS-Add-Class";
 		case CUPS_DELETE_CLASS:
 			return "CUPS-Delete-Class";

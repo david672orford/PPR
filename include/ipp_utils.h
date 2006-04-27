@@ -148,6 +148,7 @@ void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], co
 	__attribute__ (( format (printf, 5, 6) ))
 	#endif
 	;
+void ipp_add_templates(struct IPP *ipp, int group, int tag, const char name[], const char template[], int num_values, void *values);
 void ipp_add_boolean(struct IPP *ipp, int group, int tag, const char name[], gu_boolean value);
 ipp_attribute_t *ipp_find_attribute(struct IPP *ipp, int group, int tag, const char name[]);
 ipp_attribute_t *ipp_claim_attribute(struct IPP *ipp, int group, int tag, const char name[]);
