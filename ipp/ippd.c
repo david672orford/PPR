@@ -501,13 +501,14 @@ int main(int argc, char *argv[])
 				 * for the common case. */
 				ipp->response_code = IPP_OK;
 
-				/* Give the handler a memory pool into which to put its blocks. */
-				gu_pool_push(ipp->pool);
-				
+				/* Give the handler a memory pool into which to put its 
+				 * blocks.  For now borrow the IPP object's pool. */
+				GU_OBJECT_POOL_PUSH(ipp->pool);
+
 				DEBUG(("invoking handler..."));
 				(*p_handler)(ipp);
 
-				gu_pool_pop(ipp->pool);
+				GU_OBJECT_POOL_POP(ipp->pool);
 				}
 			else
 				{

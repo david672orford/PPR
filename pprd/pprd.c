@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 21 April 2006.
+** Last modified 27 April 2006.
 */
 
 /*
@@ -177,7 +177,8 @@ static void reapchild(void)
 			/* Is it pprd-question? */
 			if(!question_child_hook(pid, wstat))
 				/* Is it a responder? */
-				responder_child_hook(pid, wstat);
+				if(!responder_child_hook(pid, wstat))
+					debug("process %ld unclaimed", (long)pid);
 			}
 		}
 
@@ -283,7 +284,7 @@ static void do_socket_command(int usock)
 	int confd;
 	char buffer[256];
 	int len, writelen;
-	int result;
+	struct PPRD_CALL_RETVAL result;
 
 	if((confd = accept(usock, 0, 0)) == -1)
 		gu_Throw(_("%s(): %s() failed, errno=%d (%s)"), function, "accept", errno, strerror(errno));
@@ -299,7 +300,8 @@ static void do_socket_command(int usock)
 		if(len < 1 || buffer[len-1] != '\n')
 			{
 			error("ignoring malformed command from Unix-domain socket");
-			result = IPP_BAD_REQUEST;
+			result.status_code = IPP_BAD_REQUEST;
+			result.extra_code = 0;
 			break;
 			}
 		buffer[len - 1] = '\0';
@@ -315,14 +317,15 @@ static void do_socket_command(int usock)
 				break;
 			default:
 				error("unrecognized command received on Unix-domain socket: %s", buffer);
-				result = IPP_OPERATION_NOT_SUPPORTED;
+				result.status_code = IPP_OPERATION_NOT_SUPPORTED;
+				result.extra_code = 0;
 				break;
 			}
 		
 		} while(FALSE);
 
 	/* Send the IPP result code. */
-	writelen = gu_snprintf(buffer, sizeof(buffer), "%d\n", result);
+	writelen = gu_snprintf(buffer, sizeof(buffer), "%d %d\n", result.status_code, result.extra_code);
 	if((len = write(confd, buffer, writelen)) == -1)
 		error(_("%s(): write to client failed, errno=%d (%s)"), function, errno, strerror(errno));
 	if(len != writelen)

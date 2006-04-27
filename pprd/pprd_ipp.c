@@ -29,11 +29,12 @@
 /** cancel specified job or jobs
  * This is called by ipp_cancel_job() and ipp_purge_jobs().
  */
-static int ipp_cancel_job_core(int destid, int jobid)
+static struct PPRD_CALL_RETVAL ipp_cancel_job_core(int destid, int jobid)
 	{
 	const char function[] = "ipp_cancel_job_core";
 	int i;
 	int prnid;
+	struct PPRD_CALL_RETVAL retval = {IPP_NOT_FOUND, 0};
 
 	lock();
 
@@ -45,6 +46,8 @@ static int ipp_cancel_job_core(int destid, int jobid)
 			continue;
 		if(destid != QUEUEID_WILDCARD && queue[i].destid != destid)
 			continue;
+
+		retval.status_code = IPP_OK;
 
 		/* If pprdrv is working on this job, */
 		if((prnid = queue[i].status) >= 0)
@@ -120,12 +123,12 @@ static int ipp_cancel_job_core(int destid, int jobid)
 	
 	unlock();
 
-	return IPP_OK;
+	return retval;
 	} /* ipp_cancel_core() */
 
 /** Handler for IPP_CANCEL_JOB
  */
-static int ipp_cancel_job(const char command_args[])
+static struct PPRD_CALL_RETVAL ipp_cancel_job(const char command_args[])
 	{
 	int jobid;
 	jobid = atoi(command_args);
@@ -134,12 +137,12 @@ static int ipp_cancel_job(const char command_args[])
 
 /* Handler for IPP_HOLD_JOB
 */
-static int ipp_hold_job(const char command_args[])
+static struct PPRD_CALL_RETVAL ipp_hold_job(const char command_args[])
 	{
 	const char *function = "ipp_hold_job";
 	int job_id;
 	int x;
-	int retcode = IPP_OK;
+	struct PPRD_CALL_RETVAL retval = {IPP_NOT_FOUND, 0};	/* yet */
 
 	job_id = atoi(command_args);
 
@@ -150,6 +153,8 @@ static int ipp_hold_job(const char command_args[])
 		if(queue[x].id != job_id)
 			continue;
 
+		retval.status_code = IPP_OK;
+		
 		switch(queue[x].status)
 			{
 			case STATUS_WAITING:		/* if not printing, */
@@ -157,11 +162,13 @@ static int ipp_hold_job(const char command_args[])
 				queue_p_job_new_status(&queue[x], STATUS_HELD);
 				break;
 			case STATUS_HELD:			/* if already held, nothing to do */
+				retval.extra_code = 1;
 				break;
 			case STATUS_ARRESTED:		/* can't hold an arrested job */
-				retcode = IPP_NOT_POSSIBLE;
+				retval.status_code = IPP_NOT_POSSIBLE;
 				break;
 			case STATUS_SEIZING:		/* already going to held */
+				retval.extra_code = 1;
 				break;
 			case STATUS_CANCEL:			/* if being canceled, hijack the operation */
 				printer_new_status(&printers[queue[x].status], PRNSTATUS_SEIZING);
@@ -186,7 +193,7 @@ static int ipp_hold_job(const char command_args[])
 					}
 				else
 					{
-					retcode = IPP_INTERNAL_ERROR;
+					retval.status_code = IPP_INTERNAL_ERROR;
 					}
 				break;
 			}
@@ -196,17 +203,17 @@ static int ipp_hold_job(const char command_args[])
 
 	unlock();
 
-	return retcode;
+	return retval;
 	} /* end of ipp_hold_job() */
 
 /* Handler for IPP_RELEASE_JOB
 */
-static int ipp_release_job(const char command_args[])
+static struct PPRD_CALL_RETVAL ipp_release_job(const char command_args[])
 	{
 	const char function[] = "ipp_release_job";
 	int job_id;
 	int x;
-	int retcode = IPP_OK;
+	struct PPRD_CALL_RETVAL retval = {IPP_NOT_FOUND, 0};	/* yet */
 
 	job_id = atoi(command_args);
 
@@ -219,6 +226,8 @@ static int ipp_release_job(const char command_args[])
 		if(queue[x].id != job_id)
 			continue;
 
+		retval.status_code = IPP_OK;
+
 		switch(queue[x].status)
 			{
 			case STATUS_HELD:
@@ -230,17 +239,18 @@ static int ipp_release_job(const char command_args[])
 				break;
 			case STATUS_ARRESTED:
 				DODEBUG_IPP(("%s(): job is arrested", function));
-				retcode = IPP_NOT_POSSIBLE;
+				retval.status_code = IPP_NOT_POSSIBLE;
 				break;
 			case STATUS_SEIZING:			/* in transition to held */
 				DODEBUG_IPP(("%s(): job is already in transition to held", function));
 				/* This should be fixed */
-				retcode = IPP_NOT_POSSIBLE;
+				retval.status_code = IPP_NOT_POSSIBLE;
 				break;
 			case STATUS_WAITING:			/* not held */
 			case STATUS_WAITING4MEDIA:
 			default:						/* printing */
 				DODEBUG_IPP(("%s(): job is not held", function));
+				retval.extra_code = 1;
 				break;
 			}
 
@@ -254,7 +264,7 @@ static int ipp_release_job(const char command_args[])
 
 	unlock();
 
-	return retcode;
+	return retval;
 	} /* end of ipp_release_job() */
 
 /** Handler for IPP_PAUSE_PRINTER
@@ -262,26 +272,32 @@ static int ipp_release_job(const char command_args[])
  * RFC 2911 leaves it up to the implementor to decide whether this function
  * stops the printer immediately or after the completion of the current job.
  */
-static int ipp_pause_printer(const char command_args[])
+static struct PPRD_CALL_RETVAL ipp_pause_printer(const char command_args[])
 	{
-	const char *p = command_args;
-	int retcode = IPP_OK;
+	const char *p;
+	struct PPRD_CALL_RETVAL retval = {IPP_OK, 0};
 
-	if((p = lmatchp(p, "group")))
+	if((p = lmatchp(command_args, "group")))
 		{
 		int destid, gindex;
 		if((destid = destid_by_group(p)) == -1)
-			return IPP_NOT_FOUND;
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 		gindex = destid_to_gindex(destid);
 		groups[gindex].spool_state.held = TRUE;
 		groups[gindex].spool_state.printer_state_change_time = time(NULL);
 		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
 		}
-	else if((p = lmatchp(p, "printer")))
+	else if((p = lmatchp(command_args, "printer")))
 		{
 		int prnid;
 		if((prnid = destid_by_printer(p)) == -1)
-			return IPP_NOT_FOUND;
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 	
 		switch(printers[prnid].spool_state.status)
 			{
@@ -295,6 +311,7 @@ static int ipp_pause_printer(const char command_args[])
 			case PRNSTATUS_HALTING:
 			case PRNSTATUS_STOPT:
 			case PRNSTATUS_STOPPING:
+				retval.extra_code = 1;
 				break;
 			case PRNSTATUS_CANCELING:			/* if pprdrv already sent kill signal */
 			case PRNSTATUS_SEIZING:
@@ -312,28 +329,31 @@ static int ipp_pause_printer(const char command_args[])
 				break;
 			default:
 				error(X_("printer \"%s\" is in undefined state %d"), command_args, printers[prnid].spool_state.status);
-				retcode = IPP_INTERNAL_ERROR;
+				retval.status_code = IPP_INTERNAL_ERROR;
 				break;
 			}
 		}
 	else	/* error in ippd */
-		retcode = IPP_INTERNAL_ERROR;
+		retval.status_code = IPP_INTERNAL_ERROR;
 
-	return retcode;
+	return retval;
 	} /* ipp_pause_printer() */
 
 /** Handler for IPP_RESUME_PRINTER
  */
-static int ipp_resume_printer(const char command_args[])
+static struct PPRD_CALL_RETVAL ipp_resume_printer(const char command_args[])
 	{
-	const char *p = command_args;
-	int retcode = IPP_OK;
+	const char *p;
+	struct PPRD_CALL_RETVAL retval = {IPP_OK, 0};
 
-	if((p = lmatchp(p, "group")))
+	if((p = lmatchp(command_args, "group")))
 		{
 		int destid, gindex;
 		if((destid = destid_by_group(p)) == -1)
-			return IPP_NOT_FOUND;
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 		gindex = destid_to_gindex(destid);
 
 		groups[gindex].spool_state.held = FALSE;
@@ -342,11 +362,14 @@ static int ipp_resume_printer(const char command_args[])
 
 		group_look_for_work(gindex);
 		}
-	else if((p = lmatchp(p, "printer")))
+	else if((p = lmatchp(command_args, "printer")))
 		{
 		int prnid;
 		if((prnid = destid_by_printer(p)) == -1)
-			return IPP_NOT_FOUND;
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 	
 		switch(printers[prnid].spool_state.status)
 			{
@@ -355,8 +378,8 @@ static int ipp_resume_printer(const char command_args[])
 			case PRNSTATUS_SEIZING:
 			case PRNSTATUS_ENGAGED:
 			case PRNSTATUS_STARVED:
-				break;
 			case PRNSTATUS_PRINTING:
+				retval.extra_code = 1;
 				break;
 			case PRNSTATUS_FAULT:
 			case PRNSTATUS_STOPT:
@@ -365,7 +388,7 @@ static int ipp_resume_printer(const char command_args[])
 				printer_look_for_work(prnid);
 				break;
 			case PRNSTATUS_HALTING:
-				retcode = IPP_NOT_POSSIBLE;
+				retval.status_code = IPP_NOT_POSSIBLE;
 				break;
 			case PRNSTATUS_STOPPING:
 				printer_new_status(&printers[prnid], PRNSTATUS_PRINTING);
@@ -373,77 +396,97 @@ static int ipp_resume_printer(const char command_args[])
 				break;
 			default:
 				error(X_("printer \"%s\" is in undefined state %d"), command_args, printers[prnid].spool_state.status);
-				retcode = IPP_INTERNAL_ERROR;
+				retval.status_code = IPP_INTERNAL_ERROR;
 				break;
 			}
 		}
 	else		/* error in ippd */
-		retcode = IPP_INTERNAL_ERROR;
+		retval.status_code = IPP_INTERNAL_ERROR;
 
-	return retcode;
+	return retval;
 	} /* ipp_resume_printer() */
 
-static int ipp_purge_jobs(const char command_args[])
+static struct PPRD_CALL_RETVAL ipp_purge_jobs(const char command_args[])
 	{
-	const char *p = command_args;
+	const char *p;
 	int destid;
+	struct PPRD_CALL_RETVAL retval = {IPP_OK, 0};
 
-	if((p = lmatchp(p, "group")))
+	if((p = lmatchp(command_args, "group")))
 		{
 		if((destid = destid_by_group(command_args)) == -1)
-			return IPP_NOT_FOUND;
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 		}
-	else if((p = lmatchp(p, "printer")))
+	else if((p = lmatchp(command_args, "printer")))
 		{
 		if((destid = destid_by_printer(command_args)) == -1)
-			return IPP_NOT_FOUND;
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 		}
 	else		/* error in ippd */
-		return IPP_INTERNAL_ERROR;
+		{
+		retval.status_code = IPP_INTERNAL_ERROR;
+		return retval;
+		}
 
 	return ipp_cancel_job_core(destid, WILDCARD_JOBID);
 	} /* ipp_purge_jobs() */
 
-static int cups_accept_or_reject_jobs(const char command_args[], gu_boolean accepting)
+static struct PPRD_CALL_RETVAL cups_accept_or_reject_jobs(const char command_args[], gu_boolean accepting)
 	{
-	const char *p = command_args;
+	const char *p;
 	int destid;
-	if((p = lmatchp(p, "group")))
+	struct PPRD_CALL_RETVAL retval = {IPP_OK, 0};
+	if((p = lmatchp(command_args, "group")))
 		{
 		int gindex;
-		if((destid = destid_by_group(command_args)) == -1)
-			return IPP_NOT_FOUND;
+		if((destid = destid_by_group(p)) == -1)
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 		gindex = destid_to_gindex(destid);
 		groups[gindex].spool_state.accepting = accepting;
 		groups[gindex].spool_state.printer_state_change_time = time(NULL);
 		group_spool_state_save(&(groups[gindex].spool_state), groups[gindex].name);
-		return IPP_OK;
+		retval.status_code = IPP_OK;
+		return retval;
 		}
-	if((p = lmatchp(p, "printer")))
+	if((p = lmatchp(command_args, "printer")))
 		{
-		if((destid = destid_by_group(command_args)) == -1)
-			return IPP_NOT_FOUND;
+		if((destid = destid_by_group(p)) == -1)
+			{
+			retval.status_code = IPP_NOT_FOUND;
+			return retval;
+			}
 		printers[destid].spool_state.accepting = accepting;
 		printers[destid].spool_state.printer_state_change_time = time(NULL);
 		printer_spool_state_save(&(printers[destid].spool_state), printers[destid].name);
-		return IPP_OK;
+		return retval;
 		}
-	return IPP_BAD_REQUEST;
+	retval.status_code = IPP_BAD_REQUEST;
+	return retval;
 	} /* ipp_pause_printer() */
 
-int ipp_dispatch(const char command[])
+struct PPRD_CALL_RETVAL ipp_dispatch(const char command[])
 	{
 	FUNCTION4DEBUG("ipp_dispatch")
 	const char *p;
 	int operation_id;
-	int result_code;
+	struct PPRD_CALL_RETVAL result = {IPP_OK, 0};
 
 	DODEBUG_IPP(("%s(): %s", function, command));
 	
 	if(!(p = lmatchsp(command, "IPP")))
 		{
 		error("%s(): command missing", function);
-		return IPP_INTERNAL_ERROR;
+		result.status_code = IPP_INTERNAL_ERROR;
+		return result;
 		}
 
 	operation_id = atoi(p);
@@ -453,37 +496,38 @@ int ipp_dispatch(const char command[])
 	switch(operation_id)
 		{
 		case IPP_CANCEL_JOB:
-			result_code = ipp_cancel_job(p);
+			result = ipp_cancel_job(p);
 			break;
 		case IPP_HOLD_JOB:
-			result_code = ipp_hold_job(p);
+			result = ipp_hold_job(p);
 			break;
 		case IPP_RELEASE_JOB:
-			result_code = ipp_release_job(p);
+			result = ipp_release_job(p);
 			break;
 		case IPP_PAUSE_PRINTER:
-			result_code = ipp_pause_printer(p);
+			result = ipp_pause_printer(p);
 			break;
 		case IPP_RESUME_PRINTER:
-			result_code = ipp_resume_printer(p);
+			result = ipp_resume_printer(p);
 			break;
 		case IPP_PURGE_JOBS:
-			result_code = ipp_purge_jobs(p);
+			result = ipp_purge_jobs(p);
 			break;
 		case CUPS_ACCEPT_JOBS:
-			result_code = cups_accept_or_reject_jobs(p, TRUE);
+			result = cups_accept_or_reject_jobs(p, TRUE);
 			break;
 		case CUPS_REJECT_JOBS:
-			result_code = cups_accept_or_reject_jobs(p, FALSE);
+			result = cups_accept_or_reject_jobs(p, FALSE);
 			break;
 		default:
 			error("unsupported operation: 0x%.2x (%s)", operation_id, ipp_operation_id_to_str(operation_id));
-			result_code = IPP_OPERATION_NOT_SUPPORTED;
+			result.status_code = IPP_OPERATION_NOT_SUPPORTED;
+			result.extra_code = 0;
 			break;
 		}
 
-	DODEBUG_IPP(("%s(): done, result = 0x%04x", function, result_code));
-	return result_code;
+	DODEBUG_IPP(("%s(): done, result = {0x%04x, %d}", function, result.status_code, result.extra_code));
+	return result;
 	} /* end of ipp_dispatch() */
 
 /* end of file */

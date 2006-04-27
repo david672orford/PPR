@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<ipp><request>
+	<version-number>1.0</version-number>
+	<operation-id>Validate-Job</operation-id>
+	<request-id>1</request-id>
+	<operation-attributes>
+		<charset><name>attributes-charset</name>
+			<value>utf-8</value>
+			</charset>
+		<naturalLanguage><name>attributes-natural-language</name>
+			<value>en-US</value>
+			</naturalLanguage>
+		<uri><name>printer-uri</name>
+			<param-value>uri</param-value>
+			</uri>
+		<nameWithoutLanguage ifdef="job-name"><name>job-name</name>
+			<param-value>job-name</param-value>
+			</nameWithoutLanguage>
+		<boolean><name>ipp-attribute-fidelity</name>
+			<value>true</value>
+			</boolean>
+		<nameWithoutLanguage><name>requesting-user-name</name>
+			<env-value>USER</env-value>
+			</nameWithoutLanguage>
+	</operation-attributes>
+	<job-attributes>
+		<integer ifdef="copies"><name>copies</name>
+			<param-value>copies</param-value>
+			</integer>
+		<keyword><name>sides</name>
+			<param-value>sides</param-value>
+			</keyword>
+	</job-attributes>
+</request></ipp>

@@ -1305,7 +1305,8 @@ sub do_cgi
 	# Do we have to do this too?
 	while(wait() != -1)
 		{
-		print STDERR "status: $?\n" if($DEBUG > 0);
+		my $wait_status = $?;
+		print STDERR "CGI wait status: $wait_status\n" if($wait_status != 0 && $DEBUG > 0);
 		}
 
 	# Return the possibly altered "Connection:" header value.

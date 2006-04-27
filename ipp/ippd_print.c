@@ -74,11 +74,13 @@ static ipp_attribute_t* convert_attributes(
 	   	const char ***args, int *args_i, int *args_space
 		)
 	{
+	const char function[] = "convert_attributes";
 	struct IPP_TO_PPR *tp;		/* markes our place in the template table */
 
 	/* Step thru IPP attributes. */	
 	for( ; attr; attr = attr->next)
 		{
+		DEBUG(("%s(): attribute: %s", function, attr->name));
 		/* If another attribute group is starting, we are done. */
 		if(attr->group_tag != group_tag)
 			break;
@@ -86,6 +88,7 @@ static ipp_attribute_t* convert_attributes(
 		/* Stop thru this templates looking for a match for this attribute. */
 		for(tp=template; tp->value_tag != IPP_TAG_ZERO; tp++)
 			{
+			DEBUG(("%s(): template: %s", function, tp->name));
 			if(strcmp(tp->name, attr->name) != 0)
 				continue;
 
@@ -94,7 +97,7 @@ static ipp_attribute_t* convert_attributes(
 			 * of these tests fails. */
 			if(attr->value_tag != tp->value_tag || attr->num_values != 1)
 				{
-				debug("attribute %s bad", attr->name);
+				DEBUG(("%s(): attribute %s bad", function, attr->name));
 				ipp->response_code = IPP_BAD_REQUEST;
 				/* Suppress unsupported processing.  Otherwise any attributes
 				 * which we have not yet consumed will be listed as unsupported! */
@@ -158,10 +161,12 @@ static ipp_attribute_t* convert_attributes(
 				ipp_insert_attribute(ipp, attr);	/* move attrib to response */
 				break;
 				}
-
+			
 			/* If we are out of space in the ppr arguments array, enlarge it. */
+			DEBUG(("%s(): *args_i=%d, *args_space=%d", function, *args_i, *args_space));
 			if((*args_i + 2) >= *args_space)
 				{
+				DEBUG(("%s(): enlarging array space", function));
 				*args_space += 64;
 				*args = gu_realloc(*args, *args_space, sizeof(char*));
 				}
@@ -169,11 +174,14 @@ static ipp_attribute_t* convert_attributes(
 			/* Append the ppr option supplied in the template and the 
 			 * validated (and possibly mapped) value to the ppr command 
 			 * line. */
-			*args[(*args_i)++] = tp->ppr_option;
-			*args[(*args_i)++] = value;
+			DEBUG(("%s(): args[%d]=\"%s\"", function, *args_i, tp->ppr_option));
+			(*args)[(*args_i)++] = tp->ppr_option;
+			DEBUG(("%s(): args[%d]=\"%s\"", function, *args_i, value));
+			(*args)[(*args_i)++] = value;
 			}
 
 			/* We found it, no need to examine furthur templates. */
+			debug("done with attribute %s", attr->name);
 			break;
 			} /* template loop */
 
@@ -197,13 +205,15 @@ static ipp_attribute_t* convert_attributes(
  */
 void ipp_print_job(struct IPP *ipp)
 	{
+	const char function[] = "ipp_print_job";
 	struct URI *printer_uri;
 	const char *destname;
 	const char *user_at_host;
 	const char **args;			/* ppr command line */
 	int args_i;
 	int args_space;
-		
+	
+	DEBUG(("%s()", function));	
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
 		ipp->response_code = IPP_BAD_REQUEST;
@@ -242,6 +252,14 @@ void ipp_print_job(struct IPP *ipp)
 	if(ipp->operation_id == IPP_VALIDATE_JOB)
 		return;
 
+	#ifdef DEBUG
+	{
+	int i;
+	for(i=0; i<args_i; i++)
+		debug("args[%d]=\"%s\"", i, args[i]);
+	}
+	#endif
+	
 	/* Set up a pipe and launch PPR on the end of it. */
 	{
 	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
@@ -339,6 +357,7 @@ void ipp_print_job(struct IPP *ipp)
 		}
 	gu_Catch
 		{
+		debug("%s(): %s", function, gu_exception);
 		gu_ReThrow();
 		}
 	}
