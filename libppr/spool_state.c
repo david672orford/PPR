@@ -64,7 +64,7 @@ int printer_spool_state_load(struct PRINTER_SPOOL_STATE *pstate, const char prnn
 				&(pstate->printer_state_change_time),
 				&(pstate->protected),
 				&(pstate->job_count)
-				) != 8)
+				) != 9)
 			{
 			retval = -1;
 			break;

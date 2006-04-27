@@ -169,9 +169,9 @@ void cups_add_modify_printer(struct IPP *ipp)
 	if(retcode == 0 && (int_value = ipp_claim_enum(ipp, IPP_TAG_PRINTER, "printer-state")))
 		{
 		if(int_value == IPP_PRINTER_IDLE)
-			retcode = pprd_call("%d %s\n", IPP_RESUME_PRINTER, printer_uri->basename);
+			retcode = pprd_call("%d printer %s\n", IPP_RESUME_PRINTER, printer_uri->basename);
 		else if(int_value == IPP_PRINTER_STOPPED)
-			retcode = pprd_call("%d %s\n", IPP_PAUSE_PRINTER, printer_uri->basename);
+			retcode = pprd_call("%d printer %s\n", IPP_PAUSE_PRINTER, printer_uri->basename);
 		else
 			{
 			error("Bad printer-state value: %d", int_value);
@@ -213,6 +213,7 @@ void cups_add_modify_class(struct IPP *ipp)
 	struct URI *printer_uri;
 	ipp_attribute_t *attr;
 	const char *value;
+	int int_value;
 	int retcode = 0;
 
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
@@ -263,20 +264,18 @@ void cups_add_modify_class(struct IPP *ipp)
 	/* Set initial printer state. */	
 	if(retcode == 0 && (attr = ipp_claim_attribute(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs")) && attr->num_values == 1)
 		retcode = pprd_call("%d group %s\n", attr->values[0].boolean ? CUPS_ACCEPT_JOBS : CUPS_REJECT_JOBS, printer_uri->basename);
-	#if 0
 	if(retcode == 0 && (int_value = ipp_claim_enum(ipp, IPP_TAG_PRINTER, "printer-state")))
 		{
 		if(int_value == IPP_PRINTER_IDLE)
-			retcode = pprd_call("%d %s\n", IPP_RESUME_PRINTER, printer_uri->basename);
+			retcode = pprd_call("%d group %s\n", IPP_RESUME_PRINTER, printer_uri->basename);
 		else if(int_value == IPP_PRINTER_STOPPED)
-			retcode = pprd_call("%d %s\n", IPP_PAUSE_PRINTER, printer_uri->basename);
+			retcode = pprd_call("%d group %s\n", IPP_PAUSE_PRINTER, printer_uri->basename);
 		else
 			{
 			error("Bad printer-state value: %d", int_value);
 			retcode = 1;
 			}
 		}
-	#endif
 	#if 0
 	if(retcode == 0 && (value = ipp_claim_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "printer-state-message")))
 	#endif

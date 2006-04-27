@@ -193,6 +193,7 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 	return queue;
 	} /* ipp_load_queue() */
 
+/* Add a job the list of jobs in the IPP response. */
 static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destname[], int id, int subid)
 	{
 	const char function[] = "add_job";
@@ -212,6 +213,9 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 	if(!(qfile = fopen(fname, "r")))
 		gu_Throw(X_("%s(): can't open \"%s\", errno=%d (%s)"), function, fname, errno, gu_strerror(errno) );
 	qentryfile_clear(&qentryfile);
+	qentryfile.jobname.destname = destname;
+	qentryfile.jobname.id = id;
+	qentryfile.jobname.subid = subid;
 	ret = qentryfile_load(&qentryfile, qfile);
 	fclose(qfile);
 	if(ret == -1)
@@ -526,6 +530,9 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 	return TRUE;
 	}
 
+/*
+ * Handle IPP_GET_JOB_ATTRIBUTES
+ */
 void ipp_get_job_attributes(struct IPP *ipp)
 	{
 	const char function[] = "ipp_get_job_attributes";
@@ -590,6 +597,7 @@ void ipp_X_job(struct IPP *ipp)
 	gu_boolean is_administrator;
 	DIR *dir;
 	struct dirent *direntp;
+	int count = 0;
 	char *p;
 	int id;
 	short int subid;
@@ -633,6 +641,9 @@ void ipp_X_job(struct IPP *ipp)
 		if(job_id != id)
 			continue;
 
+		/* We have a match. */
+		count++;
+		
 		/* Non administrators can manipulate only their own jobs. */
 		if(!is_administrator)
 			{
@@ -657,9 +668,13 @@ void ipp_X_job(struct IPP *ipp)
 		
 		DEBUG(("%s(): asking pprd to delete job %d", function, id));
 		ipp->response_code = pprd_call("IPP %d %d\n", ipp->operation_id, id);
+		DEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
 		}
 	
 	closedir(dir);
+
+	if(ipp->response_code == IPP_OK && count == 0)
+		ipp->response_code = IPP_NOT_FOUND;
 	} /* ipp_X_job() */
 
 /* end of file */
