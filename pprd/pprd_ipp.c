@@ -453,6 +453,154 @@ static struct PPRD_CALL_RETVAL cups_accept_or_reject_jobs(const char command_arg
 	return new_retval(IPP_BAD_REQUEST, 0);
 	} /* ipp_pause_printer() */
 
+/* CUPS_MOVE_JOB */
+struct PPRD_CALL_RETVAL cups_move_job(const char command_args[])
+	{
+	const char *p;
+	int job_id;
+	int new_destid;
+	int x, rank2;
+	struct QEntry *q;
+	char oldname[MAX_PPR_PATH];
+	char newname[MAX_PPR_PATH];
+	int moved = 0;
+
+	p = command_args;
+	job_id = atoi(p);
+	p += strspn(p, "0123456789");
+	p += strspn(p, " ");
+
+	if((p = lmatchp(command_args, "group")))
+		{
+		if((new_destid = destid_by_group(p)) == -1)
+			return new_retval(IPP_NOT_FOUND, 0);
+		}
+	else if((p = lmatchp(command_args, "printer")))
+		{
+		if((new_destid = destid_by_printer(p)) == -1)
+			return new_retval(IPP_NOT_FOUND, 0);
+		}
+	else
+		return new_retval(IPP_INTERNAL_ERROR, 0);
+
+	lock();								/* lock the queue array */
+
+	for(rank2=x=0; x < queue_entries; x++)
+		{
+		if(queue[x].id != job_id)
+			{
+			if(queue[x].destid == new_destid)
+				rank2++;
+			continue;
+			}
+
+		/* for easier reference */
+		q = &queue[x];
+		
+		/* We can't move printing jobs. */
+		if(q->status >= 0)
+			return new_retval(IPP_NOT_POSSIBLE, 0);
+
+		/*
+		** If this is a real move an not just an attempt to reset the
+		** "never" flags,
+		*/
+		if(q->destid != new_destid)
+			{
+			/* Inform queue monitoring programs of the move. */
+			state_update("MOV %s %s %d",
+					jobid(destid_to_name(q->destid), q->id, q->subid),
+					destid_to_name(new_destid),
+					rank2++);
+
+			/* Rename the queue file. */
+			ppr_fnamef(oldname,"%s/%s-%d.%d", QUEUEDIR,
+				destid_to_name(q->destid),q->id,q->subid);
+			ppr_fnamef(newname,"%s/%s-%d.%d", QUEUEDIR,
+				destid_to_name(new_destid),q->id,q->subid);
+			rename(oldname, newname);
+
+			/* Rename all of the data files. */
+			{
+			char *list[] = {"comments", "pages", "text", "log", "infile", "barbar", NULL};
+			int x;
+			for(x=0; list[x]; x++)
+				{
+				ppr_fnamef(oldname,"%s/%s-%d.%d-%s", DATADIR,
+					destid_to_name(q->destid),
+					q->id, q->subid,
+					list[x]
+					);
+				ppr_fnamef(newname,"%s/%s-%d.%d-%s", DATADIR,
+					destid_to_name(new_destid),
+					q->id, q->subid,
+					list[x]
+					);
+				rename(oldname, newname);
+				}
+			}
+
+			}
+
+		/*
+		** In the job's log file, make a note of the fact
+		** that it was moved from one destination to another.
+		*/
+		{
+		FILE *logfile;
+		ppr_fnamef(newname,"%s/%s-%d.%d-log", DATADIR,
+			destid_to_name(new_destid),
+			q->id, q->subid
+			);
+		if((logfile = fopen(newname, "a")))
+			{
+			fprintf(logfile,
+				"Job moved from destination \"%s\" to \"%s\".\n",
+				destid_to_name(q->destid), destid_to_name(new_destid));
+			fclose(logfile);
+			}
+		}
+
+		/*
+		** Change the destination id in the queue array.  This must come
+		** after the rename code or the rename code will break.
+		*/
+		q->destid = new_destid;
+
+		/* If this job was stranded, maybe it will print here. */
+		if(q->status == STATUS_STRANDED)
+			queue_p_job_new_status(q, STATUS_WAITING);
+
+		/*
+		** Clear any "never" (printer unsuitable) flags, set new "notnow" 
+		** (required media not present) flags, and update the job status.
+		*/
+		q->never = 0;
+
+		/* Reset pass number just like in queue_insert(). */
+		if(destid_is_group(q->destid))
+			q->pass = 1;
+		else
+			q->pass = 0;
+
+		/* Set the "notnow" bits and the printer status according to the mounted media */
+		media_set_notnow_for_job(q, TRUE);
+
+		/* If the job is ready to print, try to start it on a printer. */				
+		if(q->status == STATUS_WAITING)
+			printer_try_start_suitable_4_this_job(q);
+
+		/* We found it. */
+		moved++;
+		break;
+		} /* end of loop over queue array */
+
+	unlock();					/* we are done modifying the queue array */
+
+	return new_retval(moved ? IPP_OK : IPP_NOT_FOUND, 0);
+	} /* cups_move_job() */
+
+/* This is called for each command received over the socket. */
 struct PPRD_CALL_RETVAL ipp_dispatch(const char command[])
 	{
 	FUNCTION4DEBUG("ipp_dispatch")
@@ -497,6 +645,9 @@ struct PPRD_CALL_RETVAL ipp_dispatch(const char command[])
 			break;
 		case CUPS_REJECT_JOBS:
 			result = cups_accept_or_reject_jobs(p, FALSE);
+			break;
+		case CUPS_MOVE_JOB:
+			result = cups_move_job(p);
 			break;
 		default:
 			error("unsupported operation: 0x%.2x (%s)", operation_id, ipp_operation_id_to_str(operation_id));

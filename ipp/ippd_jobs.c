@@ -194,9 +194,9 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 	} /* ipp_load_queue() */
 
 /* Add the indicated job the list of jobs in the IPP response. */
-static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destname[], int id, int subid)
+static void ipp_add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destname[], int id, int subid)
 	{
-	const char function[] = "add_job";
+	const char function[] = "ipp_add_job";
 	void *pool;
 	struct QEntryFile qentryfile;
 	int job_state;
@@ -436,7 +436,6 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 void ipp_get_jobs(struct IPP *ipp)
 	{
 	FUNCTION4DEBUG("ipp_get_jobs")
-	struct URI *printer_uri;
 	const char *destname;
 	const char *user_at_host;
 	int limit;
@@ -449,19 +448,8 @@ void ipp_get_jobs(struct IPP *ipp)
 
 	DEBUG(("%s()", function));
 	
-	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
-		{
-		DEBUG(("%s(): no printer-uri", function));
-		ipp->response_code = IPP_BAD_REQUEST;
+	if(!(destname = extract_destname(ipp, NULL)))
 		return;
-		}
-
-	if(!(destname = printer_uri_validate(printer_uri, NULL)))
-		{
-		DEBUG(("%s(): not a known printer", function));
-		ipp->response_code = IPP_NOT_FOUND;
-		return;
-		}
 
 	user_at_host = extract_identity(ipp, FALSE);
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
@@ -483,7 +471,7 @@ void ipp_get_jobs(struct IPP *ipp)
 
 	for(iii=0; iii < queue_num_entries; iii++)
 		{
-		add_job(ipp, req, queue[iii].destname, queue[iii].id, queue[iii].subid);
+		ipp_add_job(ipp, req, queue[iii].destname, queue[iii].id, queue[iii].subid);
 		ipp_add_end(ipp, IPP_TAG_JOB);
 		}
 
@@ -535,7 +523,7 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 		}
 
 	return TRUE;
-	}
+	} /* extract_jobid() */
 
 /*
  * Handle IPP_GET_JOB_ATTRIBUTES
@@ -587,13 +575,13 @@ void ipp_get_job_attributes(struct IPP *ipp)
 			continue;
 
 		*p = '\0';
-		add_job(ipp, req, p, id, subid);
+		ipp_add_job(ipp, req, p, id, subid);
 		break;
 		}
 	
 	closedir(dir);
 	request_attrs_free(req);
-	}
+	} /* ipp_get_job_attributes() */
 
 void ipp_X_job(struct IPP *ipp)
 	{
@@ -685,5 +673,82 @@ void ipp_X_job(struct IPP *ipp)
 	if(ipp->response_code == IPP_OK && count == 0)
 		ipp->response_code = IPP_NOT_FOUND;
 	} /* ipp_X_job() */
+
+void cups_move_job(struct IPP *ipp)
+	{
+	const char function[] = "ipp_get_job_attributes";
+	const char *destname = NULL;
+	struct URI *job_printer_uri;
+	const char *new_destname;
+	enum QUEUEINFO_TYPE new_qtype;
+	int job_id = 0;
+	DIR *dir;
+	struct dirent *direntp;
+	char *p;
+	int id;
+	short int subid;
+
+	if(!extract_jobid(ipp, &destname, &job_id))
+		return;
+
+	if(!(job_printer_uri = ipp_claim_uri(ipp, IPP_TAG_JOB, "job-printer-uri")))
+		{
+		DEBUG(("%s(): no job-printer-uri", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+
+	if(!(new_destname = printer_uri_validate(job_printer_uri, &new_qtype)))
+		{
+		DEBUG(("%s(): not a known printer", function));
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+
+	if(!(dir = opendir(QUEUEDIR)))
+		gu_Throw(_("%s(): %s(\"%s\") failed, errno=%d (%s)"), function, "opendir", QUEUEDIR, errno, strerror(errno));
+
+	while(ipp->response_code == IPP_OK && (direntp = readdir(dir)))
+		{
+		/* Skip ".", "..", and hidden files. */
+		if(direntp->d_name[0] == '.')
+			continue;
+
+		DEBUG(("%s(): %s", function, direntp->d_name));
+		
+		/* Locate hyphen between destname and ID */
+		if(!(p = strrchr(direntp->d_name, '-')))
+			continue;
+
+		/* If destname does not match, skip this file. */
+		if(destname && ((p - direntp->d_name) != strlen(destname) || strncmp(direntp->d_name, destname, strlen(destname)) != 0))
+			continue;
+
+		/* Parse the part of the filename after the hyphen in order to extract the 
+		 * ID and subid. */
+		if(gu_sscanf(p+1, "%d.%hd", &id, &subid) != 2)
+			{
+			fprintf(stderr, X_("Can't parse id.subid: %s\n"), p+1);
+			continue;
+			}
+		if(job_id != id)
+			continue;
+
+		*p = '\0';
+		DEBUG(("%s(): asking pprd to move job %d", function, id));
+		ipp->response_code = pprd_status_code(
+			pprd_call("IPP %d %d %s %s\n",
+				ipp->operation_id,
+				id,
+				new_qtype == QUEUEINFO_GROUP ? "group" : "printer",
+				new_destname
+				)
+			);
+		DEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
+		break;
+		}
+	
+	closedir(dir);
+	}
 
 /* end of file */

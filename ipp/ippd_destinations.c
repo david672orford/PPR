@@ -383,7 +383,7 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 			/* CUPS_SET_DEFAULT, */
 			CUPS_GET_DEVICES,
 			CUPS_GET_PPDS,
-			/* CUPS_MOVE_JOB */
+			CUPS_MOVE_JOB
 			};
 		ipp_add_integers(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
 			"operations-supported", sizeof(supported) / sizeof(supported[0]), supported);

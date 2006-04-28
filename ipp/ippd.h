@@ -36,6 +36,7 @@ void ipp_print_job(struct IPP *ipp);
 void ipp_get_jobs(struct IPP *ipp);
 void ipp_get_job_attributes(struct IPP *ipp);
 void ipp_X_job(struct IPP *ipp);
+void cups_move_job(struct IPP *ipp);
 
 /* ippd_cups_admin.c */
 void cups_get_devices(struct IPP *ipp);

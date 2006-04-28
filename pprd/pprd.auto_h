@@ -18,6 +18,7 @@ int destid_printer_bit(int destid, int prnid);
 int destid_to_gindex(int destid);
 int destid_by_gindex(int gindex);
 gu_boolean destid_accepting(int destid);
+struct PPRD_CALL_RETVAL cups_move_job(const char command_args[]);
 struct PPRD_CALL_RETVAL ipp_dispatch(const char command[]);
 void listener_bind(const char bind_address_list[], const char program[]);
 int listener_fd_set(int lastfd, fd_set *fdset);

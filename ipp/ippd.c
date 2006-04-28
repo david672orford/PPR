@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -100,6 +100,7 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 	FUNCTION4DEBUG("extract_destname")
 	struct URI *printer_uri;
 	const char *destname;
+
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
 		DEBUG(("%s(): no printer-uri", function));
@@ -113,6 +114,7 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 		ipp->response_code = IPP_NOT_FOUND;
 		return NULL;
 		}
+
 	return destname;
 	}
 
@@ -491,7 +493,7 @@ int main(int argc, char *argv[])
 					p_handler = cups_get_ppds;
 					break;
 				case CUPS_MOVE_JOB:
-					/* not implemented */
+					p_handler = cups_move_job;
 					break;
 				}
 	
