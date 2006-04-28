@@ -492,12 +492,14 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 			{
 			DEBUG(("%s(): not a known printer", function));
 			ipp->response_code = IPP_NOT_FOUND;
+			ipp->request_attrs = NULL;
 			return FALSE;
 			}
 		if((*job_id = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "job-id")) > 0)
 			{
 			DEBUG(("%s(): job-id missing", function));
 			ipp->response_code = IPP_BAD_REQUEST;
+			ipp->request_attrs = NULL;
 			return FALSE;
 			}
 		}
@@ -512,6 +514,7 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 			{
 			DEBUG(("%s(): not a valid job URI", function));
 			ipp->response_code = IPP_NOT_FOUND;
+			ipp->request_attrs = NULL;
 			return FALSE;
 			}
 		}
@@ -519,6 +522,7 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 		{
 		DEBUG(("%s(): nothing to identify the job", function));
 		ipp->response_code = IPP_BAD_REQUEST;
+		ipp->request_attrs = NULL;
 		return FALSE;
 		}
 

@@ -470,12 +470,12 @@ struct PPRD_CALL_RETVAL cups_move_job(const char command_args[])
 	p += strspn(p, "0123456789");
 	p += strspn(p, " ");
 
-	if((p = lmatchp(command_args, "group")))
+	if((p = lmatchp(p, "group")))
 		{
 		if((new_destid = destid_by_group(p)) == -1)
 			return new_retval(IPP_NOT_FOUND, 0);
 		}
-	else if((p = lmatchp(command_args, "printer")))
+	else if((p = lmatchp(p, "printer")))
 		{
 		if((new_destid = destid_by_printer(p)) == -1)
 			return new_retval(IPP_NOT_FOUND, 0);

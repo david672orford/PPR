@@ -105,6 +105,7 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 		{
 		DEBUG(("%s(): no printer-uri", function));
 		ipp->response_code = IPP_BAD_REQUEST;
+		ipp->request_attrs = NULL;
 		return NULL;
 		}
 
@@ -112,6 +113,7 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 		{
 		DEBUG(("%s(): not a known printer", function));
 		ipp->response_code = IPP_NOT_FOUND;
+		ipp->request_attrs = NULL;
 		return NULL;
 		}
 

@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 27 April 2006.
+# Last modified 28 April 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -469,7 +469,7 @@ while(1)
 			$script_exe = "$CGI_BIN/ippd";
 			$path_info = "/";
 			}
-		if($path =~ m#^((printers|admin|jobs)/.*)$#)
+		if($path =~ m#^((printers|classes|admin|jobs)(/.*)?)$#)
 			{
 			$script_name = "";
 			$script_exe = "$CGI_BIN/ippd";

@@ -177,6 +177,8 @@ const char *ipp_status_code_to_str(int status_code)
 			return "client-error-bad-request";
 		case IPP_NOT_FOUND:
 			return "client-error-not-found";
+		case IPP_INTERNAL_ERROR:
+			return "server-error-internal-error";
 		default:
 			return NULL;
 		}
