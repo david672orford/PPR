@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-22 22:24-0400\n"
+"POT-Creation-Date: 2006-04-28 10:34-0400\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -15,23 +15,23 @@ msgstr ""
 "Content-Transfer-Encoding: none\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 
-#: ../pprd/pprd.c:289 ../pprd/pprd.c:332 ../pprd/pprd_mainsup.c:114
+#: ../pprd/pprd.c:290 ../pprd/pprd.c:335 ../pprd/pprd_mainsup.c:114
 #: ../pprd/pprd_mainsup.c:119 ../pprd/pprd_mainsup.c:122
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd.c:327
+#: ../pprd/pprd.c:330
 #, c-format
 msgid "%s(): write to client failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd.c:329
+#: ../pprd/pprd.c:332
 #, c-format
 msgid "%s(): write() wrote %d of %d bytes to client"
 msgstr ""
 
-#: ../pprd/pprd_load.c:188 ../pprd/pprd_load.c:191
+#: ../pprd/pprd_load.c:180 ../pprd/pprd_load.c:183
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
@@ -195,48 +195,48 @@ msgstr ""
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:935 ../pprd/pprd_ppop.c:1011
+#: ../pprd/pprd_ppop.c:935 ../pprd/pprd_ppop.c:1013
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1052 ../pprd/pprd_ppop.c:1059 ../pprd/pprd_ppop.c:1253
-#: ../pprd/pprd_ppop.c:1338
+#: ../pprd/pprd_ppop.c:1054 ../pprd/pprd_ppop.c:1061 ../pprd/pprd_ppop.c:1255
+#: ../pprd/pprd_ppop.c:1340
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1192
+#: ../pprd/pprd_ppop.c:1194
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1201
+#: ../pprd/pprd_ppop.c:1203
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1206
+#: ../pprd/pprd_ppop.c:1208
 #, c-format
 msgid "1 file was moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1210
+#: ../pprd/pprd_ppop.c:1212
 #, c-format
 msgid "%d files where moved.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1218
+#: ../pprd/pprd_ppop.c:1220
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1220
+#: ../pprd/pprd_ppop.c:1222
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr ""
 
-#: ../pprd/pprd_ppop.c:1305 ../pprd/pprd_ppop.c:1362
+#: ../pprd/pprd_ppop.c:1307 ../pprd/pprd_ppop.c:1364
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr ""

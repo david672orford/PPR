@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -74,7 +74,7 @@ static ipp_attribute_t* convert_attributes(
 	   	const char ***args, int *args_i, int *args_space
 		)
 	{
-	const char function[] = "convert_attributes";
+	FUNCTION4DEBUG("convert_attributes")
 	struct IPP_TO_PPR *tp;		/* markes our place in the template table */
 
 	/* Step thru IPP attributes. */	
@@ -239,7 +239,7 @@ void ipp_print_job(struct IPP *ipp)
 	args[args_i++] = "-u"; args[args_i++] = user_at_host;
 	args[args_i++] = "-f"; args[args_i++] = user_at_host;
 	args[args_i++] = "--responder"; args[args_i++] = "followme";
-	/*args[args_i++] = "--responder-address"; args[args_i++] = user_at_host;*/
+	args[args_i++] = "--responder-address"; args[args_i++] = user_at_host;
 
 	/* Convert IPP operation and job template attributes to PPR options. 
 	 * Move ipp->request_attrs ahead as we go in order to keep track of

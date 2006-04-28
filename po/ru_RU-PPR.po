@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-24 20:55-0400\n"
+"POT-Creation-Date: 2006-04-28 10:34-0400\n"
 "PO-Revision-Date: 2006-04-21 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -31,8 +31,8 @@ msgid "%s: end of file in graphic\n"
 msgstr "%s: конец файла в изобразении\n"
 
 #: ../filter_dotmatrix/inbuf.c:54 ../filter_dotmatrix/inbuf.c:76
-#: ../libppr/pprd_call.c:71 ../libppr/pprd_call.c:76 ../libppr/pprd_call.c:83
-#: ../libppr/pprd_call.c:88 ../lprsrv/lprsrv_client_info.c:109
+#: ../libppr/pprd_call.c:53 ../libppr/pprd_call.c:58 ../libppr/pprd_call.c:65
+#: ../libppr/pprd_call.c:70 ../lprsrv/lprsrv_client_info.c:109
 #: ../lprsrv/lprsrv_conf.c:186 ../lprsrv/lprsrv_print.c:183
 #: ../lprsrv/lprsrv_print.c:295 ../lprsrv/lprsrv_print.c:502
 #: ../lprsrv/lprsrv_print.c:506 ../lprsrv/lprsrv_print.c:531
@@ -727,7 +727,7 @@ msgstr ""
 msgid "value is not in the correct format"
 msgstr "выбор не по тому схему"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1454 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1469 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:471 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -745,88 +745,88 @@ msgstr ""
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr ""
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1513
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1528
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr ""
 
-#: ../libppr/dispatch.c:107
+#: ../libppr/dispatch.c:90
 #, c-format
 msgid "%s: unknown sub-command \"%s\"\n"
 msgstr "%s: неизвесная подкоманда \"%s\"\n"
 
-#: ../libppr/dispatch.c:109
+#: ../libppr/dispatch.c:92
 #, c-format
 msgid "%s: incomplete sub-command \"%s\"\n"
 msgstr "%s: неполная подкоманда \"%s\"\n"
 
-#: ../libppr/dispatch.c:111
+#: ../libppr/dispatch.c:94
 #, c-format
 msgid "%s: unknown sub-sub-command \"%s %s\"\n"
 msgstr "%s: неизвестная под-под-команда \"%s\"\n"
 
-#: ../libppr/dispatch.c:127
+#: ../libppr/dispatch.c:110
 #, fuzzy, c-format
 msgid "Usage: %s"
 msgstr "Использование: %s\n"
 
-#: ../libppr/dispatch.c:157
+#: ../libppr/dispatch.c:140
 #, c-format
 msgid "%s: too few arguments\n"
 msgstr "%s: слышьком мало аргументов\n"
 
-#: ../libppr/dispatch.c:168
+#: ../libppr/dispatch.c:151
 #, c-format
 msgid "%s: too many arguments\n"
 msgstr "%s: слышьком много аргуметнов\n"
 
-#: ../libppr/dispatch.c:198
+#: ../libppr/dispatch.c:181
 msgid "All commands:\n"
 msgstr "Все команды:\n"
 
-#: ../libppr/dispatch.c:200
+#: ../libppr/dispatch.c:183
 #, c-format
 msgid "Commands related to topic %s:\n"
 msgstr ""
 
-#: ../libppr/dispatch.c:245
+#: ../libppr/dispatch.c:228
 #, c-format
 msgid "Usage: %s help <topic>\n"
 msgstr "Использование: %s help <тема>\n"
 
-#: ../libppr/dispatch.c:246
+#: ../libppr/dispatch.c:229
 #, c-format
 msgid "       %s help <command>\n"
 msgstr "       %s help <комадна>\n"
 
-#: ../libppr/dispatch.c:247
+#: ../libppr/dispatch.c:230
 msgid "Help topics:\n"
 msgstr "Темы справки:\n"
 
-#: ../libppr/dispatch.c:248 ../libppr/dispatch.c:250
+#: ../libppr/dispatch.c:231 ../libppr/dispatch.c:233
 #, c-format
 msgid "    %s -- %s\n"
 msgstr ""
 
-#: ../libppr/dispatch.c:248
+#: ../libppr/dispatch.c:231
 msgid "all"
 msgstr "все"
 
-#: ../libppr/dispatch.c:248
+#: ../libppr/dispatch.c:231
 msgid "show all commands"
 msgstr "показать все команды"
 
-#: ../libppr/dispatch.c:284
+#: ../libppr/dispatch.c:267
 #, c-format
 msgid "%s: no such help topic or command\n"
 msgstr "%s: нет такой темы или каманды\n"
 
-#: ../libppr/dispatch.c:295
+#: ../libppr/dispatch.c:278
 #, c-format
 msgid "%s: no sub-command, try \"%s help\"\n"
 msgstr "%s: нет такой подкоманды, попробуйте \"%s help\"\n"
 
-#: ../libppr/dispatch.c:307
+#: ../libppr/dispatch.c:290
 #, c-format
 msgid "%s: permission denied because user \"%s\" is not in PPR ACL \"%s\"\n"
 msgstr "%s: доступ отказен потому что исползователь \"%s\" не находится в список управления доступом \"%s\"\n"
@@ -927,12 +927,12 @@ msgstr ""
 msgid "Unclosed quote"
 msgstr ""
 
-#: ../libppr/pprd_call.c:85
+#: ../libppr/pprd_call.c:67
 #, c-format
 msgid "%s(): write() wrote %d of %d bytes"
 msgstr ""
 
-#: ../libppr/pprd_call.c:90
+#: ../libppr/pprd_call.c:72
 #, c-format
 msgid "%s(): invalid response from pprd"
 msgstr ""
@@ -972,27 +972,27 @@ msgstr ""
 msgid "no printer called \"%s\""
 msgstr "нет принтер по названию \"%s\""
 
-#: ../libppr/queueinfo.c:1470
+#: ../libppr/queueinfo.c:1485
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1479
+#: ../libppr/queueinfo.c:1494
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1502
+#: ../libppr/queueinfo.c:1517
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1538
+#: ../libppr/queueinfo.c:1553
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1549
+#: ../libppr/queueinfo.c:1564
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr ""
@@ -1194,7 +1194,7 @@ msgstr ""
 msgid "No access allowed from node \"%s\".\n"
 msgstr ""
 
-#: ../lprsrv/lprsrv.c:146 ../ppad/ppad.c:112 ../ppop/ppop.c:918
+#: ../lprsrv/lprsrv.c:146 ../ppad/ppad.c:94 ../ppop/ppop.c:918
 #: ../unixuser/ppr-followme.c:204
 msgid "Valid switches:\n"
 msgstr ""
@@ -1959,115 +1959,112 @@ msgstr ""
 msgid "limits consumption (of time, pages, etc.) by print jobs"
 msgstr ""
 
-#: ../ppad/ppad.c:72 ../ppop/ppop.c:78
+#: ../ppad/ppad.c:54 ../ppop/ppop.c:78
 msgid "Fatal: "
 msgstr "Неисправимая ошибка: "
 
-#: ../ppad/ppad.c:102 ../ppop/ppop.c:905
+#: ../ppad/ppad.c:84 ../ppop/ppop.c:905
 msgid "-M\tselect machine-readable output"
 msgstr ""
 
-#: ../ppad/ppad.c:103 ../ppop/ppop.c:906
+#: ../ppad/ppad.c:85 ../ppop/ppop.c:906
 msgid "--machine-readable\tsame as -M"
 msgstr "--machine-readable\tто же что -M"
 
-#: ../ppad/ppad.c:104
+#: ../ppad/ppad.c:86
 #, fuzzy
 msgid "--user <username>\trun as if by <username>"
 msgstr "--user <полжователь>\tто же что -u"
 
-#: ../ppad/ppad.c:105
+#: ../ppad/ppad.c:87
 msgid "-d <n>\tset debug level to <n>"
 msgstr ""
 
-#: ../ppad/ppad.c:106
+#: ../ppad/ppad.c:88
 msgid "--debug=<n>\tsame as -d"
 msgstr "--debug=<n>\tто же что -d"
 
-#: ../ppad/ppad.c:107
+#: ../ppad/ppad.c:89
 msgid "--version\tprint PPR version information"
 msgstr "--version\tпокажат идентификатор версии PPR"
 
-#: ../ppad/ppad.c:108 ../ppop/ppop.c:914
+#: ../ppad/ppad.c:90 ../ppop/ppop.c:914
 msgid "--help\tprint this help message"
 msgstr "--help\tпоказать это собщение"
 
-#: ../ppad/ppad.c:128 ../ppop/ppop.c:934
+#: ../ppad/ppad.c:110 ../ppop/ppop.c:934
 #, c-format
 msgid ""
 "The %s manpage may be viewed by entering this command at a shell prompt:\n"
 "    ppdoc %s\n"
 msgstr ""
 
-#: ../ppad/ppad.c:149
+#: ../ppad/ppad.c:131
 msgid "PPAD, Page Printer Administrator's utility"
 msgstr ""
 
-#: ../ppad/ppad.c:154 ../ppop/ppop.c:800
+#: ../ppad/ppad.c:136 ../ppop/ppop.c:800
 msgid "Type \"help\" for command list, \"exit\" to quit."
 msgstr ""
 
-#: ../ppad/ppad.c:292
+#: ../ppad/ppad.c:276
 #, fuzzy, c-format
 msgid "%s: debug level must be a positive integer\n"
 msgstr "нада выбрать положительное целое число"
 
-#: ../ppad/ppad.c:318
+#: ../ppad/ppad.c:302
 #, c-format
 msgid "%s: you are not allowed to use --user\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:102
+#: ../ppad/ppad_alias.c:84
 #, c-format
 msgid "Alias name: %s\n"
 msgstr "Псевдоним: %s\n"
 
-#: ../ppad/ppad_alias.c:103 ../ppad/ppad_group.c:159
-#: ../ppad/ppad_printer.c:768
+#: ../ppad/ppad_alias.c:85 ../ppad/ppad_group.c:141 ../ppad/ppad_printer.c:768
 #, c-format
 msgid "Comment: %s\n"
 msgstr "Заметки: %s\n"
 
-#: ../ppad/ppad_alias.c:104
+#: ../ppad/ppad_alias.c:86
 #, c-format
 msgid "For what: %s\n"
 msgstr "Чего: %s\n"
 
-#: ../ppad/ppad_alias.c:105 ../ppad/ppad_group.c:181
-#: ../ppad/ppad_printer.c:921
+#: ../ppad/ppad_alias.c:87 ../ppad/ppad_group.c:163 ../ppad/ppad_printer.c:921
 msgid "Switchset: "
 msgstr ""
 
-#: ../ppad/ppad_alias.c:106 ../ppad/ppad_group.c:188
-#: ../ppad/ppad_printer.c:928
+#: ../ppad/ppad_alias.c:91 ../ppad/ppad_group.c:170 ../ppad/ppad_printer.c:928
 #, c-format
 msgid "PassThru types: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:159
+#: ../ppad/ppad_alias.c:147
 msgid "Alias name contains a disallowed character.\n"
 msgstr "Запрощеное букво или символ находется в псевдониме.\n"
 
-#: ../ppad/ppad_alias.c:165
+#: ../ppad/ppad_alias.c:153
 msgid "Alias name begins with a disallowed character.\n"
 msgstr "Перое букво псевдонима из запрошеных.\n"
 
-#: ../ppad/ppad_alias.c:172
+#: ../ppad/ppad_alias.c:160
 #, c-format
 msgid "The name \"%s\" is not that of an existing group or printer.\n"
 msgstr "Название \"%s\" не явлается названием сушествующой групы или сушествующого принтера.\n"
 
-#: ../ppad/ppad_alias.c:215 ../ppad/ppad_conf.c:173
+#: ../ppad/ppad_alias.c:203 ../ppad/ppad_conf.c:173
 #, c-format
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "Псевдоним \"%s\" не сушествует.\n"
 
-#: ../ppad/ppad_alias.c:261 ../ppad/ppad_group.c:653
+#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:638
 #: ../ppad/ppad_printer.c:2316
 msgid "Bad set of switches.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:309 ../ppad/ppad_group.c:790
+#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:775
 #: ../ppad/ppad_printer.c:2914
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr ""
@@ -2106,74 +2103,74 @@ msgstr "Невозможно сождать временый файл \"%s\" в 
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Принтер \"%s\" не существует.\n"
 
-#: ../ppad/ppad_conf.c:170 ../ppad/ppad_group.c:558 ../ppad/ppad_group.c:598
+#: ../ppad/ppad_conf.c:170 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr "Группа \"%s\" не существует.\n"
 
-#: ../ppad/ppad_group.c:95 ../ppad/ppad_printer.c:603
+#: ../ppad/ppad_group.c:77 ../ppad/ppad_printer.c:603
 #, c-format
 msgid "WARNING: invalid \"%s\" setting: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:157
+#: ../ppad/ppad_group.c:139
 #, c-format
 msgid "Group name: %s\n"
 msgstr "Название группы: %s\n"
 
-#: ../ppad/ppad_group.c:161
+#: ../ppad/ppad_group.c:143
 msgid "Members:"
 msgstr "Члены:"
 
-#: ../ppad/ppad_group.c:171
+#: ../ppad/ppad_group.c:153
 msgid "False"
 msgstr "Не верно"
 
-#: ../ppad/ppad_group.c:171
+#: ../ppad/ppad_group.c:153
 #, c-format
 msgid "Rotate: %s\n"
 msgstr "Кругом: %s\n"
 
-#: ../ppad/ppad_group.c:171
+#: ../ppad/ppad_group.c:153
 msgid "True"
 msgstr "Верно"
 
-#: ../ppad/ppad_group.c:174 ../ppad/ppad_printer.c:827
+#: ../ppad/ppad_group.c:156 ../ppad/ppad_printer.c:827
 msgid "Default Filter Options: "
 msgstr ""
 
-#: ../ppad/ppad_group.c:192 ../ppad/ppad_printer.c:944
+#: ../ppad/ppad_group.c:174 ../ppad/ppad_printer.c:944
 #, c-format
 msgid "ACLs: %s\n"
 msgstr "Списки управлениом доступа (ACL): %s\n"
 
-#: ../ppad/ppad_group.c:198 ../ppad/ppad_printer.c:958
+#: ../ppad/ppad_group.c:180 ../ppad/ppad_printer.c:958
 msgid "Addon:"
 msgstr ""
 
-#: ../ppad/ppad_group.c:303
+#: ../ppad/ppad_group.c:288
 msgid "Value must be \"true\" or \"false\".\n"
 msgstr "Назначение должно быть или \"true\" или \"false\".\n"
 
-#: ../ppad/ppad_group.c:322
+#: ../ppad/ppad_group.c:307
 msgid "Group name contains a disallowed character.\n"
 msgstr "Название группы содержает запрешеный символ.\n"
 
-#: ../ppad/ppad_group.c:328
+#: ../ppad/ppad_group.c:313
 msgid "Group name begins with a disallowed character.\n"
 msgstr "Название группы начинается запрешеным символом.\n"
 
-#: ../ppad/ppad_group.c:377
+#: ../ppad/ppad_group.c:362
 #, c-format
 msgid "Printer \"%s\" is already a member of \"%s\".\n"
 msgstr "Принтер \"%s\" уже явлается членом группы \"%s\".\n"
 
-#: ../ppad/ppad_group.c:408
+#: ../ppad/ppad_group.c:393
 #, c-format
 msgid "Group \"%s\" would have %d members, only %d are allowed.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:561
+#: ../ppad/ppad_group.c:546
 #, c-format
 msgid "The group \"%s\" does not have a member called \"%s\".\n"
 msgstr "Группа \"%s\" не имеет члена по названию \"%s\".\n"
@@ -5929,23 +5926,27 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
-
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
-
-#~ msgid "You must supply only the name of an existing printer.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
-
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"
 
 #, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group and\n"
-#~ "a name for the new group.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
 #, fuzzy
 #~ msgid ""
@@ -5953,24 +5954,20 @@ msgstr ""
 #~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
 #, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid ""
+#~ "You must supply the name of an existing group and\n"
+#~ "a name for the new group.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
+
+#~ msgid "You must supply only the name of an existing printer.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"

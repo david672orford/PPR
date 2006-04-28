@@ -116,10 +116,15 @@ struct IPP
 	int request_id;
 	
 	ipp_attribute_t *request_attrs;
+
 	ipp_attribute_t *response_attrs_operation;	
+	ipp_attribute_t **response_attrs_operation_tail_ptr;
 	ipp_attribute_t *response_attrs_printer;	
+	ipp_attribute_t **response_attrs_printer_tail_ptr;
 	ipp_attribute_t *response_attrs_job;	
+	ipp_attribute_t **response_attrs_job_tail_ptr;
 	ipp_attribute_t *response_attrs_unsupported;	
+	ipp_attribute_t **response_attrs_unsupported_tail_ptr;
 	};
 
 /* IPP object methods */

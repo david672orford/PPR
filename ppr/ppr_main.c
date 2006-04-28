@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -1880,8 +1880,8 @@ int main(int argc, char *argv[])
 
 	/*
 	** Use the real UID to look up the username and real name of the
-	** person who is running this command.  These values will become
-	** certain defaults.
+	** person who is running this command.  These values will be the
+	** defaults for certain settings.
 	*/
 	{
 	struct passwd *pw;
@@ -1895,11 +1895,11 @@ int main(int argc, char *argv[])
 
 	/*
 	** Determine the default responder options.  The default responder is
-	** "followme" which is a meta-responder which by default ** delegates 
+	** "followme" which is a meta-responder which by default delegates 
 	** to the responder called "write".
 	**
-	** Since a responder address may not be specified with the -r switch, we 
-	** must supply a default value.  This is the name that the user logged in
+	** Since a responder address may not have been specified with the -r switch,
+	** we must supply a default value.  This is the name that the user logged in
 	** as.  The login user name is the proper address for the default 
 	** responder "followme" .  Notice that if the user used su to become a 
 	** different user after loging in, the current user id will differ from 

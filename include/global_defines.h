@@ -8,7 +8,7 @@
 ** described in the accompanying file LICENSE.txt.
 **
 ** The PPR project was begun 28 December 1992.
-** This file was last modified 27 April 2006.
+** This file was last modified 28 April 2006.
 */
 
 /*
@@ -398,6 +398,9 @@ void tail_status(gu_boolean tail_pprd, gu_boolean tail_pprdrv, gu_boolean (*call
 const char *dest_ppdfile(const char destname[]);
 int translate_snmp_error(int bit, const char **set_description, const char **set_raw1, int *set_severity);
 int translate_snmp_status(int device_status, int printer_status, const char **set_description, const char **set_raw1, int *set_severity);
+char *ppr_get_default(void);
+
+/* RPC from ippd to pprd */
 struct PPRD_CALL_RETVAL {
 	int status_code;
 	int extra_code;
@@ -407,7 +410,7 @@ struct PPRD_CALL_RETVAL pprd_call(const char command[], ...)
 	__attribute__ ((format (printf, 1, 2)))
 	#endif
 	;
-char *ppr_get_default(void);
+int pprd_status_code(struct PPRD_CALL_RETVAL retval);
 
 /*
 ** The callers of certain libppr routines must provide an error()

@@ -106,7 +106,7 @@ void gu_free_if(void *ptr);
 /* Pool functions */
 void *gu_pool_new(void);
 void gu_pool_free(void *p);
-void *gu_pool_return(void *block);
+const void *gu_pool_return(const void * block);
 void *gu_pool_push(void *p);
 void *gu_pool_pop(void *p);
 void gu_pool_suspend(gu_boolean suspend);

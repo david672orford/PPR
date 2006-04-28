@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*! \file
@@ -16,8 +16,10 @@
 
 #if 1
 #define DEBUG(a) debug a
+#define FUNCTION4DEBUG(a) const char function[] = a ;
 #else
 #define DEBUG(a)
+#define FUNCTION4DEBUG(a)
 #endif
 
 /* ippd.c */

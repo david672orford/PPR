@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -568,7 +568,7 @@ void cups_get_default(struct IPP *ipp)
  */
 void ipp_X_printer(struct IPP *ipp)
 	{
-	const char function[] = "ipp_X_printer";
+	FUNCTION4DEBUG("ipp_X_printer")
 	const char *destname;
 	enum QUEUEINFO_TYPE qtype;
 	DEBUG(("%s()", function));
@@ -579,12 +579,14 @@ void ipp_X_printer(struct IPP *ipp)
 		ipp->response_code = IPP_NOT_AUTHORIZED;
 		return;
 		}
-	ipp->response_code = pprd_call(
+	ipp->response_code = pprd_status_code(
+		pprd_call(
 			"IPP %d %s %s\n",
 			ipp->operation_id,
 			qtype == QUEUEINFO_GROUP ? "group" : "printer",
 			destname
-			);
+			)
+		);
 	}
 
 /* end of file */

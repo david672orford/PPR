@@ -1,14 +1,14 @@
-ipp.o: ./ipp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp-functions.h
+ippd.o: ./ippd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ippd.h
 
-ipp_jobs.o: ./ipp_jobs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp-functions.h
+ippd_cups_admin.o: ./ippd_cups_admin.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ippd.h
+
+ippd_destinations.o: ./ippd_destinations.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ippd.h
+
+ippd_jobs.o: ./ippd_jobs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ippd.h
+
+ippd_print.o: ./ippd_print.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ippd.h
+
+ippd_run.o: ./ippd_run.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ippd.h
 
 ppr-xml-ipp-client.o: ./ppr-xml-ipp-client.c ../include/config.h ../include/gu.h ../include/ipp_constants.h
-
-ipp_cups_admin.o: ./ipp_cups_admin.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp-functions.h
-
-ipp_destinations.o: ./ipp_destinations.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp-functions.h
-
-ipp_print.o: ./ipp_print.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp-functions.h
-
-ipp_run.o: ./ipp_run.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/ipp_constants.h ../include/ipp_utils.h ../include/queueinfo.h ipp-functions.h
 

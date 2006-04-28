@@ -97,7 +97,7 @@ const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *q
 
 const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 	{
-	const char function[] = "extract_destname";
+	FUNCTION4DEBUG("extract_destname")
 	struct URI *printer_uri;
 	const char *destname;
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
@@ -533,6 +533,22 @@ int main(int argc, char *argv[])
 			}
 
 		ipp_send_reply(ipp, TRUE);
+
+		#ifdef DEBUG
+		{
+		FILE *f;
+		if((f = fopen("/proc/self/status", "r")))
+			{
+			char *line = NULL;
+			int line_space = 80;
+			while((line = gu_getline(line, &line_space, f)))
+				{
+				debug("%s", line);
+				}
+			fclose(f);
+			}
+		}
+		#endif
 		}
 
 	gu_Final {

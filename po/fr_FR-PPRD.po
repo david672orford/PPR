@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-27 10:33-0400\n"
+"POT-Creation-Date: 2006-04-28 10:34-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: LANGUAGE <fr@li.org>\n"
@@ -14,23 +14,23 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: none\n"
 
-#: ../pprd/pprd.c:289 ../pprd/pprd.c:332 ../pprd/pprd_mainsup.c:114
+#: ../pprd/pprd.c:290 ../pprd/pprd.c:335 ../pprd/pprd_mainsup.c:114
 #: ../pprd/pprd_mainsup.c:119 ../pprd/pprd_mainsup.c:122
 #, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd.c:327
+#: ../pprd/pprd.c:330
 #, c-format
 msgid "%s(): write to client failed, errno=%d (%s)"
 msgstr ""
 
-#: ../pprd/pprd.c:329
+#: ../pprd/pprd.c:332
 #, c-format
 msgid "%s(): write() wrote %d of %d bytes to client"
 msgstr ""
 
-#: ../pprd/pprd_load.c:188 ../pprd/pprd_load.c:191
+#: ../pprd/pprd_load.c:180 ../pprd/pprd_load.c:183
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""
@@ -247,48 +247,48 @@ msgstr "\"%s\" n'est pas une imprimante.\n"
 msgid "\"%s\" does not have a bin called \"%s\".\n"
 msgstr "\"%s\" n'a pas de bac au nom de \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:935 ../pprd/pprd_ppop.c:1011
+#: ../pprd/pprd_ppop.c:935 ../pprd/pprd_ppop.c:1013
 #, c-format
 msgid "\"%s\" is not a valid destination.\n"
 msgstr "\"%s\" n'est pas une destination valide.\n"
 
-#: ../pprd/pprd_ppop.c:1052 ../pprd/pprd_ppop.c:1059 ../pprd/pprd_ppop.c:1253
-#: ../pprd/pprd_ppop.c:1338
+#: ../pprd/pprd_ppop.c:1054 ../pprd/pprd_ppop.c:1061 ../pprd/pprd_ppop.c:1255
+#: ../pprd/pprd_ppop.c:1340
 #, c-format
 msgid "No printer or group is called \"%s\".\n"
 msgstr "Aucune imprimante ni groupe ne s'appelle \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1192
+#: ../pprd/pprd_ppop.c:1194
 #, c-format
 msgid "No jobs are queued for \"%s\".\n"
 msgstr "Aucun travail n'est en attente pour \"%s\".\n"
 
-#: ../pprd/pprd_ppop.c:1201
+#: ../pprd/pprd_ppop.c:1203
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../pprd/pprd_ppop.c:1206
+#: ../pprd/pprd_ppop.c:1208
 #, c-format
 msgid "1 file was moved.\n"
 msgstr "1 fichier a été déplacé.\n"
 
-#: ../pprd/pprd_ppop.c:1210
+#: ../pprd/pprd_ppop.c:1212
 #, c-format
 msgid "%d files where moved.\n"
 msgstr "%d fichiers ont été déplacés.\n"
 
-#: ../pprd/pprd_ppop.c:1218
+#: ../pprd/pprd_ppop.c:1220
 #, c-format
 msgid "1 file was not moved because it was being printed.\n"
 msgstr "1 fichier n'a pas été déplacé car il était en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1220
+#: ../pprd/pprd_ppop.c:1222
 #, c-format
 msgid "%d files were not moved because they were being printed.\n"
 msgstr "%d fichiers n'ont pas été déplacés car ils étaient en cours d'impression.\n"
 
-#: ../pprd/pprd_ppop.c:1305 ../pprd/pprd_ppop.c:1362
+#: ../pprd/pprd_ppop.c:1307 ../pprd/pprd_ppop.c:1364
 #, c-format
 msgid "Queue entry \"%s\" does not exist.\n"
 msgstr "L'entrée de file \"%s\" n'existe pas.\n"
@@ -359,20 +359,14 @@ msgstr ""
 msgid "The printer \"%s\" has been otherwise engaged or off line for %d minutes.\n"
 msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 
-#, fuzzy
-#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
-#~ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
+#~ msgid "%s: The user \"%s\" doesn't exist.\n"
+#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
 
-#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
-#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
+#~ msgid "%s: The group \"%s\" doesn't exist.\n"
+#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
 
-#, fuzzy
-#~ msgid ""
-#~ "%s: Security problem: egid = %ld\n"
-#~ "(This program should be setgid %ld (%s).)\n"
-#~ msgstr ""
-#~ "%s : problème de sécurité : egid = %u\n"
-#~ "(Ce programme devrait être setgid \"%s\".)\n"
+#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
+#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
 
 #, fuzzy
 #~ msgid ""
@@ -382,11 +376,17 @@ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"
 #~ "%s : problème de sécurité : euid = %u\n"
 #~ "(Ce programme devrait être setuid \"%s\".)\n"
 
-#~ msgid "%s: Warning: primary group for user \"%s\" is not \"%s\".\n"
-#~ msgstr "%s : avertissement : le groupe primaire de l'utilisateur \"%s\" n'est pas \"%s\".\n"
+#, fuzzy
+#~ msgid ""
+#~ "%s: Security problem: egid = %ld\n"
+#~ "(This program should be setgid %ld (%s).)\n"
+#~ msgstr ""
+#~ "%s : problème de sécurité : egid = %u\n"
+#~ "(Ce programme devrait être setgid \"%s\".)\n"
 
-#~ msgid "%s: The group \"%s\" doesn't exist.\n"
-#~ msgstr "%s : le groupe \"%s\" n'existe pas.\n"
+#~ msgid "%s: Only \"%s\" or \"root\" may start %s.\n"
+#~ msgstr "%s : seuls \"%s\" et \"root\" peuvent démarrer %s.\n"
 
-#~ msgid "%s: The user \"%s\" doesn't exist.\n"
-#~ msgstr "%s : l'utilisateur \"%s\" n'existe pas.\n"
+#, fuzzy
+#~ msgid "otherwise engaged or off-line, retry %d in %d seconds"
+#~ msgstr "L'imprimante \"%s\" est occupée ou hors ligne depuis %d minutes.\n"

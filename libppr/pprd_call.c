@@ -88,4 +88,9 @@ struct PPRD_CALL_RETVAL pprd_call(const char command[], ...)
 	return result;
 	}
 
+int pprd_status_code(struct PPRD_CALL_RETVAL retval)
+	{
+	return retval.status_code;
+	}
+
 /* end of file */

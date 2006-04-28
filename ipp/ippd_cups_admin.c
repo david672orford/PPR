@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -165,13 +165,13 @@ void cups_add_modify_printer(struct IPP *ipp)
 
 	/* Set initial printer state. */	
 	if(retcode == 0 && (attr = ipp_claim_attribute(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs")) && attr->num_values == 1)
-		retcode = pprd_call("%d printer %s\n", attr->values[0].boolean ? CUPS_ACCEPT_JOBS : CUPS_REJECT_JOBS, printer_uri->basename);
+		retcode = pprd_status_code(pprd_call("%d printer %s\n", attr->values[0].boolean ? CUPS_ACCEPT_JOBS : CUPS_REJECT_JOBS, printer_uri->basename));
 	if(retcode == 0 && (int_value = ipp_claim_enum(ipp, IPP_TAG_PRINTER, "printer-state")))
 		{
 		if(int_value == IPP_PRINTER_IDLE)
-			retcode = pprd_call("%d printer %s\n", IPP_RESUME_PRINTER, printer_uri->basename);
+			retcode = pprd_status_code(pprd_call("%d printer %s\n", IPP_RESUME_PRINTER, printer_uri->basename));
 		else if(int_value == IPP_PRINTER_STOPPED)
-			retcode = pprd_call("%d printer %s\n", IPP_PAUSE_PRINTER, printer_uri->basename);
+			retcode = pprd_status_code(pprd_call("%d printer %s\n", IPP_PAUSE_PRINTER, printer_uri->basename));
 		else
 			{
 			error("Bad printer-state value: %d", int_value);
@@ -263,13 +263,13 @@ void cups_add_modify_class(struct IPP *ipp)
 
 	/* Set initial printer state. */	
 	if(retcode == 0 && (attr = ipp_claim_attribute(ipp, IPP_TAG_PRINTER, IPP_TAG_BOOLEAN, "printer-is-accepting-jobs")) && attr->num_values == 1)
-		retcode = pprd_call("%d group %s\n", attr->values[0].boolean ? CUPS_ACCEPT_JOBS : CUPS_REJECT_JOBS, printer_uri->basename);
+		retcode = pprd_status_code(pprd_call("%d group %s\n", attr->values[0].boolean ? CUPS_ACCEPT_JOBS : CUPS_REJECT_JOBS, printer_uri->basename));
 	if(retcode == 0 && (int_value = ipp_claim_enum(ipp, IPP_TAG_PRINTER, "printer-state")))
 		{
 		if(int_value == IPP_PRINTER_IDLE)
-			retcode = pprd_call("%d group %s\n", IPP_RESUME_PRINTER, printer_uri->basename);
+			retcode = pprd_status_code(pprd_call("%d group %s\n", IPP_RESUME_PRINTER, printer_uri->basename));
 		else if(int_value == IPP_PRINTER_STOPPED)
-			retcode = pprd_call("%d group %s\n", IPP_PAUSE_PRINTER, printer_uri->basename);
+			retcode = pprd_status_code(pprd_call("%d group %s\n", IPP_PAUSE_PRINTER, printer_uri->basename));
 		else
 			{
 			error("Bad printer-state value: %d", int_value);

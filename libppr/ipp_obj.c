@@ -76,10 +76,15 @@ struct IPP *ipp_new(const char root[], const char path_info[], int content_lengt
 	ipp->writebuf_guard = 42;
 
 	ipp->request_attrs = NULL;
+
 	ipp->response_attrs_operation = NULL;
+	ipp->response_attrs_operation_tail_ptr = &ipp->response_attrs_operation;
 	ipp->response_attrs_printer = NULL;
+	ipp->response_attrs_printer_tail_ptr = &ipp->response_attrs_printer;
 	ipp->response_attrs_job = NULL;
+	ipp->response_attrs_job_tail_ptr = &ipp->response_attrs_job;
 	ipp->response_attrs_unsupported = NULL;
+	ipp->response_attrs_unsupported_tail_ptr = &ipp->response_attrs_unsupported;
 
 	GU_OBJECT_POOL_POP(ipp->pool);
 	return ipp;
@@ -611,34 +616,37 @@ static void ipp_put_attr(struct IPP *ipp, ipp_attribute_t *attr)
 /* Add an attribute to the IPP response. */
 void ipp_insert_attribute(struct IPP *ipp, ipp_attribute_t *ap)
 	{
-	ipp_attribute_t **ap1;
+	ipp_attribute_t **tail_ptr;
 
+	/* Choose the correct linked list and get a pointer to the "next"
+	 * element of its last item (or to the first item pointer if the
+	 * list is empty).  Then, update the lists tail pointer to point
+	 * to the "next" element of the item we are about to insert.
+	 */
 	switch(ap->group_tag)
 		{
 		case IPP_TAG_OPERATION:
-			ap1 = &ipp->response_attrs_operation;
+			tail_ptr = ipp->response_attrs_operation_tail_ptr;
+			ipp->response_attrs_operation_tail_ptr = &ap->next;
 			break;
 		case IPP_TAG_PRINTER:
-			ap1 = &ipp->response_attrs_printer;
+			tail_ptr = ipp->response_attrs_printer_tail_ptr;
+			ipp->response_attrs_printer_tail_ptr = &ap->next;
 			break;
 		case IPP_TAG_JOB:
-			ap1 = &ipp->response_attrs_job;
+			tail_ptr = ipp->response_attrs_job_tail_ptr;
+			ipp->response_attrs_job_tail_ptr = &ap->next;
 			break;
 		case IPP_TAG_UNSUPPORTED:
-			ap1 = &ipp->response_attrs_unsupported;
+			tail_ptr = ipp->response_attrs_unsupported_tail_ptr;
+			ipp->response_attrs_unsupported_tail_ptr = &ap->next;
 			break;
 		default:
-			gu_Throw("assertion failed");
-		}
-
-	/* chug to the end */
-	while(*ap1)
-		{
-		ap1 = &(*ap1)->next;
+			gu_Throw("invalid group_tag: 0x%02x", ap->group_tag);
 		}
 
 	/* update the next pointer to point to this new one. */
-	*ap1 = ap;
+	*tail_ptr = ap;
 	}
 
 /*

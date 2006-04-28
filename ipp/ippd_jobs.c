@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -193,14 +193,17 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 	return queue;
 	} /* ipp_load_queue() */
 
-/* Add a job the list of jobs in the IPP response. */
+/* Add the indicated job the list of jobs in the IPP response. */
 static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destname[], int id, int subid)
 	{
 	const char function[] = "add_job";
+	void *pool;
 	struct QEntryFile qentryfile;
 	int job_state;
 	const char *job_state_reasons[10];
 	int job_state_reasons_count = 0;
+
+	GU_OBJECT_POOL_PUSH((pool = gu_pool_new()));
 
 	/* Read and parse the queue file.  We already know the file exists
 	 * and we can open it. */
@@ -219,10 +222,7 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 	ret = qentryfile_load(&qentryfile, qfile);
 	fclose(qfile);
 	if(ret == -1)
-		{
-		fprintf(stderr, X_("%s(): invalid queue file: %s"), function, fname);
-		return;
-		}
+		gu_Throw(X_("%s(): invalid queue file: %s"), function, fname);
 	}
 
 	/* Convert the job state from PPR format to IPP format. */
@@ -291,7 +291,7 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 	if(request_attrs_attr_requested(req, "job-originating-user-name"))
 		{
 		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME,
-			"job-originating-user-name", gu_strdup(qentryfile.user));
+			"job-originating-user-name", gu_pool_return(qentryfile.user));
 		}
 
 	if(request_attrs_attr_requested(req, "job-name"))
@@ -299,8 +299,9 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 		const char *ptr;
 		if(!(ptr = qentryfile.Title))
 			if(!(ptr = qentryfile.lpqFileName))
-				ptr = "";
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-name", gu_strdup(ptr));
+				ptr = NULL;
+		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME,
+			"job-name", ptr ? gu_pool_return(ptr) : "");
 		}
 
 	/* document-format */
@@ -351,7 +352,7 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 		{
 		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI,
 			"job-printer-uri", destname_to_uri_template(qentryfile.jobname.destname), qentryfile.jobname.destname);
-		}
+		}						/* no need for gu_pool_return() */
 
 	/* Derived from "ppop lpq" */
 	/* May not be correct */
@@ -375,8 +376,10 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 	
 	if(request_attrs_attr_requested(req, "job-state-reasons"))
 		{
+		const char **temp = gu_alloc(job_state_reasons_count, sizeof(char*));
+		memcpy(temp, job_state_reasons, job_state_reasons_count * sizeof(char*));
 		ipp_add_strings(ipp, IPP_TAG_JOB, IPP_TAG_KEYWORD,
-			"job-state-reasons", job_state_reasons_count, job_state_reasons);
+			"job-state-reasons", job_state_reasons_count, temp);
 		}
 
 	/*
@@ -399,7 +402,9 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 			}
 		else
 			{
-			ipp_add_out_of_band(ipp, IPP_TAG_JOB, IPP_TAG_UNKNOWN, "job-media-sheets");
+			ipp_add_out_of_band(ipp, IPP_TAG_JOB, IPP_TAG_UNKNOWN,
+				"job-media-sheets"
+				);
 			}
 		}
 
@@ -422,13 +427,15 @@ static void add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char destn
 			}
 		}
 
-	qentryfile_free(&qentryfile);
+	/*qentryfile_free(&qentryfile);*/
+	GU_OBJECT_POOL_POP(pool);
+	gu_pool_free(pool);
 	}
 
 /** Handler for IPP_GET_JOBS */
 void ipp_get_jobs(struct IPP *ipp)
 	{
-	const char function[] = "ipp_get_jobs";
+	FUNCTION4DEBUG("ipp_get_jobs")
 	struct URI *printer_uri;
 	const char *destname;
 	const char *user_at_host;
@@ -487,7 +494,7 @@ void ipp_get_jobs(struct IPP *ipp)
  * and (if possible) a queue name. */
 static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job_id)
 	{
-	const char function[] = "extract_jobid";
+	FUNCTION4DEBUG("extract_jobid")
 	struct URI *printer_uri = NULL;
 	struct URI *job_uri;
 
@@ -667,7 +674,9 @@ void ipp_X_job(struct IPP *ipp)
 			}
 		
 		DEBUG(("%s(): asking pprd to delete job %d", function, id));
-		ipp->response_code = pprd_call("IPP %d %d\n", ipp->operation_id, id);
+		ipp->response_code = pprd_status_code(
+			pprd_call("IPP %d %d\n", ipp->operation_id, id)
+			);
 		DEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
 		}
 	

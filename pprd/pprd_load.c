@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 April 2006.
 */
 
 /*
@@ -505,7 +505,6 @@ void new_group_config(char *group)
 	{
 	const char function[] = "new_group_config";
 	int x;								/* group array index */
-	int y;								/* members array index */
 	int destid;
 	int first_deleted = -1;
 	int is_new = FALSE;
