@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 5 May 2006.
 */
 
 /*
@@ -108,6 +108,25 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
 			"printer-state-message", state_message);
 		}
+	}
+
+/*
+ * Compute the value for the CUPS attribute printer-type.
+ * This still needs work.
+ */
+static int cups_printer_type(void *qip)
+	{
+	int type = 0;
+	if(queueinfo_is_group(qip))		/* is a printer class */
+		type |= 0x0001;
+	if(FALSE)
+		type |= 0x0002;				/* is a remote destination */
+	if(TRUE)						/* can print in black */
+		type |= 0x0004;
+	if(queueinfo_colorDevice(qip))	/* can print in color */
+		type |= 0x0008;
+	
+	return type;
 	}
 
 /*
@@ -258,7 +277,11 @@ static void add_queue_attributes(struct IPP *ipp, struct REQUEST_ATTRS *req, QUE
 
 	/* finishings-default */
 
-	/* printer-type */
+	if(request_attrs_attr_requested(req, "printer-type"))
+		{
+		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_ENUM,
+			"printer-type", cups_printer_type(qip));
+		}
 
 	if(request_attrs_attr_requested(req, "charset-configured"))
 		{
@@ -449,16 +472,60 @@ void ipp_get_printer_attributes(struct IPP *ipp)
 
 	} /* ipp_get_printer_attributes() */
 
+struct FILTER
+	{
+	const char *printer_info;
+	const char *printer_location;
+	int printer_type;
+	int printer_type_mask;
+	};
+
+static struct FILTER make_filter(struct IPP *ipp)
+	{
+	struct FILTER filter;
+	filter.printer_info = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "printer-info");
+	filter.printer_location = ipp_claim_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT, "printer-location");
+	filter.printer_type = ipp_claim_enum(ipp, IPP_TAG_OPERATION, "printer-type");
+	filter.printer_type_mask = ipp_claim_enum(ipp, IPP_TAG_OPERATION, "printer-type-mask");
+	return filter;
+	}
+
+static gu_boolean filter_test(struct FILTER *filter, void *qip)
+	{
+	const char *p;
+	if(filter->printer_info)	/* not implemented in CUPS 1.2.x */
+		{
+		if(!(p = queueinfo_comment(qip)) || gu_strcasecmp(p, filter->printer_info) != 0)
+			return FALSE;
+		}
+	if(filter->printer_location)
+		{
+		if(!(p = queueinfo_location(qip, 0)) || strcasecmp(p, filter->printer_location) != 0)
+			return FALSE;
+		}
+	if(filter->printer_type)
+		{
+		if((cups_printer_type(qip) & filter->printer_type_mask) != filter->printer_type)
+			return FALSE;
+		}
+	return TRUE;
+	}
+
 /** Handler for CUPS_GET_PRINTERS */
 void cups_get_printers(struct IPP *ipp)
 	{
+	int limit;
+	struct FILTER filter;
 	struct REQUEST_ATTRS *req;
 	DIR *dir;
 	struct dirent *direntp;
+	int count = 0;
 	void *qip;
 
 	DEBUG(("cups_get_printers()"));
 	
+	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
+	filter = make_filter(ipp);
 	req = request_attrs_new(ipp);
 	
 	if(!(dir = opendir(PRCONF)))
@@ -468,9 +535,15 @@ void cups_get_printers(struct IPP *ipp)
 		{
 		if(direntp->d_name[0] == '.')
 			continue;
+		if(limit > 0 && count >= limit)
+			break;
 		qip = queueinfo_new_load_config(QUEUEINFO_PRINTER, direntp->d_name);
-		add_queue_attributes(ipp, req, qip);
-		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		if(filter_test(&filter, qip))
+			{
+			add_queue_attributes(ipp, req, qip);
+			ipp_add_end(ipp, IPP_TAG_PRINTER);
+			count++;
+			}
 		queueinfo_free(qip);
 		}
 
@@ -481,13 +554,18 @@ void cups_get_printers(struct IPP *ipp)
 /* CUPS_GET_CLASSES */
 void cups_get_classes(struct IPP *ipp)
 	{
+	int limit;
+	struct FILTER filter;
 	struct REQUEST_ATTRS *req;
 	DIR *dir;
 	struct dirent *direntp;
+	int count = 0;
 	void *qip;
 
 	DEBUG(("cups_get_classes()"));
 
+	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
+	filter = make_filter(ipp);
    	req = request_attrs_new(ipp);
 
 	/* First do the real groups. */
@@ -498,9 +576,15 @@ void cups_get_classes(struct IPP *ipp)
 		{
 		if(direntp->d_name[0] == '.')
 			continue;
+		if(limit > 0 && count >= limit)
+			break;
 		qip = queueinfo_new_load_config(QUEUEINFO_GROUP, direntp->d_name);
-		add_queue_attributes(ipp, req, qip);
-		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		if(filter_test(&filter, qip))
+			{
+			add_queue_attributes(ipp, req, qip);
+			ipp_add_end(ipp, IPP_TAG_PRINTER);
+			count++;
+			}
 		queueinfo_free(qip);
 		}
 
@@ -516,9 +600,15 @@ void cups_get_classes(struct IPP *ipp)
 		{
 		if(direntp->d_name[0] == '.')
 			continue;
+		if(limit > 0 && count >= limit)
+			break;
 		qip = queueinfo_new_load_config(QUEUEINFO_ALIAS, direntp->d_name);
-		add_queue_attributes(ipp, req, qip);
-		ipp_add_end(ipp, IPP_TAG_PRINTER);
+		if(filter_test(&filter, qip))
+			{
+			add_queue_attributes(ipp, req, qip);
+			ipp_add_end(ipp, IPP_TAG_PRINTER);
+			count++;
+			}
 		queueinfo_free(qip);
 		}
 
