@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 3 April 2006.
+** Last modified 10 May 2006.
 */
 
 #include "config.h"
@@ -51,9 +33,11 @@ int option_features(const char destname[])
 	char *line;
 	char *p;
 	int len;
-	char *ui = NULL;
-	char *ui_default = NULL;
 	char *group = NULL;
+	char *ui = NULL;
+	char *ui_description = NULL;
+	char *ui_default = NULL;
+	char *ui_orderdependency = NULL;
 
 	if(!(ppdfile = dest_ppdfile(destname)))
 		{
@@ -82,6 +66,9 @@ int option_features(const char destname[])
 		/* If this is the start of a User Interface option cluster and we are not inside
 		   a group or the group is not the InstallableOptions group, print the option
 		   cluster name as a subheading.
+
+		   An example:
+		   		*OpenUI PageSize: PickOne
 		   */
 		if(!ui && (p = lmatchp(line, "*OpenUI")) && *p == '*' && (!group || strcmp(group, "InstallableOptions") != 0))
 			{
@@ -92,11 +79,11 @@ int option_features(const char destname[])
 			if(*p == '/')				/* if translation string exists, */
 				{
 				p++;
-				printf("%.*s\n", (int)strcspn(p, ":"), p);
+				ui_description = gu_strndup(p, strcspn(p, ":"));
 				}
 			else						/* if no translation string, */
 				{
-				printf("%s\n", ui);
+				ui_description = gu_strdup(ui);
 				}
 			continue;
 			}
@@ -104,29 +91,62 @@ int option_features(const char destname[])
 			{
 			gu_free(ui);
 			ui = NULL;
-			if(ui_default)
-				gu_free(ui_default);
+			if(ui_description)		/* if description wasn't used, */
+				{
+				gu_free(ui_description);
+				ui_description = NULL;
+				}
+			else					/* if it was, leave a space before next feature */
+				{
+				printf("\n");
+				}
+			gu_free_if(ui_default);
 			ui_default = NULL;
-			printf("\n");
+			gu_free_if(ui_orderdependency);
+			ui_orderdependency = NULL;
 			continue;
 			}
 		/* If we are in a User Interface option cluster and we haven't seen
-		   the default setting for this option yet, and this is a default
-		   setting, accept it.
-		   */
+		 * the default setting for this option yet, and this is a default
+		 * setting, accept it.  The line might look like this:
+		 *
+		 * *DefaultDuplex: None
+		 */
 		if(ui && !ui_default && lmatch(line, "*Default") && strncmp((p=line+8), ui, strlen(ui)) == 0 && p[strlen(ui)] == ':')
 			{
 			p += strlen(ui);
 			p++;
 			p += strspn(p, " \t");
-			ui_default = gu_strndup(p, strcspn(p, " "));
+			ui_default = gu_strndup(p, strcspn(p, " \t"));
 			/*printf("default: %s\n", ui_default);*/
 			continue;
 			}
+		/* If we are in a User Interface option cluster and we haven't seen
+		 * the order dependency line yet, and this is it, accept it.  The line
+		 * might look like this:
+		 *
+		 * *OrderDependency: 20.0 AnySetup *Duplex
+		 */
+		if(ui && !ui_orderdependency && (p = lmatchp(line, "*OrderDependency:")))
+			{
+			p += strspn(p, "0123456789.-");
+			p += strspn(p, " \t");
+			ui_orderdependency = gu_strndup(p, strcspn(p, " \t"));
+			continue;
+			}
 		/* If this is an option that matches the User Interface option
-		   cluster, print it as a possible --feature switch.
+		   cluster, and it is suitable for the document setup section,
+		   print it as a possible --feature switch.
 		   */
-		if(ui && line[0] == '*' && strncmp(line+1, ui, strlen(ui)) == 0 && isspace(line[1+strlen(ui)]))
+		if(ui && line[0] == '*' && strncmp(line+1, ui, strlen(ui)) == 0 && isspace(line[1+strlen(ui)])
+				&& (!ui_orderdependency || strcmp(ui_orderdependency, "AnySetup") == 0 || strcmp(ui_orderdependency, "DocumentSetup") == 0))
+			{
+			if(ui_description)
+				{
+				printf("%s\n", ui_description);
+				gu_free(ui_description);
+				ui_description = NULL;
+				}
 			{
 			char *translation = NULL;
 			p = line + 1 + strlen(ui);			/* Set p to point after "*Feature". */
@@ -149,17 +169,16 @@ int option_features(const char destname[])
 				);										
 			continue;
 			}
-
+			}
 		}
 
 	ppdobj_free(ppdobj);
 
-	if(ui)
-		gu_free(ui);
-	if(ui_default)
-		gu_free(ui_default);
-	if(group)
-		gu_free(group);
+	gu_free_if(group);
+	gu_free_if(ui);
+	gu_free_if(ui_description);
+	gu_free_if(ui_default);
+	gu_free_if(ui_orderdependency);
 
 	return PPREXIT_OK;
 	}

@@ -1231,7 +1231,8 @@ int command_interface(const char *argv[])
 		}
 	}
 
-	if((obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY)))		/* existing? */
+	/* existing? */
+	if((obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_RELOAD)))
 		{
 		char *line, *p;
 		gu_boolean different_interface = TRUE;
@@ -1276,7 +1277,8 @@ int command_interface(const char *argv[])
 		conf_close(obj);
 		}
 
-	else								/* new printer */
+	/* new printer */
+	else
 		{
 		FILE *defaults;
 
