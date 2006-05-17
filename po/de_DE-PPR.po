@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-28 10:34-0400\n"
+"POT-Creation-Date: 2006-05-16 12:17-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -38,8 +38,8 @@ msgstr "%s: Dateiende in Graphik\n"
 #: ../lprsrv/lprsrv_print.c:295 ../lprsrv/lprsrv_print.c:502
 #: ../lprsrv/lprsrv_print.c:506 ../lprsrv/lprsrv_print.c:531
 #: ../lprsrv/lprsrv_print.c:541 ../lprsrv/uprint_run.c:80
-#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:278 ../ppad/ppad_conf.c:280
-#: ../ppad/ppad_conf.c:282 ../ppad/ppad_conf.c:286 ../ppad/ppad_conf.c:290
+#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:269 ../ppad/ppad_conf.c:271
+#: ../ppad/ppad_conf.c:273 ../ppad/ppad_conf.c:277 ../ppad/ppad_conf.c:281
 #: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
 #: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:410
 #: ../pprdrv/pprdrv_custom_hook.c:67 ../pprdrv/pprdrv_interface.c:318
@@ -745,7 +745,7 @@ msgstr "Kann Schlüssel in Abschnitt nicht finden."
 msgid "value is not in the correct format"
 msgstr "der Wert ist nicht im korrekten Format"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1469 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1453 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:471 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -763,7 +763,7 @@ msgstr "Zu wenig Felder in \"%s\", Zeile %d"
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr "Nicht-Bool Variable im dritten Feld von \"%s\", Zeile %d"
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1528
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1512
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr "Fehler beim Lesen von \"%s\", Fehlernummer=%d (%s)"
@@ -962,62 +962,62 @@ msgstr "%s(): write() schrieb %d statt %d Bytes."
 msgid "%s(): invalid response from pprd"
 msgstr "%s: Ungültiger followme Registrierungscode\n"
 
-#: ../libppr/queueinfo.c:196
+#: ../libppr/queueinfo.c:165
 #, c-format
 msgid "Extracting information about printer \"%s\" from PPD file \"%s\".\n"
 msgstr "Hole Informationen über Drucker \"%s\" aus PPD-Datei \"%s\".\n"
 
-#: ../libppr/queueinfo.c:226
+#: ../libppr/queueinfo.c:212
 #, c-format
 msgid "Warning: PPD file \"%s\" has an invalid ColorDevice value of \"%s\".\n"
 msgstr "Warnung: PPD Datei \"%s\" enthält einen nichterlaubten ColorDevice Wert von \"%s\".\n"
 
-#: ../libppr/queueinfo.c:242 ../libppr/queueinfo.c:244
+#: ../libppr/queueinfo.c:227 ../libppr/queueinfo.c:229
 #, c-format
 msgid "Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"
 msgstr "Warnung: PPD Datei \"%s\" enthält nichterlaubten %s Wert von \"%s\".\n"
 
-#: ../libppr/queueinfo.c:764
+#: ../libppr/queueinfo.c:749
 #, c-format
 msgid "There is no alias called \"%s\""
 msgstr "Es gibt keinen Alias \"%s\""
 
-#: ../libppr/queueinfo.c:769
+#: ../libppr/queueinfo.c:754
 #, c-format
 msgid "There is no group called \"%s\""
 msgstr "Es gibt keine Gruppe \"%s\""
 
-#: ../libppr/queueinfo.c:774
+#: ../libppr/queueinfo.c:759
 #, c-format
 msgid "There is no printer called \"%s\""
 msgstr "Es gibt keinen Drucker \"%s\""
 
-#: ../libppr/queueinfo.c:797
+#: ../libppr/queueinfo.c:782
 #, c-format
 msgid "no printer called \"%s\""
 msgstr "Drucker \"%s\" existiert nicht"
 
-#: ../libppr/queueinfo.c:1485
+#: ../libppr/queueinfo.c:1469
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: zu wenige Felder\n"
 
-#: ../libppr/queueinfo.c:1494
+#: ../libppr/queueinfo.c:1478
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: Feld %d ist leer\n"
 
-#: ../libppr/queueinfo.c:1517
+#: ../libppr/queueinfo.c:1501
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr "Treffer in \"%s\", Zeile %d; mfmode=\"%s\".\n"
 
-#: ../libppr/queueinfo.c:1553
+#: ../libppr/queueinfo.c:1537
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr "Warnung: kein MetaFont Modus für Drucker \"%s\" gefunden.\n"
 
-#: ../libppr/queueinfo.c:1564
+#: ../libppr/queueinfo.c:1548
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr "Warnung: nicht aller Mitglieder der Gruppe \"%s\" haben den sicheren MetaFont Modus.\n"
@@ -2139,56 +2139,56 @@ msgstr ""
 "Der Name \"%s\" gehört nicht zu einer existierenden Gruppe\n"
 "oder einem existierenden Drucker.\n"
 
-#: ../ppad/ppad_alias.c:203 ../ppad/ppad_conf.c:173
+#: ../ppad/ppad_alias.c:203 ../ppad/ppad_conf.c:164
 #, c-format
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "Der Aliasname \"%s\" existiert nicht.\n"
 
 #: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:638
-#: ../ppad/ppad_printer.c:2316
+#: ../ppad/ppad_printer.c:2318
 msgid "Bad set of switches.\n"
 msgstr "Ungültige Liste von Argumenten.\n"
 
 #: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:775
-#: ../ppad/ppad_printer.c:2914
+#: ../ppad/ppad_printer.c:2916
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr "Zusätzliche Parameternamen müssen mit einem kleine ASCII Buchstaben beginnen.\n"
 
-#: ../ppad/ppad_conf.c:102 ../ppad/ppad_conf.c:143
+#: ../ppad/ppad_conf.c:93 ../ppad/ppad_conf.c:134
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"
 msgstr "%s(): fdopen(\"%d\", \"%s\") fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_conf.c:109
+#: ../ppad/ppad_conf.c:100
 msgid "Waiting for lock to clear.\n"
 msgstr "Warte auf Aufhebung der Sperre.\n"
 
-#: ../ppad/ppad_conf.c:124
+#: ../ppad/ppad_conf.c:115
 #, fuzzy, c-format
 msgid "The printer \"%s\" already exists.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:127
+#: ../ppad/ppad_conf.c:118
 #, fuzzy, c-format
 msgid "The group \"%s\" already exists.\n"
 msgstr "Die Gruppe \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:130
+#: ../ppad/ppad_conf.c:121
 #, fuzzy, c-format
 msgid "The alias \"%s\" already exists.\n"
 msgstr "Der Aliasname \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:154
+#: ../ppad/ppad_conf.c:145
 #, c-format
 msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
 msgstr "Kann temoräre Datei \"%s\" nicht zum schreiben öffnen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_conf.c:167 ../ppad/ppad_printer.c:2252
+#: ../ppad/ppad_conf.c:158 ../ppad/ppad_printer.c:2254
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:170 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
+#: ../ppad/ppad_conf.c:161 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr "Die Gruppe \"%s\" existiert nicht.\n"
@@ -2495,7 +2495,7 @@ msgstr ""
 msgid "IEEE 1284 DeviceID Model: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_ppd.c:884 ../ppad/ppad_printer.c:2948
+#: ../ppad/ppad_ppd.c:884 ../ppad/ppad_printer.c:2950
 #, c-format
 msgid "%s: query failed: %s\n"
 msgstr "%s: Abfrage fehlgeschlagen: %s\n"
@@ -2505,8 +2505,8 @@ msgstr "%s: Abfrage fehlgeschlagen: %s\n"
 msgid "%s(): %s() failed, errno=%d (%s)\n"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_printer.c:371 ../ppad/ppad_printer.c:1653
-#: ../ppad/ppad_printer.c:1710
+#: ../ppad/ppad_printer.c:371 ../ppad/ppad_printer.c:1655
+#: ../ppad/ppad_printer.c:1712
 #, fuzzy
 msgid "Alerts interval must be an integer.\n"
 msgstr "der Wert muß eine positive Ganzzahl sein"
@@ -2722,7 +2722,7 @@ msgstr "Das Interface \"%s\" existiert nicht.\n"
 msgid "The interface \"%s\" not executable.\n"
 msgstr "Das Interface \"%s\" ist nicht ausführbar.\n"
 
-#: ../ppad/ppad_printer.c:1431
+#: ../ppad/ppad_printer.c:1433
 #, fuzzy
 msgid ""
 "Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
@@ -2732,14 +2732,14 @@ msgstr ""
 "Erlaubte Abbruchmethoden sind \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
 "\"save/restore\", \"newinterface\", und \"default\".\n"
 
-#: ../ppad/ppad_printer.c:1457
+#: ../ppad/ppad_printer.c:1459
 #, fuzzy
 msgid "Valid feedback settings are \"true\", \"false\", or \"default\".\n"
 msgstr ""
 "Sie müssen den Namen eines existierenden Druckers\n"
 "und \"true\", \"false\", oder \"default\" angeben.\n"
 
-#: ../ppad/ppad_printer.c:1482
+#: ../ppad/ppad_printer.c:1484
 #, fuzzy
 msgid ""
 "Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
@@ -2749,23 +2749,23 @@ msgstr ""
 "Erlaubte Codes sind \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
 "\"UNKNOWN\", und \"default\".\n"
 
-#: ../ppad/ppad_printer.c:1511
+#: ../ppad/ppad_printer.c:1513
 msgid "If you set a RIP, you must specify the output language.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1517
+#: ../ppad/ppad_printer.c:1519
 msgid "The RIP name may not be an empty string.\n"
 msgstr "Der RIP Programmname darf nicht leer sein.\n"
 
-#: ../ppad/ppad_printer.c:1523
+#: ../ppad/ppad_printer.c:1525
 msgid "The RIP output language may not be an empty string.\n"
 msgstr "Die Ausgabesprache des RIP Programmes darf nicht leer sein.\n"
 
-#: ../ppad/ppad_printer.c:1738
+#: ../ppad/ppad_printer.c:1740
 msgid "No alert method and address defined, use \"ppad alerts\".\n"
 msgstr "Keine Warnungsmethode und -adresse angegeben, benutzen Sie \"ppad alerts\".\n"
 
-#: ../ppad/ppad_printer.c:1786
+#: ../ppad/ppad_printer.c:1788
 msgid ""
 "Banner and trailer must be set to \"never\", \"no\",\n"
 "\"yes\", or \"always\".\n"
@@ -2773,30 +2773,30 @@ msgstr ""
 "Start- und Endseite müssen auf \"never\", \"no\",\n"
 "\"yes\", oder \"always\" gesetzt werden.\n"
 
-#: ../ppad/ppad_printer.c:1820
+#: ../ppad/ppad_printer.c:1822
 msgid "Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"
 msgstr "Setzen Sie die Ausgababfolge auf \"Normal\", \"Reverse\" oder \"PPD\".\n"
 
-#: ../ppad/ppad_printer.c:1852
+#: ../ppad/ppad_printer.c:1854
 #, c-format
 msgid "A second parameter is not allowed because first is \"%s\"."
 msgstr "Ein zweiter Parameter ist nicht erlaubt, da der erste \"%s\" ist."
 
-#: ../ppad/ppad_printer.c:1864 ../ppad/ppad_printer.c:1869
+#: ../ppad/ppad_printer.c:1866 ../ppad/ppad_printer.c:1871
 #, c-format
 msgid "The value \"%s\" is not in the correct format for decimal currency."
 msgstr "Die Angabe \"%s\" ist nicht im korrekten Format für dezimale Währungsangaben."
 
-#: ../ppad/ppad_printer.c:1930
+#: ../ppad/ppad_printer.c:1932
 msgid "Printer configuration file does not have a \"PPDFile:\" line.\n"
 msgstr "Druckerkonfigurationsdatei hat keine Zeile: \"PPDFile:\".\n"
 
-#: ../ppad/ppad_printer.c:2000
+#: ../ppad/ppad_printer.c:2002
 #, c-format
 msgid "Printer \"%s\" already has a bin called \"%s\".\n"
 msgstr "Der Drucker \"%s\" hat schon ein Papierfach mit Namen \"%s\".\n"
 
-#: ../ppad/ppad_printer.c:2023
+#: ../ppad/ppad_printer.c:2025
 #, c-format
 msgid ""
 "Can't add these %d bin%s to \"%s\" because then the printer would\n"
@@ -2805,73 +2805,73 @@ msgstr ""
 "Kann diese %d Bin%s (Papiereinzüge) nicht zu \"%s\" hinzufügen, da der Drucker dann\n"
 "%d Bins haben würde und das %d Binlimit überschritten würde.\n"
 
-#: ../ppad/ppad_printer.c:2095
+#: ../ppad/ppad_printer.c:2097
 #, c-format
 msgid "You can't delete more than %d bins at a time.\n"
 msgstr "Sie können nicht mehr als %d Einzüge auf einmal löschen.\n"
 
-#: ../ppad/ppad_printer.c:2133
+#: ../ppad/ppad_printer.c:2135
 #, c-format
 msgid "The printer \"%s\" does not have a bin called \"%s\".\n"
 msgstr "Der Drucker \"%s\" hat keinen Einzug mit Namen \"%s\".\n"
 
-#: ../ppad/ppad_printer.c:2204
+#: ../ppad/ppad_printer.c:2206
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)\n"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_printer.c:2345
+#: ../ppad/ppad_printer.c:2347
 #, fuzzy, c-format
 msgid "Printer \"%s\" does not exist."
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_printer.c:2476
+#: ../ppad/ppad_printer.c:2478
 #, c-format
 msgid "The printer \"%s\" has no \"PPDFile:\" line in its configuration file."
 msgstr "Die Konfigurationsdatei des Druckers \"%s\" hat keinen Eintrag: \"PPDFile:\"."
 
-#: ../ppad/ppad_printer.c:2528
+#: ../ppad/ppad_printer.c:2530
 #, c-format
 msgid "WARNING: Unclosed UI block \"%s\" in PPD file.\n"
 msgstr "WARNUNG: Nichtabgeschlossener UI Abschnitt \"%s\" in PPD Datei.\n"
 
-#: ../ppad/ppad_printer.c:2581
+#: ../ppad/ppad_printer.c:2583
 msgid "WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"
 msgstr "WARNUNG: Nichtpassendes \"*OpenUI\", \"*CloseUI\" in PPD Datei.\n"
 
-#: ../ppad/ppad_printer.c:2614
+#: ../ppad/ppad_printer.c:2616
 #, c-format
 msgid "Warning:\t No value provided for \"%s\".\n"
 msgstr "Warnung:\t Kein Wert für \"%s\" angegeben.\n"
 
-#: ../ppad/ppad_printer.c:2618
+#: ../ppad/ppad_printer.c:2620
 #, c-format
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr "Der Wert für \"%s\" ist nicht erlaubt.\n"
 
-#: ../ppad/ppad_printer.c:2629
+#: ../ppad/ppad_printer.c:2631
 #, c-format
 msgid "Choose 1 thru %d or 0 if unknown> "
 msgstr "Wählen Sie 1 bis %d oder 0 wenn ubekannt>"
 
-#: ../ppad/ppad_printer.c:2676
+#: ../ppad/ppad_printer.c:2678
 #, c-format
 msgid "WARNING: Unclosed UI block in PPD file: \"%s\".\n"
 msgstr "WARNUNG: Nichtabgeschlossener UI Abschnitt in PPD Datei: \"%s\".\n"
 
-#: ../ppad/ppad_printer.c:2749 ../ppad/ppad_printer.c:2780
+#: ../ppad/ppad_printer.c:2751 ../ppad/ppad_printer.c:2782
 msgid "The lower limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das untere Limit muß 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
-#: ../ppad/ppad_printer.c:2755 ../ppad/ppad_printer.c:2786
+#: ../ppad/ppad_printer.c:2757 ../ppad/ppad_printer.c:2788
 msgid "The upper limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das obere Limit muß 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
-#: ../ppad/ppad_printer.c:2810
+#: ../ppad/ppad_printer.c:2812
 msgid "Value is not boolean.\n"
 msgstr "Der Wert ist nicht boolean (wahr/falsch)\n"
 
-#: ../ppad/ppad_printer.c:2886
+#: ../ppad/ppad_printer.c:2888
 msgid "The limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das Limit muß 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
@@ -4262,7 +4262,7 @@ msgstr "%sBenötigtes Programm \"%s\" ist nicht verfügbar.\n"
 msgid "No matching filter found.\n"
 msgstr "Kein passender Filter gefunden.\n"
 
-#: ../ppr/ppr_features.c:60
+#: ../ppr/ppr_features.c:44
 #, c-format
 msgid "%s: can't find destination %s or can't determine PPD file\n"
 msgstr ""
@@ -6264,498 +6264,67 @@ msgstr "%s: The Druckauftrag \"%s\" ist nicht Ihrer, ich ignoriere den Befehl.\n
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr "Garantiere PPR die Erlaubnis, X clients zu kontaktieren, um \"%s\" anzuzeigen.\n"
 
-#, fuzzy
-#~ msgid "Queue ID        For                      Time        Pgs Status\n"
-#~ msgstr "Warteschlange    Für                      Zeit       Seiten Status\n"
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "USB Port Kommunikation fehlgeschlagen, Fehlernummer=%d (%s)."
+
+#~ msgid "You must supply only the name of an existing printer.\n"
+#~ msgstr "Sie dürfen nur den Namen eines existierenden Druckers angeben.\n"
 
 #~ msgid ""
-#~ "You must supply the name of an existing printer, the name of an addon\n"
-#~ "parameter.  A value for the parameter is optional.  If you do not\n"
-#~ "supply a value, the parameter will be unset.\n"
+#~ "You must supply the name of an existing printer and the maximum number of\n"
+#~ "seconds to allow per page.\n"
 #~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers und den Namen eines\n"
-#~ "Parameters angeben. Ein Wert für den Parameter ist optional. Wenn Sie keinen Wert\n"
-#~ "angeben, wird der Parameter gelöscht.\n"
+#~ "Sie müssen den Namen eines existierenden Druckers und die maximale\n"
+#~ "Zeit in Sekunden pro Seite angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of a printer.  You may also supply a new\n"
+#~ "quoted, space delimited list of name=value pairs.  If you don't\n"
+#~ "supply such a list, any existing list will be deleted.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines Druckers angeben. Sie können weiterhin\n"
+#~ "neue quotierte leerzeichengetrennte Name=Wert Paare angeben.\n"
+#~ "Wenn Sie dies nicht tun, wird eine existierende Liste gelöscht.\n"
 
 #~ msgid ""
 #~ "You must specify a printer and a (possibly empty) list\n"
-#~ "of file types.  These file types should be the same as\n"
-#~ "those used with the \"ppr -T\" option.\n"
-#~ msgstr ""
-#~ "Sie müssen einen Drucker und eine (möglischerweise leere) Liste\n"
-#~ "von Dateitypen angeben. Diese Dateitypen sollten dieselben wie\n"
-#~ "bei Nutzung der Option \"ppr -T\" sein.\n"
-
-#~ msgid "You must specify a printer to delete.\n"
-#~ msgstr "Sie müssen einen Drucker zum Löschen angeben.\n"
-
-#~ msgid "Too many parameters.\n"
-#~ msgstr "Zuviele Parameter.\n"
-
-#~ msgid "You must specify a printer.\n"
-#~ msgstr "Sie müssen einen Drucker angeben.\n"
-
-#~ msgid "Port \"%s\" does not support 2-way communication."
-#~ msgstr "Anschluß \"%s\" unterstützt keine bidirektionale Kommunikation."
-
-#~ msgid "Failed to create printer config file \"%s\", errno=%d (%s).\n"
-#~ msgstr "Konnte Druckerkonfigurationsdatei \"%s\" nicht erstellen, Fehlernummer=%d (%s).\n"
-
-#~ msgid "Failed to create alias config file \"%s\", errno=%d (%s).\n"
-#~ msgstr "Konnte Aliaskonfigurationsdatei \"%s\" nicht erstellen, Fehlernummer=%d (%s).\n"
-
-#~ msgid ""
-#~ "\t-s <port>\n"
-#~ "\t--standalone-port <port>\n"
-#~ "\t\t(run standalone, bind to specified TCP port)\n"
-#~ msgstr ""
-#~ "\t-s <port>\n"
-#~ "\t--standalone-port <Port>\n"
-#~ "\t\t(nicht über inetd starten, auf TCP Port <Port> lauschen)\n"
-
-#~ msgid "lprsrv must run as root"
-#~ msgstr "lprsrv muß als root laufen"
-
-#~ msgid "Unknown port name: %s"
-#~ msgstr "Unbekannter Port: %s"
-
-#~ msgid "Standalone mode code not present.\n"
-#~ msgstr "Code für Standalonemodus nicht verfügbar.\n"
-
-#~ msgid "lprsrv is already running in standalone mode"
-#~ msgstr "lprsrv läuft bereits im Standalone Modus"
-
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "es existiert bereits ein Server, der auf TCP Port %d lauscht"
-
-#~ msgid "ppad media show <name>"
-#~ msgstr "ppad media show <Name>"
-
-#~ msgid "ppad media put <name> <width> <length> <weight> <colour> <type> <banner>"
-#~ msgstr "ppad media put <Name> <Breite> <Länge> <Masse> <Farbe> <Typ> <Startseite>"
-
-#~ msgid "ppad media delete <name>"
-#~ msgstr "ppad media delete <Name>"
-
-#~ msgid "ppad media export"
-#~ msgstr "ppad media export"
-
-#~ msgid "ppad media import"
-#~ msgstr "ppad media import"
-
-#~ msgid "Media Management:\n"
-#~ msgstr "Druckmedienverwaltung:\n"
-
-#, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad frequency <Drucker> <Ganzzahl>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <Drucker> <Kommentar>"
-
-#~ msgid "ppad location <printer> <string>"
-#~ msgstr "ppad location <Drucker> <Ort>"
-
-#~ msgid "ppad department <printer> <string>"
-#~ msgstr "ppad department <Drucker> <Abteilung>"
-
-#~ msgid "ppad contact <printer> <string>"
-#~ msgstr "ppad contact <Drucker> <Kontakt>"
-
-#~ msgid "ppad options <printer> <quoted_list>"
-#~ msgstr "ppad options <Drucker> <quotierte_Liste>"
-
-#~ msgid "ppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}"
-#~ msgstr "ppad jobbreak <Drucker> {none, signal,control-d, pjl, signal/pjl}"
-
-#~ msgid "ppad feedback <printer> {True, False}"
-#~ msgstr "ppad feedback <Drucker> {True, False}"
-
-#~ msgid "ppad codes <printer> {Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, DEFAULT}"
-#~ msgstr "ppad codes <Drucker> {Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, DEFAULT}"
-
-#~ msgid "ppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]"
-#~ msgstr "ppad rip <Drucker> [<RIP> <Treiberausgabesprache> [<RIP_optionen>]]"
-
-#~ msgid "ppad ppd <printer> <filename>"
-#~ msgstr "ppad ppd <Drucker> <Dateiname>"
-
-#~ msgid "ppad ppdq <printer>"
-#~ msgstr "ppad ppdq <Drucker>"
-
-#~ msgid "ppad alerts <printer> <frequency> <method> <address>"
-#~ msgstr "ppad alerts <Drucker> >Frequenz> <Methode> <Adresse>"
-
-#~ msgid "ppad flags <printer> {never, no, yes, always} {never, no, yes, always}"
-#~ msgstr "ppad flags <Drucker> {never, no, yes, always} {never, no, yes, always}"
-
-#~ msgid "ppad charge <printer> {<money>, none} [<money>]"
-#~ msgstr "ppad charge <Drucker> {<Betrag>, none} [<Betrag>]"
-
-#~ msgid "ppad outputorder <printer> {Normal, Reverse, PPD}"
-#~ msgstr "ppad outputorder <Drucker> {Normal, Reverse, PPD}"
-
-#~ msgid "ppad bins ppd <printer>"
-#~ msgstr "ppad bins ppd <Drucker>"
-
-#~ msgid "ppad bins add <printer> <bin>"
-#~ msgstr "ppad bins add <Drucker> <Einzug>"
-
-#~ msgid "ppad bins delete <printer> <bin>"
-#~ msgstr "ppad bins delete <Drucker> <Einzug>"
-
-#~ msgid "ppad touch <printer>"
-#~ msgstr "ppad touch <Drucker>"
-
-#~ msgid "ppad switchset <printer> <list>"
-#~ msgstr "ppad switchset <Drucker> <Liste>"
-
-#~ msgid "ppad deffiltopts <printer>"
-#~ msgstr "ppad deffiltopts <Drucker>"
-
-#~ msgid "ppad passthru <printer> <list>"
-#~ msgstr "ppad passthru <Drucker> <Liste>"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <Drucker>"
-
-#~ msgid "ppad limitpages <printer> <number> <number>"
-#~ msgstr "ppad limitpages <Drucker> <Minimum> <Maximum>"
-
-#~ msgid "ppad limitkilobytes <printer> <number> <number>"
-#~ msgstr "ppad limitkilobytes <Drucker> <Minimum> <Maximum>"
-
-#~ msgid "ppad grayok <printer> <boolean>"
-#~ msgstr "ppad grayok <Drucker> <Boolean>"
-
-#~ msgid "ppad acls <name> <acl> ..."
-#~ msgstr "ppad acls <Name> <acl> ..."
-
-#~ msgid "ppad userparams <name> <list>"
-#~ msgstr "ppad userparams <Name> <Liste>"
-
-#~ msgid "ppad pagetimelimit <name> <value>"
-#~ msgstr "ppad pagetimelimit <Name> <Wert>"
-
-#~ msgid "ppad addon <name> <value>"
-#~ msgstr "ppad addon <Name> <Wert>"
-
-#, fuzzy
-#~ msgid "Printer Management:\n"
-#~ msgstr "Druckerverwaltung:\n"
-
-#~ msgid "ppad group show <group>"
-#~ msgstr "ppad group show <Gruppe>"
-
-#~ msgid "ppad group members <group> <printer> ..."
-#~ msgstr "ppad group members <Gruppe> <Drucker> ..."
-
-#~ msgid "ppad group add <group> <printer>"
-#~ msgstr "ppad group add <Gruppe> <Drucker>"
-
-#~ msgid "ppad group remove <group> <printer>"
-#~ msgstr "ppad group remove <Gruppe> <Druckerr>"
-
-#~ msgid "ppad group delete <group>"
-#~ msgstr "ppad group delete <Gruppe>"
-
-#~ msgid "ppad group comment <group> <comment>"
-#~ msgstr "ppad group comment <Gruppe> <Kommentar>"
-
-#~ msgid "ppad group rotate <group> {true, false}"
-#~ msgstr "ppad group rotate <Gruppe> {true, false}"
-
-#~ msgid "ppad group touch <group>"
-#~ msgstr "ppad group touch <Gruppe>"
-
-#~ msgid "ppad group switchset <printer> <list>"
-#~ msgstr "ppad group switchset <Druckerr> <Liste>"
-
-#~ msgid "ppad group deffiltopts <group>"
-#~ msgstr "ppad group deffiltopts <Gruppe>"
-
-#~ msgid "ppad group acls <name> <acl> ..."
-#~ msgstr "ppad group acls <Name> <Acl> ..."
-
-#~ msgid "ppad group addon <name> <value>"
-#~ msgstr "ppad group addon <Name> <Wert>"
-
-#~ msgid "Group Management:\n"
-#~ msgstr "Gruppenmanagement:\n"
-
-#~ msgid "ppad alias show <alias>"
-#~ msgstr "ppad alias show <Alias>"
-
-#~ msgid "ppad alias forwhat <alias> <queuename>"
-#~ msgstr "ppad alias forwhat <Alias> <Warteschlange>"
-
-#~ msgid "ppad alias delete <alias>"
-#~ msgstr "ppad alias delete <Alias>"
-
-#~ msgid "ppad alias comment <alias> <comment>"
-#~ msgstr "ppad alias comment >Alias> <Kommentar>"
-
-#~ msgid "ppad alias switchset <alias> <list>"
-#~ msgstr "ppad alias switchset <Alias> <Liste>"
-
-#~ msgid "ppad alias addon <name> <value>"
-#~ msgstr "ppad alias addon <Name> <Wert>"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Verwaltung der Aliase:\n"
-
-#~ msgid "ppad ppdlib query <interface> <address> [<quoted_options_list>]"
-#~ msgstr "ppad ppdlib query <Interface> <Adresse> [<quotierte_Optionenliste>]"
-
-#, fuzzy
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib list <Ausdruck>"
-
-#~ msgid "ppad ppdlib get <name>"
-#~ msgstr "ppad ppdlib get <Name>"
-
-#~ msgid "PPD File Management:\n"
-#~ msgstr "PPD Dateiverwaltung:\n"
-
-#~ msgid "ppad help printer"
-#~ msgstr "ppad help printer"
-
-#~ msgid "ppad help alias"
-#~ msgstr "ppad help alias"
-
-#~ msgid "ppad help media"
-#~ msgstr "ppad help media"
-
-#~ msgid "ppad help ppdlib"
-#~ msgstr "ppad help ppdlib"
-
-#~ msgid "ppad help other"
-#~ msgstr "ppad help other"
-
-#~ msgid "You must supply the name of an alias to show.\n"
-#~ msgstr "Sie müssen den Namen eines Alias zum Zeigen angeben.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und eine Ausgabeordnung angeben.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a new or existing alias and\n"
-#~ "the name of the queue it is to be an alias for.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines neuen oder existierenden Alias\n"
-#~ "und den Namen der Warteschlange für den Alias angeben.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing alias and\n"
-#~ "a comment to attach to it.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Alias\n"
-#~ "und einen Kommentar angeben.\n"
-
-#~ msgid "You must supply the name of an alias and a set of switches.\n"
-#~ msgstr "Sie müssen den Namen eines Alias und einen Satz von Optionen angeben.\n"
-
-#~ msgid ""
-#~ "You must specify an alias and a (possibly empty) list\n"
-#~ "of file types.  These file types should be the same as\n"
-#~ "those used with the \"ppr -T\" option.\n"
-#~ msgstr ""
-#~ "Sie müssen ein Alias und eine (möglicherweise leere) Liste\n"
-#~ "von Dateitypen angeben. Diese Dateitypen sollten dieselben wie\n"
-#~ "bei Nutzung der Option \"ppr -T\" sein.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing alias, the name of an addon\n"
-#~ "parameter.  A value for the parameter is optional.  If you do not\n"
-#~ "supply a value, the parameter will be unset.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Alias und den Namen eines\n"
-#~ "Parameters angeben. Ein Wert für den Parameter ist optional. Wenn Sie keinen Wert\n"
-#~ "angeben, wird der Parameter gelöscht.\n"
-
-#~ msgid "You must supply the name of a group to show.\n"
-#~ msgstr "Sie müssen den Namen einer Gruppe zum Zeigen angeben.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group and\n"
-#~ "a name for the new group.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und eine Ausgabeordnung angeben.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a group and\n"
-#~ "a comment to attach to it.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen einer Gruppe und\n"
-#~ "einen Kommentar angeben.\n"
-
-#~ msgid "You must supply the name of a group and \"true\" or \"false\".\n"
-#~ msgstr "Sie müssen den Namen einer Gruppe und \"true\" oder \"false\" angeben.\n"
-
-#~ msgid ""
-#~ "You must specify a new or existing group and one or more printers\n"
-#~ "to add to it.\n"
-#~ msgstr ""
-#~ "Sie müssen eine neue oder existierende Gruppe und einen oder mehrere\n"
-#~ "Drucker zum Hinzufügen angeben.\n"
-
-#~ msgid ""
-#~ "You must specify a new or existing group and zero or more printers\n"
-#~ "to be its members.\n"
-#~ msgstr ""
-#~ "Sie müssen eine neue oder existierende Gruppe und null oder mehr\n"
-#~ "Drucker zum Hinzufügen angeben.\n"
-
-#~ msgid "You must specify a group and a printer or printers to remove from it.\n"
-#~ msgstr "Sie müssen eine Gruppe und einen oder mehrere Drucker zum Entfernen angeben.\n"
-
-#~ msgid "You must specify a group to delete.\n"
-#~ msgstr "Sie müssen eine Gruppe zum Entfernen angeben.\n"
-
-#~ msgid "You must supply the name of a group.\n"
-#~ msgstr "Sie müssen den Namen einer Gruppe angeben.\n"
-
-#~ msgid "You must supply the name of a group and a set of switches.\n"
-#~ msgstr "Sie müssen den Namen einer Gruppe und einen Satz von Optionen angeben.\n"
-
-#~ msgid ""
-#~ "You must specify a group and a (possibly empty) list\n"
-#~ "of file types.  These file types should be the same as\n"
-#~ "those used with the \"ppr -T\" option.\n"
-#~ msgstr ""
-#~ "Sie müssen eine Gruppe und eine (möglischerweise leere) Liste\n"
-#~ "von Dateitypen angeben. Diese Dateitypen sollten dieselben wie\n"
-#~ "bei Nutzung der Option \"ppr -T\" sein.\n"
-
-#~ msgid ""
-#~ "You must specify a group and a (possibly empty) list\n"
 #~ "of PPR access control lists.\n"
 #~ msgstr ""
-#~ "Sie müssen eine Gruppe und eine (möglicherweise leere) Liste\n"
+#~ "Sie müssen einen Drucker und eine (möglicherweise leere) Liste\n"
 #~ "von PPR Zugangskontrollisten angeben.\n"
 
-#~ msgid ""
-#~ "You must supply the name of an existing group, and the name of an addon\n"
-#~ "parameter.  A value for the parameter is optional.  If you do not\n"
-#~ "supply a value, the parameter will be unset.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen einer existierenden Gruppe und den Namen eines\n"
-#~ "Parameters angeben. Ein Wert für den Parameter ist optional. Wenn Sie keinen Wert\n"
-#~ "angeben, wird der Parameter gelöscht.\n"
-
-#~ msgid "You must supply a filename.\n"
-#~ msgstr "Sie müssen einen Dateinamen angeben.\n"
+#~ msgid "You must specify a printer and a boolean value.\n"
+#~ msgstr "Sie müssen einen Drucker und einen boolean (wahr/falsch) Wert angeben.\n"
 
 #~ msgid ""
-#~ "You must supply the name of an interface and an address.  If necessary, a\n"
-#~ "quoted list of options may follow the address.\n"
+#~ "You must supply the name of an existing printer and the minimum and maximum number\n"
+#~ "of kilobytes of the documents it should be allowed to print.  To clear either limit,\n"
+#~ "set it to 0.\n"
 #~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Interfaces und eine Adresse angeben.\n"
-#~ "Falls nötig, kann eine quotierte Liste von Optionen der Adresse folgen.\n"
-
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Sie müssen einen Suchbegriff angeben.\n"
+#~ "Sie müssen den Namen eines existierenden Druckers und die minimal und maximal erlaubte\n"
+#~ "Größe des zu druckenden Dokumentes angeben. Um die Limits zu löschen,\n"
+#~ "geben Sie 0 ein.\n"
 
 #~ msgid ""
-#~ "You must supply an alert frequency, such as \"7\", an alert method,\n"
-#~ "such as \"mail\", and an alert address, such as \"alertreaders\".\n"
+#~ "You must supply the name of an existing printer and the minimum and maximum number\n"
+#~ "of pages of the documents it should be allowed to print.  To clear either limit,\n"
+#~ "set it to 0.\n"
 #~ msgstr ""
-#~ "Sie müssen eine Warnfrequenz, wie \"7\", eine Warnmethode,\n"
-#~ "wie \"mail\", und eine Warnaddresse, wie \"alertreaders\" angeben.\n"
+#~ "Sie müssen den Namen eines existierenden Druckers und die minimal und maximal erlaubte\n"
+#~ "Seitenanzahl des zu druckenden Dokumentes angeben. Um die Limits zu löschen,\n"
+#~ "geben Sie 0 ein.\n"
 
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a comment to attach to it.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und einen Kommentar angeben.\n"
+#~ msgid "You must supply the name of a printer and a set of switches.\n"
+#~ msgstr "Sie müssen den Namen eines Druckers und einen Satz von Optionen angeben.\n"
 
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a location name to attach to it.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und einen Ort angeben.\n"
+#~ msgid "You must supply the name of a printer.\n"
+#~ msgstr "Sie müssen den Namen eines Druckers angeben.\n"
 
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a department name to attach to it.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und eine Abteilung angeben.\n"
+#~ msgid "You must specify a printer and a bin or bins to remove from it.\n"
+#~ msgstr "Sie müssen einen Drucker und ein oder mehrere Einzüge zum Entfernen angeben.\n"
 
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a contact name to attach to it.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und einen Kontakt angeben.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must specify a printer, either new or existing, an interface program, and\n"
-#~ "an address of the printer in a format understood by the interface program.\n"
-#~ "See ppad-interfaces(8) for information about interface programs and their\n"
-#~ "address formats.\n"
-#~ msgstr ""
-#~ "Sie müssen einen neuen oder existierenden Drucker angeben,\n"
-#~ "ein Interface, und eine Adresse, wo das Interface den\n"
-#~ "Auftrag hinsenden soll.\n"
-
-#~ msgid "Insufficient parameters.\n"
-#~ msgstr "Ungenügende Parameter.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer.  If you supply no other\n"
-#~ "parameters, the RIP setting will revert to the PPD file default.  To select\n"
-#~ "a different RIP, supply the RIP name (such as \"gs\" or \"ppr-gs\"), an\n"
-#~ "output language (such as \"pcl\" or \"other\"), and a RIP options string.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers angeben. Wenn Sie keine\n"
-#~ "weiteren Parameter angeben, wird das RIP auf den PPD Standard gesetzt. Um ein\n"
-#~ "anders RIP zu verwenden, geben Sie den RIP Namen (wie \"gs\" oder \"ppr-gs\") an,\n"
-#~ "eine Ausgabesprache (wie \"pcl\" or \"other\"), und RIP Optionen an.\n"
-
-#~ msgid "Too many parameters.  Did you forget to quote the list of options?\n"
-#~ msgstr "Zu viele Parameter. Haben Sie vergessen, die Optionenliste zu quotieren?\n"
-
-#~ msgid "You must supply the name of an existing printer and a PPD file.\n"
-#~ msgstr "Sie müssen den Namen eines existierenden Druckers und eine PPD Datei angeben.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a printer, an alert frequency, such as \"7\",\n"
-#~ "an alert method, such as \"mail\", and an alert address,\n"
-#~ "such as \"alertreaders@domain.com\".\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines Druckers, eine Warnfrequenz, wie \"7\",\n"
-#~ "eine Warnmethode, wie \"mail\", und eine Warnaddresse,\n"
-#~ "wie \"alertreaders@domain.com\" angeben.\n"
-
-#~ msgid "You must specify a printer and a new alert frequency.\n"
-#~ msgstr "Sie müssen einen Drucker un eine neue Warnfrequenz angeben.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer, a new banner\n"
-#~ "option, and a new trailer option.  Valid banner and trailer\n"
-#~ "options are \"never\", \"no\", \"yes\", and \"always\".\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers und eine neue\n"
-#~ "Start- und Endseitenoption angeben. Erlaubte Start- und Endseitenoptionen\n"
-#~ "sind \"never\", \"no\", \"yes\" und \"always\".\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a new outputorder.\n"
-#~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers\n"
-#~ "und eine Ausgabeordnung angeben.\n"
+#~ msgid "You must specify an existing printer and a new bin name or names.\n"
+#~ msgstr "Sie müssen einen Drucker und einen oder mehrere neue Einzüge angeben.\n"
 
 #~ msgid ""
 #~ "Insufficient parameters.  You must supply the name of a printer\n"
@@ -6776,64 +6345,495 @@ msgstr "Garantiere PPR die Erlaubnis, X clients zu kontaktieren, um \"%s\" anzuz
 #~ "Druckeraccount drucken dürfen, obwohl ihnen keine Kosten in Rechnung\n"
 #~ "gestellt werden.\n"
 
-#~ msgid "You must specify an existing printer and a new bin name or names.\n"
-#~ msgstr "Sie müssen einen Drucker und einen oder mehrere neue Einzüge angeben.\n"
-
-#~ msgid "You must specify a printer and a bin or bins to remove from it.\n"
-#~ msgstr "Sie müssen einen Drucker und ein oder mehrere Einzüge zum Entfernen angeben.\n"
-
-#~ msgid "You must supply the name of a printer.\n"
-#~ msgstr "Sie müssen den Namen eines Druckers angeben.\n"
-
-#~ msgid "You must supply the name of a printer and a set of switches.\n"
-#~ msgstr "Sie müssen den Namen eines Druckers und einen Satz von Optionen angeben.\n"
-
 #~ msgid ""
-#~ "You must supply the name of an existing printer and the minimum and maximum number\n"
-#~ "of pages of the documents it should be allowed to print.  To clear either limit,\n"
-#~ "set it to 0.\n"
+#~ "You must supply the name of an existing printer and\n"
+#~ "a new outputorder.\n"
 #~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers und die minimal und maximal erlaubte\n"
-#~ "Seitenanzahl des zu druckenden Dokumentes angeben. Um die Limits zu löschen,\n"
-#~ "geben Sie 0 ein.\n"
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und eine Ausgabeordnung angeben.\n"
 
 #~ msgid ""
-#~ "You must supply the name of an existing printer and the minimum and maximum number\n"
-#~ "of kilobytes of the documents it should be allowed to print.  To clear either limit,\n"
-#~ "set it to 0.\n"
+#~ "You must supply the name of an existing printer, a new banner\n"
+#~ "option, and a new trailer option.  Valid banner and trailer\n"
+#~ "options are \"never\", \"no\", \"yes\", and \"always\".\n"
 #~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers und die minimal und maximal erlaubte\n"
-#~ "Größe des zu druckenden Dokumentes angeben. Um die Limits zu löschen,\n"
-#~ "geben Sie 0 ein.\n"
+#~ "Sie müssen den Namen eines existierenden Druckers und eine neue\n"
+#~ "Start- und Endseitenoption angeben. Erlaubte Start- und Endseitenoptionen\n"
+#~ "sind \"never\", \"no\", \"yes\" und \"always\".\n"
 
-#~ msgid "You must specify a printer and a boolean value.\n"
-#~ msgstr "Sie müssen einen Drucker und einen boolean (wahr/falsch) Wert angeben.\n"
+#~ msgid "You must specify a printer and a new alert frequency.\n"
+#~ msgstr "Sie müssen einen Drucker un eine neue Warnfrequenz angeben.\n"
 
 #~ msgid ""
-#~ "You must specify a printer and a (possibly empty) list\n"
+#~ "You must supply the name of a printer, an alert frequency, such as \"7\",\n"
+#~ "an alert method, such as \"mail\", and an alert address,\n"
+#~ "such as \"alertreaders@domain.com\".\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines Druckers, eine Warnfrequenz, wie \"7\",\n"
+#~ "eine Warnmethode, wie \"mail\", und eine Warnaddresse,\n"
+#~ "wie \"alertreaders@domain.com\" angeben.\n"
+
+#~ msgid "You must supply the name of an existing printer and a PPD file.\n"
+#~ msgstr "Sie müssen den Namen eines existierenden Druckers und eine PPD Datei angeben.\n"
+
+#~ msgid "Too many parameters.  Did you forget to quote the list of options?\n"
+#~ msgstr "Zu viele Parameter. Haben Sie vergessen, die Optionenliste zu quotieren?\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing printer.  If you supply no other\n"
+#~ "parameters, the RIP setting will revert to the PPD file default.  To select\n"
+#~ "a different RIP, supply the RIP name (such as \"gs\" or \"ppr-gs\"), an\n"
+#~ "output language (such as \"pcl\" or \"other\"), and a RIP options string.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers angeben. Wenn Sie keine\n"
+#~ "weiteren Parameter angeben, wird das RIP auf den PPD Standard gesetzt. Um ein\n"
+#~ "anders RIP zu verwenden, geben Sie den RIP Namen (wie \"gs\" oder \"ppr-gs\") an,\n"
+#~ "eine Ausgabesprache (wie \"pcl\" or \"other\"), und RIP Optionen an.\n"
+
+#~ msgid "Insufficient parameters.\n"
+#~ msgstr "Ungenügende Parameter.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "You must specify a printer, either new or existing, an interface program, and\n"
+#~ "an address of the printer in a format understood by the interface program.\n"
+#~ "See ppad-interfaces(8) for information about interface programs and their\n"
+#~ "address formats.\n"
+#~ msgstr ""
+#~ "Sie müssen einen neuen oder existierenden Drucker angeben,\n"
+#~ "ein Interface, und eine Adresse, wo das Interface den\n"
+#~ "Auftrag hinsenden soll.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a contact name to attach to it.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und einen Kontakt angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a department name to attach to it.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und eine Abteilung angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a location name to attach to it.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und einen Ort angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a comment to attach to it.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und einen Kommentar angeben.\n"
+
+#~ msgid ""
+#~ "You must supply an alert frequency, such as \"7\", an alert method,\n"
+#~ "such as \"mail\", and an alert address, such as \"alertreaders\".\n"
+#~ msgstr ""
+#~ "Sie müssen eine Warnfrequenz, wie \"7\", eine Warnmethode,\n"
+#~ "wie \"mail\", und eine Warnaddresse, wie \"alertreaders\" angeben.\n"
+
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Sie müssen einen Suchbegriff angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an interface and an address.  If necessary, a\n"
+#~ "quoted list of options may follow the address.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Interfaces und eine Adresse angeben.\n"
+#~ "Falls nötig, kann eine quotierte Liste von Optionen der Adresse folgen.\n"
+
+#~ msgid "You must supply a filename.\n"
+#~ msgstr "Sie müssen einen Dateinamen angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing group, and the name of an addon\n"
+#~ "parameter.  A value for the parameter is optional.  If you do not\n"
+#~ "supply a value, the parameter will be unset.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen einer existierenden Gruppe und den Namen eines\n"
+#~ "Parameters angeben. Ein Wert für den Parameter ist optional. Wenn Sie keinen Wert\n"
+#~ "angeben, wird der Parameter gelöscht.\n"
+
+#~ msgid ""
+#~ "You must specify a group and a (possibly empty) list\n"
 #~ "of PPR access control lists.\n"
 #~ msgstr ""
-#~ "Sie müssen einen Drucker und eine (möglicherweise leere) Liste\n"
+#~ "Sie müssen eine Gruppe und eine (möglicherweise leere) Liste\n"
 #~ "von PPR Zugangskontrollisten angeben.\n"
 
 #~ msgid ""
-#~ "You must supply the name of a printer.  You may also supply a new\n"
-#~ "quoted, space delimited list of name=value pairs.  If you don't\n"
-#~ "supply such a list, any existing list will be deleted.\n"
+#~ "You must specify a group and a (possibly empty) list\n"
+#~ "of file types.  These file types should be the same as\n"
+#~ "those used with the \"ppr -T\" option.\n"
 #~ msgstr ""
-#~ "Sie müssen den Namen eines Druckers angeben. Sie können weiterhin\n"
-#~ "neue quotierte leerzeichengetrennte Name=Wert Paare angeben.\n"
-#~ "Wenn Sie dies nicht tun, wird eine existierende Liste gelöscht.\n"
+#~ "Sie müssen eine Gruppe und eine (möglischerweise leere) Liste\n"
+#~ "von Dateitypen angeben. Diese Dateitypen sollten dieselben wie\n"
+#~ "bei Nutzung der Option \"ppr -T\" sein.\n"
+
+#~ msgid "You must supply the name of a group and a set of switches.\n"
+#~ msgstr "Sie müssen den Namen einer Gruppe und einen Satz von Optionen angeben.\n"
+
+#~ msgid "You must supply the name of a group.\n"
+#~ msgstr "Sie müssen den Namen einer Gruppe angeben.\n"
+
+#~ msgid "You must specify a group to delete.\n"
+#~ msgstr "Sie müssen eine Gruppe zum Entfernen angeben.\n"
+
+#~ msgid "You must specify a group and a printer or printers to remove from it.\n"
+#~ msgstr "Sie müssen eine Gruppe und einen oder mehrere Drucker zum Entfernen angeben.\n"
 
 #~ msgid ""
-#~ "You must supply the name of an existing printer and the maximum number of\n"
-#~ "seconds to allow per page.\n"
+#~ "You must specify a new or existing group and zero or more printers\n"
+#~ "to be its members.\n"
 #~ msgstr ""
-#~ "Sie müssen den Namen eines existierenden Druckers und die maximale\n"
-#~ "Zeit in Sekunden pro Seite angeben.\n"
+#~ "Sie müssen eine neue oder existierende Gruppe und null oder mehr\n"
+#~ "Drucker zum Hinzufügen angeben.\n"
 
-#~ msgid "You must supply only the name of an existing printer.\n"
-#~ msgstr "Sie dürfen nur den Namen eines existierenden Druckers angeben.\n"
+#~ msgid ""
+#~ "You must specify a new or existing group and one or more printers\n"
+#~ "to add to it.\n"
+#~ msgstr ""
+#~ "Sie müssen eine neue oder existierende Gruppe und einen oder mehrere\n"
+#~ "Drucker zum Hinzufügen angeben.\n"
 
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "USB Port Kommunikation fehlgeschlagen, Fehlernummer=%d (%s)."
+#~ msgid "You must supply the name of a group and \"true\" or \"false\".\n"
+#~ msgstr "Sie müssen den Namen einer Gruppe und \"true\" oder \"false\" angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of a group and\n"
+#~ "a comment to attach to it.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen einer Gruppe und\n"
+#~ "einen Kommentar angeben.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing group and\n"
+#~ "a name for the new group.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und eine Ausgabeordnung angeben.\n"
+
+#~ msgid "You must supply the name of a group to show.\n"
+#~ msgstr "Sie müssen den Namen einer Gruppe zum Zeigen angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing alias, the name of an addon\n"
+#~ "parameter.  A value for the parameter is optional.  If you do not\n"
+#~ "supply a value, the parameter will be unset.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Alias und den Namen eines\n"
+#~ "Parameters angeben. Ein Wert für den Parameter ist optional. Wenn Sie keinen Wert\n"
+#~ "angeben, wird der Parameter gelöscht.\n"
+
+#~ msgid ""
+#~ "You must specify an alias and a (possibly empty) list\n"
+#~ "of file types.  These file types should be the same as\n"
+#~ "those used with the \"ppr -T\" option.\n"
+#~ msgstr ""
+#~ "Sie müssen ein Alias und eine (möglicherweise leere) Liste\n"
+#~ "von Dateitypen angeben. Diese Dateitypen sollten dieselben wie\n"
+#~ "bei Nutzung der Option \"ppr -T\" sein.\n"
+
+#~ msgid "You must supply the name of an alias and a set of switches.\n"
+#~ msgstr "Sie müssen den Namen eines Alias und einen Satz von Optionen angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing alias and\n"
+#~ "a comment to attach to it.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Alias\n"
+#~ "und einen Kommentar angeben.\n"
+
+#~ msgid ""
+#~ "You must supply the name of a new or existing alias and\n"
+#~ "the name of the queue it is to be an alias for.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines neuen oder existierenden Alias\n"
+#~ "und den Namen der Warteschlange für den Alias angeben.\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a name for the new printer.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers\n"
+#~ "und eine Ausgabeordnung angeben.\n"
+
+#~ msgid "You must supply the name of an alias to show.\n"
+#~ msgstr "Sie müssen den Namen eines Alias zum Zeigen angeben.\n"
+
+#~ msgid "ppad help other"
+#~ msgstr "ppad help other"
+
+#~ msgid "ppad help ppdlib"
+#~ msgstr "ppad help ppdlib"
+
+#~ msgid "ppad help media"
+#~ msgstr "ppad help media"
+
+#~ msgid "ppad help alias"
+#~ msgstr "ppad help alias"
+
+#~ msgid "ppad help printer"
+#~ msgstr "ppad help printer"
+
+#~ msgid "PPD File Management:\n"
+#~ msgstr "PPD Dateiverwaltung:\n"
+
+#~ msgid "ppad ppdlib get <name>"
+#~ msgstr "ppad ppdlib get <Name>"
+
+#, fuzzy
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib list <Ausdruck>"
+
+#~ msgid "ppad ppdlib query <interface> <address> [<quoted_options_list>]"
+#~ msgstr "ppad ppdlib query <Interface> <Adresse> [<quotierte_Optionenliste>]"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Verwaltung der Aliase:\n"
+
+#~ msgid "ppad alias addon <name> <value>"
+#~ msgstr "ppad alias addon <Name> <Wert>"
+
+#~ msgid "ppad alias switchset <alias> <list>"
+#~ msgstr "ppad alias switchset <Alias> <Liste>"
+
+#~ msgid "ppad alias comment <alias> <comment>"
+#~ msgstr "ppad alias comment >Alias> <Kommentar>"
+
+#~ msgid "ppad alias delete <alias>"
+#~ msgstr "ppad alias delete <Alias>"
+
+#~ msgid "ppad alias forwhat <alias> <queuename>"
+#~ msgstr "ppad alias forwhat <Alias> <Warteschlange>"
+
+#~ msgid "ppad alias show <alias>"
+#~ msgstr "ppad alias show <Alias>"
+
+#~ msgid "Group Management:\n"
+#~ msgstr "Gruppenmanagement:\n"
+
+#~ msgid "ppad group addon <name> <value>"
+#~ msgstr "ppad group addon <Name> <Wert>"
+
+#~ msgid "ppad group acls <name> <acl> ..."
+#~ msgstr "ppad group acls <Name> <Acl> ..."
+
+#~ msgid "ppad group deffiltopts <group>"
+#~ msgstr "ppad group deffiltopts <Gruppe>"
+
+#~ msgid "ppad group switchset <printer> <list>"
+#~ msgstr "ppad group switchset <Druckerr> <Liste>"
+
+#~ msgid "ppad group touch <group>"
+#~ msgstr "ppad group touch <Gruppe>"
+
+#~ msgid "ppad group rotate <group> {true, false}"
+#~ msgstr "ppad group rotate <Gruppe> {true, false}"
+
+#~ msgid "ppad group comment <group> <comment>"
+#~ msgstr "ppad group comment <Gruppe> <Kommentar>"
+
+#~ msgid "ppad group delete <group>"
+#~ msgstr "ppad group delete <Gruppe>"
+
+#~ msgid "ppad group remove <group> <printer>"
+#~ msgstr "ppad group remove <Gruppe> <Druckerr>"
+
+#~ msgid "ppad group add <group> <printer>"
+#~ msgstr "ppad group add <Gruppe> <Drucker>"
+
+#~ msgid "ppad group members <group> <printer> ..."
+#~ msgstr "ppad group members <Gruppe> <Drucker> ..."
+
+#~ msgid "ppad group show <group>"
+#~ msgstr "ppad group show <Gruppe>"
+
+#, fuzzy
+#~ msgid "Printer Management:\n"
+#~ msgstr "Druckerverwaltung:\n"
+
+#~ msgid "ppad addon <name> <value>"
+#~ msgstr "ppad addon <Name> <Wert>"
+
+#~ msgid "ppad pagetimelimit <name> <value>"
+#~ msgstr "ppad pagetimelimit <Name> <Wert>"
+
+#~ msgid "ppad userparams <name> <list>"
+#~ msgstr "ppad userparams <Name> <Liste>"
+
+#~ msgid "ppad acls <name> <acl> ..."
+#~ msgstr "ppad acls <Name> <acl> ..."
+
+#~ msgid "ppad grayok <printer> <boolean>"
+#~ msgstr "ppad grayok <Drucker> <Boolean>"
+
+#~ msgid "ppad limitkilobytes <printer> <number> <number>"
+#~ msgstr "ppad limitkilobytes <Drucker> <Minimum> <Maximum>"
+
+#~ msgid "ppad limitpages <printer> <number> <number>"
+#~ msgstr "ppad limitpages <Drucker> <Minimum> <Maximum>"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <Drucker>"
+
+#~ msgid "ppad passthru <printer> <list>"
+#~ msgstr "ppad passthru <Drucker> <Liste>"
+
+#~ msgid "ppad deffiltopts <printer>"
+#~ msgstr "ppad deffiltopts <Drucker>"
+
+#~ msgid "ppad switchset <printer> <list>"
+#~ msgstr "ppad switchset <Drucker> <Liste>"
+
+#~ msgid "ppad touch <printer>"
+#~ msgstr "ppad touch <Drucker>"
+
+#~ msgid "ppad bins delete <printer> <bin>"
+#~ msgstr "ppad bins delete <Drucker> <Einzug>"
+
+#~ msgid "ppad bins add <printer> <bin>"
+#~ msgstr "ppad bins add <Drucker> <Einzug>"
+
+#~ msgid "ppad bins ppd <printer>"
+#~ msgstr "ppad bins ppd <Drucker>"
+
+#~ msgid "ppad outputorder <printer> {Normal, Reverse, PPD}"
+#~ msgstr "ppad outputorder <Drucker> {Normal, Reverse, PPD}"
+
+#~ msgid "ppad charge <printer> {<money>, none} [<money>]"
+#~ msgstr "ppad charge <Drucker> {<Betrag>, none} [<Betrag>]"
+
+#~ msgid "ppad flags <printer> {never, no, yes, always} {never, no, yes, always}"
+#~ msgstr "ppad flags <Drucker> {never, no, yes, always} {never, no, yes, always}"
+
+#~ msgid "ppad alerts <printer> <frequency> <method> <address>"
+#~ msgstr "ppad alerts <Drucker> >Frequenz> <Methode> <Adresse>"
+
+#~ msgid "ppad ppdq <printer>"
+#~ msgstr "ppad ppdq <Drucker>"
+
+#~ msgid "ppad ppd <printer> <filename>"
+#~ msgstr "ppad ppd <Drucker> <Dateiname>"
+
+#~ msgid "ppad rip <printer> [<rip> <driver_output_language> [<rip_options>]]"
+#~ msgstr "ppad rip <Drucker> [<RIP> <Treiberausgabesprache> [<RIP_optionen>]]"
+
+#~ msgid "ppad codes <printer> {Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, DEFAULT}"
+#~ msgstr "ppad codes <Drucker> {Clean7Bit, Clean8Bit, Binary, TBCP, UNKNOWN, DEFAULT}"
+
+#~ msgid "ppad feedback <printer> {True, False}"
+#~ msgstr "ppad feedback <Drucker> {True, False}"
+
+#~ msgid "ppad jobbreak <printer> {none, signal,control-d, pjl, signal/pjl}"
+#~ msgstr "ppad jobbreak <Drucker> {none, signal,control-d, pjl, signal/pjl}"
+
+#~ msgid "ppad options <printer> <quoted_list>"
+#~ msgstr "ppad options <Drucker> <quotierte_Liste>"
+
+#~ msgid "ppad contact <printer> <string>"
+#~ msgstr "ppad contact <Drucker> <Kontakt>"
+
+#~ msgid "ppad department <printer> <string>"
+#~ msgstr "ppad department <Drucker> <Abteilung>"
+
+#~ msgid "ppad location <printer> <string>"
+#~ msgstr "ppad location <Drucker> <Ort>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <Drucker> <Kommentar>"
+
+#, fuzzy
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad frequency <Drucker> <Ganzzahl>"
+
+#~ msgid "Media Management:\n"
+#~ msgstr "Druckmedienverwaltung:\n"
+
+#~ msgid "ppad media import"
+#~ msgstr "ppad media import"
+
+#~ msgid "ppad media export"
+#~ msgstr "ppad media export"
+
+#~ msgid "ppad media delete <name>"
+#~ msgstr "ppad media delete <Name>"
+
+#~ msgid "ppad media put <name> <width> <length> <weight> <colour> <type> <banner>"
+#~ msgstr "ppad media put <Name> <Breite> <Länge> <Masse> <Farbe> <Typ> <Startseite>"
+
+#~ msgid "ppad media show <name>"
+#~ msgstr "ppad media show <Name>"
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "es existiert bereits ein Server, der auf TCP Port %d lauscht"
+
+#~ msgid "lprsrv is already running in standalone mode"
+#~ msgstr "lprsrv läuft bereits im Standalone Modus"
+
+#~ msgid "Standalone mode code not present.\n"
+#~ msgstr "Code für Standalonemodus nicht verfügbar.\n"
+
+#~ msgid "Unknown port name: %s"
+#~ msgstr "Unbekannter Port: %s"
+
+#~ msgid "lprsrv must run as root"
+#~ msgstr "lprsrv muß als root laufen"
+
+#~ msgid ""
+#~ "\t-s <port>\n"
+#~ "\t--standalone-port <port>\n"
+#~ "\t\t(run standalone, bind to specified TCP port)\n"
+#~ msgstr ""
+#~ "\t-s <port>\n"
+#~ "\t--standalone-port <Port>\n"
+#~ "\t\t(nicht über inetd starten, auf TCP Port <Port> lauschen)\n"
+
+#~ msgid "Failed to create alias config file \"%s\", errno=%d (%s).\n"
+#~ msgstr "Konnte Aliaskonfigurationsdatei \"%s\" nicht erstellen, Fehlernummer=%d (%s).\n"
+
+#~ msgid "Failed to create printer config file \"%s\", errno=%d (%s).\n"
+#~ msgstr "Konnte Druckerkonfigurationsdatei \"%s\" nicht erstellen, Fehlernummer=%d (%s).\n"
+
+#~ msgid "Port \"%s\" does not support 2-way communication."
+#~ msgstr "Anschluß \"%s\" unterstützt keine bidirektionale Kommunikation."
+
+#~ msgid "You must specify a printer.\n"
+#~ msgstr "Sie müssen einen Drucker angeben.\n"
+
+#~ msgid "Too many parameters.\n"
+#~ msgstr "Zuviele Parameter.\n"
+
+#~ msgid "You must specify a printer to delete.\n"
+#~ msgstr "Sie müssen einen Drucker zum Löschen angeben.\n"
+
+#~ msgid ""
+#~ "You must specify a printer and a (possibly empty) list\n"
+#~ "of file types.  These file types should be the same as\n"
+#~ "those used with the \"ppr -T\" option.\n"
+#~ msgstr ""
+#~ "Sie müssen einen Drucker und eine (möglischerweise leere) Liste\n"
+#~ "von Dateitypen angeben. Diese Dateitypen sollten dieselben wie\n"
+#~ "bei Nutzung der Option \"ppr -T\" sein.\n"
+
+#~ msgid ""
+#~ "You must supply the name of an existing printer, the name of an addon\n"
+#~ "parameter.  A value for the parameter is optional.  If you do not\n"
+#~ "supply a value, the parameter will be unset.\n"
+#~ msgstr ""
+#~ "Sie müssen den Namen eines existierenden Druckers und den Namen eines\n"
+#~ "Parameters angeben. Ein Wert für den Parameter ist optional. Wenn Sie keinen Wert\n"
+#~ "angeben, wird der Parameter gelöscht.\n"
+
+#, fuzzy
+#~ msgid "Queue ID        For                      Time        Pgs Status\n"
+#~ msgstr "Warteschlange    Für                      Zeit       Seiten Status\n"

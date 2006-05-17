@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-28 10:34-0400\n"
+"POT-Creation-Date: 2006-05-16 12:17-0400\n"
 "PO-Revision-Date: 2006-05-10 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -37,8 +37,8 @@ msgstr "%s: конец файла в изобразении\n"
 #: ../lprsrv/lprsrv_print.c:295 ../lprsrv/lprsrv_print.c:502
 #: ../lprsrv/lprsrv_print.c:506 ../lprsrv/lprsrv_print.c:531
 #: ../lprsrv/lprsrv_print.c:541 ../lprsrv/uprint_run.c:80
-#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:278 ../ppad/ppad_conf.c:280
-#: ../ppad/ppad_conf.c:282 ../ppad/ppad_conf.c:286 ../ppad/ppad_conf.c:290
+#: ../lprsrv/uprint_run.c:97 ../ppad/ppad_conf.c:269 ../ppad/ppad_conf.c:271
+#: ../ppad/ppad_conf.c:273 ../ppad/ppad_conf.c:277 ../ppad/ppad_conf.c:281
 #: ../ppr/ppr_infile.c:1467 ../ppr/ppr_infile.c:1519 ../ppr/ppr_infile.c:1586
 #: ../ppr/ppr_infile.c:2243 ../ppr/ppr_main.c:410
 #: ../pprdrv/pprdrv_custom_hook.c:67 ../pprdrv/pprdrv_interface.c:318
@@ -727,7 +727,7 @@ msgstr ""
 msgid "value is not in the correct format"
 msgstr "выбор не по тому схему"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1469 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1453 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:471 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -745,7 +745,7 @@ msgstr ""
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr ""
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1528
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1512
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr ""
@@ -937,62 +937,62 @@ msgstr ""
 msgid "%s(): invalid response from pprd"
 msgstr ""
 
-#: ../libppr/queueinfo.c:196
+#: ../libppr/queueinfo.c:165
 #, c-format
 msgid "Extracting information about printer \"%s\" from PPD file \"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:226
+#: ../libppr/queueinfo.c:212
 #, fuzzy, c-format
 msgid "Warning: PPD file \"%s\" has an invalid ColorDevice value of \"%s\".\n"
 msgstr "Принтер \"%s\" имет несовершеный PPD файл \"%s\".\n"
 
-#: ../libppr/queueinfo.c:242 ../libppr/queueinfo.c:244
+#: ../libppr/queueinfo.c:227 ../libppr/queueinfo.c:229
 #, fuzzy, c-format
 msgid "Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"
 msgstr "Принтер \"%s\" имет несовершеный PPD файл \"%s\".\n"
 
-#: ../libppr/queueinfo.c:764
+#: ../libppr/queueinfo.c:749
 #, c-format
 msgid "There is no alias called \"%s\""
 msgstr ""
 
-#: ../libppr/queueinfo.c:769
+#: ../libppr/queueinfo.c:754
 #, c-format
 msgid "There is no group called \"%s\""
 msgstr ""
 
-#: ../libppr/queueinfo.c:774
+#: ../libppr/queueinfo.c:759
 #, c-format
 msgid "There is no printer called \"%s\""
 msgstr ""
 
-#: ../libppr/queueinfo.c:797
+#: ../libppr/queueinfo.c:782
 #, c-format
 msgid "no printer called \"%s\""
 msgstr "нет принтер по названию \"%s\""
 
-#: ../libppr/queueinfo.c:1485
+#: ../libppr/queueinfo.c:1469
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1494
+#: ../libppr/queueinfo.c:1478
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1517
+#: ../libppr/queueinfo.c:1501
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1553
+#: ../libppr/queueinfo.c:1537
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr ""
 
-#: ../libppr/queueinfo.c:1564
+#: ../libppr/queueinfo.c:1548
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr ""
@@ -2054,56 +2054,56 @@ msgstr "Перое букво псевдонима из запрошеных.\n"
 msgid "The name \"%s\" is not that of an existing group or printer.\n"
 msgstr "Название \"%s\" не явлается названием сушествующой групы или сушествующого принтера.\n"
 
-#: ../ppad/ppad_alias.c:203 ../ppad/ppad_conf.c:173
+#: ../ppad/ppad_alias.c:203 ../ppad/ppad_conf.c:164
 #, c-format
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "Псевдоним \"%s\" не сушествует.\n"
 
 #: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:638
-#: ../ppad/ppad_printer.c:2316
+#: ../ppad/ppad_printer.c:2318
 msgid "Bad set of switches.\n"
 msgstr ""
 
 #: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:775
-#: ../ppad/ppad_printer.c:2914
+#: ../ppad/ppad_printer.c:2916
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr ""
 
-#: ../ppad/ppad_conf.c:102 ../ppad/ppad_conf.c:143
+#: ../ppad/ppad_conf.c:93 ../ppad/ppad_conf.c:134
 #, c-format
 msgid "%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\", \"%s\"), errno=%d (%s)"
 
-#: ../ppad/ppad_conf.c:109
+#: ../ppad/ppad_conf.c:100
 msgid "Waiting for lock to clear.\n"
 msgstr ""
 
-#: ../ppad/ppad_conf.c:124
+#: ../ppad/ppad_conf.c:115
 #, c-format
 msgid "The printer \"%s\" already exists.\n"
 msgstr "Принтер \"%s\" уже есть.\n"
 
-#: ../ppad/ppad_conf.c:127
+#: ../ppad/ppad_conf.c:118
 #, c-format
 msgid "The group \"%s\" already exists.\n"
 msgstr "Группа \"%s\" уже есть.\n"
 
-#: ../ppad/ppad_conf.c:130
+#: ../ppad/ppad_conf.c:121
 #, c-format
 msgid "The alias \"%s\" already exists.\n"
 msgstr "Псевдоним \"%s\" уже есть.\n"
 
-#: ../ppad/ppad_conf.c:154
+#: ../ppad/ppad_conf.c:145
 #, c-format
 msgid "Can't open temporary file \"%s\" for write, errno=%d (%s)"
 msgstr "Невозможно сождать временый файл \"%s\" в режиме записи, errno=%d (%s)"
 
-#: ../ppad/ppad_conf.c:167 ../ppad/ppad_printer.c:2252
+#: ../ppad/ppad_conf.c:158 ../ppad/ppad_printer.c:2254
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Принтер \"%s\" не существует.\n"
 
-#: ../ppad/ppad_conf.c:170 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
+#: ../ppad/ppad_conf.c:161 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr "Группа \"%s\" не существует.\n"
@@ -2403,7 +2403,7 @@ msgstr ""
 msgid "IEEE 1284 DeviceID Model: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_ppd.c:884 ../ppad/ppad_printer.c:2948
+#: ../ppad/ppad_ppd.c:884 ../ppad/ppad_printer.c:2950
 #, c-format
 msgid "%s: query failed: %s\n"
 msgstr "%s: запрос остаётся без ответа: %s\n"
@@ -2413,8 +2413,8 @@ msgstr "%s: запрос остаётся без ответа: %s\n"
 msgid "%s(): %s() failed, errno=%d (%s)\n"
 msgstr "%s(): возникла ошибка при запуски функции %s(), errno=%d (%s)\n"
 
-#: ../ppad/ppad_printer.c:371 ../ppad/ppad_printer.c:1653
-#: ../ppad/ppad_printer.c:1710
+#: ../ppad/ppad_printer.c:371 ../ppad/ppad_printer.c:1655
+#: ../ppad/ppad_printer.c:1712
 #, fuzzy
 msgid "Alerts interval must be an integer.\n"
 msgstr "нада выбрать положительное целое число"
@@ -2630,141 +2630,141 @@ msgstr ""
 msgid "The interface \"%s\" not executable.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1431
+#: ../ppad/ppad_printer.c:1433
 msgid ""
 "Valid jobbreak modes are \"signal\", \"control-d\", \"pjl\", \"signal/pjl\",\n"
 "\"newinterface\", and \"default\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1457
+#: ../ppad/ppad_printer.c:1459
 msgid "Valid feedback settings are \"true\", \"false\", or \"default\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1482
+#: ../ppad/ppad_printer.c:1484
 msgid ""
 "Valid codes settings are \"Clean7Bit\", \"Clean8Bit\", \"Binary\", \"TBCP\",\n"
 "\"UNKNOWN\", and \"default\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1511
+#: ../ppad/ppad_printer.c:1513
 msgid "If you set a RIP, you must specify the output language.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1517
+#: ../ppad/ppad_printer.c:1519
 msgid "The RIP name may not be an empty string.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1523
+#: ../ppad/ppad_printer.c:1525
 msgid "The RIP output language may not be an empty string.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1738
+#: ../ppad/ppad_printer.c:1740
 msgid "No alert method and address defined, use \"ppad alerts\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1786
+#: ../ppad/ppad_printer.c:1788
 msgid ""
 "Banner and trailer must be set to \"never\", \"no\",\n"
 "\"yes\", or \"always\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1820
+#: ../ppad/ppad_printer.c:1822
 msgid "Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1852
+#: ../ppad/ppad_printer.c:1854
 #, c-format
 msgid "A second parameter is not allowed because first is \"%s\"."
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1864 ../ppad/ppad_printer.c:1869
+#: ../ppad/ppad_printer.c:1866 ../ppad/ppad_printer.c:1871
 #, c-format
 msgid "The value \"%s\" is not in the correct format for decimal currency."
 msgstr ""
 
-#: ../ppad/ppad_printer.c:1930
+#: ../ppad/ppad_printer.c:1932
 msgid "Printer configuration file does not have a \"PPDFile:\" line.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2000
+#: ../ppad/ppad_printer.c:2002
 #, c-format
 msgid "Printer \"%s\" already has a bin called \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2023
+#: ../ppad/ppad_printer.c:2025
 #, c-format
 msgid ""
 "Can't add these %d bin%s to \"%s\" because then the printer would\n"
 "have %d bins and the %d bin limit would be exceeded.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2095
+#: ../ppad/ppad_printer.c:2097
 #, c-format
 msgid "You can't delete more than %d bins at a time.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2133
+#: ../ppad/ppad_printer.c:2135
 #, c-format
 msgid "The printer \"%s\" does not have a bin called \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2204
+#: ../ppad/ppad_printer.c:2206
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)\n"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\"), errno=%d (%s)"
 
-#: ../ppad/ppad_printer.c:2345
+#: ../ppad/ppad_printer.c:2347
 #, fuzzy, c-format
 msgid "Printer \"%s\" does not exist."
 msgstr "Принтер \"%s\" не существует.\n"
 
-#: ../ppad/ppad_printer.c:2476
+#: ../ppad/ppad_printer.c:2478
 #, fuzzy, c-format
 msgid "The printer \"%s\" has no \"PPDFile:\" line in its configuration file."
 msgstr "Принтер \"%s\" не имет PPD файл.\n"
 
-#: ../ppad/ppad_printer.c:2528
+#: ../ppad/ppad_printer.c:2530
 #, c-format
 msgid "WARNING: Unclosed UI block \"%s\" in PPD file.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2581
+#: ../ppad/ppad_printer.c:2583
 msgid "WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2614
+#: ../ppad/ppad_printer.c:2616
 #, c-format
 msgid "Warning:\t No value provided for \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2618
+#: ../ppad/ppad_printer.c:2620
 #, c-format
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2629
+#: ../ppad/ppad_printer.c:2631
 #, c-format
 msgid "Choose 1 thru %d or 0 if unknown> "
 msgstr "Выберайте от 1 по %d или 0 если неизвестно> "
 
-#: ../ppad/ppad_printer.c:2676
+#: ../ppad/ppad_printer.c:2678
 #, c-format
 msgid "WARNING: Unclosed UI block in PPD file: \"%s\".\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2749 ../ppad/ppad_printer.c:2780
+#: ../ppad/ppad_printer.c:2751 ../ppad/ppad_printer.c:2782
 msgid "The lower limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2755 ../ppad/ppad_printer.c:2786
+#: ../ppad/ppad_printer.c:2757 ../ppad/ppad_printer.c:2788
 msgid "The upper limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2810
+#: ../ppad/ppad_printer.c:2812
 msgid "Value is not boolean.\n"
 msgstr ""
 
-#: ../ppad/ppad_printer.c:2886
+#: ../ppad/ppad_printer.c:2888
 msgid "The limit must be 0 (unlimited) or a positive integer.\n"
 msgstr ""
 
@@ -4066,7 +4066,7 @@ msgstr ""
 msgid "No matching filter found.\n"
 msgstr ""
 
-#: ../ppr/ppr_features.c:60
+#: ../ppr/ppr_features.c:44
 #, c-format
 msgid "%s: can't find destination %s or can't determine PPD file\n"
 msgstr ""
@@ -5926,33 +5926,17 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
 
-#, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
 
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
+#~ msgid "You must supply only the name of an existing printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -5960,14 +5944,30 @@ msgstr ""
 #~ "a name for the new group.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
-
-#~ msgid "You must supply only the name of an existing printer.\n"
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#, fuzzy
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"

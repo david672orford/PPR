@@ -7,14 +7,15 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 27 April 2006.
+# Last modified 16 May 2006.
 #
 
 include ../Makefile.conf
 
 #=== Inventory ==============================================================
 
-BIN_PROGS=ppr-xml-ipp-client$(DOTEXE)
+# Disabled for now because requires libcups.
+#BIN_PROGS=ppr-xml-ipp-client$(DOTEXE)
 
 CGI_PROGS=ippd$(DOTEXE)
 

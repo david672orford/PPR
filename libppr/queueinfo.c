@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 10 May 2006.
+** Last modified 17 May 2006.
 */
 
 /*+ \file
@@ -193,8 +193,12 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 
 		while((line = ppdobj_readline(ppdobj)))
 			{
+			/* At debug levels greater than 5 we show the lines of the 
+			 * PPD file which we are reading.
+			 */
 			if(qip->debug_level > 5)
 				printf("PPD: %s\n", line);
+			
 			if(line[0] == '*')
 				{
 				switch(line[1])
@@ -877,7 +881,7 @@ const char *queueinfo_modelName(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->modelName)
+		if(!pip->ppd || !pip->ppd->modelName)
 			return NULL;
 		if(!answer)
 			answer = pip->ppd->modelName;
@@ -1024,7 +1028,7 @@ gu_boolean queueinfo_binaryOK(QUEUE_INFO qip)
 		{
 		struct PRINTER_INFO *pip;
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->binaryOK)
+		if(!pip->ppd || !pip->ppd->binaryOK)
 			return FALSE;
 		else
 			answer = TRUE;
@@ -1072,7 +1076,7 @@ const char *queueinfo_product(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->product)
+		if(!pip->ppd || !pip->ppd->product)
 			return NULL;
 		if(!answer)
 			answer = pip->ppd->product;
@@ -1097,7 +1101,7 @@ const char *queueinfo_shortNickName(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->shortNickName)
+		if(!pip->ppd || !pip->ppd->shortNickName)
 			return NULL;
 		if(!answer)
 			answer = pip->ppd->shortNickName;
@@ -1111,6 +1115,9 @@ const char *queueinfo_shortNickName(QUEUE_INFO qip)
 /*
  * Find the member printer with the oldest PostScript interpreter.  Several
  * functions below use this information.
+ *
+ * If one or more the the printers is missing a PPD file or the PPD file does
+ * not specify the version, then return NULL.
  */
 static struct PRINTER_INFO *find_lowest_version(struct QUEUE_INFO *qip)
 	{
@@ -1120,7 +1127,7 @@ static struct PRINTER_INFO *find_lowest_version(struct QUEUE_INFO *qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->psVersion)
+		if(!pip->ppd || !pip->ppd->psVersion)
 			return NULL;
 		if(!lowest || pip->ppd->psVersion < lowest->ppd->psVersion 
 				|| (pip->ppd->psVersion == lowest->ppd->psVersion && pip->ppd->psRevision < lowest->ppd->psRevision))
@@ -1206,7 +1213,7 @@ int queueinfo_psFreeVM(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(pip->ppd->psFreeVM == 0)
+		if(!pip->ppd || pip->ppd->psFreeVM == 0)
 			return 0;
 		if(lowest_freevm == 0 || pip->ppd->psFreeVM < lowest_freevm)
 			lowest_freevm = pip->ppd->psFreeVM;
@@ -1221,6 +1228,9 @@ int queueinfo_psFreeVM(QUEUE_INFO qip)
  * We will return the lowest resolution of all of the printers.  In
  * determining the lowest resolution, we will examine only the first
  * number.  Thus, "300x1200dpi" will be considered lower than "360dpi".
+ *
+ * If one or more printers does not have a PPD file or the PPD file
+ * does not specify the resolution, then return NULL.
 */
 const char *queueinfo_resolution(QUEUE_INFO qip)
 	{
@@ -1232,7 +1242,7 @@ const char *queueinfo_resolution(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->resolution)
+		if(!pip->ppd || !pip->ppd->resolution)
 			return 0;
 		if(lowest_resolution == 0 || atoi(pip->ppd->resolution) < lowest_resolution)
 			{
@@ -1245,6 +1255,9 @@ const char *queueinfo_resolution(QUEUE_INFO qip)
 	}
 
 /** Can the printer print in color?
+ *
+ * Return TRUE if all of the printers can.  Return FALSE if one or more 
+ * can not or does not have a PPD file.
 */
 gu_boolean queueinfo_colorDevice(QUEUE_INFO qip)
 	{
@@ -1255,7 +1268,7 @@ gu_boolean queueinfo_colorDevice(QUEUE_INFO qip)
 		{
 		struct PRINTER_INFO *pip;
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->colorDevice)
+		if(!pip->ppd || !pip->ppd->colorDevice)
 			return FALSE;
 		else
 			answer = TRUE;
@@ -1279,7 +1292,7 @@ const char *queueinfo_faxSupport(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->faxSupport)
+		if(!pip->ppd || !pip->ppd->faxSupport)
 			return NULL;
 		else if(!answer)
 			answer = pip->ppd->faxSupport;
@@ -1305,7 +1318,7 @@ const char *queueinfo_ttRasterizer(QUEUE_INFO qip)
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!pip->ppd->ttRasterizer)
+		if(!pip->ppd || !pip->ppd->ttRasterizer)
 			return NULL;
 		else if(!answer)
 			answer = pip->ppd->ttRasterizer;
@@ -1326,9 +1339,13 @@ gu_boolean queueinfo_chargeExists(QUEUE_INFO qip)
   
 /*
 ** Create a font list which includes all fonts which the printers hold in common.
+**
+** Note that if one or more of the printers is without a PPD file then the
+** font list generated by this function will be empty.
 */
 static void find_common_fonts(struct QUEUE_INFO *qip)
 	{
+	/* If we have not yet determined this list, */
 	if(!qip->common_fonts_found)
 		{
 		GU_OBJECT_POOL_PUSH(qip->pool);
@@ -1338,17 +1355,22 @@ static void find_common_fonts(struct QUEUE_INFO *qip)
 			int y;
 			char *fontname;
 
+			/* Loop thru fonts in first printer. */
 			pip = gu_pca_index(qip->printers, 0);
-			for(gu_pch_rewind(pip->ppd->fonts); (fontname = gu_pch_nextkey(pip->ppd->fonts,NULL)); )
+			if(pip->ppd)
 				{
-				for(y=1; y < gu_pca_size(qip->printers); y++)
+				for(gu_pch_rewind(pip->ppd->fonts); (fontname = gu_pch_nextkey(pip->ppd->fonts,NULL)); )
 					{
-					pipy = gu_pca_index(qip->printers, y);
-					if(!gu_pch_get(pipy->ppd->fonts, fontname))
-						break;
+					/* Look for the font in second and subsequent printers. */
+					for(y=1; y < gu_pca_size(qip->printers); y++)
+						{
+						pipy = gu_pca_index(qip->printers, y);
+						if(!pipy->ppd || !gu_pch_get(pipy->ppd->fonts, fontname))
+							break;
+						}
+					if(y == gu_pca_size(qip->printers))
+						gu_pca_push(qip->fontlist, fontname);
 					}
-				if(y == gu_pca_size(qip->printers))
-					gu_pca_push(qip->fontlist, fontname);
 				}
 			}
 		qip->common_fonts_found = TRUE;
@@ -1385,7 +1407,7 @@ gu_boolean queueinfo_fontExists(QUEUE_INFO qip, const char name[])
 	for(i=0; i < gu_pca_size(qip->printers); i++)
 		{
 		pip = gu_pca_index(qip->printers, i);
-		if(!gu_pch_get(pip->ppd->fonts, name))
+		if(!pip->ppd || !gu_pch_get(pip->ppd->fonts, name))
 			return FALSE;
 		}
 	return TRUE;
@@ -1435,6 +1457,13 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 	int x;
 	char *answer = (char*)NULL;
 
+	if(!pip->ppd)
+		{
+		if(qip->debug_level >= 2)
+			printf(X_("Can not determine mfmode for \"%s\" because it has no PPD file.\n"), qip->name);
+		return NULL;
+		}
+
 	/* Assign short variable names and replace NULL pointers
 	   with zero-length strings. */
 	p = pip->ppd->product ? pip->ppd->product : "";
@@ -1444,9 +1473,13 @@ static char *get_mfmode(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 
 	if(qip->debug_level >= 2)
 		{
-		printf(X_("Looking up mfmode for product=\"%s\",\n"
+		printf(X_("Looking up mfmode for \"%s\" (product=\"%s\",\n"
 					"\tmodelname=\"%s\", nickname=\"%s\",\n"
-					"\tresolution \"%s\" in \"%s\".\n"), p, m, n, r, MFMODES);
+					"\tresolution \"%s\") in \"%s\".\n"),
+					qip->name,
+		   			p, m, n, r,
+					MFMODES
+					);
 		}
 
 	if(!(modefile = fopen(MFMODES, "r")))
