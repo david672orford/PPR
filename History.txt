@@ -1825,7 +1825,7 @@ be represented by %M or %I in the Samba print command.
 Added proxy for switch when ppr is invoked by papsrv.  The argument is the
 AppleTalk network number, a colon, and the node number.
 
-Added a lpqFileName: line to the queue file.  This line contains the actuall
+Added a lpqFileName: line to the queue file.  This line contains the actual
 name of the input file if know.  A --lpq-filename switch was added to ppr so
 that lprsrv can pass it the actual file name.  Also, ppop lpq was modified
 ot display the file name in stead of the title if the file name is know.
@@ -2195,7 +2195,7 @@ on papsrv.h.
 Changed the format the the ppop lpq "error, retry 2 in 10 seconds" to
 "error, 2nd retry in 10 seconds" because Samba would mistake the old format
 for a job name.  (This is because it had the basic pattern of two words, one
-number, one work, one number, and one word.)  (Thanks to Olivier Tharan
+number, one word, one number, and one word.)  (Thanks to Olivier Tharan
 <olive@betty.minet.net> for tracking this one down.)
 
 Changed ppr so that it adjusts the "%%Pages:" comment if there are fewer
@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--11 May 2006
+2.00a1, 11 December 2004--19 May 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them

@@ -450,6 +450,15 @@ static void load_group(struct Group *cl, const char grpname[])
 	fclose(f);
 
 	cl->members=y;			/* set the members count */
+
+	/* Create the directory which will hold this group's dynamic 
+	   state information. */
+	{
+	char fname[MAX_PPR_PATH];
+	ppr_fnamef(fname, "%s/%s", GROUPS_PERSISTENT_STATEDIR, grpname);
+	if(mkdir(fname, UNIX_755) == -1 && errno != EEXIST)
+		fatal(0, _("%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"), function, "mkdir", fname, UNIX_755, errno, gu_strerror(errno));
+	}
 	} /* end of load_group() */
 
 /*

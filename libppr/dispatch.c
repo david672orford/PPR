@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 18 May 2006.
 */
 
 #include "config.h"
@@ -19,6 +19,7 @@
 #include "global_defines.h"
 #include "util_exits.h"
 #include "dispatch.h"
+#include "version.h"
 
 static char *username = NULL;
 
@@ -44,6 +45,10 @@ static gu_boolean acl_check(const char aclname[])
 	return answer;
 	} /* acl_check() */
 
+/** set user for command access checks
+ * Inform the command dispatch of the username of the current users
+ * so that it can apply access checks.
+ */
 int dispatch_set_user(const char aclname[], const char new_username[])
 	{
 	/* If ACL checking is requested and the existing username
@@ -85,7 +90,7 @@ static struct COMMAND_NODE *find_command(const char myname[], const char *argv[]
 			}
 		table_index++;
 		}
-		
+	
 	if(argv_index == 0)				/* didn't get beyond first word */
 		gu_utf8_fprintf(stderr, _("%s: unknown sub-command \"%s\"\n"), myname, argv[0]);
 	else if(table_index == 0)		/* sub table traversal didn't start. */
@@ -94,7 +99,7 @@ static struct COMMAND_NODE *find_command(const char myname[], const char *argv[]
 		gu_utf8_fprintf(stderr, _("%s: unknown sub-sub-command \"%s %s\"\n"), myname, argv[0], argv[1]);
 
 	return NULL;
-	}
+	} /* find_command() */
 
 /*
  * Print a description of a command's arguments.
@@ -268,6 +273,14 @@ static int help(const char myname[], const char *argv[])
 	return EXIT_NOTFOUND;
 	} /* help() */
 
+/** Dispatch command using dispatch table
+ *
+ * Dispatch the command in argv[] using the dispatch table in the global
+ * variable commands[].
+ *
+ * Return -1 if the command was not found, the exit code if it was found
+ * and run.
+ */
 int dispatch(const char myname[], const char *argv[])
 	{
 	struct COMMAND_NODE *cmd = commands;
@@ -281,9 +294,10 @@ int dispatch(const char myname[], const char *argv[])
 
 	if(gu_strcasecmp(argv[0], "help") == 0)
 		return help(myname, &argv[1]);
-	
+
+	/* Look up the command in the dispatch table. */	
 	if(!(cmd = find_command(myname, argv, &num_words)))
-		return EXIT_SYNTAX;
+		return -1;
 
 	if(cmd->acl && !acl_check(cmd->acl))
 		{
@@ -293,5 +307,106 @@ int dispatch(const char myname[], const char *argv[])
 	
 	return invoke_command(myname, argv, num_words, cmd);
 	} /* end of dispatch() */
+
+/** Dispatch commands interactively
+ * In interactive mode, we present a prompt, read command lines, break them
+ * into words and dispatch them by passing them to dispatch().
+ *
+ * Return the result code of the last command executed.
+*/
+int dispatch_interactive(const char myname[], const char banner[], const char prompt[], gu_boolean machine_readable)
+	{
+	#define MAX_CMD_WORDS 64
+	const char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
+	char *ptr;					/* used to parse arguments */
+	unsigned int x;				/* used to parse arguments */
+	int errorlevel = 0;			/* return value from last command */
+
+	if( ! machine_readable )
+		{
+		gu_utf8_putline(banner);
+		gu_utf8_putline(VERSION);
+		gu_utf8_putline(COPYRIGHT);
+		gu_utf8_putline(AUTHOR);
+		gu_utf8_putline("");
+		gu_utf8_putline(_("Type \"help\" for command list, \"exit\" to quit."));
+		gu_utf8_putline("");
+		}
+	else				/* terse, machine readable banner */
+		{
+		gu_utf8_putline("*READY\t"VERSION);
+		fflush(stdout);
+		}
+
+	/*
+	** Read input lines until end of file.
+	*/
+	while((ptr = ppr_get_command(prompt, machine_readable)))
+		{
+		/* Skip comments. */
+		if(ptr[0] == '#' || ptr[0] == ';')
+			continue;
+
+		/*
+		** Break the string into white-space separated "words".  A quoted string
+		** will be treated as one word.
+		*/
+		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t", NULL)); x++)
+			{
+			if(x == MAX_CMD_WORDS)
+				{
+				gu_utf8_putline(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
+				ar[x] = NULL;
+				break;
+				}
+			}
+
+		/*
+		** The variable x will be an index into ar[] which will
+		** indicate the first element that has any significance.
+		** If the line begins with the name of this command we will
+		** increment x in order to skip it.
+		*/
+		x=0;
+		if(ar[0] && strcmp(ar[0], myname) == 0)
+			x++;
+
+		/*
+		** If no tokens remain in this command line,
+		** go on to the next command line.
+		*/
+		if(ar[x] == (char*)NULL)
+			continue;
+
+		/*
+		** If the command is "exit", break out of
+		** the line reading loop.
+		*/
+		if(strcmp(ar[x], "exit") == 0 || strcmp(ar[x], "quit") == 0)
+			break;
+
+		/*
+		** Call the dispatch() function to execute the command.  If the
+		** command is not recognized, dispatch() will return -1.  In that
+		** case we print a helpful message and change the errorlevel to
+		** zero since -1 is not a valid exit code for a program.
+		*/
+		if((errorlevel = dispatch(myname, &ar[x])) < 0)
+			{
+			if(machine_readable)				/* A human gets english */
+				gu_utf8_putline("*UNKNOWN");
+			errorlevel = EXIT_SYNTAX;
+			}
+		else if(machine_readable)						/* If a program is reading our output, */
+			{											/* say the command is done */
+			gu_utf8_printf("*DONE\t%d\n", errorlevel);	/* and tell the exit code. */
+			}
+
+		if(machine_readable)					/* In machine readable mode output */
+			fflush(stdout);						/* is probably a pipe which must be flushed. */
+		} /* While not end of file */
+
+	return errorlevel;					/* return result of last command (not counting exit) */
+	} /* end of interactive_mode() */
 
 /* end of file */

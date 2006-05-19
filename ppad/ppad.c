@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 18 May 2006.
 */
 
 /*===========================================================================
@@ -96,125 +96,28 @@ static void help(void)
 		{
 		const char *p = gettext(switch_list[i]);
 		int to_tab = strcspn(p, "\t");
-		gu_utf8_printf("    %-20.*s %s\n", to_tab, p, p[to_tab] == '\t' ? &p[to_tab + 1] : "");
+		gu_utf8_printf("    %-20.*s %s\n",
+			to_tab, p,
+		   	p[to_tab] == '\t' ? &p[to_tab + 1] : ""
+			);
 		}
 
-	gu_fputwc('\n', stderr);
+	gu_putwc('\n');
 
 	{
 	const char *args[] = {"help", NULL};
 	dispatch(myname, args);
 	}
 
-	gu_fputwc('\n', stderr);
-	gu_utf8_printf(_("The %s manpage may be viewed by entering this command at a shell prompt:\n"
-		"    ppdoc %s\n"), "ppad(1)", "ppad");
+	gu_putwc('\n');
+	gu_utf8_printf(
+		_(	"The %s manpage may be viewed by entering this command at a shell prompt:\n"
+			"    ppdoc %s\n"
+			),
+	   	"ppad(1)",
+	   	"ppad"
+		);
 	} /* help() */
-
-/*
-** interactive mode function
-** Return the result code of the last command executed.
-**
-** In interactive mode, we present a prompt, read command
-** lines, and execute them.
-*/
-static int interactive_mode(void)
-	{
-	#define MAX_CMD_WORDS 64
-	char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
-	char *ptr;					/* used to parse arguments */
-	unsigned int x;				/* used to parse arguments */
-	int errorlevel = 0;			/* return value from last command */
-
-	if( ! machine_readable )
-		{
-		gu_utf8_putline(_("PPAD, Page Printer Administrator's utility"));
-		gu_utf8_putline(VERSION);
-		gu_utf8_putline(COPYRIGHT);
-		gu_utf8_putline(AUTHOR);
-		gu_utf8_putline("");
-		gu_utf8_putline(_("Type \"help\" for command list, \"exit\" to quit."));
-		gu_utf8_putline("");
-		}
-	else				/* terse, machine readable banner */
-		{
-		gu_utf8_putline("*READY\t"VERSION);
-		fflush(stdout);
-		}
-
-	/*
-	** Read input lines until end of file.
-	*/
-	while((ptr = ppr_get_command("ppad>", machine_readable)))
-		{
-		/* Skip comments. */
-		if(ptr[0] == '#' || ptr[0] == ';')
-			continue;
-
-		/*
-		** Break the string into white-space separated "words".  A quoted string
-		** will be treated as one word.
-		*/
-		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t", NULL)); x++)
-			{
-			if(x == MAX_CMD_WORDS)
-				{
-				gu_utf8_putline(X_("Warning: command buffer overflow!"));	/* temporary code, don't internationalize */
-				ar[x] = NULL;
-				break;
-				}
-			}
-
-		/*
-		** The variable x will be an index into ar[] which will
-		** indicate the first element that has any significance.
-		** If the line begins with the word "ppad" will will
-		** increment x.
-		*/
-		x=0;
-		if(ar[0] && strcmp(ar[0], "ppad") == 0)
-			x++;
-
-		/*
-		** If no tokens remain in this command line,
-		** go on to the next command line.
-		*/
-		if(ar[x] == (char*)NULL)
-			continue;
-
-		/*
-		** If the command is "exit", break out of
-		** the line reading loop.
-		*/
-		if(strcmp(ar[x], "exit") == 0 || strcmp(ar[x], "quit") == 0)
-			break;
-
-		/*
-		** Call the dispatch() function to execute the command.  If the
-		** command is not recognized, dispatch() will return -1.  In that
-		** case we print a helpful message and change the errorlevel to
-		** zero since -1 is not a valid exit code for a program.
-		*/
-		if((errorlevel = dispatch(myname, (const char **)&ar[x])) < 0)
-			{
-			if( ! machine_readable )					/* A human gets english */
-				gu_utf8_putline("Try \"help\" or \"exit\".");
-			else										/* A program gets a code */
-				gu_utf8_putline("*UNKNOWN");
-
-			errorlevel = EXIT_SYNTAX;
-			}
-		else if(machine_readable)						/* If a program is reading our output, */
-			{											/* say the command is done */
-			gu_utf8_printf("*DONE\t%d\n ", errorlevel); /* and tell the exit code. */
-			}
-
-		if(machine_readable)					/* In machine readable mode output */
-			fflush(stdout);						/* is probably a pipe which must be flushed. */
-		} /* While not end of file */
-
-	return errorlevel;					/* return result of last command (not counting exit) */
-	} /* end of interactive_mode() */
 
 static const char *option_chars = "Md:";
 static const struct gu_getopt_opt option_words[] =
@@ -241,13 +144,14 @@ int main(int argc, char *argv[])
 	/* Initialize internation messages library. */
 	gu_locale_init(argc, argv, PACKAGE, LOCALEDIR);
 
-	umask(PPR_UMASK);		/* so config files come out with desired mode */
+	/* So config files come out with desired mode. */
+	umask(PPR_UMASK);
 
 	/* Figure out the user's name and make it the initial value for --user. */
 	{
 	struct passwd *pw;
 	uid_t uid = getuid();
-	if((pw = getpwuid(uid)) == (struct passwd *)NULL)
+	if(!(pw = getpwuid(uid)))
 		{
 		gu_utf8_fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
@@ -265,7 +169,7 @@ int main(int argc, char *argv[])
 			{
 			case 'M':							/* machine readable */
 				machine_readable = TRUE;
-				/* send error messages to stdout */
+				/* Send error messages to stdout. */
 				/*stderr = stdout;*/
 				dup2(1,2);
 				break;
@@ -318,7 +222,7 @@ int main(int argc, char *argv[])
 	if(getopt_state.optind < argc)
 		return dispatch(myname, (const char **)&argv[getopt_state.optind]);
 	else
-		return interactive_mode();
+		return dispatch_interactive(myname, _("PPAD, Page Printer Administrator's utility"), "ppad>", machine_readable);
 
 	} /* end of main() */
 

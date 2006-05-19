@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 13 April 2006.
+** Last modified 18 May 2006.
 */
 
 /*
@@ -53,6 +35,8 @@
 #include "global_structs.h"
 #include "ppop.h"
 #include "util_exits.h"
+#include "dispatch.h"
+#include "dispatch_table.h"
 #include "version.h"
 
 const char myname[] = "ppop";
@@ -617,6 +601,7 @@ int is_my_job(const struct QEntry *qentry, const struct QEntryFile *qentryfile)
 ** Main function and associated functions, dispatch command
 ** to proper command handler.
 =========================================================================*/
+#if 0
 static int main_help(FILE *out)
 	{
 	int i;
@@ -680,7 +665,9 @@ static int main_help(FILE *out)
 		}
 	return EXIT_OK;
 	} /* end of main_help() */
+#endif
 
+#if 0
 /*
 ** Examine the command and run the correct proceedure.
 ** Return the value returned by the proceedure function.
@@ -774,112 +761,7 @@ static int dispatch(char *argv[])
 	gu_pool_free(gu_pool_pop(my_pool));
 	return retcode;
 	} /* end of dispatch() */
-
-/*
-** Interactive Mode Function
-** Return the result code of the last command executed.
-**
-** In interactive mode, we present a prompt, read command
-** lines, and execute them.
-*/
-static int interactive_mode(void)
-	{
-	#define MAX_CMD_WORDS 64
-	char *ar[MAX_CMD_WORDS+1];	/* argument vector constructed from line[] */
-	char *ptr;					/* used to parse arguments */
-	unsigned int x;				/* used to parse arguments */
-	int errorlevel=0;			/* return value from last command */
-
-	if( ! opt_machine_readable )	/* If a human will be reading our output, */
-		{
-		gu_utf8_putline(_("PPOP, Page Printer Operator's utility"));
-		gu_utf8_putline(VERSION);
-		gu_utf8_putline(COPYRIGHT);
-		gu_utf8_putline(AUTHOR);
-		gu_utf8_putline("");
-		gu_utf8_putline(_("Type \"help\" for command list, \"exit\" to quit."));
-		gu_utf8_putline("");
-		}
-	else						/* If a machine will be reading our output, */
-		{
-		gu_utf8_putline("*READY\t"SHORT_VERSION);
-		fflush(stdout);
-		}
-
-	/*
-	** Read input lines until end of file.
-	**
-	** Notice that the prompt printed when in machine readable
-	** mode is blank.  Also notice that we do not explicitly
-	** flush stdout and yet the prompt is printed even though
-	** it does not end with a line feed.  This is mysterious.
-	*/
-	while((ptr = ppr_get_command("ppop>", opt_machine_readable)))
-		{
-		/*
-		** Break the string into white-space separated "words".  A quoted string
-		** will be treated as one word.
-		*/
-		for(x=0; (ar[x] = gu_strsep_quoted(&ptr, " \t", NULL)); x++)
-			{
-			if(x == MAX_CMD_WORDS)
-				{
-				gu_utf8_putline("Warning: command buffer overflow!");	/* temporary code, don't internationalize */
-				ar[x] = NULL;
-				break;
-				}
-			}
-
-		/*
-		** The variable x will be an index into ar[] which will
-		** indicate the first element that has any significance.
-		** If the line begins with the word "ppop" we will
-		** increment x.
-		*/
-		x = 0;
-		if(ar[0] && strcmp(ar[0], "ppop") == 0)
-			x++;
-
-		/*
-		** If no tokens remain in this command line,
-		** go on to the next command line.
-		*/
-		if(ar[x] == (char*)NULL)
-			continue;
-
-		/*
-		** If the command is "exit", break out of
-		** the line reading loop.
-		*/
-		if(strcmp(ar[x], "exit") == 0 || strcmp(ar[x], "quit") == 0)
-			break;
-
-		/*
-		** Call the dispatch() function to execute the command.  If the
-		** command is not recognized, dispatch() will return -1.  In that
-		** case we print a helpful message and change the errorlevel to
-		** zero since -1 is not a valid exit code for a program.
-		*/
-		if((errorlevel = dispatch(&ar[x])) == -1)
-			{
-			if( ! opt_machine_readable )					/* A human gets english */
-				gu_utf8_putline(_("Try \"help\" or \"exit\"."));
-			else										/* A program gets a code */
-				gu_utf8_putline("*UNKNOWN");
-
-			errorlevel = EXIT_SYNTAX;
-			}
-		else if(opt_machine_readable)					/* If a program is reading our output, */
-			{											/* say the command is done */
-			gu_utf8_printf("*DONE\t%d\n", errorlevel);	/* and disclose the exit code. */
-			}
-
-		if(opt_machine_readable)					/* If stdout is a pipe as seems likely */
-			fflush(stdout);						/* when -M is used, we must flush it. */
-		} /* While not end of file */
-
-	return errorlevel;					/* return result of last command (not counting exit) */
-	} /* end of interactive_mode() */
+#endif
 
 /*
 ** Handler for sigpipe.
@@ -895,9 +777,9 @@ static void pipe_sighandler(int sig)
 	} /* end of pipe_sighandler() */
 
 /*
-** Print help.
+** --help
 */
-static void help_switches(FILE *out)
+static void help(void)
 	{
 	int i;
 	const char *switch_list[] =
@@ -915,22 +797,25 @@ static void help_switches(FILE *out)
 		NULL
 		};
 
-	gu_utf8_fputs(_("Valid switches:\n"), out);
+	gu_utf8_putline(_("Valid switches:\n"));
 	for(i = 0; switch_list[i]; i++)
 		{
 		const char *p = gettext(switch_list[i]);
 		int to_tab = strcspn(p, "\t");
-		gu_utf8_fprintf(out, "    %-35.*s %s\n",
+		gu_utf8_printf("    %-35.*s %s\n",
 			to_tab, p,
 			p[to_tab] == '\t' ? &p[to_tab + 1] : ""
 			);
 		}
 
-	gu_fputwc('\n', out);
+	gu_putwc('\n');
 
-	gu_utf8_fputs(_("Try \"ppop help\" for help with subcommands.\n"), out);
-	gu_utf8_fputs("\n", out);
-	gu_utf8_fprintf(out,
+	{
+	const char *args[] = {"help", NULL};
+	dispatch(myname, args);
+	}
+
+	gu_utf8_printf(
 		_(	"The %s manpage may be viewed by entering this command at a shell prompt:\n"
 			"    ppdoc %s\n"
 			),
@@ -992,7 +877,9 @@ int main(int argc, char *argv[])
 			{
 			case 'M':					/* -M or --machine-readable */
 				opt_machine_readable = TRUE;
-				stderr = stdout;
+				/* Send error messages to stdout. */
+				/*stderr = stdout;*/
+				dup2(1,2);
 				break;
 
 			case 'A':					/* -A or --arrest-interest-interval */
@@ -1008,7 +895,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 1000:					/* --help */
-				help_switches(stdout);
+				help();
 				exit(EXIT_OK);
 
 			case 1001:					/* --version */
@@ -1036,20 +923,22 @@ int main(int argc, char *argv[])
 				gu_getopt_default(myname, optchar, &getopt_state, stderr);
 
 				if(optchar == '?')
-					help_switches(stderr);
+					help();
 
 				exit(EXIT_SYNTAX);
 				break;
 			}
 		}
 
-	/* Change to the home directory of PPR. */
+	/*
+	 * Change to the home directory of PPR.
+	 * Why do we still do this?
+	 */ 
 	chdir(LIBDIR);
 
 	/*
-	** Install a SIGPIPE handler so we can produce an
-	** intelligible message when we try to run a command
-	** on a spooler which has shut down.
+	** Install a SIGPIPE handler so we can produce an intelligible message
+	** when we try to send a command over the FIFO when pprd is not running.
 	*/
 	signal(SIGPIPE, pipe_sighandler);
 
@@ -1084,18 +973,10 @@ int main(int argc, char *argv[])
 	/*
 	** If no subcommand, go interactive, otherwise, execute commmand.
 	*/
-	if(argc == getopt_state.optind)
-		{
-		result = interactive_mode();
-		}
+	if(getopt_state.optind < argc)
+		result = dispatch(myname, (const char **)&argv[getopt_state.optind]);
 	else
-		{
-		if((result = dispatch(&argv[getopt_state.optind])) == -1)
-			{
-			gu_utf8_fprintf(stderr, _("%s: unknown sub-command \"%s\", try \"ppop help\"\n"), myname, argv[getopt_state.optind]);
-			result = EXIT_SYNTAX;
-			}
-		}
+		result = dispatch_interactive(myname, _("PPOP, Page Printer Operator's utility"), "ppop>", opt_machine_readable);
 
 	/* Clean up by closing the FIFOs which may have
 	   been used to communicate with pprd or rpprd. */

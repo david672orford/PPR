@@ -1,31 +1,13 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_modify.c
-** Copyright 1995--2005, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
-** 
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-** 
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-** 
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-** POSSIBILITY OF SUCH DAMAGE.
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** Last modified 23 September 2005.
+** Last modified 19 May 2006.
 */
 
 #include "config.h"
@@ -44,6 +26,7 @@
 #include "ppop.h"
 #include "util_exits.h"
 #include "version.h"
+#include "dispatch_table.h"
 
 /*============================================================================
 ** Read and write the queue file
@@ -255,7 +238,7 @@ static int modify_addon(const char *name, const char *value, struct JOB *job)
 	}
 
 #define OFFSET(member) (int)&(((struct JOB *)0)->member)
-const struct DT commands[] =
+const struct DT modify_commands[] =
 	{
 	{ "title", modify_string, OFFSET(qentry.Title) },
 	{ "for", modify_string, OFFSET(qentry.For) },
@@ -282,7 +265,7 @@ static int dispatch(const char name[], const char value[], struct JOB *job)
 		return modify_addon(name+6, value, job);
 		}
 
-	for(p = commands; p->name; p++)
+	for(p = modify_commands; p->name; p++)
 		{
 		if(strcmp(p->name, name) == 0)
 			{
@@ -296,20 +279,21 @@ static int dispatch(const char name[], const char value[], struct JOB *job)
 
 /*
 ** This is the action routine for the "ppop modify" command.
+<command helptopics="jobs">
+	<name><word>modify</word></name>
+	<desc>modify a print job</desc>
+	<args>
+		<arg><name>jobid</name><desc>print job to modify</desc></arg>
+		<arg flags="repeat"><name>name=value</name><desc>what to change</desc></arg>
+	</args>
+</command>
 */
-int ppop_modify(char *argv[])
+int command_modify(const char *argv[])
 	{
 	FILE *qf;
 	struct JOB job;
 	int ret = EXIT_OK;
 	gu_boolean question_touched = FALSE;
-
-	if(!argv[0] || !argv[1])
-		{
-		gu_utf8_fputs(_("Usage: ppop modify <jobname> <name>=<value> ...\n\n"
-				"This command sets the properties of an existing job.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	/* Break the job name up into its components. */
 	if(!(job.jobname = parse_jobname(argv[0])))
@@ -347,14 +331,13 @@ int ppop_modify(char *argv[])
 	/* Loop thru the name=value pairs, calling dispatch() on each one. */
 	{
 	int x;
-	char *ptr;
-	for(x = 1; argv[x]; x++)
+	char *arg = NULL, *ptr;
+	for(x = 1; (arg = gu_strdup(argv[x])); gu_free(arg), x++)
 		{
-		/* Convert illegal characters to spaces.  Perhaps we should
-		   consider it a fatal error to include them? */
-		for(ptr = argv[x]; *ptr; ptr++)
+		/* Make sure the value does not contain ASCII control characters. */
+		for(ptr = arg; *ptr; ptr++)
 			{
-			if(*ptr < 32 || *ptr == 127)		/* ASCII controls !!! */
+			if(*ptr < 32 || *ptr == 127)
 				*ptr = ' ';
 			}
 
@@ -377,8 +360,8 @@ int ppop_modify(char *argv[])
 		   so make a note of it. */
 		if(strcmp(argv[x], "question") == 0)
 			question_touched = TRUE;
-
 		}
+	gu_free_if(arg);
 	}
 
 	/* If all of the changes were valid, */
@@ -418,4 +401,3 @@ int ppop_modify(char *argv[])
 	} /* end of ppop_modify() */
 
 /* end of file */
-

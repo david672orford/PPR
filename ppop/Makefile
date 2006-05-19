@@ -7,7 +7,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 23 April 2006.
+# Last modified 18 May 2006.
 #
 
 include ../Makefile.conf
@@ -25,10 +25,25 @@ ppop$(DOTEXE): \
 		ppop_cmds_listq.o \
 		ppop_cmds_other.o \
 		ppop_modify.o \
+		dispatch_table.o \
 		../libppr.a \
 		../libgu.a
 	$(LD) $(LDFLAGS) -o $@ $^ $(INTLLIBS)
 	$(CHMOD) 4755 $@
+
+# Extract an XML description of the commands from comments in the
+# C source code.
+dispatch_table.xml: ppop.c ppop_cmds_listq.c ppop_cmds_other.c ppop_modify.c
+	( echo "<?xml version=\"1.0\"?>"; \
+		 echo "<dispatch>"; \
+		 sed -n -e '/^<command.*>/,/^<\/command>/ p' -e '/^<helptopic.*>/,/^<\/helptopic>/ p' *.c; \
+		 echo "</dispatch>" \
+	) >dispatch_table.xml
+
+# Convert an XML description of subcommands into C source code
+# for a table which describes them.
+dispatch_table.h: dispatch_table.xml ../libppr/dispatch_table.xsl
+	xsltproc ../libppr/dispatch_table.xsl dispatch_table.xml >dispatch_table.c
 
 #=== Install =====================================================================
 

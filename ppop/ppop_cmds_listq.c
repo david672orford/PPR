@@ -7,13 +7,16 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 21 April 2006.
+** Last modified 18 May 2006.
 */
 
 /*
-** This module contains the code for the ppop queue
-** listing sub-commands such as "ppop list",
-** "ppop lpq" and "ppop qquery".
+** This module contains the code for the ppop queue listing sub-commands such
+** as "ppop list", "ppop lpq" and "ppop qquery".
+<helptopic>
+	<name>queue</name>
+	<desc>listing the jobs in print queues</desc>
+</helptopic>
 */
 
 #include "config.h"
@@ -29,6 +32,7 @@
 #include "global_structs.h"
 #include "ppop.h"
 #include "util_exits.h"
+#include "dispatch_table.h"
 
 /*
  * This routine converts a Unix time to a string.
@@ -109,13 +113,13 @@ static char *format_time(char *timestr, size_t timestr_len, time_t time_to_forma
 ** or a new one.  If the one they pass in is empty, and PPRDEST is defined,
 ** they get a new one consisting only of the value of PPRDEST.
 */
-static char **allow_PPRDEST(char *argv[])
+static const char **allow_PPRDEST(const char *argv[])
 	{
-	static char *PPRDEST_argv[2];
+	static const char *PPRDEST_argv[2];
 
 	if(!argv[0] && (PPRDEST_argv[0] = getenv("PPRDEST")))
 		{
-		PPRDEST_argv[1] = (char*)NULL;
+		PPRDEST_argv[1] = NULL;
 		argv = PPRDEST_argv;
 		}
 
@@ -402,33 +406,32 @@ static const char *describe_orientation(int orientation)
 **
 ** This routine all by itself does not implement a command
 **
-** This uses the "l" command too.
+** 1st argument, (*banner) is called to print the column headings.
 **
-** One, (*help)() is called if the wrong number of arguments
-** is passed in.
+** 2nd argument, (*item) is a pointer to a function which is called once for
+**		each queue entry.
+**		Its 1st argument is the job's place in its queue (starting with 1)
+**		Its 2nd argument is the name of the destination.
+**		Its 3rd argument is the pprd queue structure.
+**		Its 4th argument is a structure containing the information
+**			from the queue file.
+**		Its 5th argument is the handle of the response file.  This is provided
+**			so that (*item)() may pass it to job_status().
+** 3rd argument (suppress) suppresses the header on empty queue listings
+**		when true.
+** 4th argument (arrest_drop_time) is the age in seconds after which arrested
+**		jobs cease to interest us.
 **
-** The second, (*banner) is called to print the column headings.
-**
-** The third, (*item) is called once for each queue entry.
-**		The first argument is the ASCIIZ name of the destination.
-**		The second argument is the pprd queue structure.
-**		The Third argument is a structure containing the information
-**		from the queue file.
-**		The third argument is the handle of the response file.  This
-**		is provided so that (*item)() may pass it to job_status().
-**		The fourth argument is the handle of the queue file which
-**		should be passed to job_status().
-**		If the fifth argument is non-zero, then the header will be
-**		suppressed when there are no files in the queue.
+** Return value is the exit code for ppop.
 ====================================================================*/
-int custom_list(char *argv[],
-		void(*help)(void),		/* function for syntax error */
+int custom_list(const char *argv[],
 		void(*banner)(void),	/* function to print column labels */
-		int(*item)(const struct QEntry *qentry,
+		int(*item)(int rank,
+			const struct QEntry *qentry,
 			const struct QEntryFile*,
 			const char *onprinter,
 			FILE *qstream),		/* file to read Media: from */
-		int suppress,			/* True if should suppress header on empty queue */
+		gu_boolean suppress,	/* True if should suppress header on empty queue */
 		int arrested_drop_time)
 	{
 	int arg_index;
@@ -453,25 +456,22 @@ int custom_list(char *argv[],
 	long int arrest_time;
 	char *onprinter;
 
-	if(! argv[0])
-		{						/* If no destinations specified, */
-		(*help)();				/* invoke the help function */
-		return EXIT_SYNTAX;		/* and exit */
-		}
-
 	if(arrested_drop_time >= 0)			/* maybe get current time to compare to arrest time */
 		time(&time_now);				/* of arrested jobs */
 
 	if(!suppress)						/* If we should always print header, */
 		{								/* print it now */
 		if(!opt_machine_readable)		/* unless a program is reading our output. */
-			(*banner)();
+			if(banner)
+				(*banner)();
 		header_printed = TRUE;
 		}
 
 	/* Loop to process each argument: */
 	for(arg_index=0; argv[arg_index]; arg_index++)
 		{
+		int rank = 1;
+
 		/* Separate the components of the job name. */
 		if(!(job = parse_jobname(argv[arg_index])))
 			return EXIT_SYNTAX;
@@ -545,11 +545,12 @@ int custom_list(char *argv[],
 				if(!header_printed)
 					{
 					if( ! opt_machine_readable )
-						(*banner)();
+						if(banner)
+							(*banner)();
 					header_printed = TRUE;
 					}
 
-				stop = (*item)(&qentry, &qentryfile, onprinter, reply_file);
+				stop = (*item)(rank, &qentry, &qentryfile, onprinter, reply_file);
 				}
 
 			/*
@@ -563,7 +564,9 @@ int custom_list(char *argv[],
 			*/
 			qentryfile_free(&qentryfile);
 			gu_free(onprinter);
-			} /* end of while, loop back for next job */
+
+			rank++;
+			} /* loop thru jobs */
 
 		fclose(reply_file);
 		} /* end of loop for each argument */
@@ -579,15 +582,6 @@ int custom_list(char *argv[],
 ** Normal queue listing.
 ** This uses custom_list().
 ================================================================*/
-static void ppop_list_help(void)
-	{
-	gu_utf8_fputs(_("Usage: ppop list {all, <printer>, <group> , <job>} ...\n\n"
-		"This command will print information about the specified jobs.\n"
-		"Jobs may be specified by job id, by queue, or \"all\" may\n"
-		"be specified.  Multiple specifications may be used with this\n"
-		"command.\n"), stderr);
-	}
-
 static void ppop_list_banner(void)
 	{
 	/*
@@ -609,10 +603,13 @@ static void ppop_list_banner(void)
 	gu_utf8_puts(  "----------------------------------------------------------------------------\n");
 	}
 
-static int ppop_list_item(const struct QEntry *qentry,
+static int ppop_list_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	char timestr[64];		/* 10 chars expected, but large buffer for utf-8 bloating */
 	char pagesstr[4];
@@ -649,10 +646,34 @@ static int ppop_list_item(const struct QEntry *qentry,
 	return FALSE;
 	} /* end of ppop_list_item() */
 
-int ppop_list(char *argv[], int suppress)
+/*
+<command helptopics="queue">
+	<name><word>list</word></name>
+	<desc>show queued jobs</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>print queue or job to show</desc></arg>
+	</args>
+</command>
+*/
+int command_list(const char *argv[])
 	{
 	argv = allow_PPRDEST(argv);
-	return custom_list(argv, ppop_list_help, ppop_list_banner, ppop_list_item, suppress, opt_arrest_interest_interval);
+	return custom_list(argv, ppop_list_banner, ppop_list_item, FALSE, opt_arrest_interest_interval);
+	}
+
+/*
+<command hide="true">
+	<name><word>nhlist</word></name>
+	<desc>show queued jobs</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>print queue or job to show</desc></arg>
+	</args>
+</command>
+*/
+int command_nhlist(const char *argv[])
+	{
+	argv = allow_PPRDEST(argv);
+	return custom_list(argv, ppop_list_banner, ppop_list_item, TRUE, opt_arrest_interest_interval);
 	}
 
 /*================================================================
@@ -668,10 +689,9 @@ int ppop_list(char *argv[], int suppress)
 ** suited to that sort of thing.
 ================================================================*/
 
-static int lpqlist_rank;
 static int lpqlist_banner_called;
 static const char *lpqlist_destname;
-static char **lpqlist_argv;
+static const char **lpqlist_argv;
 
 static const char *count_suffix(int count)
 	{
@@ -689,16 +709,6 @@ static const char *count_suffix(int count)
 	}
 
 /*
-** custom_list() calls this if it can't parse the destination name
-*/
-static void ppop_lpq_help(void)
-	{
-	gu_utf8_fputs(_("Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n\n"
-		"The \"ppop lpq\" subcommand prints a queue listing in a format\n"
-		"similiar to that of the Berkeley Unix \"lpq\" command.\n"), stderr);
-	}
-
-/*
 ** ppop_lpq_banner() calls this to print the progress of
 ** the job a printer is working on.  This routine writes
 ** to stdout.  It prints a line fragment of either the form:
@@ -708,7 +718,6 @@ static void ppop_lpq_help(void)
 ** " (101% sent, 2 of 7 pages completed)"
 **
 ** !!! This routine must be kept up to date with the queue file format. !!!
-** !!! This routine is not ready for distributed printing. !!!
 */
 static void ppop_lpq_banner_progress(const char *printer_job_destname, int printer_job_id, int printer_job_subid)
 	{
@@ -716,7 +725,7 @@ static void ppop_lpq_banner_progress(const char *printer_job_destname, int print
 	FILE *f;
 
 	ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, printer_job_destname, printer_job_id, printer_job_subid);
-	if((f = fopen(fname, "r")) != (FILE*)NULL)
+	if((f = fopen(fname, "r")))
 		{
 		long int postscript_bytes, input_bytes, bytes_tosend, bytes_sent;
 		int pages, pages_printed, N, copies;
@@ -831,7 +840,7 @@ static void ppop_lpq_banner(void)
 		** If there is more than one printer we will prefix the message
 		** about each with its name.
 		*/
-		if(strcmp(lpqlist_destname, printer_name))
+		if(strcmp(lpqlist_destname, printer_name) != 0)
 			gu_utf8_printf("%s: ", printer_name);
 
 		/*
@@ -916,10 +925,13 @@ static void ppop_lpq_banner(void)
 /*
 ** This is called for each job in the queue.
 */
-static int ppop_lpq_item(const struct QEntry *qentry,
+static int ppop_lpq_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	char sizestr[16];
 	char rankstr[8];
@@ -929,11 +941,8 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	char fixed_name[fixed_name_MAXLENGTH + 1];
 	char fixed_name_len;
 
-	/* Advance the rank number to the next value: */
-	lpqlist_rank++;
-
 	/*
-	** See if this file should be excluded because of not matching
+	** See if this file should be excluded because it does not match
 	** the pattern set by the extra arguments.
 	*/
 	if(lpqlist_argv[0])
@@ -990,7 +999,7 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 		}
 	else								/* if not printing */
 		{
-		snprintf(rankstr, sizeof(rankstr), "%d%s", lpqlist_rank, count_suffix(lpqlist_rank));
+		snprintf(rankstr, sizeof(rankstr), "%d%s", rank, count_suffix(rank));
 		}
 
 	/*
@@ -1098,25 +1107,36 @@ static int ppop_lpq_item(const struct QEntry *qentry,
 	return FALSE;
 	} /* end of ppop_lpq_item() */
 
-int ppop_lpq(char *argv[])
+/*
+<command helptopics="queue">
+	<name><word>lpq</word></name>
+	<desc>show queued jobs in lpq format</desc>
+	<args>
+		<arg><name>destination</name><desc>print queue to show</desc></arg>
+		<arg><name flags="optional,repeat">filter</name><desc>ID or username</desc></arg>
+	</args>
+</command>
+*/
+int command_lpq(const char *argv[])
 	{
 	int retval;
 	const struct Jobname *job;
 	#define new_argv_SIZE 21
-	char *new_argv[new_argv_SIZE];
+	const char *new_argv[new_argv_SIZE];
 	int x;
 
 	/* If no argument, use PPRDEST: */
 	argv = allow_PPRDEST(argv);
 
-	/* If first parameter is empty or it is a job id rather than a destination id, */
-	if(!argv[0] || !(job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
+	/* If the first parameter is a job id rather than a destination id, */
+	if(!(job = parse_jobname(argv[0])))
+	   return EXIT_SYNTAX;
+	if(job->id != WILDCARD_JOBID)
 		{
-		ppop_lpq_help();
-		exit(EXIT_SYNTAX);
+		gu_utf8_fprintf(stderr, _("Subcommand lpq does not accept job ID's.\n"));
+		return EXIT_SYNTAX;
 		}
 
-	lpqlist_rank = 0;					/* reset number for "Rank" column */
 	lpqlist_banner_called = FALSE;		/* not called yet! */
 	lpqlist_destname = job->destname;
 	lpqlist_argv = new_argv;
@@ -1124,11 +1144,11 @@ int ppop_lpq(char *argv[])
 	for(x=0; x < (new_argv_SIZE - 1) && argv[x+1]; x++)
 		{
 		new_argv[x] = argv[x+1];
-		argv[x+1] = (char*)NULL;
+		argv[x+1] = NULL;
 		}
-	new_argv[x] = (char*)NULL;
+	new_argv[x] = NULL;
 
-	retval = custom_list(argv, ppop_lpq_help, ppop_lpq_banner, ppop_lpq_item, TRUE, opt_arrest_interest_interval);
+	retval = custom_list(argv, ppop_lpq_banner, ppop_lpq_item, TRUE, opt_arrest_interest_interval);
 
 	if( !lpqlist_banner_called && retval != EXIT_SYNTAX )
 		gu_utf8_putline(_("no entries"));
@@ -1142,20 +1162,9 @@ int ppop_lpq(char *argv[])
 ** Full debuging listing of the queue.
 ** This uses custom_list().
 ================================================================*/
-static void ppop_details_help(void)
-	{
-	gu_utf8_fputs(_("Usage: ppop details {all, <group>, <printer>, <job>}\n\n"
-		"This command displays a detailed description of all jobs,\n"
-		"the jobs queued for the indicated group, the jobs queued\n"
-		"for the indicated printer, or the indicated job.\n"), stderr);
-	}
-
-static void ppop_details_banner(void)
-	{
-	/* This kind of queue listing does not have column headings. */
-	}
-
-static int ppop_details_item(const struct QEntry *qentry,
+static int ppop_details_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
 		FILE *qstream)
@@ -1296,10 +1305,19 @@ static int ppop_details_item(const struct QEntry *qentry,
 	return FALSE;				/* don't stop */
 	} /* end of ppop_details_item() */
 
-int ppop_details(char *argv[])
+/*
+<command>
+	<name><word>details</word></name>
+	<desc>show queued jobs in detail</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>print queue or job to show</desc></arg>
+	</args>
+</command>
+*/
+int command_details(const char *argv[])
 	{
-	return custom_list(argv, ppop_details_help, ppop_details_banner, ppop_details_item, FALSE, opt_arrest_interest_interval);
-	} /* end of ppop_details() */
+	return custom_list(argv, NULL, ppop_details_item, FALSE, opt_arrest_interest_interval);
+	} /* end of command_details() */
 
 /*================================================================
 ** ppop qquery {destination}
@@ -1315,24 +1333,19 @@ static int qquery_query_count;
 #define MAX_QQUERY_ADDON_ITEMS 16
 struct ADDON
 	{
-	char *name;
+	const char *name;
 	char *value;
 	};
 static struct ADDON addon[MAX_QQUERY_ADDON_ITEMS];
 static int addon_count;
 
-static void ppop_qquery_help(void)
-	{
-	gu_utf8_fputs(_("Wrong syntax!\n"), stderr);
-	} /* end of ppop_qquery_help() */
-
-static void ppop_qquery_banner(void)
-	{ /* empty */ }
-
-static int ppop_qquery_item(const struct QEntry *qentry,
+static int ppop_qquery_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	const char *status;							/* status string */
 	char status_scratch[128];					/* printing on _____ */
@@ -1714,11 +1727,20 @@ static int ppop_qquery_item(const struct QEntry *qentry,
 	return FALSE;		/* don't stop */
 	} /* end of ppop_qquery_item() */
 
-int ppop_qquery(char *argv[])
+/*
+<command helptopics="queue">
+	<name><word>qquery</word></name>
+	<desc>show requested data fields about queued jobs</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>print queue or job to show</desc></arg>
+	</args>
+</command>
+*/
+int command_qquery(const char *argv[])
 	{
 	const char function[] = "ppop_qquery";
 	int x;
-	char *ptr;
+	const char *ptr;
 	int retval;
 
 	addon_count = 0;
@@ -1852,7 +1874,7 @@ int ppop_qquery(char *argv[])
 
 	qquery_query_count = x;
 
-	retval = custom_list(argv, ppop_qquery_help, ppop_qquery_banner, ppop_qquery_item, FALSE, opt_arrest_interest_interval);
+	retval = custom_list(argv, NULL, ppop_qquery_item, FALSE, opt_arrest_interest_interval);
 
 	return retval;
 	} /* end of ppop_qquery() */
@@ -1861,22 +1883,15 @@ int ppop_qquery(char *argv[])
 ** ppop progress {job}
 **
 ** Display the progress of a job.  This command is intended for use
-** by frontends.  It emmits three integers separated by tabs.
+** by frontends.  It emits three integers separated by tabs.
 ** They are the percentage of the job's bytes transmitted, the number
 ** of "%%Page:" comments sent, and the number of pages which the
 ** printer claims to have printed.	(Many printers make no such claims.
-** Currently this is only supported for HP PJL printers.)
+** Currently this is only works with HP PJL.)
 **
 ** Strings in this command are not marked for translation because
 ** this command is in a state of flux!
 ===================================================================*/
-
-static void ppop_progress_help(void)
-	{
-	gu_utf8_fputs(_("Usage: ppop progress <job>\n\n"
-		"This command shows the progress made printing the\n"
-		"indicated job.\n"), stderr);
-	}
 
 static void ppop_progress_banner(void)
 	{
@@ -1886,10 +1901,13 @@ static void ppop_progress_banner(void)
 	gu_utf8_printf("----------------+--------------------+----------+----------+---+----+----+----\n");
 	}
 
-static int ppop_progress_item(const struct QEntry *qentry,
+static int ppop_progress_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	const char function[] = "ppop_progress_item";
 	const char *jobname;
@@ -1963,9 +1981,18 @@ static int ppop_progress_item(const struct QEntry *qentry,
 	return FALSE;		/* don't stop */
 	} /* end of ppop_progress_item() */
 
-int ppop_progress(char *argv[])
+/*
+<command>
+	<name><word>progress</word></name>
+	<desc>show progress printing indicated job</desc>
+	<args>
+		<arg><name>jobid</name><desc>job progress of which to show</desc></arg>
+	</args>
+</command>
+*/
+int command_progress(const char *argv[])
 	{
-	return custom_list(argv, ppop_progress_help, ppop_progress_banner, ppop_progress_item, FALSE, -1);
+	return custom_list(argv, ppop_progress_banner, ppop_progress_item, FALSE, -1);
 	} /* end of ppop_progress() */
 
 /* end of file */

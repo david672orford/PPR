@@ -1,8 +1,10 @@
-ppop.o: ./ppop.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h ../include/version.h
+dispatch_table.o: ./dispatch_table.c ../include/dispatch.h dispatch_table.h
 
-ppop_cmds_listq.o: ./ppop_cmds_listq.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h
+ppop.o: ./ppop.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h ../include/dispatch.h dispatch_table.h ../include/version.h
 
-ppop_cmds_other.o: ./ppop_cmds_other.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h ../include/interface.h
+ppop_cmds_listq.o: ./ppop_cmds_listq.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h dispatch_table.h
 
-ppop_modify.o: ./ppop_modify.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h ../include/version.h
+ppop_cmds_other.o: ./ppop_cmds_other.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h ../include/interface.h dispatch_table.h
+
+ppop_modify.o: ./ppop_modify.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ppop.h ../include/util_exits.h ../include/version.h dispatch_table.h
 

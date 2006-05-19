@@ -83,7 +83,7 @@
 <!-- Print a command name as a partial variable name. -->
 <template match="/dispatch/command/name">
 	<for-each select="word">
-		<text>_</text><value-of select="."/>
+		<text>_</text><value-of select="translate(.,'-','_')"/>
 	</for-each>
 </template>
 

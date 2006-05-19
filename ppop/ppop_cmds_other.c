@@ -3,35 +3,32 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 7 April 2006.
+** Last modified 19 May 2006.
 */
 
 /*
-** PPOP queue listing commands.
-**
-** Routines which implement other user commands.
+** This module contains code for the ppop subcommands other than those
+** which list the queue or modify a job.
+<helptopic>
+	<name>printers</name>
+	<desc>controlling printers</desc>
+</helptopic>
+<helptopic>
+	<name>groups</name>
+	<desc>controlling groups of printers</desc>
+</helptopic>
+<helptopic>
+	<name>jobs</name>
+	<desc>controlling jobs</desc>
+</helptopic>
+<helptopic>
+	<name>media</name>
+	<desc>mounting media</desc>
+</helptopic>
 */
 
 #include "config.h"
@@ -52,6 +49,7 @@
 #include "ppop.h"
 #include "util_exits.h"
 #include "interface.h"
+#include "dispatch_table.h"
 
 /*===================================================================
 ** Routine to display the number of jobs canceled.
@@ -416,13 +414,16 @@ int print_aux_status(char *line, int printer_status, const char sep[])
 	return 1;
 	} /* end of print_aux_status() */
 
-/*===================================================================
-** ppop status {printer}
-**
-** Display the status of printers.  We will send the "s" command
-** over the FIFO to pprd.
-===================================================================*/
-int ppop_status(char *argv[])
+/*
+<command>
+	<name><word>status</word></name>
+	<desc>display the status of printers</desc>
+	<args>
+		<arg><name>printers</name><desc>printer to show or \"all\"</desc></arg>
+	</args>
+</command>
+*/
+int command_status(const char *argv[])
 	{
 	const char *destname;
 	FILE *FIFO, *reply_file;
@@ -434,12 +435,6 @@ int ppop_status(char *argv[])
 	int status;
 	int next_retry;
 	int countdown;
-
-	if(!argv[0])
-		{
-		gu_utf8_fprintf(stderr, _("Usage: ppop status {<printer>, <group>, all}\n"));
-		return EXIT_SYNTAX;
-		}
 
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
@@ -590,21 +585,22 @@ int ppop_status(char *argv[])
 	return EXIT_OK;
 	} /* end of ppop_status() */
 
-/*=====================================================================
+/*
 ** ppop message {printer}
 ** Retrieve the auxiliary status messages from a certain printer.
-=====================================================================*/
-int ppop_message(char *argv[])
+<command>
+	<name><word>message</word></name>
+	<desc>display display auxiliary status of printer</desc>
+	<args>
+		<arg><name>printers</name><desc>printer to show</desc></arg>
+	</args>
+</command>
+*/
+int command_message(const char *argv[])
 	{
 	const char *destname;
 	char fname[MAX_PPR_PATH];
 	FILE *statfile;
-
-	if(!argv[0] || argv[1])
-		{
-		gu_utf8_fputs(_("Usage: ppop message <printer>\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
@@ -624,25 +620,21 @@ int ppop_message(char *argv[])
 	return EXIT_OK;
 	} /* end of ppop_message() */
 
-/*=====================================================================
-** ppop media {printer}
-**
-** Show the media which are mounted on a specific printer
-** or all printers in a group.
-** Use the "f" command.
-=====================================================================*/
-int ppop_media(char *argv[])
+/*
+<command helptopics="media,printers">
+	<name><word>media</word></name>
+	<desc>show the media mounted on specificified printers</desc>
+	<args>
+		<arg><name>destination</name><desc>printer or group to show or \"all\"</desc></arg>
+	</args>
+</command>
+*/
+int command_media(const char *argv[])
 	{
 	const char function[] = "ppop_media";
 	int retcode;
 	const char *destname;
 	FILE *FIFO, *reply_file;
-
-	if(!argv[0])
-		{
-		gu_utf8_fputs(_("Usage: ppop media {<printer>, <group>, all}\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
@@ -710,26 +702,22 @@ int ppop_media(char *argv[])
 	return retcode;
 	} /* end of ppop_media() */
 
-/*==========================================================================
-** ppop mount {printer} {tray} {media}
-**
-** Mount a specific media type on a specific location.
-** We do this with the "M" (Mount) command.
-==========================================================================*/
-int ppop_mount(char *argv[])
+/*
+<command acl="ppop" helptopics="media,printers">
+	<name><word>mount</word></name>
+	<desc>mount specified medium on specified tray of specified printer</desc>
+	<args>
+		<arg><name>printer</name><desc>printer on which to mount <arg>medium</arg></desc></arg>
+		<arg><name>tray</name><desc>tray of <arg>printer</arg> on which to mount <arg>medium</arg></desc></arg>
+		<arg><name>medium</name><desc>medium to mount on <arg>tray</arg> or <arg>printer</arg></desc></arg>
+	</args>
+</command>
+*/
+int command_mount(const char *argv[])
 	{
 	int retcode = EXIT_OK;
 	const char *destname, *binname, *mediumname;
 	FILE *FIFO;
-
-	if(!argv[0] || !argv[1])
-		{
-		gu_utf8_fprintf(stderr, _("Usage: ppop mount <printer> <bin> <medium>\n"));
-		return EXIT_SYNTAX;
-		}
-
-	if(!assert_am_operator())
-		return EXIT_DENIED;
 
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
@@ -782,100 +770,6 @@ int ppop_mount(char *argv[])
 	return retcode;
 	} /* end of ppop_mount() */
 
-/*==========================================================================
-** ppop start {printer}
-**
-** start a printer which was stopt
-** We do this with the "t" command.
-**
-** ppop [w]stop {printer}
-**
-** Stop a printer gently, let current job finish.
-** We do this with the "p" command.
-** If the second parameter is true, we will wait for
-** the printer to stop.
-**
-** ppop halt {printer}
-**
-** Halt, stop a printer now, terminating printing of the current job.
-** We do this with the "b" (stop with a bang) command.
-** "h" is used by hold.
-==========================================================================*/
-int ppop_start_stop_wstop_halt(char *argv[], int variation)
-	{
-	int x;
-	int result = 0;
-	const char *destname;
-	FILE *FIFO;
-
-	if(!argv[0])
-		{
-		switch(variation)
-			{
-			case 0:
-				gu_utf8_fputs(_("Usage: ppop start <printer> ...\n\n"
-						"This command starts a previously stopt printer.\n"), stderr);
-				break;
-			case 1:
-			case 2:
-				gu_utf8_fputs(_("Usage: ppop stop <printer> ...\n"
-						"Usage: ppop wstop {printer}\n\n"
-						"This command stops a printer from printing.  If a job is being\n"
-						"printed when this command is issued, the printer does not\n"
-						"actually stop until the job is done.\n\n"
-						"The second form, \"ppop wstop\" does not return until the printer\n"
-						"has actually stopt.\n"), stderr);
-				break;
-			case 3:
-				gu_utf8_fputs(_("Usage: ppop halt <printer> ...\n\n"
-						"This command stops the printer immediately.  If a job is printing,\n"
-						"the job is returned to the queue for later printing.\n"), stderr);
-				break;
-			}
-
-		return EXIT_SYNTAX;
-		}
-
-	if(!assert_am_operator())			/* only allow operator to do this */
-		return EXIT_DENIED;
-
-	for(x=0; argv[x]; x++)
-		{
-		if(!(destname = parse_destname(argv[x], FALSE)))
-			{
-			result = EXIT_SYNTAX;
-			break;
-			}
-
-		FIFO = get_ready();
-
-		switch(variation)
-			{
-			case 0:				/* start */
-				fprintf(FIFO, "t %s\n", destname);
-				break;
-			case 1:				/* stop */
-				fprintf(FIFO, "p %s\n", destname);
-				break;
-			case 2:				/* wstop */
-				fprintf(FIFO, "P %s\n", destname);
-				break;
-			case 3:				/* halt */
-				fprintf(FIFO, "b %s\n", destname);
-				break;
-			}
-
-		fflush(FIFO);					/* send the command */
-
-		wait_for_pprd(variation != 2);	/* no timeout for wstop */
-
-		if((result = print_reply()))
-			break;
-		}
-
-	return result;
-	} /* end of ppop_start() */
-
 /*========================================================================
 ** ppop cancel {<job>, <destination>, all}
 **
@@ -891,18 +785,13 @@ int ppop_start_stop_wstop_halt(char *argv[], int variation)
 static int ppop_cancel_byuser_total;
 static int ppop_cancel_byuser_inform;
 
-static void ppop_cancel_byuser_help(void)
-	{
-	gu_utf8_fputs(_("Syntax error.\n"), stderr);
-	}
-
-static void ppop_cancel_byuser_banner(void)
-	{ }
-
-static int ppop_cancel_byuser_item(const struct QEntry *qentry,
+static int ppop_cancel_byuser_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	FILE *FIFO, *reply_file;
 	int count;
@@ -929,9 +818,9 @@ static int ppop_cancel_byuser_item(const struct QEntry *qentry,
 	} /* end of ppop_cancel_byuser_item() */
 
 /* This function is called by ppop_cancel() when no specific job is specified (I think). */
-static int ppop_cancel_byuser(char *destname, int inform)
+static int ppop_cancel_byuser(const char *destname, int inform)
 	{
-	char *list[2];
+	const char *list[2];
 	int ret;
 
 	ppop_cancel_byuser_inform = inform;
@@ -940,7 +829,7 @@ static int ppop_cancel_byuser(char *destname, int inform)
 	list[0] = destname;			/* custom_list() wants an argument list, */
 	list[1] = (char*)NULL;		/* construct one. */
 
-	if((ret = custom_list(list, ppop_cancel_byuser_help, ppop_cancel_byuser_banner, ppop_cancel_byuser_item, FALSE, -1)) )
+	if((ret = custom_list(list, NULL, ppop_cancel_byuser_item, FALSE, -1)) )
 		return ret;
 
 	say_canceled(ppop_cancel_byuser_total, TRUE);
@@ -948,21 +837,12 @@ static int ppop_cancel_byuser(char *destname, int inform)
 	return EXIT_OK;
 	} /* end of ppop_cancel_byuser() */
 
-int ppop_cancel(char *argv[], int inform)
+static int ppop_cancel(const char *argv[], int inform)
 	{
 	int x;
 	const struct Jobname *job;
 	FILE *FIFO, *reply_file;
 	int count;
-
-	if(!argv[0])
-		{
-		gu_utf8_fputs(_("Usage: ppop cancel {<job>, <destination>}\n\n"
-			  "This command cancels a job or all of your jobs queued for the\n"
-			  "specified destination.\n"), stderr);
-
-		return EXIT_SYNTAX;
-		}
 
 	for(x=0; argv[x]; x++)
 		{
@@ -1002,31 +882,46 @@ int ppop_cancel(char *argv[], int inform)
 	return EXIT_OK;
 	} /* end of ppop_cancel() */
 
+/*
+<command helptopics="jobs">
+	<name><word>cancel</word></name>
+	<desc>cancel print jobs and inform user</desc>
+	<args>
+		<arg flags="repeat"><name>what</name><desc>job to be canceled or queue to purge of user's jobs</desc></arg>
+	</args>
+</command>
+*/
+int command_cancel(const char *argv[])
+	{
+	return ppop_cancel(argv, 1);
+	}
+
+/*
+<command helptopics="jobs">
+	<name><word>scancel</word></name>
+	<desc>cancel print jobs but don't inform user</desc>
+	<args>
+		<arg flags="repeat"><name>what</name><desc>job to be canceled or queue to purge of user's jobs</desc></arg>
+	</args>
+</command>
+*/
+int command_scancel(const char *argv[])
+	{
+	return ppop_cancel(argv, 0);
+	}
+
 /*========================================================================
 ** ppop purge _destination_
 **
 ** Cancel all jobs on a destination.  Only an operator may do this.
 ** We do it with the "c"ancel command and -1 for the job id and subid.
 ========================================================================*/
-int ppop_purge(char *argv[], int inform)
+static int ppop_purge(const char *argv[], int inform)
 	{
 	int x;
 	const char *destname;
 	FILE *FIFO, *reply_file;
 	int count;
-
-	if(argv[0] == (char*)NULL)
-		{
-		gu_utf8_fputs(_("Usage: ppop purge <destination> ...\n\n"
-				"This command cancels all jobs queued for a particular destination.\n"
-				"Only an operator may use this command.  Extra arguments are\n"
-				"interpreted as the names of extra destinations to purge.\n"), stderr);
-
-		return EXIT_SYNTAX;
-		}
-
-	if(!assert_am_operator())
-		return EXIT_DENIED;
 
 	for(x=0; argv[x]; x++)
 		{
@@ -1050,26 +945,47 @@ int ppop_purge(char *argv[], int inform)
 	return EXIT_OK;
 	} /* end of ppop_purge() */
 
+/*
+<command acl="ppop" helptopics="jobs,printers,groups">
+	<name><word>purge</word></name>
+	<desc>cancel all print jobs from the indicated queues</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue to be purged</desc></arg>
+	</args>
+</command>
+*/
+int command_purge(const char *argv[])
+	{
+	return ppop_purge(argv, 1);
+	}
+
+/*
+<command acl="ppop" helptopics="jobs,printers,groups">
+	<name><word>spurge</word></name>
+	<desc>cancel all print jobs from the indicated queues but don't inform users</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue to be purged</desc></arg>
+	</args>
+</command>
+*/
+int command_spurge(const char *argv[])
+	{
+	return ppop_purge(argv, 0);
+	}
+
 /*=======================================================================
 ** ppop clean _destination_
-**
 ** Delete all the arrested jobs on a destination.
 =======================================================================*/
 static int ppop_clean_total;
 
-static void ppop_clean_help(void)
-	{
-	gu_utf8_fputs(_("Syntax error.\n"), stderr);
-	}
-
-static void ppop_clean_banner(void)
-	{
-	}
-
-static int ppop_clean_item(const struct QEntry *qentry,
+static int ppop_clean_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	FILE *FIFO, *reply_file;
 	int count;
@@ -1100,54 +1016,41 @@ static int ppop_clean_item(const struct QEntry *qentry,
 	return FALSE;		/* don't stop */
 	} /* end of ppop_clean_item() */
 
-int ppop_clean(char *argv[])
+/*
+<command acl="ppop" helptopics="jobs,printers,groups">
+	<name><word>clean</word></name>
+	<desc>remove arrested jobs from queues</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue to be cleaned</desc></arg>
+	</args>
+</command>
+*/
+int command_clean(const char *argv[])
 	{
 	int ret;
-
-	if(argv[0] == (char*)NULL)
-		{
-		gu_utf8_fputs(_("Usage: ppop clean <destination> ...\n\n"
-				"This command will delete all of the arrested jobs\n"
-				"queued for the indicated destination or destinations\n"), stderr);
-		exit(EXIT_SYNTAX);
-		}
-
-	if(!assert_am_operator())
-		return EXIT_DENIED;
-
 	ppop_clean_total = 0;
-
-	if((ret = custom_list(argv, ppop_clean_help, ppop_clean_banner, ppop_clean_item, FALSE, -1)))
+	if((ret = custom_list(argv, NULL, ppop_clean_item, FALSE, -1)))
 		return ret;
-
 	say_canceled(ppop_clean_total, FALSE);
-
 	return EXIT_OK;
-	} /* end of ppop_clean() */
+	} /* end of command_clean() */
 
 /*=======================================================================
 ** ppop cancel-active <destination>
 ** ppop cancel-my-active <destination>
-**
 ** Delete the active job for the destination.
 =======================================================================*/
 static int ppop_cancel_active_total;
 static int ppop_cancel_active_my;
 static int ppop_cancel_active_inform;
 
-static void ppop_cancel_active_help(void)
-	{
-	gu_utf8_fputs("Syntax error.\n", stderr);
-	}
-
-static void ppop_cancel_active_banner(void)
-	{
-	}
-
-static int ppop_cancel_active_item(const struct QEntry *qentry,
+static int ppop_cancel_active_item(
+		int rank,
+		const struct QEntry *qentry,
 		const struct QEntryFile *qentryfile,
 		const char *onprinter,
-		FILE *qstream)
+		FILE *qstream
+		)
 	{
 	FILE *FIFO, *reply_file;
 	int count;
@@ -1176,29 +1079,15 @@ static int ppop_cancel_active_item(const struct QEntry *qentry,
 	return FALSE;
 	} /* end of ppop_cancel_active_item() */
 
-int ppop_cancel_active(char *argv[], int my, int inform)
+static int ppop_cancel_active(const char *argv[], int my, int inform)
 	{
 	int ret;
-	const struct Jobname *job;
-
-	/* If parameter missing or it is a job id rather than a destination id, */
-	if(!argv[0] || !(job = parse_jobname(argv[0])) || job->id != WILDCARD_JOBID)
-		{
-		gu_utf8_fprintf(stderr, _("Usage: ppop cancel-%sactive <destination> ...\n\n"
-				"This command will delete all of the arrested jobs\n"
-				"queued for the indicated destination or destinations.\n"), my ? "my-" : "");
-		exit(EXIT_SYNTAX);
-		}
-
-	if(!my && !assert_am_operator())
-		return EXIT_DENIED;
 
 	ppop_cancel_active_my = my;
 	ppop_cancel_active_inform = inform;
-
 	ppop_cancel_active_total = 0;
 
-	if((ret = custom_list(argv, ppop_cancel_active_help, ppop_cancel_active_banner, ppop_cancel_active_item, FALSE, -1)))
+	if((ret = custom_list(argv, NULL, ppop_cancel_active_item, FALSE, -1)))
 		return ret;
 
 	if(ppop_cancel_active_total == 0)
@@ -1216,26 +1105,77 @@ int ppop_cancel_active(char *argv[], int my, int inform)
 	return EXIT_OK;
 	} /* end of ppop_cancel_active() */
 
-/*========================================================================
-** ppop move {destination|job} {destination}
-**
-** Move a job to a new destination or
-** move all jobs from one destination to another.
-** We perform these functions with the "m" command.
-========================================================================*/
-int ppop_move(char *argv[])
+/*
+<command acl="ppop" helptopics="jobs">
+	<name><word>cancel-active</word></name>
+	<desc>cancel any jobs that are being printed from indicated queues</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue from which to cancel active job</desc></arg>
+	</args>
+</command>
+*/
+int command_cancel_active(const char *argv[])
+	{
+	return ppop_cancel_active(argv, FALSE, 1);
+	}
+
+/*
+<command acl="ppop" helptopics="jobs">
+	<name><word>scancel-active</word></name>
+	<desc>silently cancel any jobs that are being printed from indicated queues</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue from which to cancel active job</desc></arg>
+	</args>
+</command>
+*/
+int command_scancel_active(const char *argv[])
+	{
+	return ppop_cancel_active(argv, FALSE, 0);
+	}
+
+/*
+<command helptopics="jobs">
+	<name><word>cancel-my-active</word></name>
+	<desc>cancel any of user's jobs that are being printed from indicated queues</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue from which to cancel active user's active job</desc></arg>
+	</args>
+</command>
+*/
+int command_cancel_my_active(const char *argv[])
+	{
+	return ppop_cancel_active(argv, TRUE, 1);
+	}
+
+/*
+<command helptopics="jobs">
+	<name><word>scancel-my-active</word></name>
+	<desc>cancel any of user's jobs that are being printed from indicated queues</desc>
+	<args>
+		<arg flags="repeat"><name>destionation</name><desc>queue from which to cancel user's active job</desc></arg>
+	</args>
+</command>
+*/
+int command_scancel_my_active(const char *argv[])
+	{
+	return ppop_cancel_active(argv, TRUE, 0);
+	}
+
+/*
+<command helptopics="jobs">
+	<name><word>move</word></name>
+	<desc>move a jobs or all jobs on a given destionation to a new destination</desc>
+	<args>
+		<arg><name>from</name><desc>job to move or queue from which to remove</desc></arg>
+		<arg><name>to</name><desc>destionation to which to move the job or jobs</desc></arg>
+	</args>
+</command>
+*/
+int command_move(const char *argv[])
 	{
 	const struct Jobname *job;
 	const char *new_destname;
 	FILE *FIFO;
-
-	if(!argv[0] || !argv[1])
-		{
-		gu_utf8_fputs(_("Usage: ppop move <job> <destination>\n"
-			  "     ppop move <old_destionation> <new_destination>\n\n"
-			  "This command moves a job or jobs to a different queue.\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(job = parse_jobname(argv[0])))
 		return EXIT_SYNTAX;
@@ -1260,42 +1200,17 @@ int ppop_move(char *argv[])
 	wait_for_pprd(TRUE);
 
 	return print_reply();
-	} /* end of ppop_move() */
+	} /* end of command_move() */
 
 /*===========================================================================
-** ppop rush {job}
-**
-** Move a job to the head of the queue.
-**
-** ppop last {job}
-**
-** Move a job to the end of the queue.
+ * Change a job's position in the queue.
 ===========================================================================*/
-int ppop_rush(char *argv[], int newpos)
+static int ppop_rush(const char *argv[], int newpos)
 	{
 	int x;
 	const struct Jobname *job;
 	FILE *FIFO;
 	int result = 0;
-
-	if( argv[0]==(char*)NULL )
-		{
-		if(newpos == 0)
-			{
-			gu_utf8_fputs(_("Usage: ppop rush <job> ...\n\n"
-				"This command moves the specified jobs to the head of the queue.\n"), stderr);
-			}
-		else
-			{
-			gu_utf8_fputs(_("Usage: ppop last <job> ...\n\n"
-				"This command moves the specified jobs to the end of the queue.\n"), stderr);
-			}
-
-		return EXIT_SYNTAX;
-		}
-
-	if(!assert_am_operator())			/* only operator may rush jobs */
-		return EXIT_DENIED;
 
 	for(x=0; argv[x]; x++)
 		{
@@ -1314,39 +1229,44 @@ int ppop_rush(char *argv[], int newpos)
 	return result;
 	} /* end of ppop_rush() */
 
+/*
+<command acl="ppop" helptopics="jobs">
+	<name><word>rush</word></name>
+	<desc>move a job to the head of the queue</desc>
+	<args>
+		<arg flags="repeat"><name>job</name><desc>job to move to head of queue</desc></arg>
+	</args>
+</command>
+*/
+int command_rush(const char *argv[])
+	{
+	return ppop_rush(argv, 0);
+	}
+
+/*
+<command acl="ppop" helptopics="jobs">
+	<name><word>last</word></name>
+	<desc>move a job to the end of the queue</desc>
+	<args>
+		<arg flags="repeat"><name>job</name><desc>job to move to end of queue</desc></arg>
+	</args>
+</command>
+*/
+int command_last(const char *argv[])
+	{
+	return ppop_rush(argv, 10000);
+	}
+
 /*=========================================================================
 ** ppop hold {job}
-**
-** Place a specific job on hold.
-** We do this by sending pprd the "h" command.
-**
 ** ppop release {job}
-**
-** Release a previously held or arrested job.
-** We do this by sending pprd the "r" command.
 =========================================================================*/
-int ppop_hold_release(char *argv[], int release)
+static int ppop_hold_release(const char *argv[], int release)
 	{
 	int x;
 	const struct Jobname *job;
 	FILE *FIFO;
 	int result = 0;
-
-	if(!argv[0])
-		{
-		if(! release)
-			{
-			gu_utf8_fputs(_("Usage: ppop hold <job> ...\n\n"
-				"This causes jobs to be placed in the held state.  A job\n"
-				"which is held will not be printed until it is released.\n"), stderr);
-			}
-		else
-			{
-			gu_utf8_fputs(_("Usage: ppop release <job> ...\n\n"
-				"This command releases previously held or arrested jobs.\n"), stderr);
-			}
-		return EXIT_SYNTAX;
-		}
 
 	for(x=0; argv[x]; x++)
 		{
@@ -1363,8 +1283,10 @@ int ppop_hold_release(char *argv[], int release)
 			return EXIT_DENIED;
 
 		FIFO = get_ready();
-		fprintf(FIFO, "%c %s %d %d\n", release ? 'r' : 'h',
-				job->destname, job->id, job->subid);
+		fprintf(FIFO, "%c %s %d %d\n",
+				release ? 'r' : 'h',
+				job->destname, job->id, job->subid
+				);
 		fflush(FIFO);
 		wait_for_pprd(TRUE);
 
@@ -1375,59 +1297,151 @@ int ppop_hold_release(char *argv[], int release)
 	return result;
 	} /* end of ppop_hold_release() */
 
-/*==========================================================================
-** ppop accept {destination}
-** ppop reject {destination}
-**
-** Set a printer or group to accept or reject print jobs.
-==========================================================================*/
-int ppop_accept_reject(char *argv[], int reject)
+/*
+<command helptopics="jobs">
+	<name><word>hold</word></name>
+	<desc>place a specific job on hold</desc>
+	<args>
+		<arg flags="repeat"><name>job</name><desc>job to hold</desc></arg>
+	</args>
+</command>
+*/
+int command_hold(const char *argv[])
 	{
+	return ppop_hold_release(argv, 0);
+	}
+
+/*
+<command helptopics="jobs">
+	<name><word>release</word></name>
+	<desc>release a job that is held or arrested</desc>
+	<args>
+		<arg flags="repeat"><name>job</name><desc>job to release</desc></arg>
+	</args>
+</command>
+*/
+int command_release(const char *argv[])
+	{
+	return ppop_hold_release(argv, 1);
+	}
+
+/*==========================================================================
+** This is a bunch of simple commands which operate on print destinations.
+** They all work by sending a command to pprd, so we have gathered the
+** real work into a function.
+==========================================================================*/
+static int ppop_destination_command(const char *argv[], int command)
+	{
+	int x;
 	const char *destname;
+	int result = 0;
 	FILE *FIFO;
-
-	if(!argv[0])
+	for(x=0; argv[x]; x++)
 		{
-		if(! reject)
-			gu_utf8_fputs(_("Usage: ppop accept <destionation>\n"), stderr);
-		else
-			gu_utf8_fputs(_("Usage: ppop reject <destination>\n"), stderr);
-
-		gu_utf8_fputs(_("\n\tThis command sets the status of a destination.\n"
-				"\tThe status of a destination may be displayed with\n"
-				"\tthe \"ppop destination\" command.\n"), stderr);
-
-		return EXIT_SYNTAX;
+		if(!(destname = parse_destname(argv[x], FALSE)))
+			return EXIT_SYNTAX;
+		FIFO = get_ready();
+		fprintf(FIFO, "%c %s\n", command, destname);
+		fflush(FIFO);
+		wait_for_pprd(TRUE);
+		if((result = print_reply()))
+			break;
 		}
+	return result;
+	} /* end of ppop_destination_command() */
 
-	if(!assert_am_operator())
-		return EXIT_DENIED;
+/*
+<command acl="ppop" helptopics="printers">
+	<name><word>start</word></name>
+	<desc>start printers which were stopped or faulted</desc>
+	<args>
+		<arg flags="repeat"><name>printer</name><desc>printer to be started</desc></arg>
+	</args>
+</command>
+*/
+int command_start(const char *argv[])
+	{
+	return ppop_destination_command(argv, 't');
+	} /* end of command_start() */
 
-	if(!(destname = parse_destname(argv[0], FALSE)))
-		return EXIT_SYNTAX;
+/*
+<command acl="ppop" helptopics="printers">
+	<name><word>stop</word></name>
+	<desc>stop printers at end of next job</desc>
+	<args>
+		<arg flags="repeat"><name>printer</name><desc>printer to be stopt</desc></arg>
+	</args>
+</command>
+*/
+int command_stop(const char *argv[])
+	{
+	return ppop_destination_command(argv, 'p');
+	} /* end of command_stop() */
 
-	FIFO = get_ready();
+/*
+<command acl="ppop" helptopics="printers">
+	<name><word>wstop</word></name>
+	<desc>stop printers gently, wait until stopt</desc>
+	<args>
+		<arg flags="repeat"><name>printer</name><desc>printer to be stopt</desc></arg>
+	</args>
+</command>
+*/
+int command_wstop(const char *argv[])
+	{
+	return ppop_destination_command(argv, 'P');
+	} /* end of command_wstop() */
 
-	if(! reject)
-		fprintf(FIFO, "A %s\n", destname);
-	else
-		fprintf(FIFO, "R %s\n", destname);
+/*
+<command acl="ppop" helptopics="printers">
+	<name><word>halt</word></name>
+	<desc>stop printers immediately</desc>
+	<args>
+		<arg flags="repeat"><name>printer</name><desc>printer to be stopt</desc></arg>
+	</args>
+</command>
+*/
+int command_halt(const char *argv[])
+	{
+	return ppop_destination_command(argv, 'b');
+	} /* end of command_halt() */
 
-	fflush(FIFO);
+/*
+<command acl="ppop" helptopics="printers,groups">
+	<name><word>accept</word></name>
+	<desc>allow a destination to accept new jobs</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_accept(const char *argv[])
+	{
+	return ppop_destination_command(argv, 'A');
+	}
 
-	wait_for_pprd(TRUE);
-
-	return print_reply();
-	} /* end of ppop_accept_reject() */
+/*
+<command acl="ppop" helptopics="printers,groups">
+	<name><word>reject</word></name>
+	<desc>forbid a destination to accept new jobs</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_reject(const char *argv[])
+	{
+	return ppop_destination_command(argv, 'R');
+	}
 
 /*===========================================================================
 ** ppop dest {destination}
-**
 ** Show the type and status of one or more destinations.
 ===========================================================================*/
-int ppop_destination(char *argv[], int info_level)
+static int ppop_destination(const char *argv[], int info_level)
 	{
 	const char function[] = "ppop_destination";
+	int x;
 	const char *search_destname;
 	FILE *FIFO, *reply_file;
 	const char *format;
@@ -1435,32 +1449,6 @@ int ppop_destination(char *argv[], int info_level)
 	char *line = NULL;
 	int line_len = 128;
 	char *destname, *comment, *interface, *address;
-
-	if(!argv[0])
-		{
-		gu_utf8_fputs(_("Usage: ppop dest[ination] {<destionation>, all}\n"
-				"       ppop ldest {<destionation>, all}\n"
-				"       ppop dest-comment-address {<destination>, all}\n"
-				"\n"
-				"\tThis command displays the status of a print destination.  A print\n"
-				"\tdestination is a printer or a group of printers.  A destination\n"
-				"\tmay be be set to either accept or reject print jobs sent to it.  If\n"
-				"\ta print job is rejected, it is canceled and the user is so informed.\n"
-				"\n"
-				"\tThe \"ppop ldest\" form of this command also displays the comment\n"
-				"\tattached to the printer or group.  The \"ppop dest-comment-address\n"
-				"\tform displays the command and the interface and address.\n"), stderr);
-
-		return EXIT_ERROR;
-		}
-
-	if(!(search_destname = parse_destname(argv[0], FALSE)))
-		return EXIT_SYNTAX;
-
-	/* Send a request to pprd. */
-	FIFO = get_ready();
-	fprintf(FIFO, "D %s\n", search_destname);
-	fflush(FIFO);
 
 	/* If a human is reading our output, give column names. */
 	if(opt_machine_readable)
@@ -1504,95 +1492,113 @@ int ppop_destination(char *argv[], int info_level)
 				break;
 			}
 
-		gu_utf8_printf(format, _("Destination"), _("Type"), _("Status"), _("Charge"), _("Comment"), _("Address"), "");
+		gu_utf8_printf(format,
+			_("Destination"),
+			_("Type"),
+			_("Status"),
+			_("Charge"),
+			_("Comment"),
+			_("Address"),
+			""
+			);
 		while(rule_width--)
 			putchar('-');
 		putchar('\n');
 		}
 
-	/* Wait for a reply from pprd. */
-	if(!(reply_file = wait_for_pprd(TRUE)))
-		return print_reply();			/* if error, print it */
-
-	/* Process all of the responses from pprd. */
-	while((line = gu_getline(line, &line_len, reply_file)))
+	for(x=0; argv[x]; x++)
 		{
-		destname = comment = interface = address = (char*)NULL;
-		if(gu_sscanf(line, "%S %d %d %d", &destname, &is_group, &is_accepting, &is_charge) != 4)
+		if(!(search_destname = parse_destname(argv[x], FALSE)))
+			return EXIT_SYNTAX;
+
+		/* Send a request to pprd. */
+		FIFO = get_ready();
+		fprintf(FIFO, "D %s\n", search_destname);
+		fflush(FIFO);
+	
+		/* Wait for a reply from pprd. */
+		if(!(reply_file = wait_for_pprd(TRUE)))
+			return print_reply();			/* if error, print it */
+	
+		/* Process all of the responses from pprd. */
+		while((line = gu_getline(line, &line_len, reply_file)))
 			{
-			gu_utf8_printf("Malformed response: %s", line);
-			gu_free_if(destname);
-			continue;
-			}
-
-		if(info_level > 0)						/* If we should display the */
-			{									/* destination comment */
-			char fname[MAX_PPR_PATH];
-			FILE *f;
-
-			ppr_fnamef(fname, "%s/%s", is_group ? GRCONF : PRCONF, destname);
-			if((f = fopen(fname, "r")))
+			destname = comment = interface = address = (char*)NULL;
+			if(gu_sscanf(line, "%S %d %d %d", &destname, &is_group, &is_accepting, &is_charge) != 4)
 				{
-				char *pconf_line = NULL;
-				int pconf_line_len = 128;
-				while((pconf_line = gu_getline(pconf_line, &pconf_line_len, f)))
-					{
-					if(gu_sscanf(pconf_line, "Comment: %T", &comment) == 1)
-						continue;
-					if(info_level > 1 && !is_group)
-						{
-						if(gu_sscanf(pconf_line, "Interface: %S", &interface) == 1)
-							continue;
-						if(gu_sscanf(pconf_line, "Address: %A", &address) == 1)
-							continue;
-						}
-					}
-				gu_free_if(pconf_line);
-				fclose(f);
+				gu_utf8_printf("Malformed response: %s", line);
+				gu_free_if(destname);
+				continue;
 				}
-			}
-
-		gu_utf8_printf(format,
-				destname,
-				opt_machine_readable ? (is_group ? "group" : "printer") : (is_group ? _("group") : _("printer")),
-				opt_machine_readable ? (is_accepting ? "accepting" : "rejecting") : (is_accepting ? _("accepting") : _("rejecting")),
-				opt_machine_readable ? (is_charge ? "yes" : "no") : (is_charge ? _("yes") : _("no")),
-				(comment ? comment : ""),
-				(interface ? interface : ""),
-				(address ? address : "")
-				);
-
-		/* Do not remove these */
-		gu_free(destname);
-		gu_free_if(comment);
-		gu_free_if(interface);
-		gu_free_if(address);
-		} /* end of loop which processes responses from pprd. */
-
-	fclose(reply_file);
+	
+			if(info_level > 0)						/* If we should display the */
+				{									/* destination comment */
+				char fname[MAX_PPR_PATH];
+				FILE *f;
+	
+				ppr_fnamef(fname, "%s/%s", is_group ? GRCONF : PRCONF, destname);
+				if((f = fopen(fname, "r")))
+					{
+					char *pconf_line = NULL;
+					int pconf_line_len = 128;
+					while((pconf_line = gu_getline(pconf_line, &pconf_line_len, f)))
+						{
+						if(gu_sscanf(pconf_line, "Comment: %T", &comment) == 1)
+							continue;
+						if(info_level > 1 && !is_group)
+							{
+							if(gu_sscanf(pconf_line, "Interface: %S", &interface) == 1)
+								continue;
+							if(gu_sscanf(pconf_line, "Address: %A", &address) == 1)
+								continue;
+							}
+						}
+					gu_free_if(pconf_line);
+					fclose(f);
+					}
+				}
+	
+			gu_utf8_printf(format,
+					destname,
+					opt_machine_readable ? (is_group ? "group" : "printer") : (is_group ? _("group") : _("printer")),
+					opt_machine_readable ? (is_accepting ? "accepting" : "rejecting") : (is_accepting ? _("accepting") : _("rejecting")),
+					opt_machine_readable ? (is_charge ? "yes" : "no") : (is_charge ? _("yes") : _("no")),
+					(comment ? comment : ""),
+					(interface ? interface : ""),
+					(address ? address : "")
+					);
+	
+			/* Do not remove these */
+			gu_free(destname);
+			gu_free_if(comment);
+			gu_free_if(interface);
+			gu_free_if(address);
+			} /* end of loop which processes responses from pprd. */
+	
+		fclose(reply_file);
+		}
 
 	/* We have to do the aliases ourselves. */
-	{
-	DIR *dir;
-	struct dirent *direntp;
-	int len;
-
-	if(!(dir = opendir(ALIASCONF)))
-		fatal(EXIT_INTERNAL, "%s(): opendir(\"%s\") failed, errno=%d (%s)", function, ALIASCONF, errno, gu_strerror(errno));
-
-	while((direntp = readdir(dir)))
+	if(strcmp(argv[0], "all") == 0)
 		{
-		/* Skip . and .. and hidden files. */
-		if(direntp->d_name[0] == '.')
-			continue;
-
-		/* Skip Emacs style backup files. */
-		len = strlen(direntp->d_name);
-		if(len > 0 && direntp->d_name[len-1] == '~')
-			continue;
-
-		if(strcmp(search_destname, "all") == 0 || strcmp(search_destname, direntp->d_name) == 0)
+		DIR *dir;
+		struct dirent *direntp;
+		int len;
+	
+		if(!(dir = opendir(ALIASCONF)))
+			fatal(EXIT_INTERNAL, "%s(): opendir(\"%s\") failed, errno=%d (%s)", function, ALIASCONF, errno, gu_strerror(errno));
+	
+		while((direntp = readdir(dir)))
 			{
+			/* Skip . and .. and hidden files. */
+			if(direntp->d_name[0] == '.')
+				continue;
+	
+			/* Skip Emacs style backup files. */
+			len = strlen(direntp->d_name);
+			if(len > 0 && direntp->d_name[len-1] == '~')
+				continue;
+	
 			gu_utf8_printf(format,
 				direntp->d_name,
 				opt_machine_readable ? "alias" : _("alias"),
@@ -1603,32 +1609,101 @@ int ppop_destination(char *argv[], int info_level)
 				""				/* address */
 				);
 			}
+	
+		closedir(dir);
 		}
-
-	closedir(dir);
-	}
 
 	return EXIT_OK;
 	} /* end of ppop_destination() */
 
-/*===========================================================================
+/*
+<command helptopics="printers,groups">
+	<name><word>destination</word></name>
+	<desc>show the type and status of one or more print destinations</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_destination(const char *argv[])
+	{
+	return ppop_destination(argv, 0);
+	}
+
+/*
+<command helptopics="printers,groups">
+	<name><word>dest</word></name>
+	<desc>abbreviation for ppop destination</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_dest(const char *argv[])
+	{
+	return ppop_destination(argv, 0);
+	}
+
+/*
+<command helptopics="printers,groups">
+	<name><word>destination-comment</word></name>
+	<desc>show the type, status, and comment of one or more print destinations</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_destination_comment(const char *argv[])
+	{
+	return ppop_destination(argv, 1);
+	}
+
+/*
+<command helptopics="printers,groups">
+	<name><word>ldest</word></name>
+	<desc>abbreviation for ppop destination-comment</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_ldest(const char *argv[])
+	{
+	return ppop_destination(argv, 1);
+	}
+
+/*
+<command helptopics="printers,groups">
+	<name><word>destination-comment-address</word></name>
+	<desc>show the type, status, comment, and address of one or more print destinations</desc>
+	<args>
+		<arg flags="repeat"><name>destination</name><desc>name of printer or group or alias for same</desc></arg>
+	</args>
+</command>
+*/
+int command_destination_comment_address(const char *argv[])
+	{
+	return ppop_destination(argv, 1);
+	}
+
+/*
 ** ppop alerts {printer}
-**
 ** Show the alert messages for a specific printer.
-===========================================================================*/
-int ppop_alerts(char *argv[])
+<command helptopics="printers">
+	<name><word>alerts</word></name>
+	<desc>show alert messages for a specific printer</desc>
+	<args>
+		<arg><name>printer</name><desc>name of printer to show</desc></arg>
+	</args>
+</command>
+*/
+int command_alerts(const char *argv[])
 	{
 	const char *destname;
 	char fname[MAX_PPR_PATH];
 	struct stat statbuf;
 	FILE *f;
 	int c;
-
-	if(! argv[0])
-		{
-		gu_utf8_fputs(_("Usage: ppop alerts _printer_\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
@@ -1666,12 +1741,16 @@ int ppop_alerts(char *argv[])
 	return EXIT_OK;
 	} /* end of ppop_alerts() */
 
-/*==========================================================================
-** ppop log {job}
-**
-** Show the log for a specific print job.
-==========================================================================*/
-int ppop_log(char *argv[])
+/*
+<command helptopics="jobs">
+	<name><word>log</word></name>
+	<desc>show the log for a specific print job</desc>
+	<args>
+		<arg><name>job</name><desc>jobid of job to show</desc></arg>
+	</args>
+</command>
+*/
+int command_log(const char *argv[])
 	{
 	const char function[] = "ppop_log";
 	const struct Jobname *job;
@@ -1680,12 +1759,6 @@ int ppop_log(char *argv[])
 	struct stat statbuf;
 	FILE *f;
 	wchar_t wc;
-
-	if(!argv[0])
-		{
-		gu_utf8_fputs(_("Usage: ppop log <job>\n"), stderr);
-		return EXIT_SYNTAX;
-		}
 
 	if(!(job = parse_jobname(argv[0])))
 		{
