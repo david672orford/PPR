@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 22 May 2006.
 */
 
 /*==============================================================
@@ -1231,7 +1231,7 @@ int command_interface(const char *argv[])
 		}
 	}
 
-	/* existing? */
+	/* Is there an existing printer? */
 	if((obj = conf_open(QUEUE_TYPE_PRINTER, printer, CONF_MODIFY | CONF_RELOAD)))
 		{
 		char *line, *p;
@@ -1277,7 +1277,7 @@ int command_interface(const char *argv[])
 		conf_close(obj);
 		}
 
-	/* new printer */
+	/* Nope, create new printer. */
 	else
 		{
 		FILE *defaults;
@@ -1287,7 +1287,9 @@ int command_interface(const char *argv[])
 
 		conf_printf(obj, "Interface: %s\n", interface);
 		conf_printf(obj, "Address: \"%s\"\n", address);
-		conf_printf(obj, "PPDFile: Apple LaserWriter Plus\n");	/* specify a good generic PPD file */
+
+		/* specify a good generic PPD file */
+		conf_printf(obj, "PPDFile: Apple LaserWriter Plus\n");
 		conf_printf(obj, "DefFiltOpts: level=1 colour=False resolution=300 freevm=172872 mfmode=CanonCX\n");
 
 		/* if there is a defaults file, include it */

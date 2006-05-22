@@ -1,4 +1,4 @@
-Queue ID        For                      Time      Pgs Status
+Queue ID        For                      Time       Pgs Status
 ----------------------------------------------------------------------------
 clear_output: ppop: 0
 Printer          Status
@@ -38,7 +38,7 @@ clear_output: rm: 0
 %%Trailer
 %%EOF
 % regtest interface done %
-Queue ID        For                      Time      Pgs Status
+Queue ID        For                      Time       Pgs Status
 ----------------------------------------------------------------------------
 clear_output: ppop: 0
 Printer          Status

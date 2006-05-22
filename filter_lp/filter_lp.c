@@ -201,16 +201,9 @@ int lines_per_page;				/* the final value */
 int TAB_WIDTH = DEFAULT_TAB_WIDTH;
 
 /*
-** The normal and bold fonts we will use.
-**
-** The "fontnormal=" and "fontbold=" options can change these.
-** If they are not set manually, they are set automatically,
-** with either "Courier" or "IBMCourier" being selected, depending
-** on the required character set.
-**
-** Also, the character width for these fonts as a fraction of the
-** height.  The default value is 0.60.
-*/
+ * The default font family together with our expectations
+ * about its width and height.
+ */
 char *font_family = "monospace";
 double char_width = DEFAULT_CHAR_WIDTH;
 double char_height = DEFAULT_CHAR_HEIGHT;

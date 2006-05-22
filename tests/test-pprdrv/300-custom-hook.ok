@@ -1,6 +1,6 @@
 ppad: 0
 ppad: 0
-Queue ID        For                      Time      Pgs Status
+Queue ID        For                      Time       Pgs Status
 ----------------------------------------------------------------------------
 clear_output: ppop: 0
 Printer          Status
@@ -11,6 +11,7 @@ clear_output: rm: 0
 ppr: 0
 % 2 0
 %!PS-Adobe-3.0
+%%LanguageLevel: 1
 % 4 0
 %%For: (ppr)
 %%Creator: (PPR Line Printer Emulator)

@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 8 May 2006.
+** Last modified 22 May 2006.
 */
 
 /*
@@ -43,25 +43,24 @@ static const char *conf_directory(enum QUEUE_TYPE queue_type)
 		case QUEUE_TYPE_ALIAS:
 			return ALIASCONF;
 		}
-	/* GCC warning is spurious */
+	#warning Expect spurious warning on next line
 	}
 
 /** Open a PPR destination (printer, group, or alias) configuration file.
  * queue_type is one of
  * 		QUEUE_TYPE_PRINTER
  * 		QUEUE_TYPE_GROUP
- * 		QUEUE_TYPE_ALIASA
+ * 		QUEUE_TYPE_ALIAS
  * flags is the bitwise or of
- * 		CONF_MODIFY -- allow modification, create if doesn't exist
- * 		CONF_RELOAD -- inform pprd of change (even if CONF_MODIFY is absent)
- * 		CONF_CREATE	-- create new, fail if exists (does not imply CONF_RELOAD)
+ * 		CONF_CREATE	-- create new, fail if exists and CONF_MODIFY is not defined
+ * 		CONF_MODIFY -- modify existing, fail if does not exist and CONF_CREATE is not defined
+ * 		CONF_RELOAD -- inform pprd of change (even if open mode did not allow modification)
  * 		CONF_ENOENT_PRINT -- print an error message if doesn't exist
  */
 struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], int flags)
 	{
 	const char function[] = "conf_open";
 	struct CONF_OBJ *obj = gu_alloc(1, sizeof(struct CONF_OBJ));
-	gu_boolean exists_error = FALSE;
 
 	obj->queue_type = queue_type;
 	obj->name = destname;
@@ -73,22 +72,29 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 
 	ppr_fnamef(obj->in_name, "%s/%s", conf_directory(queue_type), destname);
 
-	if(flags & CONF_MODIFY)			/* modify existing, possibly create */
+	if(debug_level >= 1)
 		{
-		if(debug_level >= 1)
-			{
-			if(flags & CONF_CREATE)
-				gu_utf8_printf("Opening \"%s\" (create new or modify existing).\n", obj->in_name);
-			else
-				gu_utf8_printf("Opening \"%s\" (modify existing).\n", obj->in_name);
-			}
+		gu_utf8_printf(
+			X_("Opening \"%s\" (create=%s, modify=%s, reload=%s).\n"),
+			obj->in_name,
+			flags & CONF_CREATE ? "YES" : "NO",
+			flags & CONF_MODIFY ? "YES" : "NO",
+			flags & CONF_RELOAD ? "YES" : "NO"
+			);
+		}
 
+	/* If modification of existing files is allowed, we must try to open
+	 * an existing file and lock it if we find one.
+	 */
+	if(flags & CONF_MODIFY)
+		{
 		do	{
-			/* must open for update if we want an exclusive lock */
+			/* Though we do not modify the original file, we must open it
+			 * for update if we want an exclusive lock. */
 			if(!(obj->in = fopen(obj->in_name, "r+")))
 				{
 				if(errno == ENOENT)		/* if open failed because doesn't exist, */
-					break;
+					break;				/* drop out without a file object */
 				else
 					gu_Throw(_("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r+", errno, gu_strerror(errno));
 				}
@@ -102,53 +108,40 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 				}
 			} while(!obj->in);
 		}
-	else if(flags & CONF_CREATE)	/* create only, no modify existing */
+
+	/* read-only or create only */
+	else
 		{
-		struct stat statbuf;
-		if(debug_level >= 1)
-			gu_utf8_printf("Opening \"%s\" (create new).\n", obj->in_name);
-		if(stat(obj->in_name, &statbuf) == 0)	/* if exists, */
-			{
-			switch(obj->queue_type)
-				{
-				case QUEUE_TYPE_PRINTER:
-					gu_utf8_fprintf(stderr, _("The printer \"%s\" already exists.\n"), destname);
-					break;
-				case QUEUE_TYPE_GROUP:
-					gu_utf8_fprintf(stderr, _("The group \"%s\" already exists.\n"), destname);
-					break;
-				case QUEUE_TYPE_ALIAS:
-					gu_utf8_fprintf(stderr, _("The alias \"%s\" already exists.\n"), destname);
-					break;
-				}
-			exists_error = TRUE;
-			}
-		}
-	else							/* read-only */
-		{
-		if(debug_level >= 1)
-			gu_utf8_printf("Opening \"%s\" (read only).\n", obj->in_name);
 		if(!(obj->in = fopen(obj->in_name, "r")))
 			{
 			if(errno != ENOENT)
-				fatal(EXIT_INTERNAL, _("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r", errno, gu_strerror(errno));
+				gu_Throw(_("%s(): %s(\"%s\", \"%s\") failed, errno=%d (%s)"), function, "fopen", obj->in_name, "r", errno, gu_strerror(errno));
 			}
 		}
 
-	/* If we are modifying the file or creating a new one, we must create a 
-	 * temporary file for the new version. */
-	if(!exists_error && (flags & CONF_MODIFY || flags & CONF_CREATE))
+	/* If create only mode and file exists, we have a problem. */
+	if(obj->in && (flags & CONF_CREATE) && !(flags & CONF_MODIFY))
 		{
-		/* Create temporary file in same dir, hidden (from pprd). */
-		ppr_fnamef(obj->out_name,"%s/.ppad%ld", conf_directory(queue_type), (long)getpid());
-		if(!(obj->out = fopen(obj->out_name, "w")))
-			fatal(EXIT_INTERNAL, _("Can't open temporary file \"%s\" for write, errno=%d (%s)"), obj->out_name, errno, gu_strerror(errno));
+		switch(obj->queue_type)
+			{
+			case QUEUE_TYPE_PRINTER:
+				gu_utf8_fprintf(stderr, _("The printer \"%s\" already exists.\n"), destname);
+				break;
+			case QUEUE_TYPE_GROUP:
+				gu_utf8_fprintf(stderr, _("The group \"%s\" already exists.\n"), destname);
+				break;
+			case QUEUE_TYPE_ALIAS:
+				gu_utf8_fprintf(stderr, _("The alias \"%s\" already exists.\n"), destname);
+				break;
+			}
+		fclose(obj->in);
+		obj->in = NULL;
 		}
 
 	/* If we tried to open the config file for read or for modify (in other
 	 * words, if it is not OK to create it), but didn't find it, we have 
 	 * failed. */
-	if(!obj->in && !(flags & CONF_CREATE))
+	else if(!obj->in && !(flags & CONF_CREATE))
 		{
 		if(flags & CONF_ENOENT_PRINT)
 			{
@@ -167,6 +160,17 @@ struct CONF_OBJ *conf_open(enum QUEUE_TYPE queue_type, const char destname[], in
 			}
 		}
 
+	/* If we are modifying the file or creating a new one, we must create a 
+	 * temporary file for the new version. */
+	else if((flags & CONF_MODIFY) || (flags & CONF_CREATE))
+		{
+		/* Create temporary file in same dir, hidden (from pprd). */
+		ppr_fnamef(obj->out_name,"%s/.ppad%ld", conf_directory(queue_type), (long)getpid());
+		if(!(obj->out = fopen(obj->out_name, "w")))
+			gu_Throw(_("Can't open temporary file \"%s\" for write, errno=%d (%s)"), obj->out_name, errno, gu_strerror(errno));
+		}
+
+	/* If an error was detected above, */
 	if(!obj->in && !obj->out)
 		{
 		gu_free(obj);

@@ -1,7 +1,7 @@
 ====================================================================
 test: -F Duplex=None
 ====================================================================
-Queue ID        For                      Time      Pgs Status
+Queue ID        For                      Time       Pgs Status
 ----------------------------------------------------------------------------
 clear_output: ppop: 0
 Printer          Status
@@ -19,7 +19,7 @@ Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/
 ====================================================================
 test: -F Duplex=DuplexNoTumble
 ====================================================================
-Queue ID        For                      Time      Pgs Status
+Queue ID        For                      Time       Pgs Status
 ----------------------------------------------------------------------------
 clear_output: ppop: 0
 Printer          Status
@@ -37,7 +37,7 @@ Filter command: /usr/lib/ppr/filters/filter_lp, argv[] = {"/usr/lib/ppr/filters/
 ====================================================================
 test: -F Duplex=DuplexTumble
 ====================================================================
-Queue ID        For                      Time      Pgs Status
+Queue ID        For                      Time       Pgs Status
 ----------------------------------------------------------------------------
 clear_output: ppop: 0
 Printer          Status

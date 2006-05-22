@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 18 May 2006.
+** Last modified 22 May 2006.
 */
 
 /*
@@ -639,8 +639,8 @@ static int ppop_list_item(
 		);
 
 	job_status(qentry, qentryfile, onprinter, qstream,
-		55,		/* media indent */
-		55		/* reason indent */
+		56,		/* media indent */
+		56		/* reason indent */
 		);
 
 	return FALSE;
