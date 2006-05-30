@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 18 May 2006.
+** Last modified 23 May 2006.
 */
 
 /*
@@ -426,31 +426,6 @@ static gu_boolean privileged(void)
 	} /* end of privileged() */
 
 /*
-** Set the user who should be considered to be running this program.
-** Only privileged users may do this.  Thus, a privileged user may
-** become a different privileged user or become an unprivileged user.
-** Thus a privileged user can use this feature to drop privledge, but
-** not to gain additional access.
-**
-** Generally, this will be used by servers running under privileged
-** user identities.  They will use this so as not to exceed the privledge
-** of the user for whom they are acting.
-*/
-static int do_u_option(const char username[])
-	{
-	if(privileged())
-		{
-		gu_free(opt_user);
-		opt_user = gu_strdup(username);
-		return 0;
-		}
-	else
-		{
-		return -1;
-		}
-	}
-
-/*
 ** Return zero if the user has the operator privledge,
 ** if not, print an error message and return -1.
 **
@@ -864,9 +839,10 @@ int main(int argc, char *argv[])
 	if(!(pw = getpwuid(uid)))
 		{
 		gu_utf8_fprintf(stderr, "%s: getpwuid(%ld) failed, errno=%d (%s)\n", myname, (long)uid, errno, gu_strerror(errno));
-		exit(EXIT_INTERNAL);
+		return EXIT_INTERNAL;
 		}
 	opt_user = gu_strdup(pw->pw_name);
+	dispatch_set_user(NULL, pw->pw_name);
 	}
 
 	/* Parse the options. */
@@ -887,11 +863,12 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'u':
-				if(do_u_option(getopt_state.optarg) == -1)
+				if(dispatch_set_user("ppop", getopt_state.optarg) == -1)
 					{
-					gu_utf8_fprintf(stderr, _("You aren't allowed to use the %s option.\n"), "-u");
+					gu_utf8_fprintf(stderr, _("%s: you are not allowed to use --user\n"), myname);
 					exit(EXIT_DENIED);
 					}
+				opt_user = getopt_state.optarg;
 				break;
 
 			case 1000:					/* --help */

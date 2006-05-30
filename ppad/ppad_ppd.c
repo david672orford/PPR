@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 8 February 2006.
+** Last modified 25 May 2006.
 */
 
 /*==============================================================
@@ -511,7 +493,7 @@ static int ppd_query_interface_probe(const char printer[], struct QUERY *q, stru
 		}
 	gu_Catch
 		{
-		gu_utf8_fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, _("%s: interface probe failed: %s\n"), myname, gu_exception);
 		retval = 0;
 		}
 
@@ -615,7 +597,7 @@ static int ppd_query_postscript(const char printer[], struct QUERY *q, struct TH
 		}
 	gu_Catch
 		{
-		gu_utf8_fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, _("%s: PostScript query failed: %s\n"), myname, gu_exception);
 		retval = 0;
 		}
 
@@ -707,7 +689,7 @@ static int ppd_query_pjl(const char printer[], struct QUERY *q, struct THE_FACTS
 		}
 	gu_Catch
 		{
-		gu_utf8_fprintf(stderr, "%s: query failed: %s\n", myname, gu_exception);
+		gu_utf8_fprintf(stderr, _("%s: PJL query failed: %s\n"), myname, gu_exception);
 		retval = 0;
 		}
 
@@ -818,17 +800,32 @@ int ppd_query_core(const char printer[], struct QUERY *q)
 			}
 		else
 			{
-			gu_utf8_printf(_("No matching PPD files found for printer with these characteristics:\n"));
+			gu_utf8_printf(_("No PPD files found which match these printer characteristics:\n"));
 			if(facts.SNMP_hrDeviceDescr)
+				{
+				gu_utf8_puts("    ");
 				gu_utf8_printf(_("SNMP Device Description: %s\n"), facts.SNMP_hrDeviceDescr);
+				}
 			if(facts.product)
+				{
+				gu_utf8_puts("    ");
 				gu_utf8_printf(_("PostScript Product Name: %s\n"), facts.product);
+				}
 			if(facts.pjl_id)
+				{
+				gu_utf8_puts("    ");
 				gu_utf8_printf(_("PJL ID String: %s\n"), facts.pjl_id);
+				}
 			if(facts.deviceid_manufacturer)
+				{
+				gu_utf8_puts("    ");
 				gu_utf8_printf(_("IEEE 1284 DeviceID Manufacturer: %s\n"), facts.deviceid_manufacturer);
+				}
 			if(facts.deviceid_model)
+				{
+				gu_utf8_puts("    ");
 				gu_utf8_printf(_("IEEE 1284 DeviceID Model: %s\n"), facts.deviceid_model);
+				}
 			}
 		}
 
@@ -886,7 +883,7 @@ int command_ppdlib_query(const char *argv[])
 		}
 
 	return ret;
-	} /* end of ppd_query */
+	} /* end of command_ppdlib_query */
 
 /*
 <command helptopics="ppdlib">
@@ -946,7 +943,7 @@ int command_ppdlib_search(const char *argv[])
 	gu_free(pattern_lowered);
 
 	return EXIT_OK;
-	} /* end of ppdlib_search() */
+	} /* end of command_ppdlib_search() */
 
 /*
 <command helptopics="ppdlib">

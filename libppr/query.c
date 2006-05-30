@@ -3,29 +3,11 @@
 ** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 31 March 2006.
+** Last modified 25 May 2006.
 */
 
 #include "config.h"
@@ -38,6 +20,9 @@
 #include <time.h>
 #include <sys/wait.h>
 #include <ctype.h>
+#ifdef INTERNATIONAL
+#include <libintl.h>
+#endif
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"
@@ -193,7 +178,7 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 				switch(fork())
 					{
 					case -1:							/* fork failed */
-						gu_Throw("fork() failed, errno=%d (%s)", errno, gu_strerror(errno));
+						gu_Throw(_("%s() failed, errno=%d (%s)"), "fork", errno, gu_strerror(errno));
 						break;
 					case 0:								/* child */
 						/* paranoid code */
@@ -295,39 +280,50 @@ void query_connect(struct QUERY *q, gu_boolean probe)
 				{
 				if(is_stderr)
 					{
-					if(lmatch(line, "query_wrapper:"))				/* save query wrapper errors for exception handler */
+					/* save query wrapper errors for exception handler */
+					if(lmatch(line, "query_wrapper:"))
 						gu_strlcpy(temp, line, sizeof(temp));
-					else											/* just print chattiness */
-						fprintf(stderr, "    %s\n", line);
+					/* just print chattiness */
+					else
+						gu_utf8_fprintf(stderr, "    %s\n", line);
 					continue;
 					}
-				if(strcmp(line, "%%[ PPR address lookup ]%%") == 0)	/* so far, so good */
+				/* So far, so good, our confidence grows, extend the timeout. */
+				if(strcmp(line, "%%[ PPR address lookup ]%%") == 0)
 					{
-					timeout = 30;									/* our confidence grows, extend the timeout */
+					timeout = 30;
 					continue;
 					}
-				if(strcmp(line, "%%[ PPR connecting ]%%") == 0)		/* so far, so good */
+				/* So far, so good, our confidence grows, extend the timeout even more. */
+				if(strcmp(line, "%%[ PPR connecting ]%%") == 0)
 					{
-					timeout = 120;									/* our confidence grows, extend the timeout */
+					timeout = 120;
 					continue;
 					}
-				if(strcmp(line, "%%[ PPR connected ]%%") == 0)		/* we are home free */
+				/* We are home free! */
+				if(strcmp(line, "%%[ PPR connected ]%%") == 0)
 					{
 					break;
 					}
-				if(lmatch(line, "%%["))								/* something bad happened? */
-					{												/* save it in case the interface exits */
+				/* Something bad happened?  Save it in case the interface exits prematurely. */
+				if(lmatch(line, "%%[ status:") || lmatch(line, "%%[ PrinterError:"))
+					{
 					gu_strlcpy(temp, line, sizeof(temp));
 					continue;
 					}
-				fprintf(stderr, "Leading garbage (%d characters): \"%s\"\n", (int)strlen(line), line);
+				/* Ignore other status messages. */
+				if(lmatch(line, "%%["))
+					{
+					continue;
+					}
+				gu_utf8_fprintf(stderr, _("Leading garbage (%d characters): \"%s\"\n"), (int)strlen(line), line);
 				}
 			if(!line)							/* if interface exited, */
 				{
 				if(strlen(temp))
-					gu_Throw("%s", temp);
+					gu_Throw(_("connect failed: %s"), temp);
 				else
-					gu_Throw("interface program quit unexpectedly");
+					gu_Throw(_("connect failed"));
 				}
 			}
 		gu_Catch
@@ -384,7 +380,7 @@ char *query_getline(struct QUERY *q, gu_boolean *is_stderr, int timeout)
 	while(!q->eof_stdout || !q->eof_stderr)
 		{
 		gettimeofday(&time_now, NULL);
-		/*printf("time_now=%d.%06d stop_time=%d.%06d\n", (int)time_now.tv_sec, (int)time_now.tv_usec, (int)stop_time.tv_sec, (int)stop_time.tv_usec);*/
+		/*gu_utf8_printf("time_now=%d.%06d stop_time=%d.%06d\n", (int)time_now.tv_sec, (int)time_now.tv_usec, (int)stop_time.tv_sec, (int)stop_time.tv_usec);*/
 		if(gu_timeval_cmp(&time_now, &stop_time) >= 0)
 			gu_Throw("timeout");
 
@@ -632,7 +628,7 @@ void query_disconnect(struct QUERY *q)
 	while((line = query_getline(q, NULL, 10)))
 		{
 		int i1, i2;
-		fprintf(stderr, "Trailing garbage:\n");
+		gu_utf8_fprintf(stderr, "Trailing garbage:\n");
 		for(i1=0; i1 < strlen(line); i1 += 16)
 			{
 			for(i2=i1; i2 < strlen(line); i2++)

@@ -27,7 +27,7 @@
 		<integer ifdef="copies"><name>copies</name>
 			<param-value>copies</param-value>
 			</integer>
-		<keyword><name>sides</name>
+		<keyword ifdef="sides"><name>sides</name>
 			<param-value>sides</param-value>
 			</keyword>
 	</job-attributes>
