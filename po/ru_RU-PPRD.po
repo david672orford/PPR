@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-28 10:34-0400\n"
+"POT-Creation-Date: 2006-05-30 13:26-0400\n"
 "PO-Revision-Date: 2005-08-31 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -31,7 +31,7 @@ msgstr ""
 msgid "%s(): write() wrote %d of %d bytes to client"
 msgstr ""
 
-#: ../pprd/pprd_load.c:180 ../pprd/pprd_load.c:183
+#: ../pprd/pprd_load.c:180 ../pprd/pprd_load.c:183 ../pprd/pprd_load.c:460
 #, c-format
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr ""

@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 28 April 2006.
+# Last modified 14 June 2006.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -459,39 +459,40 @@ while(1)
 			}
 
 		# Set these to trigger CGI execution.
-		my($script_name, $script_exe, $path_info) = ($path, undef, "");
+		my($script_name, $script_filename, $path_info) = ($path, undef, "");
 
 		# Recognize CUPS-compatibility paths and route them to the
 		# ippd CGI program.
 		if($path eq "")
 			{
 			$script_name = "";
-			$script_exe = "$CGI_BIN/ippd";
+			$script_filename = "$CGI_BIN/ippd";
 			$path_info = "/";
 			}
 		if($path =~ m#^((printers|classes|admin|jobs)(/.*)?)$#)
 			{
 			$script_name = "";
-			$script_exe = "$CGI_BIN/ippd";
+			$script_filename = "$CGI_BIN/ippd";
 			$path_info = "/$1";
 			}
 
 		# Recognize /cgi-bin/ and route to programs in $CGI_BIN.
-		if($path =~ m#^(cgi-bin/([^/]+))(.*)#)
+		if($path =~ m#^cgi-bin/([^/]+)(.*)#)
 			{
-			($script_name, $script_exe, $path_info) = ($1, $2, $3);
-			$script_exe = "$CGI_BIN/$script_exe";
+			$path_info = $2;
+			$script_name = "/cgi-bin/$1";
+			$script_filename = "$CGI_BIN/$1";
 			}
 
 		#
 		# If the request is for a CGI script,
 		#
-		if(defined($script_exe))
+		if(defined($script_filename))
 			{
-			print STDERR "path: $path, script_exe: $script_exe, path_info: $path_info\n" if($DEBUG > 0);
+			print STDERR "path: $path, script_name: $script_name, script_filename: $script_filename, path_info: $path_info, query: $query\n" if($DEBUG > 0);
 			$resp_header_connection =
 				do_cgi($request_method, $request_uri, \%request_headers,
-					$script_name, $script_exe, $path_info, $query,
+					$script_name, $script_filename, $path_info, $query,
 					$resp_header_connection, $resp_headers_general,
 					$request_time,
 					$request_version_major, $request_version_minor
@@ -879,15 +880,15 @@ sub do_get
 #=========================================================================
 sub do_cgi
 	{
-	my($method, $request_uri, $request_headers, $script_name, $script_exe, $path_info, $query, $resp_header_connection, $resp_headers_general, $request_time, $request_version_major, $request_version_minor) = @_;
+	my($method, $request_uri, $request_headers, $script_name, $script_filename, $path_info, $query, $resp_header_connection, $resp_headers_general, $request_time, $request_version_major, $request_version_minor) = @_;
 	my $protection_domain = "http://$request_headers->{HOST}/cgi-bin/";
 	my $stale = 0;
 	my $auth_info = undef;
 
-	if(! -f $script_exe)
-		{ die("404 The CGI program \"$script_exe\" is not found.\n") }
+	if(! -f $script_filename)
+		{ die("404 The CGI program \"$script_filename\" is not found.\n") }
 	if(! -x _)
-		{ die("403 The CGI program \"$script_exe\" is not executable.\n") }
+		{ die("403 The CGI program \"$script_filename\" is not executable.\n") }
 
 	$ENV{REMOTE_USER} = "";
 
@@ -923,7 +924,7 @@ sub do_cgi
 	#	($ENV{AUTH_TYPE}, $ENV{REMOTE_USER}) = ("None", "ppranon");
 	#	}
 
-	print STDERR "Executing CGI program \"$script_exe\".\n" if($DEBUG > 0);
+	print STDERR "Executing CGI program \"$script_filename\".\n" if($DEBUG > 0);
 
 	# Create two anonymous pipes, one to send data to the CGI script,
 	# the other to receive data.
@@ -969,6 +970,7 @@ sub do_cgi
 				delete $ENV{PATH_TRANSLATED};
 				}
 			$ENV{SCRIPT_NAME} = $script_name;
+			$ENV{SCRIPT_FILENAME} = $script_filename;	# Apache extension?
 			$ENV{QUERY_STRING} = $query;
 			delete $ENV{REMOTE_HOST};					# not implemented
 			delete $ENV{REMOTE_IDENT};					# not implemented
@@ -996,7 +998,7 @@ sub do_cgi
 				}
 
 			# Run the CGI script.
-			exec($script_exe) || die;
+			exec($script_filename) || die;
 			} ;
 
 		# Catch exceptions

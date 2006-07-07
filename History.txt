@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--19 May 2006
+2.00a1, 11 December 2004--6 July 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10079,4 +10079,10 @@ no final tarball was released.
 
 * ipp/: renamed IPP server from "ipp" to "ippd".
 
+* www/ppr-httpd.perl: added CGI environment variable SCRIPT_FILENAME which
+  though not in the CGI specification is set by Apache 2.x.  Another Apache
+  extension, REQUEST_URI is not implemented.
+
+* www/cgi_wizard.pl: fixed window resize code to account for height of browser
+  controls.
 

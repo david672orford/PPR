@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 18 May 2006.
+** Last modified 14 June 2006.
 */
 
 #include "config.h"
@@ -334,7 +334,7 @@ int dispatch_interactive(const char myname[], const char banner[], const char pr
 		}
 	else				/* terse, machine readable banner */
 		{
-		gu_utf8_putline("*READY\t"VERSION);
+		gu_utf8_printf("*READY\t%s\n", SHORT_VERSION);
 		fflush(stdout);
 		}
 
