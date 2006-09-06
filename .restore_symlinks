@@ -1,20 +1,22 @@
 #! /bin/bash
 # ../../INSTALL.txt --> ./docs/misc/INSTALL.txt
 ln -sf ../../INSTALL.txt ./docs/misc/INSTALL.txt || exit 1
+# ../History.txt --> ./docs/misc/docs_history.txt
+ln -sf ../History.txt ./docs/misc/docs_history.txt || exit 1
 # ../../po/README.txt --> ./docs/misc/internationalization.txt
 ln -sf ../../po/README.txt ./docs/misc/internationalization.txt || exit 1
 # ../../History.txt --> ./docs/misc/main_history.txt
 ln -sf ../../History.txt ./docs/misc/main_history.txt || exit 1
-# ../History.txt --> ./docs/misc/docs_history.txt
-ln -sf ../History.txt ./docs/misc/docs_history.txt || exit 1
 # ../../misc/README.txt --> ./docs/misc/misc_dir_contents.txt
 ln -sf ../../misc/README.txt ./docs/misc/misc_dir_contents.txt || exit 1
+# ../config.h --> ./include/config.h
+ln -sf ../config.h ./include/config.h || exit 1
 # ../nonppr_misc/md5/gu_md5.h --> ./include/gu_md5.h
 ln -sf ../nonppr_misc/md5/gu_md5.h ./include/gu_md5.h || exit 1
-# ../nonppr_misc/pcre/pcre.h --> ./include/pcre.h
-ln -sf ../nonppr_misc/pcre/pcre.h ./include/pcre.h || exit 1
 # ../nonppr_misc/c2lib/hash.h --> ./include/hash.h
 ln -sf ../nonppr_misc/c2lib/hash.h ./include/hash.h || exit 1
+# ../nonppr_misc/pcre/pcre.h --> ./include/pcre.h
+ln -sf ../nonppr_misc/pcre/pcre.h ./include/pcre.h || exit 1
 # ../nonppr_misc/c2lib/pool.h --> ./include/pool.h
 ln -sf ../nonppr_misc/c2lib/pool.h ./include/pool.h || exit 1
 # ../nonppr_misc/c2lib/pre.h --> ./include/pre.h
@@ -25,24 +27,8 @@ ln -sf ../nonppr_misc/c2lib/pstring.h ./include/pstring.h || exit 1
 ln -sf ../nonppr_misc/c2lib/tree.h ./include/tree.h || exit 1
 # ../nonppr_misc/c2lib/vector.h --> ./include/vector.h
 ln -sf ../nonppr_misc/c2lib/vector.h ./include/vector.h || exit 1
-# ../config.h --> ./include/config.h
-ln -sf ../config.h ./include/config.h || exit 1
-# ../nonppr_misc/md5/gu_md5.c --> ./libgu/gu_md5.c
-ln -sf ../nonppr_misc/md5/gu_md5.c ./libgu/gu_md5.c || exit 1
-# ../nonppr_misc/snprintf/snprintf.c --> ./libgu/snprintf.c
-ln -sf ../nonppr_misc/snprintf/snprintf.c ./libgu/snprintf.c || exit 1
-# ../nonppr_misc/wildmat/gu_wildmat.c --> ./libgu/gu_wildmat.c
-ln -sf ../nonppr_misc/wildmat/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1
-# ../nonppr_misc/pcre/pcre.c --> ./libgu/pcre.c
-ln -sf ../nonppr_misc/pcre/pcre.c ./libgu/pcre.c || exit 1
 # ../nonppr_misc/c2lib/hash.c --> ./libgu/c2lib_hash.c
 ln -sf ../nonppr_misc/c2lib/hash.c ./libgu/c2lib_hash.c || exit 1
-# ../nonppr_misc/pcre/get.c --> ./libgu/pcre_get.c
-ln -sf ../nonppr_misc/pcre/get.c ./libgu/pcre_get.c || exit 1
-# ../nonppr_misc/pcre/maketables.c --> ./libgu/pcre_maketables.c
-ln -sf ../nonppr_misc/pcre/maketables.c ./libgu/pcre_maketables.c || exit 1
-# ../nonppr_misc/pcre/study.c --> ./libgu/pcre_study.c
-ln -sf ../nonppr_misc/pcre/study.c ./libgu/pcre_study.c || exit 1
 # ../nonppr_misc/c2lib/pool.c --> ./libgu/c2lib_pool.c
 ln -sf ../nonppr_misc/c2lib/pool.c ./libgu/c2lib_pool.c || exit 1
 # ../nonppr_misc/c2lib/pre.c --> ./libgu/c2lib_pre.c
@@ -53,18 +39,30 @@ ln -sf ../nonppr_misc/c2lib/pstring.c ./libgu/c2lib_pstring.c || exit 1
 ln -sf ../nonppr_misc/c2lib/tree.c ./libgu/c2lib_tree.c || exit 1
 # ../nonppr_misc/c2lib/vector.c --> ./libgu/c2lib_vector.c
 ln -sf ../nonppr_misc/c2lib/vector.c ./libgu/c2lib_vector.c || exit 1
+# ../nonppr_misc/md5/gu_md5.c --> ./libgu/gu_md5.c
+ln -sf ../nonppr_misc/md5/gu_md5.c ./libgu/gu_md5.c || exit 1
+# ../nonppr_misc/wildmat/gu_wildmat.c --> ./libgu/gu_wildmat.c
+ln -sf ../nonppr_misc/wildmat/gu_wildmat.c ./libgu/gu_wildmat.c || exit 1
+# ../nonppr_misc/pcre/pcre.c --> ./libgu/pcre.c
+ln -sf ../nonppr_misc/pcre/pcre.c ./libgu/pcre.c || exit 1
+# ../nonppr_misc/pcre/get.c --> ./libgu/pcre_get.c
+ln -sf ../nonppr_misc/pcre/get.c ./libgu/pcre_get.c || exit 1
+# ../nonppr_misc/pcre/maketables.c --> ./libgu/pcre_maketables.c
+ln -sf ../nonppr_misc/pcre/maketables.c ./libgu/pcre_maketables.c || exit 1
+# ../nonppr_misc/pcre/study.c --> ./libgu/pcre_study.c
+ln -sf ../nonppr_misc/pcre/study.c ./libgu/pcre_study.c || exit 1
+# ../nonppr_misc/snprintf/snprintf.c --> ./libgu/snprintf.c
+ln -sf ../nonppr_misc/snprintf/snprintf.c ./libgu/snprintf.c || exit 1
 # ../nonppr_misc/md5/MD5pp.pm --> ./libscript/MD5pp.pm
 ln -sf ../nonppr_misc/md5/MD5pp.pm ./libscript/MD5pp.pm || exit 1
 # ../nonppr_misc/ps_type3/ps_type3.c --> ./libttf/ps_type3.c
 ln -sf ../nonppr_misc/ps_type3/ps_type3.c ./libttf/ps_type3.c || exit 1
 # ../nonppr_misc/squeeze/squeeze.c --> ./makeprogs/squeeze.c
 ln -sf ../nonppr_misc/squeeze/squeeze.c ./makeprogs/squeeze.c || exit 1
-# docbook-xsl-1.60.1 --> ./nonppr_misc/docbook-xsl
-ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl || exit 1
-# docbook-xml-4.2/ --> ./nonppr_misc/docbook-xml-4.2/docbook-xml-4.2
-ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml-4.2/docbook-xml-4.2 || exit 1
 # docbook-xml-4.2/ --> ./nonppr_misc/docbook-xml
 ln -sf docbook-xml-4.2/ ./nonppr_misc/docbook-xml || exit 1
+# docbook-xsl-1.60.1 --> ./nonppr_misc/docbook-xsl
+ln -sf docbook-xsl-1.60.1 ./nonppr_misc/docbook-xsl || exit 1
 # ../nonppr_misc/md5/md5pure.tcl --> ./pprpopup/md5pure.tcl
 ln -sf ../nonppr_misc/md5/md5pure.tcl ./pprpopup/md5pure.tcl || exit 1
 # ../nonppr_misc/md5/md5.js --> ./www/md5.js
