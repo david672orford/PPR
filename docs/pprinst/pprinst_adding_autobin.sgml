@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_adding_autobin.sgml
-Last Modified: 18 September 2003
+Last Modified: 22 August 2006
 Last Proofread:
 -->
 
@@ -39,7 +39,7 @@ Feedback: yes (by default)
 Codes: Binary (by default)
 Alert interval: 5 (send alert every 5 errors)
 Alert method: mail
-Alert address: alertreaders@mail.trincoll.edu
+Alert address: alertreaders@oldivy.edu
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: none
 PPDFile: HP LaserJet 4M DSC

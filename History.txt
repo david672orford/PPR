@@ -9399,7 +9399,7 @@ no final tarball was released.
 * editps/editps.conf: adjusted Mozilla 1.6 rule to include Mozilla 1.7.
 
 * libppr/readppd.c: removed extra newline from message about missing PPD file.
-  This was messing up the load fucntion in www/prn_properties.cgi.perl.
+  This was messing up the load function in www/prn_properties.cgi.perl.
 
 * docs/Makefile: changed "make" to "$(MAKE)".
 

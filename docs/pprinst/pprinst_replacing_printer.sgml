@@ -1,6 +1,6 @@
 <!--
 Filename: pprinst_replacing_printer.sgml
-Last Modified: 29 January 2004
+Last Modified: 22 August 2006
 Last Proofread: 
 -->
 
@@ -46,7 +46,7 @@ PPDFile: QMS-PS 410
   OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
   Alert method: mail
-  Alert address: alertreaders@mail.trincoll.edu
+  Alert address: alertreaders@oldivy.edu
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: no charge
 Switchset:
@@ -111,7 +111,7 @@ PPDFile: QMS-PS 410
   OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
   Alert method: mail
-  Alert address: alertreaders@mail.trincoll.edu
+  Alert address: alertreaders@oldivy.edu
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: no charge
 Switchset:
@@ -196,7 +196,7 @@ PPDFile: HP LaserJet 4M DSC
   OutputOrder: PPD
 Alert frequency: 7 (send alert every 7 errors)
   Alert method: mail
-  Alert address: alertreaders@mail.trincoll.edu
+  Alert address: alertreaders@oldivy.edu
 Flags: no no (banners discouraged, trailers discouraged)
 Charge: no charge
 Switchset:
