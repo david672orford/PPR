@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-30 13:26-0400\n"
+"POT-Creation-Date: 2006-09-13 13:27-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -77,14 +77,14 @@ msgid "The alias \"%s\" already exists!"
 msgstr "L'imprimante \"%s\" existe déjà !"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
-#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:361
+#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:343
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:152
 #: ../www/prn_addwiz.cgi.perl:853 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "_Annuler"
 
-#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:361
+#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:343
 #: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:152
 msgid "_Next"
@@ -131,7 +131,7 @@ msgstr "Description :"
 msgid "You must supply a description!"
 msgstr "Vous devez fournir une description !"
 
-#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:361
+#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:343
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:853
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"
@@ -2577,14 +2577,14 @@ msgstr ""
 msgid "Source Download"
 msgstr ""
 
-#~ msgid "As proxy for:"
-#~ msgstr "Mandataire pour :"
-
-#~ msgid "Submitted by Unix user:"
-#~ msgstr "Soumis par l'utilisateur Unix :"
+#~ msgid "Unix User"
+#~ msgstr "Utilisateur Unix"
 
 #~ msgid "Proxy For"
 #~ msgstr "Mandataire de"
 
-#~ msgid "Unix User"
-#~ msgstr "Utilisateur Unix"
+#~ msgid "Submitted by Unix user:"
+#~ msgstr "Soumis par l'utilisateur Unix :"
+
+#~ msgid "As proxy for:"
+#~ msgstr "Mandataire pour :"

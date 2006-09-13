@@ -1,32 +1,14 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_init_script.sh
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2006, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
+# This file is part of PPR.  You can redistribute it and modify it under the
+# terms of the revised BSD licence (without the advertising clause) as
+# described in the accompanying file LICENSE.txt.
 #
-# * Redistributions of source code must retain the above copyright notice,
-# this list of conditions and the following disclaimer.
-# 
-# * Redistributions in binary form must reproduce the above copyright
-# notice, this list of conditions and the following disclaimer in the
-# documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE 
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
-# POSSIBILITY OF SUCH DAMAGE.
-#
-# Last modified 7 March 2005.
+# Last modified 13 September 2006.
 #
 
 #========================================================================
@@ -58,7 +40,7 @@ for i in /etc/rc.d /etc /sbin
 case "$INIT_BASE" in
 	# RedHat Linux, Mandrake Linux, and brethren
 	"/etc/rc.d" )
-		INIT_LIST="rc0.d/K20ppr rc1.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
+		INIT_LIST="rc0.d/K20ppr2 rc1.d/K20ppr2 rc2.d/S80ppr2 rc3.d/S80ppr2 rc4.d/S80ppr2 rc5.d/S80ppr2 rc6.d/K20ppr2"
 		;;
 
 	# Solaris and Debian GNU/Linux
@@ -67,11 +49,11 @@ case "$INIT_BASE" in
 		if [ -x /usr/bin/dpkg -a -x /usr/sbin/update-rc.d ]
 			then
 			# Correctness of levels needs checking:
-			INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr rc3.d/S80ppr rc4.d/S80ppr rc5.d/S80ppr rc6.d/K20ppr"
+			INIT_LIST="rc0.d/K20ppr2 rc2.d/S80ppr2 rc3.d/S80ppr2 rc4.d/S80ppr2 rc5.d/S80ppr2 rc6.d/K20ppr2"
 
 			else
 			# Solaris 2.x, Generic System V
-			INIT_LIST="rc0.d/K20ppr rc2.d/S80ppr"
+			INIT_LIST="rc0.d/K20ppr2 rc2.d/S80ppr2"
 
 			fi
 		;;
@@ -79,7 +61,7 @@ case "$INIT_BASE" in
 	# OSF/1 3.2
 	"/sbin" )
 		# Needs checking:
-		INIT_LIST="rc0.d/K00ppr rc2.d/K00ppr rc3.d/S65ppr"
+		INIT_LIST="rc0.d/K00ppr2 rc2.d/K00ppr2 rc3.d/S65ppr2"
 		;;
 
 	# No System V style init scripts
@@ -145,11 +127,11 @@ then
 		fi
 
 	# Copy the init script into place.
-	diff init.d $INIT_BASE/init.d/ppr >/dev/null 2>&1
+	diff init.d $INIT_BASE/init.d/ppr2 >/dev/null 2>&1
 	if [ $? -ne 0 ]
 		then
 
-		cp init.d $INIT_BASE/init.d/ppr
+		cp init.d $INIT_BASE/init.d/ppr2
 		if [ $? -ne 0 ]
 			then
 			echo "===================================================="
@@ -159,7 +141,7 @@ then
 			fi
 
 		# Mark the init script as a config file when building packages.
-		../makeprogs/installconf.sh root root 755 'config(noreplace)' $INIT_BASE/init.d/ppr
+		../makeprogs/installconf.sh root root 755 'config(noreplace)' $INIT_BASE/init.d/ppr2
 		fi
 
 	# Adjust the symbolic links.  This step is skipt if we are building an RPM.
@@ -168,7 +150,7 @@ then
 		then
 		# Construct a list of the links that are present.
 		existing=""
-		for l in `echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr`
+		for l in `echo $INIT_BASE/rc[0-6].d/[SK][0-9][0-9]ppr2`
 			do
 			#if [ -L $l ]		# exists and is a symbolic link (doesn't work on Solaris)
 			if [ -f $l ]		# exists
@@ -193,7 +175,7 @@ then
 
 			if [ -x /sbin/chkconfig ]
 			then
-				/sbin/chkconfig --add ppr
+				/sbin/chkconfig --add ppr2
 			else
 				# Remove the old links.
 				for l in $existing
@@ -213,7 +195,7 @@ then
 					do
 					echo "    $INIT_BASE/$f"
 					rm -f $INIT_BASE/$f
-					ln -s ../init.d/ppr $INIT_BASE/$f
+					ln -s ../init.d/ppr2 $INIT_BASE/$f
 					done
 			fi # don't have chkconfig
 		fi # links have changed
@@ -246,12 +228,12 @@ elif [ -n "$StartupItems" ]
 		echo "    Creating directory $StartupItems/PPR..."
 		mkdir $StartupItems/PPR
 	fi
-	if diff ppr $StartupItems/PPR/PPR >/dev/null 2>&1
+	if diff init.d $StartupItems/PPR/PPR >/dev/null 2>&1
 	then
 		echo "    Startup script already installed, good."
 	else
 		echo "    Installing startup script..."
-		cp ppr $StartupItems/PPR/PPR || exit 1
+		cp init.d $StartupItems/PPR/PPR || exit 1
 	fi
 	if [ -f $StartupItems/PPR/StartupParameters.plist ]
 	then

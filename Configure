@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 24 April 2006.
+# Last modified 13 September 2006.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -223,7 +223,7 @@ opt_bindir=${opt_bindir:-$opt_prefix/bin}
 opt_libdir=${opt_libdir:-$opt_prefix/lib}
 opt_datadir=${opt_datadir:-$opt_prefix/share}
 opt_spooldir=${opt_spooldir:-/var/spool}
-opt_rundir=${opt_rundir:-/var/run/ppr}
+opt_rundir=${opt_rundir:-/var/run/ppr2}
 opt_x11bindir=${opt_x11bindir:-/usr/bin/X11}
 
 #
@@ -387,11 +387,11 @@ if [ "$NATIVE_CC" = "yes" ]
 #
 # Create a list of default install locations.
 #
-CONFDIR=$opt_sysconfdir/ppr
-LIBDIR=$opt_libdir/ppr
-SHAREDIR=$opt_datadir/ppr
-VAR_SPOOL_PPR=$opt_spooldir/ppr
-VAR_LIB_PPR=/var/lib/ppr
+CONFDIR=$opt_sysconfdir/ppr2
+LIBDIR=$opt_libdir/ppr2
+SHAREDIR=$opt_datadir/ppr2
+VAR_SPOOL_PPR=$opt_spooldir/ppr2
+VAR_LIB_PPR=/var/lib/ppr2
 RUNDIR=$opt_rundir
 TEMPDIR=/tmp
 SYSBINDIR=$opt_bindir
@@ -897,10 +897,10 @@ export CONFDIR=$CONFDIR
 export VAR_SPOOL_PPR=$VAR_SPOOL_PPR
 
 # Directory for replacable cache files
-export CACHEDIR=/var/cache/ppr
+export CACHEDIR=/var/cache/ppr2
 
 # Directory for spooler state
-export STATEDIR=/var/lib/ppr
+export STATEDIR=/var/lib/ppr2
 
 # Directory for PID files and such.
 export RUNDIR=$RUNDIR
@@ -1012,7 +1012,7 @@ export INTDIR=$(LIBDIR)/interfaces
 export RESPONDERDIR=$(LIBDIR)/responders
 # our PPD file library (must be absolute)
 export PPDDIR=$(SHAREDIR)/ppd
-# pre-loaded cache files
+# PostScript resource file
 export RESOURCEDIR=$(SHAREDIR)/resources
 # special fonts in PostScript or TTF formats
 export FONTSDIR=$(SHAREDIR)/fonts

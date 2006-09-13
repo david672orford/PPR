@@ -1,31 +1,13 @@
 /*
 ** mouse:~ppr/src/www/ppr-passwd.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2006, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 23 December 2004.
+** Last modified 7 September 2006.
 */
 
 /*
@@ -98,7 +80,7 @@ int main(int argc, char *argv[])
 	gu_boolean opt_add = FALSE;
 	gu_boolean opt_delete = FALSE;
 	int rfd, wfd;
-	FILE *rfile, *wfile;
+	FILE *rfile = NULL, *wfile;
 
 	/* Initialize international messages library. */
 	#ifdef INTERNATIONAL
@@ -187,8 +169,8 @@ int main(int argc, char *argv[])
 	/*
 		Ordinary users aren't allowed to add entries, even for themselves 
 		because then someone stepping up to an unattended terminal logged
-		into the account of a person who did not use the PPR web interface
-		regularly could open that account to web printer management, setting
+		into the account of a person who had never used the PPR web interface
+		could enable web printer management for that account, setting
 		a password known to the interloper.
 		
 		Note that non-privileged users must know their passwords in order
@@ -200,16 +182,30 @@ int main(int argc, char *argv[])
 		return EXIT_DENIED;
 		}
 
+	/* Try to open the existing password file.  If it doesn't exist,
+	 * we had better be adding the entry.  If it does exist, lock it
+	 * and create a STDIO object.
+	 */
 	if((rfd = open(htpasswd, O_RDWR)) == -1)
 		{
-		fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s).\n"), myname, htpasswd, errno, gu_strerror(errno));
-		return EXIT_INTERNAL;
+		if(!opt_add)
+			{
+			fprintf(stderr, _("%s: can't open \"%s\", errno=%d (%s).\n"), myname, htpasswd, errno, gu_strerror(errno));
+			return EXIT_INTERNAL;
+			}
 		}
-
-	if(gu_lock_exclusive(rfd, TRUE) == -1)
+	else
 		{
-		fprintf(stderr, _("%s: failed to get exclusive lock on \"%s\", errno=%d (%s).\n"), myname, htpasswd, errno, gu_strerror(errno));
-		return EXIT_INTERNAL;
+		if(gu_lock_exclusive(rfd, TRUE) == -1)
+			{
+			fprintf(stderr, _("%s: failed to get exclusive lock on \"%s\", errno=%d (%s).\n"), myname, htpasswd, errno, gu_strerror(errno));
+			return EXIT_INTERNAL;
+			}
+		if(!(rfile = fdopen(rfd, "r")))
+			{
+			fprintf(stderr, _("%s: fdopen() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
+			return EXIT_INTERNAL;
+			}
 		}
 
 	if((wfd = open(htpasswd_new, (O_WRONLY | O_CREAT | O_EXCL), UNIX_640)) == -1)
@@ -218,7 +214,7 @@ int main(int argc, char *argv[])
 		return EXIT_INTERNAL;
 		}
 
-	if(!(rfile = fdopen(rfd, "r")) || !(wfile = fdopen(wfd, "w")))
+	if(!(wfile = fdopen(wfd, "w")))
 		{
 		fprintf(stderr, _("%s: fdopen() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
 		return EXIT_INTERNAL;
@@ -233,8 +229,11 @@ int main(int argc, char *argv[])
 	char *p, *f1, *f2, *f3;
 	int linenum = 0;
 
-	/* Step thru all the lines of /etc/ppr/htpasswd. */
-	while((p = line = gu_getline(line, &line_available, rfile)))
+	/* Step thru all the lines of /etc/ppr/htpasswd. 
+	 * Note that the test will fail the first time if
+	 * rfile is not open.
+	 */
+	while(rfile && (p = line = gu_getline(line, &line_available, rfile)))
 		{
 		linenum++;
 
@@ -286,10 +285,17 @@ int main(int argc, char *argv[])
 	if(line)
 		gu_free(line);
 
+	/* done reading /etc/ppr/htpasswd */
+	if(rfile && fclose(rfile))
+		{
+		fprintf(stderr, _("%s: fclose() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
+		ret = -1;
+		}
+
 	/* If we haven't already changed an existing password, */
 	if(!found)
 		{
-		if(!opt_add)
+		if(!opt_add)		/* are we supposed to add if not found? */
 			{
 			fprintf(stderr, _("%s: user \"%s\" not found in \"%s\".\n"), myname, username, htpasswd);
 			ret = EXIT_NOTFOUND;
@@ -309,14 +315,7 @@ int main(int argc, char *argv[])
 		ret = -1;
 		}
 
-	/* /etc/ppr/htpasswd */
-	if(fclose(rfile))
-		{
-		fprintf(stderr, _("%s: fclose() failed, errno=%d (%s)\n"), myname, errno, gu_strerror(errno));
-		ret = -1;
-		}
-
-	/* If we failed, get rid of /etc/ppr/htpasswd_new. */
+	/* If something above failed, get rid of /etc/ppr/htpasswd_new. */
 	if(ret != 0)
 		{
 		if(unlink(htpasswd_new) == -1)
@@ -440,6 +439,10 @@ static int new_password(FILE *wfile, const char username[], const char realm[])
 	return 0;
 	}
 
+/* Make an MD5 digest of username:realm:password and store it as a 32 byte 
+ * hexadecimal string in buffer[] (which means that buffer[] must be 33
+ * bytes long.
+ */
 static void md5_digest(char *buffer, const char username[], const char realm[], const char password[])
 	{
 	md5_state_t state;

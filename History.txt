@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--6 July 2006
+2.00a1, 11 December 2004--13 September 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10085,4 +10085,10 @@ no final tarball was released.
 
 * www/cgi_wizard.pl: fixed window resize code to account for height of browser
   controls.
+
+* Configure: changed all ppr/ directories to ppr2/.
+
+* z_install_end/install_init_script.sh: changed to install init script as
+  /etc/init.d/ppr2 rather than /etc/init.d/ppr.
+
 
