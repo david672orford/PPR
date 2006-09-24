@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-13 13:27-0400\n"
+"POT-Creation-Date: 2006-09-24 10:53-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -1364,55 +1364,55 @@ msgstr "%s() : échec de unlink(\"%s\"), errno=%d (%s)"
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s() : échec de chmod(\"%s\", %o), errno=%d (%s)"
 
-#: ../ppad/dispatch_table.c:14
+#: ../ppad/dispatch_table.c:11
 msgid "alias to show"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:18
+#: ../ppad/dispatch_table.c:15
 msgid "name of existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:19
+#: ../ppad/dispatch_table.c:16
 msgid "name of new alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:23
+#: ../ppad/dispatch_table.c:20
 msgid "name of new or existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:24
+#: ../ppad/dispatch_table.c:21
 msgid "new target of alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:28
+#: ../ppad/dispatch_table.c:25
 msgid "name of alias to be deleted"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:32 ../ppad/dispatch_table.c:37
-#: ../ppad/dispatch_table.c:42 ../ppad/dispatch_table.c:47
+#: ../ppad/dispatch_table.c:29 ../ppad/dispatch_table.c:34
+#: ../ppad/dispatch_table.c:39 ../ppad/dispatch_table.c:44
 msgid "name of alias to be modified"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:33 ../ppad/dispatch_table.c:174
+#: ../ppad/dispatch_table.c:30 ../ppad/dispatch_table.c:174
 msgid "comment to attach (ommit to delete)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:38 ../ppad/dispatch_table.c:96
+#: ../ppad/dispatch_table.c:35 ../ppad/dispatch_table.c:96
 #: ../ppad/dispatch_table.c:288
 msgid "switches to attach (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:43 ../ppad/dispatch_table.c:105
+#: ../ppad/dispatch_table.c:40 ../ppad/dispatch_table.c:105
 #: ../ppad/dispatch_table.c:297
 msgid "languages to pass thru (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:48 ../ppad/dispatch_table.c:115
+#: ../ppad/dispatch_table.c:45 ../ppad/dispatch_table.c:115
 #: ../ppad/dispatch_table.c:340
 msgid "addon parameter to modify"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:49 ../ppad/dispatch_table.c:116
+#: ../ppad/dispatch_table.c:46 ../ppad/dispatch_table.c:116
 #: ../ppad/dispatch_table.c:341
 msgid "new value for param (ommit to delete)"
 msgstr ""
@@ -1860,7 +1860,7 @@ msgstr ""
 msgid "delete from bins list"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:402
+#: ../ppad/dispatch_table.c:403
 msgid "send reminder e-mail about printer problems"
 msgstr ""
 
@@ -1993,13 +1993,13 @@ msgid "send query to printer and produce list of suitable PPD files"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:444
-msgid "miscelanious command"
-msgstr ""
-
-#: ../ppad/dispatch_table.c:445
 #, fuzzy
 msgid "all settings for aliases"
 msgstr "Paramètre invalide pour %s"
+
+#: ../ppad/dispatch_table.c:445
+msgid "miscelanious command"
+msgstr ""
 
 #: ../ppad/dispatch_table.c:446
 #, fuzzy
@@ -5995,674 +5995,3 @@ msgstr "%s : le fichier \"%s\" n'est pas le vôtre, je ne fais rien.\n"
 #, c-format
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr "Accord des permissions PPR pour que les clients X se connectent à l'affichage \"%s\".\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer, the name of an addon\n"
-#~ "parameter.  A value for the parameter is optional.  If you do not\n"
-#~ "supply a value, the parameter will be unset.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante, le nom d'un paramètre\n"
-#~ "supplémentaire. La valeur du paramètre est optionnelle. Si vous ne donnez pas\n"
-#~ "de valeur, le paramètre ne sera pas défini.\n"
-
-#~ msgid ""
-#~ "You must specify a printer and a (possibly empty) list\n"
-#~ "of file types.  These file types should be the same as\n"
-#~ "those used with the \"ppr -T\" option.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer une imprimante et une liste (peut-être vide) de types\n"
-#~ "de fichiers. Ces types de fichiers doivent être les mêmes que ceux utilisés\n"
-#~ "avec l'option \"-T\" de ppr.\n"
-
-#~ msgid "You must specify a printer to delete.\n"
-#~ msgstr "Vous devez indiquer une imprimante à supprimer.\n"
-
-#~ msgid "Too many parameters.\n"
-#~ msgstr "Trop de paramètres.\n"
-
-#~ msgid "You must specify a printer.\n"
-#~ msgstr "Vous devez indiquer une imprimante.\n"
-
-#~ msgid "Port \"%s\" does not support 2-way communication."
-#~ msgstr "Le port \"%s\" ne supporte pas les communications bidirectionnelles."
-
-#~ msgid "Failed to create printer config file \"%s\", errno=%d (%s).\n"
-#~ msgstr "Échec dans la création du fichier de configuration de l'imprimante \"%s\", errno=%d (%s).\n"
-
-#~ msgid "Failed to create alias config file \"%s\", errno=%d (%s).\n"
-#~ msgstr "Échec de la création du fichier de configuration de l'alias \"%s\", errno=%d (%s).\n"
-
-#~ msgid ""
-#~ "\t-s <port>\n"
-#~ "\t--standalone-port <port>\n"
-#~ "\t\t(run standalone, bind to specified TCP port)\n"
-#~ msgstr ""
-#~ "\t-s <port>\n"
-#~ "\t--standalone-port <port>\n"
-#~ "\t\t(tourner en autonome, se lier au port TCP spécifié)\n"
-
-#, fuzzy
-#~ msgid "lprsrv must run as root"
-#~ msgstr "le nouveau lprsrv doit tourner en tant que root"
-
-#~ msgid "Unknown port name: %s"
-#~ msgstr "Nom de port inconnu : %s"
-
-#~ msgid "Standalone mode code not present.\n"
-#~ msgstr "Code pour le mode autonome non présent.\n"
-
-#~ msgid "lprsrv is already running in standalone mode"
-#~ msgstr "lprsrv fonctionne déjà en mode autonome"
-
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "il y a déjà un serveur qui écoute sur le port TCP %d"
-
-#, fuzzy
-#~ msgid "Media Management:\n"
-#~ msgstr "Nom des supports : "
-
-#, fuzzy
-#~ msgid "ppad outputorder <printer> {Normal, Reverse, PPD}"
-#~ msgstr "Mettez l'ordre de sortie à \"Normal\", \"Reverse\" ou \"PPD\".\n"
-
-#, fuzzy
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "Utilisation : ppop message <imprimante>\n"
-
-#, fuzzy
-#~ msgid "Printer Management:\n"
-#~ msgstr "Nom de l'imprimante : %s\n"
-
-#, fuzzy
-#~ msgid "Group Management:\n"
-#~ msgstr "Nom du groupe : %s\n"
-
-#, fuzzy
-#~ msgid "Alias Management:\n"
-#~ msgstr "Nom de l'alias : %s\n"
-
-#~ msgid "You must supply the name of an alias to show.\n"
-#~ msgstr "Vous devez indiquer le nom d'un alias à montrer.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un nouvel ordre de sortie.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a new or existing alias and\n"
-#~ "the name of the queue it is to be an alias for.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'un alias nouveau ou existant et\n"
-#~ "le nom d'une file pour laquelle il sera l'alias.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing alias and\n"
-#~ "a comment to attach to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'un alias existant et\n"
-#~ "un commentaire auquel l'attacher.\n"
-
-#~ msgid "You must supply the name of an alias and a set of switches.\n"
-#~ msgstr "Vous devez indiquer le nom d'un alias et un ensemble d'options.\n"
-
-#~ msgid ""
-#~ "You must specify an alias and a (possibly empty) list\n"
-#~ "of file types.  These file types should be the same as\n"
-#~ "those used with the \"ppr -T\" option.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer un alias et une liste (peut-être vide) de types\n"
-#~ "de fichiers. Ces types de fichiers doivent être les mêmes que ceux\n"
-#~ "utilisés avec l'option \"-T\" de ppr.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing alias, the name of an addon\n"
-#~ "parameter.  A value for the parameter is optional.  If you do not\n"
-#~ "supply a value, the parameter will be unset.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'un alias existant, le nom d'un paramètre\n"
-#~ "supplémentaire. La valeur du paramètre est optionnelle. Si vous ne\n"
-#~ "donnez pas de valeur, le paramètre ne sera pas défini.\n"
-
-#~ msgid "You must supply the name of a group to show.\n"
-#~ msgstr "Vous devez indiquer le nom d'un groupe à montrer.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group and\n"
-#~ "a name for the new group.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un nouvel ordre de sortie.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a group and\n"
-#~ "a comment to attach to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'un groupe et\n"
-#~ "un commentaire auquel l'attacher.\n"
-
-#~ msgid "You must supply the name of a group and \"true\" or \"false\".\n"
-#~ msgstr "Vous devez indiquer le nom d'un groupe et \"true\" ou \"false\".\n"
-
-#~ msgid ""
-#~ "You must specify a new or existing group and one or more printers\n"
-#~ "to add to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer un groupe nouveau ou existant et une ou plusieurs\n"
-#~ "imprimantes à y ajouter.\n"
-
-#~ msgid ""
-#~ "You must specify a new or existing group and zero or more printers\n"
-#~ "to be its members.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer un groupe nouveau ou existant et zéro ou plusieurs\n"
-#~ "imprimantes qui en seront membres.\n"
-
-#~ msgid "You must specify a group and a printer or printers to remove from it.\n"
-#~ msgstr "Vous devez indiquer un groupe et une ou plusieurs imprimantes duquel l'enlever.\n"
-
-#~ msgid "You must specify a group to delete.\n"
-#~ msgstr "Vous devez indiquer un groupe à effacer.\n"
-
-#~ msgid "You must supply the name of a group.\n"
-#~ msgstr "Vous devez indiquer le nom d'un groupe.\n"
-
-#~ msgid "You must supply the name of a group and a set of switches.\n"
-#~ msgstr "Vous devez indiquer le nom d'un groupe et un ensemble d'options.\n"
-
-#~ msgid ""
-#~ "You must specify a group and a (possibly empty) list\n"
-#~ "of file types.  These file types should be the same as\n"
-#~ "those used with the \"ppr -T\" option.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer un groupe et une liste (peut-être vide) de types\n"
-#~ "de fichiers. Ces types de fichiers doivent être les mêmes que ceux\n"
-#~ "utilisés avec l'option \"-T\" de ppr.\n"
-
-#~ msgid ""
-#~ "You must specify a group and a (possibly empty) list\n"
-#~ "of PPR access control lists.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer un groupe et une liste (peut-être vide) de listes de\n"
-#~ "contrôle d'accès PPR.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group, and the name of an addon\n"
-#~ "parameter.  A value for the parameter is optional.  If you do not\n"
-#~ "supply a value, the parameter will be unset.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'un groupe existant, le nom d'un paramètre\n"
-#~ "supplémentaire. La valeur du paramètre est optionnelle. Si vous ne\n"
-#~ "donnez pas de valeur, le paramètre ne sera pas défini.\n"
-
-#, fuzzy
-#~ msgid "You must supply a filename.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an interface and an address.  If necessary, a\n"
-#~ "quoted list of options may follow the address.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante et un ensemble d'options.\n"
-
-#, fuzzy
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante.\n"
-
-#~ msgid ""
-#~ "You must supply an alert frequency, such as \"7\", an alert method,\n"
-#~ "such as \"mail\", and an alert address, such as \"alertreaders\".\n"
-#~ msgstr ""
-#~ "Vous devez indiquer une fréquence d'alerte, comme \"7\", une méthode\n"
-#~ "d'alerte, comme \"mail\" et une adresse d'alerte, comme\n"
-#~ "\"lecteurs-alertes\".\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a comment to attach to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un commentaire à laquelle l'attacher.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a location name to attach to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un nom d'emplacement à laquelle l'attacher.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a department name to attach to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un nom de département à laquelle l'attacher.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a contact name to attach to it.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un nom de contact à laquelle l'attacher.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must specify a printer, either new or existing, an interface program, and\n"
-#~ "an address of the printer in a format understood by the interface program.\n"
-#~ "See ppad-interfaces(8) for information about interface programs and their\n"
-#~ "address formats.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer une imprimante, neuve ou existante,\n"
-#~ "une interface, et une adresse pour l'interface\n"
-#~ "à laquelle envoyer le travail.\n"
-
-#~ msgid "Insufficient parameters.\n"
-#~ msgstr "Paramètres insuffisants.\n"
-
-#~ msgid "You must supply the name of an existing printer and a PPD file.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante existante et un fichier PPD.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a printer, an alert frequency, such as \"7\",\n"
-#~ "an alert method, such as \"mail\", and an alert address,\n"
-#~ "such as \"alertreaders@domain.com\".\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante, une fréquence d'alerte, comme\n"
-#~ "\"7\", une méthode d'alerte, comme \"mail\" et une adresse d'alerte,\n"
-#~ "comme \"lecteurs-alertes@domaine.fr\".\n"
-
-#~ msgid "You must specify a printer and a new alert frequency.\n"
-#~ msgstr "Vous devez indiquer une imprimante et une nouvelle fréquence d'alerte.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer, a new banner\n"
-#~ "option, and a new trailer option.  Valid banner and trailer\n"
-#~ "options are \"never\", \"no\", \"yes\", and \"always\".\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante, une nouvelle option\n"
-#~ "de page de garde avant et une nouvelle option de page de garde arrière.  Les\n"
-#~ "options de page de garde valides sont \"never\", \"no\", \"yes\", et \"always\".\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a new outputorder.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et\n"
-#~ "un nouvel ordre de sortie.\n"
-
-#~ msgid ""
-#~ "Insufficient parameters.  You must supply the name of a printer\n"
-#~ "and an amount to change per sheet.  If you wish, you may specify\n"
-#~ "an amount to charge per duplex sheet and then an amount to charge\n"
-#~ "per simplex sheet.  If you specify only one amount, it will apply\n"
-#~ "to both.  To remove a printer charge, set the charge to \"none\".\n"
-#~ "In contrast, setting the charge to \"0.00\" will mean that only users\n"
-#~ "with charge accounts may print, even though they will not be charged\n"
-#~ "any money.\n"
-#~ msgstr ""
-#~ "Paramètres insuffisants. Vous devez fournir le nom d'une imprimante\n"
-#~ "et un montant à comptabiliser par feuille. Si vous désirez, vous pouvez\n"
-#~ "spécifier un montant à compter pour chaque feuille recto-verso et ensuite\n"
-#~ "un montant à compter pour chaque feuille en simple face. Si vous ne spécifiez\n"
-#~ "qu'un montant, il sera appliqué aux deux. Pour enlever un montant d'une\n"
-#~ "imprimante, mettez le montant à \"none\".\n"
-#~ "À l'inverse, un montant de \"0.00\" voudra dire que seuls les utilisateurs\n"
-#~ "ayant un compte pourront imprimer, même s'il ne leur en coûtera rien.\n"
-
-#~ msgid "You must specify an existing printer and a new bin name or names.\n"
-#~ msgstr "Vous devez indiquer une imprimante existante et un ou plusieurs nouveaux noms de bacs.\n"
-
-#~ msgid "You must specify a printer and a bin or bins to remove from it.\n"
-#~ msgstr "Vous devez indiquer une imprimante et un ou plusieurs bacs de laquelle les enlever.\n"
-
-#~ msgid "You must supply the name of a printer.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante.\n"
-
-#~ msgid "You must supply the name of a printer and a set of switches.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante et un ensemble d'options.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and the minimum and maximum number\n"
-#~ "of pages of the documents it should be allowed to print.  To clear either limit,\n"
-#~ "set it to 0.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et le nombre minimum\n"
-#~ "et maximum de pages des documents qu'elle a le droit d'imprimer. Pour annuler\n"
-#~ "l'une ou l'autre limite, mettez-la à 0.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and the minimum and maximum number\n"
-#~ "of kilobytes of the documents it should be allowed to print.  To clear either limit,\n"
-#~ "set it to 0.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et le nombre minimum\n"
-#~ "et maximum de kilo-octets des documents qu'elle a le droit d'imprimer.\n"
-#~ "Pour annuler l'une ou l'autre limite, mettez-là à 0.\n"
-
-#~ msgid "You must specify a printer and a boolean value.\n"
-#~ msgstr "Vous devez indiquer une imprimante et une valeur booléenne.\n"
-
-#~ msgid ""
-#~ "You must specify a printer and a (possibly empty) list\n"
-#~ "of PPR access control lists.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer une imprimante et une liste (peut-être vide) de listes\n"
-#~ "de contrôle d'accès PPR.\n"
-
-#~ msgid ""
-#~ "You must supply the name of a printer.  You may also supply a new\n"
-#~ "quoted, space delimited list of name=value pairs.  If you don't\n"
-#~ "supply such a list, any existing list will be deleted.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante. Vous pouvez aussi\n"
-#~ "indiquer une nouvelle liste, entre apostrophes, de paires nom=valeur\n"
-#~ "délimitées par des espaces. Si vous ne fournissez pas cette liste, toute\n"
-#~ "liste existante sera effacée.\n"
-
-#~ msgid ""
-#~ "You must supply the name of an existing printer and the maximum number of\n"
-#~ "seconds to allow per page.\n"
-#~ msgstr ""
-#~ "Vous devez indiquer le nom d'une imprimante existante et le nombre maximal\n"
-#~ "de secondes à autoriser par page.\n"
-
-#, fuzzy
-#~ msgid "You must supply only the name of an existing printer.\n"
-#~ msgstr "Vous devez indiquer le nom d'une imprimante existante.\n"
-
-#, fuzzy
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "La communication série a échoué, errno=%d (%s)."
-
-#, fuzzy
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "\t-a                     lance le mode du code d'authentification\n"
-
-#~ msgid "Try \"help\" or \"exit\"."
-#~ msgstr "Essayez \"help\" ou \"exit\"."
-
-#~ msgid "Try \"ppop help\" for help with subcommands.\n"
-#~ msgstr "Essayez \"ppop help\" pour avoir de l'aide sur les sous-commandes.\n"
-
-#, fuzzy
-#~ msgid "You aren't allowed to use the %s option.\n"
-#~ msgstr "Vous n'avez pas le droit d'utiliser l'option --su.\n"
-
-#, fuzzy
-#~ msgid "%s: unknown sub-command \"%s\", try \"ppop help\"\n"
-#~ msgstr "Commande inconnue, essayez \"ppop help\".\n"
-
-#~ msgid ""
-#~ "Usage: ppop list {all, <printer>, <group> , <job>} ...\n"
-#~ "\n"
-#~ "This command will print information about the specified jobs.\n"
-#~ "Jobs may be specified by job id, by queue, or \"all\" may\n"
-#~ "be specified.  Multiple specifications may be used with this\n"
-#~ "command.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop list {all, <imprimante>, <groupe>, <travail>} ...\n"
-#~ "\n"
-#~ "Cette commande affichera des informations sur les travaux spécifiés.\n"
-#~ "On peut spécifier les travaux par numéro de travail, par file ou on peut\n"
-#~ "mettre \"all\". Des spécifications multiples peuvent être utilisées\n"
-#~ "avec cette commande.\n"
-
-#~ msgid ""
-#~ "Usage: ppop lpq {all, <printer>, <group>} [<user>...] [<id>...]\n"
-#~ "\n"
-#~ "The \"ppop lpq\" subcommand prints a queue listing in a format\n"
-#~ "similiar to that of the Berkeley Unix \"lpq\" command.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop lpq {all, <imprimante>, <groupe>} [<utilisateur>...]\n"
-#~ "                       [<numéro>...]\n"
-#~ "\n"
-#~ "La sous-commande \"ppop lpq\" affiche une liste de file dans un format\n"
-#~ "similaire à celui de la commande Berkeley Unix \"lpq\".\n"
-
-#~ msgid ""
-#~ "Usage: ppop details {all, <group>, <printer>, <job>}\n"
-#~ "\n"
-#~ "This command displays a detailed description of all jobs,\n"
-#~ "the jobs queued for the indicated group, the jobs queued\n"
-#~ "for the indicated printer, or the indicated job.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop details {all, <groupe>, <imprimante>, <travail>}\n"
-#~ "\n"
-#~ "Cette commande affiche une description détaillée de tous les travaux,\n"
-#~ "les travaux mis en file pour le groupe indiqué, les travaux mis en file\n"
-#~ "pour l'imprimante indiquée, ou le travail indiqué.\n"
-
-#~ msgid ""
-#~ "Usage: ppop progress <job>\n"
-#~ "\n"
-#~ "This command shows the progress made printing the\n"
-#~ "indicated job.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop progress <travail>\n"
-#~ "\n"
-#~ "Cette commande montre l'avancement effectué pendant l'impression\n"
-#~ "du travail indiqué.\n"
-
-#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
-#~ msgstr "Utilisation : ppop status {<imprimante>, <groupe>, all}\n"
-
-#~ msgid "Usage: ppop message <printer>\n"
-#~ msgstr "Utilisation : ppop message <imprimante>\n"
-
-#~ msgid "Usage: ppop media {<printer>, <group>, all}\n"
-#~ msgstr "Utilisation : ppop media {<imprimante>, <groupe>, all}\n"
-
-#~ msgid "Usage: ppop mount <printer> <bin> <medium>\n"
-#~ msgstr "Utilisation : ppop mount <imprimante> <bac> <support>\n"
-
-#~ msgid ""
-#~ "Usage: ppop start <printer> ...\n"
-#~ "\n"
-#~ "This command starts a previously stopt printer.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop start <imprimante> ...\n"
-#~ "\n"
-#~ "Cette commande démarre une imprimante précédemment arrêtée.\n"
-
-#~ msgid ""
-#~ "Usage: ppop stop <printer> ...\n"
-#~ "Usage: ppop wstop {printer}\n"
-#~ "\n"
-#~ "This command stops a printer from printing.  If a job is being\n"
-#~ "printed when this command is issued, the printer does not\n"
-#~ "actually stop until the job is done.\n"
-#~ "\n"
-#~ "The second form, \"ppop wstop\" does not return until the printer\n"
-#~ "has actually stopt.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop stop <imprimante> ...\n"
-#~ "Utilisation : ppop wstop {imprimante}\n"
-#~ "\n"
-#~ "Cette commande arrête une imprimante. Si un travail est en cours\n"
-#~ "d'impression quand cette commande est lancée, l'imprimante ne\n"
-#~ "s'arrête en fait que lorsque le travail est terminé.\n"
-#~ "\n"
-#~ "La seconde forme, \"ppop wstop\", ne retourne pas avant que l'imprimante\n"
-#~ "ne soit réellement arrêtée.\n"
-
-#~ msgid ""
-#~ "Usage: ppop halt <printer> ...\n"
-#~ "\n"
-#~ "This command stops the printer immediately.  If a job is printing,\n"
-#~ "the job is returned to the queue for later printing.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop halt <imprimante> ...\n"
-#~ "\n"
-#~ "Cette commande arrête l'imprimante immédiatement. Si un travail est\n"
-#~ "en cours d'impression, le travail est remis dans la file pour une\n"
-#~ "impression ultérieure.\n"
-
-#~ msgid "Syntax error.\n"
-#~ msgstr "Erreur de syntaxe.\n"
-
-#~ msgid ""
-#~ "Usage: ppop cancel {<job>, <destination>}\n"
-#~ "\n"
-#~ "This command cancels a job or all of your jobs queued for the\n"
-#~ "specified destination.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop cancel {<travail>, <destination>}\n"
-#~ "\n"
-#~ "Cette commande annule un travail ou tous vos travaux mis en queue pour la\n"
-#~ "destination spécifiée.\n"
-
-#~ msgid ""
-#~ "Usage: ppop purge <destination> ...\n"
-#~ "\n"
-#~ "This command cancels all jobs queued for a particular destination.\n"
-#~ "Only an operator may use this command.  Extra arguments are\n"
-#~ "interpreted as the names of extra destinations to purge.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop purge <destination> ...\n"
-#~ "\n"
-#~ "Cette commande annule tous les travaux pour une destination particulière.\n"
-#~ "Seul un opérateur peut utiliser cette commande. Les arguments\n"
-#~ "supplémentaires sont interprétés comme les noms des destinations\n"
-#~ "supplémentaires à purger.\n"
-
-#~ msgid ""
-#~ "Usage: ppop clean <destination> ...\n"
-#~ "\n"
-#~ "This command will delete all of the arrested jobs\n"
-#~ "queued for the indicated destination or destinations\n"
-#~ msgstr ""
-#~ "Utilisation : ppop clean <destination> ...\n"
-#~ "\n"
-#~ "Cette commande effacera tous les travaux arrêtés\n"
-#~ "mis en file pour la ou les destinations indiquées\n"
-
-#~ msgid ""
-#~ "Usage: ppop cancel-%sactive <destination> ...\n"
-#~ "\n"
-#~ "This command will delete all of the arrested jobs\n"
-#~ "queued for the indicated destination or destinations.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop cancel-%sactive <destination> ...\n"
-#~ "\n"
-#~ "Cette commande effacera tous les travaux arrêtés\n"
-#~ "mis en file sur la ou les destinations indiquées.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: ppop move <job> <destination>\n"
-#~ "     ppop move <old_destionation> <new_destination>\n"
-#~ "\n"
-#~ "This command moves a job or jobs to a different queue.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop move <travail> <destination>\n"
-#~ "              ppop move <ancienne_destination> <nouvelle_destination>\n"
-#~ "\n"
-#~ "Cette commande déplace un ou plusieurs travaux vers une file différente.\n"
-
-#~ msgid ""
-#~ "Usage: ppop rush <job> ...\n"
-#~ "\n"
-#~ "This command moves the specified jobs to the head of the queue.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop rush <travail> ...\n"
-#~ "\n"
-#~ "Cette commande déplace les travaux spécifiés vers la tête de la file.\n"
-
-#~ msgid ""
-#~ "Usage: ppop last <job> ...\n"
-#~ "\n"
-#~ "This command moves the specified jobs to the end of the queue.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop last <travail> ...\n"
-#~ "\n"
-#~ "Cette commande déplace les travaux spécifiés vers la fin de la file.\n"
-
-#~ msgid ""
-#~ "Usage: ppop hold <job> ...\n"
-#~ "\n"
-#~ "This causes jobs to be placed in the held state.  A job\n"
-#~ "which is held will not be printed until it is released.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop hold <travail> ...\n"
-#~ "\n"
-#~ "Ceci place les travaux dans l'état retenu. Un travail retenu\n"
-#~ "ne sera pas imprimé tant qu'il n'est pas relâché.\n"
-
-#~ msgid ""
-#~ "Usage: ppop release <job> ...\n"
-#~ "\n"
-#~ "This command releases previously held or arrested jobs.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop release <travail> ...\n"
-#~ "\n"
-#~ "Cette commande relâche les travaux précédemment retenus ou arrêtés.\n"
-
-#~ msgid "Usage: ppop accept <destionation>\n"
-#~ msgstr "Utilisation : ppop accept <destination>\n"
-
-#~ msgid "Usage: ppop reject <destination>\n"
-#~ msgstr "Utilisation : ppop reject <destination>\n"
-
-#~ msgid ""
-#~ "\n"
-#~ "\tThis command sets the status of a destination.\n"
-#~ "\tThe status of a destination may be displayed with\n"
-#~ "\tthe \"ppop destination\" command.\n"
-#~ msgstr ""
-#~ "\n"
-#~ "\tCette commande positionne l'état d'une destination.\n"
-#~ "\tL'état d'une destination peut être affiché avec\n"
-#~ "\tla commande \"ppop destination\".\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage: ppop dest[ination] {<destionation>, all}\n"
-#~ "       ppop ldest {<destionation>, all}\n"
-#~ "       ppop dest-comment-address {<destination>, all}\n"
-#~ "\n"
-#~ "\tThis command displays the status of a print destination.  A print\n"
-#~ "\tdestination is a printer or a group of printers.  A destination\n"
-#~ "\tmay be be set to either accept or reject print jobs sent to it.  If\n"
-#~ "\ta print job is rejected, it is canceled and the user is so informed.\n"
-#~ "\n"
-#~ "\tThe \"ppop ldest\" form of this command also displays the comment\n"
-#~ "\tattached to the printer or group.  The \"ppop dest-comment-address\n"
-#~ "\tform displays the command and the interface and address.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop dest[ination] {<destination>, all}\n"
-#~ "              ppop ldest {<destination>, all}\n"
-#~ "        ppop dest-comment-address {<destination>, all}\n"
-#~ "\n"
-#~ "\tCette commande affiche l'état d'une destination d'impression.\n"
-#~ "\tUne destination d'impression est une imprimante ou un groupe\n"
-#~ "\td'imprimantes. On peut faire accepter ou rejeter des travaux\n"
-#~ "\td'impression envoyés à une destination. Si un travail\n"
-#~ "\td'impression est rejeté, il est annulé et l'utilisateur en est\n"
-#~ "\tinformé.\n"
-#~ "\n"
-#~ "\tLa forme \"ppop ldest\" de cette commande affiche aussi le\n"
-#~ "\tcommentaire attaché à l'imprimante ou au groupe. La forme\n"
-#~ "\t\"ppop dest-comment-address affiche la commande, l'interface et\n"
-#~ "\tl'adresse.\n"
-
-#~ msgid "Usage: ppop alerts _printer_\n"
-#~ msgstr "Utilisation : ppop alerts _imprimante_\n"
-
-#~ msgid "Usage: ppop log <job>\n"
-#~ msgstr "Utilisation : ppop log <travail>\n"
-
-#~ msgid ""
-#~ "Usage: ppop modify <jobname> <name>=<value> ...\n"
-#~ "\n"
-#~ "This command sets the properties of an existing job.\n"
-#~ msgstr ""
-#~ "Utilisation : ppop modify <nom travail> <nom>=<valeur> ...\n"
-#~ "\n"
-#~ "Cette commande positionne les propriétés d'un travail existant.\n"

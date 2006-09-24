@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 9 May 2006.
 */
 
 /*
@@ -458,6 +458,7 @@ struct PPRD_CALL_RETVAL cups_move_job(const char command_args[])
 	{
 	const char *p;
 	int job_id;
+	const char *new_destname;
 	int new_destid;
 	int x, rank2;
 	struct QEntry *q;
@@ -470,14 +471,14 @@ struct PPRD_CALL_RETVAL cups_move_job(const char command_args[])
 	p += strspn(p, "0123456789");
 	p += strspn(p, " ");
 
-	if((p = lmatchp(p, "group")))
+	if((new_destname = lmatchp(p, "group")))
 		{
-		if((new_destid = destid_by_group(p)) == -1)
+		if((new_destid = destid_by_group(new_destname)) == -1)
 			return new_retval(IPP_NOT_FOUND, 0);
 		}
-	else if((p = lmatchp(p, "printer")))
+	else if((new_destname = lmatchp(p, "printer")))
 		{
-		if((new_destid = destid_by_printer(p)) == -1)
+		if((new_destid = destid_by_printer(new_destname)) == -1)
 			return new_retval(IPP_NOT_FOUND, 0);
 		}
 	else
