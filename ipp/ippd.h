@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 27 September 2006.
 */
 
 /*! \file
@@ -24,6 +24,7 @@
 
 /* ippd.c */
 void debug(const char message[], ...);
+void error(const char message[], ...);
 const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *qtype);
 const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype);
 const char *extract_identity(struct IPP *ipp, gu_boolean require_authentication);

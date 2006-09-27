@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 May 2006.
+** Last modified 27 September 2006.
 */
 
 /*
@@ -21,6 +21,8 @@
 #define putc() dont_putc()
 #undef putline
 #define putline() dont_putline()
+#undef putchar
+#define putchar() dont_putchar()
 
 /*#define fputc() dont_fputc()*/
 #define fputs() dont_fputs()

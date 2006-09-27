@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 May 2006.
+** Last modified 27 September 2006.
 */
 
 /*
@@ -574,7 +574,7 @@ int command_status(const char *argv[])
 				opt_machine_readable ? "\t" : "\n                 ");
 			}
 
-		putchar('\n');
+		gu_putwc('\n');
 
 		/* leave these frees in since they are allocated on each iteration */
 		gu_free(printer_name);
@@ -612,7 +612,7 @@ int command_message(const char *argv[])
 		while((line = gu_getline(line, &line_len, statfile)))
 			{
 			if(print_aux_status(line, PRNSTATUS_PRINTING, ""))
-				putchar('\n');
+				gu_putwc('\n');
 			}
 		fclose(statfile);
 		}
@@ -1502,8 +1502,8 @@ static int ppop_destination(const char *argv[], int info_level)
 			""
 			);
 		while(rule_width--)
-			putchar('-');
-		putchar('\n');
+			gu_putwc('-');
+		gu_putwc('\n');
 		}
 
 	for(x=0; argv[x]; x++)
@@ -1732,9 +1732,9 @@ int command_alerts(const char *argv[])
 			}
 		}
 
-	/* copy the alerts to stdout */
+	/* Copy the alerts to stdout. */
 	while((c = fgetc(f)) != EOF)
-		putchar(c);
+		fputc(c, stdout);
 
 	fclose(f);
 

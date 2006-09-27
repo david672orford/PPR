@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 27 September 2006.
 */
 
 /*
@@ -50,6 +50,17 @@ void debug(const char message[], ...)
 	va_end(va);
 	fflush(stderr);
 	} /* end of debug() */
+
+void error(const char message[], ...)
+	{
+	va_list va;
+	va_start(va, message);
+	fputs("ipp-error: ", stderr);
+	vfprintf(stderr, message, va);
+	fputc('\n', stderr);
+	va_end(va);
+	fflush(stderr);
+	} /* end of error() */
 
 /*
  * Examine the supplied URL and determine if it is a valid printer-uri

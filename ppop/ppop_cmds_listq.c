@@ -220,7 +220,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 					while(*ptr)
 						{
 						for(x=0; x < reason_indent; x++) /* indent */
-							putchar(' ');
+							gu_putwc(' ');
 
 						gu_utf8_puts("(");
 
@@ -230,7 +230,7 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 								ptr++;
 								break;
 								}
-							putchar(*ptr);
+							gu_putwc(*ptr);
 							} while( *(ptr++) != ',' && *ptr );
 
 						gu_utf8_puts(")\n");
@@ -903,7 +903,7 @@ static void ppop_lpq_banner(void)
 			print_aux_status(line, printer_status, "\n\t");
 			}
 
-		putchar('\n');
+		gu_putwc('\n');
 
 		gu_free(printer_name);
 		gu_free(printer_job_destname);
@@ -1300,7 +1300,7 @@ static int ppop_details_item(
 	}
 
 	/* Put a blank line after this entry. */
-	putchar('\n');
+	gu_putwc('\n');
 
 	return FALSE;				/* don't stop */
 	} /* end of ppop_details_item() */
@@ -1722,7 +1722,7 @@ static int ppop_qquery_item(
 		}
 	}
 
-	putchar('\n');
+	gu_putwc('\n');
 
 	return FALSE;		/* don't stop */
 	} /* end of ppop_qquery_item() */
