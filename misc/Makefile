@@ -7,7 +7,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 13 September 2006.
+# Last modified 17 August 2006.
 #
 
 include ../Makefile.conf
