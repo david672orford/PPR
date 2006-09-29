@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 28 September 2006.
 */
 
 /*
@@ -553,7 +553,9 @@ int main(int argc, char *argv[])
 		return real_main(argc, argv);
 		}
 	gu_Catch {
-		fatal(0, "Caught exception: %s", gu_exception);
+		if(!lockfile_created)	/* if stderr still available, */
+			fprintf(stderr, "%s: %s\n", argc > 0 ? argv[0] : "ppr", gu_exception);
+		fatal(1, "Caught exception: %s", gu_exception);
 		}
 	/* NOTREACHED */
 	return 255;
