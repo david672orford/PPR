@@ -1,7 +1,7 @@
 ============================================================================
  mouse:~ppr/src/INSTALL.txt
  mouse:~ppr/src/docs/misc/INSTALL.txt (symbolic link)
- Last revised 12 October 2005 for PPR version 2.00a1
+ Last revised 29 September 2006 for PPR version 2.00a1
 ============================================================================
 
 This document describes the steps required to compile and install PPR.  See
@@ -94,7 +94,7 @@ Compiling from CVS requires the following additional packages:
 
 * HTMLDOC 
 
-* GNU Gettext
+* GNU Gettext utilities
 
 =============================================================================
  Programs for PostScript Filters
@@ -465,9 +465,20 @@ A Debian package can be found in debian/.
  Upgrading from previous versions
 ============================================================================
 
-PPR version 2.00 is significantly different from 1.5X.  It is recommended
-that you backup your /etc/ppr, /var/spool/ppr, /usr/share/ppr, and /usr/lib/ppr
-directories, remove them, and install fresh.
+PPR version 2.XX's directory layout is significantly different from 1.5X.
+For this reason it was not though wise to install version 2.XX over
+1.5X.  Therefor by default PPR 2.XX installs itself in new directories 
+which means it can be installed alongside PPR 1.XX.
+
+PPR 1.XX directory       Cooresponding PPR 2.XX directory
+-----------------------------------------------------------------------
+/etc/ppr                 /etc/ppr2
+/usr/lib/ppr             /usr/lib/ppr2
+/usr/share/ppr           /usr/share/ppr2
+/var/spool/ppr           /var/spool/ppr2
+
+Once you have installed PPR 2.XX, you can copy your printer, group, and
+alias configuration files from /etc/ppr to /etc/ppr2 and restart PPR 2.XX.
 
 ============================================================================
  End of instructions for compiling PPR

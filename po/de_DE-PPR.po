@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-24 10:53-0400\n"
+"POT-Creation-Date: 2006-09-29 11:50-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -577,7 +577,7 @@ msgstr ""
 "Die Code-Einstellung \"Binary\" ist nicht mit dem PPR Programm\n"
 "\"%s\" vereinbar."
 
-#: ../interfaces/parallel_generic.c:102 ../interfaces/parallel_linux.c:172
+#: ../interfaces/parallel_generic.c:85 ../interfaces/parallel_linux.c:172
 #, fuzzy, c-format
 msgid "Parallel port communication failed during %s(), errno=%d (%s)."
 msgstr "Kommunikation am Parallelanschluß fehlgeschlagen, Fehlernummer=%d (%s)."
@@ -1361,55 +1361,55 @@ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): execv(\"%s\", ...) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../ppad/dispatch_table.c:11
+#: ../ppad/dispatch_table.c:14
 msgid "alias to show"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:15
+#: ../ppad/dispatch_table.c:18
 msgid "name of existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:16
+#: ../ppad/dispatch_table.c:19
 msgid "name of new alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:20
+#: ../ppad/dispatch_table.c:23
 msgid "name of new or existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:21
+#: ../ppad/dispatch_table.c:24
 msgid "new target of alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:25
+#: ../ppad/dispatch_table.c:28
 msgid "name of alias to be deleted"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:29 ../ppad/dispatch_table.c:34
-#: ../ppad/dispatch_table.c:39 ../ppad/dispatch_table.c:44
+#: ../ppad/dispatch_table.c:32 ../ppad/dispatch_table.c:37
+#: ../ppad/dispatch_table.c:42 ../ppad/dispatch_table.c:47
 msgid "name of alias to be modified"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:30 ../ppad/dispatch_table.c:174
+#: ../ppad/dispatch_table.c:33 ../ppad/dispatch_table.c:174
 msgid "comment to attach (ommit to delete)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:35 ../ppad/dispatch_table.c:96
+#: ../ppad/dispatch_table.c:38 ../ppad/dispatch_table.c:96
 #: ../ppad/dispatch_table.c:288
 msgid "switches to attach (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:40 ../ppad/dispatch_table.c:105
+#: ../ppad/dispatch_table.c:43 ../ppad/dispatch_table.c:105
 #: ../ppad/dispatch_table.c:297
 msgid "languages to pass thru (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:45 ../ppad/dispatch_table.c:115
+#: ../ppad/dispatch_table.c:48 ../ppad/dispatch_table.c:115
 #: ../ppad/dispatch_table.c:340
 msgid "addon parameter to modify"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:46 ../ppad/dispatch_table.c:116
+#: ../ppad/dispatch_table.c:49 ../ppad/dispatch_table.c:116
 #: ../ppad/dispatch_table.c:341
 msgid "new value for param (ommit to delete)"
 msgstr ""
@@ -1864,7 +1864,7 @@ msgstr ""
 msgid "delete from bins list"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:403
+#: ../ppad/dispatch_table.c:402
 msgid "send reminder e-mail about printer problems"
 msgstr ""
 
@@ -1998,13 +1998,13 @@ msgid "send query to printer and produce list of suitable PPD files"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:444
+msgid "miscelanious command"
+msgstr ""
+
+#: ../ppad/dispatch_table.c:445
 #, fuzzy
 msgid "all settings for aliases"
 msgstr "Ungültiger Wert für %s"
-
-#: ../ppad/dispatch_table.c:445
-msgid "miscelanious command"
-msgstr ""
 
 #: ../ppad/dispatch_table.c:446
 #, fuzzy
