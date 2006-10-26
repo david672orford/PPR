@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--13 September 2006
+2.00a1, 11 December 2004--26 October 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10090,5 +10090,10 @@ no final tarball was released.
 
 * z_install_end/install_init_script.sh: changed to install init script as
   /etc/init.d/ppr2 rather than /etc/init.d/ppr.
+
+* makeprogs/installn.sh: removed chown and chgrp since they change the 
+  ownership of the file pointed to rather than the ownership of the link.
+  Since changing ownership clears SUID bits, this was a bad bug.  (Fix
+  backported to 1.5X.)
 
 

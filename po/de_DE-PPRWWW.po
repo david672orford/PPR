@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-29 10:23-0400\n"
+"POT-Creation-Date: 2006-10-26 12:30-0400\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../www/about.cgi.perl:56 ../www/cgi_menu.pl:86
+#: ../www/about.cgi.perl:56 ../www/cgi_menu.pl:68
 msgid "About PPR"
 msgstr "Über PPR"
 
@@ -75,14 +75,14 @@ msgstr "Das Alias \"%s\" existiert bereits!"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
 #: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:343
-#: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
+#: ../www/cliconf.cgi.perl:50 ../www/grp_addwiz.cgi.perl:78
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:152
 #: ../www/prn_addwiz.cgi.perl:853 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "_Abbrechen"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:343
-#: ../www/cliconf.cgi.perl:68 ../www/grp_addwiz.cgi.perl:78
+#: ../www/cliconf.cgi.perl:50 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:152
 msgid "_Next"
 msgstr "_Weiter"
@@ -157,8 +157,8 @@ msgid "Due to the problem indicated above, the queue was not created."
 msgstr "Wegen des oben angegebenen Problems wurde die Warteschlange nicht erzeugt."
 
 #: ../www/alias_addwiz.cgi.perl:183 ../www/cgi_tabbed.pl:371
-#: ../www/cliconf.cgi.perl:95 ../www/cliconf.cgi.perl:112
-#: ../www/cliconf.cgi.perl:195 ../www/delete_queue.cgi.perl:152
+#: ../www/cliconf.cgi.perl:77 ../www/cliconf.cgi.perl:94
+#: ../www/cliconf.cgi.perl:177 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:901
 #: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
@@ -261,114 +261,114 @@ msgstr "Speichere Änderungen:"
 msgid "PPR: Alias Properties: %s"
 msgstr "PPR: Eigenschaften des Alias: %s"
 
-#: ../www/cgi_menu.pl:37
+#: ../www/cgi_menu.pl:19
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: ../www/cgi_menu.pl:38 ../www/show_queues.cgi.perl:217
+#: ../www/cgi_menu.pl:20 ../www/show_queues.cgi.perl:217
 msgid "Cookie Login"
 msgstr "Cookie Login"
 
-#: ../www/cgi_menu.pl:39 ../www/show_queues.cgi.perl:217
+#: ../www/cgi_menu.pl:21 ../www/show_queues.cgi.perl:217
 msgid "Use this if your browser doesn't support Digest authentication."
 msgstr "Bitte nutzen Sie dieses, wenn Ihr Browser keine MD5 Authentifikation unterstützt."
 
-#: ../www/cgi_menu.pl:40
+#: ../www/cgi_menu.pl:22
 msgid "Spooler Logs"
 msgstr "Logdateien"
 
-#: ../www/cgi_menu.pl:41
+#: ../www/cgi_menu.pl:23
 msgid "Open a window with links to the spooler log files."
 msgstr "Ein Fenster mit Verknüpfungen zu den Logdateien öffnen."
 
-#: ../www/cgi_menu.pl:42
+#: ../www/cgi_menu.pl:24
 msgid "Disk Space"
 msgstr "Festplattenkapazität"
 
-#: ../www/cgi_menu.pl:43
+#: ../www/cgi_menu.pl:25
 msgid "Display information about free disk space on the print server."
 msgstr "Informationen über den freien Speicherplatz auf dem Druckserver anzeigen."
 
-#: ../www/cgi_menu.pl:44
+#: ../www/cgi_menu.pl:26
 msgid "Tests"
 msgstr "Tests"
 
-#: ../www/cgi_menu.pl:45
+#: ../www/cgi_menu.pl:27
 msgid "Open a window with links to test scripts."
 msgstr "Ein Fenster mit Verknüpfungen zu den Testscripten öffnen"
 
-#: ../www/cgi_menu.pl:52
+#: ../www/cgi_menu.pl:34
 msgid "Window"
 msgstr "Fenster"
 
-#: ../www/cgi_menu.pl:53
+#: ../www/cgi_menu.pl:35
 msgid "Queues"
 msgstr "Warteschlangen"
 
-#: ../www/cgi_menu.pl:54
+#: ../www/cgi_menu.pl:36
 msgid "Open a window with an icon for each queue."
 msgstr "Ein Fenster mit einem Symbol für jede Warteschlange öffnen."
 
-#: ../www/cgi_menu.pl:55
+#: ../www/cgi_menu.pl:37
 msgid "All Jobs"
 msgstr "Alle Druckaufträge"
 
-#: ../www/cgi_menu.pl:56
+#: ../www/cgi_menu.pl:38
 msgid "Open a window which lists all jobs."
 msgstr "Ein Fenster öffnen, in dem alle Aufträge angezeigt werden."
 
-#: ../www/cgi_menu.pl:61
+#: ../www/cgi_menu.pl:43
 #, perl-format
 msgid "Control %s"
 msgstr "Überwache %s"
 
-#: ../www/cgi_menu.pl:62
+#: ../www/cgi_menu.pl:44
 msgid "Monitor, start, stop, and mount forms on the printer."
 msgstr "Anzeige, start, stop und mount von Vorlagen für den Drucker."
 
-#: ../www/cgi_menu.pl:63 ../www/cgi_menu.pl:70
+#: ../www/cgi_menu.pl:45 ../www/cgi_menu.pl:52
 #, perl-format
 msgid "Properties of %s"
 msgstr "Eigenschaften von %s"
 
-#: ../www/cgi_menu.pl:64
+#: ../www/cgi_menu.pl:46
 msgid "Examine and change the configuration of the printer."
 msgstr "Konfiguration des Druckers anzeigen und ändern."
 
-#: ../www/cgi_menu.pl:68
+#: ../www/cgi_menu.pl:50
 #, perl-format
 msgid "Control %s members"
 msgstr "Überwache Mitglieder von %s"
 
-#: ../www/cgi_menu.pl:69
+#: ../www/cgi_menu.pl:51
 msgid "Monitor, start, stop, and mount forms on the member printers."
 msgstr "Anzeige, start, stop und mount von Vorlagen für den Mitgliedsdrucker."
 
-#: ../www/cgi_menu.pl:71
+#: ../www/cgi_menu.pl:53
 msgid "Examine and change the configuration of the group."
 msgstr "Konfiguration der Gruppe anzeigen und ändern."
 
-#: ../www/cgi_menu.pl:81 ../www/cgi_widgets.pl:249
+#: ../www/cgi_menu.pl:63 ../www/cgi_widgets.pl:249
 msgid "Help"
 msgstr "Hilfe"
 
-#: ../www/cgi_menu.pl:82
+#: ../www/cgi_menu.pl:64
 msgid "For This Window"
 msgstr "Für dieses Fenster"
 
-#: ../www/cgi_menu.pl:83
+#: ../www/cgi_menu.pl:65
 msgid "Display the help document for this program in a web browser window"
 msgstr "Die Hilfe für dieses Programm in einem Browserfenster anzeigen"
 
-#: ../www/cgi_menu.pl:84
+#: ../www/cgi_menu.pl:66
 msgid "All PPR Documents"
 msgstr "Alle PPR Dokumente"
 
-#: ../www/cgi_menu.pl:85
+#: ../www/cgi_menu.pl:67
 msgid "Open the PPR documentation index in a web browser window"
 msgstr "Den PPR Dokumentationsindex in einem Browserfenster anzeigen"
 
-#: ../www/cgi_menu.pl:87
+#: ../www/cgi_menu.pl:69
 msgid "Display PPR version information"
 msgstr "Versionsinformationen für PPR anzeigen"
 
@@ -404,11 +404,11 @@ msgstr "Änderungen speichern."
 msgid "_Save"
 msgstr "_Speichern"
 
-#: ../www/cliconf.cgi.perl:45
+#: ../www/cliconf.cgi.perl:27
 msgid "Downloadable Client Configuation Files"
 msgstr "Herunterladbare Client Konfigurationsdateien"
 
-#: ../www/cliconf.cgi.perl:56
+#: ../www/cliconf.cgi.perl:38
 msgid ""
 "Using this program you can download various files which help you to use PPR.\n"
 "These include shell scripts for configuring client computers to send print\n"
@@ -418,35 +418,35 @@ msgstr ""
 "Diese beinhalten Shellscripte für die Konfiguration von Clientsfür das Senden\n"
 "von Aufträgen zu PPR, PPD Dateien und Symbole für das Öffnen des PPR Webinterfaces."
 
-#: ../www/cliconf.cgi.perl:60
+#: ../www/cliconf.cgi.perl:42
 #, perl-format
 msgid "What do you want to download for the queue \"%s\"?"
 msgstr "Was möchtem Sie für die Warteschlange \"%s\" herunterladen?"
 
-#: ../www/cliconf.cgi.perl:62
+#: ../www/cliconf.cgi.perl:44
 msgid "Spooler Configuration Script"
 msgstr "Konfigurationsscript für Spooler"
 
-#: ../www/cliconf.cgi.perl:63
+#: ../www/cliconf.cgi.perl:45
 #, fuzzy
 msgid "KDE/Gnome Shortcut to Web Interface"
 msgstr "KDE-Verknüpfung zum Webinterface"
 
-#: ../www/cliconf.cgi.perl:64
+#: ../www/cliconf.cgi.perl:46
 #, fuzzy
 msgid "KDE/GNOME Shortcut to Perl/Tk Interface"
 msgstr "KDE-Verknüpfung zum Perl/Tk-Interface"
 
-#: ../www/cliconf.cgi.perl:72
+#: ../www/cliconf.cgi.perl:54
 msgid "You must make a choice."
 msgstr "Sie müssen etwas auswählen."
 
-#: ../www/cliconf.cgi.perl:86 ../www/cliconf.cgi.perl:103
+#: ../www/cliconf.cgi.perl:68 ../www/cliconf.cgi.perl:85
 #, fuzzy
 msgid "Downloadable KDE/Gnome Icon"
 msgstr "Herunterladbares KDE-Icon"
 
-#: ../www/cliconf.cgi.perl:90
+#: ../www/cliconf.cgi.perl:72
 #, fuzzy
 msgid ""
 "Click on the button below to download the KDE/Gnome icon for the PPR Web\n"
@@ -456,12 +456,12 @@ msgstr ""
 "zum PPR Webinterface herunterzuladen.\n"
 "Sie wollen sie wahrscheinlich auf Ihrem Desktop speichern."
 
-#: ../www/cliconf.cgi.perl:93 ../www/cliconf.cgi.perl:110
-#: ../www/cliconf.cgi.perl:189
+#: ../www/cliconf.cgi.perl:75 ../www/cliconf.cgi.perl:92
+#: ../www/cliconf.cgi.perl:171
 msgid "_Download"
 msgstr "_Herunterladen"
 
-#: ../www/cliconf.cgi.perl:107
+#: ../www/cliconf.cgi.perl:89
 #, fuzzy
 msgid ""
 "Click on the button below to download the KDE/Gnome icon for the PPR Perl/Tk\n"
@@ -471,11 +471,11 @@ msgstr ""
 "zum PPR Perl/Tk-Interface herunterzuladen.\n"
 "Sie wollen sie wahrscheinlich auf Ihrem Desktop speichern."
 
-#: ../www/cliconf.cgi.perl:120
+#: ../www/cliconf.cgi.perl:102
 msgid "Create Client Script: Choose a Spooler"
 msgstr "Erstelle Client Script: Wählen Sie einen Spooler"
 
-#: ../www/cliconf.cgi.perl:129
+#: ../www/cliconf.cgi.perl:111
 #, perl-format
 msgid ""
 "You have chosen to create a script which you can download and run\n"
@@ -486,52 +486,52 @@ msgstr ""
 "können, um Ihren lokalen Spooler zu konfigurieren, auf die PPR\n"
 "Warteschlange \"%s\" zu drucken."
 
-#: ../www/cliconf.cgi.perl:133
+#: ../www/cliconf.cgi.perl:115
 msgid "Please indicate which print spooler you are using:"
 msgstr "Bitte geben Sie an, welchen Druckerspooler Sie verwenden:"
 
-#: ../www/cliconf.cgi.perl:134
+#: ../www/cliconf.cgi.perl:116
 msgid "BSD lpd"
 msgstr "BSD lpd"
 
-#: ../www/cliconf.cgi.perl:135
+#: ../www/cliconf.cgi.perl:117
 msgid "LPR Next Generation"
 msgstr "LPR Next Generation"
 
-#: ../www/cliconf.cgi.perl:142
+#: ../www/cliconf.cgi.perl:124
 msgid "You must choose a spooler!"
 msgstr "Sie müssen einen Spooler wählen!"
 
-#: ../www/cliconf.cgi.perl:152
+#: ../www/cliconf.cgi.perl:134
 msgid "Create Client Script: Local Name"
 msgstr "Erstelle Client Script: Lokaler Name"
 
-#: ../www/cliconf.cgi.perl:160
+#: ../www/cliconf.cgi.perl:142
 #, perl-format
 msgid "Please choose a local name for %s:"
 msgstr "Bitte wählen Sie einen lokalen Namen für %s aus:"
 
-#: ../www/cliconf.cgi.perl:164
+#: ../www/cliconf.cgi.perl:146
 msgid "Please provide a description of this queue:"
 msgstr "Bitte deben Sie eine Beschreibung für die Warteschlange an:"
 
-#: ../www/cliconf.cgi.perl:171
+#: ../www/cliconf.cgi.perl:153
 msgid "The local name must not be blank."
 msgstr "Der lokale Name darf nicht leer sein."
 
-#: ../www/cliconf.cgi.perl:175
+#: ../www/cliconf.cgi.perl:157
 msgid "The description must not be blank."
 msgstr "Die Beschreibung darf nicht leer sein."
 
-#: ../www/cliconf.cgi.perl:184
+#: ../www/cliconf.cgi.perl:166
 msgid "Create Client Script: Download"
 msgstr "Erstelle Client Script: Herunterladen"
 
-#: ../www/cliconf.cgi.perl:188
+#: ../www/cliconf.cgi.perl:170
 msgid "Click on the button below to download the install script."
 msgstr "Klicken Sie unten auf den Knopf, um das Installationsscript herunterzuladen."
 
-#: ../www/cliconf.cgi.perl:190
+#: ../www/cliconf.cgi.perl:172
 msgid "This script must be run as root.  The command to run it is:"
 msgstr "Dieses Script kann nur von root ausgeführt werden. Das Kommando hierfür ist:"
 
