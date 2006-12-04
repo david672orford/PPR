@@ -545,3 +545,9 @@ more information about RIPs and *pprRIP:.
 
 * refman/ppad-interfaces.8.pod: copied from 2.XX branch.
 
+
+1.55, 4 December 2006
+
+No changes.
+
+

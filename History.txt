@@ -9501,19 +9501,20 @@ no final tarball was released.
   /var/run is a tmpfs).  (backport from 2.XX branch)
 
 
-1.55, 11 April 2006--26 October 2006
+1.55, 11 April 2006--4 December 2006
 
-* libppr/readppd.c:ppd_find_file(): added missing fclose().  This bug was
-  fixed in the 2.XX branch even though I can't find a record of it in
-  History.txt.
+* libppr/readppd.c:ppd_find_file(): added missing fclose().  This bug fix was
+  erroneously supposed to have been merged into 1.54 from 2.XX.)
 
 * backported from 2.XX the updated version of nonppr_misc/snprintf/snprint.c
   and added the new libgu/gu_snprintf.c.  This fixed gu_asnprintf().  The
   problem was probably related to copying stdarg arrays.
 
+* www/ppr-passwd.c: fixed --delete (backport from 2.XX branch)
+
 * makeprogs/installn.sh: removed chown and chgrp since they change the 
   ownership of the file pointed to rather than the ownership of the link.
-  Since changing ownership clears SUID bits, this was a bad bug.  (Fix
-  backported from 2.XX.)
+  Since changing ownership clears SUID bits, this was a bad bug.  (backport
+  from 2.XX branch)
 
 
