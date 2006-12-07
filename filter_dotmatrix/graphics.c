@@ -1,6 +1,6 @@
 /*
-** mouse:~ppr/src/dotmatrix/graphics.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** mouse:~ppr/src/filter_dotmatrix/graphics.c
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 15 April 2004.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -33,7 +33,10 @@
 ** responsible for printing dotmatrix graphics.
 */
 
+#include <limits.h>
 #include "filter_dotmatrix.h"
+
+/* #define DEBUG_COMPRESSION 1 */
 
 /* Maximum bytes of graphics data. */
 #define MAX_GBYTES 8640
@@ -207,7 +210,10 @@ void graphic(int mode, int pins, int length)
 			int lastc,lastlastc;
 			unsigned int di;
 			int unclaimed;
-			unsigned long int tuple;
+			#if UINT_MAX < 0xFFFF
+			#error code assumes that unsigned int is at least 32 bits
+			#endif
+			unsigned int tuple;		/* at least 32 bits required */
 
 			/* 
 			** This loop runs once for each character of graphics data and
@@ -235,34 +241,34 @@ void graphic(int mode, int pins, int length)
 						 && (c!=lastc || rlength==128) )
 					{							/* empty it. */
 					#ifdef DEBUG_COMPRESSION
-					printf("%% dumping run, %d %2.2X\n",rlength,lastc);
+					printf("%% dumping run, %d 0x%2.2X\n", rlength, lastc);
 					#endif
-					gbuffer2[di++]=257-rlength;
-					gbuffer2[di++]=lastc;
+					gbuffer2[di++] = (257 - rlength);
+					gbuffer2[di++] = lastc;
 					rlength=0;
 					}
 
 				/* If literal in progress, but we see a run starting, */
-				if(litlength>=2 && c==lastc && c==lastlastc)
+				if(litlength >= 2 && c == lastc && c == lastlastc)
 					{
-					litlength-=2;				/* lastc should have been part of the run. */
-					unclaimed+=2;				/* Leave for rlength to claim. */
+					litlength -= 2;				/* lastc should have been part of the run. */
+					unclaimed += 2;				/* Leave for rlength to claim. */
 					}  
 
-				if( litlength					/* If run starting or literal full, */
+				if(litlength					/* If run starting or literal full, */
 						&& ((c==lastc && c==lastlastc) || litlength==128) )
 					{							/* empty literal. */
 					#ifdef DEBUG_COMPRESSION
-					printf("%% dumping literals\n");
+					printf("%% dumping literals (%d bytes)\n", litlength);
 					#endif
 
-					gbuffer2[di++]=litlength-1;
+					gbuffer2[di++] = litlength-1;
 					while(litlength--)
 						{
 						#ifdef DEBUG_COMPRESSION
-						printf("%% %2.2X\n",gbuffer[x-litlength-unclaimed-1]);
+						printf("%% 0x%02X\n", gbuffer[x-litlength-unclaimed-1]);
 						#endif
-						gbuffer2[di++]=gbuffer[x-litlength-unclaimed-1];
+						gbuffer2[di++] = gbuffer[x-litlength-unclaimed-1];
 						}
 					litlength=0;
 					}
@@ -274,8 +280,8 @@ void graphic(int mode, int pins, int length)
 					printf("%% run member\n");
 					#endif
 					rlength++;
-					rlength+=unclaimed;
-					unclaimed=0;
+					rlength += unclaimed;
+					unclaimed = 0;
 					}
 
 				/* If not, it must be part of a literal list. */
@@ -285,8 +291,8 @@ void graphic(int mode, int pins, int length)
 					printf("%% literal list member\n");
 					#endif
 					litlength++;
-					litlength+=unclaimed;
-					unclaimed=0;
+					litlength += unclaimed;
+					unclaimed = 0;
 					}
 				}
 
@@ -296,8 +302,8 @@ void graphic(int mode, int pins, int length)
 				#ifdef DEBUG_COMPRESSION
 				printf("%% dumping final run, %d %2.2X\n",rlength,lastc);
 				#endif
-				gbuffer2[di++]=257-rlength;
-				gbuffer2[di++]=lastc;
+				gbuffer2[di++] = (257 - rlength);
+				gbuffer2[di++] = lastc;
 				}
 			else if(litlength)
 				{
@@ -309,9 +315,9 @@ void graphic(int mode, int pins, int length)
 				while(litlength--)
 					{
 					#ifdef DEBUG_COMPRESSION
-					printf("%% %2.2X\n",gbuffer[x-litlength-unclaimed-1]);
+					printf("%% %2.2X\n", gbuffer[x-litlength-unclaimed-1]);
 					#endif
-					gbuffer2[di++]=gbuffer[x-litlength-unclaimed-1];
+					gbuffer2[di++] = gbuffer[x-litlength-unclaimed-1];
 					}
 				}
 
@@ -331,37 +337,42 @@ void graphic(int mode, int pins, int length)
 				linelen+=4;
 				if(linelen > A85_BPL)			/* If current line is full, */
 					{
-					fputc('\n',stdout);			/* start a new one. */
+					fputc('\n', stdout);		/* start a new one. */
 					linelen=4;
 					}
 
-				tuple= gbuffer2[x++] * (256*256*256);
-				tuple+=gbuffer2[x++] * (256*256);
-				tuple+=gbuffer2[x++] * 256;
-				tuple+=gbuffer2[x++];
+				/* Take four bytes to bet encoded as 5 symbols */
+				tuple =  (unsigned)gbuffer2[x++] << 24;
+				tuple |= (unsigned)gbuffer2[x++] << 16;
+				tuple |= (unsigned)gbuffer2[x++] << 8;
+				tuple |= (unsigned)gbuffer2[x++];
+				#ifdef DEBUG_COMPRESSION
+				printf("%% tuple=0x%08X\n", tuple);
+				#endif
 
-				fputc( (tuple/(85*85*85*85)) + 33, stdout);
+
+				fputc((tuple/(85*85*85*85)) + 33, stdout);
 				tuple %= (85*85*85*85); /* keep remainder */
 
-				fputc( (char)(tuple/(85*85*85)) + 33, stdout);
+				fputc((tuple/(85*85*85)) + 33, stdout);
 				tuple %= (85*85*85);	/* always at least two characters */
 				countdown--;
 					
-				if(countdown)
+				if(countdown)			/* if more than one input byte */
 					{
-					fputc( (char)(tuple/(85*85)) + 33, stdout);
+					fputc((tuple/(85*85)) + 33, stdout);
 					tuple %= (85*85);
 					countdown--;
 						
 					if(countdown)
 						{
-						fputc( (char)(tuple/85) + 33, stdout);
+						fputc((tuple/85) + 33, stdout);
 						tuple %= 85;
 						countdown--;
 							
 						if(countdown)
 							{		
-							fputc( (char)tuple + 33, stdout);
+							fputc(tuple + 33, stdout);
 							countdown--;
 							}
 						}

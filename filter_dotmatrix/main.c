@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_dotmatrix/main.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2005, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 21 May 2004.
+** Last modified 24 August 2005.
 */
 
 /*
@@ -347,22 +347,22 @@ void reset(int hard)
 	/* Return to 10CPI */
 	if(hard)
 		{
-		current_charmode=MODE_PICA;
-		one_line_expanded=FALSE;
-		simple_compressed=FALSE;
-		script_mode=SCRIPT_NONE;		/* no super/subscript */
-		international_char_set=0;		/* Set international character set to USA */
-		nlq_mode=FALSE;
-		charset=CHARSET_EXTENDED;
-		nlq_font=NLQ_ROMAN;
-		extra_dot_spacing=0;			/* No extra inter-character spacing */
-		print_colour=COLOUR_BLACK;
+		current_charmode = MODE_PICA;
+		one_line_expanded = FALSE;
+		simple_compressed = FALSE;
+		script_mode = SCRIPT_NONE;		/* no super/subscript */
+		international_char_set = 0;		/* Set international character set to USA */
+		nlq_mode = FALSE;
+		charset = CHARSET_EXTENDED;
+		nlq_font = NLQ_ROMAN;
+		extra_dot_spacing = 0;			/* No extra inter-character spacing */
+		print_colour = COLOUR_BLACK;
 		}
 
 	/* Set select font variables to default values. */
-	out_style=0;
-	out_hscale=1.0;
-	out_vscale=1.0;
+	out_style = 0;
+	out_hscale = 1.0;
+	out_vscale = 1.0;
 
 	/* Restore default vertical tab channel */
 	vertical_tab_channel = 0;
@@ -565,6 +565,7 @@ static void process_input(void)
 /*
 ** Read command line parameters, if any, and call process_input().
 ** Usage: filter_dotmatrix 'option1...optionN' _printer_ _title_
+** The _printer_ and _title_ options are ignored.
 */
 int main(int argc, char *argv[])
 	{
@@ -593,7 +594,6 @@ int main(int argc, char *argv[])
 		GU_INI_TYPE_STRING, &MediaType,
 		GU_INI_TYPE_END);
 
-
 	if(error_message)
 		{
 		fprintf(stderr, _("%s: %s\n"
@@ -608,7 +608,7 @@ int main(int argc, char *argv[])
 	/* Set default emulation mode */
 	emulation = 0;						/* was once set to EMULATION_8IN_LINE */
 
-	/* Process the options. */
+	/* Process the filter options list. */
 	if(argc >= 2)
 		{
 		struct OPTIONS_STATE o;
@@ -624,7 +624,7 @@ int main(int argc, char *argv[])
 			**-------------------------------------------*/
 			if(strcmp(name, "noisy") == 0)
 				{
-				if( (noisy = gu_torf(value)) == ANSWER_UNKNOWN )
+				if(gu_torf_setBOOL(&noisy,value) == -1)
 					filter_options_error(1, &o, _("Value must be boolean."));
 				}
 
@@ -633,7 +633,7 @@ int main(int argc, char *argv[])
 			**-------------------------------------------*/
 			else if(strcmp(name, "colour") == 0 || strcmp(name, "color") == 0)
 				{
-				if((colour_ok = gu_torf(value)) == ANSWER_UNKNOWN)
+				if(gu_torf_setBOOL(&colour_ok,value) == -1)
 					filter_options_error(1, &o, _("Value must be boolean."));
 				}
 
@@ -772,7 +772,7 @@ int main(int argc, char *argv[])
 			/*---------------------------------------------
 			** Select a LangaugeLevel for PostScript
 			---------------------------------------------*/
-			else if(strcmp(name, "level")==0)
+			else if(strcmp(name, "level") == 0)
 				{
 				int x = atoi(value);
 				if(x == 1)
@@ -790,24 +790,19 @@ int main(int argc, char *argv[])
 			----------------------------------------------*/
 			else if(strcmp(name, "narrowcarriage") == 0)
 				{
-				switch( gu_torf(value) )
-					{
-					case ANSWER_TRUE:
-						emulation |= EMULATION_8IN_LINE;
-						break;
-					case ANSWER_FALSE:
-						emulation &= ~EMULATION_8IN_LINE;
-						break;
-					case ANSWER_UNKNOWN:
-					default:
-						filter_options_error(1, &o, _("Value must be boolean."));
-					}
+				gu_boolean temp;
+				if(gu_torf_setBOOL(&temp,value) == -1)
+					filter_options_error(1, &o, _("Value must be boolean."));
+				else if(temp)
+					emulation |= EMULATION_8IN_LINE;
+				else
+					emulation &= ~EMULATION_8IN_LINE;
 				}
 
 			/*----------------------------------------------
 			** Look for x or y shift
 			**--------------------------------------------*/
-			else if(strcmp(name,"xshift")==0)
+			else if(strcmp(name,"xshift") == 0)
 				xshift = atoi(value);
 			else if(strcmp(name,"yshift")==0)
 				yshift = atoi(value);
@@ -833,6 +828,13 @@ int main(int argc, char *argv[])
 
 		} /* end of if options exist */
 
+	/* Only 8-bit encodings are supported. */
+	if(strcasecmp(opt_charset, "UTF-8") == 0)
+		{
+		fprintf(stderr, "%s: UTF-8 not supported, assuming CP437\n", myname);
+		opt_charset = "CP437";
+		}
+	
 	/* Reset the "printer" for the dry run. */
 	reset(TRUE);						/* complete printer reset */
 	page_reset(0);						/* set variables for top of page */
