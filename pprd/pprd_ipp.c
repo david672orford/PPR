@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 7 December 2006.
+** Last modified 14 December 2006.
 */
 
 /*
@@ -601,7 +601,13 @@ struct PPRD_CALL_RETVAL cups_move_job(const char command_args[])
 	return new_retval(moved ? IPP_OK : IPP_NOT_FOUND, 0);
 	} /* cups_move_job() */
 
-/* This is called for each command received over the socket. */
+/* This is called for each command received over the socket.
+ * 
+ * These commands look like this:
+ *   IPP <op> <arguments>
+ * Where <op> is the IPP operation ID in base 10 and <arguments>
+ * are the arguments to the operation.
+ */
 struct PPRD_CALL_RETVAL ipp_dispatch(const char command[])
 	{
 	const char function[] = "ipp_dispatch";

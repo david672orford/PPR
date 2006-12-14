@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 September 2006.
+** Last modified 14 December 2006.
 */
 
 /*
@@ -106,6 +106,8 @@ const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *q
 	return NULL;
 	} /* printer_uri_validate() */
 
+/** find printer-uri attribute and resolve it to qtype and destname
+ */
 const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 	{
 	FUNCTION4DEBUG("extract_destname")
