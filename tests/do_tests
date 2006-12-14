@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 #
 # mouse:~ppr/src/tests/do_tests
-# Last modified 12 October 2005.
+# Last modified 7 December 2006.
 #
 
 use Cwd;
@@ -63,10 +63,10 @@ sub do_test
 
 # This is how things are on the test systems.
 # All this is for the benefit of our children.
-$ENV{LIBDIR} = "/usr/lib/ppr";
-$ENV{SHAREDIR} = "/usr/share/ppr";
-$ENV{CONFDIR} = "/etc/ppr";
-$ENV{VAR_SPOOL_PPR} = "/var/spool/ppr";
+$ENV{LIBDIR} = "/usr/lib/ppr2";
+$ENV{SHAREDIR} = "/usr/share/ppr2";
+$ENV{CONFDIR} = "/etc/ppr2";
+$ENV{VAR_SPOOL_PPR} = "/var/spool/ppr2";
 $ENV{TEMPDIR} = "/tmp";
 
 $ENV{BINDIR} = "$ENV{LIBDIR}/bin";

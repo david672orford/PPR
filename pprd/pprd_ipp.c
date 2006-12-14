@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 9 May 2006.
+** Last modified 7 December 2006.
 */
 
 /*
@@ -219,7 +219,7 @@ static struct PPRD_CALL_RETVAL ipp_hold_job(const char command_args[])
 */
 static struct PPRD_CALL_RETVAL ipp_release_job(const char command_args[])
 	{
-	const char function[] = "ipp_release_job";
+	FUNCTION4DEBUG("ipp_release_job")
 	int job_id;
 	int x;
 	struct PPRD_CALL_RETVAL retval = {IPP_NOT_FOUND, 0};	/* yet */
@@ -604,7 +604,7 @@ struct PPRD_CALL_RETVAL cups_move_job(const char command_args[])
 /* This is called for each command received over the socket. */
 struct PPRD_CALL_RETVAL ipp_dispatch(const char command[])
 	{
-	FUNCTION4DEBUG("ipp_dispatch")
+	const char function[] = "ipp_dispatch";
 	const char *p;
 	int operation_id;
 	struct PPRD_CALL_RETVAL result;

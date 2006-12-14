@@ -1,14 +1,14 @@
-11 December 2004
+7 December 2006
 
 This is announce.txt from:
 
-ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-1.53.tar.gz
-http://ppr-dist.trincoll.edu/pub/ppr/ppr-1.53.tar.gz
+ftp://ppr-dist.trincoll.edu/pub/ppr/ppr-2.00a1.tar.gz
+http://ppr-dist.trincoll.edu/pub/ppr/ppr-2.00a1.tar.gz
 
 
 ==========================================================================
 
-Version 1.53 of PPR has been released.
+Version 2.00a1 of PPR has been released.
 
 PPR is a Unix print spooler expressly designed for operating PostScript
 printers.  It was written by David Chappell at the Trinity College Computing
@@ -24,141 +24,9 @@ by sending them to "ppr-list@mail.trincoll.edu".
 
 
 ==========================================================================
- New in version 1.53 (since 1.52)
+ New in version 2.00a1
 ==========================================================================
 
-* The browser compatibility of the web interface has been vastly improved
-  while approving its appearance and usability in sophisticated browsers.
-
-* Corrected many internationalization problems.
-
-* Removed PostScript versions of the preformatted documentation in order
-  to reduce the size of the source code archive.  The PostScript versions
-  and still be build, and prebuilt PDF versions are still provided.
-
-* Added automatic probing for printer type to assist in selecting a PPD
-  file.  This works from the command line with the "ppad ppdq" command
-  and from the web interface.
-
-* Fixed a bug affecting PageMaker 7.0.
-
-* Fixed ppr-clean.  Bugs prevented it from doing its job which is to remove
-  leftover temporary files.
-
-* Expanded format of lprsrv.conf to allow for rules which match hosts listed
-  in additional files in the style of /etc/hosts.lpd.
-
-* Completed papd which is the replacement for papsrv.  It provides vastly 
-  simplified configuration and the ability to adjust to configuration 
-  changes without restarting.
-
-* Rewrote ppr2samba to use a new queue configuration reader library which 
-  was written by papd.
-
-* Added IPP support sufficient to print from the KDE desktop using PPR
-  as a drop-in replacement for CUPS.  The IPP support is not yet standards
-  complient and is still far from complete.
-
-* Added an editps filter for MS Windows XP.
-
-* Fixed support for the PROS protocol for print servers.
-
-* Improved support for USB.
-
-* Added more support for browsing list of available printers to the WWW
-  printer setup wizard.
-
-There were of course a large number of smaller bug fixes.  A lot of work
-was also done to clean up code which was standing in the way of furthur
-progress.  Several complicate sections were simplified by using a simple
-exception handling system based on setjmp()/longjmp().
-
-==========================================================================
- New in version 1.52 (since 1.51)
-==========================================================================
-
-* Fixed numberous build and install problems, especially problems affecting
-  non-Linux systems.
-
-* Fixed the web-browser interface's popup menu in IE 6.
-
-* Cosmetic fixes to web interface for greater consistency between Mozilla
-  1.4 and IE 6.
-
-* Fixed problem editing switchsets in the web-browser interface.
-
-* Fixed command output spacing problems caused by the source code tab-width
-  conversion done in version 1.51.
-
-* Added code to the install to send SIGHUP to Inetd or Xinetd so that it
-  will load its new configuration.
-
-* Partial rewrite of "Installing and Using PPR" to include information about
-  the web-browser and Perl/Tk interfaces.
-
-* Fixed the dotmatrix printer emulator.
-
-* Added many new Russian messages (thought he quality is likely poor).
-
-
-==========================================================================
- New in version 1.51 (since 1.50)
-==========================================================================
-
-* Reduced use of setUID programs, especially of setUID root programs.
-
-* Reimplemented ppr-passwd so it no longer depends on Apache's htpasswd.
-
-* Simplified the build process, eliminating the "fixup" step.
-
-* Fixed bug which prevented the printing of banner pages for jobs without 
-  job log files.
-
-* Added code so that the Manualfeedtimeout and JobTimeout values set with
-  "ppad userparams" take effect on level 2 PostScript printers too. 
-
-* Added ppr-index command as the front end for index generation.  The separate
-  commands, such as ppr-indexfonts, and ppr-indexppds have become backend 
-  programs that are run by ppr-index.
-
-* Added support for a "meta responder".  When using a meta responder, the
-  user uses the ppr-followme command to register a responder method and
-  address which can be used to contact him.  The ppr-followme command can be
-  used to change this registration at any time.  This greatly simplifies
-  things for X-Windows users since they no longer have to set environment
-  variables such as PPR_RESPONDER in their windowing systme startup scripts.
-  All they need to do is run ppr-responder and since the meta responder is
-  the default, their print job message will get to them.  See the
-  ppr-followme(1) manpage and the -m switch section in the ppr(1) manpage for
-  details.
-
-* Made the new Configure script the default one.  The old one is still
-  available as Configure_old.
-
-* Added support for gzip compressed PPD files.
-
-* Improved ppr-panel (a Perl/Tk interface to PPR).  These improvements
-  include the addition of a print dialog so that it can be used as a drag-
-  and-drop target for printing files in desktop environments such as KDE.
-
-* Converted the tab stops in the source code from every 8 columns to every
-  4 columns.
-
-* Added "socketapi", "appsocket", and "jetdirect" as aliases for the tcpip
-  interface.  Some of them have different default options.
-
-* Added "pros" interface for Axis print servers (this may still need
-  debugging).
-
-* Changed human-readable "ppad show" output to better group things by
-  category and to indent second and subsequent lines of logical groups.
-
-* More web interface fixes to suppress spurious Perl 5.8.0 warnings.
-
-* Corrected sorting of AppleTalk names in the added printer wizard.
-
-* Refined the reporting of printer status by "ppad status", especially for
-  status derived from PJL USTATUS messages.
 
 
 ==========================================================================
@@ -391,6 +259,6 @@ PPR may be obtained from <ftp://ppr-dist.trincoll.edu/pub/ppr/> or
 <http://ppr-dist.trincoll.edu/pub/ppr/>.  The current distribution includes
 the following files:
 
-ppr-1.53.tar.gz           Source code for PPR
+ppr-2.00a1.tar.gz         Source code for PPR
 natali-1.25.tar.gz        A library needed for Netatalk support under Linux
 

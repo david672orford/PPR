@@ -7,7 +7,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 26 October 2006.
+# Last modified 7 December 2006.
 #
 
 #
@@ -106,17 +106,8 @@ install: symlinks-restore config.h
 # The script Configure calls this in order to pick up the old settings 
 # exported from Makefile.conf.
 configure:
-	@echo "Searching for shell..."; \
-	for shell in /bin/bash /bin/ksh /bin/sh /bin/sh5; \
-		do \
-		echo " Trying $$shell..."; \
-		if [ -x $$shell ]; \
-			then \
-			echo "Running \"$$shell ./Configure\"..."; \
-			$$shell ./Configure; \
-			break; \
-			fi; \
-		done
+	echo "Running \"$$shell ./Configure\"..."
+	./Configure
 
 config.h: config.h.in Makefile.conf subst_tool$(DOTEXE)
 	./subst_tool <config.h.in >config.h	
@@ -138,7 +129,7 @@ dist-docs:
 # and build the tar file.
 dist: dist-docs clean unconfigure
 	( cd po; make pot )
-	( cd /home/ppr; tar -zcf $$HOME/ppr-$(SHORT_VERSION).tar.gz --exclude 'docbook-*-*' --exclude CVS ppr-$(SHORT_VERSION) )
+	( cd $$HOME; tar -zcf ppr-$(SHORT_VERSION).tar.gz --exclude CVS ppr-$(SHORT_VERSION) )
 	@echo
 	@echo "Distribution archive built."
 	@echo

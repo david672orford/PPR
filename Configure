@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 13 September 2006.
+# Last modified 7 December 2006.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -28,11 +28,14 @@ if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
 	fi
 
 # Find an echo that will supports escapes.
+echo "Searching for echo which supports escapes..."
 EECHO=echo
 for i in echo "echo -e" /bin/echo "/bin/echo -e" /usr/ucb/echo print
     do
-    if [ `($i '\n') 2>/dev/null | wc -l` -eq 2 ]
+	echo "  Trying $i..."
+    if [ `/bin/sh -c "$i '\n'" 2>/dev/null | wc -l` -eq 2 ]
 		then
+		echo "    Chose $i."
 		EECHO=$i
 		break
 		fi
@@ -1087,7 +1090,7 @@ MAKE_NEW_DIR=../makeprogs/make_new_dir.sh
 # Program to rebuild .depend
 PPR_MAKE_DEPEND=../makeprogs/ppr_make_depend.perl
 
-# Echo programs that support -n and backslash escapes.
+# Echo program that supports backslash escapes.
 export EECHO=$EECHO
 
 # Locations of programs used by PPR

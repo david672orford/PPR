@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--30 October 2006
+2.00a1, 11 December 2004--7 December 2006
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -9734,6 +9734,7 @@ no final tarball was released.
 * ppr/ppr_features.c: added code to ignore empty translation strings.
 
 * filter_dotmatrix/main.c: added code to ignore charset=utf-8 (with warning)
+  (backported to 1.55)
 
 * www/cgi_wizard.pl: added watermark option.
 
@@ -9804,6 +9805,7 @@ no final tarball was released.
   fills the upper 32 bits of tuple with 1's!  The fix is to write:
     tuple = (unsigned)c << 24;
   Anyone know what obscure type conversion rule is involved here?
+  (backported to 1.55)
 
 * libppr/acl.c: removed old compatibility code which counted membership
   in a group with the same name as the ACL as membership in the ACL.
