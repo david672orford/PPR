@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_obj.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 9 March 2007.
 */
 
 /*! \file */
@@ -867,14 +867,14 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 		{
 		debug("<ipp>");
 		debug("<response>");
-		debug("<version-number>%d.%d</version-number>", 1, 1);
+		debug("<version-number>%d.%d</version-number>", IPP_SUPPORTED_MAJOR, IPP_SUPPORTED_MINOR);
 		debug("<status-code>0x%04x</status-code>", ipp->response_code);
 		debug("<request-id>%d</request-id>", ipp->request_id);
 		}
 	#endif
 
-	ipp_put_sb(ipp, 1);		/* version major */
-	ipp_put_sb(ipp, 1);		/* version minor */
+	ipp_put_sb(ipp, IPP_SUPPORTED_MAJOR);		/* version major */
+	ipp_put_sb(ipp, IPP_SUPPORTED_MINOR);		/* version minor */
 	ipp_put_ss(ipp, ipp->response_code);
 	ipp_put_si(ipp, ipp->request_id);
 	

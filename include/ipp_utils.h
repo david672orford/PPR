@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.h
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 26 April 2006.
+** Last modified 9 March 2007.
 */
 
 /*! \file
@@ -46,6 +46,12 @@ Here is a partial example of using the IPP object from a CGI "script":
 Fuller examples can be found in ../ipp/ipp.c and ../pprd/pprd_ipp.c.
 
 */
+
+/* For now we claim support for IPP 1.0.  When last tried claiming IPP 1.1 
+ * support, MS Windows computers would not add our printers.
+ */
+#define IPP_SUPPORTED_MAJOR 1
+#define IPP_SUPPORTED_MINOR 0
 
 void debug(const char message[], ...)
 	#ifdef __GNUC__

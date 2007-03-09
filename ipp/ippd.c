@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 14 December 2006.
+** Last modified 9 March 2007.
 */
 
 /*
@@ -389,8 +389,14 @@ int main(int argc, char *argv[])
 			/* Hide these so they don't show up in the unsupported list. */
 			ipp->request_attrs = attr2->next;
 
-			/* For now we only support UTF-8. */
-			if(strcmp(attr1->values[0].string.text, "utf-8") != 0)
+			/* For now we only support UTF-8 and ISO-8859-1.
+			 * Actually, we are not sure if we correctly support those.
+			 * Only UTF-8 support is required by the IPP standard, but CUPS
+			 * version 1.X demands ISO-8859-1.
+			 */
+			if(strcmp(attr1->values[0].string.text, "utf-8") != 0
+					&& strcmp(attr1->values[0].string.text, "iso-8859-1") != 0
+				)
 				{
 				ipp->response_code = IPP_CHARSET;
 				/* suppress unsupported processing */

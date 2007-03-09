@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 14 December 2006.
+** Last modified 15 November 2006.
 */
 
 /*
