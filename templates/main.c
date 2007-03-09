@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/templates/main.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 9 March 2007.
 */
 
 /*! \file
