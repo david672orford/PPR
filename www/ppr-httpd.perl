@@ -1,14 +1,14 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2006, Trinity College Computing Center.
+# Copyright 1995--2007, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 14 June 2006.
+# Last modified 30 March 2007.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -27,7 +27,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 1;
+my $DEBUG = 0;
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.

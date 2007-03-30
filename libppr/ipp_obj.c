@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 9 March 2007.
+** Last modified 30 March 2007.
 */
 
 /*! \file */
@@ -30,7 +30,7 @@
  * debugging callbacks will actually be made until the caller
  * sets the debug level to something greater than 0.
  */
-#if 1
+#if 0
 #define DEBUG(a) if(ipp->debug_level >= 5) debug a
 #define XML_DEBUG(a) if(ipp->debug_level > 0) debug a
 #else

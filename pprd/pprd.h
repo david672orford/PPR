@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/include/pprd.h
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 15 November 2006.
+** Last modified 30 March 2007.
 */
 
 /*
@@ -55,6 +55,7 @@
 //#define DEBUG_NODEID 1				/* allocating and deallocating node id numbers */
 //#define DEBUG_QUESTIONS 1				/* sending questions to job submitters */
 #define DEBUG_IPP 1						/* Internet Printing Protocol operations */
+#define DEBUG_LISTENER 1				/* TCP socket listeners */
 #endif
 
 /*
@@ -248,6 +249,12 @@ struct Group
 #define DODEBUG_IPP(a) debug a
 #else
 #define DODEBUG_IPP(a)
+#endif
+
+#ifdef DEBUG_LISTENER
+#define DODEBUG_LISTENER(a) debug a
+#else
+#define DODEBUG_LISTENER(a)
 #endif
 
 /* end of file */

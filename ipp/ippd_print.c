@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_print.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 30 March 2007.
 */
 
 /*
@@ -80,7 +80,7 @@ static ipp_attribute_t* convert_attributes(
 	/* Step thru IPP attributes. */	
 	for( ; attr; attr = attr->next)
 		{
-		DEBUG(("%s(): attribute: %s", function, attr->name));
+		DODEBUG(("%s(): attribute: %s", function, attr->name));
 		/* If another attribute group is starting, we are done. */
 		if(attr->group_tag != group_tag)
 			break;
@@ -88,7 +88,7 @@ static ipp_attribute_t* convert_attributes(
 		/* Stop thru this templates looking for a match for this attribute. */
 		for(tp=template; tp->value_tag != IPP_TAG_ZERO; tp++)
 			{
-			DEBUG(("%s(): template: %s", function, tp->name));
+			DODEBUG(("%s(): template: %s", function, tp->name));
 			if(strcmp(tp->name, attr->name) != 0)
 				continue;
 
@@ -97,7 +97,7 @@ static ipp_attribute_t* convert_attributes(
 			 * of these tests fails. */
 			if(attr->value_tag != tp->value_tag || attr->num_values != 1)
 				{
-				DEBUG(("%s(): attribute %s bad", function, attr->name));
+				DODEBUG(("%s(): attribute %s bad", function, attr->name));
 				ipp->response_code = IPP_BAD_REQUEST;
 				/* Suppress unsupported processing.  Otherwise any attributes
 				 * which we have not yet consumed will be listed as unsupported! */
@@ -163,10 +163,10 @@ static ipp_attribute_t* convert_attributes(
 				}
 			
 			/* If we are out of space in the ppr arguments array, enlarge it. */
-			DEBUG(("%s(): *args_i=%d, *args_space=%d", function, *args_i, *args_space));
+			DODEBUG(("%s(): *args_i=%d, *args_space=%d", function, *args_i, *args_space));
 			if((*args_i + 2) >= *args_space)
 				{
-				DEBUG(("%s(): enlarging array space", function));
+				DODEBUG(("%s(): enlarging array space", function));
 				*args_space += 64;
 				*args = gu_realloc(*args, *args_space, sizeof(char*));
 				}
@@ -174,9 +174,9 @@ static ipp_attribute_t* convert_attributes(
 			/* Append the ppr option supplied in the template and the 
 			 * validated (and possibly mapped) value to the ppr command 
 			 * line. */
-			DEBUG(("%s(): args[%d]=\"%s\"", function, *args_i, tp->ppr_option));
+			DODEBUG(("%s(): args[%d]=\"%s\"", function, *args_i, tp->ppr_option));
 			(*args)[(*args_i)++] = tp->ppr_option;
-			DEBUG(("%s(): args[%d]=\"%s\"", function, *args_i, value));
+			DODEBUG(("%s(): args[%d]=\"%s\"", function, *args_i, value));
 			(*args)[(*args_i)++] = value;
 			}
 
@@ -213,7 +213,7 @@ void ipp_print_job(struct IPP *ipp)
 	int args_i;
 	int args_space;
 	
-	DEBUG(("%s()", function));	
+	DODEBUG(("%s()", function));	
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
 		ipp->response_code = IPP_BAD_REQUEST;
@@ -252,7 +252,7 @@ void ipp_print_job(struct IPP *ipp)
 	if(ipp->operation_id == IPP_VALIDATE_JOB)
 		return;
 
-	#ifdef DEBUG
+	#ifdef DODEBUG
 	{
 	int i;
 	for(i=0; i<args_i; i++)
@@ -313,18 +313,18 @@ void ipp_print_job(struct IPP *ipp)
 		/* Copy the job data to ppr. */
 		while((read_len = ipp_get_block(ipp, &p)) > 0)
 			{
-			/*DEBUG(("Got %d bytes", read_len));*/
+			/*DODEBUG(("Got %d bytes", read_len));*/
 			while(read_len > 0)
 				{
 				if((write_len = write(toppr_fds[1], p, read_len)) < 0)
 					gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-				/*DEBUG(("Wrote %d bytes", write_len));*/
+				/*DODEBUG(("Wrote %d bytes", write_len));*/
 				read_len -= write_len;
 				p += write_len;
 				}
 			}
 	
-		DEBUG(("Done sending job data to ppr"));
+		DODEBUG(("Done sending job data to ppr"));
 
 		close(toppr_fds[1]);
 		toppr_fds[1] = -1;
@@ -336,7 +336,7 @@ void ipp_print_job(struct IPP *ipp)
 			gu_Throw("read %d bytes as jobid", read_len);
 		jobid_buf[read_len < sizeof(jobid_buf) ? read_len : sizeof(jobid_buf) - 1] = '\0';
 		jobid = atoi(jobid_buf);
-		DEBUG(("jobid is %d", jobid));
+		DODEBUG(("jobid is %d", jobid));
 		
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);

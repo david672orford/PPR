@@ -1,10 +1,12 @@
-pprd.o: ./pprd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h ./pprd.auto_h ../include/interface.h
+pprd.o: ./pprd.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h ./pprd.auto_h ../include/interface.h ../include/ipp_constants.h
 
 pprd_alert.o: ./pprd_alert.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h ./pprd.auto_h
 
 pprd_destid.o: ./pprd_destid.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h pprd.auto_h
 
 pprd_ipp.o: ./pprd_ipp.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h ../include/ipp_constants.h pprd.h pprd.auto_h ../include/respond.h
+
+pprd_listener.o: ./pprd_listener.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h pprd.auto_h
 
 pprd_load.o: ./pprd_load.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h ./pprd.auto_h
 
@@ -31,6 +33,4 @@ pprd_respond.o: ./pprd_respond.c ../include/config.h ../include/gu.h ../include/
 pprd_state.o: ./pprd_state.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h pprd.auto_h
 
 pprd_statedirs.o: ./pprd_statedirs.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h pprd.auto_h
-
-pprd_listener.o: ./pprd_listener.c ../include/config.h ../include/gu.h ../include/global_defines.h ../include/global_structs.h pprd.h pprd.auto_h
 

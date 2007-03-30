@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_listener.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 24 October 2006.
+** Last modified 30 March 2007.
 */
 
 /*! \file
@@ -119,7 +119,7 @@ void listener_bind(const char bind_address_list[], const char program[])
 			{
 			if(errno == EADDRINUSE)
 				{
-				debug("there is already a server listening on %s:%d", f1, port);
+				DODEBUG_LISTENER(("there is already a server listening on %s:%d", f1, port));
 				close(fd);
 				continue;
 				}
@@ -158,7 +158,7 @@ int listener_fd_set(int lastfd, fd_set *fdset)
 */
 gu_boolean listener_hook(int selret, fd_set *fdset)
 	{
-	const char function[] = "listener_hook";
+	FUNCTION4DEBUG("listener_hook")
 	int hit_count = 0;
 	int iii;
 
@@ -166,7 +166,7 @@ gu_boolean listener_hook(int selret, fd_set *fdset)
 		{
 		int conn_fd;
 
-		debug("listeners[%d] = {fd=%d,program[]=\"%s\"}", iii, listeners[iii].fd, listeners[iii].program);
+		DODEBUG_LISTENER(("listeners[%d] = {fd=%d,program[]=\"%s\"}", iii, listeners[iii].fd, listeners[iii].program));
 		if(!FD_ISSET(listeners[iii].fd, fdset))
 			continue;
 
@@ -179,17 +179,17 @@ gu_boolean listener_hook(int selret, fd_set *fdset)
 		if((conn_fd = accept(listeners[iii].fd, (struct sockaddr *) &cli_addr, &clilen)) == -1)
 			{
 			/*if(errno != EAGAIN)*/
-				debug("%s(): accept() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+				DODEBUG_LISTENER(("%s(): accept() failed, errno=%d (%s)", function, errno, gu_strerror(errno)));
 			continue;
 			}
-		debug("%s(): connection to %s from %s", function, listeners[iii].program, inet_ntoa(cli_addr.sin_addr));
+		DODEBUG_LISTENER(("%s(): connection to %s from %s", function, listeners[iii].program, inet_ntoa(cli_addr.sin_addr)));
 		}
 	
 		{
 		pid_t pid;
 		if((pid = fork()) == -1)		/* error, */
 			{
-			debug("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
+			DODEBUG_LISTENER(("%s(): fork() failed, errno=%d (%s)", function, errno, gu_strerror(errno)));
 			}
 		else if(pid == 0)				/* child */
 			{
@@ -213,7 +213,7 @@ gu_boolean listener_hook(int selret, fd_set *fdset)
 			}
 		else							/* parent */
 			{
-			debug("%s(): inet child %ld launched", function, (long)pid);
+			DODEBUG_LISTENER(("%s(): inet child %ld launched", function, (long)pid));
 			}
 		}
 

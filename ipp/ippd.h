@@ -1,24 +1,25 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.h
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 September 2006.
+** Last modified 30 March 2007.
 */
 
 /*! \file
 	\brief Function prototypes for the IPP server
 */
 
-#if 1
-#define DEBUG(a) debug a
+#if 0
+#define DEBUG 1
+#define DODEBUG(a) debug a
 #define FUNCTION4DEBUG(a) const char function[] = a ;
 #else
-#define DEBUG(a)
+#define DODEBUG(a)
 #define FUNCTION4DEBUG(a)
 #endif
 

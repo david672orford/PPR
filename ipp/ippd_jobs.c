@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_jobs.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 30 March 2007.
 */
 
 /*
@@ -212,7 +212,7 @@ static void ipp_add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char d
 	FILE *qfile;
 	int ret;
 	ppr_fnamef(fname, "%s/%s-%d.%d", QUEUEDIR, destname, id, subid);
-	DEBUG(("%s(): reading \"%s\"", function, fname));
+	DODEBUG(("%s(): reading \"%s\"", function, fname));
 	if(!(qfile = fopen(fname, "r")))
 		gu_Throw(X_("%s(): can't open \"%s\", errno=%d (%s)"), function, fname, errno, gu_strerror(errno) );
 	qentryfile_clear(&qentryfile);
@@ -446,7 +446,7 @@ void ipp_get_jobs(struct IPP *ipp)
 	int queue_num_entries;			/* number of entries in above */
 	int iii;
 
-	DEBUG(("%s()", function));
+	DODEBUG(("%s()", function));
 	
 	if(!(destname = extract_destname(ipp, NULL)))
 		return;
@@ -463,7 +463,7 @@ void ipp_get_jobs(struct IPP *ipp)
 		   	which_jobs && strcmp(which_jobs, "completed") == 0,
 			my_jobs ? user_at_host : NULL
 			);
-	DEBUG(("%s(): %d entries", function, queue_num_entries));
+	DODEBUG(("%s(): %d entries", function, queue_num_entries));
 
 	/* If the number of entries found exceeds the limit, clip. */
 	if(limit != 0 && queue_num_entries > limit)
@@ -490,14 +490,14 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 		{
 		if(!(*destname = printer_uri_validate(printer_uri, NULL)))
 			{
-			DEBUG(("%s(): not a known printer", function));
+			DODEBUG(("%s(): not a known printer", function));
 			ipp->response_code = IPP_NOT_FOUND;
 			ipp->request_attrs = NULL;
 			return FALSE;
 			}
 		if((*job_id = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "job-id")) > 0)
 			{
-			DEBUG(("%s(): job-id missing", function));
+			DODEBUG(("%s(): job-id missing", function));
 			ipp->response_code = IPP_BAD_REQUEST;
 			ipp->request_attrs = NULL;
 			return FALSE;
@@ -508,11 +508,11 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 		if(job_uri->dirname && strcmp(job_uri->dirname, "/jobs") == 0
 				&& job_uri->basename && (*job_id = atoi(job_uri->basename)) > 0)
 			{
-			DEBUG(("%s(): job-id: %d", function, *job_id));
+			DODEBUG(("%s(): job-id: %d", function, *job_id));
 			}
 		else
 			{
-			DEBUG(("%s(): not a valid job URI", function));
+			DODEBUG(("%s(): not a valid job URI", function));
 			ipp->response_code = IPP_NOT_FOUND;
 			ipp->request_attrs = NULL;
 			return FALSE;
@@ -520,7 +520,7 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 		}
 	else
 		{
-		DEBUG(("%s(): nothing to identify the job", function));
+		DODEBUG(("%s(): nothing to identify the job", function));
 		ipp->response_code = IPP_BAD_REQUEST;
 		ipp->request_attrs = NULL;
 		return FALSE;
@@ -558,7 +558,7 @@ void ipp_get_job_attributes(struct IPP *ipp)
 		if(direntp->d_name[0] == '.')
 			continue;
 
-		DEBUG(("%s(): %s", function, direntp->d_name));
+		DODEBUG(("%s(): %s", function, direntp->d_name));
 		
 		/* Locate hyphen between destname and ID */
 		if(!(p = strrchr(direntp->d_name, '-')))
@@ -603,7 +603,7 @@ void ipp_X_job(struct IPP *ipp)
 	char *line = NULL;
 	int line_space = 80;
 
-	DEBUG(("%s()", function));
+	DODEBUG(("%s()", function));
 
 	if(!extract_jobid(ipp, &destname, &job_id))
 		return;
@@ -620,7 +620,7 @@ void ipp_X_job(struct IPP *ipp)
 		if(direntp->d_name[0] == '.')
 			continue;
 
-		DEBUG(("%s(): %s", function, direntp->d_name));
+		DODEBUG(("%s(): %s", function, direntp->d_name));
 		
 		/* Locate hyphen between destname and ID */
 		if(!(p = strrchr(direntp->d_name, '-')))
@@ -665,11 +665,11 @@ void ipp_X_job(struct IPP *ipp)
 				continue;
 			}
 		
-		DEBUG(("%s(): asking pprd to delete job %d", function, id));
+		DODEBUG(("%s(): asking pprd to delete job %d", function, id));
 		ipp->response_code = pprd_status_code(
 			pprd_call("IPP %d %d\n", ipp->operation_id, id)
 			);
-		DEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
+		DODEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
 		}
 	
 	closedir(dir);
@@ -697,14 +697,14 @@ void cups_move_job(struct IPP *ipp)
 
 	if(!(job_printer_uri = ipp_claim_uri(ipp, IPP_TAG_JOB, "job-printer-uri")))
 		{
-		DEBUG(("%s(): no job-printer-uri", function));
+		DODEBUG(("%s(): no job-printer-uri", function));
 		ipp->response_code = IPP_BAD_REQUEST;
 		return;
 		}
 
 	if(!(new_destname = printer_uri_validate(job_printer_uri, &new_qtype)))
 		{
-		DEBUG(("%s(): not a known printer", function));
+		DODEBUG(("%s(): not a known printer", function));
 		ipp->response_code = IPP_NOT_FOUND;
 		return;
 		}
@@ -718,7 +718,7 @@ void cups_move_job(struct IPP *ipp)
 		if(direntp->d_name[0] == '.')
 			continue;
 
-		DEBUG(("%s(): %s", function, direntp->d_name));
+		DODEBUG(("%s(): %s", function, direntp->d_name));
 		
 		/* Locate hyphen between destname and ID */
 		if(!(p = strrchr(direntp->d_name, '-')))
@@ -739,7 +739,7 @@ void cups_move_job(struct IPP *ipp)
 			continue;
 
 		*p = '\0';
-		DEBUG(("%s(): asking pprd to move job %d", function, id));
+		DODEBUG(("%s(): asking pprd to move job %d", function, id));
 		ipp->response_code = pprd_status_code(
 			pprd_call("IPP %d %d %s %s\n",
 				ipp->operation_id,
@@ -748,7 +748,7 @@ void cups_move_job(struct IPP *ipp)
 				new_destname
 				)
 			);
-		DEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
+		DODEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
 		break;
 		}
 	

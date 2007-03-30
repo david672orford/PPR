@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 9 March 2007.
+** Last modified 30 March 2007.
 */
 
 /*
@@ -116,7 +116,7 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
-		DEBUG(("%s(): no printer-uri", function));
+		DODEBUG(("%s(): no printer-uri", function));
 		ipp->response_code = IPP_BAD_REQUEST;
 		ipp->request_attrs = NULL;
 		return NULL;
@@ -124,7 +124,7 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 
 	if(!(destname = printer_uri_validate(printer_uri, qtype)))
 		{
-		DEBUG(("%s(): not a known printer", function));
+		DODEBUG(("%s(): not a known printer", function));
 		ipp->response_code = IPP_NOT_FOUND;
 		ipp->request_attrs = NULL;
 		return NULL;
@@ -338,7 +338,7 @@ int main(int argc, char *argv[])
 	
 		/* Wrap all of this information up in an IPP object. */
 		ipp = ipp_new(root, path_info, content_length, 0, 1);
-		#ifdef DEBUG
+		#ifdef DODEBUG
 		ipp_set_debug_level(ipp, 1);
 		#endif
 
@@ -528,7 +528,7 @@ int main(int argc, char *argv[])
 				 * blocks.  For now borrow the IPP object's pool. */
 				GU_OBJECT_POOL_PUSH(ipp->pool);
 
-				DEBUG(("invoking handler..."));
+				DODEBUG(("invoking handler..."));
 				(*p_handler)(ipp);
 
 				GU_OBJECT_POOL_POP(ipp->pool);

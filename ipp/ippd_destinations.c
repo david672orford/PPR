@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_destinations.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 5 May 2006.
+** Last modified 30 March 2007.
 */
 
 /*
@@ -460,7 +460,7 @@ void ipp_get_printer_attributes(struct IPP *ipp)
 	enum QUEUEINFO_TYPE qtype;
 	void *qip;
 
-	DEBUG(("ipp_get_printer_attributes()"));
+	DODEBUG(("ipp_get_printer_attributes()"));
 	
 	if((destname = extract_destname(ipp, &qtype)))
 		{
@@ -522,7 +522,7 @@ void cups_get_printers(struct IPP *ipp)
 	int count = 0;
 	void *qip;
 
-	DEBUG(("cups_get_printers()"));
+	DODEBUG(("cups_get_printers()"));
 	
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
 	filter = make_filter(ipp);
@@ -562,7 +562,7 @@ void cups_get_classes(struct IPP *ipp)
 	int count = 0;
 	void *qip;
 
-	DEBUG(("cups_get_classes()"));
+	DODEBUG(("cups_get_classes()"));
 
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
 	filter = make_filter(ipp);
@@ -661,7 +661,7 @@ void ipp_X_printer(struct IPP *ipp)
 	FUNCTION4DEBUG("ipp_X_printer")
 	const char *destname;
 	enum QUEUEINFO_TYPE qtype;
-	DEBUG(("%s()", function));
+	DODEBUG(("%s()", function));
 	if(!(destname = extract_destname(ipp, &qtype)))
 		return;
 	if(!user_acl_allows(extract_identity(ipp, TRUE), "ppop"))

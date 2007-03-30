@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_cups_admin.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 5 May 2006.
+** Last modified 30 March 2007.
 */
 
 /*
@@ -81,7 +81,7 @@ void cups_get_ppds(struct IPP *ipp)
 				|| !(f_manufacturer = gu_strsep(&p,":"))
 				)
 			{
-			DEBUG(("Bad line in PPD index"));
+			DODEBUG(("Bad line in PPD index"));
 			continue;
 			}
 
