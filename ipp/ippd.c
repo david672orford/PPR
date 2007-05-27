@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 4 May 2007.
 */
 
 /*
@@ -323,7 +323,7 @@ int main(int argc, char *argv[])
 		if(!(script = getenv("SCRIPT_NAME")))
 			gu_Throw("SCRIPT_NAME is not defined");
 
-		debug("server: %s, port: %s, script: %s", server, port, script);
+		DODEBUG(("ippd: %s, port: %s, script: %s", server, port, script));
 	
 		/* For "ipp://localhost/printers/dummy" it script will be "".  For 
 		 * "ipp://host/cgi-bin/ipp/printers/dummy" it will be "cgi-bin/ipp".
@@ -338,8 +338,8 @@ int main(int argc, char *argv[])
 	
 		/* Wrap all of this information up in an IPP object. */
 		ipp = ipp_new(root, path_info, content_length, 0, 1);
-		#ifdef DODEBUG
-		ipp_set_debug_level(ipp, 1);
+		#ifdef DEBUG
+		ipp_set_debug_level(ipp, 10);
 		#endif
 
 		if((p = getenv("REMOTE_USER")) && *p)	/* defined and not empty */
@@ -368,7 +368,7 @@ int main(int argc, char *argv[])
 					|| strcmp(attr1->name, "attributes-charset") != 0
 				)
 				{
-				debug("first attribute is not attributes-charset");
+				DODEBUG(("first attribute is not attributes-charset"));
 				ipp->response_code = IPP_BAD_REQUEST;
 				break;
 				}
@@ -381,7 +381,7 @@ int main(int argc, char *argv[])
 					|| strcmp(attr2->name, "attributes-natural-language") != 0
 				)
 				{
-				debug("second attribute is not attributes-charset");
+				DODEBUG(("second attribute is not attributes-charset"));
 				ipp->response_code = IPP_BAD_REQUEST;
 				break;
 				}

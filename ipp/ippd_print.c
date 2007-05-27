@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 4 May 2007.
 */
 
 /*
@@ -181,7 +181,7 @@ static ipp_attribute_t* convert_attributes(
 			}
 
 			/* We found it, no need to examine furthur templates. */
-			debug("done with attribute %s", attr->name);
+			DODEBUG(("done with attribute %s", attr->name));
 			break;
 			} /* template loop */
 

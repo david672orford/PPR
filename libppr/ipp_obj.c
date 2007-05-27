@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 4 May 2007.
 */
 
 /*! \file */
@@ -30,11 +30,12 @@
  * debugging callbacks will actually be made until the caller
  * sets the debug level to something greater than 0.
  */
-#if 0
-#define DEBUG(a) if(ipp->debug_level >= 5) debug a
+#if 1
+#define DEBUG 1
+#define DODEBUG(a) if(ipp->debug_level >= 5) debug a
 #define XML_DEBUG(a) if(ipp->debug_level > 0) debug a
 #else
-#define DEBUG(a)
+#define DODEBUG(a)
 #define XML_DEBUG(a)
 #endif
 
@@ -106,7 +107,7 @@ void ipp_set_debug_level(struct IPP *ipp, int level)
 */
 static void ipp_readbuf_load(struct IPP *p)
 	{
-	/*DEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));*/
+	/*DODEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));*/
 	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		gu_Throw("%s() failed, errno=%d (%s)", "read", errno, strerror(errno));
 	if(p->readbuf_remaining < 1)
@@ -123,17 +124,17 @@ static void ipp_writebuf_flush(struct IPP *ipp)
 	char *write_ptr;
 	int to_write, len;
 
-	DEBUG(("ipp_writebuf_flush(): %d bytes to flush to fd %d", ipp->writebuf_i, ipp->out_fd));
+	DODEBUG(("ipp_writebuf_flush(): %d bytes to flush to fd %d", ipp->writebuf_i, ipp->out_fd));
 	
 	to_write = ipp->writebuf_i;
 	write_ptr = ipp->writebuf;
 
 	while(to_write > 0)
 		{
-		DEBUG(("  trying to write %d bytes", to_write));
+		DODEBUG(("  trying to write %d bytes", to_write));
 		if((len = write(ipp->out_fd, write_ptr, to_write)) == -1)
 			gu_Throw("writing response failed, errno=%d (%s)", errno, gu_strerror(errno));
-		DEBUG(("    wrote %d bytes", len));
+		DODEBUG(("    wrote %d bytes", len));
 		to_write -= len;
 		write_ptr += len;
 		}
@@ -151,7 +152,7 @@ service object is destroyed.
 */
 void ipp_delete(struct IPP *ipp)
 	{
-	DEBUG(("ipp_delete(): %d leftover bytes", ipp->bytes_left + ipp->readbuf_remaining));
+	DODEBUG(("ipp_delete(): %d leftover bytes", ipp->bytes_left + ipp->readbuf_remaining));
 
 	if(ipp->magic != 0xAABB)
 		gu_Throw("ipp_delete(): not an IPP object");
@@ -339,7 +340,7 @@ void ipp_parse_request(struct IPP *ipp)
 	if(ipp->bytes_left < 9)
 		gu_Throw("request is too short to be an IPP request");
 
-	DEBUG(("request for %s, %d bytes", ipp->path_info, ipp->bytes_left));
+	DODEBUG(("request for %s, %d bytes", ipp->path_info, ipp->bytes_left));
 
 	ipp->version_major = ipp_get_sb(ipp);
 	ipp->version_minor = ipp_get_sb(ipp);
@@ -401,7 +402,7 @@ void ipp_parse_request(struct IPP *ipp)
 				name = ipp_get_bytes(ipp, name_length);
 			value_length = ipp_get_ss(ipp);
 
-			DEBUG(("0x%.2x (%s) 0x%.2x (%s) name[%d]=\"%s\", value_len=%d",
+			DODEBUG(("0x%.2x (%s) 0x%.2x (%s) name[%d]=\"%s\", value_len=%d",
 				delimiter_tag, ipp_tag_to_str(delimiter_tag),
 				value_tag, ipp_tag_to_str(value_tag),
 				name_length,
@@ -847,7 +848,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	{
 	ipp_attribute_t *attr;
 	
-	DEBUG(("ipp_send_reply()"));
+	DODEBUG(("ipp_send_reply()"));
 
 	/* Any operation or job-template attributes which have not yet been
 	 * read (and removed) must be unsupported.
