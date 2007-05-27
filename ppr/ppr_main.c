@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 27 May 2007.
 */
 
 /*
@@ -1990,7 +1990,8 @@ int main(int argc, char *argv[])
 		const char *ptr;
 		if(!(ptr = getenv("PPRDEST")))
 			if(!(ptr = getenv("PRINTER")))
-				ptr = ppr_get_default();
+				if(!(ptr = ppr_get_default()))
+					ptr = "default";
 		qentry.jobname.destname = ptr;
 		}
 

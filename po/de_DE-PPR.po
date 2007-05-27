@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-09 10:26-0500\n"
+"POT-Creation-Date: 2007-05-27 10:23-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -826,10 +826,6 @@ msgstr "Weitere Hilfethemen:\n"
 #: ../libppr/dispatch.c:236 ../libppr/dispatch.c:238
 #, c-format
 msgid "    %s -- %s\n"
-msgstr ""
-
-#: ../libppr/dispatch.c:236
-msgid "all"
 msgstr ""
 
 #: ../libppr/dispatch.c:236
@@ -4967,92 +4963,92 @@ msgstr "%s: Warnung: entweder Account \"%s\" oder dieses Programm hat die falsch
 msgid "getpwuid() fails to find your account"
 msgstr "getpwuid() kann Ihren Account nicht finden"
 
-#: ../ppr/ppr_main.c:2035
+#: ../ppr/ppr_main.c:2036
 msgid "Destination (printer or group) name is empty"
 msgstr "Name des Ziels (Drucker oder Gruppe) ist nicht gesetzt"
 
-#: ../ppr/ppr_main.c:2037
+#: ../ppr/ppr_main.c:2038
 msgid "Destination (printer or group) name contains a disallowed character"
 msgstr "Name des Ziels (Drucker oder Gruppe) enthält ein nichterlaubtes Zeichen"
 
-#: ../ppr/ppr_main.c:2039
+#: ../ppr/ppr_main.c:2040
 msgid "Destination (printer or group) name starts with a disallowed character"
 msgstr "Name des Ziels (Drucker oder Gruppe) beginnt mit einem nichtelaubten Zeichen"
 
-#: ../ppr/ppr_main.c:2059
+#: ../ppr/ppr_main.c:2060
 msgid "spaces may not precede \"=\" in filter options"
 msgstr "\"=\" darf in Filteroptionen keinem Leerzeichen folgen"
 
-#: ../ppr/ppr_main.c:2062
+#: ../ppr/ppr_main.c:2063
 msgid "filter options must take form keyword=value"
 msgstr "Filteroptionen müssen in der Form Name=Wert sein"
 
-#: ../ppr/ppr_main.c:2067
+#: ../ppr/ppr_main.c:2068
 msgid "last -o keyword has no value"
 msgstr "Das letzte -o Schlüsselwort hat keinen Wert"
 
-#: ../ppr/ppr_main.c:2070
+#: ../ppr/ppr_main.c:2071
 msgid "spaces may not follow \"=\" in filter options"
 msgstr "auf \"=\" darf in Filteroptionen kein Leerzeichen folgen"
 
-#: ../ppr/ppr_main.c:2081
+#: ../ppr/ppr_main.c:2082
 msgid "unclosed quote in filter option value"
 msgstr "nichtabgeschlossene Quotierung in den Filteroptionswerten"
 
-#: ../ppr/ppr_main.c:2099
+#: ../ppr/ppr_main.c:2100
 msgid "only one file name allowed"
 msgstr "nur ein Dateiname ist erlaubt"
 
-#: ../ppr/ppr_main.c:2138
+#: ../ppr/ppr_main.c:2139
 msgid "Input file is empty, nothing to print"
 msgstr "Eingabedatei leer, nichts zu Drucken"
 
-#: ../ppr/ppr_main.c:2216
+#: ../ppr/ppr_main.c:2217
 #, fuzzy, c-format
 msgid "%d character follows EOF mark"
 msgid_plural "%d characters follow EOF mark"
 msgstr[0] "%d Zeichen folgen auf EOF"
 msgstr[1] "%d Zeichen folgen auf EOF"
 
-#: ../ppr/ppr_main.c:2234
+#: ../ppr/ppr_main.c:2235
 #, c-format
 msgid "input file was truncated (no %%%%EOF)"
 msgstr "Eingabedatei wurde gekürzt (kein %%%%EOF)"
 
-#: ../ppr/ppr_main.c:2243
+#: ../ppr/ppr_main.c:2244
 msgid "Unclosed resource or resources"
 msgstr "Nichtabgeschlossene Ressoure(n)"
 
-#: ../ppr/ppr_main.c:2253
+#: ../ppr/ppr_main.c:2254
 #, c-format
 msgid "No \"%%%%Trailer:\" comment"
 msgstr "Fehlender \"%%%%Trailer:\" Kopf"
 
-#: ../ppr/ppr_main.c:2255
+#: ../ppr/ppr_main.c:2256
 #, c-format
 msgid "Unexpected EOF in unclosed %s"
 msgstr "Unerwartetes EOF in nichtabgesclossenem %s"
 
-#: ../ppr/ppr_main.c:2375
+#: ../ppr/ppr_main.c:2376
 #, c-format
 msgid "No valid \"%%%%Pages:\" comment"
 msgstr "Kein gültiger \"%%%%Pages:\" Kopf"
 
-#: ../ppr/ppr_main.c:2380
+#: ../ppr/ppr_main.c:2381
 #, c-format
 msgid "\"%%%%Pages:\" comment is wrong, changing it from %d to %d"
 msgstr "\"%%%%Pages:\" ist falsch, Änderung von %d nach %d"
 
-#: ../ppr/ppr_main.c:2385
+#: ../ppr/ppr_main.c:2386
 #, c-format
 msgid "Missing \"%%%%Page:\" comments or incorrect \"%%%%Pages:\" comment"
 msgstr "Fehlende \"%%%%Page:\" Köpfe oder fehlerhafter \"%%%%Pages:\" Kopf"
 
-#: ../ppr/ppr_main.c:2485
+#: ../ppr/ppr_main.c:2486
 msgid "Disk full"
 msgstr "Festplatte ist voll"
 
-#: ../ppr/ppr_main.c:2524
+#: ../ppr/ppr_main.c:2525
 #, c-format
 msgid "%s: -U: can't unlink(\"%s\"), errno=%d (%s)\n"
 msgstr "%s: -U: kann nicht löschen(\"%s\") , Fehlernummer=%d (%s)\n"

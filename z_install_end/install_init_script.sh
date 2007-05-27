@@ -1,14 +1,14 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/z_install_end/install_init_script.sh
-# Copyright 1995--2006, Trinity College Computing Center.
+# Copyright 1995--2007, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 13 September 2006.
+# Last modified 27 May 2007.
 #
 
 #========================================================================
@@ -19,7 +19,7 @@ echo "  Studying Init script system..."
 
 # Figure out if we have a System V init and what directories it uses:
 INIT_BASE=""
-for i in /etc/rc.d /etc /sbin
+for i in /etc /etc/rc.d /sbin
 	do
 	if [ -d $i/init.d ]
 	then

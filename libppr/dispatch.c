@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppad/dispatch.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 14 June 2006.
+** Last modified 27 May 2007.
 */
 
 #include "config.h"
@@ -233,9 +233,9 @@ static int help(const char myname[], const char *argv[])
 		gu_utf8_printf(_("Usage: %s help <topic>\n"), myname);
 		gu_utf8_printf(_("       %s help <command>\n"), myname);
 		gu_utf8_puts(_("Help topics:\n"));
-		gu_utf8_printf(_("    %s -- %s\n"), _("all"), _("show all commands"));
+		gu_utf8_printf(_("    %s -- %s\n"), X_("all"), _("show all commands"));
 		for(iii=0; commands_help_topics[iii].name; iii++)
-			gu_utf8_printf(_("    %s -- %s\n"), _(commands_help_topics[iii].name), _(commands_help_topics[iii].description));
+			gu_utf8_printf(_("    %s -- %s\n"), X_(commands_help_topics[iii].name), _(commands_help_topics[iii].description));
 		return EXIT_OK;
 		}
 
