@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 4 May 2007.
+** Last modified 27 May 2007.
 */
 
 /*! \file */
@@ -941,10 +941,8 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 
 	/* end of IPP response */
 	ipp_put_byte(ipp, IPP_TAG_END);
-	#ifdef DEBUG
-	debug("</ipp>");
-	debug("</response>");
-	#endif
+	XML_DEBUG(("</response>"));
+	XML_DEBUG(("</ipp>\n"));	/* leave blank line */
 
 	ipp_writebuf_flush(ipp);
 	} /* end of ipp_send_reply() */

@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppad/ppad_group.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 25 April 2006.
+** Last modified 27 May 2007.
 */
 
 /*==============================================================
@@ -350,7 +350,8 @@ static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 		queueinfo_set_debug_level(qobj, debug_level);
 
 		/* Copy all the remaining lines. */
-		do	{
+		for( ; line; line = conf_getline(obj))
+			{
 			if((ptr = lmatchp(line, "Printer:")))
 				{
 				if(!do_add)				/* If we are adding, just delete it. */
@@ -371,7 +372,7 @@ static int group_members_or_add_internal(gu_boolean do_add, const char *argv[])
 
 			/* Other lines we keep. */
 			conf_printf(obj, "%s\n", line);
-			} while(conf_getline(obj));
+			}
 
 		/* Add a "Printer:" line for each new member. */
 		for(x=1; argv[x]; x++)
