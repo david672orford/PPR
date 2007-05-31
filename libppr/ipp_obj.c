@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 May 2007.
+** Last modified 31 May 2007.
 */
 
 /*! \file */
@@ -491,12 +491,15 @@ void ipp_parse_request(struct IPP *ipp)
 		}
 
 	#ifdef DEBUG
-	if(prev_value != -1)
-		debug(" </%s>", ipp_tag_to_str(prev_value));
-	if(prev_delim != -1)
-		debug("</%s>", ipp_tag_to_str(delimiter_tag));
-	debug("</request>");
-	debug("</ipp>");
+	if(ipp->debug_level > 0)
+		{
+		if(prev_value != -1)
+			debug(" </%s>", ipp_tag_to_str(prev_value));
+		if(prev_delim != -1)
+			debug("</%s>", ipp_tag_to_str(delimiter_tag));
+		debug("</request>");
+		debug("</ipp>\n");
+		}
 	#endif
 
 	GU_OBJECT_POOL_POP(ipp->pool);
@@ -905,7 +908,6 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 			else
 				ipp_put_attr(ipp, attr);
 			}
-		XML_DEBUG(("</printer-attributes>"));
 		}
 	
 	if((attr = ipp->response_attrs_job))
@@ -927,7 +929,6 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 			else
 				ipp_put_attr(ipp, attr);
 			}
-		XML_DEBUG(("</job-attributes>"));
 		}
 
 	if((attr = ipp->response_attrs_unsupported))

@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 31 May 2007.
 */
 
 /*
@@ -461,6 +461,8 @@ void ipp_get_printer_attributes(struct IPP *ipp)
 	void *qip;
 
 	DODEBUG(("ipp_get_printer_attributes()"));
+
+	extract_identity(ipp, FALSE);	/* swallow attribute */
 	
 	if((destname = extract_destname(ipp, &qtype)))
 		{
@@ -524,6 +526,8 @@ void cups_get_printers(struct IPP *ipp)
 
 	DODEBUG(("cups_get_printers()"));
 	
+	extract_identity(ipp, FALSE);	/* swallow attribute */
+
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
 	filter = make_filter(ipp);
 	req = request_attrs_new(ipp);
@@ -563,6 +567,8 @@ void cups_get_classes(struct IPP *ipp)
 	void *qip;
 
 	DODEBUG(("cups_get_classes()"));
+
+	extract_identity(ipp, FALSE);	/* swallow attribute */
 
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");
 	filter = make_filter(ipp);
@@ -626,6 +632,9 @@ void cups_get_default(struct IPP *ipp)
 	struct REQUEST_ATTRS *req;
 	void *qip;
 
+	DODEBUG(("cups_get_default()"));
+
+	extract_identity(ipp, FALSE);	/* swallow attribute */
 	req = request_attrs_new(ipp);
 
 	/* If no default destination defined or the default destination doesn't

@@ -7,15 +7,21 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 31 May 2007.
 */
 
 /*! \file
 	\brief Function prototypes for the IPP server
 */
 
-#if 0
-#define DEBUG 1
+#if 1
+#define DEBUG 1		/* debug level */
+#define DODEBUG1(a) debug a
+#else
+#define DODEBUG1(a)
+#endif
+
+#if DEBUG > 1
 #define DODEBUG(a) debug a
 #define FUNCTION4DEBUG(a) const char function[] = a ;
 #else

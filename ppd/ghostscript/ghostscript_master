@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2004, Trinity College Computing Center.
+*% Copyright 1995--2007, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -25,7 +25,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 22 February 2005.
+*% which was last revised 31 May 2007.
 *%
 #endif
 
@@ -254,7 +254,7 @@
 *OpenGroup: PrintQuality
 
 *OpenUI *PrintoutMode: PickOne
-*OrderDependency 20 AnySetup *PrintoutMode
+*OrderDependency: 20 AnySetup *PrintoutMode
 *DefaultPrintoutMode: None
 *PrintoutMode: None: ""
 *PrintoutMode Photo: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 720] /Quality (2880x720sw) /Dither (Adaptive) >> setpagedevice"
@@ -264,7 +264,7 @@
 *CloseUI: *PrintoutMode
 
 *OpenUI *MediaType/Media Type: PickOne
-*OrderDependency 10 AnySetup *MediaType
+*OrderDependency: 10 AnySetup *MediaType
 *DefaultMediaType: Plain
 *MediaType Plain/Plain Paper: "<< /MediaType (Plain) >> setpagedevice"
 *MediaType PlainFast/Plain Paper Fast Load: "<< /MediaType (PlainFast) >> setpagedevice"
@@ -311,7 +311,7 @@
 *CloseUI: *Resolution
 
 *OpenUI *Quality/Quality: PickOne
-*OrderDependency 20 AnySetup *Quality
+*OrderDependency: 20 AnySetup *Quality
 *DefaultQuality: 360dpi
 *Quality 360dpi:       "<< /Quality (360dpi) >> setpagedevice"
 *Quality 1440x1440hq2: "<< /Quality (1440x1440hq2) >> setpagedevice"

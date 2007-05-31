@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 4 May 2007.
+** Last modified 31 May 2007.
 */
 
 /*
@@ -314,32 +314,33 @@ int main(int argc, char *argv[])
 		 * We reassemble the URL.
 		 */ 
 		{
-		char *server, *port, *script;
+		char *server_name, *server_port, *script_name;
 
-		if(!(server = getenv("SERVER_NAME")))
+		if(!(server_name = getenv("SERVER_NAME")))
 			gu_Throw("SERVER_NAME is not defined");
-		if(!(port = getenv("SERVER_PORT")))
+		if(!(server_port = getenv("SERVER_PORT")))
 			gu_Throw("SERVER_PORT is not defined");
-		if(!(script = getenv("SCRIPT_NAME")))
+		if(!(script_name = getenv("SCRIPT_NAME")))
 			gu_Throw("SCRIPT_NAME is not defined");
 
-		DODEBUG(("ippd: %s, port: %s, script: %s", server, port, script));
+		DODEBUG1(("============================================================================="));
+		DODEBUG1(("ippd: SERVER_NAME=%s, SERVER_PORT=%s, SCRIPT_NAME=%s", server_name, server_port, script_name));
 	
 		/* For "ipp://localhost/printers/dummy" it script will be "".  For 
 		 * "ipp://host/cgi-bin/ipp/printers/dummy" it will be "cgi-bin/ipp".
 		 * We want to produce "ipp://localhost" for the former and 
 		 * "ipp://localhost/cgi-bin/ipp" for the latter.
 		 */
-		if(strcmp(port, "631") == 0)
-			gu_asprintf(&root, "ipp://%s%s%s", server, strlen(script) > 0 ? "/" : "", script);
+		if(strcmp(server_port, "631") == 0)
+			gu_asprintf(&root, "ipp://%s%s%s", server_name, strlen(script_name) > 0 ? "/" : "", script_name);
 		else
-			gu_asprintf(&root, "http://%s:%s%s%s", server, port, strlen(script) > 0 ? "/" : "", script);
+			gu_asprintf(&root, "http://%s:%s%s%s", server_name, server_port, strlen(script_name) > 0 ? "/" : "", script_name);
 		}
 	
 		/* Wrap all of this information up in an IPP object. */
 		ipp = ipp_new(root, path_info, content_length, 0, 1);
 		#ifdef DEBUG
-		ipp_set_debug_level(ipp, 10);
+		ipp_set_debug_level(ipp, DEBUG);
 		#endif
 
 		if((p = getenv("REMOTE_USER")) && *p)	/* defined and not empty */
@@ -558,6 +559,7 @@ int main(int argc, char *argv[])
 		ipp_send_reply(ipp, TRUE);
 
 		#ifdef DEBUG
+		#if DEBUG > 1
 		{
 		FILE *f;
 		if((f = fopen("/proc/self/status", "r")))
@@ -571,6 +573,7 @@ int main(int argc, char *argv[])
 			fclose(f);
 			}
 		}
+		#endif
 		#endif
 		}
 

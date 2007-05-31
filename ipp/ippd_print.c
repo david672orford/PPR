@@ -252,7 +252,7 @@ void ipp_print_job(struct IPP *ipp)
 	if(ipp->operation_id == IPP_VALIDATE_JOB)
 		return;
 
-	#ifdef DODEBUG
+	#ifdef DEBUG
 	{
 	int i;
 	for(i=0; i<args_i; i++)
@@ -311,9 +311,12 @@ void ipp_print_job(struct IPP *ipp)
 		jobid_fds[1] = -1;
 	
 		/* Copy the job data to ppr. */
+		{
+		long int total = 0;
 		while((read_len = ipp_get_block(ipp, &p)) > 0)
 			{
 			/*DODEBUG(("Got %d bytes", read_len));*/
+			total += read_len;
 			while(read_len > 0)
 				{
 				if((write_len = write(toppr_fds[1], p, read_len)) < 0)
@@ -324,7 +327,8 @@ void ipp_print_job(struct IPP *ipp)
 				}
 			}
 	
-		DODEBUG(("Done sending job data to ppr"));
+		DODEBUG1(("Sent %ld bytes to ppr.", total));
+		}
 
 		close(toppr_fds[1]);
 		toppr_fds[1] = -1;
@@ -336,7 +340,7 @@ void ipp_print_job(struct IPP *ipp)
 			gu_Throw("read %d bytes as jobid", read_len);
 		jobid_buf[read_len < sizeof(jobid_buf) ? read_len : sizeof(jobid_buf) - 1] = '\0';
 		jobid = atoi(jobid_buf);
-		DODEBUG(("jobid is %d", jobid));
+		DODEBUG1(("jobid is %d\n", jobid));		/* extra lf for blank line */
 		
 		/* Include the job id, both in numberic form and in URI form. */
 		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
