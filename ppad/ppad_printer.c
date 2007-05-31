@@ -1570,7 +1570,7 @@ int command_ppd(const char *argv[])
 		queueinfo_set_warnings_file(qobj, stderr);
 		queueinfo_set_debug_level(qobj, debug_level);
 
-		/* Consider the printer's PPD file.  If this fails, stop. */
+		/* Consider the new PPD file.  If this fails, it will throw an exception. */
 		queueinfo_add_hypothetical_printer(qobj, printer, ppdname, NULL);
 
 		/*
@@ -1591,7 +1591,6 @@ int command_ppd(const char *argv[])
 			conf_printf(obj, "%s\n", line);
 			}
 	
-		/* Write the new "PPDFile:" lines. */
 		conf_printf(obj, "PPDFile: %s\n", ppdname);
 	
 		/*

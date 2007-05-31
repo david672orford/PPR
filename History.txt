@@ -10099,5 +10099,5 @@ no final tarball was released.
   backported to 1.5X.)
 
 * ppd/ghostscript/ghostscript_master: added missing colons in *OutputOrder
-  lines.
+  lines, fixed Font lines for URW fonts (there was an extra colon).
 

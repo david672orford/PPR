@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/libppr/queueinfo.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 17 May 2006.
+** Last modified 31 May 2007.
 */
 
 /*+ \file
@@ -189,7 +189,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 		gu_boolean saw_ColorDevice = FALSE;
 		gu_boolean saw_LanguageLevel = FALSE;
 
-		ppdobj = ppdobj_new(pip->ppdFile);
+		ppdobj = ppdobj_new(pip->ppdFile);		/* will throw exception if file does not exist */
 
 		while((line = ppdobj_readline(ppdobj)))
 			{
@@ -422,7 +422,7 @@ static void do_printer_ppd(struct QUEUE_INFO *qip, struct PRINTER_INFO *pip)
 			ppdobj_free(ppdobj);
 		}
 	gu_Catch {
-		/* Messed up PPD files shouldn't prevent us from describing the printer. */
+		gu_ReThrow();
 		}
 	} /* end of do_printer_ppd() */
 
@@ -556,7 +556,13 @@ static gu_boolean do_printer(struct QUEUE_INFO *qip, const char name[], int dept
 	fclose(conf);
 
 	/* Parse the PPD file and load info into this PRINTER_INFO structure. */
-	do_printer_ppd(qip, pip);
+	gu_Try {
+		do_printer_ppd(qip, pip);
+		}
+	gu_Catch
+		{
+		/* If the printer already exists, we will not growse about the PPD file. */
+		}
 
 	/* Load the spool_state file (if there is one) into PRINTER_INFO. */
 	printer_spool_state_load(&pip->spool_state, qip->name);
