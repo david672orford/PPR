@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-27 10:23-0400\n"
+"POT-Creation-Date: 2007-05-31 09:09-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -2155,12 +2155,12 @@ msgstr ""
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "Der Aliasname \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:638
+#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:639
 #: ../ppad/ppad_printer.c:2320
 msgid "Bad set of switches.\n"
 msgstr "Ungültige Liste von Argumenten.\n"
 
-#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:775
+#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:776
 #: ../ppad/ppad_printer.c:2918
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr "Zusätzliche Parameternamen müssen mit einem kleine ASCII Buchstaben beginnen.\n"
@@ -2194,7 +2194,7 @@ msgstr "Der Aliasname \"%s\" existiert nicht.\n"
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:154 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
+#: ../ppad/ppad_conf.c:154 ../ppad/ppad_group.c:544 ../ppad/ppad_group.c:584
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr "Die Gruppe \"%s\" existiert nicht.\n"
@@ -2257,17 +2257,17 @@ msgstr "Der Gruppenname enthält ein nichterlaubtes Zeichen.\n"
 msgid "Group name begins with a disallowed character.\n"
 msgstr "Der Gruppenname beginnt mit einem nichterlaubten Zeichen.\n"
 
-#: ../ppad/ppad_group.c:362
+#: ../ppad/ppad_group.c:363
 #, fuzzy, c-format
 msgid "Printer \"%s\" is already a member of \"%s\".\n"
 msgstr "%d Drucker \"%s\" ist bereits Mitglied von \"%s\".\n"
 
-#: ../ppad/ppad_group.c:393
+#: ../ppad/ppad_group.c:394
 #, fuzzy, c-format
 msgid "Group \"%s\" would have %d members, only %d are allowed.\n"
 msgstr "%d Gruppe \"%s\" hat %d Mitglieder, aber nur %d erlaubt.\n"
 
-#: ../ppad/ppad_group.c:546
+#: ../ppad/ppad_group.c:547
 #, c-format
 msgid "The group \"%s\" does not have a member called \"%s\".\n"
 msgstr "Die Gruppe \"%s\" hat kein Mitglied \"%s\".\n"

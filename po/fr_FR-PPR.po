@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-27 10:23-0400\n"
+"POT-Creation-Date: 2007-05-31 09:08-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -2145,12 +2145,12 @@ msgstr "Le nom \"%s\" n'est pas celui d'un groupe ou d'une imprimante existants.
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "L'alias \"%s\" n'existe pas.\n"
 
-#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:638
+#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:639
 #: ../ppad/ppad_printer.c:2320
 msgid "Bad set of switches.\n"
 msgstr "Mauvais groupe de bascules.\n"
 
-#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:775
+#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:776
 #: ../ppad/ppad_printer.c:2918
 #, fuzzy
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
@@ -2187,7 +2187,7 @@ msgstr "L'alias \"%s\" n'existe pas.\n"
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../ppad/ppad_conf.c:154 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
+#: ../ppad/ppad_conf.c:154 ../ppad/ppad_group.c:544 ../ppad/ppad_group.c:584
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr "Le groupe \"%s\" n'existe pas.\n"
@@ -2250,17 +2250,17 @@ msgstr "Le nom du groupe contient un caractère interdit.\n"
 msgid "Group name begins with a disallowed character.\n"
 msgstr "Le nom du groupe commence par un caractère interdit.\n"
 
-#: ../ppad/ppad_group.c:362
+#: ../ppad/ppad_group.c:363
 #, fuzzy, c-format
 msgid "Printer \"%s\" is already a member of \"%s\".\n"
 msgstr "L'imprimante \"%s\" est déjà membre de \"%s\".\n"
 
-#: ../ppad/ppad_group.c:393
+#: ../ppad/ppad_group.c:394
 #, fuzzy, c-format
 msgid "Group \"%s\" would have %d members, only %d are allowed.\n"
 msgstr "Le groupe \"%s\" aurait %d membres, seuls %d sont permis."
 
-#: ../ppad/ppad_group.c:546
+#: ../ppad/ppad_group.c:547
 #, c-format
 msgid "The group \"%s\" does not have a member called \"%s\".\n"
 msgstr "Le groupe \"%s\" n'a pas de membre appelé \"%s\".\n"

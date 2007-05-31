@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-27 10:23-0400\n"
+"POT-Creation-Date: 2007-05-31 09:11-0400\n"
 "PO-Revision-Date: 2006-05-10 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -2070,12 +2070,12 @@ msgstr "Название \"%s\" не явлается названием суш�
 msgid "The alias \"%s\" does not exist.\n"
 msgstr "Псевдоним \"%s\" не сушествует.\n"
 
-#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:638
+#: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:639
 #: ../ppad/ppad_printer.c:2320
 msgid "Bad set of switches.\n"
 msgstr ""
 
-#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:775
+#: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:776
 #: ../ppad/ppad_printer.c:2918
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr ""
@@ -2109,7 +2109,7 @@ msgstr "Псевдоним \"%s\" уже есть.\n"
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Принтер \"%s\" не существует.\n"
 
-#: ../ppad/ppad_conf.c:154 ../ppad/ppad_group.c:543 ../ppad/ppad_group.c:583
+#: ../ppad/ppad_conf.c:154 ../ppad/ppad_group.c:544 ../ppad/ppad_group.c:584
 #, c-format
 msgid "The group \"%s\" does not exist.\n"
 msgstr "Группа \"%s\" не существует.\n"
@@ -2171,17 +2171,17 @@ msgstr "Название группы содержает запрешеный с
 msgid "Group name begins with a disallowed character.\n"
 msgstr "Название группы начинается запрешеным символом.\n"
 
-#: ../ppad/ppad_group.c:362
+#: ../ppad/ppad_group.c:363
 #, c-format
 msgid "Printer \"%s\" is already a member of \"%s\".\n"
 msgstr "Принтер \"%s\" уже явлается членом группы \"%s\".\n"
 
-#: ../ppad/ppad_group.c:393
+#: ../ppad/ppad_group.c:394
 #, c-format
 msgid "Group \"%s\" would have %d members, only %d are allowed.\n"
 msgstr ""
 
-#: ../ppad/ppad_group.c:546
+#: ../ppad/ppad_group.c:547
 #, c-format
 msgid "The group \"%s\" does not have a member called \"%s\".\n"
 msgstr "Группа \"%s\" не имеет члена по названию \"%s\".\n"
@@ -5733,29 +5733,30 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "Syntax error.\n"
-#~ msgstr "Синтаксическая ошибка.\n"
+#~ msgid "all"
+#~ msgstr "все"
 
-#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
-#~ msgstr "Използования: ppop status {<принтер>, <группа>, all}\n"
-
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
-
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
-
-#~ msgid "You must supply only the name of an existing printer.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
-
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"
 
 #, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group and\n"
-#~ "a name for the new group.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
 #, fuzzy
 #~ msgid ""
@@ -5763,27 +5764,26 @@ msgstr ""
 #~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
 #, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid ""
+#~ "You must supply the name of an existing group and\n"
+#~ "a name for the new group.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
-#~ msgid "all"
-#~ msgstr "все"
+#~ msgid "You must supply only the name of an existing printer.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
+
+#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
+#~ msgstr "Използования: ppop status {<принтер>, <группа>, all}\n"
+
+#~ msgid "Syntax error.\n"
+#~ msgstr "Синтаксическая ошибка.\n"

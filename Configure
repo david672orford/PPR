@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 7 December 2006.
+# Last modified 14 December 2006.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -1168,6 +1168,7 @@ BACKUPS=*~ *.bak *.bck
 MV=mv
 RMF=rm -f
 CHMOD=chmod
+export SHELL=/bin/sh
 
 # Defines a nice, secure path for filters, interfaces, responders, and other
 # children of ppr and pprd.

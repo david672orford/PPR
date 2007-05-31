@@ -2,7 +2,7 @@ Source: ppr
 Section: net
 Priority: optional
 Maintainer: David Chappell <David.Chappell@trincoll.edu>
-Build-Depends: debhelper (>= 4.0.0) libgdbm-dev tdb-dev 
+#Build-Depends: debhelper (>= 4.0.0) libgdbm-dev tdb-dev
 Standards-Version: 3.6.0
 
 Package: ppr
