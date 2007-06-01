@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-31 09:09-0400\n"
+"POT-Creation-Date: 2007-06-01 12:49-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -357,8 +357,8 @@ msgid "value must be a positive integer"
 msgstr "der Wert muﬂ eine positive Ganzzahl sein"
 
 #: ../interfaces/atalk_ali.c:816 ../interfaces/atalk_cap.c:548
-#: ../interfaces/tcpip.c:403 ../interfaces/tcpip.c:415
-#: ../interfaces/tcpip.c:436 ../interfaces/tcpip.c:460 ../interfaces/usb.c:239
+#: ../interfaces/tcpip.c:409 ../interfaces/tcpip.c:421
+#: ../interfaces/tcpip.c:442 ../interfaces/tcpip.c:466 ../interfaces/usb.c:239
 #: ../libppr/int_tcp_connect.c:58
 msgid "value must be a positive integer or zero"
 msgstr "der Wert muﬂ eine positive Ganzzahl oder Null sein"
@@ -366,7 +366,7 @@ msgstr "der Wert muﬂ eine positive Ganzzahl oder Null sein"
 #: ../interfaces/atalk_ali.c:832 ../interfaces/atalk_cap.c:555
 #: ../interfaces/lpr.c:1006 ../interfaces/parallel.c:271
 #: ../interfaces/pros.c:511 ../interfaces/serial.c:438
-#: ../interfaces/tcpip.c:470 ../interfaces/usb.c:266
+#: ../interfaces/tcpip.c:476 ../interfaces/usb.c:266
 msgid "unrecognized keyword"
 msgstr "unbekanntes Schl¸sselwort"
 
@@ -378,13 +378,13 @@ msgstr "Fehler beim Verarbeiten der Option: %s"
 #: ../interfaces/atalk_ali.c:843 ../interfaces/atalk_cap.c:566
 #: ../interfaces/lpr.c:1018 ../interfaces/parallel.c:283
 #: ../interfaces/pros.c:525 ../interfaces/serial.c:449
-#: ../interfaces/tcpip.c:482 ../interfaces/usb.c:278
+#: ../interfaces/tcpip.c:488 ../interfaces/usb.c:278
 msgid "right here"
 msgstr "hier"
 
 #: ../interfaces/atalk_cap.c:564 ../interfaces/lpr.c:1016
 #: ../interfaces/pros.c:523 ../interfaces/serial.c:447
-#: ../interfaces/tcpip.c:480
+#: ../interfaces/tcpip.c:486
 #, c-format
 msgid "Option parsing error:  %s"
 msgstr "Fehler beim Verarbeiten der Option:  %s"
@@ -470,7 +470,7 @@ msgstr "der Wert muﬂ \"o\" oder \"f\" sein"
 
 #: ../interfaces/lpr.c:1036 ../interfaces/parallel.c:350
 #: ../interfaces/pros.c:473 ../interfaces/serial.c:551
-#: ../interfaces/tcpip.c:355 ../interfaces/usb.c:503
+#: ../interfaces/tcpip.c:361 ../interfaces/usb.c:503
 #, c-format
 msgid ""
 "The jobbreak methods \"signal\" and \"signal/pjl\" are not compatible with\n"
@@ -607,7 +607,7 @@ msgstr "Nichterlaubter \"speed=\" Wert"
 
 #: ../interfaces/serial.c:303 ../interfaces/serial.c:317
 #: ../interfaces/serial.c:408 ../interfaces/serial.c:418
-#: ../interfaces/tcpip.c:448
+#: ../interfaces/tcpip.c:454
 msgid "Invalid boolean value"
 msgstr "Ung¸ltige Bool-Variable"
 
@@ -745,7 +745,7 @@ msgstr "Kann Schl¸ssel in Abschnitt nicht finden."
 msgid "value is not in the correct format"
 msgstr "der Wert ist nicht im korrekten Format"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1486 ../ppr/ppr_editps.c:144
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1492 ../ppr/ppr_editps.c:144
 #: ../ppr/ppr_main.c:471 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -763,7 +763,7 @@ msgstr "Zu wenig Felder in \"%s\", Zeile %d"
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr "Nicht-Bool Variable im dritten Feld von \"%s\", Zeile %d"
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1545
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1551
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr "Fehler beim Lesen von \"%s\", Fehlernummer=%d (%s)"
@@ -891,13 +891,12 @@ msgstr "Das TCP/IP-Interface kann die IP-Adresse f¸r \"%s\" nicht herausfinden."
 #: ../libppr/int_tcp_connect.c:228
 #, c-format
 msgid ""
-"Printer \"%s\" is not responding.\n"
-"(Aborted after connect() blocked for %d seconds.)"
+"Printer \"%s\" did not respond to connection\n"
+"attempt within the %d seconds allowed.  It is probably turned off, disconnected\n"
+"from the network, or its IP address has changed."
 msgstr ""
-"Der Drucker \"%s\" antwortet nicht.\n"
-"(Versuch abgebrochen, nachdem connect() f¸r %d Sekunden geblockt wurde.)"
 
-#: ../libppr/int_tcp_connect.c:247
+#: ../libppr/int_tcp_connect.c:248
 msgid ""
 "Timeout while trying to connect to printer.\n"
 "(Connect() reported error ETIMEDOUT.)"
@@ -905,7 +904,7 @@ msgstr ""
 "Beim Versuch, den Drucker zu kontaktieren, ist die Zeit abgelaufen.\n"
 "(Connect() meldete den Fehler ETIMEDOUT.)"
 
-#: ../libppr/int_tcp_connect.c:264
+#: ../libppr/int_tcp_connect.c:265
 #, c-format
 msgid "Printer at \"%s\" has refused connection."
 msgstr "Der Drucker auf \"%s\" hat die Verbindung abgelehnt."
@@ -992,47 +991,47 @@ msgstr "Warnung: PPD Datei \"%s\" enth‰lt einen nichterlaubten ColorDevice Wert 
 msgid "Warning: PPD file \"%s\" has an invalid %s value of \"%s\".\n"
 msgstr "Warnung: PPD Datei \"%s\" enth‰lt nichterlaubten %s Wert von \"%s\".\n"
 
-#: ../libppr/queueinfo.c:753
+#: ../libppr/queueinfo.c:759
 #, c-format
 msgid "There is no alias called \"%s\""
 msgstr "Es gibt keinen Alias \"%s\""
 
-#: ../libppr/queueinfo.c:758
+#: ../libppr/queueinfo.c:764
 #, c-format
 msgid "There is no group called \"%s\""
 msgstr "Es gibt keine Gruppe \"%s\""
 
-#: ../libppr/queueinfo.c:763
+#: ../libppr/queueinfo.c:769
 #, c-format
 msgid "There is no printer called \"%s\""
 msgstr "Es gibt keinen Drucker \"%s\""
 
-#: ../libppr/queueinfo.c:786
+#: ../libppr/queueinfo.c:792
 #, c-format
 msgid "no printer called \"%s\""
 msgstr "Drucker \"%s\" existiert nicht"
 
-#: ../libppr/queueinfo.c:1502
+#: ../libppr/queueinfo.c:1508
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: zu wenige Felder\n"
 
-#: ../libppr/queueinfo.c:1511
+#: ../libppr/queueinfo.c:1517
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: Feld %d ist leer\n"
 
-#: ../libppr/queueinfo.c:1534
+#: ../libppr/queueinfo.c:1540
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr "Treffer in \"%s\", Zeile %d; mfmode=\"%s\".\n"
 
-#: ../libppr/queueinfo.c:1570
+#: ../libppr/queueinfo.c:1576
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr "Warnung: kein MetaFont Modus f¸r Drucker \"%s\" gefunden.\n"
 
-#: ../libppr/queueinfo.c:1581
+#: ../libppr/queueinfo.c:1587
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr "Warnung: nicht aller Mitglieder der Gruppe \"%s\" haben den sicheren MetaFont Modus.\n"
@@ -1357,55 +1356,55 @@ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): execv(\"%s\", ...) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../ppad/dispatch_table.c:14
+#: ../ppad/dispatch_table.c:11
 msgid "alias to show"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:18
+#: ../ppad/dispatch_table.c:15
 msgid "name of existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:19
+#: ../ppad/dispatch_table.c:16
 msgid "name of new alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:23
+#: ../ppad/dispatch_table.c:20
 msgid "name of new or existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:24
+#: ../ppad/dispatch_table.c:21
 msgid "new target of alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:28
+#: ../ppad/dispatch_table.c:25
 msgid "name of alias to be deleted"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:32 ../ppad/dispatch_table.c:37
-#: ../ppad/dispatch_table.c:42 ../ppad/dispatch_table.c:47
+#: ../ppad/dispatch_table.c:29 ../ppad/dispatch_table.c:34
+#: ../ppad/dispatch_table.c:39 ../ppad/dispatch_table.c:44
 msgid "name of alias to be modified"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:33 ../ppad/dispatch_table.c:174
+#: ../ppad/dispatch_table.c:30 ../ppad/dispatch_table.c:174
 msgid "comment to attach (ommit to delete)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:38 ../ppad/dispatch_table.c:96
+#: ../ppad/dispatch_table.c:35 ../ppad/dispatch_table.c:96
 #: ../ppad/dispatch_table.c:288
 msgid "switches to attach (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:43 ../ppad/dispatch_table.c:105
+#: ../ppad/dispatch_table.c:40 ../ppad/dispatch_table.c:105
 #: ../ppad/dispatch_table.c:297
 msgid "languages to pass thru (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:48 ../ppad/dispatch_table.c:115
+#: ../ppad/dispatch_table.c:45 ../ppad/dispatch_table.c:115
 #: ../ppad/dispatch_table.c:340
 msgid "addon parameter to modify"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:49 ../ppad/dispatch_table.c:116
+#: ../ppad/dispatch_table.c:46 ../ppad/dispatch_table.c:116
 #: ../ppad/dispatch_table.c:341
 msgid "new value for param (ommit to delete)"
 msgstr ""
@@ -1860,7 +1859,7 @@ msgstr ""
 msgid "delete from bins list"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:402
+#: ../ppad/dispatch_table.c:403
 msgid "send reminder e-mail about printer problems"
 msgstr ""
 
@@ -1994,13 +1993,13 @@ msgid "send query to printer and produce list of suitable PPD files"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:444
-msgid "miscelanious command"
-msgstr ""
-
-#: ../ppad/dispatch_table.c:445
 #, fuzzy
 msgid "all settings for aliases"
 msgstr "Ung¸ltiger Wert f¸r %s"
+
+#: ../ppad/dispatch_table.c:445
+msgid "miscelanious command"
+msgstr ""
 
 #: ../ppad/dispatch_table.c:446
 #, fuzzy
@@ -2156,12 +2155,12 @@ msgid "The alias \"%s\" does not exist.\n"
 msgstr "Der Aliasname \"%s\" existiert nicht.\n"
 
 #: ../ppad/ppad_alias.c:249 ../ppad/ppad_group.c:639
-#: ../ppad/ppad_printer.c:2320
+#: ../ppad/ppad_printer.c:2319
 msgid "Bad set of switches.\n"
 msgstr "Ung¸ltige Liste von Argumenten.\n"
 
 #: ../ppad/ppad_alias.c:297 ../ppad/ppad_group.c:776
-#: ../ppad/ppad_printer.c:2918
+#: ../ppad/ppad_printer.c:2917
 msgid "Addon parameter names must begin with a lower-case ASCII letter.\n"
 msgstr "Zus‰tzliche Parameternamen m¸ssen mit einem kleine ASCII Buchstaben beginnen.\n"
 
@@ -2189,7 +2188,7 @@ msgstr "Die Gruppe \"%s\" existiert nicht.\n"
 msgid "The alias \"%s\" already exists.\n"
 msgstr "Der Aliasname \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_conf.c:151 ../ppad/ppad_printer.c:2256
+#: ../ppad/ppad_conf.c:151 ../ppad/ppad_printer.c:2255
 #, c-format
 msgid "The printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
@@ -2521,7 +2520,7 @@ msgstr ""
 msgid "IEEE 1284 DeviceID Model: %s\n"
 msgstr ""
 
-#: ../ppad/ppad_ppd.c:881 ../ppad/ppad_printer.c:2952
+#: ../ppad/ppad_ppd.c:881 ../ppad/ppad_printer.c:2951
 #, c-format
 msgid "%s: query failed: %s\n"
 msgstr "%s: Abfrage fehlgeschlagen: %s\n"
@@ -2531,8 +2530,8 @@ msgstr "%s: Abfrage fehlgeschlagen: %s\n"
 msgid "%s(): %s() failed, errno=%d (%s)\n"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_printer.c:371 ../ppad/ppad_printer.c:1657
-#: ../ppad/ppad_printer.c:1714
+#: ../ppad/ppad_printer.c:371 ../ppad/ppad_printer.c:1656
+#: ../ppad/ppad_printer.c:1713
 #, fuzzy
 msgid "Alerts interval must be an integer.\n"
 msgstr "der Wert muﬂ eine positive Ganzzahl sein"
@@ -2787,11 +2786,11 @@ msgstr "Der RIP Programmname darf nicht leer sein.\n"
 msgid "The RIP output language may not be an empty string.\n"
 msgstr "Die Ausgabesprache des RIP Programmes darf nicht leer sein.\n"
 
-#: ../ppad/ppad_printer.c:1742
+#: ../ppad/ppad_printer.c:1741
 msgid "No alert method and address defined, use \"ppad alerts\".\n"
 msgstr "Keine Warnungsmethode und -adresse angegeben, benutzen Sie \"ppad alerts\".\n"
 
-#: ../ppad/ppad_printer.c:1790
+#: ../ppad/ppad_printer.c:1789
 msgid ""
 "Banner and trailer must be set to \"never\", \"no\",\n"
 "\"yes\", or \"always\".\n"
@@ -2799,30 +2798,30 @@ msgstr ""
 "Start- und Endseite m¸ssen auf \"never\", \"no\",\n"
 "\"yes\", oder \"always\" gesetzt werden.\n"
 
-#: ../ppad/ppad_printer.c:1824
+#: ../ppad/ppad_printer.c:1823
 msgid "Set outputorder to \"Normal\", \"Reverse\", or \"PPD\".\n"
 msgstr "Setzen Sie die Ausgababfolge auf \"Normal\", \"Reverse\" oder \"PPD\".\n"
 
-#: ../ppad/ppad_printer.c:1856
+#: ../ppad/ppad_printer.c:1855
 #, c-format
 msgid "A second parameter is not allowed because first is \"%s\"."
 msgstr "Ein zweiter Parameter ist nicht erlaubt, da der erste \"%s\" ist."
 
-#: ../ppad/ppad_printer.c:1868 ../ppad/ppad_printer.c:1873
+#: ../ppad/ppad_printer.c:1867 ../ppad/ppad_printer.c:1872
 #, c-format
 msgid "The value \"%s\" is not in the correct format for decimal currency."
 msgstr "Die Angabe \"%s\" ist nicht im korrekten Format f¸r dezimale W‰hrungsangaben."
 
-#: ../ppad/ppad_printer.c:1934
+#: ../ppad/ppad_printer.c:1933
 msgid "Printer configuration file does not have a \"PPDFile:\" line.\n"
 msgstr "Druckerkonfigurationsdatei hat keine Zeile: \"PPDFile:\".\n"
 
-#: ../ppad/ppad_printer.c:2004
+#: ../ppad/ppad_printer.c:2003
 #, c-format
 msgid "Printer \"%s\" already has a bin called \"%s\".\n"
 msgstr "Der Drucker \"%s\" hat schon ein Papierfach mit Namen \"%s\".\n"
 
-#: ../ppad/ppad_printer.c:2027
+#: ../ppad/ppad_printer.c:2026
 #, c-format
 msgid ""
 "Can't add these %d bin%s to \"%s\" because then the printer would\n"
@@ -2831,73 +2830,73 @@ msgstr ""
 "Kann diese %d Bin%s (Papiereinz¸ge) nicht zu \"%s\" hinzuf¸gen, da der Drucker dann\n"
 "%d Bins haben w¸rde und das %d Binlimit ¸berschritten w¸rde.\n"
 
-#: ../ppad/ppad_printer.c:2099
+#: ../ppad/ppad_printer.c:2098
 #, c-format
 msgid "You can't delete more than %d bins at a time.\n"
 msgstr "Sie kˆnnen nicht mehr als %d Einz¸ge auf einmal lˆschen.\n"
 
-#: ../ppad/ppad_printer.c:2137
+#: ../ppad/ppad_printer.c:2136
 #, c-format
 msgid "The printer \"%s\" does not have a bin called \"%s\".\n"
 msgstr "Der Drucker \"%s\" hat keinen Einzug mit Namen \"%s\".\n"
 
-#: ../ppad/ppad_printer.c:2208
+#: ../ppad/ppad_printer.c:2207
 #, fuzzy, c-format
 msgid "%s(): %s(\"%s\") failed, errno=%d (%s)\n"
 msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 
-#: ../ppad/ppad_printer.c:2349
+#: ../ppad/ppad_printer.c:2348
 #, fuzzy, c-format
 msgid "Printer \"%s\" does not exist."
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppad/ppad_printer.c:2480
+#: ../ppad/ppad_printer.c:2479
 #, c-format
 msgid "The printer \"%s\" has no \"PPDFile:\" line in its configuration file."
 msgstr "Die Konfigurationsdatei des Druckers \"%s\" hat keinen Eintrag: \"PPDFile:\"."
 
-#: ../ppad/ppad_printer.c:2532
+#: ../ppad/ppad_printer.c:2531
 #, c-format
 msgid "WARNING: Unclosed UI block \"%s\" in PPD file.\n"
 msgstr "WARNUNG: Nichtabgeschlossener UI Abschnitt \"%s\" in PPD Datei.\n"
 
-#: ../ppad/ppad_printer.c:2585
+#: ../ppad/ppad_printer.c:2584
 msgid "WARNING: mismatched \"*OpenUI\", \"*CloseUI\" in PPD file.\n"
 msgstr "WARNUNG: Nichtpassendes \"*OpenUI\", \"*CloseUI\" in PPD Datei.\n"
 
-#: ../ppad/ppad_printer.c:2618
+#: ../ppad/ppad_printer.c:2617
 #, c-format
 msgid "Warning:\t No value provided for \"%s\".\n"
 msgstr "Warnung:\t Kein Wert f¸r \"%s\" angegeben.\n"
 
-#: ../ppad/ppad_printer.c:2622
+#: ../ppad/ppad_printer.c:2621
 #, c-format
 msgid "Value provided for \"%s\" is not among the possible values.\n"
 msgstr "Der Wert f¸r \"%s\" ist nicht erlaubt.\n"
 
-#: ../ppad/ppad_printer.c:2633
+#: ../ppad/ppad_printer.c:2632
 #, c-format
 msgid "Choose 1 thru %d or 0 if unknown> "
 msgstr "W‰hlen Sie 1 bis %d oder 0 wenn ubekannt>"
 
-#: ../ppad/ppad_printer.c:2680
+#: ../ppad/ppad_printer.c:2679
 #, c-format
 msgid "WARNING: Unclosed UI block in PPD file: \"%s\".\n"
 msgstr "WARNUNG: Nichtabgeschlossener UI Abschnitt in PPD Datei: \"%s\".\n"
 
-#: ../ppad/ppad_printer.c:2753 ../ppad/ppad_printer.c:2784
+#: ../ppad/ppad_printer.c:2752 ../ppad/ppad_printer.c:2783
 msgid "The lower limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das untere Limit muﬂ 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
-#: ../ppad/ppad_printer.c:2759 ../ppad/ppad_printer.c:2790
+#: ../ppad/ppad_printer.c:2758 ../ppad/ppad_printer.c:2789
 msgid "The upper limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das obere Limit muﬂ 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
-#: ../ppad/ppad_printer.c:2814
+#: ../ppad/ppad_printer.c:2813
 msgid "Value is not boolean.\n"
 msgstr "Der Wert ist nicht boolean (wahr/falsch)\n"
 
-#: ../ppad/ppad_printer.c:2890
+#: ../ppad/ppad_printer.c:2889
 msgid "The limit must be 0 (unlimited) or a positive integer.\n"
 msgstr "Das Limit muﬂ 0 (unbegrenzt) oder eine positive Ganzzahl sein.\n"
 
@@ -5982,3 +5981,10 @@ msgstr "%s: The Druckauftrag \"%s\" ist nicht Ihrer, ich ignoriere den Befehl.\n
 #, c-format
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr "Garantiere PPR die Erlaubnis, X clients zu kontaktieren, um \"%s\" anzuzeigen.\n"
+
+#~ msgid ""
+#~ "Printer \"%s\" is not responding.\n"
+#~ "(Aborted after connect() blocked for %d seconds.)"
+#~ msgstr ""
+#~ "Der Drucker \"%s\" antwortet nicht.\n"
+#~ "(Versuch abgebrochen, nachdem connect() f¸r %d Sekunden geblockt wurde.)"

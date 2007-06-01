@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_other.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 September 2006.
+** Last modified 1 June 2007.
 */
 
 /*
@@ -1701,20 +1701,21 @@ int command_alerts(const char *argv[])
 	{
 	const char *destname;
 	char fname[MAX_PPR_PATH];
-	struct stat statbuf;
 	FILE *f;
-	int c;
 
 	if(!(destname = parse_destname(argv[0], FALSE)))
 		return EXIT_SYNTAX;
 
 	/* See if the printer configuration file exists. */
 	ppr_fnamef(fname, "%s/%s", PRCONF, destname);
+	{
+	struct stat statbuf;
 	if(stat(fname, &statbuf))
 		{
 		gu_utf8_fprintf(stderr, _("Printer \"%s\" does not exist.\n"), destname);
 		return EXIT_ERROR;
 		}
+	}
 
 	/* Try to open the alerts file. */
 	ppr_fnamef(fname, "%s/%s/alerts", PRINTERS_PURGABLE_STATEDIR, destname);
@@ -1732,9 +1733,20 @@ int command_alerts(const char *argv[])
 			}
 		}
 
-	/* Copy the alerts to stdout. */
+	/*
+	 * Copy the alerts to stdout.
+	 * !!! This still must be fixed for UTF-8 !!!
+	 */
+	{
+	int c, lastc = 0;
 	while((c = fgetc(f)) != EOF)
+		{
+		lastc = c;
 		fputc(c, stdout);
+		}
+	if(lastc != '\n')
+		fputc('\n', stdout);
+	}
 
 	fclose(f);
 

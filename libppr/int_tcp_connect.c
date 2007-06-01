@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/libppr/int_tcp_connect.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 August 2006.
+** Last modified 1 June 2007.
 */
 
 #include "config.h"
@@ -225,8 +225,9 @@ int int_tcp_open_connexion(const char address[], struct sockaddr_in *printer_add
 		if(sigalrm_caught)
 			{
 			alert(int_cmdline.printer, TRUE,
-				_("Printer \"%s\" is not responding.\n"
-				  "(Aborted after connect() blocked for %d seconds.)"),
+				_("Printer \"%s\" did not respond to connection\n"
+				  "attempt within the %d seconds allowed.  It is probably turned off, disconnected\n"
+				  "from the network, or its IP address has changed."),
 				address,
 				options->timeout
 				);

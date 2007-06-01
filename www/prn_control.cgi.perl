@@ -1,32 +1,14 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/prn_control.cgi.perl
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2007, Trinity College Computing Center.
 # Written by David Chappell.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
+# This file is part of PPR.  You can redistribute it and modify it under the
+# terms of the revised BSD licence (without the advertising clause) as
+# described in the accompanying file LICENSE.txt.
 #
-# * Redistributions of source code must retain the above copyright notice,
-# this list of conditions and the following disclaimer.
-#
-# * Redistributions in binary form must reproduce the above copyright
-# notice, this list of conditions and the following disclaimer in the
-# documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-#
-# Last modified 13 January 2005.
+# Last modified 1 June 2007.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -223,15 +205,15 @@ $status = humanify_printer_status($status, $job, $retry, $countdown, $printer_st
 my $display_job = $job ne "" ? $job : $printer_job;
 
 # Encode everything except the numbers as HTML.
-$printer = html($printer);
-$comment = html($comment);
-$status = html($status);
+#$printer = html($printer);
+#$comment = html($comment);
+#$status = html($status);
 $printer_status = html($printer_status);
 $printer_status =~ s/\n/<br>/g;
-$operation = html($operation);
-$page_clock = html($page_clock);
-$forwhom = html($forwhom);
-$display_job = html($display_job);
+#$operation = html($operation);
+#$page_clock = html($page_clock);
+#$forwhom = html($forwhom);
+#$display_job = html($display_job);
 
 # Prepare the display versions of some of the progress variables.  We
 # suppress zero and negative one when they really mean "no information
@@ -246,48 +228,48 @@ my $border = $user_agent->{css} ? 0 : 1;
 # Start a form and within it a 2 cell table.  The left hand cell will
 # present information, the right hand one will contain the buttons.
 print <<"Form10";
-<form action="$ENV{SCRIPT_NAME}?${\&form_urlencoded("name",$printer)}" method="post">
+<form action="$ENV{SCRIPT_NAME}?${\&form_urlencoded("name", $printer)}" method="post">
 <table width="100%" height="100%">
 <tr>
 <td align="left" valign="top">
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Name:")}</th><td width="${\($CHARWIDTH * 10)}">$printer</td>
-		<th>${\H_NB_("Comment:")}</th><td width="${\($CHARWIDTH * 32)}">$comment</td>
-		</tr></table>
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Status:")}</th><td width="${\($CHARWIDTH * 28)}">$status</td>
-		<th>${\H_NB_("Retry:")}</th><td width="${\($CHARWIDTH * 4)}">$retry</td>
-		<th>${\H_NB_("Countdown:")}</th><td width="${\($CHARWIDTH * 4)}">$countdown</td>
-		</tr></table>
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Operation:")}</th><td width="${\($CHARWIDTH * 25)}">$operation&nbsp;</td>
-		<th>${\H_NB_("Page clock:")}</th><td width="${\($CHARWIDTH * 15)}">$page_clock&nbsp;</td>
-		</tr></table>
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Printer status:")}</th><td width="${\($CHARWIDTH * 50)}">$printer_status&nbsp;</td>
-		</tr></table>
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Current job:")}</th><td width="${\($CHARWIDTH * 20)}">$display_job&nbsp;</td>
-		<th>${\H_NB_("For:")}</th><td width="${\($CHARWIDTH * 25)}">$forwhom&nbsp;</td>
-		</tr></table>
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Total bytes:")}</th><td width="${\($CHARWIDTH * 9)}">${\bytes($bytes_total)}&nbsp;</td>
-		<th>${\H_NB_("Bytes sent:")}</th><td width="${\($CHARWIDTH * 9)}">${\bytes($bytes_sent)}&nbsp;</td>
-		<th>${\H_NB_("Percent sent:")}</th><td width="${\($CHARWIDTH * 4)}">$percent_sent&nbsp;</td>
-		</tr></table>
-
-		<table border=$border><tr>
-		<th>${\H_NB_("Total pages:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages&nbsp;</td>
-		<th>${\H_NB_("Pages started:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_started&nbsp;</td>
-		<th>${\H_NB_("Pages completed:")}</th><td width="${\($CHARWIDTH * 4)}">$html_pages_completed&nbsp;</td>
-		</tr></table>
 Form10
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Name:"), "</th><td width=\"", $CHARWIDTH * 10, "\">", html($printer), "</td>\n";
+print "<th>", H_NB_("Comment:"), "</th><td width=\"", $CHARWIDTH * 32, "\">", html_nb($comment), "</td>\n";
+print "</tr></table>\n";
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Status:"), "</th><td width=\"", $CHARWIDTH * 28, "\">", html_nb($status), "</td>\n";
+print "<th>", H_NB_("Retry:"), "</th><td width=\"", $CHARWIDTH * 4, "\">$retry</td>\n";
+print "<th>", H_NB_("Countdown:"), "</th><td width=\"", $CHARWIDTH * 4, "\">$countdown</td>\n";
+print "</tr></table>\n";
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Operation:"), "</th><td width=\"", $CHARWIDTH * 25, "\">", html_nb($operation), "&nbsp;</td>\n";
+print "<th>", H_NB_("Page clock:"), "</th><td width=\"", $CHARWIDTH * 15, "\">", html_nb($page_clock), "&nbsp;</td>\n";
+print "</tr></table>\n";
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Printer status:"), "</th><td width=\"", $CHARWIDTH * 50, "\">$printer_status&nbsp;</td>\n";
+print "</tr></table>\n";
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Current job:"), "</th><td width=\"", $CHARWIDTH * 20, "\">", html_nb($display_job), "&nbsp;</td>\n";
+print "<th>", H_NB_("For:"), "</th><td width=\"", $CHARWIDTH * 25, "\">", html_nb($forwhom), "&nbsp;</td>\n";
+print "</tr></table>\n";
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Total bytes:"), "</th><td width=\"", $CHARWIDTH * 9, "\">${\bytes($bytes_total)}&nbsp;</td>\n";
+print "<th>", H_NB_("Bytes sent:"), "</th><td width=\"", $CHARWIDTH * 9, "\">${\bytes($bytes_sent)}&nbsp;</td>\n";
+print "<th>", H_NB_("Percent sent:"), "</th><td width=\"", $CHARWIDTH * 4, "\">$percent_sent&nbsp;</td>\n";
+print "</tr></table>\n";
+
+print "<table border=$border><tr>\n";
+print "<th>", H_NB_("Total pages:"), "</th><td width=\"", $CHARWIDTH * 4, "\">$html_pages&nbsp;</td>\n";
+print "<th>", H_NB_("Pages started:"), "</th><td width=\"", $CHARWIDTH * 4, "\">$html_pages_started&nbsp;</td>\n";
+print "<th>", H_NB_("Pages completed:"), "</th><td width=\"", $CHARWIDTH * 4, "\">$html_pages_completed&nbsp;</td>\n";
+print "</tr></table>\n";
 
 # If it is printing a job, display the progress bar.
 if($job ne "")
@@ -352,10 +334,10 @@ if($pages > 0 && $pages_started <= $pages && $pages_completed <= $pages && $page
 #
 if($alerts ne "" && $controls)
 {
+print "<label><span class=\"label\">", H_("Alert Messages:"), "</span><br>\n";
 print <<"Form18";
-<label><span class="label">${\H_("Alert Messages:")}</span><br>
-<textarea class="alerts" rows=6 cols=70 wrap="off" tabindex=0 readonly>
-$alerts
+<textarea class="alerts" rows=8 cols=80 wrap="off" tabindex=0 readonly>
+${\html($alerts)}
 </textarea>
 </label>
 Form18

@@ -1,31 +1,13 @@
 /*
 ** mouse:~ppr/src/libgu/gu_snmp.c
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2007, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 22 September 2004.
+** Last modified 1 June 2007.
 */
 
 #include "config.h"
@@ -245,16 +227,16 @@ struct gu_snmp *gu_snmp_open(unsigned long int ip_address, const char community[
 	server_ip.sin_port = htons(161);
 
 	if((fd = socket(AF_INET, SOCK_DGRAM, 0)) < 0)
-		gu_Throw("socket() failed, errno=%d (%s)", errno, gu_strerror(errno));
+		gu_CodeThrow(errno, "%s() failed, errno=%d (%s)", "socket", errno, gu_strerror(errno));
 
 	gu_Try {
 		if(bind(fd, (struct sockaddr *)&my_ip, sizeof(my_ip)) < 0)
-			gu_Throw("bind() failed, errno=%d (%s)", errno, gu_strerror(errno));
+			gu_CodeThrow(errno, "%s() failed, errno=%d (%s)", "bind", errno, gu_strerror(errno));
 
 		if(ip_address != INADDR_NONE)
 			{
 			if(connect(fd, (struct sockaddr *)&server_ip, sizeof(server_ip)) < 0)
-				gu_Throw("connect() failed, errno=%d (%s)", errno, gu_strerror(errno));
+				gu_CodeThrow(errno, "%s() failed, errno=%d (%s)", "connect", errno, gu_strerror(errno));
 			}
 		}
 	gu_Catch
@@ -570,7 +552,7 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 		printf("sending %d bytes...\n", packet_length);
 		#endif
 		if(send(p->socket, buffer, packet_length, 0) < 0)
-			gu_Throw("%s() failed, errno=%d (%s)", "send", errno, gu_strerror(errno));
+			gu_CodeThrow(errno, "%s() failed, errno=%d (%s)", "send", errno, gu_strerror(errno));
 
 		/* Wait up to 1 second for a response. */
 		FD_ZERO(&rfds);
@@ -578,7 +560,7 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 		timeout.tv_sec = 1;
 		timeout.tv_usec = 0;
 		if(select(p->socket + 1, &rfds, NULL, NULL, &timeout) < 0)
-			gu_Throw("%s() failed, errno=%d (%s)", "select", errno, gu_strerror(errno));
+			gu_CodeThrow(errno, "%s() failed, errno=%d (%s)", "select", errno, gu_strerror(errno));
 
 		/* If there was nothing to read, start next iteration
 		   (which will result in a resend. */
@@ -587,7 +569,7 @@ void gu_snmp_get(struct gu_snmp *p, ...)
 
 		/* Receive the packet. */
 		if((p->result_len = recv(p->socket, p->result, sizeof(p->result), 0)) < 0)
-			gu_Throw("%s() failed, errno=%d (%s)", "recv", errno, gu_strerror(errno));
+			gu_CodeThrow(errno, "%s() failed, errno=%d (%s)", "recv", errno, gu_strerror(errno));
 		#ifdef TEST
 		printf("Got %d bytes\n", p->result_len);
 		#endif

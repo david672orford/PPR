@@ -173,7 +173,13 @@ static void snmp_status(void *p)
 						);
 					}
 				}
-			else
+			/* If there is some other error, print it.  The exception is that if the host 
+			 * is completely unreachable we suppress the message since obscure messages
+			 * about SNMP tend to distract attention from the more useful error message
+			 * concerning that fact that the host did not respond to attempts to 
+			 * set up the date channel.
+			 */
+			else if(gu_exception_code != EHOSTUNREACH)
 				{
 				alert(int_cmdline.printer, TRUE, "gu_snmp_get() failed: %s", gu_exception);
 				}

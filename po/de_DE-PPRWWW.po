@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-31 09:11-0400\n"
+"POT-Creation-Date: 2007-06-01 12:50-0400\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -26,7 +26,7 @@ msgid "Close"
 msgstr "Schließen"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
-#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
+#: ../www/prn_control.cgi.perl:367 ../www/prn_media.cgi.perl:211
 #: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
@@ -160,7 +160,7 @@ msgstr "Wegen des oben angegebenen Problems wurde die Warteschlange nicht erzeug
 #: ../www/cliconf.cgi.perl:77 ../www/cliconf.cgi.perl:94
 #: ../www/cliconf.cgi.perl:177 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:883
-#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
+#: ../www/prn_control.cgi.perl:367 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
@@ -172,7 +172,7 @@ msgid "Comment"
 msgstr "Kommentar"
 
 #: ../www/alias_properties.cgi.perl:54 ../www/grp_properties.cgi.perl:54
-#: ../www/prn_properties.cgi.perl:55
+#: ../www/prn_control.cgi.perl:239 ../www/prn_properties.cgi.perl:55
 msgid "Comment:"
 msgstr "Kommentar:"
 
@@ -1354,93 +1354,171 @@ msgstr "Neuen Drucker speichern"
 msgid "Saving new printer:"
 msgstr "Speichere neuen Drucker:"
 
-#: ../www/prn_control.cgi.perl:85
+#: ../www/prn_control.cgi.perl:67
 #, perl-format
 msgid "Status of Printer \"%s\""
 msgstr "Status des Druckers \"%s\""
 
-#: ../www/prn_control.cgi.perl:142
+#: ../www/prn_control.cgi.perl:124
 #, perl-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
 msgstr "Kann nicht [%s] den Drucker \"%s\" wegen des folgenden Grundes:"
 
-#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:173
+#: ../www/prn_control.cgi.perl:238
+#, fuzzy
+msgid "Name:"
+msgstr "Alias Name:"
+
+#: ../www/prn_control.cgi.perl:243
+#, fuzzy
+msgid "Status:"
+msgstr "Status:"
+
+#: ../www/prn_control.cgi.perl:244
+msgid "Retry:"
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:245
+msgid "Countdown:"
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:249
+#, fuzzy
+msgid "Operation:"
+msgstr "Optionen:"
+
+#: ../www/prn_control.cgi.perl:250
+#, fuzzy
+msgid "Page clock:"
+msgstr "Seitenzähler:"
+
+#: ../www/prn_control.cgi.perl:254
+#, fuzzy
+msgid "Printer status:"
+msgstr "Druckername:"
+
+#: ../www/prn_control.cgi.perl:258
+#, fuzzy
+msgid "Current job:"
+msgstr "Derzeitige PPD Datei:"
+
+#: ../www/prn_control.cgi.perl:259
+#, fuzzy
+msgid "For:"
+msgstr "Für"
+
+#: ../www/prn_control.cgi.perl:263
+#, fuzzy
+msgid "Total bytes:"
+msgstr "Gesamtzahl der Seiten:"
+
+#: ../www/prn_control.cgi.perl:264
+#, fuzzy
+msgid "Bytes sent:"
+msgstr "Noch nicht gesendete Bytes"
+
+#: ../www/prn_control.cgi.perl:265
+#, fuzzy
+msgid "Percent sent:"
+msgstr "Vorhanden?"
+
+#: ../www/prn_control.cgi.perl:269
+#, fuzzy
+msgid "Total pages:"
+msgstr "Gesamtzahl der Seiten:"
+
+#: ../www/prn_control.cgi.perl:270
+#, fuzzy
+msgid "Pages started:"
+msgstr "Noch nicht begonnene Seiten"
+
+#: ../www/prn_control.cgi.perl:271
+#, fuzzy
+msgid "Pages completed:"
+msgstr "Fertiggestellte Seiten"
+
+#: ../www/prn_control.cgi.perl:289 ../www/show_printlog.cgi.perl:173
 msgid "Bytes Sent"
 msgstr "Gesendete Bytes"
 
-#: ../www/prn_control.cgi.perl:307
+#: ../www/prn_control.cgi.perl:289
 msgid "Bytes Unsent"
 msgstr "Noch nicht gesendete Bytes"
 
-#: ../www/prn_control.cgi.perl:338
+#: ../www/prn_control.cgi.perl:320
 msgid "Pages Completed"
 msgstr "Fertiggestellte Seiten"
 
-#: ../www/prn_control.cgi.perl:339
+#: ../www/prn_control.cgi.perl:321
 msgid "Pages Started"
 msgstr "Begonnene Seiten"
 
-#: ../www/prn_control.cgi.perl:340
+#: ../www/prn_control.cgi.perl:322
 msgid "Pages Unstarted"
 msgstr "Noch nicht begonnene Seiten"
 
-#: ../www/prn_control.cgi.perl:370
+#: ../www/prn_control.cgi.perl:337
+#, fuzzy
+msgid "Alert Messages:"
+msgstr "Warnadresse:"
+
+#: ../www/prn_control.cgi.perl:352
 msgid "Start the printer."
 msgstr "Den Drucker starten."
 
-#: ../www/prn_control.cgi.perl:370
+#: ../www/prn_control.cgi.perl:352
 msgid "_Start"
 msgstr "_Start"
 
-#: ../www/prn_control.cgi.perl:372
+#: ../www/prn_control.cgi.perl:354
 msgid "Sto_p"
 msgstr "Sto_p"
 
-#: ../www/prn_control.cgi.perl:372
+#: ../www/prn_control.cgi.perl:354
 msgid "Stop the printer after current job."
 msgstr "Den Drucker nach dem derzeitigen Auftrag anhalten."
 
-#: ../www/prn_control.cgi.perl:374
+#: ../www/prn_control.cgi.perl:356
 msgid "Stop the printer imediately."
 msgstr "Den Drucker sofort anhalten."
 
-#: ../www/prn_control.cgi.perl:374
+#: ../www/prn_control.cgi.perl:356
 msgid "_Halt"
 msgstr "_Halt"
 
-#: ../www/prn_control.cgi.perl:376
+#: ../www/prn_control.cgi.perl:358
 msgid "Media"
 msgstr "Medien"
 
-#: ../www/prn_control.cgi.perl:377
+#: ../www/prn_control.cgi.perl:359
 msgid "Change the media mounted on the printer's input trays."
 msgstr "Ändern der gemounteten Medien in den Einzügen des Druckers."
 
-#: ../www/prn_control.cgi.perl:379
+#: ../www/prn_control.cgi.perl:361
 msgid "_Refresh"
 msgstr "_Aktualisieren"
 
-#: ../www/prn_control.cgi.perl:465
+#: ../www/prn_control.cgi.perl:447
 msgid "fault"
 msgstr "Fehler"
 
-#: ../www/prn_control.cgi.perl:467
+#: ../www/prn_control.cgi.perl:449
 msgid "fault, no auto retry"
 msgstr "Fehler, keine automatische Wiederholung"
 
-#: ../www/prn_control.cgi.perl:473
+#: ../www/prn_control.cgi.perl:455
 msgid "offline"
 msgstr "aus"
 
-#: ../www/prn_control.cgi.perl:475
+#: ../www/prn_control.cgi.perl:457
 msgid "otherwise engaged or offline"
 msgstr "anderweitig beschäftigt oder aus"
 
-#: ../www/prn_control.cgi.perl:480
+#: ../www/prn_control.cgi.perl:462
 msgid "idle"
 msgstr "bereit"
 
-#: ../www/prn_control.cgi.perl:485
+#: ../www/prn_control.cgi.perl:467
 msgid "stopt"
 msgstr "angehalten"
 
@@ -2536,24 +2614,24 @@ msgstr "Rolle"
 msgid "Source Download"
 msgstr "Quellen herunterladen"
 
-#~ msgid "Numberic Unix Userid of Job Submitter"
-#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
-
-#~ msgid "Unix User"
-#~ msgstr "Unix Nutzer"
-
-#~ msgid "Proxy For"
-#~ msgstr "Proxy für"
-
-#~ msgid "Submitted by Unix user:"
-#~ msgstr "Übermittelt von Unix-Nutzer:"
-
-#~ msgid "As proxy for:"
-#~ msgstr "Als Proxy für:"
+#~ msgid "Original Queue Priority of this Job"
+#~ msgstr "Originale Warteschlangenpriorität des Auftrages"
 
 #, fuzzy
 #~ msgid "For Whom is the Submitter Acting as Proxy?"
 #~ msgstr "Für wen arbeitet der Überträger als Proxy?"
 
-#~ msgid "Original Queue Priority of this Job"
-#~ msgstr "Originale Warteschlangenpriorität des Auftrages"
+#~ msgid "As proxy for:"
+#~ msgstr "Als Proxy für:"
+
+#~ msgid "Submitted by Unix user:"
+#~ msgstr "Übermittelt von Unix-Nutzer:"
+
+#~ msgid "Proxy For"
+#~ msgstr "Proxy für"
+
+#~ msgid "Unix User"
+#~ msgstr "Unix Nutzer"
+
+#~ msgid "Numberic Unix Userid of Job Submitter"
+#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"

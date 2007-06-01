@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-31 09:11-0400\n"
+"POT-Creation-Date: 2007-06-01 12:50-0400\n"
 "PO-Revision-Date: 2005-10-15 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: Russian <David.Chappell@trincoll.edu>\n"
@@ -25,7 +25,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
-#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
+#: ../www/prn_control.cgi.perl:367 ../www/prn_media.cgi.perl:211
 #: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
@@ -157,7 +157,7 @@ msgstr "Из-за этых проблем, очередь не созданна.
 #: ../www/cliconf.cgi.perl:77 ../www/cliconf.cgi.perl:94
 #: ../www/cliconf.cgi.perl:177 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:883
-#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
+#: ../www/prn_control.cgi.perl:367 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
@@ -169,7 +169,7 @@ msgid "Comment"
 msgstr "Описиваное"
 
 #: ../www/alias_properties.cgi.perl:54 ../www/grp_properties.cgi.perl:54
-#: ../www/prn_properties.cgi.perl:55
+#: ../www/prn_control.cgi.perl:239 ../www/prn_properties.cgi.perl:55
 msgid "Comment:"
 msgstr "Описиваное:"
 
@@ -356,7 +356,7 @@ msgstr "Для этого окна"
 
 #: ../www/cgi_menu.pl:65
 msgid "Display the help document for this program in a web browser window"
-msgstr "Показать инструкции для исползования этой программы в окне веб-браусера."
+msgstr "Показать руководство по использованич этой программой в окне веб-браусера."
 
 #: ../www/cgi_menu.pl:66
 msgid "All PPR Documents"
@@ -1306,93 +1306,157 @@ msgstr "Сохранить новый принтер"
 msgid "Saving new printer:"
 msgstr "Новый принтер сохранается:"
 
-#: ../www/prn_control.cgi.perl:85
+#: ../www/prn_control.cgi.perl:67
 #, perl-format
 msgid "Status of Printer \"%s\""
 msgstr "Состояние принтера \"%s\""
 
-#: ../www/prn_control.cgi.perl:142
+#: ../www/prn_control.cgi.perl:124
 #, perl-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
-msgstr "Невозможно [%s] принтер \"%s\" по следующей причиной:"
+msgstr "Невозможно [%s] принтер \"%s\" по следующей причине:"
 
-#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:173
+#: ../www/prn_control.cgi.perl:238
+msgid "Name:"
+msgstr "Название:"
+
+#: ../www/prn_control.cgi.perl:243
+msgid "Status:"
+msgstr "Состояние:"
+
+#: ../www/prn_control.cgi.perl:244
+msgid "Retry:"
+msgstr "Повторно:"
+
+#: ../www/prn_control.cgi.perl:245
+msgid "Countdown:"
+msgstr "Через:"
+
+#: ../www/prn_control.cgi.perl:249
+msgid "Operation:"
+msgstr "Операция:"
+
+#: ../www/prn_control.cgi.perl:250
+msgid "Page clock:"
+msgstr "Страничные часы:"
+
+#: ../www/prn_control.cgi.perl:254
+msgid "Printer status:"
+msgstr "Состояние принтера:"
+
+#: ../www/prn_control.cgi.perl:258
+msgid "Current job:"
+msgstr "Задача:"
+
+#: ../www/prn_control.cgi.perl:259
+msgid "For:"
+msgstr "Для кого:"
+
+#: ../www/prn_control.cgi.perl:263
+msgid "Total bytes:"
+msgstr "Количество байтов:"
+
+#: ../www/prn_control.cgi.perl:264
+msgid "Bytes sent:"
+msgstr "Уже посланых:"
+
+#: ../www/prn_control.cgi.perl:265
+msgid "Percent sent:"
+msgstr "Перцент послан:"
+
+#: ../www/prn_control.cgi.perl:269
+msgid "Total pages:"
+msgstr "Количество страниц:"
+
+#: ../www/prn_control.cgi.perl:270
+msgid "Pages started:"
+msgstr "Уже посланых:"
+
+#: ../www/prn_control.cgi.perl:271
+msgid "Pages completed:"
+msgstr "Уже печатеных:"
+
+#: ../www/prn_control.cgi.perl:289 ../www/show_printlog.cgi.perl:173
 msgid "Bytes Sent"
 msgstr "Посланых байтов"
 
-#: ../www/prn_control.cgi.perl:307
+#: ../www/prn_control.cgi.perl:289
 msgid "Bytes Unsent"
 msgstr "Байтов ещё не посланых"
 
-#: ../www/prn_control.cgi.perl:338
+#: ../www/prn_control.cgi.perl:320
 msgid "Pages Completed"
-msgstr "Стнаниц печатаных"
+msgstr "Стнаниц печатеных"
 
-#: ../www/prn_control.cgi.perl:339
+#: ../www/prn_control.cgi.perl:321
 msgid "Pages Started"
-msgstr ""
+msgstr "Страниц на пречате"
 
-#: ../www/prn_control.cgi.perl:340
+#: ../www/prn_control.cgi.perl:322
 msgid "Pages Unstarted"
-msgstr ""
+msgstr "Страниц ещё послать"
 
-#: ../www/prn_control.cgi.perl:370
+#: ../www/prn_control.cgi.perl:337
+msgid "Alert Messages:"
+msgstr "Сообщения о проблемах:"
+
+#: ../www/prn_control.cgi.perl:352
 msgid "Start the printer."
 msgstr "Пускать принтер."
 
-#: ../www/prn_control.cgi.perl:370
+#: ../www/prn_control.cgi.perl:352
 msgid "_Start"
 msgstr "Пускать"
 
-#: ../www/prn_control.cgi.perl:372
+#: ../www/prn_control.cgi.perl:354
 msgid "Sto_p"
 msgstr "Остановить"
 
-#: ../www/prn_control.cgi.perl:372
+#: ../www/prn_control.cgi.perl:354
 msgid "Stop the printer after current job."
 msgstr "Остановить принтер после конца текущей задачи."
 
-#: ../www/prn_control.cgi.perl:374
+#: ../www/prn_control.cgi.perl:356
 msgid "Stop the printer imediately."
 msgstr "Остановить принтер немедленно."
 
-#: ../www/prn_control.cgi.perl:374
+#: ../www/prn_control.cgi.perl:356
 msgid "_Halt"
 msgstr "Обрывать"
 
-#: ../www/prn_control.cgi.perl:376
+#: ../www/prn_control.cgi.perl:358
 msgid "Media"
 msgstr "Носители"
 
-#: ../www/prn_control.cgi.perl:377
+#: ../www/prn_control.cgi.perl:359
 msgid "Change the media mounted on the printer's input trays."
 msgstr "Заменить носитель поставлен на подающем потоке принтера."
 
-#: ../www/prn_control.cgi.perl:379
+#: ../www/prn_control.cgi.perl:361
 msgid "_Refresh"
 msgstr "Обновить"
 
-#: ../www/prn_control.cgi.perl:465
+#: ../www/prn_control.cgi.perl:447
 msgid "fault"
 msgstr "порок есть"
 
-#: ../www/prn_control.cgi.perl:467
+#: ../www/prn_control.cgi.perl:449
 msgid "fault, no auto retry"
 msgstr "порок есть, снова не попробуют"
 
-#: ../www/prn_control.cgi.perl:473
+#: ../www/prn_control.cgi.perl:455
 msgid "offline"
 msgstr "разъединенный"
 
-#: ../www/prn_control.cgi.perl:475
+#: ../www/prn_control.cgi.perl:457
 msgid "otherwise engaged or offline"
 msgstr "или занятый или разъединенный"
 
-#: ../www/prn_control.cgi.perl:480
+#: ../www/prn_control.cgi.perl:462
 msgid "idle"
 msgstr "незанятый"
 
-#: ../www/prn_control.cgi.perl:485
+#: ../www/prn_control.cgi.perl:467
 msgid "stopt"
 msgstr "остановлен"
 
@@ -1565,7 +1629,7 @@ msgstr ""
 
 #: ../www/prn_properties.cgi.perl:431
 msgid "Alerts"
-msgstr "Тревогы"
+msgstr "Сообщение о проблемах"
 
 #: ../www/prn_properties.cgi.perl:435
 msgid "Alert method:"
@@ -2364,7 +2428,7 @@ msgstr "Печатать пробную страницу"
 #: ../www/show_queues.cgi.perl:561 ../www/show_queues.cgi.perl:596
 #: ../www/show_queues.cgi.perl:621
 msgid "Client Configuration"
-msgstr "Настраивать использующий компьютер"
+msgstr "Настраивать клиентные программы"
 
 #: ../www/show_queues.cgi.perl:566 ../www/show_queues.cgi.perl:601
 msgid "Printlog"
@@ -2444,7 +2508,7 @@ msgstr ""
 
 #: ../www/test_components.cgi.perl:175
 msgid "Inventory of Packages Which PPR can Use"
-msgstr "Инвенторизацие пакетов которые PPR умает использовать"
+msgstr "Отчёт пакетов которыми PPR умеет использоваться"
 
 #: ../www/test_components.cgi.perl:207
 msgid "Component"

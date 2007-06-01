@@ -1,11 +1,12 @@
 /*
 ** mouse:~ppr/src/www/prn_control.css
-** Last modified 17 December 2003.
+** Last modified 1 June 2007.
 */
 
 BODY {
 	background-color: #ffff00;	/* yellow */
 	color: black;
+	
 	/* We set this so that window size and <body> size are the
 	   This lets the JavaScript code that snaps the window size
 	   to the document size work predictable. */

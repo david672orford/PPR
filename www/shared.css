@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/www/shared.css
-** Last modified 17 October 2005.
+** Last modified 1 June 2007.
 **
 ** This style sheet is imported by all of the PPR web interface applets.
 */
@@ -10,6 +10,7 @@ BODY {
 	color: black;
 	margin: 0;						/* <-- quash silly IE behavior */
 	font-family: Helvetica, sans-serif;
+	font-size: 12pt;
 	}
 
 /* I guess setting the body font doesn't cover tables. */

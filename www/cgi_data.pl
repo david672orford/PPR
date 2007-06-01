@@ -57,7 +57,8 @@ sub cgi_read_data
 		$ENV{REMOTE_USER} = (getpwuid($<))[0];
 		$ENV{SERVER_NAME} = "placeholder";
 		$ENV{SERVER_PORT} = 80;
-		return;
+		$ENV{REQUEST_METHOD} = "GET" unless(defined($ENV{QUERY_STRING}));
+		$ENV{QUERY_STRING} = "" unless(defined($ENV{QUERY_STRING}));
 		}
 
 	# If the request method is POST, get the data on STDIN.

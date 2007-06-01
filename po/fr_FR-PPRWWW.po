@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-31 09:11-0400\n"
+"POT-Creation-Date: 2007-06-01 12:50-0400\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -24,7 +24,7 @@ msgid "Close"
 msgstr "Fermer"
 
 #: ../www/about.cgi.perl:96 ../www/cgi_tabbed.pl:371
-#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
+#: ../www/prn_control.cgi.perl:367 ../www/prn_media.cgi.perl:211
 #: ../www/show_jobs.cgi.perl:387 ../www/show_jobs.cgi.perl:418
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "Close this window."
@@ -166,7 +166,7 @@ msgstr ""
 #: ../www/cliconf.cgi.perl:77 ../www/cliconf.cgi.perl:94
 #: ../www/cliconf.cgi.perl:177 ../www/delete_queue.cgi.perl:152
 #: ../www/grp_addwiz.cgi.perl:181 ../www/prn_addwiz.cgi.perl:883
-#: ../www/prn_control.cgi.perl:385 ../www/prn_media.cgi.perl:211
+#: ../www/prn_control.cgi.perl:367 ../www/prn_media.cgi.perl:211
 #: ../www/prn_testpage.cgi.perl:174 ../www/show_jobs.cgi.perl:387
 #: ../www/show_queues.cgi.perl:189 ../www/show_queues.cgi.perl:219
 msgid "_Close"
@@ -178,7 +178,7 @@ msgid "Comment"
 msgstr "Commentaire"
 
 #: ../www/alias_properties.cgi.perl:54 ../www/grp_properties.cgi.perl:54
-#: ../www/prn_properties.cgi.perl:55
+#: ../www/prn_control.cgi.perl:239 ../www/prn_properties.cgi.perl:55
 msgid "Comment:"
 msgstr "Commentaire :"
 
@@ -1368,95 +1368,173 @@ msgstr "Sauver la nouvelle imprimante"
 msgid "Saving new printer:"
 msgstr "Sauvegarde de la nouvelle imprimante :"
 
-#: ../www/prn_control.cgi.perl:85
+#: ../www/prn_control.cgi.perl:67
 #, perl-format
 msgid "Status of Printer \"%s\""
 msgstr "État de l'imprimante \"%s\""
 
-#: ../www/prn_control.cgi.perl:142
+#: ../www/prn_control.cgi.perl:124
 #, perl-format
 msgid "Can't [%s] printer \"%s\" for the following reason:"
 msgstr "Impossible de [%s] l'imprimante \"%s\" pour la raison suivante :"
 
-#: ../www/prn_control.cgi.perl:307 ../www/show_printlog.cgi.perl:173
+#: ../www/prn_control.cgi.perl:238
+#, fuzzy
+msgid "Name:"
+msgstr "Nom :"
+
+#: ../www/prn_control.cgi.perl:243
+#, fuzzy
+msgid "Status:"
+msgstr "État :"
+
+#: ../www/prn_control.cgi.perl:244
+msgid "Retry:"
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:245
+msgid "Countdown:"
+msgstr ""
+
+#: ../www/prn_control.cgi.perl:249
+#, fuzzy
+msgid "Operation:"
+msgstr "Opération :"
+
+#: ../www/prn_control.cgi.perl:250
+#, fuzzy
+msgid "Page clock:"
+msgstr "Horloge de page :"
+
+#: ../www/prn_control.cgi.perl:254
+#, fuzzy
+msgid "Printer status:"
+msgstr "Nom de l'imprimante :"
+
+#: ../www/prn_control.cgi.perl:258
+#, fuzzy
+msgid "Current job:"
+msgstr "Choisissez un fichier PPD"
+
+#: ../www/prn_control.cgi.perl:259
+#, fuzzy
+msgid "For:"
+msgstr "Pour"
+
+#: ../www/prn_control.cgi.perl:263
+#, fuzzy
+msgid "Total bytes:"
+msgstr "Nombre total de pages :"
+
+#: ../www/prn_control.cgi.perl:264
+#, fuzzy
+msgid "Bytes sent:"
+msgstr "Octets Non Envoyés"
+
+#: ../www/prn_control.cgi.perl:265
+#, fuzzy
+msgid "Percent sent:"
+msgstr "Présent ?"
+
+#: ../www/prn_control.cgi.perl:269
+#, fuzzy
+msgid "Total pages:"
+msgstr "Nombre total de pages :"
+
+#: ../www/prn_control.cgi.perl:270
+#, fuzzy
+msgid "Pages started:"
+msgstr "Pages non démarrées"
+
+#: ../www/prn_control.cgi.perl:271
+#, fuzzy
+msgid "Pages completed:"
+msgstr "Pages terminées"
+
+#: ../www/prn_control.cgi.perl:289 ../www/show_printlog.cgi.perl:173
 msgid "Bytes Sent"
 msgstr "Octets Envoyés"
 
-#: ../www/prn_control.cgi.perl:307
+#: ../www/prn_control.cgi.perl:289
 msgid "Bytes Unsent"
 msgstr "Octets Non Envoyés"
 
-#: ../www/prn_control.cgi.perl:338
+#: ../www/prn_control.cgi.perl:320
 msgid "Pages Completed"
 msgstr "Pages terminées"
 
-#: ../www/prn_control.cgi.perl:339
+#: ../www/prn_control.cgi.perl:321
 msgid "Pages Started"
 msgstr "Pages démarrées"
 
-#: ../www/prn_control.cgi.perl:340
+#: ../www/prn_control.cgi.perl:322
 msgid "Pages Unstarted"
 msgstr "Pages non démarrées"
 
-#: ../www/prn_control.cgi.perl:370
+#: ../www/prn_control.cgi.perl:337
+#, fuzzy
+msgid "Alert Messages:"
+msgstr "Adresse d'alerte :"
+
+#: ../www/prn_control.cgi.perl:352
 #, fuzzy
 msgid "Start the printer."
 msgstr "Sauvegarde de la nouvelle imprimante :"
 
-#: ../www/prn_control.cgi.perl:370
+#: ../www/prn_control.cgi.perl:352
 msgid "_Start"
 msgstr "_Démarrer"
 
-#: ../www/prn_control.cgi.perl:372
+#: ../www/prn_control.cgi.perl:354
 msgid "Sto_p"
 msgstr "Sto_p"
 
-#: ../www/prn_control.cgi.perl:372
+#: ../www/prn_control.cgi.perl:354
 msgid "Stop the printer after current job."
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:374
+#: ../www/prn_control.cgi.perl:356
 msgid "Stop the printer imediately."
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:374
+#: ../www/prn_control.cgi.perl:356
 msgid "_Halt"
 msgstr "_Stopper"
 
-#: ../www/prn_control.cgi.perl:376
+#: ../www/prn_control.cgi.perl:358
 #, fuzzy
 msgid "Media"
 msgstr "_Support"
 
-#: ../www/prn_control.cgi.perl:377
+#: ../www/prn_control.cgi.perl:359
 msgid "Change the media mounted on the printer's input trays."
 msgstr ""
 
-#: ../www/prn_control.cgi.perl:379
+#: ../www/prn_control.cgi.perl:361
 msgid "_Refresh"
 msgstr "_Rafraîchir"
 
-#: ../www/prn_control.cgi.perl:465
+#: ../www/prn_control.cgi.perl:447
 msgid "fault"
 msgstr "panne"
 
-#: ../www/prn_control.cgi.perl:467
+#: ../www/prn_control.cgi.perl:449
 msgid "fault, no auto retry"
 msgstr "panne, pas de tentative automatique"
 
-#: ../www/prn_control.cgi.perl:473
+#: ../www/prn_control.cgi.perl:455
 msgid "offline"
 msgstr "hors ligne"
 
-#: ../www/prn_control.cgi.perl:475
+#: ../www/prn_control.cgi.perl:457
 msgid "otherwise engaged or offline"
 msgstr "déjà occupée ou hors ligne"
 
-#: ../www/prn_control.cgi.perl:480
+#: ../www/prn_control.cgi.perl:462
 msgid "idle"
 msgstr "inactif"
 
-#: ../www/prn_control.cgi.perl:485
+#: ../www/prn_control.cgi.perl:467
 msgid "stopt"
 msgstr "arrêtée"
 
