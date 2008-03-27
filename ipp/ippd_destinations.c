@@ -628,29 +628,31 @@ void cups_get_classes(struct IPP *ipp)
  */
 void cups_get_default(struct IPP *ipp)
 	{
-	const char *default_destination = "default";
+	const char function[] = "cups_get_default";	
+	const char *default_destination;
 	struct REQUEST_ATTRS *req;
 	void *qip;
 
-	DODEBUG(("cups_get_default()"));
+	DODEBUG(("%s()", function));
 
 	extract_identity(ipp, FALSE);	/* swallow attribute */
 	req = request_attrs_new(ipp);
 
-	/* If no default destination defined or the default destination doesn't
-	 * exist, */
-	if(!(default_destination = ppr_get_default())
-		|| !(qip = queueinfo_new_load_config(QUEUEINFO_SEARCH, default_destination))
-		)
-		{
-		ipp->response_code = IPP_NOT_FOUND;
-		}
-	/* OK, we found it. */
-	else
-		{
+	gu_Try {
+		if(!(default_destination = ppr_get_default()))
+			gu_Throw("no default destination defined");
+
+		/* If the default destination does not exist, this will throw an exception. */
+		qip = queueinfo_new_load_config(QUEUEINFO_SEARCH, default_destination);
+
 		add_queue_attributes(ipp, req, qip);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		queueinfo_free(qip);
+		}
+	gu_Catch
+		{
+		debug("%s(): %s", function, gu_exception);
+		ipp->response_code = IPP_NOT_FOUND;
 		}
 
 	request_attrs_free(req);
