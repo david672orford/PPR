@@ -1,6 +1,6 @@
 #
 # mouse:~ppr/src/docs/refman/ppad.8.pod
-# Copyright 1995--2006, Trinity College Computing Center.
+# Copyright 1995--2008, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 31 January 2006.
+# Last modified 15 May 2008.
 #
 
 =head1 NAME
@@ -443,7 +443,7 @@ the best PPD file for a print queue that is already configured sufficiently corr
 that documents can be printed (using the default PPD file).
 
 If you wish to probe a printer without first creating a queue for it, you should use the
-B<ppad ppd query> command.
+B<ppad ppdlib query> command.
 
 =item B<ppad alerts> I<printer> I<frequency> I<method> I<address>
 

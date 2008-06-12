@@ -1,14 +1,14 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/Configure
-# Copyright 1995--2006, Trinity College Computing Center.
+# Copyright 1995--2008, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 14 December 2006.
+# Last modified 12 June 2008.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -1277,109 +1277,6 @@ fi
 
 
 #============================================================
-if [ $SYSTEM = "SUNOS_5" ]
-then
-cat >&3 <<===EndSUNOS5===
-# SunOS 5.0 thru 5.5.1 (Solaris 2.0 thru 5.5.1)
-# See below for SunOS 5.6 and later.
-HAVE_SNPRINTF=
-HAVE_VSNPRINTF=
-HAVE_STATVFS=1
-BIND_ACCESS_BUG=1
-
-MAKE=make
-MAKEFLAGS=
-STRIP=strip
-DOTEXE=
-LIBCMD=ar -q
-RANLIB=touch
-CC=gcc
-CFLAGS=$CFLAGS -I ../include
-LD=gcc
-LDFLAGS=-L/usr/local/lib -R/usr/local/lib
-CPP=gcc -E -P -xc-header
-SOCKLIBS=-lsocket -lnsl -lresolv
-PARALLEL=generic
-===EndSUNOS5===
-fi
-
-
-#============================================================
-if [ $SYSTEM = "SUNOS_5_6" ]
-then
-cat >&3 <<===EndSUNOS56===
-# SunOS 5.6 thru 5.7 (Solaris 2.6 thru 7)
-HAVE_STATVFS=1
-BIND_ACCESS_BUG=1
-
-MAKE=make
-MAKEFLAGS=
-STRIP=strip
-DOTEXE=
-LIBCMD=ar -q
-RANLIB=touch
-CC=gcc
-CFLAGS=$CFLAGS -I ../include
-LD=gcc
-LDFLAGS=-L/usr/local/lib -R/usr/local/lib
-CPP=gcc -E -P -xc-header
-SOCKLIBS=-lsocket -lnsl -lresolv
-PARALLEL=generic
-===EndSUNOS56===
-fi
-
-
-#============================================================
-if [ $SYSTEM = "NETBSD" ]
-then
-cat >&3 <<===EndNETBSD===
-HAVE_STATFS=1
-HAVE_INITGROUPS=1
-HAVE_SETSID=
-
-MAKE=gmake
-MAKEFLAGS=
-STRIP=strip
-DOTEXE=
-LIBCMD=ar -q
-RANLIB=touch
-CC=gcc
-CFLAGS=$CFLAGS -I ../include
-LD=gcc
-LDFLAGS=
-CPP=gcc -E -P -xc-header
-SOCKLIBS=
-PARALLEL=generic
-===EndNETBSD===
-fi
-
-
-#============================================================
-if [ $SYSTEM = "FREEBSD" ]
-then
-cat >&3 <<===EndNETBSD===
-HAVE_STRSIGNAL=
-HAVE_STATFS=1
-HAVE_INITGROUPS=1
-
-MAKE=gmake
-MAKEFLAGS=
-STRIP=strip
-DOTEXE=
-LIBCMD=ar -q
-RANLIB=touch
-CC=gcc
-CFLAGS=$CFLAGS -I ../include
-LD=gcc
-LDFLAGS=
-CPP=gcc -E -P -xc-header
-SOCKLIBS=
-PARALLEL=generic
-===EndNETBSD===
-fi
-
-
-#============================================================
 if [ $SYSTEM = "LINUX" ]
 then
 cat >&3 <<===EndLINUX===
@@ -1430,6 +1327,135 @@ PARALLEL=linux
 INTLLIBS=
 
 ===EndLINUX===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "NETBSD" ]
+then
+cat >&3 <<===EndNETBSD===
+HAVE_STATFS=1
+HAVE_INITGROUPS=1
+HAVE_SETSID=
+
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+DOTEXE=
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$CFLAGS -I ../include
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+PARALLEL=generic
+===EndNETBSD===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "FREEBSD" ]
+then
+cat >&3 <<===EndFREEBSD===
+HAVE_STRSIGNAL=
+HAVE_STATFS=1
+HAVE_INITGROUPS=1
+
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+DOTEXE=
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$CFLAGS -I ../include
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+PARALLEL=generic
+===EndFREEBSD===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "OPENBSD" ]
+then
+echo "    Emitting section for $DESCRIPTION"
+cat >&3 <<===EndOpenBSD===
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndOpenBSD===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "SUNOS_5" ]
+then
+cat >&3 <<===EndSUNOS5===
+# SunOS 5.0 thru 5.5.1 (Solaris 2.0 thru 5.5.1)
+# See below for SunOS 5.6 and later.
+HAVE_SNPRINTF=
+HAVE_VSNPRINTF=
+HAVE_STATVFS=1
+BIND_ACCESS_BUG=1
+
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+DOTEXE=
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$CFLAGS -I ../include
+LD=gcc
+LDFLAGS=-L/usr/local/lib -R/usr/local/lib
+CPP=gcc -E -P -xc-header
+SOCKLIBS=-lsocket -lnsl -lresolv
+PARALLEL=generic
+===EndSUNOS5===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "SUNOS_5_6" ]
+then
+cat >&3 <<===EndSUNOS56===
+# SunOS 5.6 thru 5.7 (Solaris 2.6 thru 7)
+HAVE_STATVFS=1
+BIND_ACCESS_BUG=1
+
+MAKE=make
+MAKEFLAGS=
+STRIP=strip
+DOTEXE=
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$CFLAGS -I ../include
+LD=gcc
+LDFLAGS=-L/usr/local/lib -R/usr/local/lib
+CPP=gcc -E -P -xc-header
+SOCKLIBS=-lsocket -lnsl -lresolv
+PARALLEL=generic
+===EndSUNOS56===
 fi
 
 
