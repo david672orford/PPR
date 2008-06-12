@@ -5,7 +5,9 @@
 
 #define PACKAGE "c2lib"
 #define VERSION "1.4.1"
+#ifndef PPR_OPENBSD
 #define HAVE_ALLOCA_H 1
+#endif /* PPR_OPENBSD */
 #define HAVE_ASSERT_H 1
 #define HAVE_CTYPE_H 1
 #define HAVE_FCNTL_H 1

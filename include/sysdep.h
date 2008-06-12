@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/include/sysdep.h
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 4 February 2004.
+** Last modified 12 June 2008.
 */
 
 /*
@@ -288,27 +288,6 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 #endif /* PPR_SUNOS_5 */
 
 /*========================================================================
-** NetBSD 1.0
-**
-** Sample machine:
-========================================================================*/
-#ifdef PPR_NETBSD
-#ifdef PASS1
-
-#define HAVE_STATFS 1
-#define HAVE_INITGROUPS 1
-
-#endif
-#ifdef PASS2
-
-#define setsid() setpgrp(0, getpid()) /* setsid() (Posix?) is missing */
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/sbin/sendmail"
-
-#endif /* PASS2 */
-#endif /* PPR_NETBSD */
-
-/*========================================================================
 ** Linux
 ** Linux for i386 is the principal development platform.
 ** Linux for DEC Alpha has received some testing at Trinity College.
@@ -353,6 +332,72 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *execptfds, struc
 
 #endif /* PASS2 */
 #endif /* PPR_LINUX */
+
+/*========================================================================
+** NetBSD 1.0
+**
+** Sample machine:
+========================================================================*/
+#ifdef PPR_NETBSD
+#ifdef PASS1
+
+#define HAVE_STATFS 1
+#define HAVE_INITGROUPS 1
+
+#endif
+#ifdef PASS2
+
+#define setsid() setpgrp(0, getpid()) /* setsid() (Posix?) is missing */
+#undef SENDMAIL_PATH
+#define SENDMAIL_PATH "/usr/sbin/sendmail"
+
+#endif /* PASS2 */
+#endif /* PPR_NETBSD */
+
+/*========================================================================
+** FreeBSD 3.1R
+**
+** Sample machine:
+========================================================================*/
+#ifdef PPR_FREEBSD
+#ifdef PASS1
+
+#undef HAVE_STRSIGNAL
+#define HAVE_STATFS 1
+#define HAVE_INITGROUPS 1
+
+#endif
+#ifdef PASS2
+
+#undef SAFE_PATH
+#define SAFE_PATH "/bin:/usr/bin:/usr/local/bin"
+#undef SENDMAIL_PATH
+#define SENDMAIL_PATH "/usr/sbin/sendmail"
+
+#endif /* PASS2 */
+#endif /* PPR_FREEBSD */
+
+/*========================================================================
+** OpenBSD
+**
+** Sample machine:
+========================================================================*/
+#ifdef PPR_OPENBSD
+#ifdef PASS1
+
+#define HAVE_STATFS 1
+#define HAVE_INITGROUPS 1
+
+#endif
+#ifdef PASS2
+
+#undef SAFE_PATH
+#define SAFE_PATH "/bin:/usr/bin:/usr/local/bin"
+#undef SENDMAIL_PATH
+#define SENDMAIL_PATH "/usr/sbin/sendmail"
+
+#endif /* PASS2 */
+#endif /* PPR_OPENBSD */
 
 /*========================================================================
 ** SunOS 4.1.3_U1
@@ -583,29 +628,6 @@ int seteuid(uid_t);		/* not defined in header files */
 
 #endif /* PASS2 */
 #endif /* PPR_SUNOS_5_6 */
-
-/*========================================================================
-** FreeBSD 3.1R
-**
-** Sample machine:
-========================================================================*/
-#ifdef PPR_FREEBSD
-#ifdef PASS1
-
-#undef HAVE_STRSIGNAL
-#define HAVE_STATFS 1
-#define HAVE_INITGROUPS 1
-
-#endif
-#ifdef PASS2
-
-#undef SAFE_PATH
-#define SAFE_PATH "/bin:/usr/bin:/usr/local/bin"
-#undef SENDMAIL_PATH
-#define SENDMAIL_PATH "/usr/sbin/sendmail"
-
-#endif /* PASS2 */
-#endif /* PPR_FREEBSD */
 
 /*========================================================================
 ** Darwin (MacOS 10.x)

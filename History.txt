@@ -9501,7 +9501,7 @@ no final tarball was released.
   /var/run is a tmpfs).  (backport from 2.XX branch)
 
 
-1.55, 11 April 2006--7 December 2006
+1.55, 11 April 2006--12 June 2008
 
 * libppr/readppd.c:ppd_find_file(): added missing fclose().  This bug fix was
   erroneously supposed to have been merged into 1.54 from 2.XX.)
@@ -9527,6 +9527,10 @@ no final tarball was released.
     tuple = (unsigned)c << 24;
   Anyone know what obscure type conversion rule is involved here?
   (This change was backported from the 2.XX branch.)
+
+* Configure: added missing FREEBSD section
+
+* Added OPENBSD support (thanks to Tim Leamey)
 
 
 

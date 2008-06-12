@@ -1,7 +1,7 @@
 #! /bin/sh
 #
 # mouse:~ppr/src/Configure
-# Copyright 1995--2005, Trinity College Computing Center.
+# Copyright 1995--2008, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 # POSSIBILITY OF SUCH DAMAGE.
 #
-# Last modified 2 September 2005.
+# Last modified 12 June 2008.
 #
 
 # Find an echo that will supports escapes.
@@ -239,9 +239,21 @@ case `uname -s` in
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
+    NetBSD )
+		SYSTEM="NETBSD"
+		DESCRIPTION="NetBSD 1.0"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
     FreeBSD )
 		SYSTEM="FREEBSD"
 		DESCRIPTION="FreeBSD 3.1R"
+		CC_NATIVE=0
+		CC_GCC=1
+		;;
+	OpenBSD )
+		SYSTEM="OPENBSD"
+		DESCRIPTION="OpenBSD"
 		CC_NATIVE=0
 		CC_GCC=1
 		;;
@@ -285,12 +297,6 @@ case `uname -s` in
 		SYSTEM="IRIX"
 		DESCRIPTION="IRIX 6.3"
 		CC_NATIVE=1
-		CC_GCC=1
-		;;
-    NetBSD )
-		SYSTEM="NETBSD"
-		DESCRIPTION="NetBSD 1.0"
-		CC_NATIVE=0
 		CC_GCC=1
 		;;
     Cygwin )
@@ -1161,6 +1167,137 @@ fi
 
 
 #============================================================
+if [ $SYSTEM = "LINUX" ]
+then
+echo "    Emitting section for $DESCRIPTION"
+cat >&3 <<===EndLINUX===
+MAKE=make
+MAKEFLAGS=--no-print-directory
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -crs
+RANLIB=touch
+
+# GCC and Glibc
+CC=gcc
+#CC=g++ -fno-exceptions
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+
+# GCC with Diet libc wrapper
+#CC=diet gcc
+#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+#LD=diet gcc
+#LDFLAGS=
+
+# GCC with UClibc wrapper
+#CC=i386-uclibc-cc
+#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include \$(MISC_OPTS)
+#LD=i386-uclibc-cc
+#LDFLAGS=
+
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=flex
+LEX_LIB=
+PARALLEL=linux
+
+# Here we clear INTLLIBS which may have been set above.  Modern Linux
+# distrubions use glibc 2.0 or later which includes Gettext, so including a
+# separate libintl isn't necessary.  Worse, on RedHat 5.1 systems which have
+# been # upgraded from certain earlier versions the file /usr/lib/libintl.a
+# is poison.  That is why we clear INTLIBS here.  Comment this line out if
+# this decision is wrong for your system.
+INTLLIBS=
+
+===EndLINUX===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "NETBSD" ]
+then
+echo "    Emitting section for $DESCRIPTION"
+cat >&3 <<===EndNETBSD===
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndNETBSD===
+fi
+
+
+#============================================================
+# This section was missing in 1.54.  For now we have simply
+# copied the NETBSD section hither.
+if [ $SYSTEM = "FREEBSD" ]
+then
+echo "    Emitting section for $DESCRIPTION"
+cat >&3 <<===EndFREEBSD===
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndFREEBSD===
+fi
+
+
+#============================================================
+if [ $SYSTEM = "OPENBSD" ]
+then
+echo "    Emitting section for $DESCRIPTION"
+cat >&3 <<===EndOpenBSD===
+MAKE=gmake
+MAKEFLAGS=
+STRIP=strip
+OBJ=o
+DOTEXE=
+LIBEXT=a
+LIBCMD=ar -q
+RANLIB=touch
+CC=gcc
+CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
+LD=gcc
+LDFLAGS=
+CPP=gcc -E -P -xc-header
+SOCKLIBS=
+LEX=lex
+LEX_LIB=-ll
+PARALLEL=generic
+===EndOpenBSD===
+fi
+
+
+#============================================================
 if [ $SYSTEM = "SUNOS_5" ]
 then
 echo "    Emitting section for $DESCRIPTION"
@@ -1211,82 +1348,6 @@ PARALLEL=generic
 ===EndSUNOS56===
 fi
 
-
-#============================================================
-if [ $SYSTEM = "NETBSD" ]
-then
-echo "    Emitting section for $DESCRIPTION"
-cat >&3 <<===EndNETBSD===
-MAKE=gmake
-MAKEFLAGS=
-STRIP=strip
-OBJ=o
-DOTEXE=
-LIBEXT=a
-LIBCMD=ar -q
-RANLIB=touch
-CC=gcc
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
-LD=gcc
-LDFLAGS=
-CPP=gcc -E -P -xc-header
-SOCKLIBS=
-LEX=lex
-LEX_LIB=-ll
-PARALLEL=generic
-===EndNETBSD===
-fi
-
-
-#============================================================
-if [ $SYSTEM = "LINUX" ]
-then
-echo "    Emitting section for $DESCRIPTION"
-cat >&3 <<===EndLINUX===
-MAKE=make
-MAKEFLAGS=--no-print-directory
-STRIP=strip
-OBJ=o
-DOTEXE=
-LIBEXT=a
-LIBCMD=ar -crs
-RANLIB=touch
-
-# GCC and Glibc
-CC=gcc
-#CC=g++ -fno-exceptions
-CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
-LD=gcc
-LDFLAGS=
-
-# GCC with Diet libc wrapper
-#CC=diet gcc
-#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include \$(MISC_OPTS)
-#LD=diet gcc
-#LDFLAGS=
-
-# GCC with UClibc wrapper
-#CC=i386-uclibc-cc
-#CFLAGS=$GCC_WARNINGS_CFLAGS $CFLAGS -I ../include -idirafter /usr/include -idirafter /usr/local/include \$(MISC_OPTS)
-#LD=i386-uclibc-cc
-#LDFLAGS=
-
-CPP=gcc -E -P -xc-header
-SOCKLIBS=
-LEX=flex
-LEX_LIB=
-PARALLEL=linux
-
-# Here we clear INTLLIBS which may have been set above.  Modern Linux
-# distrubions use glibc 2.0 or later which includes Gettext, so including a
-# separate libintl isn't necessary.  Worse, on RedHat 5.1 systems which have
-# been # upgraded from certain earlier versions the file /usr/lib/libintl.a
-# is poison.  That is why we clear INTLIBS here.  Comment this line out if
-# this decision is wrong for your system.
-INTLLIBS=
-
-===EndLINUX===
-fi
 
 
 #============================================================

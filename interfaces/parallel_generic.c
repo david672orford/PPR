@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/interfaces/parallel_generic.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 16 February 2006.
+** Last modified 12 June 2008.
 */
 
 /*
@@ -49,6 +49,7 @@
 #include "gu.h"
 #include "global_defines.h"
 #include "interface.h"
+#include "libppr_int.h"
 #include "parallel.h"
 
 /*
