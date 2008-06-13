@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_respond.c
-** Copyright 1995--2003, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 July 2003.
+** Last modified 13 June 2008.
 */
 
 #include "before_system.h"
@@ -107,7 +107,7 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 		/* 4th and 5th are the printer charge rates */
 		per_duplex_str[0] = '\0';
 		per_simplex_str[0] = '\0';
-		if(prnid > -1)
+		if(prnid >= 0)
 			{
 			snprintf(per_duplex_str, sizeof(per_duplex_str), "%d", printers[prnid].charge_per_duplex);
 			snprintf(per_simplex_str, sizeof(per_simplex_str), "%d", printers[prnid].charge_per_simplex);
@@ -138,7 +138,12 @@ void respond2(const char *destnode, const char *destname, int id, int subid, con
 void respond(int destnode_id, int destid, int id, int subid, int homenode_id, int prnid, int response)
 	{
 	DODEBUG_RESPOND(("respond(destnode_id=%d, destid=%d, id=%d, subid=%d, homenode_id=%d, prnid=%d, response=%d)", destnode_id, destid, id, subid, homenode_id, prnid, response));
-	respond2(nodeid_to_name(destnode_id), destid_to_name(destnode_id, destid), id, subid, nodeid_to_name(homenode_id), prnid, destid_to_name(destnode_id, prnid), response);
+	respond2(
+		nodeid_to_name(destnode_id),
+		destid_to_name(destnode_id, destid), id, subid, nodeid_to_name(homenode_id),
+		prnid, prnid >= 0 ? destid_to_name(destnode_id, prnid) : "",
+		response
+		);
 	}
 
 /* end of file */
