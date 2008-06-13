@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_respond.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 13 June 2008.
 */
 
 #include "config.h"
@@ -115,7 +115,11 @@ void respond2(const char *destname, int id, int subid, int prnid, const char *pr
 void respond(int destid, int id, int subid, int prnid, int response)
 	{
 	DODEBUG_RESPOND(("respond(destid=%d, id=%d, subid=%d, prnid=%d, response=%d)", destid, id, subid, prnid, response));
-	respond2(destid_to_name(destid), id, subid, prnid, destid_to_name(prnid), response);
+	respond2(
+		destid_to_name(destid), id, subid,
+		prnid, prnid >= 0 ? destid_to_name(prnid) : "",
+		response
+		);
 	}
 
 /* end of file */

@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_destid.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified 13 June 2008.
 */
 
 /*
@@ -43,7 +43,7 @@ const char *destid_to_name(int destid)
 		}
 	else
 		{
-		if(destid < printer_count && printers[destid].spool_state.status != PRNSTATUS_DELETED)
+		if(destid >= 0 && destid < printer_count && printers[destid].spool_state.status != PRNSTATUS_DELETED)
 			return printers[destid].name;
 		else
 			return "<invalid>";
