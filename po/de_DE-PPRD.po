@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-06-01 12:50-0400\n"
+"POT-Creation-Date: 2008-02-15 14:06-0500\n"
 "PO-Revision-Date: 2004-10-21 18:17+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../pprd/pprd.c:290 ../pprd/pprd.c:335 ../pprd/pprd_mainsup.c:114
-#: ../pprd/pprd_mainsup.c:119 ../pprd/pprd_mainsup.c:122
+#: ../pprd/pprd.c:290 ../pprd/pprd.c:335 ../pprd/pprd_mainsup.c:96
+#: ../pprd/pprd_mainsup.c:101 ../pprd/pprd_mainsup.c:104
 #, fuzzy, c-format
 msgid "%s(): %s() failed, errno=%d (%s)"
 msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
@@ -37,32 +37,32 @@ msgstr ""
 msgid "%s(): %s(\"%s\", 0%o) failed, errno=%d (%s)"
 msgstr "%s: setgroups(\"%s\", %ld) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../pprd/pprd_mainsup.c:172
+#: ../pprd/pprd_mainsup.c:156
 #, c-format
 msgid "%s: not running\n"
 msgstr "%s: läuft nicht\n"
 
-#: ../pprd/pprd_mainsup.c:182
+#: ../pprd/pprd_mainsup.c:166
 #, c-format
 msgid "%s: failed to read PID from lock file"
 msgstr "%s: Lesen der PID aus Lockdatei fehlgeschlagen"
 
-#: ../pprd/pprd_mainsup.c:186
+#: ../pprd/pprd_mainsup.c:170
 #, c-format
 msgid "Sending SIGTERM to %s (PID=%ld).\n"
 msgstr "Sende SIGTERM an %s (PID=%ld).\n"
 
-#: ../pprd/pprd_mainsup.c:190
+#: ../pprd/pprd_mainsup.c:174
 #, c-format
 msgid "%s: kill(%ld, SIGTERM) failed, errno=%d (%s)\n"
 msgstr "%s: kill(%ld, SIGTERM) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../pprd/pprd_mainsup.c:196
+#: ../pprd/pprd_mainsup.c:180
 #, c-format
 msgid "Waiting while %s shuts down..."
 msgstr "Warte auf Beenden von %s..."
 
-#: ../pprd/pprd_mainsup.c:206
+#: ../pprd/pprd_mainsup.c:190
 #, c-format
 msgid "Shutdown complete.\n"
 msgstr "Beendet.\n"

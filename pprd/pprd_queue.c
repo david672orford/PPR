@@ -1,31 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
-** Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are met:
+** This file is part of PPR.  You can redistribute it and modify it under the
+** terms of the revised BSD licence (without the advertising clause) as
+** described in the accompanying file LICENSE.txt.
 **
-** * Redistributions of source code must retain the above copyright notice,
-** this list of conditions and the following disclaimer.
-**
-** * Redistributions in binary form must reproduce the above copyright
-** notice, this list of conditions and the following disclaimer in the
-** documentation and/or other materials provided with the distribution.
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-** AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-** IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-** ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDERS OR CONTRIBUTORS BE
-** LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-** CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-** SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-** INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-** CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-** POSSIBILITY OF SUCH DAMAGE.
-**
-** Last modified 7 April 2006.
+** Last modified 15 February 2008.
 */
 
 /*
@@ -273,7 +255,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 	const char *destname = NULL;
 	struct QEntry newent, *newentp;
 
-	scratch = gu_strdup(qfname);
+	scratch = gu_strdup(qfname);	/* because parse_qfname() modifies the array passed to it */
 
 	gu_Try
 		{
@@ -386,14 +368,15 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		int destmates_passed = 0;
 		int x;
 
-		/* Queue sanity check: */
+		/* Queue size sanity check: */
 		if(queue_entries > queue_size || queue_entries < 0)
 			fatal(1, "%s(): assertion failed: queue_entries=%d, queue_size=%d", function, queue_entries, queue_size);
 
 		/*
-		** The the queue is already full, try to expand the queue array,
-		** otherwise just don't put it in the queue.  If that is done,
-		** the job will not be printed until pprd is restarted.
+		** The the queue is already full, try to expand the queue array.  If we
+		** can't expand the queue array, don't insert the new job into the 
+		** queue.  If we don't insert it, the job will not be printed until pprd is 
+		** restarted.
 		*/
 		if(queue_entries == queue_size)
 			{
@@ -425,8 +408,10 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 				int y;
 
 				/* We must do this in segments due to problems with overlapping copies. */
-				for(y=queue_entries; y >= x; y--)
+				for(y=(queue_entries - 1); y >= x; y--)
+					{
 					memmove(&queue[y+1], &queue[y], sizeof(struct QEntry));
+					}
 
 				break;
 				}

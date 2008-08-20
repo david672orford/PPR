@@ -9438,7 +9438,11 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
+<<<<<<< History.txt
+2.00a1, 11 December 2004--15 February 2008
+=======
 2.00a1, 11 December 2004--13 June 2008
+>>>>>>> 1.196.2.126
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10116,6 +10120,10 @@ no final tarball was released.
 
 * ppop/ppop_cmds_other.c:ppop_alerts(): fixed to output LF if alerts file
   does not end with one (as may happen if the disk filled up).
+
+* pprd/pprd_queue.c:queue_accept_queuefile(): fixed off-by-one error in queue
+  insertion which caused memory corruption if there was just one space left at
+  the end and the job being inserted belonged in an earlier space.
 
 * nonppr_vendors/ppd_hp/HP_LaserJet_3390.ppd: added
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 1.41\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-06-01 12:49-0400\n"
+"POT-Creation-Date: 2008-02-15 12:57-0500\n"
 "PO-Revision-Date: 2001-01-02 12:00+GMT\n"
 "Last-Translator: Olivier Tharan <olive@oban.frmug.org>\n"
 "Language-Team: fr <ppr-bugs@mail.trincoll.edu>\n"
@@ -3722,7 +3722,7 @@ msgid_plural "%d active jobs were canceled.\n"
 msgstr[0] "%d travaux actifs ont été annulés.\n"
 msgstr[1] "%d travaux actifs ont été annulés.\n"
 
-#: ../ppop/ppop_cmds_other.c:1278 ../ppop/ppop_cmds_other.c:1771
+#: ../ppop/ppop_cmds_other.c:1278 ../ppop/ppop_cmds_other.c:1783
 msgid "You must indicate a specific job.\n"
 msgstr "Vous devez indiquer un travail spécifique.\n"
 
@@ -3772,27 +3772,27 @@ msgstr "Faux"
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "L'imprimante \"%s\" n'existe pas.\n"
 
-#: ../ppop/ppop_cmds_other.c:1725
+#: ../ppop/ppop_cmds_other.c:1726
 #, c-format
 msgid "No alerts for printer \"%s\".\n"
 msgstr "Pas d'alertes pour l'imprimante \"%s\".\n"
 
-#: ../ppop/ppop_cmds_other.c:1730 ../ppop/ppop_modify.c:318
+#: ../ppop/ppop_cmds_other.c:1731 ../ppop/ppop_modify.c:318
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s).\n"
 msgstr "Impossible d'ouvrir \"%s\", errno=%d (%s).\n"
 
-#: ../ppop/ppop_cmds_other.c:1765
+#: ../ppop/ppop_cmds_other.c:1777
 #, c-format
 msgid "Invalid job id: %s\n"
 msgstr "Numéro de travail invalide : %s\n"
 
-#: ../ppop/ppop_cmds_other.c:1786
+#: ../ppop/ppop_cmds_other.c:1798
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Le travail \"%s\" n'existe pas.\n"
 
-#: ../ppop/ppop_cmds_other.c:1796
+#: ../ppop/ppop_cmds_other.c:1808
 #, c-format
 msgid "There is no log for job \"%s\".\n"
 msgstr "Il n'y a pas de fichier de log pour le travail \"%s\".\n"

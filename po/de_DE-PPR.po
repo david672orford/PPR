@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-06-01 12:49-0400\n"
+"POT-Creation-Date: 2008-02-15 12:57-0500\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -3697,7 +3697,7 @@ msgid_plural "%d active jobs were canceled.\n"
 msgstr[0] "%d active Druckaufträge wurden gelöscht.\n"
 msgstr[1] "%d active Druckaufträge wurden gelöscht.\n"
 
-#: ../ppop/ppop_cmds_other.c:1278 ../ppop/ppop_cmds_other.c:1771
+#: ../ppop/ppop_cmds_other.c:1278 ../ppop/ppop_cmds_other.c:1783
 msgid "You must indicate a specific job.\n"
 msgstr "Sie müssen einen bestimmten Auftrag angeben.\n"
 
@@ -3746,27 +3746,27 @@ msgstr "Alias"
 msgid "Printer \"%s\" does not exist.\n"
 msgstr "Der Drucker \"%s\" existiert nicht.\n"
 
-#: ../ppop/ppop_cmds_other.c:1725
+#: ../ppop/ppop_cmds_other.c:1726
 #, c-format
 msgid "No alerts for printer \"%s\".\n"
 msgstr "Keine Warnungen für Drucker \"%s\".\n"
 
-#: ../ppop/ppop_cmds_other.c:1730 ../ppop/ppop_modify.c:318
+#: ../ppop/ppop_cmds_other.c:1731 ../ppop/ppop_modify.c:318
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s).\n"
 msgstr "Kann \"%s\" nicht öffnen, Fehlernummer=%d (%s).\n"
 
-#: ../ppop/ppop_cmds_other.c:1765
+#: ../ppop/ppop_cmds_other.c:1777
 #, c-format
 msgid "Invalid job id: %s\n"
 msgstr "Ungültige Druckaftrags-ID: %s\n"
 
-#: ../ppop/ppop_cmds_other.c:1786
+#: ../ppop/ppop_cmds_other.c:1798
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr "Druckaftrag \"%s\" existiert nicht\n"
 
-#: ../ppop/ppop_cmds_other.c:1796
+#: ../ppop/ppop_cmds_other.c:1808
 #, c-format
 msgid "There is no log for job \"%s\".\n"
 msgstr "Es gibt kein Auftragslog für \"%s\".\n"

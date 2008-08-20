@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-06-01 12:49-0400\n"
+"POT-Creation-Date: 2008-02-15 12:57-0500\n"
 "PO-Revision-Date: 2006-05-10 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -3591,7 +3591,7 @@ msgstr[0] "%d текущие задание удалено.\n"
 msgstr[1] "%d текущего задание удалены.\n"
 msgstr[2] "%d текущих заданий удаленых.\n"
 
-#: ../ppop/ppop_cmds_other.c:1278 ../ppop/ppop_cmds_other.c:1771
+#: ../ppop/ppop_cmds_other.c:1278 ../ppop/ppop_cmds_other.c:1783
 msgid "You must indicate a specific job.\n"
 msgstr ""
 
@@ -3640,27 +3640,27 @@ msgstr "псевдоним"
 msgid "Printer \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1725
+#: ../ppop/ppop_cmds_other.c:1726
 #, c-format
 msgid "No alerts for printer \"%s\".\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1730 ../ppop/ppop_modify.c:318
+#: ../ppop/ppop_cmds_other.c:1731 ../ppop/ppop_modify.c:318
 #, c-format
 msgid "Can't open \"%s\", errno=%d (%s).\n"
 msgstr "Не возмозно открыть \"%s\", errno=%d (%s).\n"
 
-#: ../ppop/ppop_cmds_other.c:1765
+#: ../ppop/ppop_cmds_other.c:1777
 #, c-format
 msgid "Invalid job id: %s\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1786
+#: ../ppop/ppop_cmds_other.c:1798
 #, c-format
 msgid "Job \"%s\" does not exist.\n"
 msgstr ""
 
-#: ../ppop/ppop_cmds_other.c:1796
+#: ../ppop/ppop_cmds_other.c:1808
 #, c-format
 msgid "There is no log for job \"%s\".\n"
 msgstr ""
@@ -5734,36 +5734,23 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "all"
-#~ msgstr "все"
+#~ msgid "Syntax error.\n"
+#~ msgstr "Синтаксическая ошибка.\n"
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
+#~ msgstr "Използования: ppop status {<принтер>, <группа>, all}\n"
 
-#, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
 
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
 
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing printer and\n"
-#~ "a name for the new printer.\n"
+#~ msgid "You must supply only the name of an existing printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
 #, fuzzy
 #~ msgid ""
@@ -5771,20 +5758,33 @@ msgstr ""
 #~ "a name for the new group.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
-
-#~ msgid "You must supply only the name of an existing printer.\n"
+#, fuzzy
+#~ msgid ""
+#~ "You must supply the name of an existing printer and\n"
+#~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
 
-#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
-#~ msgstr "Използования: ppop status {<принтер>, <группа>, all}\n"
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
 
-#~ msgid "Syntax error.\n"
-#~ msgstr "Синтаксическая ошибка.\n"
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#, fuzzy
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+
+#~ msgid "all"
+#~ msgstr "все"
