@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PPR 2.00\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-15 12:57-0500\n"
+"POT-Creation-Date: 2008-08-21 15:42-0400\n"
 "PO-Revision-Date: 2006-05-10 16:30-0500\n"
 "Last-Translator: David Chappell <David.Chappell@trincoll.edu>\n"
 "Language-Team: ru <David.Chappell@trincoll.edu>\n"
@@ -1305,55 +1305,55 @@ msgstr "%s(): возникла ошибка при запуски функции
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): возникла ошибка при запуски функции %s(\"%s\", ...), errno=%d (%s)\n"
 
-#: ../ppad/dispatch_table.c:11
+#: ../ppad/dispatch_table.c:14
 msgid "alias to show"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:15
+#: ../ppad/dispatch_table.c:18
 msgid "name of existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:16
+#: ../ppad/dispatch_table.c:19
 msgid "name of new alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:20
+#: ../ppad/dispatch_table.c:23
 msgid "name of new or existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:21
+#: ../ppad/dispatch_table.c:24
 msgid "new target of alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:25
+#: ../ppad/dispatch_table.c:28
 msgid "name of alias to be deleted"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:29 ../ppad/dispatch_table.c:34
-#: ../ppad/dispatch_table.c:39 ../ppad/dispatch_table.c:44
+#: ../ppad/dispatch_table.c:32 ../ppad/dispatch_table.c:37
+#: ../ppad/dispatch_table.c:42 ../ppad/dispatch_table.c:47
 msgid "name of alias to be modified"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:30 ../ppad/dispatch_table.c:174
+#: ../ppad/dispatch_table.c:33 ../ppad/dispatch_table.c:174
 msgid "comment to attach (ommit to delete)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:35 ../ppad/dispatch_table.c:96
+#: ../ppad/dispatch_table.c:38 ../ppad/dispatch_table.c:96
 #: ../ppad/dispatch_table.c:288
 msgid "switches to attach (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:40 ../ppad/dispatch_table.c:105
+#: ../ppad/dispatch_table.c:43 ../ppad/dispatch_table.c:105
 #: ../ppad/dispatch_table.c:297
 msgid "languages to pass thru (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:45 ../ppad/dispatch_table.c:115
+#: ../ppad/dispatch_table.c:48 ../ppad/dispatch_table.c:115
 #: ../ppad/dispatch_table.c:340
 msgid "addon parameter to modify"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:46 ../ppad/dispatch_table.c:116
+#: ../ppad/dispatch_table.c:49 ../ppad/dispatch_table.c:116
 #: ../ppad/dispatch_table.c:341
 msgid "new value for param (ommit to delete)"
 msgstr ""
@@ -1787,7 +1787,7 @@ msgstr ""
 msgid "delete from bins list"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:403
+#: ../ppad/dispatch_table.c:402
 msgid "send reminder e-mail about printer problems"
 msgstr ""
 
@@ -1918,11 +1918,11 @@ msgid "send query to printer and produce list of suitable PPD files"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:444
-msgid "all settings for aliases"
+msgid "miscelanious command"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:445
-msgid "miscelanious command"
+msgid "all settings for aliases"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:446
@@ -5734,29 +5734,30 @@ msgstr "%s: Файл \"%s\" не принадлежает вам, резелта
 msgid "Granting PPR permission to connect X clients to display \"%s\".\n"
 msgstr ""
 
-#~ msgid "Syntax error.\n"
-#~ msgstr "Синтаксическая ошибка.\n"
+#~ msgid "all"
+#~ msgstr "все"
 
-#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
-#~ msgstr "Използования: ppop status {<принтер>, <группа>, all}\n"
-
-#~ msgid "Queue ID        For                      Time       Pgs Status\n"
-#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
-
-#~ msgid "USB port communication failed, errno=%d (%s)."
-#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
-
-#~ msgid "You must supply only the name of an existing printer.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
-
-#~ msgid "You must supply a search pattern.\n"
-#~ msgstr "Вам нада ввисти шаблом.\n"
+#~ msgid "there is already a server listening on TCP port %d"
+#~ msgstr "сервер слушающый у TCP порта %d уже ест"
 
 #, fuzzy
-#~ msgid ""
-#~ "You must supply the name of an existing group and\n"
-#~ "a name for the new group.\n"
-#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+#~ msgid "ppad copy <existing_printer> <new_printer>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad comment <printer> <string>"
+#~ msgstr "ppad comment <принтер> <текст>"
+
+#~ msgid "ppad ppdopts <printer>"
+#~ msgstr "ppad ppdopts <принтер>"
+
+#~ msgid "Printer Management:\n"
+#~ msgstr "Управленние принтером:\n"
+
+#~ msgid "Alias Management:\n"
+#~ msgstr "Управленние псевдонимом:\n"
+
+#~ msgid "ppad ppdlib search <pattern>"
+#~ msgstr "ppad ppdlib search <шаблом>"
 
 #, fuzzy
 #~ msgid ""
@@ -5764,27 +5765,26 @@ msgstr ""
 #~ "a name for the new printer.\n"
 #~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "ppad ppdlib search <pattern>"
-#~ msgstr "ppad ppdlib search <шаблом>"
-
-#~ msgid "Alias Management:\n"
-#~ msgstr "Управленние псевдонимом:\n"
-
-#~ msgid "Printer Management:\n"
-#~ msgstr "Управленние принтером:\n"
-
-#~ msgid "ppad ppdopts <printer>"
-#~ msgstr "ppad ppdopts <принтер>"
-
-#~ msgid "ppad comment <printer> <string>"
-#~ msgstr "ppad comment <принтер> <текст>"
-
 #, fuzzy
-#~ msgid "ppad copy <existing_printer> <new_printer>"
-#~ msgstr "ppad comment <принтер> <текст>"
+#~ msgid ""
+#~ "You must supply the name of an existing group and\n"
+#~ "a name for the new group.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
 
-#~ msgid "there is already a server listening on TCP port %d"
-#~ msgstr "сервер слушающый у TCP порта %d уже ест"
+#~ msgid "You must supply a search pattern.\n"
+#~ msgstr "Вам нада ввисти шаблом.\n"
 
-#~ msgid "all"
-#~ msgstr "все"
+#~ msgid "You must supply only the name of an existing printer.\n"
+#~ msgstr "Название \"%s\" не явлается названием настоящого принтера.\n"
+
+#~ msgid "USB port communication failed, errno=%d (%s)."
+#~ msgstr "Собещение через порт USB терпело неудачу, errno=%d (%s)."
+
+#~ msgid "Queue ID        For                      Time       Pgs Status\n"
+#~ msgstr "Очередный ID    Для Кого                 Когда      #Ср Состояное\n"
+
+#~ msgid "Usage: ppop status {<printer>, <group>, all}\n"
+#~ msgstr "Използования: ppop status {<принтер>, <группа>, all}\n"
+
+#~ msgid "Syntax error.\n"
+#~ msgstr "Синтаксическая ошибка.\n"

@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_cups_admin.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 3 September 2008.
 */
 
 /*
@@ -194,7 +194,7 @@ void cups_delete_printer(struct IPP *ipp)
 	{
 	const char *destname;
 	enum QUEUEINFO_TYPE qtype;
-	if(!(destname = extract_destname(ipp, &qtype)) || qtype != QUEUEINFO_PRINTER)
+	if(!(destname = extract_destname(ipp, &qtype, TRUE)) || qtype != QUEUEINFO_PRINTER)
 		return;
 	if(!user_acl_allows(extract_identity(ipp, TRUE), "ppad"))
 		{
@@ -289,7 +289,7 @@ void cups_delete_class(struct IPP *ipp)
 	{
 	const char *destname;
 	enum QUEUEINFO_TYPE qtype;
-	if(!(destname = extract_destname(ipp, &qtype)) || qtype != QUEUEINFO_GROUP)
+	if(!(destname = extract_destname(ipp, &qtype, TRUE)) || qtype != QUEUEINFO_GROUP)
 		return;
 	if(!user_acl_allows(extract_identity(ipp, TRUE), "ppad"))
 		{

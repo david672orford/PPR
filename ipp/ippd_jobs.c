@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_jobs.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 30 March 2007.
+** Last modified 3 September 2008.
 */
 
 /*
@@ -66,7 +66,8 @@ static int ipp_queue_entry_compare_reversed(const void *p1, const void *p2)
 	return ipp_queue_entry_compare(p2, p1);
 	}
 
-/* Load all queue entries queued for destination destname[].
+/* Load all queue entries queued for destination destname[], or all queue
+ * entries, if destname is NULL.
  * Set set_used to the number of entries found and return a pointer
  * to the array.  If completed is true, return completed and arrested jobs
  * only and reverse the sorting order (as specified by RFC 2911 3.2.6.1).
@@ -100,8 +101,9 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 		/* Locate hyphen between destname and ID */
 		if(!(p = strrchr(direntp->d_name, '-')))
 			continue;
+		*p = '\0';		/* truncate string at end of destname */
 
-		/* If destname does not match, skip this file. */
+		/* If we are filtering by destname and destname does not match, skip this job. */
 		if(destname && ((p - direntp->d_name) != strlen(destname) || strncmp(direntp->d_name, destname, strlen(destname)) != 0))
 			continue;
 	
@@ -166,12 +168,11 @@ static struct IPP_QUEUE_ENTRY *ipp_load_queue(const char destname[], int *set_us
 			if(destname)		/* all the same queue */
 				queue[queue_used].destname = destname;
 			else				/* possibly different, don't save more than one copy */
-				{
-				*p = '\0';
+				{				/* remember that direntp->d_name has already been trimmed */
 				if(!(queue[queue_used].destname = gu_pch_get(destnames, direntp->d_name)))
 					{
 					char *temp = gu_strdup(direntp->d_name);
-					gu_pch_set(destnames, direntp->d_name, temp);
+					gu_pch_set(destnames, temp, temp);
 					queue[queue_used].destname = temp;
 					}
 				}
@@ -280,10 +281,10 @@ static void ipp_add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char d
 		}
 
 	/* job-printer-up-time */
-	if(request_attrs_attr_requested(req, "printer-up-time"))
+	if(request_attrs_attr_requested(req, "job-printer-up-time"))
 		{
-		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
-			"printer-up-time", time(NULL));
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
+			"job-printer-up-time", time(NULL));
 		}
 
 	/* printer-uri (probably spurious) */
@@ -366,7 +367,7 @@ static void ipp_add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char d
 	/* time-at-creation */
 	if(request_attrs_attr_requested(req, "time-at-creation"))
 		{
-		ipp_add_integer(ipp, IPP_TAG_PRINTER, IPP_TAG_INTEGER,
+		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER,
 			"time-at-creation", qentryfile.time);
 		}
 
@@ -448,8 +449,7 @@ void ipp_get_jobs(struct IPP *ipp)
 
 	DODEBUG(("%s()", function));
 	
-	if(!(destname = extract_destname(ipp, NULL)))
-		return;
+	destname = extract_destname(ipp, NULL, FALSE);		/* any type, not required */
 
 	user_at_host = extract_identity(ipp, FALSE);
 	limit = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "limit");

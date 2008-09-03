@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 12 June 2008.
+# Last modified 21 August 2008.
 #
 
 # If this script was not invoked by "make configure", do it now.
@@ -22,6 +22,8 @@ if [ -z "$CONFIGURE_RUNNING_FROM_MAKEFILE" ]
 	# Don't combine these two lines, some borne shells don't like it.
 	SAVED_ARGV="$*"
 	export SAVED_ARGV
+
+	test -f Makefile.conf || touch Makefile.conf
 
 	make configure
 	exit $?

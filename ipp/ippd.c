@@ -108,7 +108,7 @@ const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *q
 
 /** find printer-uri attribute and resolve it to qtype and destname
  */
-const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
+const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype, gu_boolean required)
 	{
 	FUNCTION4DEBUG("extract_destname")
 	struct URI *printer_uri;
@@ -117,8 +117,11 @@ const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype)
 	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
 		{
 		DODEBUG(("%s(): no printer-uri", function));
-		ipp->response_code = IPP_BAD_REQUEST;
-		ipp->request_attrs = NULL;
+		if(required)
+			{
+			ipp->response_code = IPP_BAD_REQUEST;
+			ipp->request_attrs = NULL;
+			}
 		return NULL;
 		}
 

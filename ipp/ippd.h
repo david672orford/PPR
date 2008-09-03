@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.h
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 31 May 2007.
+** Last modified 3 September 2008.
 */
 
 /*! \file
@@ -33,7 +33,7 @@
 void debug(const char message[], ...);
 void error(const char message[], ...);
 const char *printer_uri_validate(struct URI *printer_uri, enum QUEUEINFO_TYPE *qtype);
-const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype);
+const char *extract_destname(struct IPP *ipp, enum QUEUEINFO_TYPE *qtype, gu_boolean required);
 const char *extract_identity(struct IPP *ipp, gu_boolean require_authentication);
 const char *destname_to_uri_template(const char destname[]);
 

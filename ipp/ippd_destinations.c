@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_destinations.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 31 May 2007.
+** Last modified 3 September 2008.
 */
 
 /*
@@ -464,7 +464,7 @@ void ipp_get_printer_attributes(struct IPP *ipp)
 
 	extract_identity(ipp, FALSE);	/* swallow attribute */
 	
-	if((destname = extract_destname(ipp, &qtype)))
+	if((destname = extract_destname(ipp, &qtype, TRUE)))
 		{
 		qip = queueinfo_new_load_config(qtype, destname);
 		req = request_attrs_new(ipp);
@@ -673,7 +673,7 @@ void ipp_X_printer(struct IPP *ipp)
 	const char *destname;
 	enum QUEUEINFO_TYPE qtype;
 	DODEBUG(("%s()", function));
-	if(!(destname = extract_destname(ipp, &qtype)))
+	if(!(destname = extract_destname(ipp, &qtype, TRUE)))
 		return;
 	if(!user_acl_allows(extract_identity(ipp, TRUE), "ppop"))
 		{
