@@ -1,14 +1,14 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2007, Trinity College Computing Center.
+# Copyright 1995--2008, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 31 May 2007.
+# Last modified 10 December 2008.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -196,6 +196,26 @@ else
 	}
 }
 print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n" if($DEBUG > 0);
+
+#===========================================================
+# Possibly switch to client-private log file.
+#===========================================================
+
+{
+my $private_logfile = "$LOGDIR/ppr-httpd-$ENV{REMOTE_ADDR}";
+if(-w $private_logfile)
+	{
+	print STDERR "Connection log is \"$private_logfile\".\n" if($DEBUG > 0);
+	if(open(STDERR, ">>$private_logfile"))
+		{
+		print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n" if($DEBUG > 0);
+		}
+	else
+		{
+		print STDERR "Failed to switch to private log file: $!\n";
+		}
+	}
+}
 
 #===========================================================
 # Main Request Loop
