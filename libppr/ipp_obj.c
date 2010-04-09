@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_obj.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2008, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 31 May 2007.
+** Last modified 4 September 2008.
 */
 
 /*! \file */
@@ -871,14 +871,25 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 		{
 		debug("<ipp>");
 		debug("<response>");
-		debug("<version-number>%d.%d</version-number>", IPP_SUPPORTED_MAJOR, IPP_SUPPORTED_MINOR);
+		/*debug("<version-number>%d.%d</version-number>", IPP_SUPPORTED_MAJOR, IPP_SUPPORTED_MINOR);*/
+		debug("<version-number>%d.%d</version-number>", ipp->version_major, ipp->version_minor);
 		debug("<status-code>0x%04x</status-code>", ipp->response_code);
 		debug("<request-id>%d</request-id>", ipp->request_id);
 		}
 	#endif
 
-	ipp_put_sb(ipp, IPP_SUPPORTED_MAJOR);		/* version major */
-	ipp_put_sb(ipp, IPP_SUPPORTED_MINOR);		/* version minor */
+	/* Claiming support for IPP version 1.1 is probably the correct thing to do.  Unfortunately,
+	 * Early implementations of IPP in MS-Windows will refuse to add our printers if we claim
+	 * support for version 1.1.  So, we claim support for it only if the client does.
+	 */
+	#if 0
+	ipp_put_sb(ipp, IPP_SUPPORTED_MAJOR);
+	ipp_put_sb(ipp, IPP_SUPPORTED_MINOR);
+	#else
+	ipp_put_sb(ipp, ipp->version_major);
+	ipp_put_sb(ipp, ipp->version_minor);
+	#endif
+
 	ipp_put_ss(ipp, ipp->response_code);
 	ipp_put_si(ipp, ipp->request_id);
 	
