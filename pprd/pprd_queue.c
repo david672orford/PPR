@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_queue.c
-** Copyright 1995--2008, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 15 February 2008.
+** Last modified 19 July 2010.
 */
 
 /*
@@ -57,6 +57,9 @@ static void delete_job_files(const char *queuename, int id, int subid)
 	unlink(filename);
 
 	ppr_fnamef(filename, "%s/%s-%d.%d-barbar", DATADIR, queuename, id, subid);
+	unlink(filename);
+
+	ppr_fnamef(filename, "%s/%s-%d.%d-cmdline", DATADIR, queuename, id, subid);
 	unlink(filename);
 	} /* end of delete_job_files() */
 
@@ -199,6 +202,9 @@ struct QEntry *queue_p_job_new_status(struct QEntry *job, int newstat)
 			break;
 		case STATUS_CANCEL:
 			status_string = "being canceled";
+			break;
+		case STATUS_RECEIVING:
+			status_string = "receiving job";
 			break;
 		default:										/* >=0 means printing */
 			if(job->status < 0)

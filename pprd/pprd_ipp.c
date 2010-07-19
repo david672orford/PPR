@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_ipp.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 15 November 2006.
+** Last modified 1 June 2010.
 */
 
 /*
@@ -185,6 +185,9 @@ static struct PPRD_CALL_RETVAL ipp_hold_job(const char command_args[])
 				printers[queue[x].status].hold_job = TRUE;
 				queue_p_job_new_status(&queue[x], STATUS_SEIZING);
 				break;
+			case STATUS_RECEIVING:
+				/* not implemented */
+				break;
 			default:						/* printing? */
 				if(queue[x].status >= 0)
 					{
@@ -254,6 +257,9 @@ static struct PPRD_CALL_RETVAL ipp_release_job(const char command_args[])
 				DODEBUG_IPP(("%s(): job is already in transition to held", function));
 				/* This should be fixed */
 				retval.status_code = IPP_NOT_POSSIBLE;
+				break;
+			case STATUS_RECEIVING:
+				/* not implemented (can't be held either) */
 				break;
 			case STATUS_WAITING:			/* not held */
 			case STATUS_WAITING4MEDIA:

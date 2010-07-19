@@ -191,6 +191,7 @@ struct QEntryFile
 #define STATUS_STRANDED -7				/* no printer can print it */
 #define STATUS_FINISHED -8				/* job has been printed */
 #define STATUS_FUNDS -9					/* insufficient funds to print it */
+#define STATUS_RECEIVING -10			/* waiting for job text to arrive */
 
 /* First end of file marker in a transmitted queue file. */
 #define QF_ENDTAG1 "..\n"

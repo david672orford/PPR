@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/libgu/malloc.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 9 April 2010.
 */
 
 /*! \file
@@ -34,7 +34,7 @@ and abort the program if the allocation fails.
 #include <string.h>
 #include "gu.h"
 
-static void gu_pool_register(void *block);
+static void gu_pool_register(const void *block);
 static void gu_pool_reregister(void *block, void *old_block);
 
 #if 0
@@ -341,7 +341,7 @@ void gu_pool_free(void *p)
 /* Internal function to all a newly allocated block to the 
  * current pool (if any).
  */
-static void gu_pool_register(void *block)
+static void gu_pool_register(const void *block)
 	{
 	const char function[] = "gu_pool_register";
 	DODEBUG(("gu_pool_register(%p)",block));
@@ -354,7 +354,7 @@ static void gu_pool_register(void *block)
 			if(!(pool->blocks = realloc(pool->blocks, pool->size_allocated * sizeof(void*))))
 				gu_CodeThrow(errno, "%s(): realloc() failed, errno=%d (%s)", function, errno, gu_strerror(errno));
 			}
-		pool->blocks[pool->size_used++] = block;
+		pool->blocks[pool->size_used++] = (void*)block;
 		}
 	}
 

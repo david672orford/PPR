@@ -14,8 +14,8 @@
 	\brief Function prototypes for the IPP server
 */
 
-#if 1
-#define DEBUG 1		/* debug level */
+#if 1				/* debug enable */
+#define DEBUG 2		/* debug level */
 #define DODEBUG1(a) debug a
 #else
 #define DODEBUG1(a)

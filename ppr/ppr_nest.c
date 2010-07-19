@@ -19,6 +19,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "ppr.h"
 #include "ppr_exits.h"
 #include "ppr_gab.h"

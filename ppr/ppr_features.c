@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_features.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 10 May 2006.
+** Last modified 1 June 2010.
 */
 
 #include "config.h"
@@ -18,6 +18,7 @@
 #endif
 #include "gu.h"
 #include "global_defines.h"
+#include "global_structs.h"
 #include "ppr.h"
 #include "ppr_exits.h"
 

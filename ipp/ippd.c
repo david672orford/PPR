@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2009, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 31 May 2007.
+** Last modified 10 November 2009.
 */
 
 /*
@@ -32,19 +32,19 @@
 
 /** Send a debug message to the HTTP server's error log
 
-This function sends a message to stderr.  Messages sent to stderr end up in
+These functions send a message to stderr.  Messages sent to stderr end up in
 the HTTP server's error log.  The function takes a printf() style format
-string and argument list.  The marker "ipp: " is prepended to the message.
+string and argument list.  The marker "ippd: " is prepended to the message.
 
-This function is defined in ipp_utils.h.  It is a callback function 
-from the IPP library.
+These functions are not only called by the ippd code in this directory.  They
+are also callback functions for the IPP library functions in libppr.
 
 */
 void debug(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	fputs("ipp: ", stderr);
+	fputs("ippd: ", stderr);
 	vfprintf(stderr, message, va);
 	fputc('\n', stderr);
 	va_end(va);
@@ -55,7 +55,7 @@ void error(const char message[], ...)
 	{
 	va_list va;
 	va_start(va, message);
-	fputs("ipp-error: ", stderr);
+	fputs("ippd: error: ", stderr);
 	vfprintf(stderr, message, va);
 	fputc('\n', stderr);
 	va_end(va);
@@ -63,7 +63,7 @@ void error(const char message[], ...)
 	} /* end of error() */
 
 /*
- * Examine the supplied URL and determine if it is a valid printer-uri
+ * Examine the supplied URL and determine whether it is a valid printer-uri
  * for a printer that actually exists.  If it is, set queue_type and
  * return the destname.
  *
@@ -269,6 +269,9 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	#endif
 
+	/* IPP requests are always HTTP POST requests.  If the request is a GET request,
+	   try to handle it here as a special case.  If we can, exit when done.
+	*/
 	{
 	const char *p;
 	if((p = getenv("REQUEST_METHOD")) && strcmp(p, "GET") == 0)
@@ -351,6 +354,8 @@ int main(int argc, char *argv[])
 		if((p = getenv("REMOTE_ADDR")))
 			ipp_set_remote_addr(ipp, p);
 
+		/* Load request and convert to in-RAM object. Possibly print
+			an XML representation for debugging purposes. */
 		ipp_parse_request(ipp);
 
 		/* Simple exception handling block */
@@ -385,12 +390,12 @@ int main(int argc, char *argv[])
 					|| strcmp(attr2->name, "attributes-natural-language") != 0
 				)
 				{
-				DODEBUG(("second attribute is not attributes-charset"));
+				DODEBUG(("second attribute is not attributes-natural-language"));
 				ipp->response_code = IPP_BAD_REQUEST;
 				break;
 				}
 
-			/* Hide these so they don't show up in the unsupported list. */
+			/* Hide the forgoing attributes so they don't show up in the unsupported list. */
 			ipp->request_attrs = attr2->next;
 
 			/* For now we only support UTF-8 and ISO-8859-1.
@@ -402,6 +407,7 @@ int main(int argc, char *argv[])
 					&& strcmp(attr1->values[0].string.text, "iso-8859-1") != 0
 				)
 				{
+				DODEBUG(("no support for charset %s", attr1->values[0].string.text));
 				ipp->response_code = IPP_CHARSET;
 				/* suppress unsupported processing */
 				ipp->request_attrs = NULL;
@@ -539,6 +545,7 @@ int main(int argc, char *argv[])
 				}
 			else
 				{
+				DODEBUG(("no handler for this operation"));
 				ipp->response_code = IPP_OPERATION_NOT_SUPPORTED;
 				}
 			} while(FALSE);
@@ -561,8 +568,11 @@ int main(int argc, char *argv[])
 
 		ipp_send_reply(ipp, TRUE);
 
+		/* Dump process status.  Why, I don't remember. 
+		   Perhaps I was checking UID or GID or maybe memory usage.
+		   */
 		#ifdef DEBUG
-		#if DEBUG > 1
+		#if DEBUG > 2
 		{
 		FILE *f;
 		if((f = fopen("/proc/self/status", "r")))

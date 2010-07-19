@@ -62,6 +62,8 @@ struct IPP_TO_PPR xlate_job_template[] =
 	{IPP_TAG_ZERO}
 	};
 
+static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i);
+
 /*
  * Driver function for above tables.  It reads IPP attributes and appends
  * options to the ppr(1) command line.
@@ -247,11 +249,6 @@ void ipp_print_job(struct IPP *ipp)
 	ipp->request_attrs = convert_attributes(ipp, ipp->request_attrs, IPP_TAG_OPERATION, xlate_operation, &args, &args_i, &args_space);
 	ipp->request_attrs  = convert_attributes(ipp, ipp->request_attrs, IPP_TAG_JOB, xlate_job_template, &args, &args_i, &args_space);
 
-	/* If this isn't an actual print job request, but just a dry run,
-	 * we have done all we need to do, bail out. */
-	if(ipp->operation_id == IPP_VALIDATE_JOB)
-		return;
-
 	#ifdef DEBUG
 	{
 	int i;
@@ -259,17 +256,54 @@ void ipp_print_job(struct IPP *ipp)
 		debug("args[%d]=\"%s\"", i, args[i]);
 	}
 	#endif
-	
-	/* Set up a pipe and launch PPR on the end of it. */
+
+	switch(ipp->operation_id)
+		{
+		case IPP_VALIDATE_JOB:
+			/* If this isn't an actual print job request, but just a dry run,
+			 * we have done all we need to do, bail out. */
+			break;
+
+		case IPP_CREATE_JOB:
+			/* If this is a create job operation, save the command line and bail out. */
+
+			/* XXX Implementation missing XXX */
+
+			break;
+
+		case IPP_PRINT_JOB:
+			/* Operation must be ipp-print-job */
+			{
+			int jobid = ipp_run_ppr(ipp, args, args_i);
+		
+			/* Include the job id, both in numberic form and in URI form. */
+			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
+			ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "/jobs/%d", jobid);
+		
+			ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
+			}
+			break;
+
+		default:
+			DODEBUG(("%s(): unhandled case", function));	
+			ipp->response_code = IPP_INTERNAL_ERROR;
+			break;
+		}
+
+	} /* ipp_print_job() */
+
+/* Run PPR and send it the job data. */
+static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i)
 	{
+	const char function[] = "ipp_run_ppr";
 	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
 	int jobid_fds[2] = {-1, -1};	/* for ppr to send us jobid */
+	int jobid = -1;
 	gu_Try {
 		pid_t pid;
 		int read_len, write_len;
 		char *p;
 		char jobid_buf[10];
-		int jobid;
 
 		if(pipe(toppr_fds) == -1)
 			gu_Throw("pipe() failed");
@@ -342,11 +376,6 @@ void ipp_print_job(struct IPP *ipp)
 		jobid = atoi(jobid_buf);
 		DODEBUG1(("jobid is %d\n", jobid));		/* extra lf for blank line */
 		
-		/* Include the job id, both in numberic form and in URI form. */
-		ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
-		ipp_add_template(ipp, IPP_TAG_JOB, IPP_TAG_URI, "job-uri", "/jobs/%d", jobid);
-
-		ipp_add_string(ipp, IPP_TAG_JOB, IPP_TAG_NAME, "job-state", "pending");
 		}
 	gu_Final
 		{
@@ -364,8 +393,8 @@ void ipp_print_job(struct IPP *ipp)
 		debug("%s(): %s", function, gu_exception);
 		gu_ReThrow();
 		}
-	}
-	
-	} /* ipp_print_job() */
+
+	return jobid;
+	} /* ipp_run_ppr() */
 
 /* end of file */

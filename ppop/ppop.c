@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppop/ppop.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 23 May 2006.
+** Last modified 1 June 2010.
 */
 
 /*
@@ -911,7 +911,7 @@ int main(int argc, char *argv[])
 	 * Change to the home directory of PPR.
 	 * Why do we still do this?
 	 */ 
-	chdir(LIBDIR);
+	/*chdir(LIBDIR);*/
 
 	/*
 	** Install a SIGPIPE handler so we can produce an intelligible message

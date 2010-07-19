@@ -155,14 +155,14 @@ static void write_changes(FILE *qf, const struct JOB *job)
 */
 struct DT
 	{
-	const char *name;
-	int (*function)(const char *name, const char *value, struct JOB *job, size_t offset);
-	int offset;
+	const char *name;																			/* name of command */
+	int (*function)(const char *name, const char *value, struct JOB *job, size_t offset);		/* implementation function */
+	int offset;																					/* offset of data item which function should modify */
 	};
 
 /*
 ** This macro is used to return a void pointer to certain offset within a
-** struct JOB.  We define it as a macro because some complilers don't
+** struct JOB.  We define it as a macro because some compilers don't
 ** implement this for void.
 */
 #if 0

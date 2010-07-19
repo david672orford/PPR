@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_jobs.c
-** Copyright 1995--2008, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 3 September 2008.
+** Last modified 1 June 2010.
 */
 
 /*
@@ -263,6 +263,10 @@ static void ipp_add_job(struct IPP *ipp, struct REQUEST_ATTRS *req, const char d
 		case STATUS_FUNDS:					/* insufficient funds to print it */
 			job_state = IPP_JOB_HELD;
 			job_state_reasons[job_state_reasons_count++] = "resources-not-ready";
+			break;
+		case STATUS_RECEIVING:
+			job_state = IPP_JOB_HELD;
+			job_state_reasons[job_state_reasons_count++] = "job-data-insufficient";
 			break;
 		default:
 			job_state = IPP_JOB_PROCESSING;

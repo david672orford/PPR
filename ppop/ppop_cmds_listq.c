@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_listq.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 22 May 2006.
+** Last modified 1 June 2010.
 */
 
 /*
@@ -253,6 +253,10 @@ static void job_status(const struct QEntry *qentry, const struct QEntryFile *qen
 
 		case STATUS_FINISHED:
 			gu_utf8_printf("finished\n");
+			break;
+
+		case STATUS_RECEIVING:
+			gu_utf8_printf("receiving job\n");
 			break;
 
 		default:						/* <--- job is being printed */
@@ -1079,6 +1083,10 @@ static int ppop_lpq_item(
 			note = "stranded";
 			break;
 
+		case STATUS_RECEIVING:
+			note = "receiving";
+			break;
+
 		default:
 			note = NULL;
 			break;
@@ -1471,6 +1479,9 @@ static int ppop_qquery_item(
 			break;
 		case STATUS_SEIZING:
 			status = "being seized";
+			break;
+		case STATUS_RECEIVING:
+			status = "receiving";
 			break;
 		default:						/* <--- job is being printed */
 			if(qentry->status >= 0)		/* if greater than -1, is prnid */

@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppr/ppr_main.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 May 2007.
+** Last modified 19 July 2010.
 */
 
 /*
@@ -616,8 +616,13 @@ void file_cleanup(void)
 		{
 		char fname[MAX_PPR_PATH];
 
-		ppr_fnamef(fname, "%s/%s-%d.0", QUEUEDIR, qentry.jobname.destname, qentry.jobname.id);
-		unlink(fname);
+		/* Queue file gets nixed only if job is not in the queue in "receiving job" state. */
+		ppr_fnamef(fname, "%s/%s-%d.0-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id);
+		if(!access(fname, F_OK))
+			{
+			ppr_fnamef(fname, "%s/%s-%d.0", QUEUEDIR, qentry.jobname.destname, qentry.jobname.id);
+			unlink(fname);
+			}
 
 		ppr_fnamef(fname, "%s/%s-%d.0-comments", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
@@ -805,7 +810,6 @@ static const struct gu_getopt_opt option_words[] =
 		{"responder-address",	'r', TRUE},
 		{"file-type",			'T', TRUE},
 		{"features",			1000, FALSE},
-		{"print-id-to-fd",		1001, TRUE},
 		{"ipp-priority",		1002, TRUE},
 		{"lpq-filename",		1003, TRUE},
 		{"hold",				1004, FALSE},
@@ -822,6 +826,11 @@ static const struct gu_getopt_opt option_words[] =
 		{"ripopts",				1019, TRUE},
 
 		{"commentary", 1100, TRUE},
+
+		/* These are for the IPP server. */
+		{"print-id-to-fd",		2000, TRUE},		/* documented */
+		{"receiving",			2001, FALSE},		/* not documented */
+		{"receiving-jobid",		2002, TRUE},		/* not documented */
 
 		/* These are also documented and final. */
 		{"help", 9000, FALSE},
@@ -1285,13 +1294,14 @@ static int parse_commentary_option(const char source[], const char list[])
 ** the -d switch so that the correct switchset may be processed
 ** before pass 2 begins.
 **
-** We feed these routines the option character, such as 'd', and the
-** option string such as "chipmunk".
+** These functions do not iterate over the options lists themselves. Instead,
+** we feed them the option character, such as 'd', and the option string such
+** as "chipmunk".
 **
 ** For long options, these routines are fed the short option character
 ** which cooresponds to the long option.  If a long option does not
 ** have a short form, then optchar is a code number.  These code
-** numbers should all be greater than 255.  We have chosen to make
+** numbers should all beyond the ASCII range.  We have chosen to make
 ** them 1000 and greater.
 */
 static void doopt_pass1(int optchar, const char *optarg, const char *true_option)
@@ -1638,10 +1648,6 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 		case 1000:								/* --features */
 			exit(option_features(qentry.jobname.destname));
 
-		case 1001:								/* --print-id-to-fd */
-			option_print_id_to_fd = atoi(optarg);
-			break;
-
 		case 1002:								/* --ipp-priority */
 			if((qentry.spool_state.priority = atoi(optarg)) < 1 || qentry.spool_state.priority > 100)
 				fatal(PPREXIT_SYNTAX, _("%s option must be between 1 and 100"), true_option);
@@ -1733,6 +1739,18 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			qentry.commentary = parse_commentary_option("--commentary", optarg);
 			break;
 
+		case 2000:								/* --print-id-to-fd (for IPP server) */
+			option_print_id_to_fd = atoi(optarg);
+			break;
+
+		case 2001:								/* --receiving */
+			qentry.spool_state.status = STATUS_RECEIVING;
+			break;
+
+		case 2002:								/* --receiving-jobid */
+			qentry.jobname.id = atoi(optarg);
+			break;
+
 		case 9000:								/* --help */
 			help(stdout);
 			exit(PPREXIT_OK);	/* not ppr_abort() */
@@ -1773,7 +1791,7 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 int main(int argc, char *argv[])
 	{
 	const char *function = "main";
-	char *real_filename = (char*)NULL;			/* the file we read from if not stdin */
+	char *real_filename = (char*)NULL;			/* the file we read from if not from stdin */
 	struct gu_getopt_state getopt_state;		/* defined here because used to find filename */
 	int x;										/* various very short term uses */
 	char *ptr;									/* general use */
@@ -1831,7 +1849,7 @@ int main(int argc, char *argv[])
 	qentry.jobname.subid = 0;							/* job fragment number (unused) */
 	qentry.spool_state.priority = 50;					/* default priority */
 	qentry.spool_state.sequence_number = qentry.time;	/* <--temporary hack */
-	qentry.spool_state.status = STATUS_WAITING;
+	qentry.spool_state.status = STATUS_WAITING;			/* ready to print */
 	qentry.spool_state.flags = 0;
 	qentry.user = NULL;
 	qentry.For = NULL;
@@ -1847,6 +1865,7 @@ int main(int argc, char *argv[])
 	qentry.attr.DSC_job_type = NULL;
 	qentry.attr.langlevel = 1;							/* default to PostScript level 1 */
 	qentry.attr.pages = -1;								/* number of pages undetermined */
+	qentry.attr.pagefactor = 1;
 	qentry.attr.pageorder = PAGEORDER_ASCEND;			/* assume ascending order */
 	qentry.attr.extensions = 0;							/* no Level 2 extensions */
 	qentry.attr.orientation = ORIENTATION_UNKNOWN;		/* probably not landscape */
@@ -2040,6 +2059,36 @@ int main(int argc, char *argv[])
 		fatal(PPREXIT_SYNTAX, _("Destination (printer or group) name starts with a disallowed character"));
 
 	/*
+	** --receiving-jobid
+	** This option is used to submit the text of a job the skeleton of which was
+	** previously created with the --receiving option.
+	*/
+	if(qentry.jobname.id)
+		{
+		char temp[MAX_PPR_PATH];
+		FILE *f;
+		int len = 128;
+		char *line = NULL;
+		int optchar;
+		char **optname, **optarg;
+
+		ppr_fnamef(temp, "%s/%s-%d.%d-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
+		if(!(f = fopen(temp, "r")))
+			fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
+
+		while((line = gu_getline(line, &len, f)))
+			{
+			*optarg = NULL;
+			gu_sscanf(line, "%d %S %T", &optchar, &optname, &optarg);
+			doopt_pass2(optchar, *optarg, *optname);
+			gu_free_if(optname);
+			gu_free_if(optarg);
+			}
+
+		fclose(f);
+		}
+
+	/*
 	** Do a crude test of the syntax of the -o option.
 	** (The -o option passes options to an input file filter.)
 	*/
@@ -2100,7 +2149,7 @@ int main(int argc, char *argv[])
 		fatal(PPREXIT_SYNTAX, _("only one file name allowed"));
 
 	/*
-	** If no --title switch was used but a file name was used, make the file
+	** If no --title switch was used, but a file name was used, make the file
 	** name the default title.  The default title may be overridden by a
 	** "%%Title:" line.	 (Note that if the input is stdin, real_filename will
 	** be NULL.  Also, qentry.lpqFileName will be non-NULL only if the
@@ -2128,24 +2177,11 @@ int main(int argc, char *argv[])
 	===========================================================*/
 
 	/*
-	** Open the input file before we change to our home directory.
-	** When this function returns, the PPR home directory will be
-	** the current directory.
-	**
-	** If no file was specified, real_filename will still be NULL.
-	*/
-	if(infile_open(real_filename))		/* If input file is of zero length, */
-		{								/* we have nothing to do. */
-		warning(WARNING_SEVERE, _("Input file is empty, nothing to print"));
-		goto zero_length_file;
-		}
-
-	/*
-	** Open the FIFO now so we will find out right away if the daemon is running.
-	** In former versions, we did this sooner so that the responder
-	** in pprd could be reached, but now that we have our own
-	** responder launcher we can wait until the destination name is set so
-	** that respond() will use the correct job name.
+	** Open the FIFO now so we will find out right away if the daemon is
+	** running. In former versions, we did this sooner so that the responder
+	** in pprd could be reached, but now that we have our own responder
+	** launcher we can wait until the destination name is set (during 
+	** command-line parsing) so that respond() will use the correct job name.
 	*/
 	if((FIFO = open_fifo(FIFO_NAME)) == (FILE*)NULL)
 		{
@@ -2153,23 +2189,69 @@ int main(int argc, char *argv[])
 		}
 
 	/*
-	** We are about to start creating queue files.  We must
-	** assign a queue id now.
-	**
-	** It is possible that get_input_file() will have been
-	** oblidged to call get_next_id() because it created
-	** a "-infile" file.  That is why we test to see
-	** if it has been assigned yet.
+	** We will soon create the job. Assign a queue ID.
+	** Yes, if we fail to open the input file, a queue ID will be skipt.
+	** By accepting this slightly odd behavior, we greatly simplify
+	** the code.
 	*/
 	if(qentry.jobname.id == 0)
-		get_next_id(&qentry);
+		get_next_id(&qentry.jobname);
+
+	/*
+	** If --receiving was used: 
+	**  1) Write the queue file
+	**  2) Dump the command-line arguments to a file 
+	**  3) Submit the job (such as it is)
+	*/
+	if(qentry.spool_state.status == STATUS_RECEIVING)
+		{
+		char temp[MAX_PPR_PATH];
+		FILE *f;
+		int optchar;
+
+		if(write_queue_file(&qentry) == -1)
+			fatal(PPREXIT_DISKFULL, _("Disk full"));
+
+		ppr_fnamef(temp, "%s/%s-%d.%d-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
+		if(!(f = fopen(temp, "wb")))
+			fatal(PPREXIT_OTHERERR, _("can't open \"%s\", errno=%d (%s)"), temp, errno, gu_strerror(errno));
+
+		gu_getopt_init(&getopt_state, argc, argv, option_description_string, option_words);
+		qentry.spool_state.status = STATUS_WAITING;
+
+		while((optchar = ppr_getopt(&getopt_state)) != -1)
+			{
+			if(strcmp(getopt_state.name, "--receiving") != 0)
+				{
+				if(getopt_state.optarg)
+					fprintf(f, "%d %s %s\n", optchar, getopt_state.name, getopt_state.optarg);
+				else
+					fprintf(f, "%d %s\n", optchar, getopt_state.name);
+				}
+			}
+
+		fclose(f);
+
+		submit_job(&qentry, 0);
+		return PPREXIT_OK;
+		}
+
+	/*
+	** Open the input file. Note that if no filename was specified on the
+	** command line, real_filename will be NULL.
+	*/
+	if(infile_open(real_filename))		/* If input file is of zero length, */
+		{								/* we have nothing to do. */
+		warning(WARNING_SEVERE, _("Input file is empty, nothing to print"));
+		goto zero_length_file;
+		}
 
 	/* ================== Input PostScript Processing Starts ===================== */
 
 	/*
-	** Set a flag so that if we abort suddenly or are killed and
-	** are able to exit gracefully, we will know to remove the
-	** output files we are about to create.
+	** Set a flag so that if we abort suddenly or are killed and are able to
+	** exit gracefully, we will know to remove the output files we are about
+	** to create.
 	*/
 	spool_files_created = TRUE;
 
@@ -2479,15 +2561,14 @@ int main(int argc, char *argv[])
 		** Create and fill the queue file.  It is sad that this
 		** is the only place we check for disk full.
 		**
-		** Note that fatal() file_cleanup(), so the queue file should be
+		** Note that fatal() calls file_cleanup(), so the queue file should be
 		** removed.
 		*/
 		if(write_queue_file(&qentry) == -1)
 			fatal(PPREXIT_DISKFULL, _("Disk full"));
 
 		/*
-		** FIFO was opened above, write a command to it now.  This command
-		** tells pprd that the file is ready to print.
+		** Tell PPRD that there is a new job to be entered into the queue.
 		*/
 		submit_job(&qentry, 0);
 		}
@@ -2505,7 +2586,8 @@ int main(int argc, char *argv[])
 		{
 		char temp[10];
 		snprintf(temp, sizeof(temp), "%d\n", qentry.jobname.id);
-		write(option_print_id_to_fd, temp, strlen(temp));
+		if(write(option_print_id_to_fd, temp, strlen(temp)) < 0)
+			error("ppr: failed to write job ID to fd %d", option_print_id_to_fd);
 		}
 
 	/*
