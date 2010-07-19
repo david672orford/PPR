@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--10 December 2008
+2.00a1, 11 December 2004--28 April 2010
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10133,5 +10133,7 @@ no final tarball was released.
 
 * nonppr_vendors/hp_ppd/HP_Color_LaserJet_3800.ppd: added (after
   correcting NickName to be same as ModelName).
+
+* www/cgi_data.pl: added print_stripped()
 
 
