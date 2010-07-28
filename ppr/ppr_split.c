@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 1 June 2010.
+** Last modified 20 July 2010.
 */
 
 /*
@@ -380,7 +380,7 @@ int split_job(struct QEntryFile *qentry)
 			#endif
 			qentry->attr.pages = page_counts[x];
 			qentry->jobname.subid = (x + 1);
-			write_queue_file(qentry);
+			write_queue_file(qentry, FALSE);
 			}
 
 		/*----------------------------------------------------------

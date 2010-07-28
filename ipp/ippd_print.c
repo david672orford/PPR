@@ -203,7 +203,7 @@ static ipp_attribute_t* convert_attributes(
 	} /* convert_attributes() */
 
 /*
- * Handle IPP_PRINT_JOB or IPP_VALIDATE_JOB
+ * Handle IPP_PRINT_JOB, IPP_VALIDATE_JOB, or IPP_CREATE_JOB.
  */
 void ipp_print_job(struct IPP *ipp)
 	{
@@ -265,11 +265,8 @@ void ipp_print_job(struct IPP *ipp)
 			break;
 
 		case IPP_CREATE_JOB:
-			/* If this is a create job operation, save the command line and bail out. */
-
-			/* XXX Implementation missing XXX */
-
-			break;
+			args[args_i++] = "--skeleton-create";
+			/* drop thru */
 
 		case IPP_PRINT_JOB:
 			/* Operation must be ipp-print-job */
@@ -291,6 +288,17 @@ void ipp_print_job(struct IPP *ipp)
 		}
 
 	} /* ipp_print_job() */
+
+/*
+ * Handle IPP_SEND_DOCUMENT.
+ */
+void ipp_send_document(struct IPP *ipp)
+	{
+	const char function[] = "ipp_send_document";
+
+	/* not yet implemented */
+	ipp->response_code = IPP_INTERNAL_ERROR;
+	}
 
 /* Run PPR and send it the job data. */
 static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i)

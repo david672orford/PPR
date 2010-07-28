@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.c
-** Copyright 1995--2009, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 10 November 2009.
+** Last modified 20 July 2010.
 */
 
 /*
@@ -429,53 +429,55 @@ int main(int argc, char *argv[])
 			p_handler = NULL;
 			switch(ipp->operation_id)
 				{
-				case IPP_PRINT_JOB:		/* REQUIRED */
+				case IPP_PRINT_JOB:					/* REQUIRED */
 					p_handler = ipp_print_job;
 					break;
-				case IPP_PRINT_URI:		/* OPTIONAL */
+				case IPP_PRINT_URI:					/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_VALIDATE_JOB:	/* REQUIRED */
-					/* won't actually print when sees operation-id */
+				case IPP_VALIDATE_JOB:				/* REQUIRED */
+					/* ipp_print_job() will reframe from actually printing when sees operation-id */
 					p_handler = ipp_print_job;
 					break;
-				case IPP_CREATE_JOB:	/* OPTIONAL */
+				case IPP_CREATE_JOB:				/* OPTIONAL */
+					/* not implemented */
+					p_handler = ipp_print_job;
+					break;
+				case IPP_SEND_DOCUMENT:				/* OPTIONAL */
+					/* not implemented */
+					p_handler = ipp_send_document;
+					break;
+				case IPP_SEND_URI:					/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_SEND_DOCUMENT:	/* OPTIONAL */
-					/* not implemented */
-					break;
-				case IPP_SEND_URI:		/* OPTIONAL */
-					/* not implemented */
-					break;
-				case IPP_CANCEL_JOB:	/* REQUIRED */
+				case IPP_CANCEL_JOB:				/* REQUIRED */
 					p_handler = ipp_X_job;
 					break;
-				case IPP_GET_JOB_ATTRIBUTES:	/* REQUIRED */
+				case IPP_GET_JOB_ATTRIBUTES:		/* REQUIRED */
 					p_handler = ipp_get_job_attributes;
 					break;
-				case IPP_GET_JOBS:		/* REQUIRED */
+				case IPP_GET_JOBS:					/* REQUIRED */
 					p_handler = ipp_get_jobs;
 					break;
 				case IPP_GET_PRINTER_ATTRIBUTES:	/* REQUIRED */
 					p_handler = ipp_get_printer_attributes;
 					break;
-				case IPP_HOLD_JOB:			/* OPTIONAL */
+				case IPP_HOLD_JOB:					/* OPTIONAL */
 					p_handler = ipp_X_job;
 					break;
-				case IPP_RELEASE_JOB:		/* OPTIONAL */
+				case IPP_RELEASE_JOB:				/* OPTIONAL */
 					p_handler = ipp_X_job;
 					break;
-				case IPP_RESTART_JOB:		/* OPTIONAL */
+				case IPP_RESTART_JOB:				/* OPTIONAL */
 					/* not implemented */
 					break;
-				case IPP_PAUSE_PRINTER:		/* OPTIONAL */
+				case IPP_PAUSE_PRINTER:				/* OPTIONAL */
 					p_handler = ipp_X_printer;
 					break;
-				case IPP_RESUME_PRINTER:	/* OPTIONAL */
+				case IPP_RESUME_PRINTER:			/* OPTIONAL */
 					p_handler = ipp_X_printer;
 					break;
-				case IPP_PURGE_JOBS:		/* OPTIONAL */
+				case IPP_PURGE_JOBS:				/* OPTIONAL */
 					p_handler = ipp_X_printer;
 					break;
 				case IPP_SET_PRINTER_ATTRIBUTES:

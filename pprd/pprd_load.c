@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprd/pprd_load.c
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 20 July 2010.
 */
 
 /*
@@ -622,7 +622,7 @@ void initialize_queue(void)
 
 		DODEBUG_RECOVER(("%s(): inheriting queue file \"%s\"", function, direntp->d_name));
 
-		queue_accept_queuefile(direntp->d_name, FALSE);
+		queue_accept_queuefile(direntp->d_name, FALSE, FALSE);
 		}
 
 	/* We are done.  Close the queue directory. */

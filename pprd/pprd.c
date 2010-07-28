@@ -255,6 +255,10 @@ static void do_fifo_command(int fifo)
 				queue_new_job(ptr);
 				break;
 
+			case 'J':					/* a print job from skeleton */
+				queue_reload_job(ptr);
+				break;
+
 			case 'n':					/* Nag operator by email */
 				{
 				int count = gu_alloc_checkpoint();

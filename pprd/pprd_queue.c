@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 July 2010.
+** Last modified 20 July 2010.
 */
 
 /*
@@ -254,7 +254,7 @@ struct QEntry *queue_job_new_status(int destid, int id, int subid, int newstat)
 ** The job is entered in the queue, then the pprd_printer.c module is
 ** informed of its arrival.
 ===========================================================================*/
-void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
+void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new, gu_boolean reload_job)
 	{
 	const char function[] = "queue_accept_queuefile";
 	char *scratch = NULL;
@@ -268,7 +268,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		if(parse_qfname(scratch, &destname, &newent.id, &newent.subid) == -1)
 			gu_Throw("can't parse queue file name");
 
-		/* Coinvert the destination queue name to a queue id number. */
+		/* Convert the destination queue name to a queue id number. */
 		if((newent.destid = destid_by_name(destname)) == -1)
 			{
 			/* Destination doesn't exist, throw an exception.  The exception handler
@@ -294,6 +294,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 			gu_Throw("destination \"%s\" is not accepting jobs", destname);
 			}
 
+		/* Load limited information from queue file. */
 		{
 		char qfname_path[MAX_PPR_PATH];
 		FILE *qfile;
@@ -343,7 +344,7 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 
 		/*
 		** If this is a group job, set pass number to one, otherwise, set pass 
-		** number to zero which will indicate the pprdrv that it is not
+		** number to zero which will indicate to pprdrv that this is not
 		** a group job.
 		*/
 		if(destid_is_group(newent.destid))
@@ -370,86 +371,104 @@ void queue_accept_queuefile(const char qfname[], gu_boolean job_is_new)
 		   This may change the printer status too. */
 		media_set_notnow_for_job(&newent, FALSE);
 
-		{
-		int destmates_passed = 0;
-		int x;
-
 		/* Queue size sanity check: */
 		if(queue_entries > queue_size || queue_entries < 0)
 			fatal(1, "%s(): assertion failed: queue_entries=%d, queue_size=%d", function, queue_entries, queue_size);
-
-		/*
-		** The the queue is already full, try to expand the queue array.  If we
-		** can't expand the queue array, don't insert the new job into the 
-		** queue.  If we don't insert it, the job will not be printed until pprd is 
-		** restarted.
-		*/
-		if(queue_entries == queue_size)
+	
+		if(reload_job)
 			{
-			if((queue_size + QUEUE_SIZE_GROWBY) <= QUEUE_SIZE_MAX)		/* there are limits */
+			int x;
+			for(x=0; x < queue_entries; x++)	/* Find job in queue array. */
 				{
-				DODEBUG_NEWJOB(("%s(): expanding %d entry queue to %d entries", function, queue_size, queue_size+QUEUE_SIZE_GROWBY));
-				queue_size += QUEUE_SIZE_GROWBY;
-				queue = (struct QEntry *)gu_realloc(queue, queue_size, sizeof(struct QEntry));
+				if(queue[x].destid == newent.destid && queue[x].id == newent.id && queue[x].subid == newent.subid)
+					break;
 				}
-			else
-				{
-				gu_Throw("queue array overflow");
-				}
+			if(!(x < queue_entries))
+				gu_Throw("can't find job %d in queue array", newent.id);
+			memcpy(&queue[x], &newent, sizeof(struct QEntry));
+			newentp = &queue[x];
 			}
-
-		for(x=0; x < queue_entries; x++)	/* Find or make a space in the queue array. */
+		else
 			{
+			int destmates_passed = 0;		/* rank in queue for indicated destination */
+			int x;
+	
 			/*
-			** A higher priority number means a more urgent job.  If we have found
-			** a job with a lower priority number than the job we are inserting,
-			** or a job with an equal priority number but a later priority time,
-			** move all the jobs from here on one slot furthur toward the end
-			** of the queue and break out of the loop.
+			** The the queue is already full, try to expand the queue array.  If we
+			** can't expand the queue array, don't insert the new job into the 
+			** queue.  If we don't insert it, the job will not be printed until pprd is 
+			** restarted.
 			*/
-			if(newent.priority > queue[x].priority ||
-				(newent.priority == queue[x].priority && newent.sequence_number < queue[x].sequence_number)
-				)
+			if(queue_entries == queue_size)
 				{
-				int y;
-
-				/* We must do this in segments due to problems with overlapping copies. */
-				for(y=(queue_entries - 1); y >= x; y--)
+				if((queue_size + QUEUE_SIZE_GROWBY) <= QUEUE_SIZE_MAX)		/* there are limits */
 					{
-					memmove(&queue[y+1], &queue[y], sizeof(struct QEntry));
+					DODEBUG_NEWJOB(("%s(): expanding %d entry queue to %d entries", function, queue_size, queue_size+QUEUE_SIZE_GROWBY));
+					queue_size += QUEUE_SIZE_GROWBY;
+					queue = (struct QEntry *)gu_realloc(queue, queue_size, sizeof(struct QEntry));
 					}
-
-				break;
+				else
+					{
+					gu_Throw("queue array overflow");
+					}
 				}
-
-			/*
-			** If we are passing a job which is for the same destination as
-			** the job we are inserting, add one to the count which will
-			** be stored in rank2.
-			*/
-			if(queue[x].destid == newent.destid)
-				destmates_passed++;
-			}
-
-		/* Copy the new queue entry into the place prepared for it. */
-		memcpy(&queue[x], &newent, sizeof(struct QEntry));
-		newentp = &queue[x];
-
-		/* increment our count of queue entries */
-		queue_entries++;
-
-		/* increment destination's job count */
-		job_count_adjust(newent.destid, 1, job_is_new);
+	
+			for(x=0; x < queue_entries; x++)	/* Find or make a space in the queue array. */
+				{
+				/*
+				** A higher priority number means a more urgent job.  If we have found
+				** a job with a lower priority number than the job we are inserting,
+				** or a job with an equal priority number but a later priority time,
+				** move all the jobs from here on one slot furthur toward the end
+				** of the queue and break out of the loop.
+				*/
+				if(newent.priority > queue[x].priority ||
+					(newent.priority == queue[x].priority && newent.sequence_number < queue[x].sequence_number)
+					)
+					{
+					int y;
+	
+					/* We must do this in segments due to problems with overlapping copies. */
+					for(y=(queue_entries - 1); y >= x; y--)
+						{
+						memmove(&queue[y+1], &queue[y], sizeof(struct QEntry));
+						}
+	
+					break;
+					}
+	
+				/*
+				** If we are passing a job which is for the same destination as
+				** the job we are inserting, add one to the count which will
+				** be stored in rank2.
+				*/
+				if(queue[x].destid == newent.destid)
+					destmates_passed++;
+				}
+	
+			/* Copy the new queue entry into the place prepared for it. */
+			memcpy(&queue[x], &newent, sizeof(struct QEntry));
+			newentp = &queue[x];
+	
+			/* increment our count of queue entries */
+			queue_entries++;
 		
-		/* Inform queue display programs that there is a new job in the queue. */
-		state_update("JOB %s %d %d",
-				jobid(destname, newent.id, newent.subid),
-				x, destmates_passed);
-		}
+			/* increment destination's job count */
+			job_count_adjust(newent.destid, 1, job_is_new);
+				
+			/* Inform queue display programs that there is a new job in the queue. */
+			state_update("JOB %s %d %d",
+					jobid(destname, newent.id, newent.subid),
+					x, destmates_passed);
+			} /* new (and not reloaded) job */
 
 		/* If there is an outstanding question, then let the question system
-		   know about this job. */
-		if(newentp->flags & JOB_FLAG_QUESTION_UNANSWERED)
+		   know about this job.  (This is suppressed for jobs in the 
+		   "receiving data" state since their queue files will shortly 
+		   be overwritten which could destroy the answers to the questions
+		   which we pose.
+		   */
+		if(newentp->flags & JOB_FLAG_QUESTION_UNANSWERED && newentp->status != STATUS_RECEIVING)
 			question_job(newentp);
 
 		/* If pprd isn't restarting and the job is ready to print, try to start a printer. */
@@ -484,8 +503,20 @@ void queue_new_job(char *command)
 		error("%s(): bad j command: %s", function, command);
 		return;
 		}
-	queue_accept_queuefile(qfname, TRUE);
+	queue_accept_queuefile(qfname, TRUE, FALSE);
 	} /* end of queue_new_job() */
+
+void queue_reload_job(char *command)
+	{
+	const char function[] = "queue_reload_job";
+	char *qfname;
+	if(!(qfname = lmatchp(command, "J ")))
+		{
+		error("%s(): bad J command: %s", function, command);
+		return;
+		}
+	queue_accept_queuefile(qfname, TRUE, TRUE);
+	} /* end of queue_reload_job() */
 
 /* end of file */
 

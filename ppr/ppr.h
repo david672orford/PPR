@@ -191,7 +191,7 @@ __attribute__ (( noreturn, format (printf, 2, 3) ))
 #endif
 ;
 void file_cleanup(void);
-int write_queue_file(struct QEntryFile *qentry);
+int write_queue_file(struct QEntryFile *qentry, gu_boolean overwrite);
 void submit_job(struct QEntryFile *qe, int segment);
 void become_user(void);
 void unbecome_user(void);

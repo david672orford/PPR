@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.h
-** Copyright 1995--2008, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 3 September 2008.
+** Last modified 20 July 2010.
 */
 
 /*! \file
@@ -39,6 +39,7 @@ const char *destname_to_uri_template(const char destname[]);
 
 /* ippd_print.c */
 void ipp_print_job(struct IPP *ipp);
+void ipp_send_document(struct IPP *ipp);
 	
 /* ippd_jobs.c */
 void ipp_get_jobs(struct IPP *ipp);

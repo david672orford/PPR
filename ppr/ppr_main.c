@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 19 July 2010.
+** Last modified 20 July 2010.
 */
 
 /*
@@ -75,11 +75,12 @@ static int ignore_truncated = FALSE;			/* TRUE if should discard without %%EOF *
 static gu_boolean option_show_jobid = FALSE;
 static int option_print_id_to_fd = -1;			/* -1 for don't, file descriptor number otherwise */
 static const char *option_page_list = NULL;
+static int option_skeleton_jobid = 0;
 
 /* Command line option settings */
 const char *features[MAX_FEATURES];				/* -F switch features to add */
 int features_count = 0;							/* number asked for (number of -F switches?) */
-gu_boolean option_strip_fontindex = FALSE;				/* TRUE if should strip those in fontindex.db */
+gu_boolean option_strip_fontindex = FALSE;		/* TRUE if should strip those in fontindex.db */
 int ppr_respond_by = PPR_RESPOND_BY_STDERR;
 int option_nofilter_hexdump = FALSE;			/* don't encourage use of hexdump when no filter */
 char *option_filter_options = NULL;				/* contents of -o switch */
@@ -374,7 +375,7 @@ static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean e
 ** Create and fill the queue file.
 ** Return -1 if we run out of disk space.
 */
-int write_queue_file(struct QEntryFile *qentry)
+int write_queue_file(struct QEntryFile *qentry, gu_boolean overwrite)
 	{
 	const char function[] = "write_queue_file";
 	char magic_cookie[16];
@@ -404,7 +405,7 @@ int write_queue_file(struct QEntryFile *qentry)
 	ppr_fnamef(qfname, "%s/%s-%d.%d", QUEUEDIR, qentry->jobname.destname, qentry->jobname.id, qentry->jobname.subid);
 
 	/* Very carefully open the queue file. */
-	if((fd = open(qfname, O_WRONLY | O_CREAT | O_EXCL, (S_IRUSR | S_IWUSR))) < 0)
+	if((fd = open(qfname, O_WRONLY | O_CREAT | (overwrite ? 0 : O_EXCL), (S_IRUSR | S_IWUSR))) < 0)
 		fatal(PPREXIT_OTHERERR, _("can't open queue file \"%s\", errno=%d (%s)"), qfname, errno, gu_strerror(errno) );
 	if((Qfile = fdopen(fd, "w")) == (FILE*)NULL)
 		fatal(PPREXIT_OTHERERR, _("%s(): %s() failed, errno=%d (%s)"), function, "fdopen", errno, gu_strerror(errno));
@@ -499,7 +500,10 @@ static FILE *open_fifo(const char name[])
 */
 void submit_job(struct QEntryFile *qe, int subid)
 	{
-	fprintf(FIFO, "j %s-%d.%d\n", qe->jobname.destname, qe->jobname.id, subid);
+	if(option_skeleton_jobid)
+		fprintf(FIFO, "J %s-%d.%d\n", qe->jobname.destname, qe->jobname.id, subid);
+	else
+		fprintf(FIFO, "j %s-%d.%d\n", qe->jobname.destname, qe->jobname.id, subid);
 
 	/*
 	** If --show-jobid has been used, display the id of the 
@@ -616,11 +620,15 @@ void file_cleanup(void)
 		{
 		char fname[MAX_PPR_PATH];
 
-		/* Queue file gets nixed only if job is not in the queue in "receiving job" state. */
-		ppr_fnamef(fname, "%s/%s-%d.0-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id);
-		if(!access(fname, F_OK))
+		if(!option_skeleton_jobid)
 			{
 			ppr_fnamef(fname, "%s/%s-%d.0", QUEUEDIR, qentry.jobname.destname, qentry.jobname.id);
+			unlink(fname);
+
+			ppr_fnamef(fname, "%s/%s-%d.0-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id);
+			unlink(fname);
+
+			ppr_fnamef(fname, "%s/%s-%d.0-log", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 			unlink(fname);
 			}
 
@@ -631,9 +639,6 @@ void file_cleanup(void)
 		unlink(fname);
 
 		ppr_fnamef(fname, "%s/%s-%d.0-pages", DATADIR, qentry.jobname.destname, qentry.jobname.id);
-		unlink(fname);
-
-		ppr_fnamef(fname, "%s/%s-%d.0-log", DATADIR, qentry.jobname.destname, qentry.jobname.id);
 		unlink(fname);
 		}
 
@@ -829,8 +834,8 @@ static const struct gu_getopt_opt option_words[] =
 
 		/* These are for the IPP server. */
 		{"print-id-to-fd",		2000, TRUE},		/* documented */
-		{"receiving",			2001, FALSE},		/* not documented */
-		{"receiving-jobid",		2002, TRUE},		/* not documented */
+		{"skeleton-create",		2001, FALSE},		/* not documented */
+		{"skeleton-jobid",		2002, TRUE},		/* not documented */
 
 		/* These are also documented and final. */
 		{"help", 9000, FALSE},
@@ -1743,12 +1748,12 @@ static void doopt_pass2(int optchar, const char *optarg, const char *true_option
 			option_print_id_to_fd = atoi(optarg);
 			break;
 
-		case 2001:								/* --receiving */
+		case 2001:								/* --skeleton-create */
 			qentry.spool_state.status = STATUS_RECEIVING;
 			break;
 
-		case 2002:								/* --receiving-jobid */
-			qentry.jobname.id = atoi(optarg);
+		case 2002:								/* --skeleton-jobid */
+			qentry.jobname.id = option_skeleton_jobid = atoi(optarg);
 			break;
 
 		case 9000:								/* --help */
@@ -2198,7 +2203,7 @@ int main(int argc, char *argv[])
 		get_next_id(&qentry.jobname);
 
 	/*
-	** If --receiving was used: 
+	** If --skeleton-create was used: 
 	**  1) Write the queue file
 	**  2) Dump the command-line arguments to a file 
 	**  3) Submit the job (such as it is)
@@ -2209,7 +2214,7 @@ int main(int argc, char *argv[])
 		FILE *f;
 		int optchar;
 
-		if(write_queue_file(&qentry) == -1)
+		if(write_queue_file(&qentry, FALSE) == -1)
 			fatal(PPREXIT_DISKFULL, _("Disk full"));
 
 		ppr_fnamef(temp, "%s/%s-%d.%d-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
@@ -2221,7 +2226,7 @@ int main(int argc, char *argv[])
 
 		while((optchar = ppr_getopt(&getopt_state)) != -1)
 			{
-			if(strcmp(getopt_state.name, "--receiving") != 0)
+			if(strcmp(getopt_state.name, "--skeleton-create") != 0)
 				{
 				if(getopt_state.optarg)
 					fprintf(f, "%d %s %s\n", optchar, getopt_state.name, getopt_state.optarg);
@@ -2564,7 +2569,7 @@ int main(int argc, char *argv[])
 		** Note that fatal() calls file_cleanup(), so the queue file should be
 		** removed.
 		*/
-		if(write_queue_file(&qentry) == -1)
+		if(write_queue_file(&qentry, option_skeleton_jobid ? TRUE : FALSE) == -1)
 			fatal(PPREXIT_DISKFULL, _("Disk full"));
 
 		/*
