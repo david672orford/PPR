@@ -1,14 +1,14 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2008, Trinity College Computing Center.
+# Copyright 1995--2010, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 10 December 2008.
+# Last modified 2 August 2010.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -27,7 +27,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 1;
+my $DEBUG = 1;	# 1 for basic debugging, 2 to show request headers
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.
@@ -391,7 +391,7 @@ while(1)
 			{ $resp_header_connection = "close" }
 
 		#
-		# Did the client ask for a specific setting?
+		# Did the client have something to say about persistent connexions?
 		# Note that I cannot find anything in RFC 2068 to suggest that the
 		# values of these tokens are case-insensitve.  I have noticed
 		# that HotJava 3.0 sends "Connection: keep-alive".  At the moment I
@@ -478,7 +478,7 @@ while(1)
 			die "501 The only request methods that this server can accept are GET and POST.\n";
 			}
 
-		# Set these to trigger CGI execution.
+		# We may change these defaults below in order to trigger CGI execution.
 		my($script_name, $script_filename, $path_info) = ($path, undef, "");
 
 		# Recognize CUPS-compatibility paths and route them to the
@@ -595,7 +595,7 @@ EndExceptionEntity
 
 		print "HTTP/1.1 $code $code_description\r\n";
 		print $resp_headers_general;
-		print "Accept-Ranges: bytes\n";
+		print "Accept-Ranges: bytes\r\n";
 		if($resp_header_connection ne '')
 			{ print "Connection: $resp_header_connection\r\n" }
 		print "Content-Type: text/html\r\n";
@@ -944,6 +944,13 @@ sub do_cgi
 	#	($ENV{AUTH_TYPE}, $ENV{REMOTE_USER}) = ("None", "ppranon");
 	#	}
 
+	# If the client is hesitating to send the request body because its is big and
+	# it fears that we may reject the request, tell it to go ahead.
+	if($request_headers->{EXPECT} && $request_headers->{EXPECT} eq "100-continue")
+		{
+		print "HTTP/1.1 100 Continue\r\n\r\n";
+		}
+
 	print STDERR "Executing CGI program \"$script_filename\".\n" if($DEBUG > 0);
 
 	# Create two anonymous pipes, one to send data to the CGI script,
@@ -1039,49 +1046,103 @@ sub do_cgi
 	close(QUERY_READ) || die "close() failed, $!";
 	close(RESP_WRITE) || die "close() failed, $!";
 
-	# If the request method is POST then we need to send the
-	# posted data to the CGI program.  There may be other
-	# methods we have to do this for too.
+	# If the request method is POST then we need to send the posted data to
+	# the CGI program.  There may be other methods we have to do this for too.
 	if($method eq "POST")
 		{
-		my $countdown = $request_headers->{CONTENT_LENGTH};
-		if(!defined($countdown))
+		if(defined($request_headers->{TRANSFER_ENCODING}) && $request_headers->{TRANSFER_ENCODING} eq "chunked")
 			{
-			# Ouch!	 No content length!
-			die "411 This $method request needs a \"Content-Length:\" header.\n";
-			}
-
-		print STDERR "Sending $countdown bytes of form data.\n" if($DEBUG > 0);
-
-		my $count;
-		while($countdown > 0)
-			{
-			eval
-				{
-				alarm($POST_REQUEST_TIMEOUT);
-				$count = read(STDIN, $buffer, (($countdown > $POST_REQUEST_BUFSIZE) ? $POST_REQUEST_BUFSIZE : $countdown));
-				alarm(0);
+			eval {
+				my $line;
+				my $chunk_length;
+				my $buffer;
+				my $count;
+				do  {
+					alarm($POST_REQUEST_TIMEOUT);
+					$line = <STDIN>;
+					alarm(0);
+					$line =~ s/\s+$//;
+					$line =~ /^([0-9A-Fa-f]+)$/ || die "Invalid length \"$line\" in chunked upload";
+					$chunk_length = hex($1);
+					print STDERR "\$chunk_length=$chunk_length\n";
+					if($chunk_length > 0)
+						{
+						for(my $countdown = $chunk_length; $countdown > 0; $countdown -= $count)
+							{
+							print STDERR "\$countdown=$countdown\n";
+							alarm($POST_REQUEST_TIMEOUT);
+							$count = read(STDIN, $buffer, (($countdown > $POST_REQUEST_BUFSIZE) ? $POST_REQUEST_BUFSIZE : $countdown));
+							alarm(0);
+							if(! defined $count)
+								{
+								die("read() on socket failed, $!");
+								}
+							print STDERR "\$count=$count\n";
+							if($count <= 0)
+								{
+								die("read() returned $count while \$countdown = $countdown");
+								}
+							print QUERY_WRITE $buffer;
+							}
+						alarm($POST_REQUEST_TIMEOUT);
+						$line = <STDIN>;
+						alarm(0);
+						$line eq "\r\n" || die "Failed to find expected blank line in chunked encoding\n";
+						}
+					} while($chunk_length > 0);
+				print STDERR "Waiting for end of chunk footer\n";
+				do {
+					alarm($POST_REQUEST_TIMEOUT);
+					$line = <STDIN>;
+					alarm(0);
+					} while($line ne "\r\n");
+				print STDERR "End of chunk footer seen\n";
 				};
 			if($@)
 				{
 				die unless $@ eq "alarm\n";
 				die("Timeout after $POST_REQUEST_TIMEOUT seconds while waiting for POST data.");
 				}
-			if(! defined $count)
-				{
-				die("read() on socket failed, $!");
-				}
-			if($count <= 0)
-				{
-				die("read() returned $count while \$countdown = $countdown");
-				}
-			print QUERY_WRITE $buffer;
-			#print STDERR $buffer;
-			$countdown -= $count;
 			}
 
-		#print STDERR "\n";
-		}
+		elsif(defined(my $countdown = $request_headers->{CONTENT_LENGTH}))
+			{	
+			print STDERR "Sending $countdown bytes of form data.\n" if($DEBUG > 0);
+			my $buffer;
+			my $count;
+			while($countdown > 0)
+				{
+				eval
+					{
+					alarm($POST_REQUEST_TIMEOUT);
+					$count = read(STDIN, $buffer, (($countdown > $POST_REQUEST_BUFSIZE) ? $POST_REQUEST_BUFSIZE : $countdown));
+					alarm(0);
+					};
+				if($@)
+					{
+					die unless $@ eq "alarm\n";
+					die("Timeout after $POST_REQUEST_TIMEOUT seconds while waiting for POST data.");
+					}
+				if(! defined $count)
+					{
+					die("read() on socket failed, $!");
+					}
+				if($count <= 0)
+					{
+					die("read() returned $count while \$countdown = $countdown");
+					}
+				print QUERY_WRITE $buffer;
+				$countdown -= $count;
+				}
+			}
+
+		else
+			{
+			# Ouch!	 No content length!
+			die "411 This $method request needs a \"Content-Length:\" header.\n";
+			}
+
+		} # POST
 
 	close(QUERY_WRITE) || die "close() failed, $!";
 
@@ -1183,12 +1244,13 @@ sub do_cgi
 			}
 		}
 
-	# Chunked is desireable if no content length header was received from the
-	# CGI script and we will be returning an entity body.
+	# It is desirable to use changed mode for the response, if no Content-Length
+	# header was received from the CGI script and we will be returning an entity
+	# body.
 	my $chunked = (!defined($content_length) && $status != 304) ? 1 : 0;
 
-	# If chunked is not permitted, then we will have to close the connection
-	# after this response.
+	# If chunked is not permitted (because the HTTP version is too low), then we
+	# will have to close the connection after this response.
 	if($chunked && !($request_version_major > 1 || $request_version_minor >= 1))
 		{
 		$chunked = 0;
@@ -1268,9 +1330,9 @@ sub do_cgi
 		}
 	print "\r\n";
 
-	# Workaround for bug in CUPS 1.1.17 which doesn't handle chunked
-	# transfer encoding properly if the end of the header and the 
-	# start of the body are in one packet.
+	# Workaround for bug in CUPS 1.1.17 which doesn't handle responses using
+	# chunked transfer encoding properly if the end of the header and the 
+	# start of the body are in a single packet.
 	if($chunked && $content_type eq "application/ipp")
 		{
 		$| = 1;

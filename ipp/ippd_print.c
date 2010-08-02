@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_print.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 4 May 2007.
+** Last modified 2 August 2010.
 */
 
 /*
@@ -62,7 +62,7 @@ struct IPP_TO_PPR xlate_job_template[] =
 	{IPP_TAG_ZERO}
 	};
 
-static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i);
+static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i, gu_boolean expect_job_text);
 
 /*
  * Driver function for above tables.  It reads IPP attributes and appends
@@ -271,7 +271,7 @@ void ipp_print_job(struct IPP *ipp)
 		case IPP_PRINT_JOB:
 			/* Operation must be ipp-print-job */
 			{
-			int jobid = ipp_run_ppr(ipp, args, args_i);
+			int jobid = ipp_run_ppr(ipp, args, args_i, ipp->operation_id == IPP_PRINT_JOB);
 		
 			/* Include the job id, both in numberic form and in URI form. */
 			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
@@ -294,14 +294,14 @@ void ipp_print_job(struct IPP *ipp)
  */
 void ipp_send_document(struct IPP *ipp)
 	{
-	const char function[] = "ipp_send_document";
+	FUNCTION4DEBUG("ipp_send_document")
 
 	/* not yet implemented */
 	ipp->response_code = IPP_INTERNAL_ERROR;
 	}
 
 /* Run PPR and send it the job data. */
-static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i)
+static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i, gu_boolean expect_job_text)
 	{
 	const char function[] = "ipp_run_ppr";
 	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
@@ -353,24 +353,25 @@ static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i)
 		jobid_fds[1] = -1;
 	
 		/* Copy the job data to ppr. */
-		{
-		long int total = 0;
-		while((read_len = ipp_get_block(ipp, &p)) > 0)
+		if(expect_job_text)
 			{
-			/*DODEBUG(("Got %d bytes", read_len));*/
-			total += read_len;
-			while(read_len > 0)
+			long int total = 0;
+			while((read_len = ipp_get_block(ipp, &p)) > 0)
 				{
-				if((write_len = write(toppr_fds[1], p, read_len)) < 0)
-					gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
-				/*DODEBUG(("Wrote %d bytes", write_len));*/
-				read_len -= write_len;
-				p += write_len;
+				/*DODEBUG(("Got %d bytes", read_len));*/
+				total += read_len;
+				while(read_len > 0)
+					{
+					if((write_len = write(toppr_fds[1], p, read_len)) < 0)
+						gu_Throw("write() failed, errno=%d (%s)", errno, gu_strerror(errno));
+					/*DODEBUG(("Wrote %d bytes", write_len));*/
+					read_len -= write_len;
+					p += write_len;
+					}
 				}
+		
+			DODEBUG1(("Sent %ld bytes to ppr.", total));
 			}
-	
-		DODEBUG1(("Sent %ld bytes to ppr.", total));
-		}
 
 		close(toppr_fds[1]);
 		toppr_fds[1] = -1;

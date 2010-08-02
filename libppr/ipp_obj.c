@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_obj.c
-** Copyright 1995--2008, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 4 September 2008.
+** Last modified 2 August 2010.
 */
 
 /*! \file */
@@ -338,7 +338,7 @@ void ipp_parse_request(struct IPP *ipp)
 	#endif
 
 	if(ipp->bytes_left < 9)
-		gu_Throw("request is too short to be an IPP request");
+		gu_Throw("request is too short (%d bytes) to be an IPP request", ipp->bytes_left);
 
 	DODEBUG(("request for %s, %d bytes", ipp->path_info, ipp->bytes_left));
 

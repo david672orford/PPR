@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 July 2010.
+** Last modified 2 August 2010.
 */
 
 /*
@@ -436,11 +436,11 @@ int main(int argc, char *argv[])
 					/* not implemented */
 					break;
 				case IPP_VALIDATE_JOB:				/* REQUIRED */
-					/* ipp_print_job() will reframe from actually printing when sees operation-id */
+					/* ipp_print_job() will refrain from actually printing when sees operation-id */
 					p_handler = ipp_print_job;
 					break;
 				case IPP_CREATE_JOB:				/* OPTIONAL */
-					/* not implemented */
+					/* ipp_print_job() will not expect job text when it sees operation-id */
 					p_handler = ipp_print_job;
 					break;
 				case IPP_SEND_DOCUMENT:				/* OPTIONAL */

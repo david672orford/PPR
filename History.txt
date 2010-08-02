@@ -10136,4 +10136,6 @@ no final tarball was released.
 
 * www/cgi_data.pl: added print_stripped()
 
+* www/ppr-httpd.perl: added support for "Expect: 100-continue".
+
 

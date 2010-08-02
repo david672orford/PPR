@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 July 2010.
+** Last modified 2 August 2010.
 */
 
 /*
@@ -2238,7 +2238,8 @@ int main(int argc, char *argv[])
 		fclose(f);
 
 		submit_job(&qentry, 0);
-		return PPREXIT_OK;
+
+		goto skeleton_skip_point;
 		}
 
 	/*
@@ -2577,6 +2578,8 @@ int main(int argc, char *argv[])
 		*/
 		submit_job(&qentry, 0);
 		}
+
+	skeleton_skip_point:
 
 	/*
 	** We are done with the communications channel to
