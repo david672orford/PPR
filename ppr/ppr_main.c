@@ -325,7 +325,7 @@ static void write_feature_lines(FILE *qfile)
 */
 static void assert_ok_value(const char value[], gu_boolean null_ok, gu_boolean empty_ok, gu_boolean entirely_whitespace_ok, const char name[], gu_boolean is_argument)
 	{
-	if(value == (const char *)NULL)
+	if(!value)
 		{
 		if(!null_ok)
 			fatal(PPREXIT_OTHERERR, _("NULL value for %s%s"), name, is_argument ? _(" argument") : "");
@@ -2075,7 +2075,7 @@ int main(int argc, char *argv[])
 		int len = 128;
 		char *line = NULL;
 		int optchar;
-		char **optname, **optarg;
+		char *optname, *optarg;
 
 		ppr_fnamef(temp, "%s/%s-%d.%d-cmdline", DATADIR, qentry.jobname.destname, qentry.jobname.id, qentry.jobname.subid);
 		if(!(f = fopen(temp, "r")))
@@ -2083,11 +2083,12 @@ int main(int argc, char *argv[])
 
 		while((line = gu_getline(line, &len, f)))
 			{
-			*optarg = NULL;
+			/* printf("line=\"%s\"\n", line); */
+			optarg = NULL;
 			gu_sscanf(line, "%d %S %T", &optchar, &optname, &optarg);
-			doopt_pass2(optchar, *optarg, *optname);
+			doopt_pass2(optchar, optarg, optname);
 			gu_free_if(optname);
-			gu_free_if(optarg);
+			/* gu_free_if(optarg); */	/* doopt_pass2() will have saved pointers to this */
 			}
 
 		fclose(f);
@@ -2226,13 +2227,15 @@ int main(int argc, char *argv[])
 
 		while((optchar = ppr_getopt(&getopt_state)) != -1)
 			{
-			if(strcmp(getopt_state.name, "--skeleton-create") != 0)
-				{
-				if(getopt_state.optarg)
-					fprintf(f, "%d %s %s\n", optchar, getopt_state.name, getopt_state.optarg);
-				else
-					fprintf(f, "%d %s\n", optchar, getopt_state.name);
-				}
+			if(strcmp(getopt_state.name, "--skeleton-create") == 0)
+				continue;
+			if(strcmp(getopt_state.name, "--print-id-to-fd") == 0)
+				continue;
+
+			if(getopt_state.optarg)
+				fprintf(f, "%d %s %s\n", optchar, getopt_state.name, getopt_state.optarg);
+			else
+				fprintf(f, "%d %s\n", optchar, getopt_state.name);
 			}
 
 		fclose(f);
