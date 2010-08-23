@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 2 August 2010.
+# Last modified 22 August 2010.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -1064,12 +1064,12 @@ sub do_cgi
 					$line =~ s/\s+$//;
 					$line =~ /^([0-9A-Fa-f]+)$/ || die "Invalid length \"$line\" in chunked upload";
 					$chunk_length = hex($1);
-					print STDERR "\$chunk_length=$chunk_length\n";
+					#print STDERR "\$chunk_length=$chunk_length\n";
 					if($chunk_length > 0)
 						{
 						for(my $countdown = $chunk_length; $countdown > 0; $countdown -= $count)
 							{
-							print STDERR "\$countdown=$countdown\n";
+							#print STDERR "\$countdown=$countdown\n";
 							alarm($POST_REQUEST_TIMEOUT);
 							$count = read(STDIN, $buffer, (($countdown > $POST_REQUEST_BUFSIZE) ? $POST_REQUEST_BUFSIZE : $countdown));
 							alarm(0);
@@ -1090,13 +1090,13 @@ sub do_cgi
 						$line eq "\r\n" || die "Failed to find expected blank line in chunked encoding\n";
 						}
 					} while($chunk_length > 0);
-				print STDERR "Waiting for end of chunk footer\n";
+				#print STDERR "Waiting for end of chunk footer\n";
 				do {
 					alarm($POST_REQUEST_TIMEOUT);
 					$line = <STDIN>;
 					alarm(0);
 					} while($line ne "\r\n");
-				print STDERR "End of chunk footer seen\n";
+				#print STDERR "End of chunk footer seen\n";
 				};
 			if($@)
 				{
