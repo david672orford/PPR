@@ -1050,7 +1050,7 @@ sub do_cgi
 	# the CGI program.  There may be other methods we have to do this for too.
 	if($method eq "POST")
 		{
-		if(defined($request_headers->{TRANSFER_ENCODING}) && $request_headers->{TRANSFER_ENCODING} eq "chunked")
+		if(defined($request_headers->{TRANSFER_ENCODING}) && $request_headers->{TRANSFER_ENCODING} =~ /^chunked$/i)
 			{
 			eval {
 				my $line;
