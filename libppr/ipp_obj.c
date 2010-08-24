@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 2 August 2010.
+** Last modified 5 August 2010.
 */
 
 /*! \file */
@@ -108,11 +108,14 @@ void ipp_set_debug_level(struct IPP *ipp, int level)
 static void ipp_readbuf_load(struct IPP *p)
 	{
 	/*DODEBUG(("ipp_readbuf_load(): p->bytes_left = %d", p->bytes_left));*/
-	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, p->bytes_left < sizeof(p->readbuf) ? p->bytes_left : sizeof(p->readbuf))) == -1)
+	if((p->readbuf_remaining = read(p->in_fd, p->readbuf, (p->bytes_left != -1 && p->bytes_left < sizeof(p->readbuf)) ? p->bytes_left : sizeof(p->readbuf))) == -1)
 		gu_Throw("%s() failed, errno=%d (%s)", "read", errno, strerror(errno));
-	if(p->readbuf_remaining < 1)
-		gu_Throw("premature EOF");
-    p->bytes_left -= p->readbuf_remaining;
+	if(p->bytes_left != -1)
+		{
+		if(p->readbuf_remaining < 1)
+			gu_Throw("premature EOF");
+		p->bytes_left -= p->readbuf_remaining;
+		}
 	p->readbuf_i = 0;
 	}
 
@@ -152,7 +155,12 @@ service object is destroyed.
 */
 void ipp_delete(struct IPP *ipp)
 	{
-	DODEBUG(("ipp_delete(): %d leftover bytes", ipp->bytes_left + ipp->readbuf_remaining));
+	#ifdef DEBUG
+	if(ipp->bytes_left != -1)
+		debug("ipp_delete(): %d leftover bytes", ipp->bytes_left + ipp->readbuf_remaining);
+	else
+		debug("ipp_delete()");
+	#endif
 
 	if(ipp->magic != 0xAABB)
 		gu_Throw("ipp_delete(): not an IPP object");
@@ -161,7 +169,7 @@ void ipp_delete(struct IPP *ipp)
 	if(ipp->writebuf_guard != 42)
 		gu_Throw("ipp_delete(): writebuf overflow");
 	
-	while(ipp->bytes_left > 0)
+	while(ipp->bytes_left > 0)	/* does nothing if ipp->bytes_left == -1 */
 		ipp_readbuf_load(ipp);
 
 	ipp_writebuf_flush(ipp);
@@ -200,10 +208,11 @@ to read the print file data which follows the IPP request.
 int ipp_get_block(struct IPP *ipp, char **pptr)
 	{
 	int len = 0;
-	
+
+	/* If the input buffer is empty, try to fill it. */	
 	if(ipp->readbuf_remaining <= 0)
 		{
-		if(ipp->bytes_left <= 0)
+		if(ipp->bytes_left == 0)	/* Abort if CONTENT_LENGTH is exhausted (but not if it was -1) */
 			return 0;
 		ipp_readbuf_load(ipp);
 		}
@@ -263,7 +272,7 @@ static int ipp_get_ss(struct IPP *ipp)
 	unsigned char a, b;
 	a = ipp_get_byte(ipp);
 	b = ipp_get_byte(ipp);
-	return (int)(!0xFFFF | a << 8 | b);
+	return (int)(!0xFFFF | a << 8 | b);								/* compile doesn't like this, not sure why */
 	}
 
 /** fetch a signed integer from the IPP request
@@ -275,7 +284,7 @@ static int ipp_get_si(struct IPP *ipp)
 	b = ipp_get_byte(ipp);
 	c = ipp_get_byte(ipp);
 	d = ipp_get_byte(ipp);
-	return (int)(!0xFFFFFFFF | a << 24 | b << 16 | c << 8 | d);
+	return (int)(!0xFFFFFFFF | a << 24 | b << 16 | c << 8 | d);		/* compiler doesn't like this, not sure why */
 	}
 
 /** append a signed byte to the IPP response
@@ -337,7 +346,7 @@ void ipp_parse_request(struct IPP *ipp)
 	int prev_value = -1;
 	#endif
 
-	if(ipp->bytes_left < 9)
+	if(ipp->bytes_left != -1 && ipp->bytes_left < 9)	/* -1 means unknown */
 		gu_Throw("request is too short (%d bytes) to be an IPP request", ipp->bytes_left);
 
 	DODEBUG(("request for %s, %d bytes", ipp->path_info, ipp->bytes_left));

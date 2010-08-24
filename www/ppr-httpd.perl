@@ -1002,17 +1002,21 @@ sub do_cgi
 			delete $ENV{REMOTE_HOST};					# not implemented
 			delete $ENV{REMOTE_IDENT};					# not implemented
 
-			# The method GET has no uploaded entity body.  POST and
-			# PUT do.
+			# The method GET has no uploaded entity body.
+			# POST and PUT do.
 			if($method eq "GET")
 				{
 				delete $ENV{CONTENT_TYPE};
 				delete $ENV{CONTENT_LENGTH};
 				}
-			else
+			else	# POST and PUT
 				{
 				$ENV{CONTENT_TYPE} = $request_headers->{CONTENT_TYPE};
 				$ENV{CONTENT_LENGTH} = $request_headers->{CONTENT_LENGTH};
+				if(!defined($ENV{CONTENT_LENGTH}))		# for chunked upload
+					{
+					$ENV{CONTENT_LENGTH} = -1;
+					}		
 				}
 
 			# Other request headers should be converted to environment variables

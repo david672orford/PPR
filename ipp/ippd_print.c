@@ -224,6 +224,8 @@ void ipp_print_job(struct IPP *ipp)
 	if(!(destname = printer_uri_validate(printer_uri, NULL)))
 		{
 		ipp->response_code = IPP_NOT_FOUND;
+		ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_TEXT,
+                    "status-message", _("Requested print queue not found"));
 		return;
 		}
 
@@ -271,7 +273,7 @@ void ipp_print_job(struct IPP *ipp)
 		case IPP_PRINT_JOB:
 			/* Operation must be ipp-print-job */
 			{
-			int jobid = ipp_run_ppr(ipp, args, args_i, ipp->operation_id == IPP_PRINT_JOB);
+			int jobid = ipp_run_ppr(ipp, args, args_i, ipp->operation_id);
 		
 			/* Include the job id, both in numberic form and in URI form. */
 			ipp_add_integer(ipp, IPP_TAG_JOB, IPP_TAG_INTEGER, "job-id", jobid);
@@ -287,21 +289,130 @@ void ipp_print_job(struct IPP *ipp)
 			break;
 		}
 
+	gu_free(args);
 	} /* ipp_print_job() */
 
 /*
  * Handle IPP_SEND_DOCUMENT.
+  <ipp>
+  <request>
+   <version-number>1.1</version-number>
+   <operation-id>Send-Document</operation-id>
+   <request-id>1</request-id>
+  <operation-attributes>
+   <charset>
+    <name>attributes-charset</name>
+    <value>utf-8</value>
+   </charset>
+   <naturalLanguage>
+    <name>attributes-natural-language</name>
+    <value>ru-ru</value>
+   </naturalLanguage>
+   <uri>
+    <name>printer-uri</name>
+    <value>ipp://localhost:631/printers/paints_usb</value>
+   </uri>
+   <integer>
+    <name>job-id</name>
+    <value>1013</value>
+   </integer>
+   <nameWithoutLanguage>
+    <name>requesting-user-name</name>
+    <value>david</value>
+   </nameWithoutLanguage>
+   <nameWithoutLanguage>
+    <name>document-name</name>
+    <value>3toLBx</value>
+   </nameWithoutLanguage>
+   <mimeMediaType>
+    <name>document-format</name>
+    <value>application/octet-stream</value>
+   </mimeMediaType>
+   <boolean>
+    <name>last-document</name>
+    <value>[1 byte value]</value>
+   </boolean>
+  </operation-attributes>
+  </request>
+  </ipp>
+
  */
 void ipp_send_document(struct IPP *ipp)
 	{
 	FUNCTION4DEBUG("ipp_send_document")
+	struct URI *printer_uri;
+	const char *destname;
+	int job_id;
+	char job_id_str[10];
+	const char *user_at_host;
+	const char **args;			/* ppr command line */
+	int args_i;
+	int args_space;
 
-	/* not yet implemented */
-	ipp->response_code = IPP_INTERNAL_ERROR;
+	DODEBUG(("%s()", function));	
+	if(!(printer_uri = ipp_claim_uri(ipp, IPP_TAG_OPERATION, "printer-uri")))
+		{
+		DODEBUG(("%s(): printer-uri not specified", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+	if(!(destname = printer_uri_validate(printer_uri, NULL)))
+		{
+		DODEBUG(("%s(): printer does not exist", function));
+		ipp->response_code = IPP_NOT_FOUND;
+		return;
+		}
+	if(!((job_id = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "job-id")) > 0))
+		{
+		DODEBUG(("%s(): job-id is missing or invalid", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+	if(!(ipp_claim_boolean(ipp, IPP_TAG_OPERATION, "last-document", FALSE)))
+		{
+		DODEBUG(("%s(): last-document is not set", function));
+		ipp->response_code = IPP_BAD_REQUEST;
+		return;
+		}
+
+	/* Allocate some space for the PPR arguments. */
+	args_space = 64;
+	args = gu_realloc(NULL, args_space, sizeof(char*));
+
+	/* Basic arguments */
+	args_i = 0;
+	args[args_i++] = PPR_PATH;
+	args[args_i++] = "-d"; args[args_i++] = destname;
+
+	args[args_i++] = "--skeleton-jobid";
+	gu_snprintf(job_id_str, sizeof(job_id_str), "%d", job_id);
+	args[args_i++] = job_id_str;
+
+	/* !!! Is the client required to supply requesting-user-name on Send-Document? !!! */
+	user_at_host = extract_identity(ipp, FALSE);
+	args[args_i++] = "-u"; args[args_i++] = user_at_host;
+	args[args_i++] = "-f"; args[args_i++] = user_at_host;
+	args[args_i++] = "--responder"; args[args_i++] = "followme";
+	args[args_i++] = "--responder-address"; args[args_i++] = user_at_host;
+
+	/* Try to sweep up anything else the client may have supplied so as to avoid
+	   reporting unsupported attributes. */
+	ipp->request_attrs = convert_attributes(ipp, ipp->request_attrs, IPP_TAG_OPERATION, xlate_operation, &args, &args_i, &args_space);
+	ipp->request_attrs  = convert_attributes(ipp, ipp->request_attrs, IPP_TAG_JOB, xlate_job_template, &args, &args_i, &args_space);
+
+	#ifdef DEBUG
+	{
+	int i;
+	for(i=0; i<args_i; i++)
+		debug("args[%d]=\"%s\"", i, args[i]);
+	}
+	#endif
+
+	ipp_run_ppr(ipp, args, args_i, ipp->operation_id);
 	}
 
 /* Run PPR and send it the job data. */
-static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i, gu_boolean expect_job_text)
+static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i, int operation_id)
 	{
 	const char function[] = "ipp_run_ppr";
 	int toppr_fds[2] = {-1, -1};	/* for sending print data to ppr */
@@ -353,7 +464,7 @@ static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i, gu_boole
 		jobid_fds[1] = -1;
 	
 		/* Copy the job data to ppr. */
-		if(expect_job_text)
+		if(operation_id != IPP_CREATE_JOB)
 			{
 			long int total = 0;
 			while((read_len = ipp_get_block(ipp, &p)) > 0)
@@ -375,16 +486,18 @@ static int ipp_run_ppr(struct IPP *ipp, const char *args[], int args_i, gu_boole
 
 		close(toppr_fds[1]);
 		toppr_fds[1] = -1;
-	
-		/* If the job was sucessful, ppr will have printed the jobid to our return pipe. */
-		if((read_len = read(jobid_fds[0], jobid_buf, sizeof(jobid_buf))) == -1)
-			gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
-		if(read_len <= 0)
-			gu_Throw("read %d bytes as jobid", read_len);
-		jobid_buf[read_len < sizeof(jobid_buf) ? read_len : sizeof(jobid_buf) - 1] = '\0';
-		jobid = atoi(jobid_buf);
-		DODEBUG1(("jobid is %d\n", jobid));		/* extra lf for blank line */
-		
+
+		if(operation_id != IPP_SEND_DOCUMENT)
+			{	
+			/* If the job was sucessful, ppr will have printed the jobid to our return pipe. */
+			if((read_len = read(jobid_fds[0], jobid_buf, sizeof(jobid_buf))) == -1)
+				gu_Throw("read() failed, errno=%d (%s)", errno, gu_strerror(errno));
+			if(read_len <= 0)
+				gu_Throw("read %d bytes as jobid", read_len);
+			jobid_buf[read_len < sizeof(jobid_buf) ? read_len : sizeof(jobid_buf) - 1] = '\0';
+			jobid = atoi(jobid_buf);
+			DODEBUG1(("jobid is %d\n", jobid));		/* extra lf for blank line */
+			}
 		}
 	gu_Final
 		{

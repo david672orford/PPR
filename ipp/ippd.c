@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 2 August 2010.
+** Last modified 5 August 2010.
 */
 
 /*
@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 			gu_Throw("CONTENT_TYPE is not application/ipp");
 		if(!(path_info = getenv("PATH_INFO")) || strlen(path_info) < 1)
 			gu_Throw("PATH_INFO is missing");
-		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) < 0)
+		if(!(p = getenv("CONTENT_LENGTH")) || (content_length = atoi(p)) == 0)
 			gu_Throw("CONTENT_LENGTH is missing or invalid");
 
 		/* These CGI variables comprise the full URL of this "script".

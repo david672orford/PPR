@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 1 June 2010.
+** Last modified 5 August 2010.
 */
 
 /*
@@ -499,7 +499,7 @@ static gu_boolean extract_jobid(struct IPP *ipp, const char **destname, int *job
 			ipp->request_attrs = NULL;
 			return FALSE;
 			}
-		if((*job_id = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "job-id")) > 0)
+		if((*job_id = ipp_claim_positive_integer(ipp, IPP_TAG_OPERATION, "job-id")) <= 0)
 			{
 			DODEBUG(("%s(): job-id missing", function));
 			ipp->response_code = IPP_BAD_REQUEST;
@@ -674,6 +674,8 @@ void ipp_X_job(struct IPP *ipp)
 			pprd_call("IPP %d %d\n", ipp->operation_id, id)
 			);
 		DODEBUG(("%s(): pprd says: %s", function, ipp_status_code_to_str(ipp->response_code)));
+
+		break;		/* If we get as far as here, we are done. */
 		}
 	
 	closedir(dir);
