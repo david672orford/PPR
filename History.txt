@@ -10140,6 +10140,14 @@ no final tarball was released.
 
 * www/ppr-httpd.perl: added support for chunked POST upload
 
+* libppr/ipp_obj.c: added support for chunked upload (which does not have
+  a Content-Length header.
+
+* ipp/ippd_run.c: fixed IPP_CANCEL_JOB when the job is specified by 
+  printer URI and job id.
+
+* ipp/ippd.c, ippd_print.c: added support for Create-Job and Send-Document.
+
 
 
 

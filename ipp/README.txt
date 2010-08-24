@@ -1,12 +1,21 @@
 mouse:~ppr/src/ipp/README.txt
-1 June 2006
+24 August 2010
 
 This directory contains PPR's IPP server.
 
-PPR will soon implement IPP 1.0 and 1.1 as well as the CUPS extensions.  It can
-already work to some extent with many IPP clients intended for use with CUPS.
-These include the CUPS command-line programs lp, lpr, lpq, lpstat, etc., as
-well as KDE's printing subsystem, Openoffice.org, and Mozilla.
+=== Introduction ===
+
+PPR implements much of IPP 1.0 as well as the CUPS extensions to IPP. It works
+with most IPP clients intended for use with CUPS. These include the CUPS
+command-line programs lp, lpr, lpq, lpstat, etc., as well as KDE's printing
+subsystem, Openoffice.org, and Mozilla.
+
+=== Setup ===
+
+1) Disable cupsd or switch it to a port other than 631 by changing the Listen
+   line in /etc/cups/cupsd.conf. If there is a Listen line for cups.sock,
+   disable it.
+2) Restart pprd.
 
 === Notes on CUPS cancel ===
 
