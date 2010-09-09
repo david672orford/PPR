@@ -103,10 +103,15 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE
 			"printer-state-reasons", state_reasons_count, state_reasons);
 		}
 
-	if(request_attrs_attr_requested(req, "printer-state-message") && state_message)
+	if(request_attrs_attr_requested(req, "printer-state-message"))
 		{
+		/* Note that if state_message is NULL, we add the attribute
+		 * anyway with an empty string value. We do this because
+		 * GTK 2.20.1 does not handle a missing printer-state-message
+		 * properly and segfaults.
+		 */
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT,
-			"printer-state-message", state_message);
+			"printer-state-message", state_message ? state_message : "");
 		}
 	}
 
