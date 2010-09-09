@@ -47,7 +47,7 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE
 	int state;
 	const char *state_reasons[10];
 	int state_reasons_count = 0;
-	const char *state_message = NULL;
+	char *state_message = NULL;
 
 	switch(queueinfo_status(qip))
 		{
@@ -58,34 +58,60 @@ static void printer_add_status(struct IPP *ipp, struct REQUEST_ATTRS *req, QUEUE
 			state = IPP_PRINTER_PROCESSING;
 			break;
 		case PRNSTATUS_CANCELING:
+			state = IPP_PRINTER_PROCESSING;
+			state_message = _("canceling current job");
+			break;
 		case PRNSTATUS_SEIZING:
 			state = IPP_PRINTER_PROCESSING;
+			state_message = _("seizing current job");
 			break;
 		case PRNSTATUS_STOPPING:
+			state = IPP_PRINTER_PROCESSING;
+			state_reasons[state_reasons_count++] = "moving-to-paused";
+			state_message = _("stopping");
+			break;
 		case PRNSTATUS_HALTING:
 			state = IPP_PRINTER_PROCESSING;
 			state_reasons[state_reasons_count++] = "moving-to-paused";
+			state_message = _("halting");
 			break;
 		case PRNSTATUS_STOPT:
 			state = IPP_PRINTER_STOPPED;
 			state_reasons[state_reasons_count++] = "paused";
+			state_message = _("stopt");
 			break;
 		case PRNSTATUS_FAULT:
 			state = IPP_PRINTER_STOPPED;
 			state_reasons[state_reasons_count++] = "other";
+			{
+			int retry, countdown;
+			queueinfo_retry(qip, &retry, &countdown);
+			gu_asprintf(&state_message,
+				_("fault, retry %d in %d seconds"),
+				retry, countdown);
+			}
 			break;
 		case PRNSTATUS_ENGAGED:
 			state = IPP_PRINTER_STOPPED;
 			state_reasons[state_reasons_count++] = "connecting-to-device";
+			{
+			int retry, countdown;
+			queueinfo_retry(qip, &retry, &countdown);
+			gu_asprintf(&state_message,
+				_("otherwise engaged or off-line, retry %d in %d seconds"),
+				retry, countdown);
+			}
 			break;
 		case PRNSTATUS_STARVED:
 			state = IPP_PRINTER_STOPPED;
 			state_reasons[state_reasons_count++] = "other";
+			state_message = "Starved for system resources";
 			break;
 		default:
 			debug("invalid printer state");
 			state = IPP_PRINTER_IDLE;
 			state_reasons[state_reasons_count++] = "other";
+			state_message = "Printer is in an invalid state";
 			break;
 		}
 

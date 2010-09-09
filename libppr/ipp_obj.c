@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 5 August 2010.
+** Last modified 9 September 2010.
 */
 
 /*! \file */
@@ -767,6 +767,7 @@ void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int
  * The formatting is done immediately, so the values can be destroyed
  * as soon as the call returns.
 */
+#if 0
 void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
 	{
 	ipp_attribute_t *ap;
@@ -788,6 +789,7 @@ void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], cons
 	va_end(va);
 	GU_OBJECT_POOL_POP(ipp->pool);
 	}
+#endif
 
 /** add a very basic formatted string to the IPP response
  *

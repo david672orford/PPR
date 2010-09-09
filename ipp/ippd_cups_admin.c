@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd_cups_admin.c
-** Copyright 1995--2008, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 3 September 2008.
+** Last modified 9 September 2010.
 */
 
 /*
@@ -37,10 +37,10 @@ void cups_get_devices(struct IPP *ipp)
 	int iii;
 	for(iii=0; iii < 10; iii++)
 		{
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "device-class", gu_strdup("file"));
-		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-info", "Acme Port %d", iii);
-		ipp_add_printf(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-make-and-model", "unknown");
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_strdup("file:///x"));
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "device-class", "file");
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-info", gu_asprintf("Acme Port %d", iii));
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-make-and-model", "unknown");
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_asprintf("file:///tmp/out-%d.ps", iii));
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	} /* cups_get_devices() */

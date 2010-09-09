@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_utils.h
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 9 March 2007.
+** Last modified 9 September 2010.
 */
 
 /*! \file
@@ -149,11 +149,13 @@ void ipp_add_out_of_band(struct IPP *ipp, int group_tag, int value_tag, const ch
 void ipp_add_integers(struct IPP *ipp, int group, int tag, const char name[], int num_values, int values[]);
 void ipp_add_string(struct IPP *ipp, int group, int tag, const char name[], const char value[]);
 void ipp_add_strings(struct IPP *ipp, int group, int tag, const char name[], int num_values, const char *values[]);
+#if 0
 void ipp_add_printf(struct IPP *ipp, int group, int tag, const char name[], const char value[], ...)
 	#ifdef __GNUC__
 	__attribute__ (( format (printf, 5, 6) ))
 	#endif
 	;
+#endif
 void ipp_add_template(struct IPP *ipp, int group, int tag, const char name[], const char template[], ...)
 	#ifdef __GNUC__
 	__attribute__ (( format (printf, 5, 6) ))
