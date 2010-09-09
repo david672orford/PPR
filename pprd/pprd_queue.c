@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 July 2010.
+** Last modified 9 September 2010.
 */
 
 /*
@@ -64,7 +64,8 @@ static void delete_job_files(const char *queuename, int id, int subid)
 	} /* end of delete_job_files() */
 
 /*===========================================================================
-** Unlink a job and remove its entry from the queue array.
+** Adjust the number of jobs in a queue up or down by the indicated
+** amount and update the queue's (printer's or group's) spool_state file.
 ===========================================================================*/
 static void job_count_adjust(int destid, int increment, gu_boolean flush)
 	{
@@ -115,8 +116,8 @@ void queue_dequeue_job(int destid, int id, int subid)
 					sizeof(struct QEntry) * (queue_entries-x-1) );
 				}
 
-			queue_entries--;					/* one less in queue */
-			job_count_adjust(destid, -1, TRUE);
+			queue_entries--;					/* one less (overall) in queue */
+			job_count_adjust(destid, -1, TRUE);	/* in lese in destionation's queue */
 			break;								/* and we needn't look farther */
 			}
 		}

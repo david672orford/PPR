@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 22 August 2010.
+# Last modified 9 September 2010.
 #
 
 use lib "@PERL_LIBDIR@";
@@ -27,7 +27,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 1;	# 1 for basic debugging, 2 to show request headers
+my $DEBUG = 2;	# 1 for basic debugging, 2 to show request headers
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.
@@ -159,21 +159,6 @@ if(scalar @ARGV >= 1)
 	}
 
 #===========================================================
-# If we are running in the foreground, leave STDERR alone.
-# Otherwise, if we have access, send STDERR to a debugging
-# file, otherwise throw it away.  We must do something
-# with it so it doesn't corrupt the HTTP transaction.
-#===========================================================
-if(defined $ENV{TCPBIND_FOREGROUND})
-	{
-	print STDERR "Running in foreground mode, log goes to stderr.\n";
-	}
-else
-	{
-	open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
-	}
-
-#===========================================================
 # Start of connection handling code.
 #===========================================================
 
@@ -195,27 +180,28 @@ else
 	$REMOTE_PORT = 0;
 	}
 }
-print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n" if($DEBUG > 0);
 
 #===========================================================
-# Possibly switch to client-private log file.
+# If we are running in the foreground, leave STDERR alone.
+# Otherwise, if we have access, send STDERR to a debugging
+# file, otherwise throw it away.  We must do something
+# with it so it doesn't corrupt the HTTP transaction.
 #===========================================================
-
-{
-my $private_logfile = "$LOGDIR/ppr-httpd-$ENV{REMOTE_ADDR}";
-if(-w $private_logfile)
+if(defined $ENV{TCPBIND_FOREGROUND})
 	{
-	print STDERR "Connection log is \"$private_logfile\".\n" if($DEBUG > 0);
-	if(open(STDERR, ">>$private_logfile"))
-		{
-		print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n" if($DEBUG > 0);
-		}
-	else
-		{
-		print STDERR "Failed to switch to private log file: $!\n";
-		}
+	print STDERR "Running in foreground mode, log goes to stderr.\n";
 	}
-}
+elsif($DEBUG && $ENV{REMOTE_ADDR} ne "")
+	{
+	open(STDERR, ">>$LOGDIR/ppr-httpd-$ENV{REMOTE_ADDR}") || open(STDERR, ">/dev/null") || die $!;
+	}
+else
+	{
+	open(STDERR, ">>$LOGDIR/ppr-httpd") || open(STDERR, ">/dev/null") || die $!;
+	}
+
+# First log entry
+print STDERR "Connect from \"$ENV{REMOTE_ADDR}:$REMOTE_PORT\", PID=$$.\n" if($DEBUG > 0);
 
 #===========================================================
 # Main Request Loop
@@ -1111,7 +1097,7 @@ sub do_cgi
 
 		elsif(defined(my $countdown = $request_headers->{CONTENT_LENGTH}))
 			{	
-			print STDERR "Sending $countdown bytes of form data.\n" if($DEBUG > 0);
+			print STDERR "$countdown bytes of POST data to send to CGI script.\n" if($DEBUG > 0);
 			my $buffer;
 			my $count;
 			while($countdown > 0)
@@ -1121,6 +1107,7 @@ sub do_cgi
 					alarm($POST_REQUEST_TIMEOUT);
 					$count = read(STDIN, $buffer, (($countdown > $POST_REQUEST_BUFSIZE) ? $POST_REQUEST_BUFSIZE : $countdown));
 					alarm(0);
+					print STDERR "Received $count bytes from client.\n" if($DEBUG > 0);
 					};
 				if($@)
 					{
@@ -1137,6 +1124,7 @@ sub do_cgi
 					}
 				print QUERY_WRITE $buffer;
 				$countdown -= $count;
+				print STDERR "$countdown bytes left to go.\n" if($DEBUG > 0);
 				}
 			}
 

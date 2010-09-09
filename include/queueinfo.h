@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/include/queueinfo.h
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 28 April 2006.
+** Last modified 9 September 2010.
 */
 
 /* An opaque type declaration */
@@ -37,6 +37,7 @@ int queueinfo_queued_job_count(QUEUE_INFO qip);
 const char *queueinfo_modelName(QUEUE_INFO qip);
 int queueinfo_accepting(QUEUE_INFO qip);
 int queueinfo_status(QUEUE_INFO qip);
+int queueinfo_retry(QUEUE_INFO qip, int *retry, int *countdown);
 int queueinfo_state_change_time(QUEUE_INFO qip);
 const char *queueinfo_membername(QUEUE_INFO qip, int index);
 

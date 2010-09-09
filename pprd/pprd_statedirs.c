@@ -30,7 +30,7 @@ void printer_spool_state_save(struct PRINTER_SPOOL_STATE *pstate, const char prn
 	char temp[128];
 	int len;
 	ppr_fnamef(fname, "%s/%s/spool_state", PRINTERS_PERSISTENT_STATEDIR, prnname);
-	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
+	if((fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
 	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d %d %d %d %d\n",
 		pstate->accepting,
@@ -54,7 +54,7 @@ void group_spool_state_save(struct GROUP_SPOOL_STATE *gstate, const char grpname
 	char temp[128];
 	int len;
 	ppr_fnamef(fname, "%s/%s/spool_state", GROUPS_PERSISTENT_STATEDIR, grpname);
-	if((fd = open(fname, O_WRONLY | O_CREAT, UNIX_644)) == -1)
+	if((fd = open(fname, O_WRONLY | O_CREAT | O_TRUNC, UNIX_644)) == -1)
 		fatal(0, "can't create \"%s\" for write, errno=%d (%s)", fname, errno, strerror(errno));
 	len = gu_snprintf(temp, sizeof(temp), "%d %d %d %d %d\n",
 		gstate->accepting,

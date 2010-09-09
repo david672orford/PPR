@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/libppr/queueinfo.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2010, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 31 May 2007.
+** Last modified 9 September 2010.
 */
 
 /*+ \file
@@ -964,6 +964,36 @@ int queueinfo_status(QUEUE_INFO qip)
 		{
 		struct PRINTER_INFO *pip = gu_pca_index(qip->printers, 0);
 		return pip->spool_state.status;
+		}
+	else
+		gu_Throw("shouldn't happen");
+	}
+
+/** Return the retry count and the time to the next retry.
+ */
+int queueinfo_retry(QUEUE_INFO qip, int *retry, int *countdown)
+	{
+	if(qip->group_spool_state_valid)
+		gu_Throw("not a printer");
+	else if(qip->printers > 0)
+		{
+		struct PRINTER_INFO *pip = gu_pca_index(qip->printers, 0);
+		switch(pip->spool_state.status)
+			{
+			case PRNSTATUS_FAULT:
+				*retry = pip->spool_state.next_error_retry;
+				*countdown = pip->spool_state.countdown;
+				break;
+			case PRNSTATUS_ENGAGED:
+				*retry = pip->spool_state.next_engaged_retry;
+				*countdown = pip->spool_state.countdown;
+				break;
+			default:
+				*retry = 0;
+				*countdown = 0;
+				break;
+			}
+		return 0;
 		}
 	else
 		gu_Throw("shouldn't happen");
