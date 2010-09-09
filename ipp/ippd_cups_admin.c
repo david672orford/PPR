@@ -35,12 +35,15 @@
 void cups_get_devices(struct IPP *ipp)
 	{
 	int iii;
+	char *p;
 	for(iii=0; iii < 10; iii++)
 		{
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_KEYWORD, "device-class", "file");
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-info", gu_asprintf("Acme Port %d", iii));
+		gu_asprintf(&p, "Acme Port %d", iii);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-info", p);
 		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_TEXT, "device-make-and-model", "unknown");
-		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", gu_asprintf("file:///tmp/out-%d.ps", iii));
+		gu_asprintf(&p, "file:///tmp/out-%d.ps", iii);
+		ipp_add_string(ipp, IPP_TAG_PRINTER, IPP_TAG_URI, "device-uri", p);
 		ipp_add_end(ipp, IPP_TAG_PRINTER);
 		}
 	} /* cups_get_devices() */
