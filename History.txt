@@ -7044,10 +7044,10 @@ line was being parsed twice.
 
 * Changed MAILPATH to SENDMAIL_PATH and eliminated MAILX.
 
-* Configure: applied fix from Tim Leamey <tcleamey@ucdavis.edu> for HP-UX
+* Configure: applied fix from Tim Leamy <tcleamey@ucdavis.edu> for HP-UX
   10.2.
 
-* pprd/ppop: applied patch from Tim Leamey <tcleamey@ucdavis.edu> to add
+* pprd/ppop: applied patch from Tim Leamy <tcleamey@ucdavis.edu> to add
   "ppop last" to move a job to the tail of the queue.
 
 * www/login_cookie.cgi.perl, docs_*.cgi.perl: added -T to the Perl invocation
@@ -9530,10 +9530,10 @@ no final tarball was released.
 
 * Configure: added missing FREEBSD section
 
-* Added OPENBSD support (thanks to Tim Leamey)
+* Added OPENBSD support (thanks to Tim Leamy)
 
 * pprd/pprd_destid.c: fixed to print "<invalid>" for negative destination
-  ID numbers and not just for those which are too high (thanks to Tim Leamey)
+  ID numbers and not just for those which are too high (thanks to Tim Leamy)
 
 * pprd/pprd_respond.c:respond() fixed to use "" as the printer name if
   prnid is -1
