@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 9 September 2010.
+# Last modified: 11 April 2011
 #
 
 use lib "@PERL_LIBDIR@";
@@ -27,7 +27,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 2;	# 1 for basic debugging, 2 to show request headers
+my $DEBUG = 0;	# 1 for basic debugging, 2 to show request headers
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.

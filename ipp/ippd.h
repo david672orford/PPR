@@ -7,14 +7,14 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 20 July 2010.
+** Last modified 9 September 2010.
 */
 
 /*! \file
 	\brief Function prototypes for the IPP server
 */
 
-#if 1				/* debug enable */
+#if 0				/* debug enable */
 #define DEBUG 2		/* debug level */
 #define DODEBUG1(a) debug a
 #else

@@ -7,7 +7,7 @@
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 2 August 2010.
+** Last modified 9 September 2010.
 */
 
 /*
@@ -207,7 +207,7 @@ static ipp_attribute_t* convert_attributes(
  */
 void ipp_print_job(struct IPP *ipp)
 	{
-	const char function[] = "ipp_print_job";
+	FUNCTION4DEBUG("ipp_print_job")
 	struct URI *printer_uri;
 	const char *destname;
 	const char *user_at_host;
