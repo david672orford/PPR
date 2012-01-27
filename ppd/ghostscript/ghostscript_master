@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2007, Trinity College Computing Center.
+*% Copyright 1995--2012, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -256,7 +256,7 @@
 *OpenUI *PrintoutMode: PickOne
 *OrderDependency: 20 AnySetup *PrintoutMode
 *DefaultPrintoutMode: None
-*PrintoutMode: None: ""
+*PrintoutMode None: ""
 *PrintoutMode Photo: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 720] /Quality (2880x720sw) /Dither (Adaptive) >> setpagedevice"
 *PrintoutMode Photo2: "<< /ImageType (2) /MediaType (Coated) /HWResolution [1440 1440] /Quality (1440x1440sw) /Dither (Adaptive) >> setpagedevice"
 *PrintoutMode Photo3: "<< /ImageType (2) /MediaType (Coated) /HWResolution [2880 1440] /Quality (2880x1440sw) /Dither (Adaptive) >> setpagedevice"
