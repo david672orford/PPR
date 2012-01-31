@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--4 March 2011
+2.00a1, 11 December 2004--15 April 2011
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10123,7 +10123,7 @@ no final tarball was released.
 
 * nonppr_vendors/ppd_hp/HP_LaserJet_3390.ppd: added
 
-* Added OPENBSD support (thanks to Tim Leamy)
+* Added OpenBSD support (thanks to Tim Leamy)
 
 * pprd/pprd_destid.c: fixed to print "<invalid>" for negative destination
   ID numbers and not just for those which are too high (thanks to Tim Leamy)
@@ -10154,7 +10154,5 @@ no final tarball was released.
 * ipp/ippd_destinations.c:printer_add_status() if printer-state-message is
   requested, return an empty string value rather than omitting it since
   the Gtk CUPS backend version 2.20.1 dereferences the null pointer.
-
-
 
 
