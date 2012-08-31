@@ -1,13 +1,13 @@
 #
 # mouse:~ppr/src/www/cgi_wizard.pl
-# Copyright 1995--2006, Trinity College Computing Center.
+# Copyright 1995--2012, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 6 July 2006.
+# Last modified: 31 August 2012
 #
 
 use 5.004;
@@ -22,6 +22,9 @@ sub do_wizard
 {
 my $wizard_table = shift;
 my $options = shift;
+my $page_started = 0;
+
+eval {
 
 # Assign default values to unset options.
 $options->{auth} = 0 if(!defined($options->{auth}));
@@ -67,10 +70,12 @@ my $action = &cgi_data_move("wiz_action", "");
 # this stack is popped.
 my @stack = split(/ /, $data{wiz_stack});
 
-# Debugging code
-#print STDERR "Page: $page\n";
-#print STDERR "Action: $action\n";
-#print STDERR "Stack: ", join(' ', @stack), "\n";
+if($options->{debug} > 2)
+	{
+	print STDERR "Page: $page\n";
+	print STDERR "Action: $action\n";
+	print STDERR "Stack: ", join(' ', @stack), "\n";
+	}
 
 # If this is this is the first appearance of this wizard or this is the
 # Finish page, demand authentication.  We ask for authentication on the
@@ -214,6 +219,8 @@ Vary: accept-language
 <link rel="prefetch" href="$options->{wiz_imgdir}exclaim.png">
 EndOfText1
 
+$page_started = 1;
+
 {
 my %noted;
 foreach my $prefetch_page (@$wizard_table)
@@ -287,7 +294,7 @@ print "\n  <!-- end of dopage() output -->\n\n" if($options->{debug} > 0);
 print "</td>\n</tr>\n";
 
 # This debug information helps to make the table rendering clearer.
-if($options->{debug} > 1)
+if($options->{debug} >= 10)
 	{
 	print "<tr>";
 	my $x;
@@ -392,6 +399,18 @@ print "</form>\n";
 
 # Print data at bottom of page for debugging.
 &cgi_debug_data() if($options->{debug});
+
+# Catch errors not caught above.
+}; if($@)
+	{
+	if(!$page_started)
+		{
+		print "Content-Type: text/html\n\n";
+		print "<html><head>Internal Fault<title></title></head><body>\n";
+		}
+	print "<p>Internal fault:", html($@), "</p>\n";
+	print STDERR $@;
+	}
 
 # And this is the last of the HTML document.
 print <<"Tail10";
