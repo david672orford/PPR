@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ppop/ppop_cmds_other.c
-** Copyright 1995--2007, Trinity College Computing Center.
+** Copyright 1995--2011, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 1 June 2007.
+** Last modified: 15 September 2011
 */
 
 /*
@@ -1683,7 +1683,7 @@ int command_ldest(const char *argv[])
 */
 int command_destination_comment_address(const char *argv[])
 	{
-	return ppop_destination(argv, 1);
+	return ppop_destination(argv, 2);
 	}
 
 /*
