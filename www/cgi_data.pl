@@ -1,13 +1,13 @@
 #
 # mouse:~ppr/src/misc/cgi_data.pl
-# Copyright 1995--2010, Trinity College Computing Center.
+# Copyright 1995--2012, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 28 April 2010.
+# Last modified: 30 March 2012
 #
 
 =head1 cgi_data.pl
@@ -203,6 +203,10 @@ sub html_value
 =item form_urlencoded()
 
 This function applies form encoding to the name=value pair supplied.
+
+FIXME: add "-_.~" to the characters not encoded
+       See: http://en.wikipedia.org/wiki/Percent-encoding
+       See: http://docs.python.org/library/urllib.html#urllib.quote_plus
 
 =cut
 sub form_urlencoded

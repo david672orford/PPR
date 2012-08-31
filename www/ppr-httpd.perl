@@ -1,14 +1,14 @@
 #! @PERL_PATH@ -wT
 #
 # mouse:~ppr/src/www/ppr-httpd.perl
-# Copyright 1995--2010, Trinity College Computing Center.
+# Copyright 1995--2012, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified: 11 April 2011
+# Last modified: 17 April 2012
 #
 
 use lib "@PERL_LIBDIR@";
