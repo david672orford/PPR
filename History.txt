@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--15 April 2011
+2.00a1, 11 December 2004--5 September 2012
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10154,5 +10154,13 @@ no final tarball was released.
 * ipp/ippd_destinations.c:printer_add_status() if printer-state-message is
   requested, return an empty string value rather than omitting it since
   the Gtk CUPS backend version 2.20.1 dereferences the null pointer.
+
+* www/ppr-httpd.perl, ipp/ippd.c: disabled chunked mode for PPD download since
+  it causes crashes in Gtk+ in Ubuntu 12.04. The problem is that the Gtk+
+  CUPS backend assumes that the response will not be chunked and passes the
+  network connexion file descriptor to the CUPS client's ppdOpenFd().
+  It then fails to test the pointer returned by ppdFindOption(ppd, "PageSize")
+  for NULLness. The result is a segfault if the chunking damages the
+  relevant part of the PPD file.
 
 

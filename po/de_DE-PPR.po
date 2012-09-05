@@ -8,10 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-24 09:22-0400\n"
+"POT-Creation-Date: 2012-08-31 10:16-0400\n"
 "PO-Revision-Date: 2004-10-21 18:33+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -745,7 +746,7 @@ msgstr "Kann Schlüssel in Abschnitt nicht finden."
 msgid "value is not in the correct format"
 msgstr "der Wert ist nicht im korrekten Format"
 
-#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1492 ../ppr/ppr_editps.c:127
+#: ../libppr/cs2enc.c:57 ../libppr/queueinfo.c:1522 ../ppr/ppr_editps.c:127
 #: ../ppr/ppr_main.c:472 ../pprdrv/pprdrv_flag.c:260 ../pprdrv/pprdrv_log.c:68
 #: ../pprdrv/pprdrv_lw_messages.c:63 ../pprdrv/pprdrv_pjl_messages.c:70
 #: ../samba/ppr2samba.c:427
@@ -763,7 +764,7 @@ msgstr "Zu wenig Felder in \"%s\", Zeile %d"
 msgid "Non-boolean value in 3rd field of \"%s\" line %d"
 msgstr "Nicht-Bool Variable im dritten Feld von \"%s\", Zeile %d"
 
-#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1551
+#: ../libppr/cs2enc.c:107 ../libppr/queueinfo.c:1581
 #, c-format
 msgid "Error reading \"%s\", errno=%d (%s)"
 msgstr "Fehler beim Lesen von \"%s\", Fehlernummer=%d (%s)"
@@ -1011,27 +1012,27 @@ msgstr "Es gibt keinen Drucker \"%s\""
 msgid "no printer called \"%s\""
 msgstr "Drucker \"%s\" existiert nicht"
 
-#: ../libppr/queueinfo.c:1508
+#: ../libppr/queueinfo.c:1538
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: too few fields\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: zu wenige Felder\n"
 
-#: ../libppr/queueinfo.c:1517
+#: ../libppr/queueinfo.c:1547
 #, c-format
 msgid "Warning: syntax error in \"%s\" line %d: field %d is empty\n"
 msgstr "Warnung: Syntax Fehler in \"%s\", Zeile %d: Feld %d ist leer\n"
 
-#: ../libppr/queueinfo.c:1540
+#: ../libppr/queueinfo.c:1570
 #, c-format
 msgid "Match at \"%s\" line %d, mfmode=\"%s\".\n"
 msgstr "Treffer in \"%s\", Zeile %d; mfmode=\"%s\".\n"
 
-#: ../libppr/queueinfo.c:1576
+#: ../libppr/queueinfo.c:1606
 #, c-format
 msgid "Warning: no MetaFont mode found for printer \"%s\".\n"
 msgstr "Warnung: kein MetaFont Modus für Drucker \"%s\" gefunden.\n"
 
-#: ../libppr/queueinfo.c:1587
+#: ../libppr/queueinfo.c:1617
 #, c-format
 msgid "Warning: not all members of group \"%s\" have the save MetaFont mode.\n"
 msgstr "Warnung: nicht aller Mitglieder der Gruppe \"%s\" haben den sicheren MetaFont Modus.\n"
@@ -1356,55 +1357,55 @@ msgstr "%s(): %s() fehlgeschlagen, Fehlernummer=%d (%s)"
 msgid "%s(): %s(\"%s\", ...) failed, errno=%d (%s)\n"
 msgstr "%s(): execv(\"%s\", ...) fehlgeschlagen, Fehlernummer=%d (%s)\n"
 
-#: ../ppad/dispatch_table.c:11
+#: ../ppad/dispatch_table.c:14
 msgid "alias to show"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:15
+#: ../ppad/dispatch_table.c:18
 msgid "name of existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:16
+#: ../ppad/dispatch_table.c:19
 msgid "name of new alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:20
+#: ../ppad/dispatch_table.c:23
 msgid "name of new or existing alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:21
+#: ../ppad/dispatch_table.c:24
 msgid "new target of alias"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:25
+#: ../ppad/dispatch_table.c:28
 msgid "name of alias to be deleted"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:29 ../ppad/dispatch_table.c:34
-#: ../ppad/dispatch_table.c:39 ../ppad/dispatch_table.c:44
+#: ../ppad/dispatch_table.c:32 ../ppad/dispatch_table.c:37
+#: ../ppad/dispatch_table.c:42 ../ppad/dispatch_table.c:47
 msgid "name of alias to be modified"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:30 ../ppad/dispatch_table.c:174
+#: ../ppad/dispatch_table.c:33 ../ppad/dispatch_table.c:174
 msgid "comment to attach (ommit to delete)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:35 ../ppad/dispatch_table.c:96
+#: ../ppad/dispatch_table.c:38 ../ppad/dispatch_table.c:96
 #: ../ppad/dispatch_table.c:288
 msgid "switches to attach (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:40 ../ppad/dispatch_table.c:105
+#: ../ppad/dispatch_table.c:43 ../ppad/dispatch_table.c:105
 #: ../ppad/dispatch_table.c:297
 msgid "languages to pass thru (ommit to delete list)"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:45 ../ppad/dispatch_table.c:115
+#: ../ppad/dispatch_table.c:48 ../ppad/dispatch_table.c:115
 #: ../ppad/dispatch_table.c:340
 msgid "addon parameter to modify"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:46 ../ppad/dispatch_table.c:116
+#: ../ppad/dispatch_table.c:49 ../ppad/dispatch_table.c:116
 #: ../ppad/dispatch_table.c:341
 msgid "new value for param (ommit to delete)"
 msgstr ""
@@ -1859,7 +1860,7 @@ msgstr ""
 msgid "delete from bins list"
 msgstr ""
 
-#: ../ppad/dispatch_table.c:403
+#: ../ppad/dispatch_table.c:402
 msgid "send reminder e-mail about printer problems"
 msgstr ""
 
@@ -1993,13 +1994,13 @@ msgid "send query to printer and produce list of suitable PPD files"
 msgstr ""
 
 #: ../ppad/dispatch_table.c:444
+msgid "miscelanious command"
+msgstr ""
+
+#: ../ppad/dispatch_table.c:445
 #, fuzzy
 msgid "all settings for aliases"
 msgstr "Ungültiger Wert für %s"
-
-#: ../ppad/dispatch_table.c:445
-msgid "miscelanious command"
-msgstr ""
 
 #: ../ppad/dispatch_table.c:446
 #, fuzzy

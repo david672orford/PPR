@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.c
-** Copyright 1995--2010, Trinity College Computing Center.
+** Copyright 1995--2012, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 5 August 2010.
+** Last modified: 5 September 2012
 */
 
 /*
@@ -207,7 +207,9 @@ static void send_ppd(const char prnname[])
 		{
 		void *ppdobj;
 		char *line;
-		printf("Content-Type: text/plain\n\n");
+		printf("Content-Type: text/plain\n");
+		printf("X-Chunked-OK: false\n");
+		printf("\n");
 		ppdobj = ppdobj_new(ppd);
 		while((line = ppdobj_readline(ppdobj)))
 			printf("%s\n", line);

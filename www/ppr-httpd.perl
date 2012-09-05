@@ -8,7 +8,7 @@
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified: 17 April 2012
+# Last modified: 5 September 2012
 #
 
 use lib "@PERL_LIBDIR@";
@@ -1146,6 +1146,7 @@ sub do_cgi
 	my $expires = undef;
 	my $location = undef;
 	my $last_modified = undef;
+	my $x_chunked_ok = 1;
 	while(<RESP_READ>)
 		{
 		# strip any kind of line terminator
@@ -1184,6 +1185,11 @@ sub do_cgi
 		if(/^Last-Modified:\s*(.+)/i)			# Makes "If-Modified-Since:" handling possible
 			{
 			$last_modified = cgi_time_parse($1);
+			next;
+			}
+		if(/^X-Chunked-OK: false$/)
+			{
+			$x_chunked_ok = 0;
 			next;
 			}
 
@@ -1241,12 +1247,17 @@ sub do_cgi
 	# body.
 	my $chunked = (!defined($content_length) && $status != 304) ? 1 : 0;
 
-	# If chunked is not permitted (because the HTTP version is too low), then we
-	# will have to close the connection after this response.
-	if($chunked && !($request_version_major > 1 || $request_version_minor >= 1))
+	# If we would like to use chunked mode because we do not know the length 
+	# of the response, but the HTTP version is less than 1.1 or the CGI
+	# script has asked us not to, we will have to close the connection after
+	# this response.
+	if($chunked)
 		{
-		$chunked = 0;
-		$resp_header_connection = "close";
+		if(!($request_version_major > 1 || $request_version_minor >= 1) || !$x_chunked_ok)
+			{
+			$chunked = 0;
+			$resp_header_connection = "close";
+			}
 		}
 
 	#
