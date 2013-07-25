@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2012, Trinity College Computing Center.
+*% Copyright 1995--2013, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -22,10 +22,11 @@
 *%	PRINTER_HPDJ550C	HP DeskJet 550C, 560C
 *%	PRINTER_DM24		24 pin dot matrix printers
 *%	PRINTER_EPSC62		Epson Stylus C62
+*%  PRINTER_BROMFC		Brother MFC series
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 31 October 2012.
+*% which was last revised 25 July 2013.
 *%
 #endif
 
