@@ -9438,7 +9438,7 @@ no final tarball was released.
   translated root drirectory from SCRIPT_NAME when running CGI scripts.
   
 
-2.00a1, 11 December 2004--5 September 2012
+2.00a1, 11 December 2004--31 October 2012
 
 * added config.h.in; added subst_tool.c; modified Config to generate a 
   Makefile.conf which exports numberous variables rather than writing them
@@ -10162,5 +10162,10 @@ no final tarball was released.
   It then fails to test the pointer returned by ppdFindOption(ppd, "PageSize")
   for NULLness. The result is a segfault if the chunking damages the
   relevant part of the PPD file.
+
+* ppd/ghostscript/: added "Brother MFC Series Ghostscript" PPD file. Changed
+  "*DefaultOutputOrder: Forward" to "Normal".
+
+* pprdrv/pprdrv_ppd.c: fixed message about invalid DefaultOutputOrder.
 
 

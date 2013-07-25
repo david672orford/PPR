@@ -1,20 +1,20 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.h
-** Copyright 1995--2010, Trinity College Computing Center.
+** Copyright 1995--2012, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 9 September 2010.
+** Last modified: 4 September 2012
 */
 
 /*! \file
 	\brief Function prototypes for the IPP server
 */
 
-#if 0				/* debug enable */
+#if 1				/* debug enable */
 #define DEBUG 2		/* debug level */
 #define DODEBUG1(a) debug a
 #else

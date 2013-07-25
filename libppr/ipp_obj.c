@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ipp_obj.c
-** Copyright 1995--2010, Trinity College Computing Center.
+** Copyright 1995--2012, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 9 September 2010.
+** Last modified: 4 September 2012
 */
 
 /*! \file */
@@ -28,7 +28,8 @@
 /* If this is enabled, debugging code is compiled in and the
  * caller must provided a callback function debug().  No 
  * debugging callbacks will actually be made until the caller
- * sets the debug level to something greater than 0.
+ * sets the debug level to something greater than 0 when XML_DEBUG()
+ * begins to work or to 5 or greater when DODEBUG() starts to work.
  */
 #if 1
 #define DEBUG 1
@@ -159,7 +160,7 @@ void ipp_delete(struct IPP *ipp)
 	if(ipp->bytes_left != -1)
 		debug("ipp_delete(): %d leftover bytes", ipp->bytes_left + ipp->readbuf_remaining);
 	else
-		debug("ipp_delete()");
+		DODEBUG(("ipp_delete()"));
 	#endif
 
 	if(ipp->magic != 0xAABB)

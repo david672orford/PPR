@@ -27,7 +27,7 @@ defined($SHORT_VERSION) || die;
 defined($SAFE_PATH) || die;
 defined($CGI_BIN) || die;
 
-my $DEBUG = 0;	# 1 for basic debugging, 2 to show request headers
+my $DEBUG = 1;	# 1 for basic debugging, 2 to show request headers
 
 # The text for "Server:" header and $ENV{SERVER_SOFTWARE}.	It is based on
 # the PPR version number.

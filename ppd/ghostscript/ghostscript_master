@@ -25,18 +25,18 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 31 May 2007.
+*% which was last revised 31 October 2012.
 *%
 #endif
 
 *% This tracks the PPR version.  It will be the same as the last version of
 *% PPR in which this file was changed.
-*FileVersion: "1.53"
+*FileVersion: "2.00a1"
 
 *FormatVersion: "4.2"
 *LanguageVersion: English
 
-%* This PPD file accurately represents Ghostscript 4.0 or later.
+*% This PPD file accurately represents Ghostscript 4.0 or later.
 *PSVersion: "(2010.0) 400"
 
 #ifdef PRINTER_HPIII
@@ -98,8 +98,20 @@
 *ColorDevice: True
 *DefaultColorSpace: CMYK
 *Throughput: "8"
-*% *pprRIP: ppr-gs escp ijs=ijsgimpprint,EPSON,escp2-c62
 *pprRIP: ppr-gs escp ijs=ijsgutenprint,EPSON,escp2-c62
+#endif
+
+#ifdef PRINTER_BROMFC
+*Product: "(Brother MFC Series Ghostscript)"
+*ModelName: "Brother MFC Series Ghostscript"
+*NickName: "Brother MFC Series Ghostscript"
+*PCFileName: "BROMFC.PPD"
+*DefaultResolution: 300dpi
+*ColorDevice: False
+*DefaultColorSpace: Gray
+*Throughput: "8"
+*pprRIP: ppr-gs PCL -sDEVICE=ljet4d -r600x600
+*cupsModelNumber: 0
 #endif
 
 *% ===== General Information =====
@@ -176,7 +188,7 @@
 #if defined(PRINTER_HPDJ500) | defined(PRINTER_HPDJ550C) | defined(PRINTER_EPSC62)
 *DefaultOutputOrder: Reverse
 #else
-*DefaultOutputOrder: Forward
+*DefaultOutputOrder: Normal
 #endif
 
 #ifdef PRINTER_HPDJ550C
@@ -319,6 +331,16 @@
 
 *CloseGroup: PrintQuality
 
+#endif
+
+#ifdef PRINTER_BROMFC
+*OpenUI *Duplex/Duplex: PickOne
+*OrderDependency: 50 AnySetup *Duplex
+*DefaultDuplex: None
+*Duplex None/Off: "<</Duplex false>>setpagedevice"
+*Duplex DuplexNoTumble/Long-Edge Binding: "<</Duplex true /Tumble false>>setpagedevice"
+*Duplex DuplexTumble/Short-Edge Binding: "<</Duplex true /Tumble true>>setpagedevice"
+*CloseUI *Duplex
 #endif
 
 *% ===== Fonts =====

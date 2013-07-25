@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ppr-1.53b\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-04 11:17-0400\n"
+"POT-Creation-Date: 2012-09-07 14:40-0400\n"
 "PO-Revision-Date: 2004-10-21 18:36+0200\n"
 "Last-Translator: Jan Kohnert <jan.kohnert@t-online.de>\n"
 "Language-Team: de_DE <ppr-list@mail.cc.trincoll.edu>\n"
@@ -75,14 +75,14 @@ msgid "The alias \"%s\" already exists!"
 msgstr "Das Alias \"%s\" existiert bereits!"
 
 #: ../www/alias_addwiz.cgi.perl:78 ../www/alias_addwiz.cgi.perl:146
-#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:343
+#: ../www/cgi_tabbed.pl:380 ../www/cgi_wizard.pl:350
 #: ../www/cliconf.cgi.perl:50 ../www/grp_addwiz.cgi.perl:78
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:134
 #: ../www/prn_addwiz.cgi.perl:835 ../www/prn_testpage.cgi.perl:112
 msgid "_Cancel"
 msgstr "_Abbrechen"
 
-#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:343
+#: ../www/alias_addwiz.cgi.perl:78 ../www/cgi_wizard.pl:350
 #: ../www/cliconf.cgi.perl:50 ../www/grp_addwiz.cgi.perl:78
 #: ../www/prn_addwiz.cgi.perl:134
 msgid "_Next"
@@ -128,7 +128,7 @@ msgstr "Beschreibung:"
 msgid "You must supply a description!"
 msgstr "Sie müssen eine Bechreibung angeben!"
 
-#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:343
+#: ../www/alias_addwiz.cgi.perl:146 ../www/cgi_wizard.pl:350
 #: ../www/grp_addwiz.cgi.perl:144 ../www/prn_addwiz.cgi.perl:835
 #: ../www/prn_testpage.cgi.perl:174
 msgid "_Back"
@@ -2615,24 +2615,24 @@ msgstr "Rolle"
 msgid "Source Download"
 msgstr "Quellen herunterladen"
 
-#~ msgid "Original Queue Priority of this Job"
-#~ msgstr "Originale Warteschlangenpriorität des Auftrages"
+#~ msgid "Numberic Unix Userid of Job Submitter"
+#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
+
+#~ msgid "Unix User"
+#~ msgstr "Unix Nutzer"
+
+#~ msgid "Proxy For"
+#~ msgstr "Proxy für"
+
+#~ msgid "Submitted by Unix user:"
+#~ msgstr "Übermittelt von Unix-Nutzer:"
+
+#~ msgid "As proxy for:"
+#~ msgstr "Als Proxy für:"
 
 #, fuzzy
 #~ msgid "For Whom is the Submitter Acting as Proxy?"
 #~ msgstr "Für wen arbeitet der Überträger als Proxy?"
 
-#~ msgid "As proxy for:"
-#~ msgstr "Als Proxy für:"
-
-#~ msgid "Submitted by Unix user:"
-#~ msgstr "Übermittelt von Unix-Nutzer:"
-
-#~ msgid "Proxy For"
-#~ msgstr "Proxy für"
-
-#~ msgid "Unix User"
-#~ msgstr "Unix Nutzer"
-
-#~ msgid "Numberic Unix Userid of Job Submitter"
-#~ msgstr "Numerische Unix Benutzer-ID des Auftragsüberträgers"
+#~ msgid "Original Queue Priority of this Job"
+#~ msgstr "Originale Warteschlangenpriorität des Auftrages"
