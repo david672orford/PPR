@@ -1,13 +1,13 @@
 #
 # mouse:~ppr/src/docs/refman/ppr.1.pod
-# Copyright 1995--2006, Trinity College Computing Center.
+# Copyright 1995--2013, Trinity College Computing Center.
 # Written by David Chappell.
 #
 # This file is part of PPR.  You can redistribute it and modify it under the
 # terms of the revised BSD licence (without the advertising clause) as
 # described in the accompanying file LICENSE.txt.
 #
-# Last modified 24 April 2006.
+# Last modified: 10 October 2013
 #
 
 =head1 NAME
@@ -802,8 +802,6 @@ flux and is not yet documented.
 The option B<--editps-level> (described below) can modify the operation
 of the B<editps> hack.
 
-All hacks are off by default.
-
 =back
 
 =item B<--editps-level> I<n>
@@ -848,12 +846,13 @@ performs major modifications such as optimizing it for size or speed.
 
 =head2 Resource Handling
 
-Prior to version 2.00, PPR has a complicated system for stripping resources,
-such as procedure sets and fonts, out of jobs and reinserting them at print 
-time.  While useful in theory, only LaserWriter 8 (a Macintosh printer driver)
-to advantage of it.  Other than that, it simply caused problems as multiple
-versions of the same resource with the same name proliferated.  One print
-job could 'poison' the cache with versions of resources which were incompatible
+Prior to version 2.00, PPR had a complicated system for stripping resources
+(such as procedure sets and fonts) out of jobs and reinserting them when the
+job was sent to the printer. While useful in theory, only LaserWriter 8 (a
+Macintosh printer driver) to advantage of it.  Other than that, it simply caused problems because
+the writers of printer drivers were not careful to change the resource version
+numbers when the changed the resources. As a result one print job could 'poison' 
+the cache with versions of resources which were incompatible
 with other print jobs.  To these reasons, PPR version 2.00 no longer extracts
 resources from incoming jobs.
 

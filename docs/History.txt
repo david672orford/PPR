@@ -539,7 +539,7 @@ more information about RIPs and *pprRIP:.
 * ../INSTALL.txt: added section about CVS build requirements
 
 
-2.00a1, 11 December 2004--12 December 2006.
+2.00a1, 11 December 2004--10 October 2013.
 
 * refman/: removed references to papsrv.
 
@@ -618,4 +618,7 @@ more information about RIPs and *pprRIP:.
   too big.
 
 * refman/ppr-filters.1.pod: fixed description of mincolumns=.
+
+* refman/ppr.1.pod: resolved contradictory statements about whether -H editps
+  is on by default to say that it is.
 

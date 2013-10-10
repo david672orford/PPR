@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/pprdrv/ppr-gs.c
-** Copyright 1995--2012, Trinity College Computing Center.
+** Copyright 1995--2013, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified: 31 October 2012
+** Last modified: 4 September 2013
 */
 
 /*
@@ -42,9 +42,6 @@ struct GS_EXE
 	const char *exe;
 	const char *driver_list;
 	} gs_exe_list[] = {
-		{LIBDIR"/../ppr-gs/bin/gs",				/* PPR Ghostscript distribution */
-			SHAREDIR"/../ppr-gs/gs_drivers"
-			},
 		{"/usr/local/bin/gs",					/* Installation from Source Tarball */
 			"/usr/local/share/ghostscript/gs_drivers"
 			},
@@ -63,7 +60,6 @@ struct GS_EXE
 ** Where do we seek rastertohp, rastertoepson, and other external CUPS drivers?
 */
 const char *cups_bin_list[] = {
-		LIBDIR"/../ppr-gs/bin",					/* PPR Ghostscript distribution */
 		"/usr/local/lib/cups/filter",			/* Installation from CUPS Source Tarball */
 		"/usr/lib/cups/filter",					/* System package per Linux FHS */
 		"/usr/libexec/cups/filter",				/* System package BSD */
@@ -74,7 +70,6 @@ const char *cups_bin_list[] = {
 ** Where do we seek IJS servers such as hpijs?
 */
 const char *ijs_bin_list[] = {
-		LIBDIR"/../ppr-gs/bin",					/* PPR Ghostscript distribution */
 		"/usr/local/bin",						/* Installation from Source Tarball */
 		"/usr/bin",								/* System package */
 		NULL

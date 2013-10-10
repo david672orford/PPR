@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/include/global_structs.h
-** Copyright 1995--2006, Trinity College Computing Center.
+** Copyright 1995--2013, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified 27 April 2006.
+** Last modified: 10 October 2013
 */
 
 /* =================== for pprd queue entries =====================*/
@@ -160,7 +160,7 @@ struct QEntryFile
 #define HACK_TRANSPARENT 2
 #define HACK_BADEPS 4
 #define HACK_EDITPS 8
-#define HACK_DEFAULT_HACKS 0	/* documented in ppr(1) */
+#define HACK_DEFAULT_HACKS 8	/* documented in ppr(1) */
 
 /* "%%ProofMode:" values. */
 #define PROOFMODE_NOTIFYME -1

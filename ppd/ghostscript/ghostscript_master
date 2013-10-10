@@ -26,7 +26,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 25 July 2013.
+*% which was last revised 4 September 2013.
 *%
 #endif
 
@@ -111,8 +111,10 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "8"
-*pprRIP: ppr-gs PCL -sDEVICE=ljet4d -r600x600
-*cupsModelNumber: 0
+*% *pprRIP: ppr-gs PCL -sDEVICE=ljet4d -r600x600
+*% *pprRIP: ppr-gs PCL -sDEVICE=laserjet
+*% *pprRIP: ppr-gs PCL ijs="hpijs,HP,HP LaserJet 4"
+*pprRIP: ppr-gs PCL ijs="hpijs,HP,HP LaserJet"
 #endif
 
 *% ===== General Information =====
