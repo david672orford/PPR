@@ -1,4 +1,4 @@
-7 December 2006
+16 May 2014
 
 This is announce.txt from:
 
@@ -27,6 +27,9 @@ by sending them to "ppr-list@mail.trincoll.edu".
  New in version 2.00a1
 ==========================================================================
 
+* Greatly improved IPP support
+
+* Dropped uprint-lpr, uprint-lp, etc.
 
 
 ==========================================================================
@@ -80,11 +83,7 @@ by sending them to "ppr-list@mail.trincoll.edu".
 * Advertises printer queues on an AppleTalk network so that Macintosh
   computers can print to them even if the printers don't support AppleTalk.
 
-* Accepts jobs from AT&T's LAN Manager for Unix and sends notices using the
-  LAN Manager messaging facilities.
-
-* Accepts jobs from the Samba LAN Manager compatible server and sends
-  notices using Samba's messaging facilities.
+* Accepts jobs from Samba and sends notices using Samba's messaging facilities.
 
 * When used with Samba version 1.9.18 or later, PPR supports Windows 95
   drag-and-drop printer driver installation.  With Samba 2.2.x it supports
@@ -116,10 +115,6 @@ by sending them to "ppr-list@mail.trincoll.edu".
 * Prints banner pages which include information gleened from the Document
   Structure Comments, such as user name, number of pages, and warnings
   concerning defective DSC comments.
-
-* Caches fonts received from Macintosh clients so that they need not be
-  downloaded again.  This saves time the next time the document is printed.
-  (This only works with LaserWriter 8.x.)
 
 * If MS-Windows format TrueType fonts are manually installed in the spooler,
   it will convert them to PostScript and download them on demand.
@@ -163,67 +158,6 @@ The Cygnus Windows NT port can be compiled but it doesn't work yet.
 The MacOS port can be compiled and installed, but the install scripts may
 still need a little tweaking.  Final testing couldn't be accomplished
 due to the limitations of the Sourceforge.net compile farm.
-
-============================================================================
- Intended Audiance
-============================================================================
-
-PPR begain as a research project designed to explore the possibilities of
-the Adobe Document Structuring convention, PPD files, and automatic
-filtering.  The goal is to make printing easy for end users.
-
-However, PostScript can be very complex and PPR is a very complex piece of
-code.  Considerable effort has been expended to make PPR easy to set up and
-use.  All the same, some level of understanding of PostScript, the Document
-Structuring Convention, and the processes involved is sometimes required.
-
-While PPR has been used with a number of PostScript generating applications,
-it has not been possible to test it with every one.  This problem should be
-a matter of moderate concern because most if not all PostScript generating
-applications have one or more errors in their conformance to the Document
-Structuring Convention.  When document structuring comments make serious
-factual errors in their description of the structure of the document or
-concerning the fonts and other resources required, PPR may fail to print it
-even though a more simple minded spooler would print it.
-
-When unexpected results are obtained, it may be necessary to examine the
-input and the output, manually interpreting the DSC comments.  Anyone
-supporting PPR would be well advised to first read Appendix G of "PostScript
-Language Reference Manual, Second Edition" as well as "PostScript Printer
-Description File Format Specification".
-
-That said, it should be noted that PPR has been extensively tested in an
-environment containing hundreds of clients and dozens of printers.  The
-clients have included Unix, MS-DOS, MS-Windows, and MacOS.
-
-
-============================================================================
- Technical Support
-============================================================================
-
-Trinity College cannot of course guarantee to provide you with technical
-support for this for this product.  As stated above, while PPR is intended
-to make printing easy to set up and use, diagnosing problems with PostScript
-printing still requires specialized knowledge.
-
-An installation manual, an incomplete technical description, and man pages
-for most of the programs are provided.  We will also endeavor to participate
-in the answering of questions sent to the PPR mailing list.  We regret that
-Trinity College is not in a position to provide technical support beyond
-this.
-
-Bug reports and suggestions are of course welcome.  Bug reports will be
-most useful they describe the exact steps necessary to reproduce the
-problem.  Of course, if you can if include a fix or point out the
-offending source file and function, please do so.
-
-Bug reports should be sent to <ppr-bugs@mail.trincoll.edu>.
-
-If you have PostScript questions, it might be well to post them to the
-Usenet news group "comp.languages.postscript".  Questions related to
-CAP should be posted to "comp.protocols.appletalk".  Questions directly
-related to PPR should be sent to the PPR mailing list.
-
 
 ============================================================================
  License Terms

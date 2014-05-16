@@ -1,11 +1,11 @@
 #
 # mouse:~ppr/src/ppr.spec
-# Last modified 11 December 2004.
+# Last modified: 16 May 2014
 #
 
 Name: ppr
 Summary: A spooler for PostScript printers
-Version: 1.53
+Version: 2.00a1
 Release: 1
 License: BSD
 URL: http://ppr.trincoll.edu/
@@ -74,6 +74,9 @@ with Ghostscript, Netatalk, CAP60, and Samba.  It has a web interface.
 
 * Tue Dec 11 2004 David Chappell <David.Chappell@trincoll.edu> 1.53-1
 - for PPR 1.53 release
+
+* Tue May 16 2014 David Chappell <David.Chappell@trincoll.edu> 2.00a1-1
+- for PPR 2.00a1 release
 
 #============================================================================
 # This unpacks the source.
