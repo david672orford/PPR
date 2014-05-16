@@ -3413,7 +3413,7 @@ msgstr "соединение делается"
 
 #: ../ppop/ppop_cmds_other.c:245
 msgid "sending data"
-msgstr "текст посылается"
+msgstr "данные отправлаются"
 
 #: ../ppop/ppop_cmds_other.c:247
 msgid "closing connection"

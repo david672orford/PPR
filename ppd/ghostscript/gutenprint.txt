@@ -1,0 +1,10 @@
+To find the parameters for Gutenprint using Foomatic:
+
+1) Find the printer on this page:
+   http://gimp-print.sourceforge.net/p_Supported_Printers.php
+
+2) Use this command to produce the PPD file:
+   $ foomatic-ppdfile -d gutenprint-ijs.5.2 -p HP-LaserJet_3
+
+3) Search the PPD file for DeviceManufacturer and DeviceModel
+

@@ -2,7 +2,7 @@
 *%
 #if 0
 *% ~ppr/src/ppd/ghostscript/ghostscript_master
-*% Copyright 1995--2013, Trinity College Computing Center.
+*% Copyright 1995--2014, Trinity College Computing Center.
 *% Written by David Chappell.
 *%
 *% Permission to use, copy, modify, and distribute this software and its
@@ -26,7 +26,7 @@
 *%
 #else
 *% This file was generated from "~ppr/src/ppd/ghostscript_master"
-*% which was last revised 4 September 2013.
+*% which was last revised 18 February 2014.
 *%
 #endif
 
@@ -111,10 +111,14 @@
 *ColorDevice: False
 *DefaultColorSpace: Gray
 *Throughput: "8"
+*% ===Prints with 'drips' on some letters===
 *% *pprRIP: ppr-gs PCL -sDEVICE=ljet4d -r600x600
-*% *pprRIP: ppr-gs PCL -sDEVICE=laserjet
-*% *pprRIP: ppr-gs PCL ijs="hpijs,HP,HP LaserJet 4"
-*pprRIP: ppr-gs PCL ijs="hpijs,HP,HP LaserJet"
+*% ===Gets stuck===
+*% *pprRIP: ppr-gs PCL ijs="hpijs,HP,HP LaserJet"
+*% ===Works properly (nope, gets stuck)===
+*% *pprRIP: ppr-gs PCL ijs="ijsgutenprint,HP,pcl-4"
+*% ===Does not work at all===
+*pprRIP: ppr-gs PCL -sDEVICE=hl1250
 #endif
 
 *% ===== General Information =====

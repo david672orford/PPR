@@ -1,6 +1,6 @@
 /*
 ** mouse:~ppr/src/filter_pcl/PCLparse.java
-** Copyright 1995--2004, Trinity College Computing Center.
+** Copyright 1995--2014, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** Redistribution and use in source and binary forms, with or without
@@ -25,7 +25,7 @@
 ** ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
 ** POSSIBILITY OF SUCH DAMAGE.
 **
-** Last modified 23 January 2004.
+** Last modified: 18 February 2014
 */
 
 import java.io.*;
@@ -163,9 +163,9 @@ class PCLparse
 		debug(")\n");
 		}
 
-	// This function dispatches a PCL parameterized ESC.  The wierd
-	// terminology is HP's.
-	public void parameterized_esc(int parameterized_char, int group_char, int value_thousandths, int parameter_char) throws AssertionFailed
+	// This function dispatches a PCL "parameterized ESC". (Why HP calls
+	// them that is a little unclear.)
+	public void parameterized_esc(int parameterized_char, int group_char, int value_thousandths, int parameter_char, InputStream infile) throws AssertionFailed, IOException
 		{
 		debug("ESC ");
 				debug((char)parameterized_char);
@@ -444,7 +444,14 @@ class PCLparse
 				debug("set compression method");
 				break;
 			case 0x2a6257:						// ESC * b W
-				debug("raster row");
+				debug("raster row ");
+				debug(value_thousandths / 1000);
+				debug(" bytes");
+				while(value_thousandths > 0)
+					{
+					must_getc(infile);
+					value_thousandths -= 1000;
+					}
 				break;
 			case 0x2a7246:						// ESC * r F
 				debug("raster graphics orientation");
@@ -560,7 +567,7 @@ class PCLparse
 							break;
 							}
 
-						parameterized_esc(parameterized_character, group_character, (value*value_sign), parameter_character);
+						parameterized_esc(parameterized_character, group_character, (value*value_sign), parameter_character, infile);
 
 						} while(c >= 96 && c <= 126);	// while parameter_character is upper case
 					} // while not EOF

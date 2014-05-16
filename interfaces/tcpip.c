@@ -490,7 +490,7 @@ int int_main(int argc, char *argv[])
 		}
 	}
 
-	/* We can't use control-T status updates if the job isn't PostScript. */
+	/* We can't use control-T status updates if the page description language isn't PostScript. */
 	if(strcmp(int_cmdline.PDL, "postscript") != 0)
 		{
 		options.idle_status_interval = 0;
