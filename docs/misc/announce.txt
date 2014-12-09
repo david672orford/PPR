@@ -17,10 +17,9 @@ Center in Hartford, Connecticut, U.S.A.
 
 ==========================================================================
 
-If you wish to subscribe to the PPR mailing list, send mail to
-"majordomo@mail.trincoll.edu".  The message should consist of the single
-line "subscribe ppr-list".  You may post messages to the list
-by sending them to "ppr-list@mail.trincoll.edu".
+If you wish to subscribe to the PPR mailing list, send a blank message to
+"ppr-join@lists.trincoll.edu". You may post messages to the list
+by sending them to "ppr@lists.trincoll.edu".
 
 
 ==========================================================================
@@ -134,17 +133,16 @@ PPR was origionally written to work on AT&T's 6386 WGS and StarServer E
 running Unix System V Release 4.0 and AT&T's port of LAN Manager to Unix
 with AT&T's AppleTalk Network Program.
 
-It was later ported to SunOS 5.x (Solaris 2.x) and CAP60 patch level 194.
-Netatalk is not yet supported on Solaris 2.x.
+It was later ported to SunOS 5.x (Solaris 2.x) and CAP60.
 
 Linux is currently the principal development system.  An extra library
 called NATALI can be obtained from the place you got PPR.  This library
 allows PPR to work with Netatalk under Linux.
 
-DEC OSF/1 and Digital Unix 4.0 are also supported, though AppleTalk has not
+DEC OSF/1 and Digital Unix 4.0 are also supported
 been attempted.
 
-SGI's IRIX 6.3 is also a supported platform.  However, AppleTalk on IRIX has
+SGI's IRIX 6.3 is also a supported platform.
 not been attempted.
 
 The complete system has not been tested on 386BSD/NetBSD/FreeBSD/OpenBSD,
@@ -155,9 +153,8 @@ reported whether or not it works.
 
 The Cygnus Windows NT port can be compiled but it doesn't work yet.
 
-The MacOS port can be compiled and installed, but the install scripts may
-still need a little tweaking.  Final testing couldn't be accomplished
-due to the limitations of the Sourceforge.net compile farm.
+The MacOSX port can be compiled and installed, but the install scripts may
+still need a little tweaking.
 
 ============================================================================
  License Terms

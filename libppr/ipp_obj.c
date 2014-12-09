@@ -905,7 +905,7 @@ void ipp_send_reply(struct IPP *ipp, gu_boolean header)
 	ipp_put_ss(ipp, ipp->response_code);
 	ipp_put_si(ipp, ipp->request_id);
 	
-	if(!(attr = ipp->response_attrs_operation))
+	if(!(attr = ipp->response_attrs_operation))			/* see RFC 2911 3.1.4.2 */
 		gu_Throw("no response_attrs_operation");
 	XML_DEBUG(("<operation-attributes>"));
 	ipp_put_byte(ipp, IPP_TAG_OPERATION);

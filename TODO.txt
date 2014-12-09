@@ -1,0 +1,23 @@
+== Problems Noticed on Raven ==
+
+* Printing just the first page from Mozilla Thunderbird creates and empty job which blocks the queue
+* When the queue is blocked, the progress shows as bug%.
+* Canceling the job frees the queue
+* If one prints to a PostScript file, that can be printed using the ppr command
+* If one prints to a PDF file, the acrobat reader core dumps when run from filter_pdf.
+* In Evince multiple copies do not work
+* In Evince duplex does not work
+* If multiple copies of a job with an odd number of pages are printed in Openoffice writer, the first page of the second copy is printed on the back of the last page of the first copy.
+
+Brother printer still not set up to use a clean driver. (The drivers supplied by Brother are hopelessly complicated.) Hpijs is a good candidate, but the documentation of the printer makes and models has disappeared, apparently because the authors figure we can use Foomatic.
+
+== Things to Fix for Release ==
+* finish cleaning stale links
+* replace big-email-list.cgi
+* cut out bonding server
+* drop Apple PAP support or at least most of the mentions of it
+* Drop broken Freshmeat logo
+* Drop or correct mail.trincoll.edu e-mail addresses
+* Upload 2.00a1 to Sourceforge.net
+
+

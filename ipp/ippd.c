@@ -1,13 +1,13 @@
 /*
 ** mouse:~ppr/src/ipp/ippd.c
-** Copyright 1995--2012, Trinity College Computing Center.
+** Copyright 1995--2014, Trinity College Computing Center.
 ** Written by David Chappell.
 **
 ** This file is part of PPR.  You can redistribute it and modify it under the
 ** terms of the revised BSD licence (without the advertising clause) as
 ** described in the accompanying file LICENSE.txt.
 **
-** Last modified: 5 September 2012
+** Last modified: 14 October 2014
 */
 
 /*
@@ -307,6 +307,7 @@ int main(int argc, char *argv[])
 	gu_Try {
 		char *p, *path_info;
 		int content_length;
+		gu_boolean language_set = FALSE;
 
 		/* Do basic input validation */
 		if(!(p = getenv("REQUEST_METHOD")) || strcmp(p, "POST") != 0)
@@ -365,7 +366,8 @@ int main(int argc, char *argv[])
 			ipp_attribute_t *attr1, *attr2;
 			void (*p_handler)(struct IPP *ipp);
 			
-			if(ipp->version_major != 1)
+			/*if(ipp->version_major != 1)*/
+			if(ipp->version_major > 1)		/* Gtk+ sends 0.0 */
 				{
 				ipp->response_code = IPP_VERSION_NOT_SUPPORTED;
 				break;
@@ -426,6 +428,7 @@ int main(int argc, char *argv[])
 				"attributes-charset", "utf-8");
 			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
 				"attributes-natural-language", language);
+			language_set = TRUE;
 			}
 
 			p_handler = NULL;
@@ -552,7 +555,15 @@ int main(int argc, char *argv[])
 				DODEBUG(("no handler for this operation"));
 				ipp->response_code = IPP_OPERATION_NOT_SUPPORTED;
 				}
-			} while(FALSE);
+			} while(FALSE);		/* end of exception handling block */
+
+		if(!language_set)
+			{
+			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_CHARSET,
+				"attributes-charset", "utf-8");
+			ipp_add_string(ipp, IPP_TAG_OPERATION, IPP_TAG_LANGUAGE,
+				"attributes-natural-language", "en-us");
+			}
 
 		switch(ipp->response_code)
 			{
